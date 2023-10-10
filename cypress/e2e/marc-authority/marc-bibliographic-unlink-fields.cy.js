@@ -23,7 +23,6 @@ describe('MARC -> MARC Bibliographic', () => {
       'This record has successfully saved and is in process. Changes may not appear immediately.',
     accordion: 'Contributor',
   };
-  let createdInstanceID;
   const marcFiles = [
     {
       marc: 'marcFileForC365598_1.mrc',
@@ -71,38 +70,31 @@ describe('MARC -> MARC Bibliographic', () => {
   before(() => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
-      Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-      Permissions.moduleDataImportEnabled.gui,
-      Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
-      Permissions.dataExportEnableApp.gui,
+      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      });
-      marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdAuthorityIDs.push(link.split('/')[5]);
-              });
-            }
-          },
-        );
+      cy.loginAsAdmin().then(() => {
+        marcFiles.forEach((marcFile) => {
+          cy.visit(TopMenu.dataImportPath);
+          DataImport.waitLoading();
+
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitLoadingList();
+          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(marcFile.fileName);
+          for (let i = 0; i < marcFile.numOfRecords; i++) {
+            Logs.getCreatedItemsID(i).then((link) => {
+              createdAuthorityIDs.push(link.split('/')[5]);
+            });
+          }
+        });
       });
     });
   });

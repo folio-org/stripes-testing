@@ -103,6 +103,7 @@ const mclLinkHeader = MultiColumnListHeader({ id: 'list-column-link' });
 const mclAuthRefTypeHeader = MultiColumnListHeader({ id: 'list-column-authreftype' });
 const mclHeadingRef = MultiColumnListHeader({ id: 'list-column-headingref' });
 const mclHeadingType = MultiColumnListHeader({ id: 'list-column-headingtype' });
+const contributorsList = MultiColumnList({ id: 'list-contributors' });
 const buttonPrevPageDisabled = Button({
   id: 'authority-result-list-prev-paging-button',
   disabled: true,
@@ -212,7 +213,7 @@ const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
 const verifyContributor = (indexRow, indexColumn, value) => {
   cy.expect(
     contributorAccordion
-      .find(MultiColumnList({ id: 'list-contributors' }))
+      .find(contributorsList)
       .find(MultiColumnListRow({ index: indexRow }))
       .find(MultiColumnListCell({ columnIndex: indexColumn }))
       .has({ content: value }),
@@ -222,7 +223,7 @@ const verifyContributor = (indexRow, indexColumn, value) => {
 const verifyContributorWithMarcAppLink = (indexRow, indexColumn, value) => {
   cy.expect(
     contributorAccordion
-      .find(MultiColumnList({ id: 'list-contributors' }))
+      .find(contributorsList)
       .find(MultiColumnListRow({ index: indexRow }))
       .find(MultiColumnListCell({ columnIndex: indexColumn }))
       .has({ content: including(value) }),
@@ -919,7 +920,7 @@ export default {
     cy.expect(section.find(Button(including('Contributor'))).exists());
     cy.expect(
       Accordion('Contributor')
-        .find(MultiColumnList({ id: 'list-contributors' }))
+        .find(contributorsList)
         .find(MultiColumnListCell(including(text)))
         .exists(),
     );
@@ -993,7 +994,7 @@ export default {
   checkMarcAppIconExist: (indexRow) => {
     cy.expect(
       contributorAccordion
-        .find(MultiColumnList({ id: 'list-contributors' }))
+        .find(contributorsList)
         .find(MultiColumnListRow({ index: indexRow }))
         .find(marcAuthorityAppIcon)
         .exists(),
@@ -1003,7 +1004,7 @@ export default {
   checkMarcAppIconAbsent: (indexRow) => {
     cy.expect(
       contributorAccordion
-        .find(MultiColumnList({ id: 'list-contributors' }))
+        .find(contributorsList)
         .find(MultiColumnListRow({ index: indexRow }))
         .find(marcAuthorityAppIcon)
         .absent(),
