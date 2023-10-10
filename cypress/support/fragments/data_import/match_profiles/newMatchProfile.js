@@ -1,4 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import { including } from '@interactors/html';
 import {
   Button,
   Select,
@@ -7,6 +8,7 @@ import {
   Accordion,
   SelectionOption,
   Dropdown,
+  Callout,
 } from '../../../../../interactors';
 import { EXISTING_RECORDS_NAMES } from '../../../constants';
 
@@ -456,5 +458,9 @@ export default {
       .then(({ response }) => {
         return response;
       });
+  },
+
+  checkCalloutMessage: (message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
   },
 };
