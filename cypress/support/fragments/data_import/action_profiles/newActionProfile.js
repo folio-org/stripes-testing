@@ -1,5 +1,5 @@
 import { including } from '@interactors/html';
-import { TextField, Button, Select, Section, Pane, Callout } from '../../../../../interactors';
+import { TextField, Button, Select, Section, Pane } from '../../../../../interactors';
 import SelectMappingProfile from './modals/selectMappingProfile';
 import { FOLIO_RECORD_TYPE, PROFILE_TYPE_NAMES } from '../../../constants';
 
@@ -92,10 +92,6 @@ export default {
   chooseAction: (profileAction = action) => cy.do(actionSelect.choose(profileAction)),
 
   saveProfile: () => cy.do(Button('Save as profile & Close').click()),
-
-  checkCalloutMessage: (message) => {
-    cy.expect(Callout({ textContent: including(message) }).exists());
-  },
 
   linkMappingProfile: (specialMappingProfileName) => {
     cy.do(profileLinkButton.click());

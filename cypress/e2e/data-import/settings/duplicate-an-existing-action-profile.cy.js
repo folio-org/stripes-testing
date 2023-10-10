@@ -5,7 +5,8 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import Users from '../../../support/fragments/users/users';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import newActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -16,8 +17,8 @@ describe('data-import', () => {
       action: 'Create (all record types except MARC Authority or MARC Holdings)',
     };
 
-    const calloutErrorMessage = `Action profile '${actionProfile.name}' already exists`;
-    const calloutMessage = `The action profile "${actionProfile.name}" was successfully created`;
+    const calloutErrorMessage = `New record not created: Action profile '${actionProfile.name}' already exists`;
+    const calloutMessage = `New record created:The action profile "${actionProfile.name}" was successfully created`;
 
     const duplicatedActionProfile = {
       name: `C2345 autotest duplicate action profile ${getRandomStringCode(8)}`,
@@ -46,13 +47,13 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         ActionProfileView.duplicate();
-        newActionProfile.verifyPreviouslyCreatedDataIsDisplayed(actionProfile);
-        newActionProfile.chooseAction(duplicatedActionProfile.action);
-        newActionProfile.saveProfile();
-        newActionProfile.checkCalloutMessage(calloutErrorMessage);
-        newActionProfile.fillName(duplicatedActionProfile.name);
-        newActionProfile.saveProfile();
-        ActionProfiles.checkCalloutMessage(calloutMessage);
+        NewActionProfile.verifyPreviouslyCreatedDataIsDisplayed(actionProfile);
+        NewActionProfile.chooseAction(duplicatedActionProfile.action);
+        NewActionProfile.saveProfile();
+        InteractorsTools.checkCalloutErrorMessage(calloutErrorMessage);
+        NewActionProfile.fillName(duplicatedActionProfile.name);
+        NewActionProfile.saveProfile();
+        InteractorsTools.checkCalloutMessage(calloutMessage);
         ActionProfiles.checkActionProfilePresented(duplicatedActionProfile.name);
       },
     );
