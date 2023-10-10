@@ -1,20 +1,19 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
+import { TestTypes, DevTeams, Permissions } from '../../../support/dictionary';
 
 let user;
 
 describe('bulk-edit', () => {
   before('create user', () => {
     cy.createTempUser([
-      permissions.bulkEditView.gui,
-      permissions.bulkEditEdit.gui,
-      permissions.bulkEditCsvEdit.gui,
-      permissions.bulkEditCsvView.gui,
-      permissions.uiInventoryViewCreateEditItems.gui,
-      permissions.uiUsersView.gui,
+      Permissions.bulkEditView.gui,
+      Permissions.bulkEditEdit.gui,
+      Permissions.bulkEditCsvEdit.gui,
+      Permissions.bulkEditCsvView.gui,
+      Permissions.uiInventoryViewCreateEditItems.gui,
+      Permissions.uiUsersView.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
