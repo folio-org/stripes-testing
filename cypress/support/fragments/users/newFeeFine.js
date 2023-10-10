@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Button, Modal, Option, Select, TextArea, MultiColumnListRow, HTML, TextField } from '../../../../interactors';
+import { Button, HTML, Modal, MultiColumnListRow, Option, Select, TextArea, TextField } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'new-modal' });
 const feeFineTypeSelect = rootModal.find(Select({ id: 'feeFineType' }));
@@ -38,11 +38,22 @@ const getNewFeeFineAccount = (values) => {
     // required field
     feeFineOwner: values.feeFineOwner,
   };
+
   if ('itemId' in values) {
-    return { ...body, itemId: values.itemId, barcode: values.barcode, title: values.title };
-  } else {
-    return body;
+    body.itemId = values.itemId;
+    body.barcode = values.barcode;
+    body.title = values.title;
   }
+
+  if ('dateCreated' in values) {
+    body.dateCreated = values.dateCreated;
+  }
+
+  if ('dueDate' in values) {
+    body.dueDate = values.dueDate;
+  }
+
+  return body;
 };
 
 const createFeeFineAccountViaApi = (feeFineAccount) => (
