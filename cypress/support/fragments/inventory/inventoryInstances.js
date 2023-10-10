@@ -364,8 +364,6 @@ export default {
         cy.log(instance.items);
         instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
         instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-        // cy.wrap((instance.items).each((item) => cy.deleteItemViaApi(item.id)));
-        // cy.wrap((instance.holdings).each((holding) => cy.deleteHoldingRecordViaApi(holding.id)));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       },
     );
