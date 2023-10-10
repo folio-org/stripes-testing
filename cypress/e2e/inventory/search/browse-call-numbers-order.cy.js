@@ -52,7 +52,7 @@ describe('Inventory -> Call Number Browse', () => {
   });
 
   it(
-    'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (spitfire) (null)',
+    'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       // #1 Input query in search input field that will return Instance records → Click "Search" button
@@ -81,13 +81,14 @@ describe('Inventory -> Call Number Browse', () => {
         // #6 Click "Add item" button next to added holding line in detail view
         InventoryInstance.clickAddItemByHoldingName(callNumber);
         // #7 Input:
-        // * unique value in "Barcode" field
-        ItemRecordNew.addBarcode(`barcode ${getRandomPostfix()}`);
         // * select any value in "Material type" dropdown
         // * select any value in "Permanent loan type" dropdown
         InventoryInstance.fillItemRequiredFields();
+        // * unique value in "Barcode" field
+        ItemRecordNew.addBarcode(`barcode ${getRandomPostfix()}`);
         // #8 Click "Save & close"
         ItemRecordNew.save();
+        InventoryInstance.verifyNumberOfItemsInHoldingByName(callNumber, 1);
       });
 
       // #10 Click "Add holdings" button
@@ -104,7 +105,7 @@ describe('Inventory -> Call Number Browse', () => {
       // * "DVD F GON"
       // * "B OBAMA"
       // * "SC DAH"
-      itemsCallNumbers.forEach((callNumber) => {
+      itemsCallNumbers.forEach((callNumber, index) => {
         // #13 Click "Add item" button next to added holding line in detail view
         InventoryInstance.clickAddItemByHoldingName(LOCATION_NAMES.MAIN_LIBRARY_UI);
         // #14 Input:
@@ -119,6 +120,10 @@ describe('Inventory -> Call Number Browse', () => {
         ItemRecordNew.addCallNumber(callNumber);
         // #15 Click "Save & close"
         ItemRecordNew.save();
+        InventoryInstance.verifyNumberOfItemsInHoldingByName(
+          LOCATION_NAMES.MAIN_LIBRARY_UI,
+          index + 1,
+        );
       });
 
       // #17 * Select "Browse" in toggle
