@@ -381,8 +381,16 @@ export default {
     });
   },
 
+  marcAuthViewIconClickUsingId(id) {
+    cy.do(Link({ href: including(`/${id}`) }).click());
+  },
+
   goToPreviousPage() {
     cy.go('back');
+  },
+
+  verifyRecordAndMarcAuthIcon(accordion, expectedText) {
+    cy.expect(Accordion(accordion).find(HTML(including(expectedText))).exists());
   },
 
   checkExistanceOfAuthorityIconInInstanceDetailPane(accordion) {
