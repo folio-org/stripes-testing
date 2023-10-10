@@ -95,7 +95,6 @@ describe('ui-acquisition units: Acquisition Units', () => {
           OrderLines.addPOLine();
           OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
           OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-            `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
             'Purchase',
             location.institutionId,
             '4',
