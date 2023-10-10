@@ -324,6 +324,14 @@ export default {
     internal: 'ui-users.loans.anonymize',
     gui: 'Users: User loans anonymize',
   },
+  uiFeeFinesActions: {
+    internal: 'ui-users.feefineactions',
+    gui: 'Fee/Fine Details: Can create, edit and remove fee/fine actions',
+  },
+  uiFeeFinesCanWaive: {
+    internal: 'ui-users.manual_waive',
+    gui: 'Fees/Fines: Can waive',
+  },
   uiFeeFines: {
     internal: 'ui-users.feesfines.actions.all',
     gui: 'Users: Can create, edit and remove fees/fines',
