@@ -129,7 +129,6 @@ describe('Title Level Request. Create Item or Title level request', () => {
     cy.get('@requestId').then((id) => {
       Requests.deleteRequestViaApi(id);
     });
-    // Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
