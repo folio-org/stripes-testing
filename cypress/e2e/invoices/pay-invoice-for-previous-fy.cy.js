@@ -95,7 +95,7 @@ describe('Invoices', () => {
           periodEnd: new Date(date.getFullYear() + 1, 11, 31),
         });
 
-        Budgets.getBudgetViaApi(testData.budget.id).then((resp) => {
+        Budgets.getBudgetByIdViaApi(testData.budget.id).then((resp) => {
           Budgets.updateBudgetViaApi({ ...resp, budgetStatus: 'Active' });
         });
       });
