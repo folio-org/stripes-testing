@@ -73,11 +73,15 @@ describe('circulation-log', () => {
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Closed loan');
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
 
       SearchPane.searchByItemBarcode(item.barcode);
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
     },
   );
 });

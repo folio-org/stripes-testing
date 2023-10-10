@@ -738,8 +738,9 @@ export default {
   },
 
   newInvoiceFromOrder() {
+    cy.wait(2000);
     cy.do([
-      orderDetailsPane.find(actionsButton).click(),
+      PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton).click(),
       Button('New invoice').click(),
       submitButton.click(),
     ]);

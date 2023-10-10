@@ -20,14 +20,14 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-finance: Fiscal Year Rollover', () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
+    code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FYTA',
+    series: 'FY',
   };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -76,7 +76,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
         });
-
+        secondFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '2';
         FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
           secondFiscalYear.id = secondFiscalYearResponse.id;
         });
@@ -171,15 +171,30 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       cy.visit(TopMenu.fundPath);
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
-      Funds.selectPlannedBudgetDetails();
+      Funds.selectPreviousBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Payment');
+      Funds.varifyDetailsInTransaction(
+        firstFiscalYear.code,
+        '($10.00)',
+        invoice.invoiceNumber,
+        'Encumbrance',
+        `${defaultFund.name} (${defaultFund.code})`,
+      );
       cy.visit(TopMenu.fundPath);
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
       Funds.selectBudgetDetails();
       Funds.openTransactions();
       Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        secondFiscalYear.code,
+        '($10.00)',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${defaultFund.name} (${defaultFund.code})`,
+      );
+      Funds.checkStatusInTransactionDetails('Unreleased');
     },
   );
 });
