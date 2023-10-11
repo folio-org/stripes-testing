@@ -114,8 +114,10 @@ describe('Invoices', () => {
       // Click on created invoice line
       InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkInvoiceLineDetails({
-        description: testData.orderLine.titleOrPackage,
-        status: INVOICE_STATUSES.OPEN,
+        invoiceLineInformation: [
+          { key: 'Description', value: testData.orderLine.titleOrPackage },
+          { key: 'Status', value: INVOICE_STATUSES.OPEN },
+        ],
       });
     },
   );

@@ -7,10 +7,13 @@ const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane('Tags');
 const addTagsField = MultiSelect({ label: 'Tag text area' });
 const closeButton = rootSection.find(Button({ icon: 'times' }));
+const actionsButton = Button('Actions');
+const editButton = Button('Edit');
+const deleteButton = Button('Delete');
 
 export default {
   waitLoadingWithExistingLine(title) {
-    cy.expect(rootSection.find(KeyValue({ value: title })).exists());
+    cy.expect([rootSection.find(KeyValue({ value: title })).exists(), actionsButton.exists()]);
   },
 
   openTagsPane() {
@@ -45,5 +48,17 @@ export default {
     cy.do(closeButton.click());
     cy.expect(rootSection.absent());
     AgreementViewDetails.waitLoading();
+  },
+
+  verifyActionsButtons() {
+    cy.do(actionsButton.click());
+    cy.expect([editButton.exists(), deleteButton.exists()]);
+    cy.do(actionsButton.click());
+  },
+
+  gotoDelete() {
+    cy.do(actionsButton.click());
+    cy.expect(deleteButton.exists());
+    cy.do(deleteButton.click());
   },
 };
