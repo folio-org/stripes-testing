@@ -1,3 +1,6 @@
+import { HTML, including } from '@interactors/html';
+import { Button } from '../../../../../interactors';
+
 export default {
   verifyJsonScreenIsOpened: () => {
     cy.get('#logs-pane').should('exist');
@@ -14,5 +17,17 @@ export default {
         const instanceHrid = text.match(/in(\d+)/);
         return instanceHrid[0];
       });
+  },
+
+  openHoldingsTab: () => {
+    cy.do(Button('Holdings*').click());
+  },
+
+  openItemTab: () => {
+    cy.do(Button('Item*').click());
+  },
+
+  verifyContentInTab: (value) => {
+    cy.expect(HTML(including(value)).exists());
   },
 };

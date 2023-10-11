@@ -22,11 +22,11 @@ import Users from '../../../support/fragments/users/users';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('data-import', () => {
   describe('Log details', () => {
     let user;
-    let instanceHRID;
     const quantityOfCreatedHoldings = 5;
     const quantityOfCreatedItems = 8;
     const quantityOfErrors = 5;
@@ -37,38 +37,36 @@ describe('data-import', () => {
       'No action',
       'No action',
     ];
-    const holdingsData = { permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI, itemsQuqntity: 3 };
-    const filePathForUpload = 'marcBibFileForC388506.mrc';
-    const marcFileName = `C388506 autotestFileName.${getRandomPostfix()}`;
+    const filePathForUpload = 'marcBibFileForMultiple.mrc';
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C388506 Test multiple holdings.${getRandomPostfix()}`,
+          name: `Test multiple holdings.${getRandomPostfix()}`,
           permanentLocation: '945$h',
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `C388506 Test multiple holdings.${getRandomPostfix()}`,
+          name: `Test multiple holdings.${getRandomPostfix()}`,
         },
       },
       {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C388506 Test multiple items.${getRandomPostfix()}`,
+          name: `Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
-          name: `C388506 Test multiple items.${getRandomPostfix()}`,
+          name: `Test multiple items.${getRandomPostfix()}`,
         },
       },
     ];
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C388506 Test multiple items.${getRandomPostfix()}`,
+      profileName: `Test multiple items.${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
@@ -84,29 +82,7 @@ describe('data-import', () => {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
         });
-      });
-    });
 
-    after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-          instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-    });
-
-    it(
-      'C388506 Check the log result table for imported multiple items with errors in multiple holdings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
-      () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
@@ -153,6 +129,28 @@ describe('data-import', () => {
         NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+      });
+    });
+
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      collectionOfMappingAndActionProfiles.forEach((profile) => {
+        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      });
+    });
+
+    it(
+      'C388506 Check the log result table for imported multiple items with errors in multiple holdings (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        let instanceHRID;
+        const marcFileName = `C388506 multipleAutotestFileName.${getRandomPostfix()}`;
+        const holdingsData = {
+          permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
+          itemsQuqntity: 3,
+        };
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
@@ -180,13 +178,95 @@ describe('data-import', () => {
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
+
+          InventoryInstance.checkIsHoldingsCreated([`${holdingsData.permanentLocation} >`]);
+          InventoryInstance.openHoldingsAccordion(`${holdingsData.permanentLocation} >`);
+          InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
+            holdingsData.permanentLocation,
+            holdingsData.itemsQuqntity,
+          );
+
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+            (instance) => {
+              instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+              instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
         });
-        InventoryInstance.checkIsHoldingsCreated([`${holdingsData.permanentLocation} >`]);
-        InventoryInstance.openHoldingsAccordion(`${holdingsData.permanentLocation} >`);
-        InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
-          holdingsData.permanentLocation,
-          holdingsData.itemsQuqntity,
+      },
+    );
+
+    it(
+      'C389502 Check the JSON screen for imported multiple items with error in multiple holdings (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        let instanceHrid;
+        const marcFileName = `C389502 multipleAutotestFileName.${getRandomPostfix()}`;
+        const title =
+          'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.';
+        const jsonHoldingsTestData = [
+          'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
+          'KU/CC/DI/M',
+          'KU/CC/DI/A',
+          'E',
+          '{"key":"permanentLocationId","value":"fake"}',
+          '{"key":"permanentLocationId","value":"null"}',
+        ];
+        const jsonItemTestData = [
+          'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
+          "Mapped Item is invalid: [Field 'materialType.id' is a required field and can not be null]",
+          'ERROR: invalid input syntax for type uuid: "arch" (22P02)',
+        ];
+
+        // upload .mrc file
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(filePathForUpload, marcFileName);
+        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
+        Logs.openFileDetails(marcFileName);
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        });
+        FileDetails.verifyMultipleHoldingsStatus(
+          arrayOfHoldingsStatuses,
+          quantityOfCreatedHoldings,
         );
+        FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
+        FileDetails.verifyMultipleErrorStatus(quantityOfErrors);
+        FileDetails.verifyInstanceStatusIsHiperlink('Created');
+        // get items hrids for checking json page
+        FileDetails.getItemHrids().then((hrids) => {
+          const itemHrids = hrids;
+
+          FileDetails.openJsonScreen(title);
+          JsonScreenView.verifyJsonScreenIsOpened();
+          // get Instance hrid for deleting
+          JsonScreenView.getInstanceHrid().then((hrid) => {
+            instanceHrid = hrid;
+
+            JsonScreenView.openHoldingsTab();
+            jsonHoldingsTestData.forEach((value) => JsonScreenView.verifyContentInTab(value));
+            JsonScreenView.openItemTab();
+            jsonItemTestData.forEach((value) => JsonScreenView.verifyContentInTab(value));
+            itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
+
+            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+              (instance) => {
+                instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+                instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+                InventoryInstance.deleteInstanceViaApi(instance.id);
+              },
+            );
+          });
+        });
       },
     );
   });

@@ -12,6 +12,8 @@ import {
   Link,
   Section,
   TextArea,
+  HTML,
+  including,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
@@ -118,13 +120,6 @@ export default {
 
   editFiscalYearDetails: () => {
     cy.do([actions.click(), edit.click()]);
-  },
-
-  selectNoAcquisitionUnit() {
-    cy.do([
-      Button({ id: 'acqUnitIds-selection' }).click(),
-      SelectionOption('No acquisition unit').click(),
-    ]);
   },
 
   checkCreatedFiscalYear: (fiscalYearName) => {
@@ -247,5 +242,17 @@ export default {
 
   editDescription: () => {
     cy.do([TextArea({ name: 'description' }).fillIn('Edited_by_AQA_Team'), saveAndClose.click()]);
+  },
+
+  checkNoResultsMessage(absenceMessage) {
+    cy.expect(
+      Section({ id: 'fiscal-year-results-pane' })
+        .find(HTML(including(absenceMessage)))
+        .exists(),
+    );
+  },
+
+  selectAcquisitionUnitFilter(AUName) {
+    cy.do([Button({ id: 'acqUnitIds-selection' }).click(), SelectionOption(AUName).click()]);
   },
 };
