@@ -415,6 +415,14 @@ export default {
     cy.expect(paneHeader.find(linkHeadingsButton).exists());
   },
 
+  verifyEnabledLinkHeadingsButton() {
+    cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: false }));
+  },
+
+  verifyDisabledLinkHeadingsButton() {
+    cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: true }));
+  },
+
   clickArrowDownButton(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(arrowDownButton).click());
   },
@@ -1076,7 +1084,7 @@ export default {
   },
 
   checkButtonSaveAndCloseEnable() {
-    cy.expect(saveAndCloseButton.exists());
+    cy.expect(saveAndCloseButtonEnabled.exists());
   },
 
   checkDeleteButtonExist(rowIndex) {
