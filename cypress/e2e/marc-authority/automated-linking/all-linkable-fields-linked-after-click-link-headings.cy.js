@@ -46,105 +46,105 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     {
       rowIndex: 33,
       tag: '100',
-      naturalId: 'n2008001084',
+      naturalId: 'n2008001084C387538',
       value: 'C387538 Coates, Ta-Nehisi',
       type: 'Contributor',
     },
     {
       rowIndex: 34,
       tag: '110',
-      naturalId: 'no2006108277',
+      naturalId: 'no2006108277C387538',
       value: 'C387538 Black Panther Fugitives (Musical group)',
       type: 'Contributor',
     },
     {
       rowIndex: 35,
       tag: '111',
-      naturalId: 'no2009176429',
+      naturalId: 'no2009176429C387538',
       value: 'C387538 Pimedate Ööde Filmifestival',
       type: 'Contributor',
     },
     {
       rowIndex: 36,
       tag: '130',
-      naturalId: 'n80026980',
+      naturalId: 'n80026980C387538',
       value: 'C387538 Marvel comics',
       type: 'Title data',
     },
     {
       rowIndex: 37,
       tag: '240',
-      naturalId: 'no2020024230',
+      naturalId: 'no2020024230C387538',
       value: 'C387538 Black Panther',
       type: 'Title data',
     },
     {
       rowIndex: 65,
       tag: '600',
-      naturalId: 'n2016004081',
+      naturalId: 'n2016004081C387538',
       value: 'C387538 Black Panther (Fictitious character)',
       type: 'Subject',
     },
     {
       rowIndex: 60,
       tag: '610',
-      naturalId: 'nb2009024488',
+      naturalId: 'nb2009024488C387538',
       value: 'C387538 Black Panther Movement',
       type: 'Subject',
     },
     {
       rowIndex: 61,
       tag: '611',
-      naturalId: 'n82216757',
+      naturalId: 'n82216757C387538',
       value: 'C387538 Panther Photographic International',
       type: 'Subject',
     },
     {
       rowIndex: 62,
       tag: '630',
-      naturalId: 'no2023006889',
+      naturalId: 'no2023006889C387538',
       value: 'C387538 Black Panther, Wakanda forever (Motion picture)',
       type: 'Subject',
     },
     {
       rowIndex: 67,
       tag: '650',
-      naturalId: 'sh2009125989',
+      naturalId: 'sh2009125989C387538',
       value: 'C387538 Good and evil',
       type: 'Subject',
     },
     {
       rowIndex: 71,
       tag: '651',
-      naturalId: 'sh85001531',
+      naturalId: 'sh85001531C387538',
       value: 'C387538 Africa',
       type: 'Subject',
     },
     {
       rowIndex: 73,
       tag: '655',
-      naturalId: 'gf2014026266',
+      naturalId: 'gf2014026266C387538',
       value: 'C387538 Comics (Graphic works)',
       type: 'Subject',
     },
     {
       rowIndex: 86,
       tag: '700',
-      naturalId: 'n83169267',
+      naturalId: 'n83169267C387538',
       value: 'C387538 Lee, Stan, 1922-2018',
       type: 'Contributor',
     },
     {
       rowIndex: 88,
       tag: '710',
-      naturalId: 'no2008081921',
+      naturalId: 'no2008081921C387538',
       value: 'C387538 Robinson & Associates, Inc',
       type: 'Contributor',
     },
     {
       rowIndex: 89,
       tag: '711',
-      naturalId: 'n84745425',
+      naturalId: 'n84745425C387538',
       value:
         'C387538 Delaware Symposium on Language Studies. 1985 Delaware symposia on language studies',
       type: 'Contributor',
@@ -152,35 +152,35 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     {
       rowIndex: 90,
       tag: '730',
-      naturalId: 'n79066095',
+      naturalId: 'n79066095C387538',
       value: 'C387538 Lee, Stan, 1922-2018',
       type: 'Contributor',
     },
     {
       rowIndex: 91,
       tag: '800',
-      naturalId: 'n79023811',
+      naturalId: 'n79023811C387538',
       value: 'C387538 Neilson, Donald, 1936-2011',
       type: 'Title data',
     },
     {
       rowIndex: 92,
       tag: '810',
-      naturalId: 'n80095585',
+      naturalId: 'n80095585C387538',
       value: 'C387538 Black Panther Party',
       type: 'Title data',
     },
     {
       rowIndex: 93,
       tag: '811',
-      naturalId: 'no2018125587',
+      naturalId: 'no2018125587C387538',
       value: 'C387538 Stockholm International Film Festival',
       type: 'Title data',
     },
     {
       rowIndex: 94,
       tag: '830',
-      naturalId: 'no2018018754',
+      naturalId: 'no2018018754C387538',
       value: 'C387538 Black Panther (Motion picture : 2018)',
       type: 'Title data',
     },
@@ -190,7 +190,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
     ]).then((createdUserProperties) => {
@@ -248,13 +247,13 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
           `records[${matchs.rowIndex}].content`,
         );
       });
-      QuickMarcEditor.checkLinkHeadingsButton();
+      QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout(testData.calloutAfterLinking);
       fields.forEach((matchs) => {
         QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(matchs.rowIndex);
       });
-      QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
+      QuickMarcEditor.verifyDisabledLinkHeadingsButton();
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
       fields.forEach((field) => {
