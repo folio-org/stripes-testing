@@ -195,4 +195,9 @@ export default {
     cy.expect(root.exists());
     this.waitLoading();
   },
+  checkHoldingsStatementAbsent: (statement) => cy.expect(
+    MultiColumnList({ id: 'list-holdingsStatement' })
+      .find(HTML(including(statement)))
+      .absent(),
+  ),
 };
