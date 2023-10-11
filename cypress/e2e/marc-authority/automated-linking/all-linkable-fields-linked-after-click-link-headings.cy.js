@@ -18,7 +18,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     marcAuthIcon: 'Linked to MARC authority',
     successCalloutAfterLinking:
       'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
-    errorCalloutAfterLinking: 
+    errorCalloutAfterLinking:
       'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 must be set manually by selecting the link icon.',
   };
 
@@ -238,7 +238,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
     InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[1]);
     for (let i = 2; i < 22; i++) {
-      MarcAuthority.deleteViaAPI(createdRecordsIDs[i])
+      MarcAuthority.deleteViaAPI(createdRecordsIDs[i]);
     }
   });
 
