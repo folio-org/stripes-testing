@@ -363,9 +363,11 @@ export default {
     cy.expect(section.exists());
   },
 
-  searchByTitle(title) {
+  searchByTitle(title, result = true) {
     cy.do([filterPane.find(inputSearchField).fillIn(title), filterPane.find(searchButton).click()]);
-    cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    if (result) {
+      cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    }
   },
 
   clickViewAuthorityIconDisplayedInTagField(tag) {
