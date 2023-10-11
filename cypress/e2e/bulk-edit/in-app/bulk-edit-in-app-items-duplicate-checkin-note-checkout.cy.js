@@ -18,11 +18,6 @@ const notes = {
   checkInNote: 'CheckInNote',
   checkOutNote: 'CheckOutNote',
 };
-const newNotes = {
-  adminNote: `adminNote-${getRandomPostfix()}`,
-  actionNote: `actionNote-${getRandomPostfix()}`,
-  checkInNote: `checkInNote-${getRandomPostfix()}`,
-};
 
 const item = {
   barcode: getRandomPostfix(),
@@ -88,12 +83,13 @@ describe('bulk-edit', () => {
         BulkEditActions.duplicateCheckInNote();
 
         BulkEditActions.confirmChanges();
-        const changes = [`Check in;${notes.checkInNote};true`,
-        `Check in;${notes.checkInNote};false`,
-        `Check out;${notes.checkOutNote};true`,
-        `Check out;${notes.checkOutNote};false`,
-        `Check out;${notes.checkInNote};true`,
-        `Check out;${notes.checkInNote};false`
+        const changes = [
+          `Check in;${notes.checkInNote};true`,
+          `Check in;${notes.checkInNote};false`,
+          `Check out;${notes.checkOutNote};true`,
+          `Check out;${notes.checkOutNote};false`,
+          `Check out;${notes.checkInNote};true`,
+          `Check out;${notes.checkInNote};false`
         ]
         BulkEditActions.verifyChangesInAreYouSureForm('Circulation Notes', changes);
         BulkEditActions.commitChanges();

@@ -76,7 +76,7 @@ export default {
           .find(MultiColumnListCell({ column, content: including(value) }))
           .exists(),
       );
-    })
+    });
   },
 
   downloadPreview() {
@@ -463,7 +463,7 @@ export default {
     ]);
     cy.expect(RepeatableFieldItem({ index: rowIndex })
       .find(Select({ content: 'Check out note' }))
-      .has({ disabled: true }))
+      .has({ disabled: true }));
   },
 
   verifyMatchingOptionsForLocationFilter(location) {
