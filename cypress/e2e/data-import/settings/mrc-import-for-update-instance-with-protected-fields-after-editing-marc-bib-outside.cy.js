@@ -35,10 +35,21 @@ describe('data-import', () => {
     // unique file names
     const nameMarcFileForCreate = `C356830 autotestFile.${getRandomPostfix()}.mrc`;
     const editedMarcFileName = `C356830 marcFileForMatch.${getRandomPostfix()}.mrc`;
-
-    const protectedFields = {
-      firstField: '*',
-      secondField: '920',
+    const firstProtectedFieldsData = {
+      indicator1: '*',
+      indicator2: '*',
+      subfield: '5',
+      data: 'amb',
+      source: 'USER',
+      field: '*',
+    };
+    const secondProtectedFieldData = {
+      indicator1: '*',
+      indicator2: '*',
+      subfield: '*',
+      data: '*',
+      source: 'USER',
+      field: '920',
     };
     const matchProfile = {
       profileName: `C356830 001 to Instance HRID ${getRandomPostfix()}`,
@@ -93,14 +104,14 @@ describe('data-import', () => {
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       Users.deleteViaApi(user.userId);
       MarcFieldProtection.getListViaApi({
-        query: `"field"=="${protectedFields.firstField}"`,
-      }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+        query: `"data"=="${firstProtectedFieldsData.data}"`,
+      }).then((field) => {
+        MarcFieldProtection.deleteViaApi(field[0].id);
       });
       MarcFieldProtection.getListViaApi({
-        query: `"field"=="${protectedFields.secondField}"`,
-      }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+        query: `"field"=="${secondProtectedFieldData.field}"`,
+      }).then((field) => {
+        MarcFieldProtection.deleteViaApi(field[0].id);
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
@@ -113,22 +124,8 @@ describe('data-import', () => {
       'C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
-        MarcFieldProtection.createViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '5',
-          data: 'amb',
-          source: 'USER',
-          field: protectedFields.firstField,
-        });
-        MarcFieldProtection.createViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '*',
-          data: '*',
-          source: 'USER',
-          field: protectedFields.secondField,
-        });
+        MarcFieldProtection.createViaApi(firstProtectedFieldsData);
+        MarcFieldProtection.createViaApi(secondProtectedFieldData);
 
         // create match profile
         cy.visit(SettingsMenu.matchProfilePath);

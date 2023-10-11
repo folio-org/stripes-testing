@@ -80,10 +80,13 @@ describe('Loan date and time', () => {
     // "Loan" accordion => Expand "Loan" accordion and Select "Checked Out" and "Checked In" => Search for an item
     SearchPane.searchByCheckedOut();
     SearchPane.findResultRowIndexByContent(barcode).then((rowIndex) => {
-      SearchPane.checkResultSearch({
-        itemBarcode: barcode,
-        circAction: 'Checked out',
-      }, rowIndex);
+      SearchPane.checkResultSearch(
+        {
+          itemBarcode: barcode,
+          circAction: 'Checked out',
+        },
+        rowIndex,
+      );
     });
     SearchPane.searchByItemBarcode(barcode);
   };

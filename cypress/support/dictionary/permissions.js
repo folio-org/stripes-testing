@@ -39,6 +39,14 @@ export default {
   uiNotesItemView: { internal: 'ui-notes.item.view', gui: 'Notes: Can view a note' },
   uiNotesItemEdit: { internal: 'ui-notes.item.edit', gui: 'Notes: Can edit a note' },
   uiNotesItemDelete: { internal: 'ui-notes.item.delete', gui: 'Notes: Can delete a note' },
+  uiNotesSettingsEdit: {
+    internal: 'ui-notes.settings.edit',
+    gui: 'Settings (Notes): Edit and View General settings',
+  },
+  uiNotesAssignUnassign: {
+    internal: 'ui-notes.item.assign-unassign',
+    gui: 'Notes: Can assign and unassign a note',
+  },
   // Agreements
   uiAgreementsAgreementsEdit: {
     internal: 'ui-agreements.agreements.edit',
@@ -315,6 +323,14 @@ export default {
   uiUserLoansAnonymize: {
     internal: 'ui-users.loans.anonymize',
     gui: 'Users: User loans anonymize',
+  },
+  uiFeeFinesActions: {
+    internal: 'ui-users.feefineactions',
+    gui: 'Fee/Fine Details: Can create, edit and remove fee/fine actions',
+  },
+  uiFeeFinesCanWaive: {
+    internal: 'ui-users.manual_waive',
+    gui: 'Fees/Fines: Can waive',
   },
   uiFeeFines: {
     internal: 'ui-users.feesfines.actions.all',
