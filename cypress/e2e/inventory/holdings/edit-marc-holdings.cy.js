@@ -17,6 +17,9 @@ describe('MARC -> MARC Holdings', () => {
   const testData = {
     tag001: '001',
     tag001value: '$a Second 001 field',
+    tag852: '852',
+    tag853: '853',
+    tag853value: 'C356543 statement',
   };
 
   const marcFile = {
@@ -40,7 +43,7 @@ describe('MARC -> MARC Holdings', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+        JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile('Completed');
@@ -51,7 +54,10 @@ describe('MARC -> MARC Holdings', () => {
             InventoryInstance.searchByTitle(recordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.goToMarcHoldingRecordAdding();
-            QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
+            QuickMarcEditor.updateExistingField(
+              testData.tag852,
+              QuickMarcEditor.getExistingLocation(),
+            );
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveHoldings();
 
@@ -100,7 +106,7 @@ describe('MARC -> MARC Holdings', () => {
   );
 
   it(
-    'C387461 Add multiple 001s when editing "MARC Holdings" record',
+    'C387461 Add multiple 001s when editing "MARC Holdings" record (Spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstances.searchBySource('MARC');
@@ -123,6 +129,58 @@ describe('MARC -> MARC Holdings', () => {
       HoldingsRecordView.editInQuickMarc();
       QuickMarcEditor.checkReadOnlyTags();
       QuickMarcEditor.verifyNoFieldWithContent(testData.tag001value);
+    },
+  );
+
+  it(
+    'C356843 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (Spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventoryInstances.searchBySource('MARC');
+      InventoryInstance.searchByTitle(recordIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.waitLoading();
+      // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings - re-opening activates it
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkSource('MARC');
+      HoldingsRecordView.close();
+      InventoryInstance.waitLoading();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.editInQuickMarc();
+      // adding a non-required field to delete it later, and saving
+      QuickMarcEditor.addEmptyFields(5);
+      QuickMarcEditor.checkEmptyFieldAdded(6);
+      QuickMarcEditor.updateExistingTagValue(6, testData.tag853);
+      QuickMarcEditor.updateExistingField(testData.tag853, `$a ${testData.tag853value}`);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveHoldings();
+
+      HoldingsRecordView.editInQuickMarc();
+      QuickMarcEditor.addEmptyFields(6);
+      QuickMarcEditor.checkEmptyFieldAdded(7);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.addEmptyFields(6);
+      QuickMarcEditor.checkEmptyFieldAdded(8);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.addEmptyFields(6);
+      QuickMarcEditor.checkEmptyFieldAdded(9);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.deleteFieldAndCheck(6, testData.tag853);
+      QuickMarcEditor.afterDeleteNotification(testData.tag853);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.deleteField(7);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      // here and below - wait until deleted empty field is not shown
+      cy.wait(1000);
+      QuickMarcEditor.deleteField(7);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      cy.wait(1000);
+      QuickMarcEditor.deleteFieldAndCheck(7, '');
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.clickSaveAndCloseThenCheck(1);
+      QuickMarcEditor.confirmDelete();
+      QuickMarcEditor.checkAfterSaveHoldings();
+      HoldingsRecordView.checkHoldingsStatementAbsent(testData.tag853value);
     },
   );
 });

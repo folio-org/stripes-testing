@@ -1,4 +1,10 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import {
+  FOLIO_RECORD_TYPE,
+  PAYMENT_METHOD,
+  BATCH_GROUP,
+  VENDOR_NAMES,
+} from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -9,7 +15,31 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 describe('data-import', () => {
   describe('Settings', () => {
     let user = null;
-    const mappingProfileName = `C343284 invoice mapping profile ${getRandomPostfix()}`;
+    const mappingProfile = {
+      name: `C343284 invoice mapping profile ${getRandomPostfix()}`,
+      incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
+      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      batchGroup: BATCH_GROUP.FOLIO,
+      vendorInvoiceNumber: '123',
+      paymentMethod: PAYMENT_METHOD.CASH,
+      currency: '"USD"',
+      invoiceLineDescription: 'abc',
+      quantity: '1',
+      subtotal: '10.00',
+      vendorName: VENDOR_NAMES.EBSCO,
+      invoiceDate: '###TODAY###',
+    };
+    const requiredFields = {
+      batchGroup: 'Batch group*',
+      vendorInvoiceNumber: 'Vendor invoice number*',
+      paymentMethod: 'Payment method*',
+      currency: 'Currency*',
+      description: 'Description*',
+      quantity: 'Quantity*',
+      subtotal: 'Sub-total*',
+      vendorName: 'Vendor name*',
+      invoiceDate: 'Invoice date*',
+    };
 
     before('login', () => {
       cy.createTempUser([
@@ -38,49 +68,49 @@ describe('data-import', () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         FieldMappingProfiles.checkNewMappingProfileFormIsOpened();
 
-        NewFieldMappingProfile.addName(mappingProfileName);
-        NewFieldMappingProfile.addIncomingRecordType('EDIFACT invoice');
-        NewFieldMappingProfile.addFolioRecordType('Invoice');
+        NewFieldMappingProfile.addName(mappingProfile.name);
+        NewFieldMappingProfile.addIncomingRecordType(mappingProfile.incomingRecordType);
+        NewFieldMappingProfile.addFolioRecordType(mappingProfile.existingRecordType);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkErrorMessageIsPresented('Batch group*');
+        NewFieldMappingProfile.checkErrorMessageIsPresented(requiredFields.batchGroup);
 
-        NewFieldMappingProfile.fillBatchGroup('"FOLIO"');
+        NewFieldMappingProfile.fillBatchGroup(mappingProfile.batchGroup);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkErrorMessageIsPresented('Vendor invoice number*');
+        NewFieldMappingProfile.checkErrorMessageIsPresented(requiredFields.vendorInvoiceNumber);
 
-        NewFieldMappingProfile.fillVendorInvoiceNumber('123');
+        NewFieldMappingProfile.fillVendorInvoiceNumber(mappingProfile.vendorInvoiceNumber);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkErrorMessageIsPresented('Payment method*');
+        NewFieldMappingProfile.checkErrorMessageIsPresented(requiredFields.paymentMethod);
 
-        NewFieldMappingProfile.fillPaymentMethod('"Cash"');
+        NewFieldMappingProfile.fillPaymentMethod(mappingProfile.paymentMethod);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkErrorMessageIsPresented('Currency*');
+        NewFieldMappingProfile.checkErrorMessageIsPresented(requiredFields.currency);
 
-        NewFieldMappingProfile.fillCurrency('"USD"');
+        NewFieldMappingProfile.fillCurrency(mappingProfile.currency);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkErrorMessageIsPresented('Description*');
+        NewFieldMappingProfile.checkErrorMessageIsPresented(requiredFields.description);
 
-        NewFieldMappingProfile.fillDescription('abc');
+        NewFieldMappingProfile.fillInvoiceLineDescription(mappingProfile.invoiceLineDescription);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkErrorMessageIsPresented('Quantity*');
+        NewFieldMappingProfile.checkErrorMessageIsPresented(requiredFields.quantity);
 
-        NewFieldMappingProfile.fillQuantity('1');
+        NewFieldMappingProfile.fillQuantity(mappingProfile.quantity);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkErrorMessageIsPresented('Sub-total*');
+        NewFieldMappingProfile.checkErrorMessageIsPresented(requiredFields.subtotal);
 
-        NewFieldMappingProfile.fillSubTotal('10.00');
+        NewFieldMappingProfile.fillSubTotal(mappingProfile.subtotal);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkErrorMessageIsPresented('Vendor name*');
+        NewFieldMappingProfile.checkErrorMessageIsPresented(requiredFields.vendorName);
 
-        NewFieldMappingProfile.fillVendorName('EBSCO');
+        NewFieldMappingProfile.fillVendorName(mappingProfile.vendorName);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkErrorMessageIsPresented('Invoice date*');
-        NewFieldMappingProfile.fillInvoiceDate('###TODAY###');
+        NewFieldMappingProfile.checkErrorMessageIsPresented(requiredFields.invoiceDate);
+        NewFieldMappingProfile.fillInvoiceDate(mappingProfile.invoiceDate);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(mappingProfileName);
-        FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
+        FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-        FieldMappingProfileView.delete(mappingProfileName);
+        FieldMappingProfileView.delete(mappingProfile.name);
       },
     );
   });

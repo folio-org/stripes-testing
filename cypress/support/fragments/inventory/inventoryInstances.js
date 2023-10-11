@@ -12,6 +12,7 @@ import {
   Modal,
   Select,
   TextInput,
+  TextArea,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -357,6 +358,16 @@ export default {
     );
   },
 
+  deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId) {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
+      (instance) => {
+        instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+        instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      },
+    );
+  },
+
   createLoanType: (loanType) => {
     return cy
       .okapiRequest({
@@ -616,7 +627,7 @@ export default {
       );
     }
     cy.expect([
-      AdvancedSearchRowInventory({ index: rowIndex }).find(TextField()).exists(),
+      AdvancedSearchRowInventory({ index: rowIndex }).find(TextArea()).exists(),
       AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchModifierSelect).exists(),
       AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOptionSelect).exists(),
     ]);
@@ -653,7 +664,7 @@ export default {
     cy.expect([
       advSearchModal.exists(),
       AdvancedSearchRowInventory({ index: rowIndex })
-        .find(TextField())
+        .find(TextArea())
         .has({ value: including(query) }),
       AdvancedSearchRowInventory({ index: rowIndex })
         .find(advSearchModifierSelect)

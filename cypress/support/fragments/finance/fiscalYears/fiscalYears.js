@@ -52,6 +52,7 @@ export default {
       id: uuid(),
       name: `autotest_year_${getRandomPostfix()}`,
       code: DateTools.getRandomFiscalYearCode(2000, 9999),
+      currency: 'USD',
       periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
       periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
       description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
@@ -128,12 +129,12 @@ export default {
     cy.xpath(createdFiscalYearNameXpath).should('be.visible').and('have.text', fiscalYearName);
   },
 
-  filltheStartAndEndDateoncalenderstartDateField1: () => {
+  filltheStartAndEndDateoncalenderstartDateField: (periodStart, periodEnd) => {
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
-      TextField({ name: 'periodStart' }).fillIn('01/01/2022'),
+      TextField({ name: 'periodStart' }).fillIn(periodStart),
       TextField({ name: 'periodEnd' }).clear(),
-      TextField({ name: 'periodEnd' }).fillIn('12/30/2022'),
+      TextField({ name: 'periodEnd' }).fillIn(periodEnd),
       saveAndClose.click(),
     ]);
   },
@@ -199,7 +200,12 @@ export default {
     ]);
   },
 
-  createViaApi: (fiscalYearProperties) => {
+  resetFilters: () => {
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
+  },
+
+  createViaApi(fiscalYearProperties) {
     return cy
       .okapiRequest({
         path: 'finance/fiscal-years',
@@ -211,12 +217,13 @@ export default {
         return response.body;
       });
   },
-
-  resetFilters: () => {
-    cy.do(resetButton.click());
-    cy.expect(resetButton.is({ disabled: true }));
+  updateFiscalYearViaApi(fiscalYear) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `finance/fiscal-years/${fiscalYear.id}`,
+      body: fiscalYear,
+    });
   },
-
   deleteFiscalYearViaApi: (fiscalYearId) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/fiscal-years/${fiscalYearId}`,

@@ -67,7 +67,7 @@ const createJobProfile = (jobProfile) => {
   newJobProfile.fillJobProfile(jobProfile);
 };
 
-const searchJobProfileForImport = (jobProfileTitle) => {
+const search = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
   cy.do(
@@ -84,13 +84,13 @@ export default {
 
   waitLoadingList,
   waitLoading,
-  searchJobProfileForImport,
+  search,
   deleteJobProfile,
   createJobProfile,
   closeJobProfile,
 
   checkJobProfilePresented: (jobProfileTitle) => {
-    searchJobProfileForImport(jobProfileTitle);
+    search(jobProfileTitle);
     cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 
@@ -136,7 +136,7 @@ export default {
     newJobProfile.fillJobProfile(jobProfile);
   },
   select: (jobProfileTitle) => {
-    searchJobProfileForImport(jobProfileTitle);
+    search(jobProfileTitle);
     cy.do(MultiColumnListCell(jobProfileTitle).click());
   },
   openFileRecords: (fileName) => {
@@ -147,14 +147,18 @@ export default {
 
   checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.exists()),
 
-  checkCalloutMessage: (profileName) => {
+  checkCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(`The job profile "${profileName}" was successfully updated`),
+        textContent: including(message),
       }).exists(),
     );
   },
 
   verifyActionMenuAbsent: () => cy.expect(paneResults.find(actionsButton).absent()),
   verifyJobProfileAbsent: () => cy.expect(paneResults.find(HTML(including('The list contains no items'))).exists()),
+  verifySearchFieldIsEmpty: () => cy.expect(TextField({ id: 'input-search-job-profiles-field' }).has({ value: '' })),
+  verifySearchResult: (profileName) => {
+    cy.expect(paneResults.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
 };

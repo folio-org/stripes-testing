@@ -37,6 +37,7 @@ import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovemen
 import ItemRecordView from './item/itemRecordView';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
+import Badge from '../../../../interactors/badge';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -128,6 +129,7 @@ const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
 const administrativeDataAccordion = Accordion('Administrative data');
 const unlinkIconButton = Button({ icon: 'unlink' });
 const itemBarcodeField = TextField({ name: 'barcode' });
+const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 
 const validOCLC = {
@@ -380,8 +382,16 @@ export default {
     });
   },
 
+  marcAuthViewIconClickUsingId(id) {
+    cy.do(Link({ href: including(`/${id}`) }).click());
+  },
+
   goToPreviousPage() {
     cy.go('back');
+  },
+
+  verifyRecordAndMarcAuthIcon(accordion, expectedText) {
+    cy.expect(Accordion(accordion).find(HTML(including(expectedText))).exists());
   },
 
   checkExistanceOfAuthorityIconInInstanceDetailPane(accordion) {
@@ -572,6 +582,11 @@ export default {
     cy.expect(addItemButton.exists());
     cy.do(addItemButton.click());
     cy.expect(Section({ id: 'acc01' }).exists());
+  },
+
+  clickAddItemByHoldingName(holdingName) {
+    const holdingSection = section.find(Accordion(including(holdingName)));
+    cy.do(holdingSection.find(addItemButton).click());
   },
 
   fillItemRequiredFields() {
@@ -976,5 +991,14 @@ export default {
   openHoldingViewByID: (holdingsID) => {
     cy.do(viewHoldingsButtonByID(holdingsID).click());
     cy.expect(Button('Actions').exists());
+  },
+
+  verifyCheckedOutDate: (date) => {
+    cy.expect(itemStatusKeyValue.has({ subValue: including(date) }));
+  },
+
+  verifyNumberOfItemsInHoldingByName(holdingName, numOfItems) {
+    const holdingSection = section.find(Accordion(including(holdingName)));
+    cy.expect(holdingSection.find(Badge()).has({ value: `${numOfItems}` }));
   },
 };

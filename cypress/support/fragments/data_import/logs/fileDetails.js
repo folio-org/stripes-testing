@@ -6,7 +6,9 @@ import {
   MultiColumnListRow,
   Link,
   PaneHeader,
+  Section,
   Button,
+  Pane,
 } from '../../../../../interactors';
 import LogsViewAll from './logsViewAll';
 import arrays from '../../../utils/arrays';
@@ -272,6 +274,14 @@ export default {
     );
   },
 
+  openJsonScreen: (title) => {
+    cy.get('#search-results-list')
+      .find('*[class^="mclCell"]')
+      .contains(title)
+      .invoke('removeAttr', 'target')
+      .click();
+  },
+
   filterRecordsWithError: (quantity) => {
     cy.do(
       jobSummaryTable
@@ -468,5 +478,20 @@ export default {
           .invoke('text')
           .should('eq', invoiceStatus);
       });
+  },
+
+  verifyLogDetailsPageIsOpened: (fileName) => {
+    cy.expect(Pane(fileName).exists());
+  },
+
+  getInvoiceNumber(vendorInvoiceNumber) {
+    cy.do(
+      Section()
+        .find(MultiColumnListCell(including(vendorInvoiceNumber)))
+        .perform((el) => {
+          cy.wrap(el.innerText.split('-')[0]).as('invoiceNumber');
+        }),
+    );
+    return cy.get('@invoiceNumber');
   },
 };

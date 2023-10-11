@@ -7,6 +7,7 @@ import {
   DropdownMenu,
   HTML,
   Callout,
+  TextField,
 } from '../../../../../interactors';
 import NewMatchProfile from './newMatchProfile';
 
@@ -52,18 +53,50 @@ const search = (profileName) => {
   cy.do(Pane('Match profiles').find(Button('Search')).click());
 };
 
-const saveAndClose = () => cy.do(Button('Save as profile & Close').click());
-
 export default {
   openNewMatchProfileForm,
   deleteMatchProfile,
   search,
-  saveAndClose,
 
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileForm(profile);
-    saveAndClose();
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithExistingPart: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithExistingPart(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithQualifier: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithQualifierInIncomingAndExistingRecords(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithQualifierAndComparePart: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithQualifierAndExistingRecordField: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);
+    NewMatchProfile.saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
+  createMatchProfileWithStaticValue: (profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithStaticValue(profile);
+    NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
@@ -72,45 +105,10 @@ export default {
     cy.expect(MultiColumnListCell(profileName).exists());
   },
 
-  createMatchProfileWithExistingPart: (profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithExistingPart(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
-  createMatchProfileWithQualifier: (profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithQualifierInIncomingAndExistingRecords(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
-  createMatchProfileWithQualifierAndComparePart: (profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
-  createMatchProfileWithQualifierAndExistingRecordField: (profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
-  createMatchProfileWithStaticValue: (profile) => {
-    openNewMatchProfileForm();
-    NewMatchProfile.fillMatchProfileWithStaticValue(profile);
-    saveAndClose();
-    waitCreatingMatchProfile();
-  },
-
-  checkCalloutMessage: (profileName) => {
+  checkCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(`The match profile "${profileName}" was successfully updated`),
+        textContent: including(message),
       }).exists(),
     );
   },
@@ -119,4 +117,8 @@ export default {
   selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
   verifyMatchProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifySearchFieldIsEmpty: () => cy.expect(TextField({ id: 'input-search-match-profiles-field' }).has({ value: '' })),
+  verifySearchResult: (profileName) => {
+    cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
 };

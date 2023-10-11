@@ -113,7 +113,6 @@ describe('orders: export', () => {
         Orders.createPOLineViaActions();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
         OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
           'Purchase',
           location.institutionId,
           '3',

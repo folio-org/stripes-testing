@@ -43,33 +43,22 @@ describe('bulk-edit', () => {
       'C366072 Verify Bulk edit elements in the left pane -- Users Local & In app (firebird)',
       { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs', 'Query');
         BulkEditSearchPane.verifyRecordIdentifierEmpty();
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
-        BulkEditSearchPane.openQuerySearch();
-        BulkEditSearchPane.verifySpecificTabHighlighted('Query');
-        BulkEditSearchPane.verifyRecordTypesEmpty();
-        BulkEditSearchPane.isBuildQueryButtonDisabled(true);
-
+        // Without waiter, user is not logging in
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(2000);
         cy.login(userWithProfileView.username, userWithProfileView.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs', 'Query');
         BulkEditSearchPane.isUsersRadioChecked(false);
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
-
-        BulkEditSearchPane.openQuerySearch();
-        BulkEditSearchPane.verifySpecificTabHighlighted('Query');
-        BulkEditSearchPane.usersRadioIsDisabled(false);
-        BulkEditSearchPane.isBuildQueryButtonDisabled(false);
-
-        BulkEditSearchPane.isUsersRadioChecked(false);
-        BulkEditSearchPane.clickBuildQueryButton();
-        BulkEditSearchPane.verifyBuildQueryModal();
       },
     );
   });

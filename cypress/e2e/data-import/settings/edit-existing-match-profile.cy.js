@@ -21,6 +21,7 @@ describe('data-import', () => {
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
+    const calloutMessage = `The match profile "${matchProfile.profileName}" was successfully updated`;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -31,7 +32,7 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
         InteractorsTools.closeCalloutMessage();
-        MatchProfileView.closeViewModeForMatchProfile();
+        MatchProfileView.closeViewMode();
       });
     });
 
@@ -51,7 +52,7 @@ describe('data-import', () => {
         MatchProfileEdit.verifyScreenName(matchProfile.profileName);
         MatchProfileEdit.changeExistingInstanceRecordField();
         MatchProfileEdit.save();
-        MatchProfiles.checkCalloutMessage(matchProfile.profileName);
+        MatchProfiles.checkCalloutMessage(calloutMessage);
         MatchProfileView.verifyExistingInstanceRecordField();
       },
     );

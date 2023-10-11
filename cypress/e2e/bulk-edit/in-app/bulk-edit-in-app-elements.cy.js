@@ -7,6 +7,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
 const item = {
@@ -96,7 +97,7 @@ describe('bulk-edit', () => {
         expectedColumnTitles.forEach((title) => BulkEditSearchPane.verifyResultColumTitles(title));
 
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
-        BulkEditSearchPane.verifyItemsActionDropdownItems();
+        BulkEditActions.verifyItemActionDropdownItems();
 
         BulkEditSearchPane.changeShowColumnCheckbox('Item ID');
         BulkEditSearchPane.verifyResultColumTitles('Item ID');
