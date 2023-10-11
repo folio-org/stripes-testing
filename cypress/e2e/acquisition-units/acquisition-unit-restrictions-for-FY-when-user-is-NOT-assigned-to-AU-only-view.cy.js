@@ -70,19 +70,19 @@ describe('Acquisition Units', () => {
     });
   });
 
-  // after(() => {
-  //   cy.loginAsAdmin({
-  //     path: SettingsMenu.acquisitionUnitsPath,
-  //     waiter: AcquisitionUnits.waitLoading,
-  //   });
-  //   FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-  //   AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-  //   AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    cy.loginAsAdmin({
+      path: SettingsMenu.acquisitionUnitsPath,
+      waiter: AcquisitionUnits.waitLoading,
+    });
+    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+    Users.deleteViaApi(user.userId);
+  });
 
   it(
-    'C375073 Acquisition unit restrictions for "Fiscal year" records (Edit, Create, Delete options are active) when user is NOT assigned to acquisition unit (thunderjet)',
+    'C375078 Acquisition unit restrictions for "Fiscal year" records (Edit, Create, Delete options are active) when user is NOT assigned to acquisition unit (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByAll(defaultFiscalYear.name);
