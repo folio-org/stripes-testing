@@ -248,7 +248,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     () => {
       InventoryInstance.searchByTitle(createdRecordsIDs[0]);
       InventoryInstances.selectInstance();
-      console.log(createdRecordsIDs);
       InventoryInstance.editMarcBibliographicRecord();
       linkableFields.forEach((tag) => {
         QuickMarcEditor.setRulesForField(tag, true);
