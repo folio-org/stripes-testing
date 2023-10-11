@@ -7,9 +7,11 @@ import {
   PaneContent,
   PaneHeader,
   MultiColumnListCell,
+  MultiSelect,
   SelectionOption,
   Link,
   Section,
+  TextArea,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
@@ -236,5 +238,14 @@ export default {
 
   expextFY: (FYName) => {
     cy.expect(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).exists());
+  },
+
+  assignAU: (AUName) => {
+    cy.wait(6000);
+    cy.do([MultiSelect({ id: 'fy-acq-units' }).select(AUName), saveAndClose.click()]);
+  },
+
+  editDescription: () => {
+    cy.do([TextArea({ name: 'description' }).fillIn('Edited_by_AQA_Team'), saveAndClose.click()]);
   },
 };
