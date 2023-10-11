@@ -1,5 +1,13 @@
 import { HTML, including } from '@interactors/html';
-import { Pane, Section, Heading, KeyValue, Button } from '../../../../interactors';
+import {
+  Pane,
+  Section,
+  Heading,
+  KeyValue,
+  Button,
+  Accordion,
+  MultiColumnListCell,
+} from '../../../../interactors';
 
 const requestDetailsSection = Pane({ id: 'instance-details' });
 const titleInformationSection = Section({ id: 'title-info' });
@@ -9,6 +17,9 @@ const requesterInfoSection = Section({ id: 'requester-info' });
 const staffNotesInfoSection = Section({ id: 'staff-notes' });
 const actionsButton = requestDetailsSection.find(Button('Actions'));
 const moveRequestButton = Button('Move request');
+const fulfillmentInProgressAccordion = Accordion({
+  id: 'fulfillment-in-progress',
+});
 
 export default {
   waitLoading: () => {
@@ -80,5 +91,18 @@ export default {
 
   openMoveRequest() {
     cy.do(moveRequestButton.click());
+  },
+
+  requestQueueOnInstance(instanceTitle) {
+    cy.do([actionsButton.click(), Button('Reorder queue').click()]);
+    cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
+  },
+
+  checkRequestMovedToFulfillmentInProgress(itemBarcode) {
+    cy.expect(
+      fulfillmentInProgressAccordion
+        .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+        .exists(),
+    );
   },
 };

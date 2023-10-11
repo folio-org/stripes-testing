@@ -11,8 +11,10 @@ import {
   Link,
   Button,
 } from '../../../../interactors';
+import InvoiceEditForm from './invoiceEditForm';
 import InvoiceLineEditForm from './invoiceLineEditForm';
 import ApproveInvoiceModal from './modal/approveInvoiceModal';
+import PayInvoiceModal from './modal/payInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
 
@@ -49,6 +51,12 @@ export default {
         .click(),
     );
   },
+  openInvoiceEditForm() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Edit').click()]);
+    InvoiceEditForm.waitLoading();
+
+    return InvoiceEditForm;
+  },
   openInvoiceLineEditForm() {
     cy.do([invoiceLinesSection.find(actionsButton).click(), newBlankLineButton.click()]);
     InvoiceLineEditForm.waitLoading();
@@ -67,6 +75,24 @@ export default {
           .find(MultiColumnListCell({ columnIndex: 2 }))
           .has({ content: including(record.description) }),
       ]);
+
+      if (record.receiptStatus) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 5 }))
+            .has({ content: including(record.receiptStatus) }),
+        );
+      }
+
+      if (record.paymentStatus) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 6 }))
+            .has({ content: including(record.paymentStatus) }),
+        );
+      }
     });
   },
   checkInvoiceDetails({ title, invoiceInformation = [], invoiceLines } = {}) {
@@ -86,13 +112,23 @@ export default {
           text: including(`Total number of invoice lines: ${invoiceLines.length}`),
         }),
       );
+      this.checkTableContent(invoiceLines);
     }
   },
-  approveInvoice() {
-    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Approve').click()]);
+  approveInvoice({ isApprovePayEnabled = false } = {}) {
+    cy.do([
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
+      Button(isApprovePayEnabled ? 'Approve & pay' : 'Approve').click(),
+    ]);
 
-    ApproveInvoiceModal.verifyModalView();
-    ApproveInvoiceModal.clickSubmitButton();
+    ApproveInvoiceModal.verifyModalView({ isApprovePayEnabled });
+    ApproveInvoiceModal.clickSubmitButton({ isApprovePayEnabled });
+  },
+  payInvoice() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Pay').click()]);
+
+    PayInvoiceModal.verifyModalView();
+    PayInvoiceModal.clickSubmitButton();
   },
   openSelectOrderLineModal() {
     cy.do([invoiceLinesSection.find(actionsButton).click(), Button('Add line from POL').click()]);

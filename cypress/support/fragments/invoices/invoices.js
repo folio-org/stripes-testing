@@ -71,6 +71,7 @@ const getDefaultInvoice = ({
   fiscalYearId,
   accountingCode,
   invoiceDate = moment.utc().format(),
+  exportToAccounting = true,
 }) => ({
   chkSubscriptionOverlap: true,
   currency: 'USD',
@@ -78,7 +79,7 @@ const getDefaultInvoice = ({
   batchGroupId,
   batchGroupName,
   status: 'Open',
-  exportToAccounting: true,
+  exportToAccounting,
   vendorId,
   vendorName,
   fiscalYearId,
@@ -119,9 +120,14 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createInvoiceViaApi({ vendorId, accountingCode }) {
+  createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }) {
     cy.getBatchGroups().then(({ id: batchGroupId }) => {
-      const invoice = getDefaultInvoice({ batchGroupId, vendorId, accountingCode });
+      const invoice = getDefaultInvoice({
+        batchGroupId,
+        vendorId,
+        accountingCode,
+        exportToAccounting,
+      });
       cy.okapiRequest({
         method: 'POST',
         path: 'invoice/invoices',
@@ -179,8 +185,9 @@ export default {
     fundDistributions,
     accountingCode,
     releaseEncumbrance,
+    exportToAccounting,
   }) {
-    this.createInvoiceViaApi({ vendorId, accountingCode }).then((resp) => {
+    this.createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
       const invoiceLine = getDefaultInvoiceLine({

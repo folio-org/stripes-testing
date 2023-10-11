@@ -3,14 +3,11 @@ import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragmen
 import { Budgets } from '../../support/fragments/finance';
 import TopMenu from '../../support/fragments/topMenu';
 import Organizations from '../../support/fragments/organizations/organizations';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 import Users from '../../support/fragments/users/users';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
@@ -19,8 +16,6 @@ describe('Invoices', () => {
     organization,
     order: { ...NewOrder.getDefaultOrder({ vendorId: organization.id }), reEncumber: true },
     orderLine: {},
-    servicePoint: ServicePoints.defaultServicePoint,
-    location: {},
     user: {},
   };
 
@@ -30,32 +25,19 @@ describe('Invoices', () => {
       testData.budget = budget;
       testData.fiscalYear = fiscalYear;
 
-      ServicePoints.createViaApi(testData.servicePoint).then(() => {
-        testData.location = Locations.getDefaultLocation({
-          servicePointId: testData.servicePoint.id,
-        });
+      Organizations.createOrganizationViaApi(testData.organization).then(() => {
+        testData.orderLine = BasicOrderLine.getDefaultOrderLine();
 
-        Locations.createViaApi(testData.location).then(() => {
-          Organizations.createOrganizationViaApi(testData.organization).then(() => {
-            testData.orderLine = BasicOrderLine.getDefaultOrderLine({
-              specialLocationId: testData.location.id,
-              vendorAccount: testData.organization.name,
-            });
+        Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
+          testData.order = order;
 
-            Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then(
-              (order) => {
-                testData.order = order;
+          Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' });
 
-                Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' });
-
-                Invoices.createInvoiceViaApi({
-                  vendorId: testData.organization.id,
-                  accountingCode: testData.organization.erpCode,
-                }).then((invoice) => {
-                  testData.invoice = invoice;
-                });
-              },
-            );
+          Invoices.createInvoiceViaApi({
+            vendorId: testData.organization.id,
+            accountingCode: testData.organization.erpCode,
+          }).then((invoice) => {
+            testData.invoice = invoice;
           });
         });
       });
@@ -73,7 +55,6 @@ describe('Invoices', () => {
 
   after('Delete test data', () => {
     Organizations.deleteOrganizationViaApi(testData.organization.id);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Invoices.getInvoiceViaApi({
       query: `vendorInvoiceNo="${testData.invoice.vendorInvoiceNo}"`,
     }).then(({ invoices }) => {
@@ -81,8 +62,6 @@ describe('Invoices', () => {
     });
     Orders.deleteOrderViaApi(testData.order.id);
     Budgets.deleteBudgetWithFundLedgerAndFYViaApi(testData.budget);
-    InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
-    Locations.deleteViaApi(testData.location);
     Users.deleteViaApi(testData.user.userId);
   });
 
@@ -135,8 +114,10 @@ describe('Invoices', () => {
       // Click on created invoice line
       InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkInvoiceLineDetails({
-        description: testData.orderLine.titleOrPackage,
-        status: INVOICE_STATUSES.OPEN,
+        invoiceLineInformation: [
+          { key: 'Description', value: testData.orderLine.titleOrPackage },
+          { key: 'Status', value: INVOICE_STATUSES.OPEN },
+        ],
       });
     },
   );
