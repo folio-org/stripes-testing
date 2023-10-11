@@ -15,6 +15,14 @@ import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user = null;
+    const protectedFieldData = {
+      protectedField: '*',
+      in1: '*',
+      in2: '*',
+      subfield: '5',
+      data: 'NcD',
+      source: 'User',
+    };
     const OCLCAuthentication = '100481406/PAOLF';
     const oclcForImport = '19257462';
     const initialFields = {
@@ -96,7 +104,7 @@ describe('data-import', () => {
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
-        MarcFieldProtection.create('*', '5', 'NcD');
+        MarcFieldProtection.create(protectedFieldData);
         MarcFieldProtection.verifyFieldProtectionIsCreated('NcD');
 
         cy.visit(SettingsMenu.targetProfilesPath);
