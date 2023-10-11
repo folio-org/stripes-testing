@@ -119,6 +119,7 @@ export default {
   },
 
   editFiscalYearDetails: () => {
+    cy.wait(5000);
     cy.do([actionsButton.click(), editButton.click()]);
   },
 

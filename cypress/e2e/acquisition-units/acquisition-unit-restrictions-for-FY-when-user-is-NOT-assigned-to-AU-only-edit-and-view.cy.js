@@ -55,6 +55,8 @@ describe('Acquisition Units', () => {
       AcquisitionUnits.assignAdmin();
       AcquisitionUnits.editAU();
       AcquisitionUnits.selectViewCheckbox();
+      AcquisitionUnits.editAU();
+      AcquisitionUnits.selectEditCheckbox();
 
       cy.visit(TopMenu.fiscalYearPath);
       FinanceHelp.searchByAll(defaultFiscalYear.name);
@@ -88,8 +90,9 @@ describe('Acquisition Units', () => {
       FinanceHelp.searchByAll(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);
       FiscalYears.clickActionsButtonInFY();
-      FiscalYears.checkEditButtonIsDisabled();
       FiscalYears.checkDeleteButtonIsDisabled();
+      FiscalYears.editFiscalYearDetails();
+      FiscalYears.editDescription();
       FiscalYears.clickNewFY();
       FiscalYears.checkAcquisitionUnitIsAbsentToAssign(defaultAcquisitionUnit.name);
     },
