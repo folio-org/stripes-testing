@@ -31,6 +31,7 @@ const acquisitionAccordion = Accordion('Acquisition');
 const addElectronicAccessButton = Button('Add electronic access');
 const relationshipSelectDropdown = Select('Relationship');
 const uriTextarea = TextArea({ ariaLabel: 'URI' });
+const holdingsViewPane = Pane({ id: 'ui-inventory.holdingsRecordView' });
 
 function waitLoading() {
   cy.expect(actionsButton.exists());
@@ -161,7 +162,7 @@ export default {
     );
   },
   checkHoldingRecordViewOpened: () => {
-    cy.expect(Pane({ id: 'ui-inventory.holdingsRecordView' }).exists());
+    cy.expect(holdingsViewPane.exists());
   },
   checkHotlinkToPOL: (number) => {
     cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
@@ -194,4 +195,9 @@ export default {
     cy.expect(root.exists());
     this.waitLoading();
   },
+  checkHoldingsStatementAbsent: (statement) => cy.expect(
+    MultiColumnList({ id: 'list-holdingsStatement' })
+      .find(HTML(including(statement)))
+      .absent(),
+  ),
 };

@@ -7,8 +7,6 @@ import {
 } from '../../../support/constants';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';

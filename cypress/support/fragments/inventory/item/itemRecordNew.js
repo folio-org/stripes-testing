@@ -1,8 +1,10 @@
 import { including } from '@interactors/html';
-import { Accordion, TextField, Pane, Button } from '../../../../../interactors';
+import { Accordion, TextField, Pane, Button, TextArea, Select } from '../../../../../interactors';
 
 const saveAndCloseBtn = Button('Save & close');
 const cancelBtn = Button('Cancel');
+const callNumberTextField = TextArea('Call number');
+const callNumberType = Select('Call number type');
 
 export default {
   waitLoading: (itemTitle) => {
@@ -17,6 +19,12 @@ export default {
         .fillIn(barcode),
     );
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
+  },
+  addCallNumber: (callNumber) => {
+    cy.do(callNumberTextField.fillIn(callNumber));
+  },
+  chooseCallNumberType: (type) => {
+    cy.do(callNumberType.choose(type));
   },
 
   save: () => cy.do(saveAndCloseBtn.click()),
