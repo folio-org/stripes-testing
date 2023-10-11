@@ -120,6 +120,7 @@ describe('MARC -> MARC Bibliographic', () => {
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[2]);
       InventoryInstances.selectInstance();
+      cy.wait(1000);
       InventoryInstance.editMarcBibliographicRecord();
 
       InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
