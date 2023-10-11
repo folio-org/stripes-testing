@@ -1,5 +1,5 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -53,7 +53,7 @@ describe('data-import', () => {
 
     it(
       'C347618 Overlaying with single record import creates does not duplicate control fields (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         InventoryInstances.importWithOclc(oclcNumber);
         InventoryInstance.checkCalloutMessage(
