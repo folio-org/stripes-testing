@@ -1502,4 +1502,8 @@ export default {
   check008BoxesCount(count) {
     cy.get('div[data-testid="bytes-field-col"]').should('have.length', count);
   },
+
+  checkTagAbsent(tag) {
+    cy.expect(getRowInteractorByTagName(tag).absent());
+  },
 };
