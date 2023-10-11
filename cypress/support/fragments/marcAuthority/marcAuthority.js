@@ -113,22 +113,7 @@ export default {
         .fillIn(content),
     ]);
   },
-  checkFieldByRow: (rowIndex, field) => {
-    cy.do([
-      QuickMarcEditorRow({ index: rowIndex })
-        .find(TextField({ name: `records[${rowIndex}].tag` }))
-        .has({ value: field.tag }),
-      QuickMarcEditorRow({ index: rowIndex })
-        .find(TextField({ name: `records[${rowIndex}].indicators[0]` }))
-        .has({ value: field.indicator0 }),
-      QuickMarcEditorRow({ index: rowIndex })
-        .find(TextField({ name: `records[${rowIndex}].indicators[1]` }))
-        .has({ value: field.indicator1 }),
-      QuickMarcEditorRow({ index: rowIndex })
-        .find(TextArea({ name: `records[${rowIndex}].content` }))
-        .has({ value: field.content }),
-    ]);
-  },
+
   checkLinkingAuthority650: () => {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 650 has been linked to a MARC authority record.').exists());
@@ -138,10 +123,7 @@ export default {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 700 has been linked to a MARC authority record.').exists());
   },
-  checkLinkingAuthorityByTag: (tag) => {
-    cy.expect(buttonLink.exists());
-    cy.expect(Callout(`Field ${tag} has been linked to a MARC authority record.`).exists());
-  },
+
   changeField: (tag, content) => {
     cy.do([QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(content)]);
   },
@@ -157,9 +139,6 @@ export default {
   },
   clicksaveAndCloseButton: () => {
     cy.do(saveAndCloseButton.click());
-  },
-  clickUnlinkButton: () => {
-    cy.do(buttonLink.click());
   },
   checkPresentedColumns: (presentedColumns) => presentedColumns.forEach((columnName) => cy.expect(MultiColumnListHeader(columnName).exists())),
   checkLDRValue: (ldrValue) => {

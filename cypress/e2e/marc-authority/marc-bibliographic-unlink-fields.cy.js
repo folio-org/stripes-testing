@@ -74,39 +74,39 @@ describe('MARC -> MARC Bibliographic', () => {
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-    ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
+    ])
+      .then((createdUserProperties) => {
+        testData.userProperties = createdUserProperties;
 
-      cy.loginAsAdmin().then(() => {
-        marcFiles.forEach((marcFile) => {
-          cy.visit(TopMenu.dataImportPath);
-          DataImport.waitLoading();
+        cy.loginAsAdmin().then(() => {
+          marcFiles.forEach((marcFile) => {
+            cy.visit(TopMenu.dataImportPath);
+            DataImport.waitLoading();
 
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then((link) => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitLoadingList();
+            JobProfiles.search(marcFile.jobProfileToRun);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.checkStatusOfJobProfile('Completed');
+            Logs.openFileDetails(marcFile.fileName);
+            for (let i = 0; i < marcFile.numOfRecords; i++) {
+              Logs.getCreatedItemsID(i).then((link) => {
+                createdAuthorityIDs.push(link.split('/')[5]);
+              });
+            }
+          });
+        });
+      })
+      .then(() => {
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
       });
-    });
   });
 
-  beforeEach('Login to the application', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, {
-      path: TopMenu.inventoryPath,
-      waiter: InventoryInstances.waitContentLoading,
-    });
-  });
-
-  afterEach(() => {
+  after(() => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[2]);
     createdAuthorityIDs.forEach((id, index) => {
@@ -120,6 +120,7 @@ describe('MARC -> MARC Bibliographic', () => {
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[2]);
       InventoryInstances.selectInstance();
+      // unstable without this waiter
       cy.wait(1000);
       InventoryInstance.editMarcBibliographicRecord();
 
@@ -152,7 +153,13 @@ describe('MARC -> MARC Bibliographic', () => {
         11,
         'By selecting Unlink, then field 100 will be unlinked from the MARC authority record. Are you sure you want to continue?',
       );
-      MarcAuthority.checkFieldByRow(unlinkedField.rowIndex, unlinkedField);
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(
+        unlinkedField.rowIndex,
+        unlinkedField.tag,
+        unlinkedField.indicator0,
+        unlinkedField.indicator1,
+        unlinkedField.content,
+      );
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
       InventoryInstance.verifyContributor(0, 1, contributors.firstName);

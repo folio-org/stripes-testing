@@ -102,6 +102,7 @@ const specRetInputNamesHoldings008 = [
 const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const linkHeadingsButton = Button('Link headings');
 const arrowDownButton = Button({ icon: 'arrow-down' });
+const buttonLink = Button({ icon: 'unlink' });
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -450,10 +451,12 @@ export default {
 
   checkUnlinkModal(rowIndex, text) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
-    cy.expect(unlinkModal.exists());
-    cy.expect(unlinkButtonInsideModal.exists());
-    cy.expect(cancelUnlinkButtonInsideModal.exists());
-    cy.expect(unlinkModal.has({ content: including(text) }));
+    cy.expect([
+      unlinkModal.exists(),
+      unlinkButtonInsideModal.exists(),
+      cancelUnlinkButtonInsideModal.exists(),
+      unlinkModal.has({ content: including(text) }),
+    ]);
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
   },
 
@@ -1509,5 +1512,14 @@ export default {
 
   check008BoxesCount(count) {
     cy.get('div[data-testid="bytes-field-col"]').should('have.length', count);
+  },
+
+  checkLinkingAuthorityByTag: (tag) => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout(`Field ${tag} has been linked to a MARC authority record.`).exists());
+  },
+
+  clickUnlinkButton: () => {
+    cy.do(buttonLink.click());
   },
 };
