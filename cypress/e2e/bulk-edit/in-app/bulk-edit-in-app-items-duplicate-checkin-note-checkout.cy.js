@@ -90,7 +90,7 @@ describe('bulk-edit', () => {
           `Check out;${notes.checkOutNote};false`,
           `Check out;${notes.checkInNote};true`,
           `Check out;${notes.checkInNote};false`
-        ]
+        ];
         BulkEditActions.verifyChangesInAreYouSureForm('Circulation Notes', changes);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
