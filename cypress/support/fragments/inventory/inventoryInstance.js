@@ -129,6 +129,7 @@ const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
 const administrativeDataAccordion = Accordion('Administrative data');
 const unlinkIconButton = Button({ icon: 'unlink' });
 const itemBarcodeField = TextField({ name: 'barcode' });
+const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 
@@ -1009,5 +1010,8 @@ export default {
         .find(marcAuthorityAppIcon)
         .absent(),
     );
+  },
+  verifyCheckedOutDate: (date) => {
+    cy.expect(itemStatusKeyValue.has({ subValue: including(date) }));
   },
 };

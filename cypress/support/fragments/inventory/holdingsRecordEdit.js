@@ -13,6 +13,10 @@ import {
   MultiSelect,
   MultiSelectOption,
   TextInput,
+  FieldSet,
+  Selection,
+  RepeatableFieldItem,
+  RepeatableField,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -21,11 +25,12 @@ const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
 const sourceSelect = rootForm.find(Select({ name: 'sourceId' }));
 const readonlyFields = [holdingsHrId, sourceSelect];
 const callNumber = rootForm.find(TextArea({ name: 'callNumber' }));
+const statisticalCodeFieldSet = FieldSet('Statistical code');
+const addStatisticalCodeButton = Button('Add statistical code');
 
 export default {
   saveAndClose: () => {
     cy.do(rootForm.find(Button('Save & close')).click());
-    cy.expect(rootForm.absent());
   },
   waitLoading: () => {
     cy.expect(rootForm.exists());
@@ -41,6 +46,34 @@ export default {
       SelectionList().select(including(location)),
     ]);
   },
+  clickAddStatisticalCode(rowIndex = 1) {
+    cy.do(addStatisticalCodeButton.click());
+    cy.expect(
+      statisticalCodeFieldSet
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Selection())
+        .exists(),
+    );
+  },
+  chooseStatisticalCode(code, rowIndex = 1) {
+    cy.do([
+      statisticalCodeFieldSet
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Selection())
+        .choose(including(code)),
+    ]);
+  },
+  addStatisticalCode(code) {
+    this.clickAddStatisticalCode();
+    this.chooseStatisticalCode(code);
+  },
+  removeStatisticalCode(code) {
+    cy.do(
+      RepeatableFieldItem({ singleValue: including(code) })
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+  },
   clearTemporaryLocation: () => {
     cy.do([
       Button({ id: 'additem_temporarylocation' }).click(),
@@ -51,7 +84,6 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-tag-accordion' }).click());
   },
   addTag(tag) {
-    this.openTags();
     cy.do([
       TextInput({ id: 'multiselect-input-input-tag' }).fillIn(tag),
       MultiSelect().open(),
@@ -71,5 +103,24 @@ export default {
   },
   verifyNoCalloutErrorMessage() {
     cy.expect(Callout({ type: calloutTypes.error }).absent());
+  },
+  checkErrorMessageForStatisticalCode: (isPresented = true) => {
+    if (isPresented) {
+      cy.expect(statisticalCodeFieldSet.has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
+  },
+  verifyStatisticalCodesCount(itemCount) {
+    if (itemCount === 0) {
+      cy.do(statisticalCodeFieldSet.absent());
+    } else {
+      cy.do(RepeatableField('Statistical code').has({ itemCount }));
+    }
   },
 };

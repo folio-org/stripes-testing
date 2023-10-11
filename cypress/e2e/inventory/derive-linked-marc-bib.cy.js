@@ -65,7 +65,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
           () => {
             DataImport.verifyUploadState();
             DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+            JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(marcFile.fileName);
             Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

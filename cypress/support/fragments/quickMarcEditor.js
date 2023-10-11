@@ -792,6 +792,14 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
   },
 
+  fillEmptyTextAreaOfField(rowIndex, fieldName, content) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: fieldName }))
+        .fillIn(content),
+    );
+  },
+
   updateExistingTagValue(rowIndex, newTagValue) {
     cy.do(
       QuickMarcEditorRow({ index: rowIndex })
@@ -1084,7 +1092,7 @@ export default {
   },
 
   checkButtonSaveAndCloseEnable() {
-    cy.expect(saveAndCloseButton.exists());
+    cy.expect(saveAndCloseButtonEnabled.exists());
   },
 
   checkDeleteButtonExist(rowIndex) {
@@ -1488,5 +1496,18 @@ export default {
       cy.do(holdingsLocationSaveButton.click());
       cy.expect(holdingsLocationModal.absent());
     });
+  },
+
+  checkOnlyBackslashesIn008Boxes() {
+    cy.get('div[data-testid="bytes-field-col"]')
+      .find('input')
+      .then((fields) => {
+        const fieldValues = Array.from(fields, (field) => field.getAttribute('value'));
+        expect(fieldValues.join('')).to.match(/^\\+$/);
+      });
+  },
+
+  check008BoxesCount(count) {
+    cy.get('div[data-testid="bytes-field-col"]').should('have.length', count);
   },
 };

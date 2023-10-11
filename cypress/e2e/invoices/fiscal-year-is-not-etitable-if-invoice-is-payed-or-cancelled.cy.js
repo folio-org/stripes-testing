@@ -1,6 +1,6 @@
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
-import { Invoices } from '../../support/fragments/invoices';
+import { Invoices, InvoiceView } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Users from '../../support/fragments/users/users';
@@ -106,11 +106,14 @@ describe('Invoices', () => {
       it(description, { tags: [TestTypes.criticalPath, DevTeams.thunderjet] }, () => {
         Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
         Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
-        Invoices.checkInvoiceDetails({
-          ...testData.invoice,
-          status,
-          fiscalYear: testData.fiscalYear.code,
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: 'Status', value: status },
+            { key: 'Fiscal year', value: testData.fiscalYear.code },
+          ],
         });
+
         const InvoiceEditForm = Invoices.openInvoiceEditForm();
         InvoiceEditForm.checkButtonsConditions([
           {
@@ -125,10 +128,12 @@ describe('Invoices', () => {
         InvoiceEditForm.clickSaveButton();
 
         InteractorsTools.checkCalloutMessage('Invoice has been saved');
-        Invoices.checkInvoiceDetails({
-          ...testData.invoice,
-          status,
-          fiscalYear: testData.fiscalYear.code,
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: 'Status', value: status },
+            { key: 'Fiscal year', value: testData.fiscalYear.code },
+          ],
         });
       });
     });

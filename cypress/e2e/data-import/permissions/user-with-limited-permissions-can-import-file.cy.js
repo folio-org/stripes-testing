@@ -15,7 +15,7 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions';
+import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -167,7 +167,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFile);
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

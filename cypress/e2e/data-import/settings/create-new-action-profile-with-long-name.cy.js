@@ -6,13 +6,14 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import Users from '../../../support/fragments/users/users';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 
-describe('data-import:', () => {
-  describe('Settings: Create a new action profile with a long name', () => {
+describe('data-import', () => {
+  describe('Settings', () => {
     let user;
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C2343 autotest action profile ${getRandomStringCode(160)}`,
     };
+    const calloutMessage = `The action profile "${actionProfile.name}" was successfully created`;
 
     before('create user', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -36,7 +37,7 @@ describe('data-import:', () => {
         ActionProfiles.createWithoutLinkedMappingProfile(actionProfile);
         ActionProfiles.verifyActionProfileOpened(actionProfile.name);
         ActionProfileView.verifyActionProfileTitleName(actionProfile.name);
-        ActionProfiles.checkCreateProfileCalloutMessage(actionProfile.name);
+        ActionProfiles.checkCalloutMessage(calloutMessage);
       },
     );
   });

@@ -58,7 +58,7 @@ describe('plug-in MARC authority | Search', () => {
           () => {
             DataImport.uploadFile(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
-            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+            JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(marcFile.fileName);
             Logs.checkStatusOfJobProfile('Completed');

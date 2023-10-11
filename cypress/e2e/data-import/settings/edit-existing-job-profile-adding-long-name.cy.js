@@ -39,7 +39,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfileView.edit();
         JobProfileEdit.verifyScreenName(jobProfile.profileName);
         JobProfileEdit.changeProfileName(jobProfileLongName);
