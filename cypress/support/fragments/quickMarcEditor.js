@@ -416,11 +416,11 @@ export default {
   },
 
   verifyEnabledLinkHeadingsButton() {
-    cy.expect(paneHeader.find(linkHeadingsButton).has({disabled: false}));
+    cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: false }));
   },
 
   verifyDisabledLinkHeadingsButton() {
-    cy.expect(paneHeader.find(linkHeadingsButton).has({disabled: true}));
+    cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: true }));
   },
 
   clickArrowDownButton(rowIndex) {
