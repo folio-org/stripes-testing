@@ -103,14 +103,14 @@ describe('data-import', () => {
     after('delete test data', () => {
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       MarcFieldProtection.getListViaApi({
-        query: `"field"=="//${firstProtectedFieldsData.data}"`,
-      }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+        query: `"data"=="${firstProtectedFieldsData.data}"`,
+      }).then((field) => {
+        MarcFieldProtection.deleteViaApi(field[0].id);
       });
       MarcFieldProtection.getListViaApi({
         query: `"field"=="${secondProtectedFieldData.field}"`,
-      }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      }).then((field) => {
+        MarcFieldProtection.deleteViaApi(field[0].id);
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
