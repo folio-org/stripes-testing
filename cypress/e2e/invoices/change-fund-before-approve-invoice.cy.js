@@ -119,7 +119,7 @@ describe('Invoices', () => {
   });
 
   it(
-    'C375998 Approve and pay invoice with added adjustment amount to invoice line (not prorated, related to total as "In addition to") (thunderjet)',
+    'C353596 Invoice payment is successful if order line fund distribution is changed before invoice approval (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       cy.createOrderApi(order).then((response) => {
