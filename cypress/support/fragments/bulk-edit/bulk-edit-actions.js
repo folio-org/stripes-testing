@@ -69,6 +69,16 @@ export default {
     ]);
   },
 
+  verifyChangesInAreYouSureForm(column, changes) {
+    changes.forEach((value) => {
+      cy.expect(
+        areYouSureForm
+          .find(MultiColumnListCell({ column, content: including(value) }))
+          .exists(),
+      );
+    })
+  },
+
   downloadPreview() {
     cy.do(downloadPreviewBtn.click());
     // Wait for file to download
@@ -440,6 +450,20 @@ export default {
 
   verifyNoMatchingOptionsForLocationFilter() {
     cy.expect(HTML('No matching options').exists());
+  },
+
+  duplicateCheckInNote(rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose('Check in note'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Duplicate to')
+    ]);
+    cy.expect(RepeatableFieldItem({ index: rowIndex })
+      .find(Select({ content: 'Check out note' }))
+      .has({ disabled: true }))
   },
 
   verifyMatchingOptionsForLocationFilter(location) {
