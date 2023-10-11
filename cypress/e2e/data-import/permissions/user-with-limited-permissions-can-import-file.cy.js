@@ -15,7 +15,7 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions';
+import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';

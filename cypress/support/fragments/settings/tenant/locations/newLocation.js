@@ -106,4 +106,12 @@ export default {
     Campuses.deleteViaApi(campusId);
     Institutions.deleteViaApi(institutionId);
   },
+
+  deleteViaApi: (locationId) => {
+    cy.okapiRequest({
+      path: `locations/${locationId}`,
+      method: 'DELETE',
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };
