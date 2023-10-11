@@ -19,6 +19,7 @@ import {
   Link,
   Card,
   ListRow,
+  Select,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -52,10 +53,13 @@ const notesSection = Section({ id: 'notes' });
 const viewAgreementPane = Pane({ id: 'pane-view-agreement' });
 const newAgreementLineButton = Button({ id: 'add-agreement-line-button' });
 const viewInAgreementLineSearchButton = Button({ id: 'agreement-line-search' });
+const noteTypeDropdown = Select({ name: 'type' });
+const agreementLineFilter = Button({ id: 'clickable-nav-agreementLines' });
 
 function openAgreementLineAccordion() {
   cy.do(agreementLine.click());
 }
+
 function selectAgreementLine() {
   cy.do(
     Section({ id: 'lines' })
@@ -63,6 +67,7 @@ function selectAgreementLine() {
       .click(),
   );
 }
+
 function addNewNote() {
   cy.do(newNoteButton.click());
 }
@@ -139,8 +144,11 @@ export default {
     cy.expect(supplementaryDocumentsAccordion.has({ open: true }));
   },
 
-  createNote(specialNote = NewNote.defaultNote) {
+  createNote(specialNote = NewNote.defaultNote, noteType) {
     addNewNote();
+    if (noteType) {
+      cy.do(noteTypeDropdown.choose(noteType));
+    }
     NewNote.fill(specialNote);
     NewNote.save();
   },
@@ -438,5 +446,9 @@ export default {
 
   clickNewAgreementLine() {
     cy.do(newAgreementLineButton.click());
+  },
+
+  openAgreementLineFilter() {
+    cy.do(agreementLineFilter.click());
   },
 };

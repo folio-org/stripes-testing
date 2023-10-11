@@ -91,8 +91,8 @@ export default {
 
   getDayTomorrowDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getDate() + 1)}/${padWithZero(
-      currentDate.getMonth() + 1,
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate() + 1,
     )}/${currentDate.getFullYear()}`;
   },
 
@@ -105,8 +105,8 @@ export default {
 
   getPreviousDayDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getDate() - 1)}/${padWithZero(
-      currentDate.getMonth() + 1,
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate() - 1,
     )}/${currentDate.getFullYear()}`;
   },
 
@@ -119,8 +119,8 @@ export default {
 
   getTwoPreviousDaysDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getDate() - 2)}/${padWithZero(
-      currentDate.getMonth() + 1,
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate() - 2,
     )}/${currentDate.getFullYear()}`;
   },
 
@@ -133,8 +133,8 @@ export default {
 
   getThreePreviousDaysDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getDate() - 3)}/${padWithZero(
-      currentDate.getMonth() + 1,
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate() - 3,
     )}/${currentDate.getFullYear()}`;
   },
 
@@ -150,6 +150,15 @@ export default {
     // returns random 4 digit code for the Fiscal Year
     return (
       getRandomStringCode(4) +
+      Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min)).toString()
+    );
+  },
+
+  getRandomFiscalYearCodeFY: (min, max) => {
+    // returns random 4 digit code for the Fiscal Year
+    return (
+      'FY' +
+      getRandomStringCode(2) +
       Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min)).toString()
     );
   },
