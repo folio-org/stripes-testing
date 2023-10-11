@@ -167,9 +167,11 @@ describe('Invoices', () => {
 
       // Fill the following fields: "Invoice date" - Today, "Fiscal year" - select previous "Fiscal year #1"
       InvoiceEditForm.fillInvoiceFields({
-        ...testData.invoice,
+        invoiceDate: testData.invoice.invoiceDate,
         fiscalYear: fiscalYears.prev.code,
-        vendorName: undefined,
+        batchGroupName: testData.invoice.batchGroupName,
+        vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
+        paymentMethod: testData.invoice.paymentMethod,
       });
 
       // Click "Save & close" button
