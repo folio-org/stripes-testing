@@ -1,8 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
 import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
-import DateTools from '../../support/utils/dateTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
@@ -12,13 +10,7 @@ import Users from '../../support/fragments/users/users';
 
 describe('Acquisition Units', () => {
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
-  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const secondFiscalYear = {
-    name: `new_autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCode(9000, 9999),
-    periodBeginDate: DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit(),
-    periodEndDate: DateTools.getTwoPreviousDaysDateForFiscalYearOnUIEdit(),
-  };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   let user;
 
   before(() => {
@@ -54,24 +46,25 @@ describe('Acquisition Units', () => {
       permissions.uiFinanceFinanceViewGroup.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-        firstFiscalYear.id = firstFiscalYearResponse.id;
+      FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+        defaultFiscalYear.id = firstFiscalYearResponse.id;
       });
 
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
-      AcquisitionUnits.assignUser(user.username);
+      AcquisitionUnits.assignAdmin();
 
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.fiscalYearPath,
-        waiter: FiscalYears.waitForFiscalYearDetailsLoading,
-      });
-      FinanceHelp.searchByAll(firstFiscalYear.name);
-      FiscalYears.selectFisacalYear(firstFiscalYear.name);
+      cy.visit(TopMenu.fiscalYearPath);
+      FinanceHelp.searchByAll(defaultFiscalYear.name);
+      FiscalYears.selectFisacalYear(defaultFiscalYear.name);
       FiscalYears.editFiscalYearDetails();
       FiscalYears.assignAU(defaultAcquisitionUnit.name);
       FiscalYears.closeThirdPane();
       FiscalYears.resetFilters();
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.fiscalYearPath,
+        waiter: FiscalYears.waitForFiscalYearDetailsLoading,
+      });
     });
   });
 
@@ -80,26 +73,24 @@ describe('Acquisition Units', () => {
       path: SettingsMenu.acquisitionUnitsPath,
       waiter: AcquisitionUnits.waitLoading,
     });
+    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
     Users.deleteViaApi(user.userId);
   });
 
   it(
-    'C375073 Acquisition unit restrictions for "Fiscal year" records (View, Edit, Create, Delete options are restricted) when user is NOT assigned to acquisition unit (thunderjet)',
+    'C374168 Acquisition unit restrictions for "Fiscal year" records (View, Edit, Create, Delete options are active) when user is assigned to acquisition unit (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
-      FinanceHelp.searchByAll(firstFiscalYear.name);
-      FiscalYears.selectFisacalYear(firstFiscalYear.name);
-      FiscalYears.editFiscalYearDetails();
-      FiscalYears.editDescription();
-      FiscalYears.deleteFiscalYearViaActions();
-      FiscalYears.createDefaultFiscalYear(secondFiscalYear);
-      FiscalYears.closeThirdPane();
+      FinanceHelp.searchByAll(defaultFiscalYear.name);
+      FiscalYears.checkNoResultsMessage(
+        `No results found for "${defaultFiscalYear.name}". Please check your spelling and filters.`,
+      );
       FiscalYears.resetFilters();
-      FinanceHelp.searchByAll(secondFiscalYear.name);
-      FiscalYears.selectFisacalYear(secondFiscalYear.name);
-      FiscalYears.deleteFiscalYearViaActions();
+      FiscalYears.openAcquisitionAccordion();
+      FiscalYears.selectAcquisitionUnitFilter(defaultAcquisitionUnit.name);
+      FiscalYears.checkNoResultsMessage('No results found. Please check your filters.');
     },
   );
 });
