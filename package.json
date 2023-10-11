@@ -19,7 +19,7 @@
     "lint:fix": "eslint --fix --quiet",
     "prettier": "prettier .",
     "prettier:fix": "prettier --write",
-    "prepare": "husky install"
+    "prepare": "husky install~"
   },
   "husky": {
     "hooks": {
@@ -36,7 +36,7 @@
     "@interactors/html": "^1.0.0-rc1.4",
     "@interactors/keyboard": "^1.0.0-rc1.5",
     "axe-core": "4.3.3",
-    "cypress": "12.14.0",
+    "cypress": "^13.3.0",
     "cypress-cloud": "^1.9.3",
     "cypress-testrail-simple": "^3.1.0",
     "date-fns": "^2.16.1",
