@@ -4,6 +4,8 @@ import { Button } from '../../../../../interactors';
 export default {
   verifyJsonScreenIsOpened: () => {
     cy.get('#logs-pane').should('exist');
+    // TODO need to wait until page will be loaded
+    cy.wait(2000);
   },
 
   getInstanceHrid: () => {
@@ -25,6 +27,10 @@ export default {
 
   openItemTab: () => {
     cy.do(Button('Item*').click());
+  },
+
+  openOrderTab: () => {
+    cy.do(Button('Order*').click());
   },
 
   verifyContentInTab: (value) => {
