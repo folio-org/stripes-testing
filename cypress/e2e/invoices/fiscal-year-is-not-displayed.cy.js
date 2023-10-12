@@ -84,7 +84,14 @@ describe('Invoices', () => {
       ]);
 
       // #2 Fill all mandatory fields with valid values:
-      InvoiceEditForm.fillInvoiceFields(testData.invoice);
+      InvoiceEditForm.fillInvoiceFields({
+        invoiceDate: testData.invoice.invoiceDate,
+        status: testData.invoice.status,
+        batchGroupName: testData.invoice.batchGroupName,
+        vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
+        vendorName: testData.invoice.vendorName,
+        paymentMethod: testData.invoice.paymentMethod,
+      });
 
       // #3 Click "Save & close" button
       InvoiceEditForm.clickSaveButton();
@@ -106,7 +113,14 @@ describe('Invoices', () => {
 
       // #5 Make some changes (e.g. add some value in "Note" field in "Invoice information" accordion)
       testData.invoice.vendorInvoiceNo = FinanceHelper.getRandomInvoiceNumber();
-      InvoiceEditForm.fillInvoiceFields(testData.invoice);
+      InvoiceEditForm.fillInvoiceFields({
+        invoiceDate: testData.invoice.invoiceDate,
+        status: testData.invoice.status,
+        batchGroupName: testData.invoice.batchGroupName,
+        vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
+        vendorName: testData.invoice.vendorName,
+        paymentMethod: testData.invoice.paymentMethod,
+      });
 
       // #6 Click "Save & close" button
       InvoiceEditForm.clickSaveButton();

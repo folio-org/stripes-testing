@@ -18,6 +18,7 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtentions/fileExtensions';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import Users from '../../../support/fragments/users/users';
+import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
 
 describe('data-import', () => {
   describe('Permissions', () => {
@@ -28,6 +29,7 @@ describe('data-import', () => {
     const actionProfileName = `C353645_action_profile_${getRandomPostfix()}`;
     const matchProfileName = `C353645_match_profile_${getRandomPostfix()}`;
     const jobProfileName = `C353645_job_profile_${getRandomPostfix()}`;
+    const fileExtensionName = '.dat';
 
     before('create test data', () => {
       cy.getAdminToken();
@@ -107,8 +109,8 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.fileExtensionsPath);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
         FileExtensions.verifyActionMenuAbsent();
-        FileExtensions.select();
-        FileExtensions.verifyActionMenuOnViewPaneAbsent();
+        FileExtensions.select(fileExtensionName);
+        FileExtensionView.verifyActionMenuAbsent();
 
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();

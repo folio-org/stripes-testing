@@ -112,11 +112,7 @@ describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-      OrderLines.fillInPOLineInfoForExportWithLocation(
-        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
-        'Purchase',
-        location.institutionId,
-      );
+      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.exportManagerOrganizationsPath);

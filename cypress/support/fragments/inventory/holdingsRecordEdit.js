@@ -27,6 +27,7 @@ const readonlyFields = [holdingsHrId, sourceSelect];
 const callNumber = rootForm.find(TextArea({ name: 'callNumber' }));
 const statisticalCodeFieldSet = FieldSet('Statistical code');
 const addStatisticalCodeButton = Button('Add statistical code');
+const callNumberType = rootForm.find(Select('Call number type'));
 
 export default {
   saveAndClose: () => {
@@ -122,5 +123,8 @@ export default {
     } else {
       cy.do(RepeatableField('Statistical code').has({ itemCount }));
     }
+  },
+  chooseCallNumberType(type) {
+    cy.do(callNumberType.choose(type));
   },
 };

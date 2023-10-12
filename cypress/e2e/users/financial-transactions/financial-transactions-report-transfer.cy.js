@@ -113,7 +113,7 @@ describe('Financial Transactions Detail Report', () => {
   );
 
   after(
-    'Delete owner, transfer account, feeFineType, paymentMethod, waiveReason, refundReason, user',
+    'Delete owner, transfer account, feeFineType, paymentMethod, waiveReason, refundReason, user (vega)',
     () => {
       TransferAccounts.deleteViaApi(transferAccount.id);
       ManualCharges.deleteViaApi(feeFineType.id);

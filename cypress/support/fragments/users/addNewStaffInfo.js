@@ -27,7 +27,7 @@ export default {
           source: 'ADMINISTRATOR, Diku_admin',
           transactionInformation: '',
           typeAction: 'Staff info only',
-        }
+        },
       });
     });
   },
