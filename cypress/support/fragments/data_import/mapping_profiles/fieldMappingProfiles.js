@@ -1,3 +1,4 @@
+import { including, HTML } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
@@ -6,8 +7,6 @@ import {
   MultiColumnListRow,
   PaneContent,
   Form,
-  HTML,
-  including,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import FieldMappingProfileEdit from './fieldMappingProfileEdit';
