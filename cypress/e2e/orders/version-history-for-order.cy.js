@@ -66,11 +66,7 @@ describe('Orders: orders', () => {
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-      OrderLines.fillInPOLineInfoForExportWithLocation(
-        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
-        'Purchase',
-        location.institutionId,
-      );
+      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.editOrder();
       Orders.approveOrder();

@@ -38,14 +38,13 @@ describe('inventory', () => {
       item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
       InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
 
-      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` })
-        .then((holdings) => {
-          cy.getLocations({ limit: 1, query: `id="${holdings[0].permanentLocationId}"` }).then(
-            (location) => {
-              item.firstHoldingName = location.name;
-            },
-          );
-        });
+      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
+        cy.getLocations({ limit: 1, query: `id="${holdings[0].permanentLocationId}"` }).then(
+          (location) => {
+            item.firstHoldingName = location.name;
+          },
+        );
+      });
     });
   });
 
@@ -56,7 +55,7 @@ describe('inventory', () => {
   });
 
   it(
-    'C15186 Move one holdings with all it\'s associated items from one instance to another instance (firebird) (TaaS)',
+    "C15186 Move one holdings with all it's associated items from one instance to another instance (firebird) (TaaS)",
     { tags: [testTypes.extendedPath, devTeams.firebird] },
     () => {
       InventorySearchAndFilter.switchToItem();
