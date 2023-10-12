@@ -55,6 +55,8 @@ describe('Acquisition Units', () => {
       AcquisitionUnits.assignAdmin();
       AcquisitionUnits.editAU();
       AcquisitionUnits.selectViewCheckbox();
+      AcquisitionUnits.editAU();
+      AcquisitionUnits.selectEditCheckbox();
 
       cy.visit(TopMenu.fiscalYearPath);
       FinanceHelp.searchByAll(defaultFiscalYear.name);
@@ -82,14 +84,15 @@ describe('Acquisition Units', () => {
   });
 
   it(
-    'C375078 Acquisition unit restrictions for "Fiscal year" records (Edit, Create, Delete options are active) when user is NOT assigned to acquisition unit (thunderjet)',
+    'C375079 Acquisition unit restrictions for "Fiscal year" records (Create, Delete options are active) when user is NOT assigned to acquisition unit (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByAll(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);
       FiscalYears.clickActionsButtonInFY();
-      FiscalYears.checkEditButtonIsDisabled();
       FiscalYears.checkDeleteButtonIsDisabled();
+      FiscalYears.editFiscalYearDetails();
+      FiscalYears.editDescription();
       FiscalYears.clickNewFY();
       FiscalYears.checkAcquisitionUnitIsAbsentToAssign(defaultAcquisitionUnit.name);
     },

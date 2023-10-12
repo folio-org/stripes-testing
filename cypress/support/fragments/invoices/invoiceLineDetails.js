@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   KeyValue,
   Link,
   MultiColumnListCell,
@@ -34,9 +35,12 @@ export default {
 
     return InvoiceLineEditForm;
   },
-  checkInvoiceLineDetails({ invoiceLineInformation = [] } = {}) {
+  checkInvoiceLineDetails({ invoiceLineInformation = [], checkboxes = [] } = {}) {
     invoiceLineInformation.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+    checkboxes.forEach(({ locator, conditions }) => {
+      cy.expect(informationSection.find(Checkbox(locator)).has(conditions));
     });
   },
   checkFundDistibutionTableContent(records = []) {

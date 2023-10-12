@@ -118,6 +118,12 @@ describe('Invoices', () => {
           { key: 'Description', value: testData.orderLine.titleOrPackage },
           { key: 'Status', value: INVOICE_STATUSES.OPEN },
         ],
+        checkboxes: [
+          {
+            locator: { labelText: 'Release encumbrance' },
+            conditions: { disabled: true, checked: false },
+          },
+        ],
       });
     },
   );
