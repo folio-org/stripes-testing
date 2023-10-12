@@ -482,6 +482,9 @@ export default {
     if (profile.reEncumber) {
       cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
     }
+    if (profile.acquisitionsUnits) {
+      cy.do(TextField('Acquisitions units').fillIn(`"${profile.acquisitionsUnits}"`));
+    }
     // Order line information
     cy.do(titleField.fillIn(profile.title));
     if (profile.mustAcknowledgeReceivingNote) {
