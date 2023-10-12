@@ -1,6 +1,5 @@
-import uuid from 'uuid';
 import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -8,27 +7,19 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Requests from '../../support/fragments/requests/requests';
+import NewRequest from '../../support/fragments/requests/newRequest';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import FilterItems from '../../support/fragments/inventory/filterItems';
-import CreatePageTypeRequest from '../../support/fragments/inventory/createPageTypeRequest';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
-describe('Create Item or Title level request', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
+describe('Title Level Request. Create Item or Title level request', () => {
+  const tlrCheckboxExists = true;
+  let requestId;
   let userData = {};
-  const patronGroup = {
-    name: 'groupToRequest' + getRandomPostfix(),
-  };
   const instanceData = {
     title: `Instance ${getRandomPostfix()}`,
   };
@@ -36,18 +27,18 @@ describe('Create Item or Title level request', () => {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     itemBarcode: generateItemBarcode(),
   };
-  const requestPolicyBody = {
-    requestTypes: [REQUEST_TYPES.PAGE],
-    name: `page${getRandomPostfix()}`,
-    id: uuid(),
+  const patronGroup = {
+    name: 'groupTLR' + getRandomPostfix(),
   };
-  before('Preconditions', () => {
+
+  before('Preconditions:', () => {
     cy.getAdminToken()
       .then(() => {
         cy.loginAsAdmin({
           path: SettingsMenu.circulationTitleLevelRequestsPath,
           waiter: TitleLevelRequests.waitLoading,
         });
+        // TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -86,46 +77,18 @@ describe('Create Item or Title level request', () => {
               materialType: { id: testData.materialTypeId },
             },
           ],
-        }).then((specialInstanceIds) => {
-          testData.holdingId = specialInstanceIds.holdingIds[0].id;
         });
       });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser(
       [
         Permissions.uiRequestsCreate.gui,
         Permissions.uiRequestsView.gui,
         Permissions.uiRequestsEdit.gui,
-        Permissions.inventoryAll.gui,
         Permissions.requestsAll.gui,
+        Permissions.inventoryAll.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
@@ -135,11 +98,12 @@ describe('Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      cy.log('Test-1');
       cy.login(userData.username, userData.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
       });
+      cy.log('Test-2');
     });
   });
 
@@ -148,15 +112,10 @@ describe('Create Item or Title level request', () => {
       path: SettingsMenu.circulationTitleLevelRequestsPath,
       waiter: TitleLevelRequests.waitLoading,
     });
-    cy.get('@requestId').then((id) => {
-      Requests.deleteRequestViaApi(id);
-    });
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
-    RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    cy.deleteLoanType(testData.loanTypeId);
+    Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -165,27 +124,34 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
     'C347890 Check that user can create Item level request from instance page (vega) (TaaS)',
     { tags: [TestTypes.Extended, DevTeams.vega] },
     () => {
+      cy.log('new request-0');
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
-      // FilterItems.toggleAccordionItemsButton(testData.holdingId);
-      // InventoryInstance.openItemByBarcode(testData.itemBarcode);
-      inventoryInstance.checkNewRequestAtNewPane();
+      InventoryInstance.checkNewRequestAtNewPane();
+      cy.log('new request-1');
       cy.intercept('POST', 'circulation/requests').as('createRequest');
-      NewRequest.waitLoadingNewRequestPage(true);
+      cy.log('new request-2');
+      // Pay attention on the "Create title level request" check mark button (checked)
+      NewRequest.waitLoadingNewTitleRequestPage(tlrCheckboxExists);
+      // Pay attention on Title information accordion
       NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title]);
+      NewRequest.verifyTitleInformation();
+      // Pay attention on the Request information accordion
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
       NewRequest.enterRequesterInfoWithRequestType({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
       });
+      // Enter user barcode in Requester filed and click Enter button
+      NewRequest.verifyRequesterInformation(userData.username, userData.barcode, patronGroup.name);
       NewRequest.saveRequestAndClose();
       NewRequest.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
+        requestId = intercept.response.body.id;
         cy.wrap(intercept.response.body.id).as('requestId');
       });
     },

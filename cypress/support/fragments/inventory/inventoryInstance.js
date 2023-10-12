@@ -898,7 +898,7 @@ export default {
       Button({ id: 'edit-instance' }).exists(),
       Button({ id: 'copy-instance' }).exists(),
     ]);
-    cy.do(Button({ id: 'new-request' }).click());
+    cy.do(Button('New request').click());
   },
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
