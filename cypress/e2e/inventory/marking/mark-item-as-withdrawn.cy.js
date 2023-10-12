@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
 import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../../support/fragments/requests/requests';
@@ -100,7 +100,7 @@ describe('inventory', () => {
     it(
       'C10930: Mark items as withdrawn (folijet) (prokopovych)',
 
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);

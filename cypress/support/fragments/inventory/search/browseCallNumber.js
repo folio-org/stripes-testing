@@ -3,6 +3,7 @@ import {
   including,
   MultiColumnListCell,
   MultiColumnListHeader,
+  MultiColumnListRow,
   Section,
 } from '../../../../../interactors';
 
@@ -63,8 +64,22 @@ export default {
     cy.do(Button(including(callNumber)).click());
     cy.expect(instanceDetailsPane.exists());
   },
-
   clickBrowseBtn() {
     cy.do(browseButton.click());
+  },
+  valueInResultTableIsHighlighted(value) {
+    cy.do([
+      MultiColumnListCell(`${value}`).has({ innerHTML: including(`<strong>${value}</strong>`) }),
+    ]);
+  },
+  resultRowsIsInRequiredOder(rows) {
+    cy.do(
+      MultiColumnListCell({ content: rows[0] }).perform((element) => {
+        const rowNumber = parseInt(element.parentElement.getAttribute('data-row-inner'), 10);
+        rows.forEach((el, i) => {
+          cy.expect(MultiColumnListRow({ index: rowNumber + i }).has({ content: including(el) }));
+        });
+      }),
+    );
   },
 };
