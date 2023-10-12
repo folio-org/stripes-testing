@@ -404,7 +404,11 @@ export default {
   },
 
   verifyRecordAndMarcAuthIcon(accordion, expectedText) {
-    cy.expect(Accordion(accordion).find(HTML(including(expectedText))).exists());
+    cy.expect(
+      Accordion(accordion)
+        .find(HTML(including(expectedText)))
+        .exists(),
+    );
   },
 
   checkExistanceOfAuthorityIconInInstanceDetailPane(accordion) {
