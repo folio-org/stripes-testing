@@ -253,6 +253,14 @@ export default {
     cy.do(browseSearchAndFilterInput.choose('Other scheme'));
   },
 
+  selectBrowseDeweyDecimal() {
+    cy.do(browseButton.click());
+    // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(ONE_SECOND);
+    cy.do(browseSearchAndFilterInput.choose('Dewey Decimal classification'));
+  },
+
   showsOnlyNameTypeAccordion() {
     cy.expect(Accordion({ id: 'nameType' }).exists());
     cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
