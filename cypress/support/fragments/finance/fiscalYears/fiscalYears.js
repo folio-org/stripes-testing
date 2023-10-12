@@ -24,10 +24,10 @@ const numberOfSearchResultsHeader = '//*[@id="paneHeaderfiscal-year-results-pane
 const zeroResultsFoundText = '0 records found';
 // TODO: move all same buttons to one place related to Finance module
 const saveAndClose = Button('Save & Close');
-const agreements = Button('Agreements');
-const buttonNew = Button('New');
-const actions = Button('Actions');
-const edit = Button('Edit');
+const agreementsButton = Button('Agreements');
+const newButton = Button('New');
+const actionsButton = Button('Actions');
+const editButton = Button('Edit');
 const deleteButton = Button('Delete');
 const fiscalYearButton = Button('Fiscal year');
 const resetButton = Button({ id: 'reset-fiscal-years-filters' });
@@ -73,7 +73,7 @@ export default {
 
   createDefaultFiscalYear(fiscalYear) {
     cy.do([
-      buttonNew.click(),
+      newButton.click(),
       TextField('Name*').fillIn(fiscalYear.name),
       TextField('Code*').fillIn(fiscalYear.code),
       TextField({ name: 'periodStart' }).fillIn(fiscalYear.periodBeginDate),
@@ -119,7 +119,7 @@ export default {
   },
 
   editFiscalYearDetails: () => {
-    cy.do([actions.click(), edit.click()]);
+    cy.do([actionsButton.click(), editButton.click()]);
   },
 
   checkCreatedFiscalYear: (fiscalYearName) => {
@@ -148,7 +148,7 @@ export default {
 
   tryToCreateFiscalYearWithoutMandatoryFields: (fiscalYearName) => {
     cy.do([
-      buttonNew.click(),
+      newButton.click(),
       TextField('Name*').fillIn(fiscalYearName),
       saveAndClose.click(),
       TextField('Code*').fillIn('some code'),
@@ -156,7 +156,7 @@ export default {
       TextField({ name: 'periodStart' }).fillIn('05/05/2021'),
       saveAndClose.click(),
       // try to navigate without saving
-      agreements.click(),
+      agreementsButton.click(),
       Button('Keep editing').click(),
       Button('Cancel').click(),
       Button('Close without saving').click(),
@@ -191,7 +191,7 @@ export default {
 
   deleteFiscalYearViaActions: () => {
     cy.do([
-      actions.click(),
+      actionsButton.click(),
       deleteButton.click(),
       Button('Delete', { id: 'clickable-fiscal-year-remove-confirmation-confirm' }).click(),
     ]);
@@ -254,5 +254,27 @@ export default {
 
   selectAcquisitionUnitFilter(AUName) {
     cy.do([Button({ id: 'acqUnitIds-selection' }).click(), SelectionOption(AUName).click()]);
+  },
+
+  clickActionsButtonInFY() {
+    cy.do(actionsButton.click());
+  },
+
+  clickNewFY() {
+    cy.do(newButton.click());
+    cy.expect(saveAndClose.is({ disabled: true }));
+  },
+
+  checkEditButtonIsDisabled() {
+    cy.expect(editButton.is({ disabled: true }));
+  },
+
+  checkDeleteButtonIsDisabled() {
+    cy.expect(deleteButton.is({ disabled: true }));
+  },
+
+  checkAcquisitionUnitIsAbsentToAssign(AUName) {
+    cy.do(MultiSelect({ id: 'fy-acq-units' }).open());
+    cy.expect(SelectionOption(AUName).absent());
   },
 };
