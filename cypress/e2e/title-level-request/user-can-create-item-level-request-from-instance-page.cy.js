@@ -20,6 +20,7 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import FilterItems from '../../support/fragments/inventory/filterItems';
 import CreatePageTypeRequest from '../../support/fragments/inventory/createPageTypeRequest';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('Create Item or Title level request', () => {
   let addedCirculationRule;
@@ -173,7 +174,7 @@ describe('Create Item or Title level request', () => {
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
       // FilterItems.toggleAccordionItemsButton(testData.holdingId);
       // InventoryInstance.openItemByBarcode(testData.itemBarcode);
-      CreatePageTypeRequest.clickNewRequest(testData.itemBarcode);
+      inventoryInstance.checkNewRequestAtNewPane();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.waitLoadingNewRequestPage(true);
       NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title]);

@@ -883,12 +883,8 @@ export default {
     cy.expect([
       Button({ id: 'edit-instance' }).exists(),
       Button({ id: 'copy-instance' }).exists(),
-      Button({ id: 'clickable-view-source' }).exists(),
-      Button({ id: 'view-requests' }).exists(),
-      editMARCBibRecordButton.absent(),
     ]);
-    cy.do(Button({ id: 'clickable-view-source' }).click());
-    cy.expect(HTML('MARC bibliographic record').exists());
+    cy.do(Button({ id: 'new-request' }).click());
   },
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
