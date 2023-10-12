@@ -28,7 +28,7 @@ describe('data-import', () => {
     const title =
       'Earthquakes, mudslides, fires & riots : California & graphic design, 1936-1986 / Louise Sandhaus ; with contributions by Denise Gonzales Crisp, Lorraine Wild, Michael Worthington.';
     const jsonErrorMessage =
-      'org.folio.rest.core.exceptions.HttpException: Importer is not a member of the specified acquisitions group - operation is restricted';
+      'org.folio.rest.core.exceptions.HttpException: User does not have permissions to manage acquisition units assignments - operation is restricted';
     const filePathForCreateOrder = 'marcBibFileForC385666.mrc';
     const marcFileName = `C385666 autotestFileName ${getRandomPostfix()}`;
     const mappingProfile = {
@@ -116,7 +116,6 @@ describe('data-import', () => {
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openOrderTab();
         JsonScreenView.verifyContentInTab(jsonErrorMessage);
-        // org.folio.rest.core.exceptions.HttpException: User does not have permissions to manage acquisition units assignments - operation is restricted
       },
     );
   });
