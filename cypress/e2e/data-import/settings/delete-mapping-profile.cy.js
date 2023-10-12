@@ -7,13 +7,17 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 
 describe('data-import', () => {
   describe('Settings', () => {
     let user;
-    const notLinkedMappingProfile = `Autotest_mappingProfile${getRandomPostfix()}`;
-    const linkedMappingProfile = `Autotest_mappingProfile${getRandomPostfix()}`;
-    const actionProfile = `Autotest_actionProfile${getRandomPostfix()}`;
+    const notLinkedMappingProfile = `C2353_autotest_mappingProfile${getRandomStringCode(160)}`;
+    const linkedMappingProfile = `C2353_autotest_mappingProfile${getRandomPostfix()}`;
+    const actionProfile = `C2353_autotest_actionProfile${getRandomPostfix()}`;
+    const jobProfile = `C2353_autotest_jobProfile${getRandomPostfix()}`;
 
     before('login', () => {
       cy.getAdminToken().then(() => {
@@ -25,8 +29,13 @@ describe('data-import', () => {
               mappingProfileResponse.body.id,
             );
           },
-        );
-        // createt not linked mapping profile
+        ).then((actionProfileResponse) => {
+          NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+            jobProfile,
+            actionProfileResponse.body.id,
+          );
+        });
+        // create not linked mapping profile
         NewFieldMappingProfile.createMappingProfileViaApi(notLinkedMappingProfile);
       });
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -37,6 +46,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      JobProfiles.deleteJobProfile(jobProfile);
       ActionProfiles.deleteActionProfile(actionProfile);
       FieldMappingProfileView.deleteViaApi(linkedMappingProfile);
       Users.deleteViaApi(user.userId);
@@ -46,30 +56,20 @@ describe('data-import', () => {
       'C2353 Delete an existing field mapping profile (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        // #1 Go to "Settings" application-> "Data import" section-> "Field mapping profiles" section
         cy.visit(SettingsMenu.mappingProfilePath);
 
-        // #2 Click field mapping profiles from the list until you find one with an associated job profile
         FieldMappingProfiles.search(linkedMappingProfile);
         FieldMappingProfiles.selectMappingProfileFromList(linkedMappingProfile);
 
-        // #3 Click the Action menu at the top right to display possible actions
-        // #4 Click "Delete" option and confirm by clicking "Delete" again
         FieldMappingProfileView.delete(linkedMappingProfile);
-        // // You will be presented with a "Cannot delete field mapping profile" prompt and your only option will be to click "Close" and return to the Field mapping profile view
         FieldMappingProfileView.verifyCannotDeleteModalOpened();
         FieldMappingProfileView.closeCannotDeleteModal();
         FieldMappingProfileView.closeViewMode(linkedMappingProfile);
 
-        // #5 Click the field mapping profiles that were created in the precondition
         FieldMappingProfiles.search(notLinkedMappingProfile);
         FieldMappingProfiles.selectMappingProfileFromList(notLinkedMappingProfile);
 
-        // #6 Click the Action menu at the top right to display possible actions
-        // #7 Click the "Delete" button
-        // #8 Click  the "Delete" button in the confirmation modal window
         FieldMappingProfileView.delete(notLinkedMappingProfile);
-        // You are returned to the Field mapping profile list, you are shown a green popup notification of the deletion.
         FieldMappingProfiles.checkSuccessDelitionCallout(notLinkedMappingProfile);
         FieldMappingProfiles.search(notLinkedMappingProfile);
         FieldMappingProfiles.verifyMappingProfileAbsent();
