@@ -380,7 +380,11 @@ export default {
 
   fillInvoiceMappingProfile: (profile) => {
     // Summary section
-    fillSummaryInMappingProfile(profile);
+    cy.do([
+      nameField.fillIn(profile.name),
+      incomingRecordTypeField.choose(profile.incomingRecordType),
+      existingRecordType.choose(profile.typeValue),
+    ]);
     if (profile.description) {
       cy.do(
         Accordion('Summary')

@@ -358,6 +358,16 @@ export default {
     );
   },
 
+  deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId) {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
+      (instance) => {
+        instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+        instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      },
+    );
+  },
+
   createLoanType: (loanType) => {
     return cy
       .okapiRequest({
