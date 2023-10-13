@@ -296,7 +296,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       });
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
-      QuickMarcEditor.updateExistingField(testData.tags.tag245, '$a A New Record $0 3052044');
+      QuickMarcEditor.updateExistingField(testData.tags.tag245, '$a A New Record $0 3052044C388562');
       QuickMarcEditor.updateExistingField(newFields[3].tag, `${newFields[3].content} $0 y015016`);
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
@@ -307,7 +307,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       InventoryInstance.verifyAndClickLinkIcon(newFields[0].tag);
       MarcAuthorities.switchToSearch();
       InventoryInstance.verifySelectMarcAuthorityModal();
-      InventoryInstance.searchResultsWithOption('Identifier (all)', '3052044');
+      InventoryInstance.searchResultsWithOption('Identifier (all)', '3052044C388562');
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(newFields[0].tag, newFields[0].rowIndex + 1);
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -321,7 +321,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.updateExistingField(newFields[1].tag, newFields[1].content);
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
-      QuickMarcEditor.updateExistingField(newFields[2].tag, `${newFields[1].content} $0 sh85095299`);
+      QuickMarcEditor.updateExistingField(newFields[2].tag, `${newFields[1].content} $0 sh85095299C388562`);
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout('Field 650 has been linked to MARC authority record(s).');
