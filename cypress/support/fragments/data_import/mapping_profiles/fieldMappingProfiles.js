@@ -54,7 +54,7 @@ export default {
   createInvoiceMappingProfile: (mappingProfile, defaultProfile) => {
     search(defaultProfile);
     duplicate();
-    cy.wait(1000);
+    cy.wait(2000);
     NewFieldMappingProfile.fillInvoiceMappingProfile(mappingProfile);
     FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());

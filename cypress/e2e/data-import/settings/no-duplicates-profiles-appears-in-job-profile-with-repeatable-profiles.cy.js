@@ -340,6 +340,19 @@ describe('data-import', () => {
           profileName: `Import job profile with the same match and action profiles.${getRandomPostfix()}`,
           acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
         };
+        const jobProfileNameForChanging = `C385654 Import job profile with the same match and action profiles.${getRandomPostfix()}`;
+        const calloutMessage = `The job profile "${jobProfileNameForChanging}" was successfully created`;
+        const linkedProfileNames = [
+          collectionOfMatchProfiles[1].matchProfile.profileName,
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          collectionOfMatchProfiles[0].matchProfile.profileName,
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          collectionOfMappingAndActionProfiles[1].actionProfile.name,
+        ];
 
         // create Job profile
         cy.visit(SettingsMenu.jobProfilePath);
@@ -383,7 +396,17 @@ describe('data-import', () => {
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        // JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfileView.duplicate();
+        NewJobProfile.fillProfileName(jobProfileNameForChanging);
+        NewJobProfile.unlinkProfile(1);
+        NewJobProfile.saveAndClose();
+        JobProfileView.verifyCalloutMessage(calloutMessage);
+        JobProfileView.verifyJobProfileOpened();
+        JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
+        JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
+
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfiles.deleteJobProfile(jobProfileNameForChanging);
       },
     );
   });
