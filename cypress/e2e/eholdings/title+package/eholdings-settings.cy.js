@@ -6,6 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -49,7 +50,7 @@ describe('eHoldings', () => {
 
     it(
       'C9236 Settings: Add/Edit a custom label(spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
       () => {
         cy.visit(SettingsMenu.eHoldingsPath).then(() => {
           EHoldingsPackage.updateCustomLabelInSettings(testData.label1Value, 1);
