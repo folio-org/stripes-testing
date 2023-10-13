@@ -33,7 +33,7 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `C343338 autoTestMappingProf.${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
       batchGroup: BATCH_GROUP.FOLIO,
       organizationName: VENDOR_NAMES.GOBI,
@@ -103,7 +103,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC343338.edi', fileName);
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);

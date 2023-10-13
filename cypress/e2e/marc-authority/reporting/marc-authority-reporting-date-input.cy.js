@@ -33,7 +33,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
   });
 
   it(
-    'C375218 Date input via date pickers in "Set date range for MARC authority headings updates (CSV) report" modal (spitfire)',
+    'C375218 Date input via date pickers in "Set date range for MARC authority headings updates (CSV) report" modal (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       MarcAuthorities.clickActionsAndReportsButtons();
@@ -75,7 +75,10 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
       MarcAuthorities.checkValidationError({ name: 'toDate', error: '"End date" is required' });
 
       MarcAuthorities.fillReportModal(tomorrow, today);
-      MarcAuthorities.checkValidationError({ name: 'toDate', error: '"End date" must be greater than or equal to "Start date"' });
+      MarcAuthorities.checkValidationError({
+        name: 'toDate',
+        error: '"End date" must be greater than or equal to "Start date"',
+      });
 
       MarcAuthorities.fillReportModal('13/02/2023', '13/02/2023');
       MarcAuthorities.checkValidationError({ name: 'fromDate', error: '"Start date" is required' });

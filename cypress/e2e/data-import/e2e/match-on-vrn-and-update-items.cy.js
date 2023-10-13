@@ -203,7 +203,8 @@ describe('data-import', () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();
-          OrderDetails.checkIsOrderOpened(ORDER_STATUSES.OPEN);
+          Orders.selectStatusInSearch(ORDER_STATUSES.OPEN);
+          OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
           OrderDetails.checkIsItemsInInventoryCreated(item.title, 'Main Library');
           // check receiving pieces are created
           cy.visit(TopMenu.ordersPath);
@@ -263,7 +264,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
-        JobProfiles.searchJobProfileForImport(jobProfilesData.name);
+        JobProfiles.search(jobProfilesData.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
         cy.wait(10000);

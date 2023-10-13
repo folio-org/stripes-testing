@@ -72,7 +72,6 @@ describe('Orders: Receiving and Check-in', () => {
           Orders.createPOLineViaActions();
           OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
           OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-            `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
             'Purchase',
             locationResponse.institutionId,
             '2',

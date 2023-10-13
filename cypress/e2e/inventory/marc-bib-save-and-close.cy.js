@@ -40,7 +40,7 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-        JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+        JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -67,7 +67,7 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
   });
 
   it(
-    'C360097 Verify updates are saved after clicking "Save & keep editing" button in "MARC Bibliographic" edit mode (Spitfire)',
+    'C360097 Verify updates are saved after clicking "Save & keep editing" button in "MARC Bibliographic" edit mode (Spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       QuickMarcEditor.updateExistingFieldContent(testData.tag245rowIndex, testData.tag245value1);

@@ -15,6 +15,7 @@ describe('data-import', () => {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       name: `C2348 autotest action profile ${getRandomPostfix()}`,
     };
+    const calloutMessage = `The action profile "${actionProfile.name}" was successfully updated`;
 
     before('create user', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -47,7 +48,7 @@ describe('data-import', () => {
         ActionProfileEdit.changeAction();
         ActionProfileEdit.save();
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
-        ActionProfiles.checkCalloutMessage(actionProfile.name);
+        ActionProfiles.checkCalloutMessage(calloutMessage);
         ActionProfileView.verifyAction();
       },
     );

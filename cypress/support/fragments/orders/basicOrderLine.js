@@ -21,7 +21,7 @@ const getDefaultOrderLine = ({
   productIds = [],
   referenceNumbers = [],
   vendorAccount = '1234',
-}) => {
+} = {}) => {
   const defaultOrderLine = {
     id: uuid(),
     checkinItems,

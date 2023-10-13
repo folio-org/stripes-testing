@@ -13,4 +13,14 @@ export default {
         .exists(),
     ));
   },
+
+  getUserFeesFines: (userId) => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `feefineactions?query=(userId==${userId})&limit=10000`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
 };

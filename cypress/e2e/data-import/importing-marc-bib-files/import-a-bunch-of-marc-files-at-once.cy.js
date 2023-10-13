@@ -38,7 +38,7 @@ describe('data-import', () => {
           DataImport.verifyUploadState();
           DataImport.uploadBunchOfFiles(filePathForUpload, upload.quantityOfFiles, upload.fileName);
           DataImport.waitFileIsUploaded();
-          JobProfiles.searchJobProfileForImport(jobProfileToRun);
+          JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(upload.fileName);
 

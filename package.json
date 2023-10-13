@@ -1,6 +1,6 @@
 {
   "name": "@folio/stripes-testing",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
   "publishConfig": {
@@ -36,7 +36,7 @@
     "@interactors/html": "^1.0.0-rc1.4",
     "@interactors/keyboard": "^1.0.0-rc1.5",
     "axe-core": "4.3.3",
-    "cypress": "12.17.4",
+    "cypress": "12.14.0",
     "cypress-cloud": "^1.9.3",
     "cypress-testrail-simple": "^3.1.0",
     "date-fns": "^2.16.1",
@@ -50,7 +50,7 @@
     "@cypress/request": "2.88.7",
     "@folio/eslint-config-stripes": "^6.4.0",
     "@interactors/with-cypress": "^1.0.0-rc1.3",
-    "@shelex/cypress-allure-plugin": "^2.23.0",
+    "@shelex/cypress-allure-plugin": "^2.40.0",
     "bigtest": "^0.14.0",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
@@ -69,7 +69,7 @@
     "uuid": "^3.4.0"
   },
   "resolutions": {
-    "cypress": "12.17.4",
+    "cypress": "12.14.0",
     "chromedriver": "116.0.0"
   },
   "overrides": {

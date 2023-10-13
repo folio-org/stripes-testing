@@ -44,7 +44,7 @@ describe('remote-storage-configuration', () => {
       Configurations.editConfiguration(name, { provider: dematicStagingDirector.title });
       Configurations.closeWithSaving();
       Configurations.verifyEditedConfiguration(name, {
-        provider: `${dematicStagingDirector.title} (TCP/IP)`,
+        provider: `${dematicStagingDirector.title}`,
       });
       Configurations.verifyDataSynchronizationSettingsAccordion(true);
 

@@ -13,6 +13,10 @@ import {
   MultiSelect,
   MultiSelectOption,
   TextInput,
+  FieldSet,
+  Selection,
+  RepeatableFieldItem,
+  RepeatableField,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -21,11 +25,13 @@ const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
 const sourceSelect = rootForm.find(Select({ name: 'sourceId' }));
 const readonlyFields = [holdingsHrId, sourceSelect];
 const callNumber = rootForm.find(TextArea({ name: 'callNumber' }));
+const statisticalCodeFieldSet = FieldSet('Statistical code');
+const addStatisticalCodeButton = Button('Add statistical code');
+const callNumberType = rootForm.find(Select('Call number type'));
 
 export default {
   saveAndClose: () => {
     cy.do(rootForm.find(Button('Save & close')).click());
-    cy.expect(rootForm.absent());
   },
   waitLoading: () => {
     cy.expect(rootForm.exists());
@@ -40,6 +46,34 @@ export default {
       SelectionList().filter(location),
       SelectionList().select(including(location)),
     ]);
+  },
+  clickAddStatisticalCode(rowIndex = 1) {
+    cy.do(addStatisticalCodeButton.click());
+    cy.expect(
+      statisticalCodeFieldSet
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Selection())
+        .exists(),
+    );
+  },
+  chooseStatisticalCode(code, rowIndex = 1) {
+    cy.do([
+      statisticalCodeFieldSet
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Selection())
+        .choose(including(code)),
+    ]);
+  },
+  addStatisticalCode(code) {
+    this.clickAddStatisticalCode();
+    this.chooseStatisticalCode(code);
+  },
+  removeStatisticalCode(code) {
+    cy.do(
+      RepeatableFieldItem({ singleValue: including(code) })
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
   },
   clearTemporaryLocation: () => {
     cy.do([
@@ -70,5 +104,27 @@ export default {
   },
   verifyNoCalloutErrorMessage() {
     cy.expect(Callout({ type: calloutTypes.error }).absent());
+  },
+  checkErrorMessageForStatisticalCode: (isPresented = true) => {
+    if (isPresented) {
+      cy.expect(statisticalCodeFieldSet.has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
+  },
+  verifyStatisticalCodesCount(itemCount) {
+    if (itemCount === 0) {
+      cy.do(statisticalCodeFieldSet.absent());
+    } else {
+      cy.do(RepeatableField('Statistical code').has({ itemCount }));
+    }
+  },
+  chooseCallNumberType(type) {
+    cy.do(callNumberType.choose(type));
   },
 };

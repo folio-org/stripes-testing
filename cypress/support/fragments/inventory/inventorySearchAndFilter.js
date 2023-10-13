@@ -245,6 +245,14 @@ export default {
     cy.do(Select('Search field index').choose('Contributors'));
   },
 
+  selectBrowseOtherScheme() {
+    cy.do(browseButton.click());
+    // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(ONE_SECOND);
+    cy.do(browseSearchAndFilterInput.choose('Other scheme'));
+  },
+
   showsOnlyNameTypeAccordion() {
     cy.expect(Accordion({ id: 'nameType' }).exists());
     cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
@@ -656,5 +664,9 @@ export default {
 
   searchByStatus(status) {
     cy.do([Button({ id: 'accordion-toggle-button-itemStatus' }).click(), Checkbox(status).click()]);
+  },
+
+  selectBrowseOption(option) {
+    cy.do(browseSearchAndFilterInput.choose(option));
   },
 };

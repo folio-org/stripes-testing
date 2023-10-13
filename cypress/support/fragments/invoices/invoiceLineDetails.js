@@ -11,6 +11,7 @@ import {
   including,
 } from '../../../../interactors';
 import InvoiceLineEditForm from './invoiceLineEditForm';
+import FundDetails from '../finance/funds/fundDetails';
 import TransactionDetails from '../finance/transactions/transactionDetails';
 
 // invoice lines details
@@ -34,15 +35,13 @@ export default {
 
     return InvoiceLineEditForm;
   },
-  checkInvoiceLineDetails(invoiceLine) {
-    cy.expect([
-      invoiceLineDetailsPane.exists(),
-      informationSection
-        .find(KeyValue('Description'))
-        .has({ value: including(invoiceLine.description) }),
-      informationSection.find(KeyValue('Status')).has({ value: including(invoiceLine.status) }),
-      informationSection.find(Checkbox({ disabled: true, text: 'Release encumbrance' })).exists(),
-    ]);
+  checkInvoiceLineDetails({ invoiceLineInformation = [], checkboxes = [] } = {}) {
+    invoiceLineInformation.forEach(({ key, value }) => {
+      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+    checkboxes.forEach(({ locator, conditions }) => {
+      cy.expect(informationSection.find(Checkbox(locator)).has(conditions));
+    });
   },
   checkFundDistibutionTableContent(records = []) {
     records.forEach((record, index) => {
@@ -58,17 +57,27 @@ export default {
       ]);
     });
   },
-  openEncumbrancePane(index = 0) {
-    const budget = fundDistributionsSection
-      .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-      .find(MultiColumnListCell({ columnIndex: 5 }))
-      .find(Link());
+  openFundDetailsPane(rowIndex = 0) {
+    this.clickTheLinkInFundDetailsSection({ rowIndex });
 
-    cy.do([budget.perform((el) => el.removeAttribute('target')), budget.click()]);
+    FundDetails.waitLoading();
+
+    return FundDetails;
+  },
+  openEncumbrancePane(rowIndex = 0) {
+    this.clickTheLinkInFundDetailsSection({ rowIndex, columnIndex: 5 });
 
     TransactionDetails.waitLoading();
 
     return TransactionDetails;
+  },
+  clickTheLinkInFundDetailsSection({ rowIndex = 0, columnIndex = 0 } = {}) {
+    const link = fundDistributionsSection
+      .find(MultiColumnListRow({ rowIndexInParent: `row-${rowIndex}` }))
+      .find(MultiColumnListCell({ columnIndex }))
+      .find(Link());
+
+    cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
   },
   getInvoiceLinesViaApi(searchParams) {
     return cy

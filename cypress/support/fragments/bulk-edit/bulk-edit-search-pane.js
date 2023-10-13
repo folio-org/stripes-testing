@@ -511,8 +511,8 @@ export default {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
   },
 
-  isHoldingsRadioChecked() {
-    cy.expect(holdingsRadio.has({ checked: true }));
+  isHoldingsRadioChecked(checked = true) {
+    cy.expect(holdingsRadio.has({ checked }));
   },
 
   verifyRadioHidden(name) {

@@ -26,7 +26,7 @@ describe('data-import', () => {
       DataImport.verifyUploadState();
       // upload a marc file for creating of the new instance, holding and item
       DataImport.uploadFile(filePathForUpload, fileName);
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);
@@ -79,7 +79,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
-        JobProfiles.searchJobProfileForImport('Default - Create Holdings and SRS MARC Holdings');
+        JobProfiles.search('Default - Create Holdings and SRS MARC Holdings');
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
         Logs.openFileDetails(editedMarcFileName);

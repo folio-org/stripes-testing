@@ -247,6 +247,7 @@ export default {
   },
 
   endCheckInSessionAndCheckDetailsOfCheckInAreCleared: () => {
+    cy.wait(2000);
     cy.do(endSessionButton.click());
     cy.expect(
       PaneContent({ id: 'check-in-content' })
