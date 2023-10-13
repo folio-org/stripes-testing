@@ -8,6 +8,7 @@ export default {
     exceptionDeleteModal.has({
       message:
           'This match profile cannot be deleted, as it is in use by one or more job profiles.',
+      header: 'Cannot delete match profile',
     }),
   ),
 };

@@ -3,12 +3,8 @@ import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -32,8 +28,6 @@ describe('data-import', () => {
     };
     const profile = {
       createJobProfile: `autotest jobProfileForCreate.${getRandomPostfix()}`,
-      createActionProfile: `autotest actionProfileForCreate${getRandomPostfix()}`,
-      createMappingProfile: `autotest mappingProfileForCreate${getRandomPostfix()}`,
       createMatchProfile: `autotest matchProfileForCreate${getRandomPostfix()}`,
     };
 
@@ -42,27 +36,16 @@ describe('data-import', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
-        NewFieldMappingProfile.createMappingProfileViaApi(profile.createMappingProfile).then(
-          (mappingProfileResponse) => {
-            NewActionProfile.createActionProfileViaApi(
-              profile.createActionProfile,
-              mappingProfileResponse.body.id,
-            ).then((actionProfileResponse) => {
-              NewMatchProfile.createMatchProfileViaApi(profile.createMatchProfile).then(
-                (matchProfileResponse) => {
-                  NewJobProfile.createJobProfileViaApi(
-                    profile.createJobProfile,
-                    matchProfileResponse.body.id,
-                    actionProfileResponse.body.id,
-                  );
-                },
-              );
-            });
-
-            cy.login(user.username, user.password);
-            cy.visit(SettingsMenu.matchProfilePath);
+        NewMatchProfile.createMatchProfileViaApi(profile.createMatchProfile).then(
+          (matchProfileResponse) => {
+            NewJobProfile.createJobProfileWithLinkedMatchProfileViaApi(
+              profile.createJobProfile,
+              matchProfileResponse.body.id,
+            );
           },
         );
+        cy.login(user.username, user.password);
+        cy.visit(SettingsMenu.matchProfilePath);
       });
       MatchProfiles.createMatchProfile(matchProfileToDelete);
       MatchProfileView.closeViewMode();
@@ -70,9 +53,7 @@ describe('data-import', () => {
 
     after('Delete test data', () => {
       JobProfiles.deleteJobProfile(profile.createJobProfile);
-      ActionProfiles.deleteActionProfile(profile.createActionProfile);
       MatchProfiles.deleteMatchProfile(profile.createMatchProfile);
-      FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
       Users.deleteViaApi(user.userId);
     });
 
