@@ -40,7 +40,7 @@ describe('Agreement Notes', () => {
   });
 
   it(
-    'C1309 Edit a note on an Agreement record (erm)',
+    'C1309 Edit a note on an Agreement record (erm) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.erm] },
     () => {
       const changedNote = {

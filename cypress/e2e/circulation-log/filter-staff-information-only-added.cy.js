@@ -16,6 +16,10 @@ import PaymentMethods from '../../support/fragments/settings/users/paymentMethod
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import SearchResults from '../../support/fragments/circulation-log/searchResults';
+import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 
 let userData = {};
 const ownerData = {};
@@ -125,6 +129,25 @@ describe('circulation-log', () => {
       SearchPane.searchByItemBarcode(item.barcode);
       SearchPane.verifyResultCells();
       SearchPane.checkResultSearch(searchResultsData);
+    },
+  );
+
+  it(
+    'C17048 Check the Actions button from filtering Circulation log by Staff only information added (volaris)',
+    { tags: [testTypes.criticalPath, devTeams.volaris] },
+    () => {
+      cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
+      SearchPane.setFilterOptionFromAccordion('fee', 'Staff information only added');
+      SearchPane.findResultRowIndexByContent(userData.barcode).then((rowIndex) => {
+        SearchResults.chooseActionByRow(rowIndex, 'Fee/fine details');
+        FeeFineDetails.waitLoading();
+        TopMenuNavigation.navigateToApp('Circulation log');
+        SearchResults.chooseActionByRow(rowIndex, 'User details');
+        Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
+        TopMenuNavigation.navigateToApp('Circulation log');
+        SearchResults.clickOnCell(item.barcode, Number(rowIndex));
+        ItemRecordView.waitLoading();
+      });
     },
   );
 });
