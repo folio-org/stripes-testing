@@ -98,12 +98,10 @@ describe('Title Level Request. Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      cy.log('Test-1');
       cy.login(userData.username, userData.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
       });
-      cy.log('Test-2');
     });
   });
 
@@ -132,9 +130,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       cy.log('new request-0');
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
       InventoryInstance.checkNewRequestAtNewPane();
-      cy.log('new request-1');
       cy.intercept('POST', 'circulation/requests').as('createRequest');
-      cy.log('new request-2');
       // Pay attention on the "Create title level request" check mark button (checked)
       NewRequest.waitLoadingNewTitleRequestPage(tlrCheckboxExists);
       // Pay attention on Title information accordion
