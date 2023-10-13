@@ -82,7 +82,7 @@ describe('MARC -> MARC Holdings', () => {
   });
 
   it(
-    'C358991 Verify that field which moved above "852" retains all values in the subfield text box when edit "MARC Holdings" record (Spitfire)',
+    'C358991 Verify that field which moved above "852" retains all values in the subfield text box when edit "MARC Holdings" record (Spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventoryInstances.searchBySource('MARC');

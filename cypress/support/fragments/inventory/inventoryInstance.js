@@ -104,6 +104,7 @@ const mclLinkHeader = MultiColumnListHeader({ id: 'list-column-link' });
 const mclAuthRefTypeHeader = MultiColumnListHeader({ id: 'list-column-authreftype' });
 const mclHeadingRef = MultiColumnListHeader({ id: 'list-column-headingref' });
 const mclHeadingType = MultiColumnListHeader({ id: 'list-column-headingtype' });
+const contributorsList = MultiColumnList({ id: 'list-contributors' });
 const buttonPrevPageDisabled = Button({
   id: 'authority-result-list-prev-paging-button',
   disabled: true,
@@ -131,6 +132,7 @@ const unlinkIconButton = Button({ icon: 'unlink' });
 const itemBarcodeField = TextField({ name: 'barcode' });
 const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
+const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 
 const validOCLC = {
   id: '176116217',
@@ -213,10 +215,20 @@ const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
 const verifyContributor = (indexRow, indexColumn, value) => {
   cy.expect(
     contributorAccordion
-      .find(MultiColumnList({ id: 'list-contributors' }))
+      .find(contributorsList)
       .find(MultiColumnListRow({ index: indexRow }))
       .find(MultiColumnListCell({ columnIndex: indexColumn }))
       .has({ content: value }),
+  );
+};
+
+const verifyContributorWithMarcAppLink = (indexRow, indexColumn, value) => {
+  cy.expect(
+    contributorAccordion
+      .find(contributorsList)
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell({ columnIndex: indexColumn }))
+      .has({ content: including(value) }),
   );
 };
 
@@ -266,6 +278,7 @@ export default {
   openItemByBarcode,
   verifyAlternativeTitle,
   verifyContributor,
+  verifyContributorWithMarcAppLink,
 
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
@@ -391,7 +404,11 @@ export default {
   },
 
   verifyRecordAndMarcAuthIcon(accordion, expectedText) {
-    cy.expect(Accordion(accordion).find(HTML(including(expectedText))).exists());
+    cy.expect(
+      Accordion(accordion)
+        .find(HTML(including(expectedText)))
+        .exists(),
+    );
   },
 
   checkExistanceOfAuthorityIconInInstanceDetailPane(accordion) {
@@ -922,7 +939,7 @@ export default {
     cy.expect(section.find(Button(including('Contributor'))).exists());
     cy.expect(
       Accordion('Contributor')
-        .find(MultiColumnList({ id: 'list-contributors' }))
+        .find(contributorsList)
         .find(MultiColumnListCell(including(text)))
         .exists(),
     );
@@ -993,6 +1010,25 @@ export default {
     cy.expect(Button('Actions').exists());
   },
 
+  checkMarcAppIconExist: (indexRow) => {
+    cy.expect(
+      contributorAccordion
+        .find(contributorsList)
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(marcAuthorityAppIcon)
+        .exists(),
+    );
+  },
+
+  checkMarcAppIconAbsent: (indexRow) => {
+    cy.expect(
+      contributorAccordion
+        .find(contributorsList)
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(marcAuthorityAppIcon)
+        .absent(),
+    );
+  },
   verifyCheckedOutDate: (date) => {
     cy.expect(itemStatusKeyValue.has({ subValue: including(date) }));
   },

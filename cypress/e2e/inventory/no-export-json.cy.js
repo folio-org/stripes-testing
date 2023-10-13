@@ -15,17 +15,19 @@ const item = {
 
 describe('ui-inventory: query search', () => {
   before('create inventory instance', () => {
-    cy.createTempUser([permissions.uiInventoryViewCreateEditInstances.gui]).then((userProperties) => {
-      user = userProperties;
-      item.instanceId = InventoryInstances.createInstanceViaApi(
-        item.instanceName,
-        item.itemBarcode,
-      );
-      cy.login(user.username, user.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-    });
+    cy.createTempUser([permissions.uiInventoryViewCreateEditInstances.gui]).then(
+      (userProperties) => {
+        user = userProperties;
+        item.instanceId = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+      },
+    );
   });
 
   after('Delete all data', () => {
@@ -44,7 +46,10 @@ describe('ui-inventory: query search', () => {
       InventorySearchAndFilter.verifyNoExportJsonOption();
       InventorySearchAndFilter.resetAll();
       InventorySearchAndFilter.switchToHoldings();
-      InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+      InventorySearchAndFilter.searchByParameter(
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+        item.instanceName,
+      );
       InventorySearchAndFilter.verifyNoExportJsonOption();
       InventorySearchAndFilter.resetAll();
       InventorySearchAndFilter.switchToItem();

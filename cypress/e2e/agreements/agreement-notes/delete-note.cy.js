@@ -38,7 +38,7 @@ describe('Agreement Notes', () => {
     Agreements.deleteViaApi(agreementId);
   });
 
-  it('C1312 Delete a note (erm)', { tags: [TestTypes.extendedPath, DevTeams.erm] }, () => {
+  it('C1312 Delete a note (erm) (TaaS)', { tags: [TestTypes.extendedPath, DevTeams.erm] }, () => {
     AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
     AgreementViewDetails.openNotesSection();
     AgreementViewDetails.verifySpecialNotesRow({

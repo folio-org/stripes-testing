@@ -14,6 +14,7 @@ import {
   Checkbox,
   Dropdown,
   DropdownMenu,
+  Callout,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -481,6 +482,9 @@ export default {
     addVendor(profile);
     if (profile.reEncumber) {
       cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
+    }
+    if (profile.acquisitionsUnits) {
+      cy.do(TextField('Acquisitions units').fillIn(`"${profile.acquisitionsUnits}"`));
     }
     // Order line information
     cy.do(titleField.fillIn(profile.title));
@@ -1024,5 +1028,9 @@ export default {
 
     cy.do(fieldName.click());
     cy.expect(fieldName.has({ error: 'Please enter a value' }));
+  },
+
+  checkCalloutMessage: (message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
   },
 };
