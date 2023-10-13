@@ -56,7 +56,7 @@ describe('Users-loans App', () => {
   });
 
   it(
-    'C396360 Save invoice fiscal year after fund distribution change to fund using different ledger if FY was undefined(Thunderjet) (TaaS)',
+    'C396360 Save invoice fiscal year after fund distribution change to fund using different ledger if FY was undefined(Thunderjet)',
     { tags: [testTypes.criticalPath, devTeams.thunderjet] },
     () => {
       cy.visit(topMenu.invoicesPath);
