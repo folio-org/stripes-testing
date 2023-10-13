@@ -7,6 +7,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import UserEdit from '../../support/fragments/users/userEdit';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import Users from '../../support/fragments/users/users';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 
 describe('Manual Fees/Fines', () => {
   const testData = {
@@ -57,12 +58,38 @@ describe('Manual Fees/Fines', () => {
       UsersSearchPane.searchByKeywords(testData.user.username);
       // Go to User Information for patron
       UsersSearchPane.selectUserFromList(testData.user.username);
-      // Expand Fee/Fine section of User Information
       UsersCard.waitLoading();
+      // Expand Fee/Fine section of User Information
       UsersCard.openFeeFines();
       // Press Create fee/fine button
       UsersCard.startFeeFineAdding();
       // New fee/fine page will open as shown in attachment
+      NewFeeFine.waitLoading();
+      NewFeeFine.checkInitialState(
+        { ...testData.user, middleName: 'testMiddleName' },
+        ownerBody.name,
+      );
+    },
+  );
+
+  it(
+    'C450 Verify behavior when "New fee/fine" button pressed within Fee/Fine History (vega) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    () => {
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      // Find active user in FOLIO
+      UsersSearchPane.searchByKeywords(testData.user.username);
+      // Go to User Information for patron
+      UsersSearchPane.selectUserFromList(testData.user.username);
+      UsersCard.waitLoading();
+      // Expand Fee/Fine section of User Information
+      UsersCard.openFeeFines();
+      // Click on "View all fees/fines" link
+      UsersCard.viewAllFeesFines();
+      // Click on "Actions" button > select "+ New fee/fine" action
+      UserAllFeesFines.createFeeFine();
+      // "New fee/fine" modal opened
       NewFeeFine.waitLoading();
       NewFeeFine.checkInitialState(
         { ...testData.user, middleName: 'testMiddleName' },
