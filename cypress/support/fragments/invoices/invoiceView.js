@@ -29,6 +29,7 @@ const newBlankLineButton = Button('New blank line');
 
 // information section
 const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
+const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
 
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
@@ -106,7 +107,12 @@ export default {
       }
     });
   },
-  checkInvoiceDetails({ title, invoiceInformation = [], invoiceLines } = {}) {
+  checkInvoiceDetails({
+    title,
+    invoiceInformation = [],
+    invoiceLines,
+    voucherInformation = [],
+  } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
     }
@@ -118,13 +124,22 @@ export default {
     }
 
     if (invoiceLines) {
-      cy.expect(
-        invoiceLinesSection.has({
-          text: including(`Total number of invoice lines: ${invoiceLines.length}`),
-        }),
-      );
+      this.checkInvoiceLinesCount(invoiceLines.length);
       this.checkTableContent(invoiceLines);
     }
+
+    if (voucherInformation.length) {
+      voucherInformation.forEach(({ key, value }) => {
+        cy.expect(voucherInformationSection.find(KeyValue(key)).has({ value: including(value) }));
+      });
+    }
+  },
+  checkInvoiceLinesCount(count) {
+    cy.expect(
+      invoiceLinesSection.has({
+        text: including(`Total number of invoice lines: ${count}`),
+      }),
+    );
   },
   approveInvoice({ isApprovePayEnabled = false } = {}) {
     cy.do([

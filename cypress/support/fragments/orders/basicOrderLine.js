@@ -12,6 +12,7 @@ const getDefaultOrderLine = ({
   title = `autotest_po_line_name-${getRandomPostfix()}`,
   instanceId,
   checkinItems = false,
+  purchaseOrderId,
   specialLocationId,
   specialMaterialTypeId,
   acquisitionMethod = '',
@@ -71,7 +72,7 @@ const getDefaultOrderLine = ({
       trial: false,
       accessProvider: null,
     },
-    purchaseOrderId: '',
+    purchaseOrderId,
     receiptStatus: 'Pending',
     reportingCodes: [],
     source: 'User',
@@ -82,7 +83,7 @@ const getDefaultOrderLine = ({
       referenceNumbers,
     },
   };
-  if (!defaultOrderLine.physical.materialType) {
+  if (specialLocationId && !specialMaterialTypeId) {
     NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType()).then((mtypes) => {
       defaultOrderLine.physical.materialType = mtypes.body.id;
     });

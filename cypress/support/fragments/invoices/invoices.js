@@ -112,6 +112,7 @@ const getDefaultInvoiceLine = ({
 
 export default {
   getDefaultInvoice,
+  getDefaultInvoiceLine,
   getInvoiceViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -171,7 +172,7 @@ export default {
       }
     });
   },
-  createInviceLineViaApi(invoiceLineProperties) {
+  createInvoiceLineViaApi(invoiceLineProperties) {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -201,7 +202,7 @@ export default {
           accountingCode,
           releaseEncumbrance,
         });
-        this.createInviceLineViaApi(invoiceLine);
+        this.createInvoiceLineViaApi(invoiceLine);
       },
     );
     return cy.get('@invoice');

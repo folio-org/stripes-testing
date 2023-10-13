@@ -35,13 +35,17 @@ export default {
 
     return InvoiceLineEditForm;
   },
-  checkInvoiceLineDetails({ invoiceLineInformation = [], checkboxes = [] } = {}) {
+  checkInvoiceLineDetails({ invoiceLineInformation = [], checkboxes = [], fundDistribution } = {}) {
     invoiceLineInformation.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
     });
     checkboxes.forEach(({ locator, conditions }) => {
       cy.expect(informationSection.find(Checkbox(locator)).has(conditions));
     });
+
+    if (fundDistribution) {
+      this.checkFundDistibutionTableContent([fundDistribution]);
+    }
   },
   checkFundDistibutionTableContent(records = []) {
     records.forEach((record, index) => {
@@ -59,6 +63,22 @@ export default {
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
             .find(MultiColumnListCell({ columnIndex: 1 }))
             .has({ content: including(record.expenseClass) }),
+        );
+      }
+      if (record.amount) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 3 }))
+            .has({ content: including(record.amount) }),
+        );
+      }
+      if (record.initial) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .has({ content: including(record.initial) }),
         );
       }
       if (record.encumbrance) {

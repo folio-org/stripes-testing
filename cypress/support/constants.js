@@ -135,6 +135,12 @@ export const INVOICE_STATUSES = {
   PAID: 'Paid',
 };
 
+export const VOUCHER_STATUSES = {
+  AWAITING_PAYMENT: 'Awaiting payment',
+  CANCELLED: 'Cancelled',
+  PAID: 'Paid',
+};
+
 export const ORDER_STATUSES = {
   OPEN: 'Open',
   PENDING: 'Pending',
