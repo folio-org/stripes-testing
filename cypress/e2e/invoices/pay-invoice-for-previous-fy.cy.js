@@ -28,32 +28,10 @@ import { INVOICE_STATUSES, ORDER_STATUSES } from '../../support/constants';
 describe('Invoices', () => {
   const isApprovePayEnabled = true;
   const date = new Date();
-  const code = CodeTools(4);
-  const fiscalYears = {
-    prev: {
-      ...FiscalYears.getDefaultFiscalYear(),
-      code: `${code}${StringTools.randomFourDigitNumber()}`,
-    },
-    next: {
-      ...FiscalYears.getDefaultFiscalYear(),
-      code: `${code}${StringTools.randomFourDigitNumber()}`,
-      periodStart: new Date(date.getFullYear(), date.getMonth(), date.getDate() + 3),
-      periodEnd: new Date(date.getFullYear() + 1, 11, 31),
-    },
-  };
-  const organization = NewOrganization.getDefaultOrganization();
-  const testData = {
-    organization,
-    order: { ...NewOrder.defaultOngoingTimeOrder, vendor: organization.id, reEncumber: true },
-    expenseClass: ExpenseClasses.getDefaultExpenseClass(),
-    invoice: {},
-    user: {},
-  };
 
-  before('Create test data', () => {
+  const prepareTestData = (testData, fiscalYears) => {
     cy.getAdminToken()
       .then(() => {
-        Approvals.setApprovePayValue(isApprovePayEnabled);
         FiscalYears.createViaApi(fiscalYears.next);
         ExpenseClasses.createExpenseClassViaApi(testData.expenseClass);
 
@@ -121,14 +99,16 @@ describe('Invoices', () => {
           Budgets.updateBudgetViaApi({ ...resp, budgetStatus: 'Active' });
         });
       });
+  };
 
+  const prepareTestUser = (testData, permissions = []) => {
     cy.createTempUser([
       Permissions.uiFinanceViewFundAndBudget.gui,
       Permissions.uiInvoicesApproveInvoices.gui,
       Permissions.viewEditCreateInvoiceInvoiceLine.gui,
       Permissions.uiInvoicesPayInvoices.gui,
-      Permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
       Permissions.uiOrdersView.gui,
+      ...permissions,
     ]).then((userProperties) => {
       testData.user = userProperties;
 
@@ -137,182 +117,429 @@ describe('Invoices', () => {
         waiter: Orders.waitLoading,
       });
     });
+  };
+
+  before('Enable "Approve and pay in one click" option', () => {
+    cy.getAdminToken();
+    Approvals.setApprovePayValue(isApprovePayEnabled);
   });
 
-  after('Delete test data', () => {
+  after('Disable "Approve and pay in one click" option', () => {
     Approvals.setApprovePayValue(false);
-    Organizations.deleteOrganizationViaApi(testData.organization.id);
-    Users.deleteViaApi(testData.user.userId);
   });
 
-  it(
-    'C388520 Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
-    () => {
-      // Click on "PO number" link on "Orders" pane
-      const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
-      OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
+  describe('"Invoice: Pay invoices in a different fiscal year" permission is assigned to a user', () => {
+    const code = CodeTools(4);
+    const fiscalYears = {
+      prev: {
+        ...FiscalYears.getDefaultFiscalYear(),
+        code: `${code}${StringTools.randomFourDigitNumber()}`,
+      },
+      next: {
+        ...FiscalYears.getDefaultFiscalYear(),
+        code: `${code}${StringTools.randomFourDigitNumber()}`,
+        periodStart: new Date(date.getFullYear(), date.getMonth(), date.getDate() + 3),
+        periodEnd: new Date(date.getFullYear() + 1, 11, 31),
+      },
+    };
+    const organization = NewOrganization.getDefaultOrganization();
+    const testData = {
+      organization,
+      order: {
+        ...NewOrder.getDefaultOngoingOrder({ vendorId: organization.id }),
+        reEncumber: true,
+      },
+      expenseClass: ExpenseClasses.getDefaultExpenseClass(),
+      invoice: {},
+      user: {},
+    };
 
-      // Click "Actions" button, Select "New invoice" option, Click "Submit" button
-      OrderDetails.createNewInvoice();
+    beforeEach('Create test data', () => {
+      prepareTestData(testData, fiscalYears);
+      prepareTestUser(testData, [Permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui]);
+    });
 
-      // * "Create vendor invoice" page appears
-      // * "Vendor name" field is not editable and contains vendor name from related order
-      InvoiceEditForm.checkButtonsConditions([
-        {
-          label: 'Vendor name',
-          conditions: { disabled: true, value: testData.invoice.vendorName },
-        },
-      ]);
+    afterEach('Delete test data', () => {
+      Organizations.deleteOrganizationViaApi(testData.organization.id);
+      Users.deleteViaApi(testData.user.userId);
+    });
 
-      // Fill the following fields: "Invoice date" - Today, "Fiscal year" - select previous "Fiscal year #1"
-      InvoiceEditForm.fillInvoiceFields({
-        invoiceDate: testData.invoice.invoiceDate,
-        fiscalYear: fiscalYears.prev.code,
-        batchGroupName: testData.invoice.batchGroupName,
-        vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
-        paymentMethod: testData.invoice.paymentMethod,
-      });
+    it(
+      'C388520 Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
+      { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+      () => {
+        // Click on "PO number" link on "Orders" pane
+        const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
 
-      // Click "Save & close" button
-      InvoiceEditForm.clickSaveButton({ invoiceCreated: true, invoiceLineCreated: true });
+        // Click "Actions" button, Select "New invoice" option, Click "Submit" button
+        OrderDetails.createNewInvoice();
 
-      // Fiscal year" field is specified with previous "Fiscal year #1"
-      InvoiceView.checkInvoiceDetails({
-        title: testData.invoice.vendorInvoiceNo,
-        invoiceInformation: [
-          { key: 'Status', value: INVOICE_STATUSES.OPEN },
-          { key: 'Fiscal year', value: fiscalYears.prev.code },
-        ],
-        invoiceLines: [
+        // * "Create vendor invoice" page appears
+        // * "Vendor name" field is not editable and contains vendor name from related order
+        InvoiceEditForm.checkButtonsConditions([
           {
-            poNumber: testData.order.poNumber,
-            description: testData.orderLine.titleOrPackage,
+            label: 'Vendor name',
+            conditions: { disabled: true, value: testData.invoice.vendorName },
           },
-        ],
-      });
+        ]);
 
-      // Click "Actions" button, Select "Approve & pay" option, Click "Submit" button
-      InvoiceView.approveInvoice({ isApprovePayEnabled });
+        // Fill the following fields: "Invoice date" - Today, "Fiscal year" - select previous "Fiscal year #1"
+        InvoiceEditForm.fillInvoiceFields({
+          invoiceDate: testData.invoice.invoiceDate,
+          fiscalYear: fiscalYears.prev.code,
+          batchGroupName: testData.invoice.batchGroupName,
+          vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
+          paymentMethod: testData.invoice.paymentMethod,
+        });
 
-      // * Invoice status is changed to "Paid"
-      // * "Receipt status" and "Payment status" are specified as "Ongoing"
-      InvoiceView.checkInvoiceDetails({
-        title: testData.invoice.vendorInvoiceNo,
-        invoiceInformation: [
-          { key: 'Status', value: INVOICE_STATUSES.PAID },
-          { key: 'Fiscal year', value: fiscalYears.prev.code },
-        ],
-        invoiceLines: [
+        // Click "Save & close" button
+        InvoiceEditForm.clickSaveButton({ invoiceCreated: true, invoiceLineCreated: true });
+
+        // Fiscal year" field is specified with previous "Fiscal year #1"
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: 'Status', value: INVOICE_STATUSES.OPEN },
+            { key: 'Fiscal year', value: fiscalYears.prev.code },
+          ],
+          invoiceLines: [
+            {
+              poNumber: testData.order.poNumber,
+              description: testData.orderLine.titleOrPackage,
+            },
+          ],
+        });
+
+        // Click "Actions" button, Select "Approve & pay" option, Click "Submit" button
+        InvoiceView.approveInvoice({ isApprovePayEnabled });
+
+        // * Invoice status is changed to "Paid"
+        // * "Receipt status" and "Payment status" are specified as "Ongoing"
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: 'Status', value: INVOICE_STATUSES.PAID },
+            { key: 'Fiscal year', value: fiscalYears.prev.code },
+          ],
+          invoiceLines: [
+            {
+              poNumber: testData.order.poNumber,
+              description: testData.orderLine.titleOrPackage,
+              receiptStatus: 'Ongoing',
+              paymentStatus: 'Ongoing',
+            },
+          ],
+        });
+
+        // Click on invoice line record in "Invoice lines" accordion
+        InvoiceView.selectInvoiceLine();
+
+        // * "Current encumbrance" field in "Fund distribution" accordion contains a link with "0.00" value
+        InvoiceLineDetails.checkFundDistibutionTableContent([
           {
-            poNumber: testData.order.poNumber,
-            description: testData.orderLine.titleOrPackage,
-            receiptStatus: 'Ongoing',
-            paymentStatus: 'Ongoing',
+            name: testData.fund.name,
+            encumbrance: '0.00',
           },
-        ],
-      });
+        ]);
 
-      // Click on invoice line record in "Invoice lines" accordion
-      InvoiceView.selectInvoiceLine();
+        // Click "Current encumbrance" link in "Fund distribution" accordion
+        const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
+        TransactionDetails.checkTransactionDetails({
+          information: [
+            { key: 'Fiscal year', value: fiscalYears.prev.code },
+            { key: 'Amount', value: '0.00' },
+            { key: 'Source', value: testData.order.poNumber },
+            { key: 'Type', value: 'Encumbrance' },
+            { key: 'From', value: testData.fund.name },
+            { key: 'Initial encumbrance', value: '100.00' },
+            { key: 'Awaiting payment', value: '0.00' },
+            { key: 'Expended', value: '100.00' },
+            { key: 'Status', value: 'Released' },
+          ],
+        });
 
-      // * "Current encumbrance" field in "Fund distribution" accordion contains a link with "0.00" value
-      InvoiceLineDetails.checkFundDistibutionTableContent([
-        {
-          name: testData.fund.name,
-          encumbrance: '0.00',
-        },
-      ]);
+        // Search for "Payment" transaction and click on its "Transaction date" link
+        Transactions.selectTransaction('Payment');
+        TransactionDetails.checkTransactionDetails({
+          information: [
+            { key: 'Fiscal year', value: fiscalYears.prev.code },
+            { key: 'Amount', value: '100.00' },
+            { key: 'Source', value: testData.invoice.vendorInvoiceNo },
+            { key: 'Type', value: 'Payment' },
+            { key: 'From', value: testData.fund.name },
+          ],
+        });
 
-      // Click "Current encumbrance" link in "Fund distribution" accordion
-      const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
-      TransactionDetails.checkTransactionDetails({
-        information: [
-          { key: 'Fiscal year', value: fiscalYears.prev.code },
-          { key: 'Amount', value: '0.00' },
-          { key: 'Source', value: testData.order.poNumber },
-          { key: 'Type', value: 'Encumbrance' },
-          { key: 'From', value: testData.fund.name },
-          { key: 'Initial encumbrance', value: '100.00' },
-          { key: 'Awaiting payment', value: '0.00' },
-          { key: 'Expended', value: '100.00' },
-          { key: 'Status', value: 'Released' },
-        ],
-      });
+        // Close "Transactions" page
+        Transactions.closeTransactionsPage();
+        BudgetDetails.checkBudgetDetails({
+          information: [
+            { key: 'Name', value: testData.budget.name },
+            { key: 'Status', value: 'Active' },
+            { key: 'Allowable expenditure', value: '100%' },
+            { key: 'Allowable encumbrance', value: '100%' },
+          ],
+        });
 
-      // Search for "Payment" transaction and click on its "Transaction date" link
-      Transactions.selectTransaction('Payment');
-      TransactionDetails.checkTransactionDetails({
-        information: [
-          { key: 'Fiscal year', value: fiscalYears.prev.code },
-          { key: 'Amount', value: '100.00' },
-          { key: 'Source', value: testData.invoice.vendorInvoiceNo },
-          { key: 'Type', value: 'Payment' },
-          { key: 'From', value: testData.fund.name },
-        ],
-      });
-
-      // Close "Transactions" page
-      Transactions.closeTransactionsPage();
-      BudgetDetails.checkBudgetDetails({
-        information: [
-          { key: 'Name', value: testData.budget.name },
-          { key: 'Status', value: 'Active' },
-          { key: 'Allowable expenditure', value: '100%' },
-          { key: 'Allowable encumbrance', value: '100%' },
-        ],
-      });
-
-      // Close "Fund A-Fiscal year #1" page by clicking on "X" button on the top left of the page
-      BudgetDetails.closeBudgetDetails();
-      FundDetails.checkFundDetails({
-        information: [
-          { key: 'Name', value: testData.fund.name },
-          { key: 'Code', value: testData.fund.code },
-          { key: 'Ledger', value: testData.ledger.name },
-          { key: 'Status', value: 'Active' },
-        ],
-        currentBudget: {
-          name: fiscalYears.next.code,
-          allocated: '100.00',
-        },
-        previousBudgets: [
-          {
-            name: testData.budget.name,
+        // Close "Fund A-Fiscal year #1" page by clicking on "X" button on the top left of the page
+        BudgetDetails.closeBudgetDetails();
+        FundDetails.checkFundDetails({
+          information: [
+            { key: 'Name', value: testData.fund.name },
+            { key: 'Code', value: testData.fund.code },
+            { key: 'Ledger', value: testData.ledger.name },
+            { key: 'Status', value: 'Active' },
+          ],
+          currentBudget: {
+            name: fiscalYears.next.code,
             allocated: '100.00',
           },
-        ],
-      });
+          previousBudgets: [
+            {
+              name: testData.budget.name,
+              allocated: '100.00',
+            },
+          ],
+        });
 
-      // Click on the record in "Current budget" accordion
-      FundDetails.openCurrentBudgetDetails();
-      BudgetDetails.checkBudgetDetails({
-        information: [
-          { key: 'Name', value: fiscalYears.next.code },
-          { key: 'Status', value: 'Active' },
-          { key: 'Allowable expenditure', value: '100%' },
-          { key: 'Allowable encumbrance', value: '100%' },
-        ],
-      });
+        // Click on the record in "Current budget" accordion
+        FundDetails.openCurrentBudgetDetails();
+        BudgetDetails.checkBudgetDetails({
+          information: [
+            { key: 'Name', value: fiscalYears.next.code },
+            { key: 'Status', value: 'Active' },
+            { key: 'Allowable expenditure', value: '100%' },
+            { key: 'Allowable encumbrance', value: '100%' },
+          ],
+        });
 
-      // Click "View transactions" link in "Budget information" accordion
-      BudgetDetails.clickViewTransactionsLink();
+        // Click "View transactions" link in "Budget information" accordion
+        BudgetDetails.clickViewTransactionsLink();
 
-      // Search for "Encumbrance" transaction and click on its "Transaction date" link
-      Transactions.selectTransaction('Encumbrance');
-      TransactionDetails.checkTransactionDetails({
-        information: [
-          { key: 'Fiscal year', value: fiscalYears.next.code },
-          { key: 'Amount', value: '100.00' },
-          { key: 'Source', value: testData.order.poNumber },
-          { key: 'Type', value: 'Encumbrance' },
-          { key: 'From', value: testData.fund.name },
-          { key: 'Initial encumbrance', value: '100.00' },
-          { key: 'Awaiting payment', value: '0.00' },
-          { key: 'Expended', value: '0.00' },
-          { key: 'Status', value: 'Unreleased' },
-        ],
-      });
-    },
-  );
+        // Search for "Encumbrance" transaction and click on its "Transaction date" link
+        Transactions.selectTransaction('Encumbrance');
+        TransactionDetails.checkTransactionDetails({
+          information: [
+            { key: 'Fiscal year', value: fiscalYears.next.code },
+            { key: 'Amount', value: '100.00' },
+            { key: 'Source', value: testData.order.poNumber },
+            { key: 'Type', value: 'Encumbrance' },
+            { key: 'From', value: testData.fund.name },
+            { key: 'Initial encumbrance', value: '100.00' },
+            { key: 'Awaiting payment', value: '0.00' },
+            { key: 'Expended', value: '0.00' },
+            { key: 'Status', value: 'Unreleased' },
+          ],
+        });
+      },
+    );
+  });
+
+  describe('"Invoice: Pay invoices in a different fiscal year" permission is NOT assigned to a user', () => {
+    const code = CodeTools(4);
+    const fiscalYears = {
+      prev: {
+        ...FiscalYears.getDefaultFiscalYear(),
+        code: `${code}${StringTools.randomFourDigitNumber()}`,
+      },
+      next: {
+        ...FiscalYears.getDefaultFiscalYear(),
+        code: `${code}${StringTools.randomFourDigitNumber()}`,
+        periodStart: new Date(date.getFullYear(), date.getMonth(), date.getDate() + 3),
+        periodEnd: new Date(date.getFullYear() + 1, 11, 31),
+      },
+    };
+    const organization = NewOrganization.getDefaultOrganization();
+    const testData = {
+      organization,
+      order: {
+        ...NewOrder.getDefaultOngoingOrder({ vendorId: organization.id }),
+        reEncumber: true,
+      },
+      expenseClass: ExpenseClasses.getDefaultExpenseClass(),
+      invoice: {},
+      user: {},
+    };
+
+    beforeEach('Create test data', () => {
+      prepareTestData(testData, fiscalYears);
+      prepareTestUser(testData);
+    });
+
+    afterEach('Delete test data', () => {
+      Organizations.deleteOrganizationViaApi(testData.organization.id);
+      Users.deleteViaApi(testData.user.userId);
+    });
+
+    it(
+      'C388545 Approve and pay invoice created in current FY when related order line was created in previous FY and user does not have "Invoice: Pay invoices in a different fiscal year" permission (thunderjet) (TaaS)',
+      { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+      () => {
+        // Click on "PO number" link on "Orders" pane
+        const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
+
+        // Click "Actions" button, Select "New invoice" option, Click "Submit" button
+        OrderDetails.createNewInvoice();
+
+        // * "Create vendor invoice" page appears
+        // * "Vendor name" field is not editable and contains vendor name from related order
+        InvoiceEditForm.checkButtonsConditions([
+          {
+            label: 'Vendor name',
+            conditions: { disabled: true, value: testData.invoice.vendorName },
+          },
+        ]);
+
+        // Fill the following fields: "Invoice date" - Today, "Fiscal year" - not sets
+        InvoiceEditForm.fillInvoiceFields({
+          invoiceDate: testData.invoice.invoiceDate,
+          batchGroupName: testData.invoice.batchGroupName,
+          vendorInvoiceNo: testData.invoice.vendorInvoiceNo,
+          paymentMethod: testData.invoice.paymentMethod,
+        });
+
+        // Click "Save & close" button
+        InvoiceEditForm.clickSaveButton({ invoiceCreated: true, invoiceLineCreated: true });
+
+        // Fiscal year" field is specified with previous "Fiscal year #1"
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: 'Status', value: INVOICE_STATUSES.OPEN },
+            { key: 'Fiscal year', value: fiscalYears.next.code },
+          ],
+          invoiceLines: [
+            {
+              poNumber: testData.order.poNumber,
+              description: testData.orderLine.titleOrPackage,
+            },
+          ],
+        });
+
+        // Click "Actions" button, Select "Approve & pay" option, Click "Submit" button
+        InvoiceView.approveInvoice({ isApprovePayEnabled });
+
+        // * Invoice status is changed to "Paid"
+        // * "Receipt status" and "Payment status" are specified as "Ongoing"
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: 'Status', value: INVOICE_STATUSES.PAID },
+            { key: 'Fiscal year', value: fiscalYears.next.code },
+          ],
+          invoiceLines: [
+            {
+              poNumber: testData.order.poNumber,
+              description: testData.orderLine.titleOrPackage,
+              receiptStatus: 'Ongoing',
+              paymentStatus: 'Ongoing',
+            },
+          ],
+        });
+
+        // Click on invoice line record in "Invoice lines" accordion
+        InvoiceView.selectInvoiceLine();
+
+        // * "Current encumbrance" field in "Fund distribution" accordion contains a link with "0.00" value
+        InvoiceLineDetails.checkFundDistibutionTableContent([
+          {
+            name: testData.fund.name,
+            encumbrance: '0.00',
+          },
+        ]);
+
+        // Click "Current encumbrance" link in "Fund distribution" accordion
+        const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
+        TransactionDetails.checkTransactionDetails({
+          information: [
+            { key: 'Fiscal year', value: fiscalYears.next.code },
+            { key: 'Amount', value: '0.00' },
+            { key: 'Source', value: testData.order.poNumber },
+            { key: 'Type', value: 'Encumbrance' },
+            { key: 'From', value: testData.fund.name },
+            { key: 'Initial encumbrance', value: '100.00' },
+            { key: 'Awaiting payment', value: '0.00' },
+            { key: 'Expended', value: '100.00' },
+            { key: 'Status', value: 'Released' },
+          ],
+        });
+
+        // Search for "Payment" transaction and click on its "Transaction date" link
+        Transactions.selectTransaction('Payment');
+        TransactionDetails.checkTransactionDetails({
+          information: [
+            { key: 'Fiscal year', value: fiscalYears.next.code },
+            { key: 'Amount', value: '100.00' },
+            { key: 'Source', value: testData.invoice.vendorInvoiceNo },
+            { key: 'Type', value: 'Payment' },
+            { key: 'From', value: testData.fund.name },
+          ],
+        });
+
+        // Close "Transactions" page
+        Transactions.closeTransactionsPage();
+        BudgetDetails.checkBudgetDetails({
+          information: [
+            { key: 'Name', value: fiscalYears.next.code },
+            { key: 'Status', value: 'Active' },
+            { key: 'Allowable expenditure', value: '100%' },
+            { key: 'Allowable encumbrance', value: '100%' },
+          ],
+        });
+
+        // Close "Fund A-Fiscal year #1" page by clicking on "X" button on the top left of the page
+        BudgetDetails.closeBudgetDetails();
+        FundDetails.checkFundDetails({
+          information: [
+            { key: 'Name', value: testData.fund.name },
+            { key: 'Code', value: testData.fund.code },
+            { key: 'Ledger', value: testData.ledger.name },
+            { key: 'Status', value: 'Active' },
+          ],
+          currentBudget: {
+            name: fiscalYears.next.code,
+            allocated: '100.00',
+          },
+          previousBudgets: [
+            {
+              name: testData.budget.name,
+              allocated: '100.00',
+            },
+          ],
+        });
+
+        // Click on the record in "Previous budget" accordion
+        FundDetails.openPreviousBudgetDetails();
+        BudgetDetails.checkBudgetDetails({
+          information: [
+            { key: 'Name', value: testData.budget.name },
+            { key: 'Status', value: 'Active' },
+            { key: 'Allowable expenditure', value: '100%' },
+            { key: 'Allowable encumbrance', value: '100%' },
+          ],
+        });
+
+        // Click "View transactions" link in "Budget information" accordion
+        BudgetDetails.clickViewTransactionsLink();
+
+        // Search for "Encumbrance" transaction and click on its "Transaction date" link
+        Transactions.selectTransaction('Encumbrance');
+        TransactionDetails.checkTransactionDetails({
+          information: [
+            { key: 'Fiscal year', value: fiscalYears.prev.code },
+            { key: 'Amount', value: '100.00' },
+            { key: 'Source', value: testData.order.poNumber },
+            { key: 'Type', value: 'Encumbrance' },
+            { key: 'From', value: testData.fund.name },
+            { key: 'Initial encumbrance', value: '100.00' },
+            { key: 'Awaiting payment', value: '0.00' },
+            { key: 'Expended', value: '0.00' },
+            { key: 'Status', value: 'Unreleased' },
+          ],
+        });
+      },
+    );
+  });
 });

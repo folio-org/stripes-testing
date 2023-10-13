@@ -1,9 +1,15 @@
 # Change history for stripes-testing
 
-## 4.6.0 IN PROGRESS
+## 4.7.0 IN PROGRESS
+
+- Updated `<AdvancedSearch>` interactor for search match support. Updated e2e tests. Refs UITEST-111.
+
+## [4.6.0](https://github.com/folio-org/stripes-testing/tree/v4.6.0) (2023-10-11)
+
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.5.0...v4.6.0)
 
 - Export some `@bigtest/react` functions. Refs UITEST-108.
-- Updated `<AdvancedSearch>` interactor for search match support. Updated e2e tests. Refs UITEST-111.
+- Bump Cypress from v10 to v12. FAT-7403.
 
 ## [4.5.0](https://github.com/folio-org/stripes-testing/tree/v4.5.0) (2023-02-01)
 
