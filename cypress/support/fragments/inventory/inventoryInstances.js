@@ -13,6 +13,7 @@ import {
   Select,
   TextInput,
   TextArea,
+  PaneHeader,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -33,6 +34,7 @@ const actionsButton = rootSection.find(Button('Actions'));
 const singleRecordImportModal = Modal('Single record import');
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button('Search', { type: 'submit' });
+const paneHeaderSearch = PaneHeader('Inventory');
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
@@ -708,5 +710,13 @@ export default {
     searchInstancesOptions.forEach((searchOption) => {
       cy.expect(inventorySearchAndFilterInput.has({ content: including(searchOption) }));
     });
+  },
+
+  verifyInventorySearchPaneheader() {
+    cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
+  },
+
+  checkActionsButtonInSecondPane() {
+    cy.expect(actionsButton.exists());
   },
 };

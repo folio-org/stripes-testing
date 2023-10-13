@@ -661,7 +661,12 @@ export default {
   verifyInstanceDetailsViewAbsent() {
     cy.expect(instanceDetailsSection.absent());
   },
+
   selectBrowseOption(option) {
     cy.do(browseSearchAndFilterInput.choose(option));
+  },
+
+  checkSearchQueryText(text) {
+    cy.expect(keywordInput.has({ value: text }));
   },
 };
