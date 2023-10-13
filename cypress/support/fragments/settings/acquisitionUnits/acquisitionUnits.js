@@ -139,4 +139,16 @@ export default {
     cy.do([Checkbox('Edit').click(), saveAUButton.click()]);
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
   },
+
+  selectDeleteCheckbox: () => {
+    cy.expect(assignedUsersSection.exists());
+    cy.do([Checkbox('Delete').click(), saveAUButton.click()]);
+    cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+  },
+
+  selectCreateCheckbox: () => {
+    cy.expect(assignedUsersSection.exists());
+    cy.do([Checkbox('Create').click(), saveAUButton.click()]);
+    cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+  },
 };
