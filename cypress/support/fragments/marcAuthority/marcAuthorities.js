@@ -65,7 +65,7 @@ const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this pag
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
-const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' })
+const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 
 export default {
   waitLoading() {
