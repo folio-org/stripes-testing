@@ -96,7 +96,7 @@ export default {
       path: `records-editor/records/${internalAuthorityId}`,
     });
   },
-  addNewField: (rowIndex, tag, content, indicator0 = '\\', indicator1 = '\\') => {
+  addNewField: (rowIndex, tag, content = '', indicator0 = '\\', indicator1 = '\\') => {
     cy.do([
       QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
       QuickMarcEditorRow({ index: rowIndex + 1 })
