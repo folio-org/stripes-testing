@@ -168,6 +168,7 @@ export default {
     cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
     cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
   },
+  checkCopyNumber: (number) => cy.expect(KeyValue('Copy Number').has({ value: number })),
   addElectronicAccess: (type) => {
     cy.expect(electronicAccessAccordion.exists());
     cy.do([
