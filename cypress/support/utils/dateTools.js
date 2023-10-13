@@ -82,6 +82,13 @@ export default {
     )}`;
   },
 
+  get2DaysAfterTomorrowDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
+      currentDate.getDate() + 3,
+    )}`;
+  },
+
   getDayTomorrowDateForFiscalYear: () => {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
