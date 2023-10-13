@@ -285,7 +285,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         testData.fieldContents.tagLDRContent,
       );
       newFields.forEach((newField) => {
-        MarcAuthority.addNewField(newField.rowIndex, newField.tag);
+        MarcAuthority.addNewField(newField.rowIndex, newField.tag, '');
       });
       linkableFields.forEach((tag) => {
         QuickMarcEditor.setRulesForField(tag, true);
