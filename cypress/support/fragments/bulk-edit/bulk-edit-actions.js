@@ -72,9 +72,7 @@ export default {
   verifyChangesInAreYouSureForm(column, changes) {
     changes.forEach((value) => {
       cy.expect(
-        areYouSureForm
-          .find(MultiColumnListCell({ column, content: including(value) }))
-          .exists(),
+        areYouSureForm.find(MultiColumnListCell({ column, content: including(value) })).exists(),
       );
     });
   },
@@ -364,23 +362,15 @@ export default {
 
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex })
-        .find(bulkPageSelections.valueType)
-        .choose(noteType),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(bulkPageSelections.action)
-        .choose('Find'),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(TextArea())
-        .fillIn(oldNote),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
+      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(oldNote),
       RepeatableFieldItem({ index: rowIndex })
         .find(Select({ value: '' }))
-        .choose('Replace with')
+        .choose('Replace with'),
     ]);
     // TODO: redesign with interactors
-    cy.xpath(
-      `//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`,
-    ).type(newNote);
+    cy.xpath(`//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`).type(newNote);
   },
 
   addItemNote(type, value, rowIndex = 0) {
@@ -459,11 +449,13 @@ export default {
         .choose('Check in note'),
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
-        .choose('Duplicate to')
+        .choose('Duplicate to'),
     ]);
-    cy.expect(RepeatableFieldItem({ index: rowIndex })
-      .find(Select({ content: 'Check out note' }))
-      .has({ disabled: true }));
+    cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ content: 'Check out note' }))
+        .has({ disabled: true }),
+    );
   },
 
   verifyMatchingOptionsForLocationFilter(location) {
