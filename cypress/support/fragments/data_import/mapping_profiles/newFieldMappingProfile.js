@@ -380,7 +380,11 @@ export default {
 
   fillInvoiceMappingProfile: (profile) => {
     // Summary section
-    fillSummaryInMappingProfile(profile);
+    cy.do([
+      nameField.fillIn(profile.name),
+      incomingRecordTypeField.choose(profile.incomingRecordType),
+      existingRecordType.choose(profile.typeValue),
+    ]);
     if (profile.description) {
       cy.do(
         Accordion('Summary')
@@ -477,6 +481,9 @@ export default {
     addVendor(profile);
     if (profile.reEncumber) {
       cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
+    }
+    if (profile.acquisitionsUnits) {
+      cy.do(TextField('Acquisitions units').fillIn(`"${profile.acquisitionsUnits}"`));
     }
     // Order line information
     cy.do(titleField.fillIn(profile.title));
