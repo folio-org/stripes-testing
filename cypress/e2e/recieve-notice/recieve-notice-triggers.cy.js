@@ -14,9 +14,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi, {
-  NOTICE_CATEGORIES,
-} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
@@ -69,39 +67,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     name: getTestEntityValue('Overdue fine, returned'),
     description: 'Created by autotest team',
   };
-  // const defaultTemplate = {
-  //   name: `TestName${getRandomPostfix()}`,
-  //   description: 'Created by autotest team',
-  //   body: 'Test_email_body',
-  //   category: 'Loan',
-  //   previewText: 'Test_email_body',
-  // };
-  // const checkOutTemplate = { ...defaultTemplate };
-  // checkOutTemplate.name += ' Check out';
-  // checkOutTemplate.subject = checkOutTemplate.name;
-  // checkOutTemplate.body = `{{#loans}}${checkOutTemplate.body} {{item.title}} {{loan.initialBorrowDateTime}}{{/loans}}`;
-  // const loanDueDateChangeTemplate = { ...defaultTemplate };
-  // loanDueDateChangeTemplate.name += ' Loan due date change';
-  // loanDueDateChangeTemplate.subject = loanDueDateChangeTemplate.name;
-  // loanDueDateChangeTemplate.body += ' {{item.title}} {{loan.dueDateTime}}';
-  // const checkInTemplate = { ...defaultTemplate };
-  // checkInTemplate.name += ' Check in';
-  // checkInTemplate.subject = checkInTemplate.name;
-  // checkInTemplate.body = `{{#loans}}${checkInTemplate.body} {{item.title}} {{loan.checkedInDateTime}}{{/loans}}`;
   let loanPolicyId;
-  // const noticePolicy = {
-  //   name: `${defaultTemplate.name} Check out + Loan due date change + Check in`,
-  //   description: 'Created by autotest team',
-  //   selectOptions(template) {
-  //     return {
-  //       noticeName: NOTICE_CATEGORIES.loan.name,
-  //       noticeId: 'loan',
-  //       templateName: template.name,
-  //       format: 'Email',
-  //       action: template.name.substring(template.name.indexOf(' ') + 1),
-  //     };
-  //   },
-  // };
   const patronGroup = {
     name: 'groupToTestNoticeCheckout' + getRandomPostfix(),
   };
