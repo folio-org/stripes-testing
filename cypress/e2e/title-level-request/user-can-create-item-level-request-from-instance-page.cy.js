@@ -38,7 +38,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
           path: SettingsMenu.circulationTitleLevelRequestsPath,
           waiter: TitleLevelRequests.waitLoading,
         });
-        // TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
