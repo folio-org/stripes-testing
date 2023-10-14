@@ -14,7 +14,7 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcAuthorityBrowse from '../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
-describe('Manual Linking Bib field to Authority 1XX', () => {
+describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () => {
   const testData = {
     tag100: '100',
     instanceField100Value: 'Coates, Ta-Nehisi, 1975-',
