@@ -89,6 +89,13 @@ export default {
     )}`;
   },
 
+  get2DaysAfterTomorrowDateForFiscalYearOnUIEdit: () => {
+    const currentDate = new Date();
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate() + 3,
+    )}/${currentDate.getFullYear()}`;
+  },
+
   getDayTomorrowDateForFiscalYear: () => {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(

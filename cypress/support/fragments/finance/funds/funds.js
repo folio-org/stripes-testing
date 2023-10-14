@@ -20,6 +20,7 @@ import {
   Link,
   MultiColumnList,
   MultiSelectOption,
+  PaneHeader,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
@@ -706,6 +707,14 @@ export default {
     ]);
   },
 
+  selectPreviousBudgetDetailsByFY: (fund, fiscalYear) => {
+    cy.do([
+      Section({ id: 'previousBudgets' })
+        .find(MultiColumnListCell(`${fund.code}-${fiscalYear.code}`))
+        .click(),
+    ]);
+  },
+
   selectPlannedBudgetDetails: (rowNumber = 0) => {
     cy.do([
       Section({ id: 'plannedBudget' })
@@ -848,6 +857,14 @@ export default {
   closeTransactionDetails: () => {
     cy.do(
       Section({ id: 'pane-transaction-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  closeTransactionApp: (fund, fiscalYear) => {
+    cy.do(
+      PaneHeader(`${fund.code}-${fiscalYear.code}`)
         .find(Button({ icon: 'times' }))
         .click(),
     );
