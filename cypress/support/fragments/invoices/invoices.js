@@ -300,6 +300,59 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
+  createRolloverInvoiceWithAjustmentAndFund(
+    invoice,
+    organization,
+    descriptionInput,
+    valueInput,
+    percentOrDollar,
+    proRate,
+    realtioToTotal,
+    exportToAccounting = false,
+    fund,
+  ) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(organization);
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select('FOLIO'),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').checked(false),
+    ]);
+    cy.do([
+      Button({ id: 'adjustments-add-button' }).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+    ]);
+    if (percentOrDollar === '$') {
+      cy.do(Button('$').click());
+    } else if (percentOrDollar === '%') {
+      cy.do(Button('%').click());
+    }
+    cy.do([
+      Select({ name: 'adjustments[0].prorate' }).choose(proRate),
+      Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
+    ]);
+    if (exportToAccounting === true) {
+      cy.do(Checkbox({ name: 'adjustments[0].exportToAccounting' }).click());
+    }
+    cy.do([
+      Button({ id: 'adjustments[0].fundDistributions-add-button' }).click(),
+      Button({ id: 'adjustments[0].fundDistributions[0].fundId' }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
   createSpecialInvoice(invoice) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
@@ -752,6 +805,23 @@ export default {
     ]);
   },
 
+  editInvoice: () => {
+    cy.wait(4000);
+    cy.do([
+      PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click(),
+      Button('Edit').click(),
+    ]);
+  },
+
+  changeFY: (fiscalYear) => {
+    cy.wait(6000);
+    cy.do([
+      Selection('Fiscal year*').open(),
+      SelectionList().select(fiscalYear),
+      saveAndClose.click(),
+    ]);
+  },
+
   addAdjustment: (descriptionInput, valueInput, typeToggle, realtioToTotal) => {
     cy.do([
       Button({ id: 'adjustments-add-button' }).click(),
@@ -761,6 +831,34 @@ export default {
       Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
       saveAndClose.click(),
     ]);
+  },
+
+  addAdjustmentToInvoice: (
+    descriptionInput,
+    valueInput,
+    percentOrDollar,
+    proRate,
+    realtioToTotal,
+    exportToAccounting = false,
+  ) => {
+    cy.do([
+      Button({ id: 'adjustments-add-button' }).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+    ]);
+    if (percentOrDollar === '$') {
+      cy.do(Button('$').click());
+    } else if (percentOrDollar === '%') {
+      cy.do(Button('%').click());
+    }
+    cy.do([
+      Select({ name: 'adjustments[0].prorate' }).choose(proRate),
+      Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
+    ]);
+    if (exportToAccounting === true) {
+      cy.do(Checkbox({ name: 'adjustments[0].exportToAccounting' }).click());
+    }
+    cy.do(saveAndClose.click());
   },
 
   selectStatusFilter: (status) => {
