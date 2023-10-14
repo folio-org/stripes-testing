@@ -13,6 +13,7 @@ import {
 } from '../../../../interactors';
 import InvoiceEditForm from './invoiceEditForm';
 import InvoiceLineEditForm from './invoiceLineEditForm';
+import InvoiceLineDetails from './invoiceLineDetails';
 import ApproveInvoiceModal from './modal/approveInvoiceModal';
 import PayInvoiceModal from './modal/payInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
@@ -50,6 +51,8 @@ export default {
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
     );
+
+    return InvoiceLineDetails;
   },
   openInvoiceEditForm() {
     cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Edit').click()]);

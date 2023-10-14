@@ -639,7 +639,7 @@ export default {
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    cy.expect(Button('Actions').exists());
+    cy.expect(Pane({ titleLabel: including('Holdings') }).exists());
   },
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
