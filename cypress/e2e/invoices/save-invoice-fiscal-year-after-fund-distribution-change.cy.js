@@ -18,9 +18,6 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import NewExpenceClass from '../../support/fragments/settings/finance/newExpenseClass';
-import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 
 describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -61,14 +58,12 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
   const allocatedQuantity = '100';
-  // const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  // const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  // const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  // const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
-  // const periodStartForThirdFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  // const periodEndForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+  const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
+  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
+  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
+  const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
+
   let user;
   let orderNumber;
   let servicePointId;
@@ -170,9 +165,9 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     });
   });
 
-  // after(() => {
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it(
     'C396360 Save invoice fiscal year after fund distribution change to fund using different ledger if FY was undefined (thunderjet) (TaaS)',
@@ -183,118 +178,94 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Invoices.selectInvoiceLine();
       Invoices.editInvoiceLine();
       Invoices.changeFundInLine(secondFund);
-      cy.pause();
-      //   // Need to wait, while data will be loaded
-      //   cy.wait(4000);
-      //   Invoices.approveInvoice();
-      //   Invoices.selectInvoiceLine();
-      //   Invoices.openPageCurrentEncumbrance('$0.00');
-      //   Funds.selectTransactionInList('Encumbrance');
-      //   Funds.varifyDetailsInTransaction(
-      //     secondFiscalYear.code,
-      //     '$0.00',
-      //     `${orderNumber}-1`,
-      //     'Encumbrance',
-      //     `${firstFund.name} (${firstFund.code})`,
-      //   );
-      //   Funds.checkStatusInTransactionDetails('Released');
-      //   Funds.selectTransactionInList('Pending payment');
-      //   Funds.varifyDetailsInTransaction(
-      //     secondFiscalYear.code,
-      //     '($110.00)',
-      //     `${orderNumber}-1`,
-      //     'Pending payment',
-      //     `${firstFund.name} (${firstFund.code})`,
-      //   );
-      //   Funds.closeTransactionApp(firstFund, secondFiscalYear);
-      //   Funds.closeBudgetDetails();
-      //   Funds.selectPreviousBudgetDetails();
-      //   Funds.viewTransactions();
-      //   Funds.selectTransactionInList('Encumbrance');
-      //   Funds.varifyDetailsInTransaction(
-      //     firstFiscalYear.code,
-      //     '($110.00)',
-      //     `${orderNumber}-1`,
-      //     'Encumbrance',
-      //     `${firstFund.name} (${firstFund.code})`,
-      //   );
-      //   Funds.checkStatusInTransactionDetails('Unreleased');
 
       cy.visit(TopMenu.ledgerPath);
       FinanceHelp.searchByName(firstLedger.name);
       Ledgers.selectLedger(firstLedger.name);
       Ledgers.rollover();
-      Ledgers.fillInCommonRolloverInfoWithoutCheckboxOneTimeOrders(
+      Ledgers.fillInRolloverWithoutCheckboxCloseBudgetsOneTimeOrders(
+        secondFiscalYear.code,
+        'None',
+        'Allocation',
+      );
+      FinanceHelp.searchByName(secondLedger.name);
+      Ledgers.selectLedger(secondLedger.name);
+      Ledgers.rollover();
+      Ledgers.fillInRolloverWithoutCheckboxCloseBudgetsOneTimeOrders(
         secondFiscalYear.code,
         'None',
         'Allocation',
       );
 
-      //   cy.visit(TopMenu.fiscalYearPath);
-      //   FinanceHelp.searchByName(secondFiscalYear.name);
-      //   FiscalYears.selectFY(secondFiscalYear.name);
-      //   FiscalYears.editFiscalYearDetails();
-      //   FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-      //     periodStartForFirstFY,
-      //     periodEndForFirstFY,
-      //   );
-      //   FinanceHelp.searchByName(thirdFiscalYear.name);
-      //   FiscalYears.selectFY(thirdFiscalYear.name);
-      //   FiscalYears.editFiscalYearDetails();
-      //   FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-      //     periodStartForThirdFY,
-      //     periodEndForThirdFY,
-      //   );
+      cy.visit(TopMenu.fiscalYearPath);
+      FinanceHelp.searchByName(firstFiscalYear.name);
+      FiscalYears.selectFY(firstFiscalYear.name);
+      FiscalYears.editFiscalYearDetails();
+      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+        periodStartForFirstFY,
+        periodEndForFirstFY,
+      );
+      FinanceHelp.searchByName(secondFiscalYear.name);
+      FiscalYears.selectFY(secondFiscalYear.name);
+      FiscalYears.editFiscalYearDetails();
+      FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
+        periodStartForSecondFY,
+        periodEndForSecondFY,
+      );
 
-      //   cy.visit(TopMenu.invoicesPath);
-      //   Invoices.searchByNumber(invoice.invoiceNumber);
-      //   Invoices.selectInvoice(invoice.invoiceNumber);
-      //   Invoices.payInvoice();
-      //   Invoices.selectInvoiceLine();
-      //   Invoices.openPageCurrentEncumbrance('$0.00');
-      //   Funds.selectTransactionInList('Encumbrance');
-      //   Funds.varifyDetailsInTransaction(
-      //     secondFiscalYear.code,
-      //     '$0.00',
-      //     `${orderNumber}-1`,
-      //     'Encumbrance',
-      //     `${firstFund.name} (${firstFund.code})`,
-      //   );
-      //   Funds.checkStatusInTransactionDetails('Released');
-      //   Funds.selectTransactionInList('Payment');
-      //   Funds.varifyDetailsInTransaction(
-      //     secondFiscalYear.code,
-      //     '($110.00)',
-      //     `${orderNumber}-1`,
-      //     'Payment',
-      //     `${firstFund.name} (${firstFund.code})`,
-      //   );
-      //   Funds.closeTransactionApp(firstFund, secondFiscalYear);
-      //   Funds.closeBudgetDetails();
-      //   Funds.selectPreviousBudgetDetailsByFY(firstFund, firstFiscalYear);
-      //   Funds.viewTransactions();
-      //   Funds.selectTransactionInList('Encumbrance');
-      //   Funds.varifyDetailsInTransaction(
-      //     firstFiscalYear.code,
-      //     '($110.00)',
-      //     `${orderNumber}-1`,
-      //     'Encumbrance',
-      //     `${firstFund.name} (${firstFund.code})`,
-      //   );
-      //   Funds.checkStatusInTransactionDetails('Unreleased');
-      //   Funds.closeTransactionApp(firstFund, firstFiscalYear);
-      //   Funds.closeBudgetDetails();
-      //   Funds.selectBudgetDetails();
-      //   Funds.viewTransactions();
-      //   Funds.selectTransactionInList('Encumbrance');
-      //   Funds.varifyDetailsInTransaction(
-      //     thirdFiscalYear.code,
-      //     '($110.00)',
-      //     `${orderNumber}-1`,
-      //     'Encumbrance',
-      //     `${firstFund.name} (${firstFund.code})`,
-      //   );
-      //   Funds.checkStatusInTransactionDetails('Unreleased');
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.searchByNumber(invoice.invoiceNumber);
+      Invoices.selectInvoice(invoice.invoiceNumber);
+      Invoices.approveInvoice();
+      Invoices.payInvoice();
+      Invoices.selectInvoiceLine();
+      Invoices.openPageCurrentEncumbrance(`${secondFund.name}(${secondFund.code})`);
+      Funds.selectBudgetDetails();
+      Funds.openTransactions();
+      Funds.checkNoTransactionOfType('Encumbrance');
+      Funds.checkNoTransactionOfType('Payment');
+      Funds.closeTransactionApp(secondFund, secondFiscalYear);
+      Funds.closeBudgetDetails();
+      Funds.selectPreviousBudgetDetailsByFY(secondFund, firstFiscalYear);
+      Funds.viewTransactions();
+      Funds.checkNoTransactionOfType('Encumbrance');
+      Funds.selectTransactionInList('Payment');
+      Funds.varifyDetailsInTransaction(
+        firstFiscalYear.code,
+        '($10.00)',
+        `${orderNumber}-1`,
+        'Payment',
+        `${secondFund.name} (${secondFund.code})`,
+      );
+
+      cy.visit(TopMenu.fundPath);
+      FinanceHelp.searchByName(firstFund.name);
+      Funds.selectFund(firstFund.name);
+      Funds.selectBudgetDetails();
+      Funds.openTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        secondFiscalYear.code,
+        '$0.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${firstFund.name} (${firstFund.code})`,
+      );
+      Funds.checkStatusInTransactionDetails('Unreleased');
+      Funds.closeTransactionApp(firstFund, secondFiscalYear);
+      Funds.closeBudgetDetails();
+      Funds.selectPreviousBudgetDetailsByFY(firstFund, firstFiscalYear);
+      Funds.viewTransactions();
+      Funds.checkNoTransactionOfType('Pending payment');
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        firstFiscalYear.code,
+        '$0.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${firstFund.name} (${firstFund.code})`,
+      );
+      Funds.checkStatusInTransactionDetails('Released');
     },
   );
 });
