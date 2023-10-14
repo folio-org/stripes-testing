@@ -844,4 +844,12 @@ export default {
       batchGroupFilterSection.find(SelectionOption(batchGroup)).click(),
     ]);
   },
+
+  openPageCurrentEncumbrance: (title) => {
+    cy.get('#invoiceLineFundDistribution')
+      .find('*[class^="mclCell"]')
+      .contains(title)
+      .invoke('removeAttr', 'target')
+      .click();
+  },
 };
