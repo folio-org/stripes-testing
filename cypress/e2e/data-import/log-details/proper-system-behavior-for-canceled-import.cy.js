@@ -61,8 +61,6 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(secondFilePathForUpload, secondMarcFileName);
-        // TODO wait until file will be uploaded
-        cy.wait(5000);
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(secondMarcFileName);

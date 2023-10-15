@@ -294,6 +294,7 @@ export default {
   },
 
   filterRecordsWithError: (index) => {
+    cy.wait(2000);
     cy.do(
       jobSummaryTable
         .find(MultiColumnListRow({ indexRow: 'row-3' }))
@@ -303,7 +304,7 @@ export default {
     );
     cy.expect(
       PaneHeader({ id: 'paneHeaderpane-results' })
-        .find(HTML(including('found')))
+        .find(HTML(including('errors found')))
         .exists(),
     );
   },
