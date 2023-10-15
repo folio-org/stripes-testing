@@ -38,4 +38,37 @@ export default {
 
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
   verifyMatchProfileTitleName: (profileName) => cy.get('#view-match-profile-pane-content h2').should('have.text', profileName),
+  verifyMatchProfile({
+    profileName,
+    incomingRecordFields,
+    existingRecordFields,
+    existingRecordType,
+  }) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.get(`[data-id="${existingRecordType}"]`).should('contain', 'MARC Bibliographic');
+    cy.contains('Incoming MARC Bibliographic record')
+      .parent()
+      .should('include.text', incomingRecordFields.field);
+    cy.contains('Incoming MARC Bibliographic record')
+      .parent()
+      .should('include.text', incomingRecordFields.in1);
+    cy.contains('Incoming MARC Bibliographic record')
+      .parent()
+      .should('include.text', incomingRecordFields.in2);
+    cy.contains('Incoming MARC Bibliographic record')
+      .parent()
+      .should('include.text', incomingRecordFields.subfield);
+    cy.contains('Existing MARC Bibliographic record')
+      .parent()
+      .should('include.text', existingRecordFields.field);
+    cy.contains('Existing MARC Bibliographic record')
+      .parent()
+      .should('include.text', existingRecordFields.in1);
+    cy.contains('Existing MARC Bibliographic record')
+      .parent()
+      .should('include.text', existingRecordFields.in2);
+    cy.contains('Existing MARC Bibliographic record')
+      .parent()
+      .should('include.text', existingRecordFields.subfield);
+  },
 };
