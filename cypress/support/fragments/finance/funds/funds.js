@@ -339,6 +339,10 @@ export default {
       .click();
   },
 
+  checkNoTransactionOfType: (transactionType) => {
+    cy.expect(MultiColumnListCell(transactionType).absent());
+  },
+
   increaseAllocation: () => {
     cy.do([
       actionsButton.click(),
