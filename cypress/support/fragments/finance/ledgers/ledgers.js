@@ -35,7 +35,7 @@ const fiscalYearSelect = Select({ name: 'toFiscalYearId' });
 const rolloverAllocationCheckbox = Checkbox({
   name: 'budgetsRollover[0].rolloverAllocation',
 });
-const rolloverBudgetVelue = Select({
+const rolloverBudgetVelueSelect = Select({
   name: 'budgetsRollover[0].rolloverBudgetValue',
 });
 const addAvailableToSelect = Select({
@@ -136,10 +136,36 @@ export default {
       fiscalYearSelect.choose(fiscalYear),
       Checkbox({ name: 'needCloseBudgets' }).click(),
       rolloverAllocationCheckbox.click(),
-      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(4000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
+  fillInCommonRolloverInfoWithoutCheckboxOneTimeOrders(
+    fiscalYear,
+    rolloverBudgetValue,
+    rolloverValueAs,
+  ) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      Checkbox({ name: 'restrictEncumbrance' }).click(),
+      Checkbox({ name: 'restrictExpenditures' }).click(),
+      Checkbox({ name: 'needCloseBudgets' }).click(),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
@@ -173,7 +199,7 @@ export default {
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       rolloverAllocationCheckbox.click(),
-      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
@@ -207,7 +233,7 @@ export default {
     cy.wait(3000);
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
-      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
@@ -224,7 +250,7 @@ export default {
     cy.do([
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
-      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
@@ -428,11 +454,167 @@ export default {
     cy.wait(3000);
     cy.do([
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
-      rolloverBudgetVelue.choose(rolloverBudgetValue),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
+  },
+
+  fillInRolloverData(
+    fiscalYear,
+    restrictEncumbrance = false,
+    restrictExpenditures = false,
+    needCloseBudgets = false,
+    rolloverAllocation = false,
+    rolloverAdjustAllocation = false,
+    rolloverBudgetValue = false,
+    rolloverValueAs = false,
+    setAllowances = false,
+    allowedEncumbrance = false,
+    allowedExpenditure = false,
+    ongoingEncumbrances = false,
+    ongoingEncumbrancesBasedOn = false,
+    ongoingEncumbrancesIncreaseBy = false,
+    ongoingSubscriptionEncumbrances = false,
+    ongoingSubscriptionEncumbrancesBasedOn = false,
+    ongoingSubscriptionEncumbrancesIncreaseBy = false,
+    oneTimeEncumbrances = false,
+    oneTimeEncumbrancesBasedOn = false,
+    oneTimeEncumbrancesIncreaseBy = false,
+  ) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.choose(fiscalYear));
+    if (restrictEncumbrance === true) {
+      cy.do(Checkbox({ name: 'restrictEncumbrance' }).click());
+    }
+    if (restrictExpenditures === true) {
+      cy.do(Checkbox({ name: 'restrictExpenditures' }).click());
+    }
+    if (needCloseBudgets === true) {
+      cy.do(Checkbox({ name: 'needCloseBudgets' }).click());
+    }
+    if (rolloverAllocation === true) {
+      cy.do(rolloverAllocationCheckbox.click());
+    }
+    if (rolloverAdjustAllocation === true) {
+      cy.do(
+        TextField({ name: 'budgetsRollover[0].adjustAllocation' }).fillIn(rolloverAdjustAllocation),
+      );
+    }
+    if (rolloverBudgetValue === true) {
+      cy.do(rolloverBudgetVelueSelect.choose(rolloverBudgetValue));
+    }
+    if (rolloverValueAs === true) {
+      cy.do(addAvailableToSelect.choose(rolloverValueAs));
+    }
+    if (setAllowances === true) {
+      cy.do(Checkbox({ name: 'budgetsRollover[0].setAllowances' }).click());
+    }
+    if (allowedEncumbrance === true) {
+      cy.do(
+        TextField({ name: 'budgetsRollover[0].allowableEncumbrance' }).fillIn(allowedEncumbrance),
+      );
+    } else {
+      cy.expect(
+        TextField({ name: 'budgetsRollover[0].allowableEncumbrance' }).is({ disabled: true }),
+      );
+    }
+    if (allowedExpenditure === true) {
+      cy.do(
+        TextField({ name: 'budgetsRollover[0].allowableExpenditure' }).fillIn(allowedExpenditure),
+      );
+    } else {
+      cy.expect(
+        TextField({ name: 'budgetsRollover[0].allowableExpenditure' }).is({ disabled: true }),
+      );
+    }
+    if (ongoingEncumbrances === true) {
+      cy.do([
+        Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
+        Select({ name: 'encumbrancesRollover[0].basedOn' }).choose(ongoingEncumbrancesBasedOn),
+      ]);
+    } else {
+      cy.expect(Select({ name: 'encumbrancesRollover[0].basedOn' }).is({ disabled: true }));
+    }
+    if (ongoingEncumbrancesIncreaseBy === true) {
+      cy.do(
+        TextField({ name: 'encumbrancesRollover[0].increaseBy' }).fillIn(
+          ongoingEncumbrancesIncreaseBy,
+        ),
+      );
+    } else {
+      cy.expect(TextField({ name: 'encumbrancesRollover[0].increaseBy' }).is({ disabled: true }));
+    }
+    if (ongoingSubscriptionEncumbrances === true) {
+      cy.do([
+        Checkbox({ name: 'encumbrancesRollover[1].rollover' }).click(),
+        Select({ name: 'encumbrancesRollover[1].basedOn' }).choose(
+          ongoingSubscriptionEncumbrancesBasedOn,
+        ),
+      ]);
+    } else {
+      cy.expect(Select({ name: 'encumbrancesRollover[1].basedOn' }).is({ disabled: true }));
+    }
+    if (ongoingSubscriptionEncumbrancesIncreaseBy === true) {
+      cy.do(
+        TextField({ name: 'encumbrancesRollover[1].increaseBy' }).fillIn(
+          ongoingSubscriptionEncumbrancesIncreaseBy,
+        ),
+      );
+    } else {
+      cy.expect(TextField({ name: 'encumbrancesRollover[1].increaseBy' }).is({ disabled: true }));
+    }
+    if (oneTimeEncumbrances === true) {
+      cy.do([
+        Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+        Select({ name: 'encumbrancesRollover[2].basedOn' }).choose(oneTimeEncumbrancesBasedOn),
+      ]);
+    } else {
+      cy.expect(Select({ name: 'encumbrancesRollover[2].basedOn' }).is({ disabled: true }));
+    }
+    if (oneTimeEncumbrancesIncreaseBy === true) {
+      cy.do(
+        TextField({ name: 'encumbrancesRollover[2].increaseBy' }).fillIn(
+          oneTimeEncumbrancesIncreaseBy,
+        ),
+      );
+    } else {
+      cy.expect(TextField({ name: 'encumbrancesRollover[2].increaseBy' }).is({ disabled: true }));
+    }
+  },
+
+  clickRolloverAfterFillinData() {
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(4000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
+  fillInRolloverWithoutCheckboxCloseBudgetsOneTimeOrders(
+    fiscalYear,
+    rolloverBudgetValue,
+    rolloverValueAs,
+  ) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      Checkbox({ name: 'needCloseBudgets' }).click(),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(4000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
   },
 };

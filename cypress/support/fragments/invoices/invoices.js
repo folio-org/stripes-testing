@@ -491,6 +491,15 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
+  changeFundInLine: (fund) => {
+    cy.do([
+      Selection('Fund ID*').open(),
+      SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
+      saveAndClose.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+  },
+
   addFundToLine: (fund) => {
     cy.do([
       Button({ id: 'fundDistributions-add-button' }).click(),
@@ -834,5 +843,13 @@ export default {
       batchGroupFilterSection.find(Button({ id: 'batchGroupId-selection' })).click(),
       batchGroupFilterSection.find(SelectionOption(batchGroup)).click(),
     ]);
+  },
+
+  openPageCurrentEncumbrance: (title) => {
+    cy.get('#invoiceLineFundDistribution')
+      .find('*[class^="mclCell"]')
+      .contains(title)
+      .invoke('removeAttr', 'target')
+      .click();
   },
 };
