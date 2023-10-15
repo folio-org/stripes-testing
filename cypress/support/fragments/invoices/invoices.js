@@ -353,6 +353,29 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
+  createRolloverInvoiceWithFY(invoice, organization, fiscalYear) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      Selection('Fiscal year').open(),
+      SelectionList().select(fiscalYear.code),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(organization);
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select('FOLIO'),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').checked(false),
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
   createSpecialInvoice(invoice) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
@@ -453,11 +476,25 @@ export default {
   createInvoiceLine: (invoiceLine) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
     cy.do(newBlankLineButton.click());
-    // TODO: update using interactors once we will be able to pass negative value into text field
-    cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
+      TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
       TextField('Description*').fillIn(invoiceLine.description),
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
+      saveAndClose.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+  },
+
+  createInvoiceLineWithFund: (invoiceLine, fund) => {
+    cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
+    cy.do(newBlankLineButton.click());
+    cy.do([
+      TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
+      TextField('Description*').fillIn(invoiceLine.description),
+      TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
+      Button({ id: 'fundDistributions-add-button' }).click(),
+      Button({ name: 'fundDistributions[0].fundId' }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
       saveAndClose.click(),
     ]);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
@@ -949,5 +986,23 @@ export default {
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();
+  },
+
+  checkApproveButtonIsDissabled: () => {
+    cy.wait(6000);
+    cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
+    cy.expect(Button('Approve').is({ disabled: true }));
+  },
+
+  clickOnOrganizationFromInvoice: (organizationName) => {
+    cy.do(Section({ id: 'vendorDetails' }).find(Link(organizationName)).click());
+  },
+
+  selectFundInInvoiceLine: (fund) => {
+    cy.do(
+      Section({ id: 'invoiceLineFundDistribution' })
+        .find(Link(`${fund.name}(${fund.code})`))
+        .click(),
+    );
   },
 };
