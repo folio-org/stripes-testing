@@ -127,7 +127,7 @@ export default {
     cy.xpath(createdFiscalYearNameXpath).should('be.visible').and('have.text', fiscalYearName);
   },
 
-  filltheStartAndEndDateoncalenderstartDateField: (periodStart, periodEnd) => {
+  filltheStartAndEndDateonCalenderstartDateField: (periodStart, periodEnd) => {
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
       TextField({ name: 'periodStart' }).fillIn(periodStart),
