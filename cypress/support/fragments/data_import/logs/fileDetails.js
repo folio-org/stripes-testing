@@ -53,6 +53,15 @@ const status = {
   error: 'Error',
 };
 
+const visibleColumnsInSummaryTable = {
+  SRS_MARC: { columnIndex: 2 },
+  INSTANCE: { columnIndex: 3 },
+  HOLDINGS: { columnIndex: 4 },
+  ITEM: { columnIndex: 5 },
+  INVOICE: { columnIndex: 7 },
+  ERROR: { columnIndex: 8 },
+};
+
 const visibleColumnsInResultsList = {
   RECORD: { columnIndex: 1 },
   TITLE: { columnIndex: 2 },
@@ -210,6 +219,7 @@ export default {
   columnNameInSummuryTable,
   status,
   invoiceNumberFromEdifactFile,
+  visibleColumnsInSummaryTable,
   validateNumsAscendingOrder,
   checkStatusInColumn,
   checkItemsStatusesInResultList,
@@ -283,13 +293,18 @@ export default {
       .click();
   },
 
-  filterRecordsWithError: (quantity) => {
+  filterRecordsWithError: (index) => {
     cy.do(
       jobSummaryTable
         .find(MultiColumnListRow({ indexRow: 'row-3' }))
-        .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
+        .find(MultiColumnListCell(index))
         .find(Link({ href: including('/data-import/job-summary') }))
         .click(),
+    );
+    cy.expect(
+      PaneHeader({ id: 'paneHeaderpane-results' })
+        .find(HTML(including('found')))
+        .exists(),
     );
   },
 
