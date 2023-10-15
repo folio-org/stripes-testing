@@ -9,7 +9,6 @@ import Users from '../../support/fragments/users/users';
 import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import DateTools from '../../support/utils/dateTools';
-import NewOrder from '../../support/fragments/orders/newOrder';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
