@@ -37,6 +37,7 @@ const jobsPane = Pane({ id: 'pane-jobs-title' });
 const orChooseFilesButton = Button('or choose files');
 const cancelImportJobModal = Modal('Cancel import job?');
 const yesButton = Button('Yes, cancel import job');
+const cancelButton = Button('No, do not cancel import');
 const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
 
 const uploadFile = (filePathName, fileName) => {
@@ -408,19 +409,30 @@ export default {
       .contains('li[class^="job-"]', fileName)
       .then((elem) => {
         elem.parent()[0].querySelector('button[icon="trash"]').click();
+
+        cy.get('div[class^="listContainer-"] button[icon="trash"]').should('not.be.visible');
       });
   },
 
   verifyCancelImportJobModal: () => {
+    const headerModalContent = 'Are you sure that you want to cancel this import job?';
+    const modalContent =
+      'Note: Cancelled jobs cannot be restarted. Records created or updated before\nthe job is cancelled cannot yet be reverted.';
     cy.expect([
       cancelImportJobModal.exists(),
-      cancelImportJobModal.find(yesButton).exists(),
-      cancelImportJobModal.find(Button('No, do not cancel import')).exists(),
+      cancelImportJobModal.find(HTML(including(headerModalContent))).exists(),
+      cancelImportJobModal.find(HTML(including(modalContent))).exists(),
+      cancelImportJobModal.find(cancelButton, { disabled: true }).exists(),
+      cancelImportJobModal.find(yesButton, { disabled: false }).exists(),
     ]);
   },
 
-  cancelImportJob: () => {
+  confirmDeleteImportJob: () => {
     cy.do(cancelImportJobModal.find(yesButton).click());
+  },
+
+  cancelDeleteImportJob: () => {
+    cy.do(cancelImportJobModal.find(cancelButton).click());
   },
 
   waitFileIsUploaded: () => {
