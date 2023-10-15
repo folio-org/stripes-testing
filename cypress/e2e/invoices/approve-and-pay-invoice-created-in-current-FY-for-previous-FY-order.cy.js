@@ -10,14 +10,10 @@ import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import DateTools from '../../support/utils/dateTools';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import OrderLines from '../../support/fragments/orders/orderLines';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import NewExpenceClass from '../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -55,12 +51,6 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     restrictExpenditures: false,
   };
   const defaultFund = { ...Funds.defaultUiFund };
-  const defaultOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'One-time',
-    approved: true,
-    reEncumber: true,
-  };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
     status: 'Inactive',
@@ -73,13 +63,8 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
   const periodEndForSecondFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
-  const periodStartForThirdFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForThirdFY = DateTools.get2DaysAfterTomorrowDateForFiscalYearOnUIEdit();
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
-  let orderNumber;
-  let servicePointId;
-  let location;
 
   before(() => {
     cy.getAdminToken();
@@ -220,9 +205,9 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     });
   });
 
-  //   after(() => {
-  //     Users.deleteViaApi(user.userId);
-  //   });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it(
     'C388564 Approve and pay invoice created in current FY for previous FY without related order (thunderjet) (TaaS)',
