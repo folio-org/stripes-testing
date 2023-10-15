@@ -8,6 +8,9 @@ function openActions() {
 function clickMissingButton() {
   cy.do(Button('Missing').click());
 }
+function clickNewRequestButton() {
+  cy.do(Button('New request').click());
+}
 function confirmMarkAsMissing() {
   cy.do(Modal('Confirm item status: Missing').find(Button('Confirm')).click());
 }
@@ -18,6 +21,8 @@ function cancelMarkAsMissing() {
 export default {
   confirmMarkAsMissing,
   cancelMarkAsMissing,
+  openActions,
+  clickNewRequestButton,
   edit() {
     cy.wait(5000);
     openActions();
