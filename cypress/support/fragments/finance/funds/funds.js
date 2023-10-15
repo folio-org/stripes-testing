@@ -21,11 +21,13 @@ import {
   MultiColumnList,
   MultiSelectOption,
   PaneHeader,
+  Select,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -734,6 +736,12 @@ export default {
   editBudget: () => {
     cy.wait(4000);
     cy.do([actionsButton.click(), Button('Edit').click()]);
+  },
+
+  changeStatusOfBudget: (statusName, fund, fiscalYear) => {
+    cy.wait(4000);
+    cy.do([Select({ id: 'budget-status' }).choose(statusName), saveAndCloseButton.click()]);
+    InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${fiscalYear.code} has been saved`);
   },
 
   addExpensesClass: (firstExpenseClassName) => {
