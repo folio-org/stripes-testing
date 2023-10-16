@@ -5,6 +5,7 @@ export default {
   invoiceApprovedMessage: 'Invoice has been approved successfully',
   invoiceApprovedAndPaidMessage: 'Invoice has been approved and paid successfully',
   invoicePaidMessage: 'Invoice has been paid successfully',
+  invoiceCancelledMessage: 'Invoice has been cancelled successfully',
   invoiceDeletedMessage: 'Invoice has been deleted',
   // warnings
   invoiceCanNotBeApproved:
