@@ -201,4 +201,11 @@ export default {
       .find(HTML(including(statement)))
       .absent(),
   ),
+  checkInstanceTitle: (title) => {
+    cy.expect(HTML(including(`Instance: ${title}`)).exists());
+  },
+  checkLastUpdatedDate: (userName) => {
+    cy.do(Button(including('Record last updated:')).click());
+    cy.expect(HTML(including(`Source: ${userName}`)).exists());
+  },
 };
