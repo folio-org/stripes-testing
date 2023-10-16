@@ -51,7 +51,6 @@ describe('Bulk Edit - Logs', () => {
         item.holdingsHRID = holdings[0].hrid;
         cy.updateHoldingRecord(holdings[0].id, {
           ...holdings[0],
-          discoverySuppress: true,
           permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
           temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
         });

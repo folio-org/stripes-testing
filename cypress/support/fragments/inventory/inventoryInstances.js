@@ -13,6 +13,7 @@ import {
   Select,
   TextInput,
   TextArea,
+  PaneHeader,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -22,10 +23,7 @@ import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import generateUniqueItemBarcodeWithShift from '../../utils/generateUniqueItemBarcodeWithShift';
-import {
-  AdvancedSearch,
-  AdvancedSearchRow,
-} from '../../../../interactors/advanced-search';
+import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -33,6 +31,7 @@ const actionsButton = rootSection.find(Button('Actions'));
 const singleRecordImportModal = Modal('Single record import');
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button('Search', { type: 'submit' });
+const paneHeaderSearch = PaneHeader('Inventory');
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
@@ -611,9 +610,7 @@ export default {
 
   checkAdvSearchInstancesModalFields(rowIndex) {
     if (rowIndex) {
-      cy.expect(
-        AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists(),
-      );
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
       advSearchOperators.forEach((operator) => {
         cy.expect(
           AdvancedSearchRow({ index: rowIndex })
@@ -622,9 +619,7 @@ export default {
         );
       });
     } else {
-      cy.expect(
-        AdvancedSearchRow({ index: rowIndex }).has({ text: including('Search for') }),
-      );
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).has({ text: including('Search for') }));
     }
     cy.expect([
       AdvancedSearchRow({ index: rowIndex }).find(TextArea()).exists(),
@@ -708,5 +703,13 @@ export default {
     searchInstancesOptions.forEach((searchOption) => {
       cy.expect(inventorySearchAndFilterInput.has({ content: including(searchOption) }));
     });
+  },
+
+  verifyInventorySearchPaneheader() {
+    cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
+  },
+
+  checkActionsButtonInSecondPane() {
+    cy.expect(actionsButton.exists());
   },
 };

@@ -47,6 +47,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     inputTextFieldNames: (el) => [...el.querySelectorAll('input')].map((input) => input.name),
     liValues: (el) => [...el.querySelectorAll('li')].map((li) => li.textContent),
     innerHTML: (el) => el.innerHTML,
+    innerText: (el) => el.innerText,
   })
   .actions({ hrefClick: ({ perform }) => perform((el) => el.querySelector('a').click()) });
 

@@ -227,6 +227,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   OTHER_SCHEME: 'Other scheme',
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
+  DEWAY_DECIMAL: 'Dewey Decimal classification',
 };
 
 export const EXPORT_TRANSFORMATION_NAMES = {
