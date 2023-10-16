@@ -1,3 +1,4 @@
+import { including, HTML } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
@@ -6,13 +7,13 @@ import {
   MultiColumnListRow,
   PaneContent,
   Form,
-  HTML,
-  including,
+  MultiColumnList,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import FieldMappingProfileEdit from './fieldMappingProfileEdit';
 import NewFieldMappingProfile from './newFieldMappingProfile';
 import FieldMappingProfileView from './fieldMappingProfileView';
+import Callout from '../../../../../interactors/callout';
 
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
@@ -45,6 +46,10 @@ export default {
   openNewMappingProfileForm,
   search,
   mappingProfileForDuplicate,
+  clearSearchField: () => {
+    cy.do(searchField.focus());
+    cy.do(Button({ id: 'input-mapping-profiles-search-field-clear-button' }).click());
+  },
   waitLoading: () => cy.expect(MultiColumnListRow({ index: 0 }).exists()),
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
@@ -107,12 +112,28 @@ export default {
     cy.do(searchButton.click());
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
-  checkListOfExistingProfilesIsDisplayed: () => cy.expect(PaneContent({ id: 'pane-results-content' }).exists()),
+  checkListOfExistingProfilesIsDisplayed: () => {
+    cy.wait(2000);
+    cy.expect(
+      PaneContent({ id: 'pane-results-content' })
+        .find(MultiColumnList({ id: 'mapping-profiles-list' }))
+        .exists(),
+    );
+  },
   checkNewMappingProfileFormIsOpened: () => cy.expect(Form({ id: 'mapping-profiles-form' }).exists()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
   verifyMappingProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
+  checkSuccessDelitionCallout: (profileName) => {
+    cy.expect(
+      Callout({
+        textContent: including(
+          `The field mapping profile "${profileName}" was successfully deleted`,
+        ),
+      }).exists(),
+    );
   },
 };

@@ -32,7 +32,7 @@ describe('Agreement Notes', () => {
   });
 
   it(
-    'C1308 Create a note for an Agreement record (erm)',
+    'C1308 Create a note for an Agreement record (erm) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.erm] },
     () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);

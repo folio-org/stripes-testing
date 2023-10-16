@@ -245,6 +245,22 @@ export default {
     cy.do(Select('Search field index').choose('Contributors'));
   },
 
+  selectBrowseOtherScheme() {
+    cy.do(browseButton.click());
+    // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(ONE_SECOND);
+    cy.do(browseSearchAndFilterInput.choose('Other scheme'));
+  },
+
+  selectBrowseDeweyDecimal() {
+    cy.do(browseButton.click());
+    // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(ONE_SECOND);
+    cy.do(browseSearchAndFilterInput.choose('Dewey Decimal classification'));
+  },
+
   showsOnlyNameTypeAccordion() {
     cy.expect(Accordion({ id: 'nameType' }).exists());
     cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
@@ -573,8 +589,12 @@ export default {
     cy.expect(instanceDetailsSection.exists());
   },
 
-  verifyInstanceDisplayed(instanceTitle) {
-    cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+  verifyInstanceDisplayed(instanceTitle, byInnerText = false) {
+    if (byInnerText) {
+      cy.expect(MultiColumnListCell({ innerText: instanceTitle }).exists());
+    } else {
+      cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+    }
   },
 
   verifyShelvingOrder(val) {
@@ -652,5 +672,13 @@ export default {
 
   verifyInstanceDetailsViewAbsent() {
     cy.expect(instanceDetailsSection.absent());
+  },
+
+  searchByStatus(status) {
+    cy.do([Button({ id: 'accordion-toggle-button-itemStatus' }).click(), Checkbox(status).click()]);
+  },
+
+  selectBrowseOption(option) {
+    cy.do(browseSearchAndFilterInput.choose(option));
   },
 };

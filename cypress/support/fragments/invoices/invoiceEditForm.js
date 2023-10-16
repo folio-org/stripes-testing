@@ -7,6 +7,7 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  including,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
@@ -36,6 +37,7 @@ const vendorFields = {
 
 const extendedInfoFields = {
   paymentMethod: extendedInformationSection.find(Select({ id: 'invoice-payment-method' })),
+  exchangeRate: extendedInformationSection.find(TextField({ id: 'exchange-rate' })),
 };
 
 const buttons = {
@@ -67,7 +69,10 @@ export default {
   },
   fillInvoiceFields(invoice) {
     if (invoice.fiscalYear) {
-      cy.do([Selection('Fiscal year').open(), SelectionList().select(invoice.fiscalYear)]);
+      cy.do([
+        Selection(including('Fiscal year')).open(),
+        SelectionList().select(invoice.fiscalYear),
+      ]);
     }
     if (invoice.status) {
       cy.do([Selection('Status*').open(), SelectionList().select(invoice.status)]);
@@ -83,6 +88,13 @@ export default {
     }
     if (invoice.batchGroupName) {
       cy.do([Selection('Batch group*').open(), SelectionList().select(invoice.batchGroupName)]);
+    }
+    if (invoice.currency) {
+      cy.do([Selection('Currency*').open(), SelectionList().select(invoice.currency)]);
+    }
+    if (invoice.exchangeRate) {
+      cy.expect(extendedInfoFields.exchangeRate.has({ disabled: false }));
+      cy.do(extendedInfoFields.exchangeRate.fillIn(invoice.exchangeRate));
     }
     if (invoice.paymentMethod) {
       cy.do(extendedInfoFields.paymentMethod.choose(invoice.paymentMethod));

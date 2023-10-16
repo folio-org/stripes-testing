@@ -511,8 +511,8 @@ export default {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
   },
 
-  isHoldingsRadioChecked() {
-    cy.expect(holdingsRadio.has({ checked: true }));
+  isHoldingsRadioChecked(checked = true) {
+    cy.expect(holdingsRadio.has({ checked }));
   },
 
   verifyRadioHidden(name) {
@@ -688,7 +688,9 @@ export default {
       DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Former ids')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Instance (Title, Publisher, Publication date)')).has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox('Instance (Title, Publisher, Publication date)'))
+        .has({ checked: false }),
       DropdownMenu().find(Checkbox('Permanent location')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Temporary location')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Effective location')).has({ checked: false }),

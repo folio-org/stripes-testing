@@ -36,9 +36,21 @@ describe('data-import', () => {
     let user = null;
     let instanceHrid;
     const OCLCAuthentication = '100481406/PAOLF';
-    const protectedFields = {
-      firstField: '*',
-      secondField: '920',
+    const firstProtectedFieldsData = {
+      indicator1: '*',
+      indicator2: '*',
+      subfield: '5',
+      data: 'amb',
+      source: 'USER',
+      field: '*',
+    };
+    const secondProtectedFieldData = {
+      indicator1: '*',
+      indicator2: '*',
+      subfield: '*',
+      data: '*',
+      source: 'USER',
+      field: '920',
     };
     const quantityOfItems = '1';
     const oclcForImport = '830936944';
@@ -91,14 +103,14 @@ describe('data-import', () => {
     after('delete test data', () => {
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       MarcFieldProtection.getListViaApi({
-        query: `"field"=="${protectedFields.firstField}"`,
-      }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+        query: `"data"=="${firstProtectedFieldsData.data}"`,
+      }).then((field) => {
+        MarcFieldProtection.deleteViaApi(field[0].id);
       });
       MarcFieldProtection.getListViaApi({
-        query: `"field"=="${protectedFields.secondField}"`,
-      }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+        query: `"field"=="${secondProtectedFieldData.field}"`,
+      }).then((field) => {
+        MarcFieldProtection.deleteViaApi(field[0].id);
       });
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
@@ -125,22 +137,8 @@ describe('data-import', () => {
         );
         Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(OCLCAuthentication);
 
-        MarcFieldProtection.createViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '5',
-          data: 'amb',
-          source: 'USER',
-          field: protectedFields.firstField,
-        });
-        MarcFieldProtection.createViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: '*',
-          data: '*',
-          source: 'USER',
-          field: protectedFields.secondField,
-        });
+        MarcFieldProtection.createViaApi(firstProtectedFieldsData);
+        MarcFieldProtection.createViaApi(secondProtectedFieldData);
 
         // create match profile
         cy.visit(SettingsMenu.matchProfilePath);
