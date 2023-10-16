@@ -1,8 +1,8 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtentions/fileExtensions';
-import NewFileExtention from '../../../support/fragments/settings/dataImport/fileExtentions/newFileExtention';
+import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
+import NewFileExtension from '../../../support/fragments/settings/dataImport/fileExtensions/newFileExtension';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -29,13 +29,13 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         cy.visit(SettingsMenu.fileExtensionsPath);
-        FileExtensions.openNewFileExtentionForm();
-        NewFileExtention.verifyNewFileExtentionFormIsOpened();
-        NewFileExtention.fill(testData);
-        NewFileExtention.save();
-        NewFileExtention.verifyCalloutMessage(calloutMessage);
-        NewFileExtention.verifyPreviouslyPopulatedDataIsNotDisplayed();
-        NewFileExtention.verifyNewFileExtentionFormIsOpened();
+        FileExtensions.openNewFileExtensionForm();
+        NewFileExtension.verifyNewFileExtensionFormIsOpened();
+        NewFileExtension.fill(testData);
+        NewFileExtension.save();
+        NewFileExtension.verifyCalloutMessage(calloutMessage);
+        NewFileExtension.verifyPreviouslyPopulatedDataIsNotDisplayed();
+        NewFileExtension.verifyNewFileExtensionFormIsOpened();
       },
     );
   });

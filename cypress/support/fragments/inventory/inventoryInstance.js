@@ -363,9 +363,11 @@ export default {
     cy.expect(section.exists());
   },
 
-  searchByTitle(title) {
+  searchByTitle(title, result = true) {
     cy.do([filterPane.find(inputSearchField).fillIn(title), filterPane.find(searchButton).click()]);
-    cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    if (result) {
+      cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    }
   },
 
   clickViewAuthorityIconDisplayedInTagField(tag) {
@@ -911,10 +913,7 @@ export default {
 
   checkNewRequestAtNewPane() {
     cy.do(actionsButton.click());
-    cy.expect([
-      Button({ id: 'edit-instance' }).exists(),
-      Button({ id: 'copy-instance' }).exists(),
-    ]);
+    cy.expect([Button({ id: 'edit-instance' }).exists(), Button({ id: 'copy-instance' }).exists()]);
     cy.do(Button('New request').click());
   },
 
