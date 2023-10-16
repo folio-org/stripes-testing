@@ -181,7 +181,15 @@ export default {
   },
 
   verifyTitleInformation() {
-    this.verifyItemInformation([tlRequest, title, contributors, PublicationDate, edition, isbn, PublicationDate]);
+    this.verifyItemInformation([
+      tlRequest,
+      title,
+      contributors,
+      PublicationDate,
+      edition,
+      isbn,
+      PublicationDate,
+    ]);
   },
 
   chooseItemInSelectItemPane: (itemBarcode) => {

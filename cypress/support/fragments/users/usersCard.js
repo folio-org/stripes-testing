@@ -238,6 +238,9 @@ export default {
   viewAllFeesFines() {
     cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click());
   },
+  viewAllClosedFeesFines() {
+    cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewclosedaccounts' })).click());
+  },
   verifyPatronBlockValue(value = '') {
     cy.expect(KeyValue('Patron group').has({ value: including(value) }));
   },

@@ -125,7 +125,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
   });
   it(
     'C347890 Check that user can create Item level request from instance page (vega) (TaaS)',
-    { tags: [TestTypes.Extended, DevTeams.vega] },
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       cy.log('new request-0');
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
