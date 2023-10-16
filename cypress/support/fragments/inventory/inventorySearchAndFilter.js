@@ -581,8 +581,12 @@ export default {
     cy.expect(instanceDetailsSection.exists());
   },
 
-  verifyInstanceDisplayed(instanceTitle) {
-    cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+  verifyInstanceDisplayed(instanceTitle, byInnerText = false) {
+    if (byInnerText) {
+      cy.expect(MultiColumnListCell({ innerText: instanceTitle }).exists());
+    } else {
+      cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+    }
   },
 
   verifyShelvingOrder(val) {
