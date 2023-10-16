@@ -1,4 +1,4 @@
-import { Button, Form, Select, PaneHeader } from '../../../../../interactors';
+import { Button, Form, Select, PaneHeader, including } from '../../../../../interactors';
 import { REQUEST_METHOD } from '../../../constants';
 
 const commentRequiredForm = Form({ id: 'form-require-comment' });
@@ -42,7 +42,23 @@ export default {
   },
   verifySaveButtonDisabled: () => cy.do(saveButton.has({ disabled: true })),
   requireCommentForPaidFeeChooseOption: (option) => cy.do(requireCommentForPaidFee.choose(option)),
+  verifyRequireCommentForPaidFeeOptions: () => cy.expect([
+    requireCommentForPaidFee.has({ content: including('Yes') }),
+    requireCommentForPaidFee.has({ content: including('No') }),
+  ]),
   requireCommentForWaivedFeeChooseOption: (option) => cy.do(requireCommentForWaivedFee.choose(option)),
+  verifyrequireCommentForWaivedFeeOptions: () => cy.expect([
+    requireCommentForWaivedFee.has({ content: including('Yes') }),
+    requireCommentForWaivedFee.has({ content: including('No') }),
+  ]),
   requireCommentForRefundedFeeChooseOption: (option) => cy.do(requireCommentForRefundedFee.choose(option)),
+  verifyRequireCommentForRefundedFeeOptions: () => cy.expect([
+    requireCommentForRefundedFee.has({ content: including('Yes') }),
+    requireCommentForRefundedFee.has({ content: including('No') }),
+  ]),
   requireCommentForTransferredFeeChooseOption: (option) => cy.do(requireCommentForTransferredFee.choose(option)),
+  verifyRequireCommentForTransferredFeeOptions: () => cy.expect([
+    requireCommentForTransferredFee.has({ content: including('Yes') }),
+    requireCommentForTransferredFee.has({ content: including('No') }),
+  ]),
 };

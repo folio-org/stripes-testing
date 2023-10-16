@@ -24,6 +24,10 @@ describe('Settings Users', () => {
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       CommentRequired.verifySaveButtonDisabled();
+      CommentRequired.verifyRequireCommentForPaidFeeOptions();
+      CommentRequired.verifyrequireCommentForWaivedFeeOptions();
+      CommentRequired.verifyRequireCommentForRefundedFeeOptions();
+      CommentRequired.verifyRequireCommentForTransferredFeeOptions();
       CommentRequired.requireCommentForPaidFeeChooseOption(yesOption);
       CommentRequired.requireCommentForWaivedFeeChooseOption(yesOption);
       CommentRequired.requireCommentForRefundedFeeChooseOption(yesOption);
