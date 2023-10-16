@@ -18,6 +18,7 @@ const modal = Modal('Confirm multipiece check out');
 const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
 const modalForDeliveryRequest = Modal('Route for delivery request');
+const noteModal = Modal({ id: 'popup-note-modal' });
 
 function addPatron(userName) {
   cy.do(Button({ id: 'clickable-find-user' }).click());
@@ -221,6 +222,6 @@ export default {
     cy.do(Button('Close').click());
   },
   checkNoteModalNotDisplayed: () => {
-    cy.expect(Modal({ id: 'popup-note-modal' }).absent());
+    cy.expect(noteModal.absent());
   },
 };
