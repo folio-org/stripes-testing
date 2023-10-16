@@ -9,6 +9,7 @@ import UserEdit from '../../../../support/fragments/users/userEdit';
 import NewNoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import NoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import { NOTICE_CATEGORIES } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 
 describe('Patron Notices', () => {
   let userData;
@@ -57,7 +58,9 @@ describe('Patron Notices', () => {
       NewNoticePolicyTemplate.checkAfterSaving({
         name: testData.noticeTemplateBody.name,
         description: testData.noticeTemplateBody.description,
-        category: testData.noticeTemplateBody.category,
+        category: NOTICE_CATEGORIES.loan,
+        subject: 'Email subject: Loan',
+        body: 'Email body {{item.title}}',
       });
       cy.wait(2000);
       NoticePolicyTemplate.collapseAll();

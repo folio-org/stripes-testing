@@ -26,8 +26,8 @@ export default {
     id,
   }),
   startAdding: () => cy.do(newButton.click()),
-  fillReasonParameters: ({ reason, description }) => {
-    cy.do(reasonTextField.fillIn(reason));
+  fillReasonParameters: ({ name, description }) => {
+    cy.do(reasonTextField.fillIn(name));
     cy.do(rootSection.find(descriptionTextField).fillIn(description));
   },
   trySave: () => cy.do(saveButton.click()),
