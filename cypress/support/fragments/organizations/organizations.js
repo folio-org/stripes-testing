@@ -405,6 +405,12 @@ export default {
     cy.do(editButton.click());
   },
 
+  changeOrganizationStatus: (status) => {
+    cy.wait(4000);
+    cy.do([organizationStatus.choose(status), saveAndClose.click()]);
+    cy.wait(6000);
+  },
+
   verifyNewCategory: (category) => {
     cy.do([
       openContactSectionButton.click(),

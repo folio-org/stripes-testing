@@ -16,7 +16,7 @@ describe('data-import', () => {
   describe('Settings', () => {
     let user;
     const matchProfileToDelete = {
-      profileName: `C2346 autotest action profile to delete ${getRandomStringCode(8)}`,
+      profileName: `C2346 autotest match profile_${getRandomStringCode(8)}`,
       incomingRecordFields: {
         field: '001',
       },
