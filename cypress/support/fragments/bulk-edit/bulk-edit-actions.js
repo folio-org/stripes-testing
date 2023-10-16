@@ -442,18 +442,23 @@ export default {
     cy.expect(HTML('No matching options').exists());
   },
 
-  duplicateCheckInNote(rowIndex = 0) {
+  duplicateCheckInNote(note = 'in', rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
-        .choose('Check in note'),
+        .choose(`Check ${note} note`),
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Duplicate to'),
     ]);
-    cy.expect(
+    if (note === 'in') cy.expect(
       RepeatableFieldItem({ index: rowIndex })
         .find(Select({ content: 'Check out note' }))
+        .has({ disabled: true }),
+    );
+    else cy.expect(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ content: 'Check in note' }))
         .has({ disabled: true }),
     );
   },
