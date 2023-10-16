@@ -681,4 +681,8 @@ export default {
   selectBrowseOption(option) {
     cy.do(browseSearchAndFilterInput.choose(option));
   },
+
+  checkSearchQueryText(text) {
+    cy.expect(keywordInput.has({ value: text }));
+  },
 };
