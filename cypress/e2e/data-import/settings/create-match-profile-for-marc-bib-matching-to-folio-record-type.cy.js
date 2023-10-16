@@ -38,7 +38,6 @@ describe('data-import', () => {
         NewMatchProfile.verifyExistingRecordSection();
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
-        NewMatchProfile.fillIncomingRecordSections(matchProfile);
       },
     );
   });

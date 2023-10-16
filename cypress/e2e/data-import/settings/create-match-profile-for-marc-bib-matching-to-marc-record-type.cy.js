@@ -10,6 +10,7 @@ import MatchProfileView from '../../../support/fragments/data_import/match_profi
 describe('data-import', () => {
   describe('Settings', () => {
     let user;
+    const incomingRecordType = 'MARC Bibliographic';
     const matchProfile = {
       profileName: `C9322 autotest match profile_${getRandomPostfix()}`,
       incomingRecordFields: {
@@ -59,7 +60,7 @@ describe('data-import', () => {
         });
         NewMatchProfile.saveAndClose();
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
-        MatchProfileView.verifyMatchProfile(matchProfile);
+        MatchProfileView.verifyMatchProfile(matchProfile, incomingRecordType);
       },
     );
   });
