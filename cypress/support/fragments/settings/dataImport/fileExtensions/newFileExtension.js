@@ -1,10 +1,10 @@
 import { including } from '@interactors/html';
 import { Pane, TextField, MultiSelect, Button, Callout } from '../../../../../../interactors';
 
-const verifyNewFileExtentionFormIsOpened = () => cy.expect(Pane('New file extension mapping').exists());
+const verifyNewFileExtensionFormIsOpened = () => cy.expect(Pane('New file extension mapping').exists());
 
 export default {
-  verifyNewFileExtentionFormIsOpened,
+  verifyNewFileExtensionFormIsOpened,
   fill: (data) => {
     // TODO need to wait until page will be uploaded
     cy.wait(2000);
