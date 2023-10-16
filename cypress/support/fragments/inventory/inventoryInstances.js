@@ -580,6 +580,28 @@ export default {
     cy.deleteHoldingRecordViaApi(instance.holdingId);
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
+
+  createLocalCallNumberTypeViaApi: (name) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'call-number-types',
+        body: {
+          id: uuid(),
+          name,
+          source: 'local',
+        },
+      })
+      .then((res) => {
+        return res.body.id;
+      });
+  },
+
+  deleteLocalCallNumberTypeViaApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `call-number-types/${id}`,
+  }),
+
   searchBySource: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-source' }).click());
     cy.do(Checkbox(source).click());
