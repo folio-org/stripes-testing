@@ -135,6 +135,7 @@ export default {
       TextField({ name: 'periodEnd' }).fillIn(periodEnd),
       saveAndClose.click(),
     ]);
+    cy.wait(6000);
   },
 
   filltheStartAndEndDateoncalenderstartDateField2: () => {

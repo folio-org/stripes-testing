@@ -96,6 +96,13 @@ export default {
     )}/${currentDate.getFullYear()}`;
   },
 
+  getSomeDaysAfterTomorrowDateForFiscalYear: (days) => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
+      currentDate.getDate() + days,
+    )}`;
+  },
+
   getDayTomorrowDateForFiscalYear: () => {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
