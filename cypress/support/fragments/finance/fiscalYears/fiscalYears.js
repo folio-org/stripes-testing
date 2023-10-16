@@ -119,6 +119,7 @@ export default {
   },
 
   editFiscalYearDetails: () => {
+    cy.wait(5000);
     cy.do([actionsButton.click(), editButton.click()]);
   },
 
@@ -126,7 +127,7 @@ export default {
     cy.xpath(createdFiscalYearNameXpath).should('be.visible').and('have.text', fiscalYearName);
   },
 
-  filltheStartAndEndDateoncalenderstartDateField: (periodStart, periodEnd) => {
+  filltheStartAndEndDateonCalenderstartDateField: (periodStart, periodEnd) => {
     cy.do([
       TextField({ name: 'periodStart' }).clear(),
       TextField({ name: 'periodStart' }).fillIn(periodStart),
@@ -134,6 +135,7 @@ export default {
       TextField({ name: 'periodEnd' }).fillIn(periodEnd),
       saveAndClose.click(),
     ]);
+    cy.wait(6000);
   },
 
   filltheStartAndEndDateoncalenderstartDateField2: () => {

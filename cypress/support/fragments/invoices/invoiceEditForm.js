@@ -7,6 +7,7 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  including,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
@@ -68,7 +69,10 @@ export default {
   },
   fillInvoiceFields(invoice) {
     if (invoice.fiscalYear) {
-      cy.do([Selection('Fiscal year').open(), SelectionList().select(invoice.fiscalYear)]);
+      cy.do([
+        Selection(including('Fiscal year')).open(),
+        SelectionList().select(invoice.fiscalYear),
+      ]);
     }
     if (invoice.status) {
       cy.do([Selection('Status*').open(), SelectionList().select(invoice.status)]);

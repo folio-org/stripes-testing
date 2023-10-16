@@ -80,7 +80,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   });
 
   it(
-    'C367956 Verify that CRUD actions with fields from "Derive MARC Bib" window will save in new record (spitfire)',
+    'C367956 Verify that CRUD actions with fields from "Derive MARC Bib" window will save in new record (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       cy.visit(`${TopMenu.inventoryPath}/view/${instanceId}`);

@@ -281,6 +281,23 @@ export default {
     });
   },
 
+  createApprovedOrderForRollover(order, isApproved = false, reEncumber = false) {
+    cy.do([actionsButton.click(), newButton.click()]);
+    this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
+    cy.do(Select('Order type*').choose(order.orderType));
+    if (isApproved === true) {
+      cy.do(Checkbox({ name: 'approved' }).click());
+    }
+    if (reEncumber === true) {
+      cy.do(Checkbox({ name: 'reEncumber' }).click());
+    }
+    cy.do(saveAndClose.click());
+    return cy.wait('@newOrder', getLongDelay()).then(({ response }) => {
+      return response.body;
+    });
+  },
+
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')

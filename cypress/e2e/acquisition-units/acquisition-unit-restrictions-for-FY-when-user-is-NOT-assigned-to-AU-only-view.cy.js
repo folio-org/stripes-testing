@@ -53,7 +53,7 @@ describe('Acquisition Units', () => {
       AcquisitionUnits.newAcquisitionUnit();
       AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
       AcquisitionUnits.assignAdmin();
-      AcquisitionUnits.edit(defaultAcquisitionUnit.name);
+      AcquisitionUnits.editAU();
       AcquisitionUnits.selectViewCheckbox();
 
       cy.visit(TopMenu.fiscalYearPath);

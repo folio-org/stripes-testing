@@ -16,6 +16,7 @@ export const Checkbox = HTML.extend('checkbox')
     valid: (el) => el.querySelector('input').validity.valid,
     value: (el) => el.querySelector('input').value,
     label: (el) => el.textContent,
+    labelText: (el) => el.querySelector('[class^=labelText]').textContent,
     ariaLabel: (el) => el.querySelector('input').ariaLabel,
     ariaInvalid: (el) => el.querySelector('input').getAttribute('aria-invalid') === 'true',
     feedbackText: (el) => el.querySelector('[role=alert]').textContent,
