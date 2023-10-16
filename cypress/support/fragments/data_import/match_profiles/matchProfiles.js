@@ -58,7 +58,10 @@ export default {
   openNewMatchProfileForm,
   deleteMatchProfile,
   search,
-
+  clearSearchField: () => {
+    cy.do(TextField({ id: 'input-search-match-profiles-field' }).focus());
+    cy.do(Button({ id: 'input-match-profiles-search-field-clear-button' }).click());
+  },
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileForm(profile);

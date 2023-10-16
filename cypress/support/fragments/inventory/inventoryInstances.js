@@ -22,10 +22,7 @@ import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import generateUniqueItemBarcodeWithShift from '../../utils/generateUniqueItemBarcodeWithShift';
-import {
-  AdvancedSearch,
-  AdvancedSearchRow,
-} from '../../../../interactors/advanced-search';
+import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -611,9 +608,7 @@ export default {
 
   checkAdvSearchInstancesModalFields(rowIndex) {
     if (rowIndex) {
-      cy.expect(
-        AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists(),
-      );
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
       advSearchOperators.forEach((operator) => {
         cy.expect(
           AdvancedSearchRow({ index: rowIndex })
@@ -622,9 +617,7 @@ export default {
         );
       });
     } else {
-      cy.expect(
-        AdvancedSearchRow({ index: rowIndex }).has({ text: including('Search for') }),
-      );
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).has({ text: including('Search for') }));
     }
     cy.expect([
       AdvancedSearchRow({ index: rowIndex }).find(TextArea()).exists(),

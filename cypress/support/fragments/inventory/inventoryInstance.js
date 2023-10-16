@@ -913,10 +913,7 @@ export default {
 
   checkNewRequestAtNewPane() {
     cy.do(actionsButton.click());
-    cy.expect([
-      Button({ id: 'edit-instance' }).exists(),
-      Button({ id: 'copy-instance' }).exists(),
-    ]);
+    cy.expect([Button({ id: 'edit-instance' }).exists(), Button({ id: 'copy-instance' }).exists()]);
     cy.do(Button('New request').click());
   },
 
