@@ -45,16 +45,30 @@ export default {
   },
   checkFundDistibutionTableContent(records = []) {
     records.forEach((record, index) => {
-      cy.expect([
-        fundDistributionsSection
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 0 }))
-          .has({ content: including(record.name) }),
-        fundDistributionsSection
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 5 }))
-          .has({ content: including(record.encumbrance) }),
-      ]);
+      if (record.name) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.name) }),
+        );
+      }
+      if (record.expenseClass) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.expenseClass) }),
+        );
+      }
+      if (record.encumbrance) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 5 }))
+            .has({ content: including(record.encumbrance) }),
+        );
+      }
     });
   },
   openFundDetailsPane(rowIndex = 0) {

@@ -22,19 +22,19 @@ describe('data-import', () => {
     before('login', () => {
       cy.getAdminToken().then(() => {
         // create mapping profile profile linked to action profile
-        NewFieldMappingProfile.createMappingProfileViaApi(linkedMappingProfile).then(
-          (mappingProfileResponse) => {
+        NewFieldMappingProfile.createMappingProfileViaApi(linkedMappingProfile)
+          .then((mappingProfileResponse) => {
             NewActionProfile.createActionProfileViaApi(
               actionProfile,
               mappingProfileResponse.body.id,
             );
-          },
-        ).then((actionProfileResponse) => {
-          NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
-            jobProfile,
-            actionProfileResponse.body.id,
-          );
-        });
+          })
+          .then((actionProfileResponse) => {
+            NewJobProfile.createJobProfileWithLinkedActionProfileViaApi(
+              jobProfile,
+              actionProfileResponse.body.id,
+            );
+          });
         // create not linked mapping profile
         NewFieldMappingProfile.createMappingProfileViaApi(notLinkedMappingProfile);
       });

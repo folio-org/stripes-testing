@@ -41,7 +41,7 @@ describe('Settings: Location', () => {
   });
 
   it(
-    'C365628 Settings (tenant): View locations (firebird)',
+    'C365628 Settings (tenant): View locations (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
       // Select "Institutions" option on the "Location setup" subsection
