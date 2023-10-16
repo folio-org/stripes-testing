@@ -21,15 +21,15 @@ describe('data-import', () => {
   describe('Settings', () => {
     let user;
     const mappingProfile = {
-      name: `C402332 autotest mapping profile_${getRandomPostfix()}`,
+      name: `402365 autotest mapping profile_${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      name: `C402332 autotest action profile_${getRandomPostfix()}`,
+      name: `402365 autotest action profile_${getRandomPostfix()}`,
     };
     const matchProfile = {
-      profileName: `C402332 autotest match profile_${getRandomPostfix()}`,
+      profileName: `402365 autotest match profile_${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '001',
       },
@@ -39,7 +39,7 @@ describe('data-import', () => {
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C2332 autotest job profile ${getRandomPostfix()}`,
+      profileName: `402365 autotest job profile_${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
@@ -109,7 +109,6 @@ describe('data-import', () => {
         MatchProfiles.verifySearchResult(matchProfile.profileName);
         MatchProfiles.clearSearchField();
         MatchProfiles.verifySearchFieldIsEmpty();
-        cy.pause();
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
 
         cy.visit(SettingsMenu.jobProfilePath);
