@@ -57,6 +57,7 @@ const contributorsOption = Option('Contributors');
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const searchButton = Button({ type: 'submit' });
 const resetAllButton = Button('Reset all');
+const resultsPaneHeaderBrowse = PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' });
 
 const typeSelect = Section({ id: 'nameType' });
 const nameTypeButton = typeSelect.find(Button('Name type'));
@@ -332,5 +333,24 @@ export default {
       body: instanceWithContributor,
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  checkBrowseQueryText(text) {
+    cy.expect(recordSearch.has({ value: text }));
+  },
+
+  verifyInventoryBrowsePaneheader() {
+    cy.expect([
+      resultsPaneHeaderBrowse.exists(),
+      PaneHeader({ text: including('records found') }).absent(),
+    ]);
+  },
+
+  checkNonExactSearchResultForARow(browseQuery, rowIndex = 5) {
+    cy.expect([
+      MultiColumnListRow({ index: rowIndex }).has({
+        content: including(`${browseQuery}would be here`),
+      }),
+    ]);
   },
 };
