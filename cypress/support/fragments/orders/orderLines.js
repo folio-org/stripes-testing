@@ -1,4 +1,3 @@
-import { MultiSelect } from 'bigtest';
 import {
   Button,
   SearchField,
@@ -30,6 +29,7 @@ import {
   RECEIVING_WORKFLOW_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_PAYMENT_STATUS,
+  RECEIPT_STATUS_SELECTED,
 } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import selectLocationModal from './modals/selectLocationModal';
@@ -155,7 +155,7 @@ export default {
     );
   },
 
-  checkCreatedPOLineResource(orderLineTitleName, recourceName, fund) {
+  checkCreatedPOLineResource: (orderLineTitleName, recourceName, fund) => {
     cy.expect([
       orderLineDetailsPane.exists(),
       itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
@@ -166,10 +166,22 @@ export default {
         .has({ content: `${fund.name}(${fund.code})` }),
     ]);
   },
+  checkPOLReceiptStatus(receiptStatus) {
+    cy.expect([
+      orderLineDetailsPane.exists(),
+      poLineInfoSection.find(KeyValue({ value: receiptStatus })).exists(),
+    ]);
+  },
+  checkPOLReceivingWorkflow(receivingWorkflow) {
+    cy.expect([
+      orderLineDetailsPane.exists(),
+      poLineInfoSection.find(KeyValue({ value: receivingWorkflow })).exists(),
+    ]);
+  },
   checkCreatedPOLineOtherResource(orderLineTitleName, fund) {
     this.checkCreatedPOLineResource(orderLineTitleName, ORDER_FORMAT_NAMES.OTHER, fund);
   },
-  checkCreatedPOLinePhysicalResource: (orderLineTitleName, fund) => {
+  checkCreatedPOLinePhysicalResource(orderLineTitleName, fund) {
     this.checkCreatedPOLineResource(
       orderLineTitleName,
       ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE_Check,
@@ -329,6 +341,51 @@ export default {
       quantityPhysicalLocationField.fillIn(quantityPhysical),
       saveAndCloseButton.click(),
     ]);
+  },
+
+  POLineInfoWithReceiptNotRequiredStatus: (institutionId) => {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED),
+    ]);
+    cy.expect(receivingWorkflowSelect.disabled());
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  POLineInfoEditWithReceiptNotRequiredStatus: () => {
+    cy.do(Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED));
+    cy.expect(receivingWorkflowSelect.disabled());
+    cy.do(saveAndCloseButton.click());
+  },
+
+  POLineInfoEditWithPendingReceiptStatus: () => {
+    cy.do([
+      Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.PENDING),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  checkCalloutMessageInEditedPOL: (orderNumber, numberOfPOL) => {
+    InteractorsTools.checkCalloutMessage(
+      `The purchase order line ${orderNumber}-${numberOfPOL} was successfully updated`,
+    );
   },
 
   POLineInfodorPhysicalMaterialWithFund: (orderLineTitleName, fund) => {
@@ -726,7 +783,7 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
-  fillInPOLineInfoForExport(accountNumber, AUMethod) {
+  fillInPOLineInfoForExport(AUMethod) {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitle),
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX),
@@ -736,7 +793,6 @@ export default {
       receivingWorkflowSelect.choose(
         RECEIVING_WORKFLOW_NAMES.INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY,
       ),
-      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
@@ -759,14 +815,13 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
-  fillInPOLineInfoForExportWithLocation(accountNumber, AUMethod, institutionId) {
+  fillInPOLineInfoForExportWithLocation(AUMethod, institutionId) {
     cy.wait(4000);
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
-      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
@@ -790,18 +845,12 @@ export default {
     submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationForPhysicalResource(
-    accountNumber,
-    AUMethod,
-    institutionName,
-    quantity,
-  ) {
+  fillInPOLineInfoForExportWithLocationForPhysicalResource(AUMethod, institutionName, quantity) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
-      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
@@ -1426,5 +1475,23 @@ export default {
       .then(() => {
         expect(quantity).to.equal(arrayOfQuantityRows.length);
       });
+  },
+  getOrderLineViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'orders/order-lines',
+        searchParams,
+      })
+      .then(({ body }) => body.poLines);
+  },
+  createOrderLineViaApi(orderLine) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/order-lines',
+        body: orderLine,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
   },
 };

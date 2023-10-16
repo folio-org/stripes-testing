@@ -58,7 +58,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-        JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+        JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -80,7 +80,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   });
 
   it(
-    'C367956 Verify that CRUD actions with fields from "Derive MARC Bib" window will save in new record (spitfire)',
+    'C367956 Verify that CRUD actions with fields from "Derive MARC Bib" window will save in new record (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       cy.visit(`${TopMenu.inventoryPath}/view/${instanceId}`);

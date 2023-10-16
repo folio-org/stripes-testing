@@ -249,7 +249,7 @@ describe('data-import', () => {
         );
         NewJobProfile.saveAndClose();
 
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfileView.edit();
         JobProfileEdit.verifyScreenName(jobProfile.profileName);
         JobProfileEdit.unlinkProfile(1);

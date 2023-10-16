@@ -14,8 +14,6 @@ import {
   TextField,
 } from '../../../../interactors';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
-import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import eHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import topMenu from '../../../support/fragments/topMenu';
@@ -83,16 +81,9 @@ export default {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToPackages();
     eHoldingsProvidersSearch.byProvider(packageName);
-    eHoldingsPackages.openPackage();
     cy.do(actionsButton.click());
     cy.do(deletePackage.click());
     cy.do(confirmModal.find(Button('Yes, delete')).click());
-  },
-
-  switchToPackage() {
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('JSTOR');
-    eHoldingsPackagesSearch.bySelectionStatus('Selected');
   },
 
   verifyPackage() {
@@ -148,13 +139,6 @@ export default {
       description.fillIn(data.description),
       SaveAndClose.click(),
     ]);
-  },
-
-  packageSearch() {
-    cy.visit(topMenu.eholdingsPath);
-    eHoldingsSearch.switchToPackages();
-    eHoldingsProvidersSearch.byProvider('VLeBooks');
-    eHoldingsPackagesSearch.bySelectionStatus('Selected');
   },
 
   modelSearch() {

@@ -15,12 +15,43 @@ export default {
       budgetStatus: 'Active',
     };
   },
+  getBudgetViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'finance/budgets',
+        searchParams,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+  getBudgetByIdViaApi(budgetId) {
+    return cy
+      .okapiRequest({
+        path: `finance/budgets/${budgetId}`,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
   createViaApi(budgetProperties) {
     return cy
       .okapiRequest({
         path: 'finance/budgets',
         body: budgetProperties,
         method: 'POST',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+  updateBudgetViaApi(budget) {
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `finance/budgets/${budget.id}`,
+        body: budget,
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
@@ -39,13 +70,18 @@ export default {
     ledger: ledgerProps,
     fund: fundProps,
     budget: budgetProps,
+    expenseClasses = [],
   } = {}) {
     const fiscalYear = {
       ...FiscalYears.getDefaultFiscalYear(),
       ...fiscalYearProps,
     };
-    const ledger = { ...Ledgers.getDefaultLedger(), ...ledgerProps };
-    const fund = { ...Funds.getDefaultFund(), ...fundProps };
+    const ledger = {
+      ...Ledgers.getDefaultLedger(),
+      fiscalYearOneId: fiscalYear.id,
+      ...ledgerProps,
+    };
+    const fund = { ...Funds.getDefaultFund(), ledgerId: ledger.id, ...fundProps };
     const budget = {
       fiscalYearId: fiscalYear.id,
       fundId: fund.id,
@@ -54,9 +90,21 @@ export default {
     };
 
     FiscalYears.createViaApi(fiscalYear);
-    Ledgers.createViaApi({ ...ledger, fiscalYearOneId: fiscalYear.id });
-    Funds.createViaApi({ ...fund, ledgerId: ledger.id });
-    this.createViaApi(budget);
+    Ledgers.createViaApi(ledger);
+    Funds.createViaApi(fund);
+
+    this.createViaApi(budget).then((resp) => {
+      if (expenseClasses.length) {
+        this.updateBudgetViaApi({
+          ...resp,
+          _version: resp._version + 1,
+          statusExpenseClasses: expenseClasses.map(({ id }) => ({
+            status: 'Active',
+            expenseClassId: id,
+          })),
+        });
+      }
+    });
 
     return {
       fiscalYear,

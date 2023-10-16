@@ -1,8 +1,15 @@
+import { including } from '@interactors/html';
 import { TextField, Button, Select, Section, Pane } from '../../../../../interactors';
 import SelectMappingProfile from './modals/selectMappingProfile';
 import { FOLIO_RECORD_TYPE, PROFILE_TYPE_NAMES } from '../../../constants';
 
 const action = 'Create (all record types except MARC Authority or MARC Holdings)';
+
+const nameField = TextField({ name: 'profile.name' });
+const actionSelect = Select({ name: 'profile.action' });
+const recordTypeselect = Select({ name: 'profile.folioRecord' });
+const profileLinkSection = Section({ id: 'actionProfileFormAssociatedMappingProfileAccordion' });
+const profileLinkButton = Button('Link Profile');
 
 const defaultActionProfile = {
   name: 'autotest action profile',
@@ -72,23 +79,25 @@ export default {
   getDefaultItemActionProfile,
   fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
-      TextField({ name: 'profile.name' }).fillIn(specialActionProfile.name),
-      Select({ name: 'profile.action' }).choose(specialActionProfile.action || action),
-      Select({ name: 'profile.folioRecord' }).choose(
+      nameField.fillIn(specialActionProfile.name),
+      actionSelect.choose(specialActionProfile.action || action),
+      recordTypeselect.choose(
         specialActionProfile.typeValue || FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       ),
     ]);
   },
 
+  fillName: (profileName = defaultActionProfile.name) => cy.do(nameField.fillIn(profileName)),
+
+  chooseAction: (profileAction = action) => cy.do(actionSelect.choose(profileAction)),
+
+  saveProfile: () => cy.do(Button('Save as profile & Close').click()),
+
   linkMappingProfile: (specialMappingProfileName) => {
-    cy.do(Button('Link Profile').click());
+    cy.do(profileLinkButton.click());
     SelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
     SelectMappingProfile.selectMappingProfile(specialMappingProfileName);
-    cy.expect(
-      Section({ id: 'actionProfileFormAssociatedMappingProfileAccordion' })
-        .find(Button('Link Profile'))
-        .has({ disabled: true }),
-    );
+    cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
     cy.do(Button('Save as profile & Close').click());
     cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
   },
@@ -147,5 +156,19 @@ export default {
       .then(({ response }) => {
         return response;
       });
+  },
+
+  verifyPreviouslyCreatedDataIsDisplayed: (profile) => {
+    cy.expect([
+      Pane('New action profile').exists(),
+      nameField.has({ value: profile.name }),
+      actionSelect.has({ content: including(profile.action) }),
+      recordTypeselect.has({ content: including(profile.typeValue) }),
+    ]);
+  },
+
+  verifyPreviouslyPopulatedDataIsDisplayed(profile) {
+    this.verifyPreviouslyCreatedDataIsDisplayed(profile);
+    cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
   },
 };

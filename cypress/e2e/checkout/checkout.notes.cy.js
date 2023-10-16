@@ -79,7 +79,7 @@ describe('Check out - Notes', () => {
 
   it(
     'C356781: Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (Spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);
@@ -105,7 +105,7 @@ describe('Check out - Notes', () => {
 
   it(
     'C380512: Verify that all notes assigned to user pop up when user scan patron card (“Close” option) (Spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);

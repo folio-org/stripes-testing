@@ -7,39 +7,42 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  including,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
+import InvoiceStates from './invoiceStates';
 
 const invoiceEditFormRoot = Section({ id: 'pane-invoice-form' });
 const informationSection = invoiceEditFormRoot.find(Section({ id: 'invoiceForm-information' }));
+const vendorInformationSection = invoiceEditFormRoot.find(
+  Section({ id: 'invoiceForm-vendorDetails' }),
+);
 const extendedInformationSection = invoiceEditFormRoot.find(
   Section({ id: 'invoiceForm-extendedInformation' }),
 );
-const inputRecordSearch = SearchField({ id: 'input-record-search' });
-const searchButton = Button('Search');
 const cancelButtom = Button('Cancel');
 const saveButtom = Button('Save & close');
-
-const invoiceStates = {
-  invoiceCreatedMessage: 'Invoice has been saved',
-  invoiceLineCreatedMessage: 'Invoice line has been saved',
-  invoiceApprovedMessage: 'Invoice has been approved successfully',
-  invoicePaidMessage: 'Invoice has been paid successfully',
-  invoiceDeletedMessage: 'Invoice has been deleted',
-};
 
 const infoFields = {
   fiscalYear: informationSection.find(Button({ id: 'invoice-fiscal-year' })),
   note: informationSection.find(TextArea({ id: 'note' })),
 };
 
+const vendorFields = {
+  vendorInvoiceNo: vendorInformationSection.find(TextField({ id: 'vendorInvoiceNo' })),
+  vendorName: vendorInformationSection.find(TextField({ id: 'vendorId' })),
+  accountingCode: vendorInformationSection.find(Button({ id: 'accounting-code-selection' })),
+};
+
 const extendedInfoFields = {
   paymentMethod: extendedInformationSection.find(Select({ id: 'invoice-payment-method' })),
+  exchangeRate: extendedInformationSection.find(TextField({ id: 'exchange-rate' })),
 };
 
 const buttons = {
   'Fiscal year': infoFields.fiscalYear,
+  'Vendor name': vendorFields.vendorName,
   Cancel: cancelButtom,
   'Save & close': saveButtom,
 };
@@ -59,12 +62,18 @@ export default {
   selectVendorOnUi(vendorName) {
     cy.do([
       Button('Organization look-up').click(),
-      inputRecordSearch.fillIn(vendorName),
-      searchButton.click(),
+      SearchField({ id: 'input-record-search' }).fillIn(vendorName),
+      Button('Search').click(),
     ]);
     FinanceHelper.selectFromResultsList();
   },
   fillInvoiceFields(invoice) {
+    if (invoice.fiscalYear) {
+      cy.do([
+        Selection(including('Fiscal year')).open(),
+        SelectionList().select(invoice.fiscalYear),
+      ]);
+    }
     if (invoice.status) {
       cy.do([Selection('Status*').open(), SelectionList().select(invoice.status)]);
     }
@@ -80,6 +89,13 @@ export default {
     if (invoice.batchGroupName) {
       cy.do([Selection('Batch group*').open(), SelectionList().select(invoice.batchGroupName)]);
     }
+    if (invoice.currency) {
+      cy.do([Selection('Currency*').open(), SelectionList().select(invoice.currency)]);
+    }
+    if (invoice.exchangeRate) {
+      cy.expect(extendedInfoFields.exchangeRate.has({ disabled: false }));
+      cy.do(extendedInfoFields.exchangeRate.fillIn(invoice.exchangeRate));
+    }
     if (invoice.paymentMethod) {
       cy.do(extendedInfoFields.paymentMethod.choose(invoice.paymentMethod));
     }
@@ -92,13 +108,16 @@ export default {
     cy.do(cancelButtom.click());
     cy.expect(invoiceEditFormRoot.absent());
   },
-  clickSaveButton({ checkCalloutMessage = true } = {}) {
+  clickSaveButton({ invoiceCreated = true, invoiceLineCreated = false } = {}) {
     cy.expect(saveButtom.has({ disabled: false }));
     cy.do(saveButtom.click());
-    cy.expect(invoiceEditFormRoot.absent());
 
-    if (checkCalloutMessage) {
-      InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+    if (invoiceCreated) {
+      InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+    }
+
+    if (invoiceLineCreated) {
+      InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
     }
     // wait for changes to be applied
     cy.wait(2000);

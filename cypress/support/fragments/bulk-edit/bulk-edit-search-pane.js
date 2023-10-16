@@ -511,8 +511,8 @@ export default {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
   },
 
-  isHoldingsRadioChecked() {
-    cy.expect(holdingsRadio.has({ checked: true }));
+  isHoldingsRadioChecked(checked = true) {
+    cy.expect(holdingsRadio.has({ checked }));
   },
 
   verifyRadioHidden(name) {
@@ -676,8 +676,6 @@ export default {
       DropdownMenu().find(Checkbox('Preferred contact type id')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Date enrolled')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Expiration date')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Record created')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Record updated')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
@@ -690,7 +688,7 @@ export default {
       DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Former ids')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Instance')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Instance (Title, Publisher, Publication date)')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Permanent location')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Temporary location')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Effective location')).has({ checked: false }),
@@ -720,153 +718,6 @@ export default {
       DropdownMenu().find(Checkbox('Source')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Instance HRID')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Item barcode')).has({ checked: false }),
-    ]);
-  },
-
-  verifyItemsActionDropdownItems() {
-    cy.expect([
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item HRID', checked: true }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Barcode', checked: true }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Effective call number', checked: true }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Status', checked: true }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Material type', checked: true }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Permanent loan type', checked: true }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Temporary loan type', checked: true }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item effective location', checked: true }))
-        .exists(),
-
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item ID', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Version', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Holdings record ID', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Former identifiers', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Suppress from discovery', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Title', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Contributor names', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Call number', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Shelving order', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Accession number', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item level call number', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item level call number prefix', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item level call number suffix', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item level call number type', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Volume', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Enumeration', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Chronology', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Year, caption', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item identifier', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Copy number', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Number of pieces', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Description of pieces', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Number of missing pieces', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Missing pieces', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Missing pieces date', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item damaged status', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item damaged status date', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Administrative notes', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Circulation Notes', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Is bound with', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Bound with titles', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item permanent location', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Item temporary location', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'In transit destination service point', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Statistical codes', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Purchase order line identifier', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Tags', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Last check in', checked: false }))
-        .exists(),
-      DropdownMenu()
-        .find(Checkbox({ name: 'Electronic access', checked: false }))
-        .exists(),
     ]);
   },
 

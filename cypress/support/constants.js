@@ -129,6 +129,7 @@ export const BATCH_GROUP = {
 };
 
 export const INVOICE_STATUSES = {
+  OPEN: 'Open',
   APPROVED: 'Approved',
   CANCELLED: 'Cancelled',
   PAID: 'Paid',
@@ -170,6 +171,16 @@ export const ORDER_FORMAT_NAMES_IN_PROFILE = {
 export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   APPROVAL_PLAN: 'Approval plan',
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+};
+
+export const RECEIPT_STATUS_SELECTED = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt not required',
+};
+
+export const RECEIPT_STATUS_VIEW = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
 };
 
 export const RECEIVING_WORKFLOW_NAMES = {
@@ -282,4 +293,10 @@ export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
   PURCHASE: 'Purchase',
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
   TECHNICAL: 'Technical',
+};
+
+export const REMOTE_STORAGE_PROVIDER_NAMES = {
+  Dematic_EMS: 'Dematic EMS (API)',
+  DDEMATIC_STAGING_DIRECTOR: 'Dematic StagingDirector (TCP/IP)',
+  CAIA_SOFT: 'CaiaSoft',
 };

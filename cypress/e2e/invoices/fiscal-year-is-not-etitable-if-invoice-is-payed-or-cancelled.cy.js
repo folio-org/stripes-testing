@@ -1,54 +1,53 @@
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-
 import TopMenu from '../../support/fragments/topMenu';
-import { Invoices } from '../../support/fragments/invoices';
+import { Invoices, InvoiceView } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
 import Organizations from '../../support/fragments/organizations/organizations';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 import Users from '../../support/fragments/users/users';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
+import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
   const createInvoiceWithStatus = (testData, status) => {
-    cy.getAdminToken();
-
-    const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi();
-    testData.budget = budget;
-    testData.fiscalYear = fiscalYear;
-
-    ServicePoints.createViaApi(testData.servicePoint).then(() => {
-      testData.location = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
+    cy.getAdminToken().then(() => {
+      const { fiscalYear, ledger, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
+        ledger: { restrictEncumbrance: true, restrictExpenditures: true },
+        budget: { allocated: '100' },
       });
+      testData.fund = fund;
+      testData.ledger = ledger;
+      testData.budget = budget;
+      testData.fiscalYear = fiscalYear;
 
-      Locations.createViaApi(testData.location).then(() => {
-        Organizations.createOrganizationViaApi(testData.organization).then(() => {
-          const orderLine = BasicOrderLine.getDefaultOrderLine({
-            fundDistribution: [{ fundId: fund.id, value: budget.allowableEncumbrance }],
-            specialLocationId: testData.location.id,
-            vendorAccount: testData.organization.name,
-          });
+      Organizations.createOrganizationViaApi(testData.organization).then(() => {
+        const orderLine = BasicOrderLine.getDefaultOrderLine({
+          listUnitPrice: 100,
+          fundDistribution: [{ code: fund.code, fundId: fund.id, value: 100 }],
+        });
 
-          Orders.createOrderWithOrderLineViaApi(testData.order, orderLine).then((order) => {
-            Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' });
+        Orders.createOrderWithOrderLineViaApi(testData.order, orderLine).then((order) => {
+          testData.order = order;
 
-            Invoices.createInvoiceWithInvoiceLineViaApi({
-              vendorId: testData.organization.id,
-              poLineId: orderLine.id,
-              fundDistributions: [{ fundId: fund.id, value: budget.allowableEncumbrance }],
-              accountingCode: testData.organization.erpCode,
-            }).then((invoice) => {
-              testData.invoice = invoice;
+          Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' });
 
-              Invoices.changeInvoiceStatusViaApi({ invoice: testData.invoice, status });
-            });
-          });
+          OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
+            (resp) => {
+              Invoices.createInvoiceWithInvoiceLineViaApi({
+                vendorId: testData.organization.id,
+                fiscalYearId: testData.fiscalYear.id,
+                poLineId: orderLine.id,
+                fundDistributions: resp[0].fundDistribution,
+                accountingCode: testData.organization.erpCode,
+                releaseEncumbrance: true,
+              }).then((invoice) => {
+                testData.invoice = invoice;
+
+                Invoices.changeInvoiceStatusViaApi({ invoice: testData.invoice, status });
+              });
+            },
+          );
         });
       });
     });
@@ -68,7 +67,6 @@ describe('Invoices', () => {
 
   const cleanUpTestData = (testData) => {
     Organizations.deleteOrganizationViaApi(testData.organization.id);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);
   };
 
@@ -94,8 +92,6 @@ describe('Invoices', () => {
       const testData = {
         organization,
         order: { ...NewOrder.getDefaultOrder({ vendorId: organization.id }), reEncumber: true },
-        servicePoint: ServicePoints.defaultServicePoint,
-        location: {},
         user: {},
       };
 
@@ -110,11 +106,14 @@ describe('Invoices', () => {
       it(description, { tags: [TestTypes.criticalPath, DevTeams.thunderjet] }, () => {
         Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
         Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
-        Invoices.checkInvoiceDetails({
-          ...testData.invoice,
-          status,
-          fiscalYear: testData.fiscalYear.code,
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: 'Status', value: status },
+            { key: 'Fiscal year', value: testData.fiscalYear.code },
+          ],
         });
+
         const InvoiceEditForm = Invoices.openInvoiceEditForm();
         InvoiceEditForm.checkButtonsConditions([
           {
@@ -129,10 +128,12 @@ describe('Invoices', () => {
         InvoiceEditForm.clickSaveButton();
 
         InteractorsTools.checkCalloutMessage('Invoice has been saved');
-        Invoices.checkInvoiceDetails({
-          ...testData.invoice,
-          status,
-          fiscalYear: testData.fiscalYear.code,
+        InvoiceView.checkInvoiceDetails({
+          title: testData.invoice.vendorInvoiceNo,
+          invoiceInformation: [
+            { key: 'Status', value: status },
+            { key: 'Fiscal year', value: testData.fiscalYear.code },
+          ],
         });
       });
     });

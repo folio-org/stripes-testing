@@ -1,3 +1,4 @@
+import { including, HTML } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
@@ -6,17 +7,17 @@ import {
   MultiColumnListRow,
   PaneContent,
   Form,
-  HTML,
-  including,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import FieldMappingProfileEdit from './fieldMappingProfileEdit';
 import NewFieldMappingProfile from './newFieldMappingProfile';
 import FieldMappingProfileView from './fieldMappingProfileView';
+import Callout from '../../../../../interactors/callout';
 
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
 const resultsPane = Pane({ id: 'pane-results' });
+const searchField = TextField({ id: 'input-search-mapping-profiles-field' });
 
 const openNewMappingProfileForm = () => {
   cy.do([actionsButton.click(), Button('New field mapping profile').click()]);
@@ -28,7 +29,7 @@ const mappingProfileForDuplicate = {
 };
 
 const search = (nameForSearch) => {
-  cy.do(TextField({ id: 'input-search-mapping-profiles-field' }).fillIn(nameForSearch));
+  cy.do(searchField.fillIn(nameForSearch));
   cy.expect(searchButton.has({ disabled: false }));
   cy.do(searchButton.click(), getLongDelay());
 };
@@ -102,7 +103,7 @@ export default {
   },
   selectMappingProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   checkMappingProfilePresented: (mappingProfileName) => {
-    cy.do(TextField({ id: 'input-search-mapping-profiles-field' }).fillIn(mappingProfileName));
+    cy.do(searchField.fillIn(mappingProfileName));
     cy.do(searchButton.click());
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
@@ -110,4 +111,17 @@ export default {
   checkNewMappingProfileFormIsOpened: () => cy.expect(Form({ id: 'mapping-profiles-form' }).exists()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
   verifyMappingProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
+  verifySearchResult: (profileName) => {
+    cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
+  checkSuccessDelitionCallout: (profileName) => {
+    cy.expect(
+      Callout({
+        textContent: including(
+          `The field mapping profile "${profileName}" was successfully deleted`,
+        ),
+      }).exists(),
+    );
+  },
 };

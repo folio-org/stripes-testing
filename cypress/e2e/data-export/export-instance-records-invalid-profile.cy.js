@@ -20,7 +20,7 @@ const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 
 // TODO: identify how to stabilize flaky test
 
-describe.skip('data-export', () => {
+describe('data-export', () => {
   beforeEach('create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,

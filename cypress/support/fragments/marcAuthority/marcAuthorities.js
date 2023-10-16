@@ -21,6 +21,7 @@ import {
   SearchField,
   Section,
   Select,
+  TextArea,
   TextField,
   including,
 } from '../../../../interactors';
@@ -64,6 +65,7 @@ const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this pag
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
+const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 
 export default {
   waitLoading() {
@@ -364,6 +366,13 @@ export default {
     );
   },
 
+  verifyEmptyAuthorityField: () => {
+    cy.expect([
+      sourceFileAccordion.find(MultiSelect({ label: including('Authority source') })).exists(),
+      sourceFileAccordion.find(MultiSelect({ selectedCount: 0 })).exists(),
+    ]);
+  },
+
   clickActionsButton() {
     cy.do(actionsButton.click());
   },
@@ -455,7 +464,7 @@ export default {
       modalAdvancedSearch.exists(),
       AdvancedSearchRow({ index: 0 }).has({ text: including('Search for') }),
       AdvancedSearchRow({ index: row })
-        .find(TextField())
+        .find(TextArea())
         .has({ value: including(value) }),
       AdvancedSearchRow({ index: row }).has({ text: including('in') }),
       AdvancedSearchRow({ index: row })
@@ -661,5 +670,17 @@ export default {
 
   checkDetailViewIncludesText(text) {
     cy.expect(marcViewSection.find(HTML(including(text))).exists());
+  },
+
+  verifyEnabledSearchButton() {
+    cy.expect(searchButton.has({ disabled: false }));
+  },
+
+  verifyDisabledSearchButton() {
+    cy.expect(searchButton.has({ disabled: true }));
+  },
+
+  closeAuthorityLinkingModal() {
+    cy.do(closeLinkAuthorityModal.click());
   },
 };

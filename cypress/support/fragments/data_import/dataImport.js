@@ -197,7 +197,7 @@ export default {
   // actions
   importFileForBrowse(profileName, fileName) {
     JobProfiles.waitLoadingList();
-    JobProfiles.searchJobProfileForImport(profileName);
+    JobProfiles.search(profileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -214,7 +214,7 @@ export default {
     // upload a marc file for export
     cy.visit(TopMenu.dataImportPath);
     uploadFile('oneMarcBib.mrc', nameForMarcFileWithBib);
-    JobProfiles.searchJobProfileForImport(JobProfiles.defaultInstanceAndSRSMarcBib);
+    JobProfiles.search(JobProfiles.defaultInstanceAndSRSMarcBib);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameForMarcFileWithBib);
 

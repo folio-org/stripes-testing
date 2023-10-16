@@ -1,6 +1,7 @@
 import {
   Button,
   HTML,
+  List,
   ListItem,
   Modal,
   Section,
@@ -10,6 +11,7 @@ import {
   KeyValue,
   Select,
   Pane,
+  Link,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
@@ -70,6 +72,19 @@ export default {
     );
   },
 
+  verifyListOfExistingPackagesIsDisplayed: () => {
+    cy.expect(resultSection.find(List()).exists());
+  },
+
+  openPackageWithExpectedTitels: (totalTitlesNumber) => {
+    cy.do(
+      resultSection
+        .find(ListItem({ text: including(`Total titles: ${totalTitlesNumber}`) }))
+        .find(Link())
+        .click(),
+    );
+  },
+
   openPackage: (rowNumber = 0) => {
     const specialRow = resultSection.find(
       ListItem({ className: including('list-item-'), index: rowNumber }),
@@ -83,12 +98,6 @@ export default {
       cy.wrap(specialPackage).as('selectedPackage');
     });
     return cy.get('@selectedPackage');
-  },
-
-  getPackageName: (rowNumber = 0) => {
-    return cy.then(() => resultSection
-      .find(ListItem({ className: including('list-item-'), index: rowNumber }))
-      .h3Value());
   },
 
   getCustomPackageViaApi: () => {
