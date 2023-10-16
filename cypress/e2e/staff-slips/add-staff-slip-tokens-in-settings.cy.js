@@ -167,6 +167,7 @@ describe('Staff slips', () => {
       EditStaffClips.saveAndClose();
       EditStaffClips.checkAfterUpdate('Pick slip');
       cy.visit(TopMenu.requestsPath);
+      cy.wait(5000);
       NewRequest.printPickSlips();
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editPickslip();
