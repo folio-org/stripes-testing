@@ -118,21 +118,25 @@ describe('Bulk Edit - Logs', () => {
       BulkEditFiles.verifyCSVFileRows(itemBarcodesFileName, [item.itemBarcode]);
 
       BulkEditSearchPane.downloadFileWithMatchingRecords();
-      BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`,
+      BulkEditFiles.verifyMatchedResultFileContent(
+        `*${matchedRecordsFileName}`,
         [item.itemBarcode],
-        'holdingsItemBarcode');
+        'holdingsItemBarcode',
+      );
 
       BulkEditSearchPane.downloadFileWithProposedChanges();
       BulkEditFiles.verifyMatchedResultFileContent(
         previewOfProposedChangesFileName,
         [item.itemBarcode],
-        'holdingsItemBarcode');
+        'holdingsItemBarcode',
+      );
 
       BulkEditSearchPane.downloadFileWithUpdatedRecords();
       BulkEditFiles.verifyMatchedResultFileContent(
         updatedRecordsFileName,
         [item.itemBarcode],
-        'holdingsItemBarcode');
+        'holdingsItemBarcode',
+      );
 
       TopMenuNavigation.navigateToApp('Inventory');
       InventorySearchAndFilter.switchToItem();
