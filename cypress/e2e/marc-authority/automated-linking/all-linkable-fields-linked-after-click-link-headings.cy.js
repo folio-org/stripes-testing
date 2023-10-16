@@ -203,26 +203,24 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      cy.loginAsAdmin().then(
-        () => {
-          marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.waitLoading();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdRecordsIDs.push(link.split('/')[5]);
-              });
-            }
-          });
-        }
-      );
+      cy.loginAsAdmin().then(() => {
+        marcFiles.forEach((marcFile) => {
+          cy.visit(TopMenu.dataImportPath);
+          DataImport.waitLoading();
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(marcFile.jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(marcFile.fileName);
+          for (let i = 0; i < marcFile.numOfRecords; i++) {
+            Logs.getCreatedItemsID(i).then((link) => {
+              createdRecordsIDs.push(link.split('/')[5]);
+            });
+          }
+        });
+      });
     });
   });
 

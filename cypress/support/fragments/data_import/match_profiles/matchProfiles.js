@@ -8,6 +8,7 @@ import {
   HTML,
   Callout,
   TextField,
+  MultiColumnList,
 } from '../../../../../interactors';
 import NewMatchProfile from './newMatchProfile';
 
@@ -113,7 +114,10 @@ export default {
     );
   },
 
-  checkListOfExistingProfilesIsDisplayed: () => cy.expect(resultsPane.exists()),
+  verifyListOfExistingProfilesIsDisplayed: () => {
+    cy.wait(2000);
+    cy.expect(resultsPane.find(MultiColumnList({ id: 'match-profiles-list' })).exists());
+  },
   selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
   verifyMatchProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),

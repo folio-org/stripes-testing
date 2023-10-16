@@ -14,6 +14,7 @@ import {
   Checkbox,
   Dropdown,
   DropdownMenu,
+  Callout,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -1027,5 +1028,9 @@ export default {
 
     cy.do(fieldName.click());
     cy.expect(fieldName.has({ error: 'Please enter a value' }));
+  },
+
+  checkCalloutMessage: (message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
   },
 };

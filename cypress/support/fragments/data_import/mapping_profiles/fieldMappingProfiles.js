@@ -12,6 +12,7 @@ import { getLongDelay } from '../../../utils/cypressTools';
 import FieldMappingProfileEdit from './fieldMappingProfileEdit';
 import NewFieldMappingProfile from './newFieldMappingProfile';
 import FieldMappingProfileView from './fieldMappingProfileView';
+import Callout from '../../../../../interactors/callout';
 
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
@@ -113,5 +114,14 @@ export default {
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
+  checkSuccessDelitionCallout: (profileName) => {
+    cy.expect(
+      Callout({
+        textContent: including(
+          `The field mapping profile "${profileName}" was successfully deleted`,
+        ),
+      }).exists(),
+    );
   },
 };

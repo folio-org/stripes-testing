@@ -639,7 +639,7 @@ export default {
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    cy.expect(Button('Actions').exists());
+    cy.expect(Pane({ titleLabel: including('Holdings') }).exists());
   },
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
@@ -907,6 +907,15 @@ export default {
     ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());
     cy.expect(HTML('MARC bibliographic record').exists());
+  },
+
+  checkNewRequestAtNewPane() {
+    cy.do(actionsButton.click());
+    cy.expect([
+      Button({ id: 'edit-instance' }).exists(),
+      Button({ id: 'copy-instance' }).exists(),
+    ]);
+    cy.do(Button('New request').click());
   },
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),

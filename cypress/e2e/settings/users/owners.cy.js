@@ -88,7 +88,7 @@ describe('ui-users-settings: Owners', () => {
     });
 
     it(
-      'C440 Verify that you can create/edit/delete fee/fine owners (vega)',
+      'C440 Verify that you can create/edit/delete fee/fine owners (vega) (TaaS)',
       { tags: [TestType.extendedPath, DevTeams.vega] },
       () => {
         UsersOwners.startNewLineAdding();
