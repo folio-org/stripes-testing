@@ -22,4 +22,10 @@ export default {
         return body;
       });
   },
+  deleteExpenseClassViaApi(expenseClassId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `finance/expense-classes/${expenseClassId}`,
+    });
+  },
 };

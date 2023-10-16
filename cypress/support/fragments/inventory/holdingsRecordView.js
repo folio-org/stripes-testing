@@ -168,6 +168,7 @@ export default {
     cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
     cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
   },
+  checkCopyNumber: (number) => cy.expect(KeyValue('Copy number').has({ value: number })),
   addElectronicAccess: (type) => {
     cy.expect(electronicAccessAccordion.exists());
     cy.do([
@@ -194,5 +195,17 @@ export default {
     cy.do(PaneHeader().find(closeButton).click());
     cy.expect(root.exists());
     this.waitLoading();
+  },
+  checkHoldingsStatementAbsent: (statement) => cy.expect(
+    MultiColumnList({ id: 'list-holdingsStatement' })
+      .find(HTML(including(statement)))
+      .absent(),
+  ),
+  checkInstanceTitle: (title) => {
+    cy.expect(HTML(including(`Instance: ${title}`)).exists());
+  },
+  checkLastUpdatedDate: (userName) => {
+    cy.do(Button(including('Record last updated:')).click());
+    cy.expect(HTML(including(`Source: ${userName}`)).exists());
   },
 };

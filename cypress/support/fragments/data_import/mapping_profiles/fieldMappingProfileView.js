@@ -19,6 +19,7 @@ const deleteButton = Button('Delete');
 const fullScreenView = Pane({ id: 'full-screen-view' });
 const associatedList = MultiColumnList({ id: 'associated-actionProfiles-list' });
 const overrideProtectedSectionAccordoin = Accordion({ id: 'override-protected-section' });
+const cannotDeleteModal = Modal({ title: 'Cannot delete field mapping profile' });
 
 const closeViewMode = (profileName) => {
   cy.do(
@@ -170,4 +171,6 @@ export default {
   verifyMappingProfileOpened: () => cy.expect(fullScreenView.exists()),
   verifyVendorName: (vendorName) => cy.expect(KeyValue('Vendor name').has({ value: vendorName })),
   verifyMappingProfileTitleName: (profileName) => cy.get('#full-screen-view-content h2').should('have.text', profileName),
+  verifyCannotDeleteModalOpened: () => cy.expect(cannotDeleteModal.exists()),
+  closeCannotDeleteModal: () => cy.do(cannotDeleteModal.find(Button('Close')).click()),
 };

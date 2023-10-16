@@ -11,8 +11,11 @@ import {
   Link,
   Button,
 } from '../../../../interactors';
+import InvoiceEditForm from './invoiceEditForm';
 import InvoiceLineEditForm from './invoiceLineEditForm';
+import InvoiceLineDetails from './invoiceLineDetails';
 import ApproveInvoiceModal from './modal/approveInvoiceModal';
+import PayInvoiceModal from './modal/payInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
 
@@ -48,6 +51,14 @@ export default {
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
     );
+
+    return InvoiceLineDetails;
+  },
+  openInvoiceEditForm() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Edit').click()]);
+    InvoiceEditForm.waitLoading();
+
+    return InvoiceEditForm;
   },
   openInvoiceLineEditForm() {
     cy.do([invoiceLinesSection.find(actionsButton).click(), newBlankLineButton.click()]);
@@ -115,6 +126,12 @@ export default {
 
     ApproveInvoiceModal.verifyModalView({ isApprovePayEnabled });
     ApproveInvoiceModal.clickSubmitButton({ isApprovePayEnabled });
+  },
+  payInvoice() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Pay').click()]);
+
+    PayInvoiceModal.verifyModalView();
+    PayInvoiceModal.clickSubmitButton();
   },
   openSelectOrderLineModal() {
     cy.do([invoiceLinesSection.find(actionsButton).click(), Button('Add line from POL').click()]);

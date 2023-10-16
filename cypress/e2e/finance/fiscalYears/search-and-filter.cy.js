@@ -38,12 +38,12 @@ describe('ui-finance: Fiscal Year', () => {
       FiscalYears.resetFilters();
       // Filter Fiscal Year
       FiscalYears.openAcquisitionAccordion();
-      FiscalYears.selectNoAcquisitionUnit();
+      FiscalYears.selectAcquisitionUnitFilter('No acquisition unit');
       FiscalYears.checkSearchResults(defaultFiscalYear.name);
       FiscalYears.resetFilters();
       // Search and Filter Fiscal Year
       FinanceHelp.searchByAll(defaultFiscalYear.name);
-      FiscalYears.selectNoAcquisitionUnit();
+      FiscalYears.selectAcquisitionUnitFilter('No acquisition unit');
       FiscalYears.expextFY(defaultFiscalYear.name);
     },
   );

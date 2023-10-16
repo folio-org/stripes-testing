@@ -109,4 +109,58 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       );
     },
   );
+
+  it(
+    'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      cy.visit(TopMenu.inventoryPath, {
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      InventoryInstances.searchBySource('MARC');
+      InventoryInstance.searchByTitle(createdInstanceIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.waitLoading();
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.addEmptyFields(20);
+      // here and below - wait until new field is shown
+      cy.wait(500);
+      QuickMarcEditor.updateExistingFieldContent(21, '1');
+      QuickMarcEditor.checkEmptyFieldAdded(21, '1');
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.addEmptyFields(20);
+      // here and below - wait until new field is shown
+      cy.wait(500);
+      QuickMarcEditor.updateExistingFieldContent(22, '2');
+      QuickMarcEditor.checkEmptyFieldAdded(22, '2');
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.addEmptyFields(20);
+      // here and below - wait until new field is shown
+      cy.wait(500);
+      QuickMarcEditor.updateExistingFieldContent(23, '3');
+      QuickMarcEditor.checkEmptyFieldAdded(23, '3');
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.deleteField(20);
+      // here and below - wait until deleted empty field is not shown
+      cy.wait(1000);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+
+      QuickMarcEditor.deleteField(21);
+      // here and below - wait until deleted empty field is not shown
+      cy.wait(1000);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.deleteField(21);
+      // here and below - wait until deleted empty field is not shown
+      cy.wait(1000);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.deleteField(21);
+      // here and below - wait until deleted empty field is not shown
+      cy.wait(1000);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.checkTagAbsent('');
+      QuickMarcEditor.clickSaveAndCloseThenCheck(1);
+      QuickMarcEditor.confirmDelete();
+      QuickMarcEditor.checkAfterSaveAndClose();
+    },
+  );
 });
