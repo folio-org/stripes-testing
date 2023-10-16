@@ -31,7 +31,7 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
     let holdingsHrId;
-    const filePathToUpload = 'oneMarcBib.mrc';
+    const filePathToUpload = 'marcBibFileForC11106.mrc';
     const editedMarcFileName = `C11106 autotestFileName_${getRandomPostfix()}`;
     const marcFileName = `C11106 autotestFileName_${getRandomPostfix()}`;
     const marcFileNameForUpdate = `C11106 autotestFileNameForUpdate_${getRandomPostfix()}`;
@@ -80,7 +80,7 @@ describe('data-import', () => {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
       name: `C11106 holdingsMappingProfileForUpdate_${getRandomPostfix()}`,
       permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
-      copyNumber: '"1"',
+      copyNumber: '1',
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -91,7 +91,7 @@ describe('data-import', () => {
       profileName: `C11106 match profile${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '911',
-        subfield: 'h',
+        subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
@@ -229,14 +229,19 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         // change file for adding random barcode and holdings hrid
-        DataImport.editMarcFile('//', editedMarcFileName, ['holdingsHrid'], [holdingsHrId]);
+        DataImport.editMarcFile(
+          filePathToUpload,
+          editedMarcFileName,
+          ['holdingsHrid'],
+          [holdingsHrId],
+        );
 
         // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.fillPermanentLocation(mappingProfile.permanentLocation);
-        NewFieldMappingProfile.fillCopyNumber(mappingProfile.copyNumber);
+        NewFieldMappingProfile.fillCopyNumber(`"${mappingProfile.copyNumber}"`);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
@@ -254,7 +259,7 @@ describe('data-import', () => {
         // create job profile
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfileForUpdate);
-        NewJobProfile.linkActionProfile(actionProfile);
+        NewJobProfile.linkMatchAndActionProfiles(matchProfile.profileName, actionProfile.name);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
