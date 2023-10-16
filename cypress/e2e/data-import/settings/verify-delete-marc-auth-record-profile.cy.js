@@ -50,7 +50,7 @@ describe('data-import', () => {
         JobProfiles.verifyJobProfileAbsent();
 
         cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.checkListOfExistingProfilesIsDisplayed();
+        MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.search(profileName);
         MatchProfiles.verifyMatchProfileAbsent();
 
