@@ -117,7 +117,7 @@ export default {
     );
   },
 
-  checkListOfExistingProfilesIsDisplayed: () => {
+  verifyListOfExistingProfilesIsDisplayed: () => {
     cy.wait(2000);
     cy.expect(resultsPane.find(MultiColumnList({ id: 'match-profiles-list' })).exists());
   },

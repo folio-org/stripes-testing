@@ -94,7 +94,7 @@ describe('Loans: Claim returned', () => {
   });
 
   it(
-    'C10960 Loans: Resolve claimed returned item (vega)',
+    'C10960 Loans: Resolve claimed returned item (vega) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       // Navigate to loan details for a loan where the item is claim returned

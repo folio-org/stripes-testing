@@ -19,6 +19,11 @@ export default {
     cy.do(Button('Edit').click());
   },
 
+  delete: () => {
+    cy.do(viewPane.find(Button('Actions')).click());
+    cy.do(Button('Delete').click());
+  },
+
   duplicate: () => {
     cy.do(viewPane.find(Button('Actions')).click());
     cy.do(Button('Duplicate').click());
