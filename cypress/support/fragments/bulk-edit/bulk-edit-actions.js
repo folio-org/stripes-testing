@@ -12,6 +12,7 @@ import {
   RepeatableFieldItem,
   Select,
   TextArea,
+  Selection,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -28,6 +29,7 @@ const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const calendarButton = Button({ icon: 'calendar' });
+const locationLookupModal = Modal('Select permanent location');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -133,6 +135,22 @@ export default {
     );
     getEmailField().first().type(oldEmailDomain);
     getEmailField().eq(2).type(newEmailDomain);
+  },
+
+  clickLocationLookup() {
+    cy.do(Button('Location look-up').click());
+  },
+
+  verifyLocationLookupModal() {
+    cy.expect([
+      locationLookupModal.exists(),
+      Select({ label: 'Institution' }).exists(),
+      Select({ label: 'Campus' }).exists(),
+      Select({ label: 'Library' }).exists(),
+      Selection('Location').exists(),
+      cancelBtn.has({ disabled: false }),
+      Button('Save and close').has({ disabled: true }),
+    ])
   },
 
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
