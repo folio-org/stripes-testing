@@ -1,14 +1,20 @@
 import uuid from 'uuid';
 
 export default {
-  generateLedgerRollover({ ledger, fromFiscalYear, toFiscalYear }) {
+  generateLedgerRollover({
+    ledger,
+    fromFiscalYear,
+    toFiscalYear,
+    encumbrancesRollover = [{ orderType: 'Ongoing', basedOn: 'InitialAmount' }],
+    needCloseBudgets = true,
+  }) {
     return {
       ledgerId: ledger.id,
       budgetsRollover: [
         { addAvailableTo: 'Allocation', rolloverBudgetValue: 'None', rolloverAllocation: true },
       ],
-      encumbrancesRollover: [{ orderType: 'Ongoing', basedOn: 'InitialAmount' }],
-      needCloseBudgets: true,
+      encumbrancesRollover,
+      needCloseBudgets,
       fromFiscalYearId: fromFiscalYear.id,
       restrictEncumbrance: true,
       restrictExpenditures: true,
