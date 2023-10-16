@@ -28,7 +28,7 @@ describe('data-import', () => {
     };
 
     const calloutMessage = `The match profile "${duplicatedMatchProfile.profileName}" was successfully created`;
-    const calloutErrorMessage = `Match profile '${matchProfile.profileName}' already exists`;
+    const calloutErrorMessage = 'New record not created';
 
     before('create user and profile', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
