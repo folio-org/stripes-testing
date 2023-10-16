@@ -14,8 +14,6 @@ describe('eHoldings', () => {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('TestSP_1', uuid()),
       label1Value: 'Lorem ipsum dolor sit amet consectetur adipiscing elit et',
       label2Value: 'Label: custom',
-      label1OriginalValue: 'simple',
-      label2OriginalValue: '145',
       resourseUrl: '/eholdings/resources/58-473-185972',
     };
 
@@ -31,6 +29,10 @@ describe('eHoldings', () => {
           testData.userProperties.userId,
           testData.servicePoint.id,
         );
+        cy.getEHoldingsCustomLabelsViaAPI().then((labels) => {
+          testData.label1OriginalValue = labels[0].attributes.displayLabel;
+          testData.label2OriginalValue = labels[1].attributes.displayLabel;
+        });
         cy.login(testData.userProperties.username, testData.userProperties.password);
       });
     });
