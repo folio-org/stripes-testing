@@ -451,16 +451,20 @@ export default {
         .find(bulkPageSelections.action)
         .choose('Duplicate to'),
     ]);
-    if (note === 'in') cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ content: 'Check out note' }))
-        .has({ disabled: true }),
-    );
-    else cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ content: 'Check in note' }))
-        .has({ disabled: true }),
-    );
+    if (note === 'in') {
+      cy.expect(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(Select({ content: 'Check out note' }))
+          .has({ disabled: true }),
+      );
+    }
+    else {
+      cy.expect(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(Select({ content: 'Check in note' }))
+          .has({ disabled: true }),
+      );
+    }
   },
 
   verifyMatchingOptionsForLocationFilter(location) {
