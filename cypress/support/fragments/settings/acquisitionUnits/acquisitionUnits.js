@@ -55,6 +55,9 @@ export default {
       findUserButton.click(),
       userSearchModal.find(searchTextField).fillIn(userName),
       searchButton.click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
     ]);
@@ -110,9 +113,30 @@ export default {
     cy.do(Button('Edit').click());
   },
 
+  editAU: () => {
+    cy.wait(5000);
+    cy.do(actionsButton.click());
+    // //Need to wait,while wright link of Edit button will be loaded
+    cy.wait(5000);
+    cy.do(Button('Edit').click());
+  },
+
+  selectAU: (AUName) => {
+    cy.do(auListPane.find(Button(AUName)).click());
+    cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+    // //Need to wait,while data of Acquisition Unit will be loaded
+    cy.wait(5000);
+  },
+
   selectViewCheckbox: () => {
     cy.expect(assignedUsersSection.exists());
     cy.do([viewCheckbox.click(), saveAUButton.click()]);
+    cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+  },
+
+  selectEditCheckbox: () => {
+    cy.expect(assignedUsersSection.exists());
+    cy.do([Checkbox('Edit').click(), saveAUButton.click()]);
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
   },
 };

@@ -15,10 +15,12 @@ import {
   PaneContent,
   PaneHeader,
   Tooltip,
+  Select,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
+import Institutions from './settings/tenant/location-setup/institutions';
 
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
@@ -61,6 +63,9 @@ const removeLinkingButton = Button({
   id: 'clickable-quick-marc-remove-authority-linking-confirm-modal-confirm',
 });
 const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlink-modal-confirm' });
+const cancelUnlinkButtonInsideModal = Button({
+  id: 'clickable-quick-marc-confirm-unlink-modal-cancel',
+});
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
@@ -97,6 +102,7 @@ const specRetInputNamesHoldings008 = [
 const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const linkHeadingsButton = Button('Link headings');
 const arrowDownButton = Button({ icon: 'arrow-down' });
+const buttonLink = Button({ icon: 'unlink' });
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -310,6 +316,16 @@ const default008BoxesHoldings = [
   TextField('Rept date'),
 ];
 
+const holdingsLocationLink = Button('Permanent location look-up');
+const holdingsLocationModal = Modal('Select permanent location');
+const holdingsLocationInstitutionSelect = holdingsLocationModal.find(Select('Institution'));
+const holdingsLocationCampusSelect = holdingsLocationModal.find(Select('Campus'));
+const holdingsLocationLibrarySelect = holdingsLocationModal.find(Select('Library'));
+const holdingsLocationSelectDisabled = holdingsLocationModal.find(
+  Button({ name: 'locationId', disabled: true }),
+);
+const holdingsLocationSaveButton = holdingsLocationModal.find(Button('Save and close'));
+
 export default {
   getInitialRowsCount() {
     return validRecord.lastRowNumber;
@@ -403,6 +419,14 @@ export default {
     cy.expect(paneHeader.find(linkHeadingsButton).exists());
   },
 
+  verifyEnabledLinkHeadingsButton() {
+    cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: false }));
+  },
+
+  verifyDisabledLinkHeadingsButton() {
+    cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: true }));
+  },
+
   clickArrowDownButton(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(arrowDownButton).click());
   },
@@ -412,12 +436,12 @@ export default {
       .then((body) => {
         const ruleIds = [];
         body.filter((rule) => {
-          rule.bibField == `${tag}` && ruleIds.push(rule.id);
+          return rule.bibField === `${tag}` && ruleIds.push(rule.id);
         });
         return ruleIds;
       })
       .then((ruleIds) => {
-        ruleIds.forEach(ruleId => {
+        ruleIds.forEach((ruleId) => {
           cy.setRulesForFieldViaApi(ruleId, isEnabled);
         });
       });
@@ -430,6 +454,17 @@ export default {
   clickUnlinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
+    cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
+  },
+
+  checkUnlinkModal(rowIndex, text) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
+    cy.expect([
+      unlinkModal.exists(),
+      unlinkButtonInsideModal.exists(),
+      cancelUnlinkButtonInsideModal.exists(),
+      unlinkModal.has({ content: including(text) }),
+    ]);
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
   },
 
@@ -754,7 +789,7 @@ export default {
     return newContent;
   },
 
-  updateExistingTagName({ currentTagName = validRecord.existingTag, newTagName }) {
+  updateExistingTagName(currentTagName = validRecord.existingTag, newTagName) {
     cy.then(() => QuickMarcEditorRow({ tagValue: currentTagName }).index()).then((index) => {
       cy.do(
         QuickMarcEditorRow({ index })
@@ -766,6 +801,14 @@ export default {
 
   updateExistingFieldContent(rowIndex, newContent = `newContent${getRandomPostfix()}`) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
+  },
+
+  fillEmptyTextAreaOfField(rowIndex, fieldName, content) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: fieldName }))
+        .fillIn(content),
+    );
   },
 
   updateExistingTagValue(rowIndex, newTagValue) {
@@ -1050,13 +1093,17 @@ export default {
     cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
+  checkUnlinkTooltipText(tag, text) {
+    cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
+    cy.expect(Tooltip().has({ text }));
+  },
 
   checkLinkButtonExistByRowIndex(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists());
   },
 
   checkButtonSaveAndCloseEnable() {
-    cy.expect(saveAndCloseButton.exists());
+    cy.expect(saveAndCloseButtonEnabled.exists());
   },
 
   checkDeleteButtonExist(rowIndex) {
@@ -1150,7 +1197,12 @@ export default {
     cy.expect(TextArea({ ariaLabel: 'Subfield', textContent: including(content) }).absent());
   },
 
-  verifyTagWithNaturalIdExistance(rowIndex, tag, naturalId, nameLocator = `records[${rowIndex}].subfieldGroups.zeroSubfield`) {
+  verifyTagWithNaturalIdExistance(
+    rowIndex,
+    tag,
+    naturalId,
+    nameLocator = `records[${rowIndex}].subfieldGroups.zeroSubfield`,
+  ) {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextField({ name: `records[${rowIndex}].tag` }))
@@ -1421,11 +1473,65 @@ export default {
     cy.expect([calloutAfterSaveAndClose.exists(), viewMarcSection.exists()]);
   },
 
+  checkNoDeletePlaceholder() {
+    cy.expect(
+      rootSection.find(HTML(including('has been deleted from this MARC record.'))).absent(),
+    );
+  },
+
   verifyIconsAfterUnlinking(rowIndex) {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
       QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).absent(),
       QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
     ]);
+  },
+
+  selectExistingHoldingsLocation(locationObject) {
+    Institutions.getInstitutionByIdViaApi(locationObject.institutionId).then((institution) => {
+      const institutionName = institution.name;
+      cy.do(holdingsLocationLink.click());
+      cy.expect(holdingsLocationModal.exists());
+      cy.do(holdingsLocationInstitutionSelect.choose(institutionName));
+      // wait until values applied in dropdowns
+      cy.wait(3000);
+      cy.expect([
+        holdingsLocationInstitutionSelect.has({ value: locationObject.institutionId }),
+        holdingsLocationCampusSelect.has({ value: locationObject.campusId }),
+        holdingsLocationLibrarySelect.has({ value: locationObject.libraryId }),
+        holdingsLocationSelectDisabled
+          .find(HTML(including(`${locationObject.name} (${locationObject.code})`)))
+          .exists(),
+        holdingsLocationSaveButton.has({ disabled: false }),
+      ]);
+      cy.do(holdingsLocationSaveButton.click());
+      cy.expect(holdingsLocationModal.absent());
+    });
+  },
+
+  checkOnlyBackslashesIn008Boxes() {
+    cy.get('div[data-testid="bytes-field-col"]')
+      .find('input')
+      .then((fields) => {
+        const fieldValues = Array.from(fields, (field) => field.getAttribute('value'));
+        expect(fieldValues.join('')).to.match(/^\\+$/);
+      });
+  },
+
+  check008BoxesCount(count) {
+    cy.get('div[data-testid="bytes-field-col"]').should('have.length', count);
+  },
+
+  checkTagAbsent(tag) {
+    cy.expect(getRowInteractorByTagName(tag).absent());
+  },
+
+  checkLinkingAuthorityByTag: (tag) => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout(`Field ${tag} has been linked to a MARC authority record.`).exists());
+  },
+
+  clickUnlinkButton: () => {
+    cy.do(buttonLink.click());
   },
 };

@@ -21,6 +21,7 @@ const waitSelector = Pane({ id: 'view-job-profile-pane' });
 const closeButton = Button({ icon: 'times' });
 const paneResults = Pane({ id: 'pane-results' });
 const searchButton = Button('Search');
+const searchField = TextField({ id: 'input-search-job-profiles-field' });
 
 const openNewJobProfileForm = () => {
   cy.do([paneResults.find(actionsButton).click(), Button('New job profile').click()]);
@@ -67,12 +68,10 @@ const createJobProfile = (jobProfile) => {
   newJobProfile.fillJobProfile(jobProfile);
 };
 
-const searchJobProfileForImport = (jobProfileTitle) => {
+const search = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
-  cy.do(
-    paneResults.find(TextField({ id: 'input-search-job-profiles-field' })).fillIn(jobProfileTitle),
-  );
+  cy.do(paneResults.find(searchField).fillIn(jobProfileTitle));
   cy.do(searchButton.click());
 };
 
@@ -84,13 +83,17 @@ export default {
 
   waitLoadingList,
   waitLoading,
-  searchJobProfileForImport,
+  search,
   deleteJobProfile,
   createJobProfile,
   closeJobProfile,
+  clearSearchField: () => {
+    cy.do(searchField.focus());
+    cy.do(Button({ id: 'input-job-profiles-search-field-clear-button' }).click());
+  },
 
   checkJobProfilePresented: (jobProfileTitle) => {
-    searchJobProfileForImport(jobProfileTitle);
+    search(jobProfileTitle);
     cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 
@@ -136,7 +139,7 @@ export default {
     newJobProfile.fillJobProfile(jobProfile);
   },
   select: (jobProfileTitle) => {
-    searchJobProfileForImport(jobProfileTitle);
+    search(jobProfileTitle);
     cy.do(MultiColumnListCell(jobProfileTitle).click());
   },
   openFileRecords: (fileName) => {
@@ -145,16 +148,20 @@ export default {
     cy.expect(PaneHeader(fileName).exists());
   },
 
-  checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.exists()),
+  checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.find(MultiColumnList({ id: 'job-profiles-list' })).exists()),
 
-  checkCalloutMessage: (profileName) => {
+  checkCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(`The job profile "${profileName}" was successfully updated`),
+        textContent: including(message),
       }).exists(),
     );
   },
 
   verifyActionMenuAbsent: () => cy.expect(paneResults.find(actionsButton).absent()),
   verifyJobProfileAbsent: () => cy.expect(paneResults.find(HTML(including('The list contains no items'))).exists()),
+  verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
+  verifySearchResult: (profileName) => {
+    cy.expect(paneResults.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
 };

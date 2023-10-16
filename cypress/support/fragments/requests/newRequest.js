@@ -14,6 +14,7 @@ import {
   TextField,
   Option,
   including,
+  Modal,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import dateTools from '../../utils/dateTools';
@@ -33,6 +34,12 @@ const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
 const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
 const requestInfoSection = Section({ id: 'new-requester-info' });
+const title = 'Title';
+const tlRequest = 'Title level requests';
+const contributors = 'Contributor';
+const PublicationDate = 'Publication date';
+const edition = 'Edition';
+const isbn = 'ISBN(s)';
 
 function addRequester(userName) {
   cy.do(Button({ id: 'requestform-addrequest' }).click());
@@ -138,6 +145,16 @@ export default {
     ]);
   },
 
+  waitLoadingNewTitleRequestPage(TLR = false) {
+    cy.expect(Pane({ title: 'New request' }).exists());
+    if (TLR) cy.expect(titleLevelRequest.exists());
+    cy.expect([
+      Accordion('Title information').exists(),
+      Accordion('Request information').exists(),
+      Accordion('Requester information').exists(),
+    ]);
+  },
+
   enterItemInfo(barcode) {
     cy.do([itemBarcodeInput.fillIn(barcode), enterItemBarcodeButton.click()]);
   },
@@ -161,6 +178,18 @@ export default {
 
   verifyItemInformation: (allContentToCheck) => {
     return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'new-item-info' }, including(contentToCheck)).exists()));
+  },
+
+  verifyTitleInformation() {
+    this.verifyItemInformation([
+      tlRequest,
+      title,
+      contributors,
+      PublicationDate,
+      edition,
+      isbn,
+      PublicationDate,
+    ]);
   },
 
   chooseItemInSelectItemPane: (itemBarcode) => {
@@ -190,12 +219,12 @@ export default {
     cy.expect(requestInfoSection.find(HTML(patronGroupName)).exists());
   },
 
-  enterRequestAndPatron: (patron) => {
+  enterRequestAndPatron(patron) {
     cy.do([
       TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
       TextArea({ id: 'patronComments' }).fillIn(patron),
-      Checkbox({ name: 'createTitleLevelRequest' }).click(),
     ]);
+    this.enableTitleLevelRequest();
     cy.expect(Spinner().absent());
   },
 
@@ -244,5 +273,20 @@ export default {
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
+  },
+
+  checkRequestIsNotAllowedModal() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: 'This requester already has an open request for this item',
+      }),
+    );
+  },
+  checkRequestIsNotAllowedInstanceModal() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: 'This requester already has an open request for this instance',
+      }),
+    );
   },
 };

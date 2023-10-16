@@ -21,6 +21,7 @@ describe('data-import', () => {
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.instanceHrid,
     };
+    const calloutMessage = `The match profile "${matchProfile.profileName}" was successfully updated`;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -31,7 +32,7 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
         InteractorsTools.closeCalloutMessage();
-        MatchProfileView.closeViewModeForMatchProfile();
+        MatchProfileView.closeViewMode();
       });
     });
 
@@ -44,14 +45,14 @@ describe('data-import', () => {
       'C2339 Edit an existing match profile (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
-        MatchProfiles.checkListOfExistingProfilesIsDisplayed();
+        MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.search(matchProfile.profileName);
         MatchProfiles.selectMatchProfileFromList(matchProfile.profileName);
         MatchProfileView.edit();
         MatchProfileEdit.verifyScreenName(matchProfile.profileName);
         MatchProfileEdit.changeExistingInstanceRecordField();
         MatchProfileEdit.save();
-        MatchProfiles.checkCalloutMessage(matchProfile.profileName);
+        MatchProfiles.checkCalloutMessage(calloutMessage);
         MatchProfileView.verifyExistingInstanceRecordField();
       },
     );

@@ -8,7 +8,6 @@ import {
   Checkbox,
   MultiColumnListCell,
   Modal,
-  TextField,
   MultiColumnList,
   Link,
   Callout,
@@ -20,6 +19,7 @@ const deleteButton = Button('Delete');
 const fullScreenView = Pane({ id: 'full-screen-view' });
 const associatedList = MultiColumnList({ id: 'associated-actionProfiles-list' });
 const overrideProtectedSectionAccordoin = Accordion({ id: 'override-protected-section' });
+const cannotDeleteModal = Modal({ title: 'Cannot delete field mapping profile' });
 
 const closeViewMode = (profileName) => {
   cy.do(
@@ -126,13 +126,6 @@ export default {
     );
   },
 
-  checkErrorMessageIsPresented: (textFieldName) => {
-    const fieldName = TextField(textFieldName);
-
-    cy.do(fieldName.click());
-    cy.expect(fieldName.has({ error: 'Please enter a value' }));
-  },
-
   verifyLinkedActionProfile: (profileName) => {
     cy.expect(
       Accordion('Associated action profiles')
@@ -163,8 +156,21 @@ export default {
     );
   },
 
+  checkCreateProfileCalloutMessage: (profileName) => {
+    cy.expect(
+      Callout({
+        textContent: including(
+          `The field mapping profile "${profileName}" was successfully created`,
+        ),
+      }).exists(),
+    );
+  },
+
   verifyInstanceStatusTerm: (status) => cy.expect(KeyValue('Instance status term').has({ value: status })),
   verifyActionMenuAbsent: () => cy.expect(fullScreenView.find(actionsButton).absent()),
   verifyMappingProfileOpened: () => cy.expect(fullScreenView.exists()),
   verifyVendorName: (vendorName) => cy.expect(KeyValue('Vendor name').has({ value: vendorName })),
+  verifyMappingProfileTitleName: (profileName) => cy.get('#full-screen-view-content h2').should('have.text', profileName),
+  verifyCannotDeleteModalOpened: () => cy.expect(cannotDeleteModal.exists()),
+  closeCannotDeleteModal: () => cy.do(cannotDeleteModal.find(Button('Close')).click()),
 };

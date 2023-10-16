@@ -128,7 +128,7 @@ describe('Financial Transactions Detail Report', () => {
   );
 
   it(
-    'C343328 Check that the user can create "Financial Transactions Detail Report" for waive',
+    'C343328 Check that the user can create "Financial Transactions Detail Report" for waive (vega)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();

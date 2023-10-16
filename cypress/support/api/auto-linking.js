@@ -13,8 +13,8 @@ Cypress.Commands.add('setRulesForFieldViaApi', (ruleId, isEnabled) => {
     method: 'PATCH',
     path: `linking-rules/instance-authority/${ruleId}`,
     body: {
-      'id': ruleId,
-      'autoLinkingEnabled': isEnabled
+      id: ruleId,
+      autoLinkingEnabled: isEnabled,
     },
     isDefaultSearchParamsRequired: false,
   });

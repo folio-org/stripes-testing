@@ -103,22 +103,13 @@ describe('orders: export', () => {
       Orders.createOrder(order, true, false).then((orderId) => {
         order.id = orderId;
         Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport(
-          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
-          'Purchase',
-        );
+        OrderLines.fillInPOLineInfoForExport('Purchase');
         OrderLines.backToEditingOrder();
         Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport(
-          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
-          'Purchase at vendor system',
-        );
+        OrderLines.fillInPOLineInfoForExport('Purchase at vendor system');
         OrderLines.backToEditingOrder();
         Orders.createPOLineViaActions();
-        OrderLines.fillInPOLineInfoForExport(
-          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
-          'Depository',
-        );
+        OrderLines.fillInPOLineInfoForExport('Depository');
         Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((response) => {
           orderNumber = response[0].poNumber;
 

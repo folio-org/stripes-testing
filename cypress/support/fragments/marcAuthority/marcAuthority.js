@@ -113,6 +113,7 @@ export default {
         .fillIn(content),
     ]);
   },
+
   checkLinkingAuthority650: () => {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 650 has been linked to a MARC authority record.').exists());
@@ -122,6 +123,7 @@ export default {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 700 has been linked to a MARC authority record.').exists());
   },
+
   changeField: (tag, content) => {
     cy.do([QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(content)]);
   },
@@ -241,6 +243,16 @@ export default {
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextField({ name: `records[${rowIndex}].tag` }))
         .fillIn(tag),
+    );
+  },
+
+  updateDataByRowIndex: (rowIndex, content) => {
+    // wait until all the saved and updated values will be loaded.
+    cy.wait(2000);
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .fillIn(content),
     );
   },
 

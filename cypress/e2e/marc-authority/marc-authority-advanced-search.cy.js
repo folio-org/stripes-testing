@@ -48,7 +48,7 @@ describe('MARC Authority - Advanced Search', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
       DataImport.uploadFile(marcFile.marc, marcFile.fileName);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(marcFile.fileName);
       Logs.checkStatusOfJobProfile('Completed');

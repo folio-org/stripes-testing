@@ -15,9 +15,10 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions';
+import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import Users from '../../../support/fragments/users/users';
+import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
 
 describe('data-import', () => {
   describe('Permissions', () => {
@@ -28,6 +29,7 @@ describe('data-import', () => {
     const actionProfileName = `C353645_action_profile_${getRandomPostfix()}`;
     const matchProfileName = `C353645_match_profile_${getRandomPostfix()}`;
     const jobProfileName = `C353645_job_profile_${getRandomPostfix()}`;
+    const fileExtensionName = '.dat';
 
     before('create test data', () => {
       cy.getAdminToken();
@@ -75,13 +77,13 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.verifyActionMenuAbsent();
-        JobProfiles.searchJobProfileForImport(jobProfileName);
+        JobProfiles.search(jobProfileName);
         JobProfiles.selectJobProfile(jobProfileName);
         JobProfileView.verifyJobProfileOpened();
         JobProfileView.verifyActionMenuAbsent();
 
         cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.checkListOfExistingProfilesIsDisplayed();
+        MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.verifyActionMenuAbsent();
         MatchProfiles.search(matchProfileName);
         MatchProfiles.selectMatchProfileFromList(matchProfileName);
@@ -107,8 +109,8 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.fileExtensionsPath);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
         FileExtensions.verifyActionMenuAbsent();
-        FileExtensions.select();
-        FileExtensions.verifyActionMenuOnViewPaneAbsent();
+        FileExtensions.select(fileExtensionName);
+        FileExtensionView.verifyActionMenuAbsent();
 
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();

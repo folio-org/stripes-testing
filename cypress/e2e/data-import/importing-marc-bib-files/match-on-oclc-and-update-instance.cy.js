@@ -177,7 +177,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForCreate);
-        JobProfiles.searchJobProfileForImport(collectionOfJobProfiles[0].jobProfile.profileName);
+        JobProfiles.search(collectionOfJobProfiles[0].jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -250,7 +250,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForUpdate);
-          JobProfiles.searchJobProfileForImport(collectionOfJobProfiles[1].jobProfile.profileName);
+          JobProfiles.search(collectionOfJobProfiles[1].jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -261,7 +261,7 @@ describe('data-import', () => {
           ].forEach((columnName) => {
             FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
           });
-          FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
+          FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
           cy.visit(TopMenu.inventoryPath);

@@ -3,9 +3,6 @@ import {
   Callout,
   KeyValue,
   Modal,
-  MultiSelect,
-  MultiSelectMenu,
-  MultiSelectOption,
   PaneHeader,
   RadioButton,
   Section,
@@ -15,21 +12,6 @@ import exportManagerSearchPane from '../exportManager/exportManagerSearchPane';
 import topMenu from '../topMenu';
 
 const actionsButton = Button('Actions');
-const radioPackageFieldsToExport = RadioButton({
-  id: 'selected-package-fields',
-});
-const radioTitleFieldsToExport = RadioButton({ id: 'selected-title-fields' });
-const allPackageRadioButton = RadioButton({
-  ariaLabel: 'Export all fields',
-  name: 'packageFields',
-});
-const allTitleRadioButton = RadioButton({
-  ariaLabel: 'Export all fields',
-  name: 'titleFields',
-});
-const exportButton = Button('Export');
-const exportSettingsModal = Modal({ id: 'eholdings-export-modal' });
-const cancelButton = Button('Cancel');
 const titlesSection = Section({ id: 'packageShowTitles' });
 const searchIcon = Button({ icon: 'search' });
 const filterTitlesModal = Modal({ id: 'eholdings-details-view-search-modal' });
@@ -52,53 +34,6 @@ export default {
       filterTitlesModal.find(notSelectedRadioButton).click(),
       filterTitlesModal.find(searchButton).click(),
     ]);
-  },
-
-  packageFieldsToExportRadio: () => {
-    cy.do(radioPackageFieldsToExport.click());
-  },
-
-  allPackageFieldsToExportRadioButton: () => {
-    cy.do(allPackageRadioButton.click());
-  },
-
-  packageFieldsSelectFromExportDropdown: (options) => {
-    cy.do([
-      radioPackageFieldsToExport.click(),
-      MultiSelect({ ariaLabelledby: 'selected-package-fields' }).toggle(),
-      MultiSelectMenu().find(MultiSelectOption(options)).click(),
-    ]);
-  },
-
-  packageFieldsToExportDropdown: (options) => {
-    cy.do([
-      radioPackageFieldsToExport.click(),
-      MultiSelect({ ariaLabelledby: 'selected-package-fields' }).toggle(),
-      MultiSelectMenu().find(MultiSelectOption(options)).click(),
-    ]);
-  },
-
-  allTitleFieldsToExportRadioButton: () => {
-    cy.do(allTitleRadioButton.click());
-  },
-
-  titleFieldsToExportRadio: () => {
-    cy.do(radioTitleFieldsToExport.click());
-  },
-
-  titleFieldsToExportDropDown: (options) => {
-    cy.do([
-      MultiSelect({ ariaLabelledby: 'selected-title-fields' }).toggle(),
-      MultiSelectMenu().find(MultiSelectOption(options)).click(),
-    ]);
-  },
-
-  clickExportButton: () => {
-    cy.do(exportSettingsModal.find(exportButton).click());
-  },
-
-  clickCancelButton: () => {
-    cy.do(exportSettingsModal.find(cancelButton).click());
   },
 
   verifyJobIDRecord() {

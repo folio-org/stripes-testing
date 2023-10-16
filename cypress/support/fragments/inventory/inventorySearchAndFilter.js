@@ -45,7 +45,7 @@ const navigationInstancesButton = Button({
 const paneFilterSection = Section({ id: 'pane-filter' });
 const paneResultsSection = Section({ id: 'pane-results' });
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
-const instancesTagsSection = Section({ id: 'instancesTags' });
+const instancesTagsSection = Section({ id: including('Tags') });
 const tagsPane = Pane('Tags');
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
@@ -243,6 +243,22 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(ONE_SECOND);
     cy.do(Select('Search field index').choose('Contributors'));
+  },
+
+  selectBrowseOtherScheme() {
+    cy.do(browseButton.click());
+    // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(ONE_SECOND);
+    cy.do(browseSearchAndFilterInput.choose('Other scheme'));
+  },
+
+  selectBrowseDeweyDecimal() {
+    cy.do(browseButton.click());
+    // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(ONE_SECOND);
+    cy.do(browseSearchAndFilterInput.choose('Dewey Decimal classification'));
   },
 
   showsOnlyNameTypeAccordion() {
@@ -505,12 +521,18 @@ export default {
     cy.expect(MultiColumnList({ id: 'list-inventory' }).has({ rowCount: 1 }));
   },
 
+  searchTag(tag) {
+    cy.do([tagsAccordionButton.click(), instancesTagsSection.find(TextField()).fillIn(tag)]);
+  },
+
   filterByTag(tag) {
-    cy.do([
-      tagsAccordionButton.click(),
-      instancesTagsSection.find(TextField()).fillIn(tag),
-      instancesTagsSection.find(Checkbox(tag)).click(),
-    ]);
+    this.searchTag(tag);
+    cy.do(instancesTagsSection.find(Checkbox(tag)).click());
+  },
+
+  verifyTagIsAbsent(tag) {
+    this.searchTag(tag);
+    cy.expect(HTML('No matching options').exists());
   },
 
   resetAllAndVerifyNoResultsAppear() {
@@ -562,8 +584,17 @@ export default {
     cy.do(Button(including(`${callNumber} ${suffix}`)).click());
   },
 
-  verifyInstanceDisplayed(instanceTitle) {
-    cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+  selectFoundItemFromBrowseResultList(value) {
+    cy.do(Button(including(value)).click());
+    cy.expect(instanceDetailsSection.exists());
+  },
+
+  verifyInstanceDisplayed(instanceTitle, byInnerText = false) {
+    if (byInnerText) {
+      cy.expect(MultiColumnListCell({ innerText: instanceTitle }).exists());
+    } else {
+      cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+    }
   },
 
   verifyShelvingOrder(val) {
@@ -604,6 +635,11 @@ export default {
     cy.expect([Button('New').exists(), DropdownMenu().find(HTML('Show columns')).exists()]);
   },
 
+  verifyNoExportJsonOption() {
+    paneResultsSection.find(actionsButton);
+    cy.expect(Button('Export instances (JSON)').absent());
+  },
+
   filterHoldingsByPermanentLocation: (location) => {
     cy.do(Button({ id: 'accordion-toggle-button-holdingsPermanentLocation' }).click());
     // need to wait until data will be loaded
@@ -632,5 +668,17 @@ export default {
       paneResultsSection.find(HTML(including('No results found for'))).exists(),
       instancesList.absent(),
     ]);
+  },
+
+  verifyInstanceDetailsViewAbsent() {
+    cy.expect(instanceDetailsSection.absent());
+  },
+
+  searchByStatus(status) {
+    cy.do([Button({ id: 'accordion-toggle-button-itemStatus' }).click(), Checkbox(status).click()]);
+  },
+
+  selectBrowseOption(option) {
+    cy.do(browseSearchAndFilterInput.choose(option));
   },
 };

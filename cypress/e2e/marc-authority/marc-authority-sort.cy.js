@@ -83,7 +83,7 @@ describe('MARC Authority Sort', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+        JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile('Completed');

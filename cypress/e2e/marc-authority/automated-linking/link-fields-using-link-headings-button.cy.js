@@ -35,79 +35,82 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     {
       rowIndex: 82,
       value: 'Stelfreeze, Brian',
-      tag: 700
+      tag: 700,
     },
     {
       rowIndex: 83,
       value: 'Sprouse, Chris',
-      tag: 700
+      tag: 700,
     },
   ];
 
   const createdAuthorityIDs = [];
 
-  const linkableFields = [100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, 830];
+  const linkableFields = [
+    100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811,
+    830,
+  ];
 
   const matchingNaturalIds = [
     {
       rowIndex: 33,
       tag: '100',
-      naturalId: 'n2008001084'
+      naturalId: 'n2008001084',
     },
     {
       rowIndex: 37,
       tag: '240',
-      naturalId: 'no2020024230'
+      naturalId: 'no2020024230',
     },
     {
       rowIndex: 65,
       tag: '600',
-      naturalId: 'n2016004081'
+      naturalId: 'n2016004081',
     },
     {
       rowIndex: 62,
       tag: '630',
-      naturalId: 'no2023006889'
+      naturalId: 'no2023006889',
     },
     {
       rowIndex: 73,
       tag: '655',
-      naturalId: 'gf2014026266'
+      naturalId: 'gf2014026266',
     },
     {
       rowIndex: 84,
       tag: '700',
-      naturalId: 'no2011137752'
+      naturalId: 'no2011137752',
     },
     {
       rowIndex: 86,
       tag: '700',
-      naturalId: 'n77020008'
+      naturalId: 'n77020008',
     },
     {
       rowIndex: 87,
       tag: '700',
-      naturalId: 'n91065740'
+      naturalId: 'n91065740',
     },
     {
       rowIndex: 88,
       tag: '710',
-      naturalId: 'no2008081921'
+      naturalId: 'no2008081921',
     },
     {
       rowIndex: 89,
       tag: '711',
-      naturalId: 'n84745425'
+      naturalId: 'n84745425',
     },
     {
       rowIndex: 91,
       tag: '800',
-      naturalId: 'n79023811'
+      naturalId: 'n79023811',
     },
     {
       rowIndex: 94,
       tag: '830',
-      naturalId: 'no2018018754'
+      naturalId: 'no2018018754',
     },
   ];
 
@@ -115,57 +118,57 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     {
       rowIndex: 34,
       tag: '110',
-      naturalId: 'no20061082779'
+      naturalId: 'no20061082779',
     },
     {
       rowIndex: 35,
       tag: '111',
-      naturalId: 'no20091764299'
+      naturalId: 'no20091764299',
     },
     {
       rowIndex: 36,
       tag: '130',
-      naturalId: 'n800269809'
+      naturalId: 'n800269809',
     },
     {
       rowIndex: 60,
       tag: '610',
-      naturalId: 'nb20090244889'
+      naturalId: 'nb20090244889',
     },
     {
       rowIndex: 61,
       tag: '611',
-      naturalId: 'n822167579'
+      naturalId: 'n822167579',
     },
     {
       rowIndex: 67,
       tag: '650',
-      naturalId: 'sh20091259899'
+      naturalId: 'sh20091259899',
     },
     {
       rowIndex: 71,
       tag: '651',
-      naturalId: 'sh850015319'
+      naturalId: 'sh850015319',
     },
     {
       rowIndex: 85,
       tag: '700',
-      naturalId: 'n831692679'
+      naturalId: 'n831692679',
     },
     {
       rowIndex: 90,
       tag: '730',
-      naturalId: 'n790660959'
+      naturalId: 'n790660959',
     },
     {
       rowIndex: 92,
       tag: '810',
-      naturalId: 'n800955859'
+      naturalId: 'n800955859',
     },
     {
       rowIndex: 93,
       tag: '811',
-      naturalId: 'no20181255879'
+      naturalId: 'no20181255879',
     },
   ];
 
@@ -176,24 +179,26 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-    ]).then(createdUserProperties => {
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach(marcFile => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitLoadingList();
-          JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(marcFile.fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(marcFile.fileName);
-          for (let i = 0; i < marcFile.numOfRecords; i++) {
-            Logs.getCreatedItemsID(i).then(link => {
-              createdAuthorityIDs.push(link.split('/')[5]);
-            });
-          }
-        });
+      marcFiles.forEach((marcFile) => {
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+          () => {
+            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitLoadingList();
+            JobProfiles.search(marcFile.jobProfileToRun);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(marcFile.fileName);
+            Logs.checkStatusOfJobProfile('Completed');
+            Logs.openFileDetails(marcFile.fileName);
+            for (let i = 0; i < marcFile.numOfRecords; i++) {
+              Logs.getCreatedItemsID(i).then((link) => {
+                createdAuthorityIDs.push(link.split('/')[5]);
+              });
+            }
+          },
+        );
       });
 
       cy.visit(TopMenu.inventoryPath).then(() => {
@@ -204,7 +209,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         linkableFields.forEach((tag) => {
           QuickMarcEditor.setRulesForField(tag, true);
         });
-        linkingTagAndValues.forEach(linking => {
+        linkingTagAndValues.forEach((linking) => {
           QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
           MarcAuthorities.switchToSearch();
           InventoryInstance.verifySelectMarcAuthorityModal();
@@ -220,7 +225,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   });
 
   beforeEach('Login to the application', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.inventoryPath,
+      waiter: InventoryInstances.waitContentLoading,
+    });
   });
 
   after('Deleting created user and data', () => {
@@ -238,8 +246,26 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
-      QuickMarcEditor.verifyTagFieldAfterLinking(83, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        82,
+        '700',
+        '1',
+        '\\',
+        '$a Stelfreeze, Brian',
+        '$e artist.',
+        '$0 id.loc.gov/authorities/names/n91065740',
+        '',
+      );
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        83,
+        '700',
+        '1',
+        '\\',
+        '$a Sprouse, Chris',
+        '$e artist.',
+        '$0 id.loc.gov/authorities/names/nb98017694',
+        '',
+      );
       QuickMarcEditor.checkLinkHeadingsButton();
 
       for (let i = 82; i < 87; i++) {
@@ -250,51 +276,99 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.afterDeleteNotification('700');
 
       QuickMarcEditor.clickLinkHeadingsButton();
-      QuickMarcEditor.checkCallout('Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).');
-      QuickMarcEditor.checkCallout('Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.');
+      QuickMarcEditor.checkCallout(
+        'Field 100, 240, 600, 630, 655, 700, 710, 711, 800, and 830 has been linked to MARC authority record(s).',
+      );
+      QuickMarcEditor.checkCallout(
+        'Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
+      );
       QuickMarcEditor.checkLinkHeadingsButton();
       QuickMarcEditor.afterDeleteNotification('700');
-      QuickMarcEditor.verifyTagFieldAfterLinking(87, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
-      matchingNaturalIds.forEach(matchs => {
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        87,
+        '700',
+        '1',
+        '\\',
+        '$a Stelfreeze, Brian',
+        '$e artist.',
+        '$0 id.loc.gov/authorities/names/n91065740',
+        '',
+      );
+      matchingNaturalIds.forEach((matchs) => {
         QuickMarcEditor.verifyTagWithNaturalIdExistance(
           matchs.rowIndex,
           matchs.tag,
           matchs.naturalId,
         );
       });
-      notMatchingNaturalIds.forEach(matchs => {
+      notMatchingNaturalIds.forEach((matchs) => {
         QuickMarcEditor.verifyTagWithNaturalIdExistance(
           matchs.rowIndex,
           matchs.tag,
           matchs.naturalId,
-          `records[${matchs.rowIndex}].content`
+          `records[${matchs.rowIndex}].content`,
         );
       });
 
       QuickMarcEditor.clickSaveAndKeepEditingButton();
       QuickMarcEditor.clickRestoreDeletedField();
-      QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
-      QuickMarcEditor.verifyTagFieldAfterUnlinking(83, '700', '1', '\\', '$a Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262');
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        82,
+        '700',
+        '1',
+        '\\',
+        '$a Sprouse, Chris',
+        '$e artist.',
+        '$0 id.loc.gov/authorities/names/nb98017694',
+        '',
+      );
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(
+        83,
+        '700',
+        '1',
+        '\\',
+        '$a Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262',
+      );
 
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout('Field 700 has been linked to MARC authority record(s).');
-      QuickMarcEditor.checkCallout('Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.');
+      QuickMarcEditor.checkCallout(
+        'Field 110, 111, 130, 610, 611, 650, 651, 700, 730, 810, and 811 must be set manually by selecting the link icon.',
+      );
       QuickMarcEditor.verifyTagWithNaturalIdExistance(83, '700', 'n2014052262');
-      notMatchingNaturalIds.forEach(matchs => {
+      notMatchingNaturalIds.forEach((matchs) => {
         QuickMarcEditor.verifyTagWithNaturalIdExistance(
           matchs.rowIndex,
           matchs.tag,
           matchs.naturalId,
-          `records[${matchs.rowIndex}].content`
+          `records[${matchs.rowIndex}].content`,
         );
       });
       QuickMarcEditor.checkLinkHeadingsButton();
 
       QuickMarcEditor.clickSaveAndKeepEditingButton();
-      QuickMarcEditor.verifyTagFieldAfterLinking(82, '700', '1', '\\', '$a Sprouse, Chris', '$e artist.', '$0 id.loc.gov/authorities/names/nb98017694', '');
-      QuickMarcEditor.verifyTagFieldAfterLinking(87, '700', '1', '\\', '$a Stelfreeze, Brian', '$e artist.', '$0 id.loc.gov/authorities/names/n91065740', '');
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        82,
+        '700',
+        '1',
+        '\\',
+        '$a Sprouse, Chris',
+        '$e artist.',
+        '$0 id.loc.gov/authorities/names/nb98017694',
+        '',
+      );
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        87,
+        '700',
+        '1',
+        '\\',
+        '$a Stelfreeze, Brian',
+        '$e artist.',
+        '$0 id.loc.gov/authorities/names/n91065740',
+        '',
+      );
       // Wait for requests to be finished.
       cy.wait(3000);
-    }
+    },
   );
 });

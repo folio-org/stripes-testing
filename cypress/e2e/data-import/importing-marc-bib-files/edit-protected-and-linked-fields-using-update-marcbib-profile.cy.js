@@ -138,7 +138,7 @@ describe('data-import', () => {
             () => {
               DataImport.uploadFile(marcFile.marc, marcFile.fileName);
               JobProfiles.waitLoadingList();
-              JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+              JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
               JobProfiles.waitFileIsImported(marcFile.fileName);
               Logs.checkStatusOfJobProfile('Completed');
@@ -293,7 +293,7 @@ describe('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');

@@ -14,6 +14,7 @@ import {
   Checkbox,
   Dropdown,
   DropdownMenu,
+  Callout,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -285,6 +286,9 @@ const getDefaultItemMappingProfile = (name) => {
   };
   return defaultItemMappingProfile;
 };
+const fillInvoiceLineDescription = (description) => {
+  cy.do(Accordion('Invoice line information').find(TextField('Description*')).fillIn(description));
+};
 
 export default {
   getDefaultInstanceMappingProfile,
@@ -307,6 +311,7 @@ export default {
   selectFromResultsList,
   waitLoading,
   fillSummaryInMappingProfile,
+  fillInvoiceLineDescription,
   selectOrganizationByName,
   save,
 
@@ -376,7 +381,11 @@ export default {
 
   fillInvoiceMappingProfile: (profile) => {
     // Summary section
-    fillSummaryInMappingProfile(profile);
+    cy.do([
+      nameField.fillIn(profile.name),
+      incomingRecordTypeField.choose(profile.incomingRecordType),
+      existingRecordType.choose(profile.typeValue),
+    ]);
     if (profile.description) {
       cy.do(
         Accordion('Summary')
@@ -410,11 +419,7 @@ export default {
     }
     // Invoice line information section
     if (profile.invoiceLinePOlDescription) {
-      cy.do(
-        Accordion('Invoice line information')
-          .find(TextField('Description*'))
-          .fillIn(profile.invoiceLinePOlDescription),
-      );
+      fillInvoiceLineDescription(profile.invoiceLinePOlDescription);
     }
     if (profile.polNumber) {
       cy.do(TextField('PO line number').fillIn(profile.polNumber));
@@ -477,6 +482,9 @@ export default {
     addVendor(profile);
     if (profile.reEncumber) {
       cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
+    }
+    if (profile.acquisitionsUnits) {
+      cy.do(TextField('Acquisitions units').fillIn(`"${profile.acquisitionsUnits}"`));
     }
     // Order line information
     cy.do(titleField.fillIn(profile.title));
@@ -926,6 +934,31 @@ export default {
     waitLoading();
   },
 
+  addExpenceClass: (fundDistributionSource) => {
+    cy.do([
+      Select({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.0.fields.14.value',
+      }).focus(),
+      Select({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.0.fields.14.value',
+      }).choose(fundDistributionSource),
+    ]);
+    cy.expect(
+      Select({ name: 'profile.mappingDetails.mappingFields[26].subfields.0.fields.14.value' }).has({
+        error: 'One or more values must be added before the profile can be saved.',
+      }),
+    );
+    cy.do(Button('Add fund distribution').click());
+    cy.wait(3000);
+    cy.get('#invoice-line-fund-distribution [class*=repeatableFieldItem]')
+      .find('button:contains("Accepted values"):last')
+      .click();
+  },
+
+  verifyExpenseClassesIsPresentedInDropdown: (value) => {
+    cy.expect(DropdownMenu({ visible: true }).find(HTML(value)).exists());
+  },
+
   markFieldForProtection: (field) => {
     cy.get('div[class^="mclRow--"]')
       .contains('div[class^="mclCell-"]', field)
@@ -988,5 +1021,16 @@ export default {
     Object.values(ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES).forEach((method) => {
       cy.expect(DropdownMenu().find(Button(method)).exists());
     });
+  },
+
+  checkErrorMessageIsPresented: (textFieldName) => {
+    const fieldName = TextField(textFieldName);
+
+    cy.do(fieldName.click());
+    cy.expect(fieldName.has({ error: 'Please enter a value' }));
+  },
+
+  checkCalloutMessage: (message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
   },
 };

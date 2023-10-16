@@ -38,7 +38,7 @@ describe('data-import', () => {
       'C2331 Add tags to a job profile, then remove tags from it (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfileView.addExistingTag(tag);
         JobProfileView.verifyAssignedTags(tag);
 

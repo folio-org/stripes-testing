@@ -69,15 +69,19 @@ describe('circulation-log', () => {
         object: 'Loan',
         circAction: 'Closed loan',
         servicePoint: testData.userServicePoint.name,
-        source: 'ADMINISTRATOR, DIKU',
+        source: 'ADMINISTRATOR, Diku_admin',
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Closed loan');
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
 
       SearchPane.searchByItemBarcode(item.barcode);
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
     },
   );
 });
