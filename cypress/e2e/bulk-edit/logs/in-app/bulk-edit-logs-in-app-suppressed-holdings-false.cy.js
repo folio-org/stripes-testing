@@ -47,9 +47,9 @@ describe('Bulk Edit - Logs', () => {
       FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
 
       cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.itemBarcode}"` }).then(
-        (item) => {
-          item.discoverySuppress = true;
-          cy.updateItemViaApi(item);
+        (res) => {
+          res.discoverySuppress = true;
+          cy.updateItemViaApi(res);
         },
       );
       cy.getHoldings({
@@ -120,22 +120,19 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.downloadFileWithMatchingRecords();
       BulkEditFiles.verifyMatchedResultFileContent(`*${matchedRecordsFileName}`,
         [item.itemBarcode],
-        'holdingsItemBarcode'
-      );
+        'holdingsItemBarcode');
 
       BulkEditSearchPane.downloadFileWithProposedChanges();
       BulkEditFiles.verifyMatchedResultFileContent(
         previewOfProposedChangesFileName,
         [item.itemBarcode],
-        'holdingsItemBarcode',
-      );
+        'holdingsItemBarcode');
 
       BulkEditSearchPane.downloadFileWithUpdatedRecords();
       BulkEditFiles.verifyMatchedResultFileContent(
         updatedRecordsFileName,
         [item.itemBarcode],
-        'holdingsItemBarcode',
-      );
+        'holdingsItemBarcode');
 
       TopMenuNavigation.navigateToApp('Inventory');
       InventorySearchAndFilter.switchToItem();
