@@ -150,7 +150,7 @@ export default {
       Selection('Location').exists(),
       cancelBtn.has({ disabled: false }),
       Button('Save and close').has({ disabled: true }),
-    ])
+    ]);
   },
 
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
@@ -165,7 +165,7 @@ export default {
           .find(bulkPageSelections.action)
           .choose('Replace with'),
       );
-    }
+    };
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
