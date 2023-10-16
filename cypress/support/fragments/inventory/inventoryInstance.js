@@ -909,6 +909,15 @@ export default {
     cy.expect(HTML('MARC bibliographic record').exists());
   },
 
+  checkNewRequestAtNewPane() {
+    cy.do(actionsButton.click());
+    cy.expect([
+      Button({ id: 'edit-instance' }).exists(),
+      Button({ id: 'copy-instance' }).exists(),
+    ]);
+    cy.do(Button('New request').click());
+  },
+
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
   overlayWithOclc: (oclc) => {
