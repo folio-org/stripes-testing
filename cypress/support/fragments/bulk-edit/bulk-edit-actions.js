@@ -165,7 +165,7 @@ export default {
           .find(bulkPageSelections.action)
           .choose('Replace with'),
       );
-    };
+    }
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
