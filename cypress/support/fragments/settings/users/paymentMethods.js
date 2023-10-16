@@ -12,7 +12,7 @@ import {
   MultiColumnListCell,
   Modal,
   HTML,
-  EditableList,
+  MultiColumnList,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -48,7 +48,7 @@ export default {
   checkPaymentMethodInTable: (ownerName, paymentMethodName) => {
     cy.do(ownerSelect.choose(ownerName));
     cy.expect(
-      EditableList('editList-settings-payments')
+      MultiColumnList('editList-settings-payments')
         .find(MultiColumnListCell(paymentMethodName))
         .exists(),
     );
