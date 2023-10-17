@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -7,7 +8,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
@@ -41,6 +41,9 @@ describe('Call Number Browse', () => {
      */
     cy.getAdminToken()
       .then(() => {
+        InventoryInstances.createLocalCallNumberTypeViaApi('My Local CN type').then((id) => {
+          testData.callNumberTypeId = id;
+        });
         cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
           instance.instanceTypeId = instanceTypes[0].id;
         });
@@ -49,6 +52,17 @@ describe('Call Number Browse', () => {
         });
         cy.getLocations({ limit: 1 }).then((res) => {
           instance.locationId = res.id;
+        });
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          instance.loanTypeId = res[0].id;
+          instance.loanTypeName = res[0].name;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          instance.materialTypeId = res.id;
+        });
+        InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {
+          testData.callNumberTypes = res;
+          cy.log(JSON.stringify(res));
         });
         const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
         instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
@@ -68,33 +82,35 @@ describe('Call Number Browse', () => {
           ],
         }).then((instanceIds) => {
           instance.id = instanceIds.instanceId;
-        });
-        InventoryInstances.createLocalCallNumberTypeViaApi('My Local CN type').then((id) => {
-          testData.callNumberTypeId = id;
+          callNumbers.forEach((callNumber) => {
+            const callNumberTypeId = testData.callNumberTypes.find(
+              (el) => el.name === callNumber.type,
+            ).id;
+            cy.log(
+              JSON.stringify({
+                itemLevelCallNumberTypeId: callNumberTypeId,
+                itemLevelCallNumber: callNumber.value,
+              }),
+            );
+            return ItemRecordNew.createViaApi({
+              holdingsId: instanceIds.holdingIds[0].id,
+              itemBarcode: uuid(),
+              materialTypeId: instance.materialTypeId,
+              permanentLoanTypeId: instance.loanTypeId,
+              itemLevelCallNumberTypeId: callNumberTypeId,
+              itemLevelCallNumber: callNumber.value,
+            });
+          });
         });
       });
 
-    cy.createTempUser([Permissions.inventoryAll.gui])
-      .then((userProperties) => {
-        testData.userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-      })
-      .then(() => {
-        InventoryInstance.searchByTitle(instance.title);
-        InventoryInstances.selectInstance();
-        callNumbers.forEach((el, index) => {
-          InventoryInstance.addItem();
-          InventoryInstance.fillItemRequiredFields();
-          ItemRecordNew.addBarcode(`barcode ${getRandomPostfix()}`);
-          ItemRecordNew.chooseCallNumberType(el.type);
-          ItemRecordNew.addCallNumber(el.value);
-          ItemRecordNew.save();
-          InventoryInstance.verifyNumberOfItemsInHoldingByName('Holdings: ', index + 1);
-        });
+    cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+      testData.userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
       });
+    });
   });
 
   after('Delete test data', () => {

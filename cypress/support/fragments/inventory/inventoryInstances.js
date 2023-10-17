@@ -121,7 +121,18 @@ const waitContentLoading = () => {
   );
 };
 
+const getCallNumberTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'call-number-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.callNumberTypes;
+  });
+
 export default {
+  getCallNumberTypes,
   waitContentLoading,
   waitLoading: () => {
     cy.expect(
