@@ -246,7 +246,7 @@ describe('Claimed Returned', () => {
                 loan.id,
               );
               // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
-              cy.wait(150000);
+              cy.wait(250000);
               cy.reload();
               LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AGED_TO_LOST);
               UserLoans.openClaimReturnedPane();
