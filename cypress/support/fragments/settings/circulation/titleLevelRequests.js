@@ -1,4 +1,4 @@
-import { Pane, Button, Select, Checkbox, NavListItem } from '../../../../../interactors';
+import { Pane, Button, Select, Checkbox, NavListItem, Modal } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const saveButton = Button('Save');
@@ -8,6 +8,7 @@ const cancellationNotice = Select({ name: 'cancellationPatronNoticeTemplateId' }
 const expirationNotice = Select({ name: 'expirationPatronNoticeTemplateId' });
 
 export default {
+  TLRCheckbox,
   waitLoading() {
     cy.expect(Pane('Title level requests').exists());
   },
@@ -33,6 +34,10 @@ export default {
     cy.do(saveButton.click());
   },
 
+  clickOnTLRCheckbox: () => {
+    cy.do(TLRCheckbox.click());
+  },
+
   changeTitleLevelRequestsStatus(status) {
     cy.wait(2000);
     cy.get('input[name="titleLevelRequestsFeatureEnabled"]')
@@ -42,8 +47,8 @@ export default {
           cy.expect(
             Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists(),
           );
-          cy.do(TLRCheckbox.click());
-          cy.do(saveButton.click());
+          this.clickOnTLRCheckbox();
+          this.clickOnSaveButton();
           this.checkUpdateTLRCalloutAppeared();
         } else if (checked && status === 'allow') {
           // If checkbox is already checked - to prevent test failing during parallel run
@@ -52,7 +57,7 @@ export default {
           cy.expect(
             Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists(),
           );
-          cy.do(TLRCheckbox.click());
+          this.clickOnTLRCheckbox();
           // need to wait if the popup module appears
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(7000);
@@ -60,7 +65,7 @@ export default {
             if (body.find('div[label*="Cannot change"]').length) {
               cy.do(Button('Close').click());
             } else {
-              cy.do(saveButton.click());
+              this.clickOnSaveButton();
               this.checkUpdateTLRCalloutAppeared();
             }
           });
@@ -70,5 +75,14 @@ export default {
 
   checkUpdateTLRCalloutAppeared() {
     InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
+  },
+
+  checkCannotChangeTLRModal() {
+    cy.expect(
+      Modal('Cannot change "Allow title level requests"').has({
+        message:
+          '"Allow title level requests" cannot be changed because it is in use by one or more requests',
+      }),
+    );
   },
 };

@@ -282,10 +282,20 @@ export default {
       }),
     );
   },
+
   checkRequestIsNotAllowedInstanceModal() {
     cy.expect(
       Modal('Request not allowed').has({
         message: 'This requester already has an open request for this instance',
+      }),
+    );
+  },
+
+  checkCannotChangeTLRModal() {
+    cy.expect(
+      Modal('Cannot change "Allow title level requests"').has({
+        message:
+          '"Allow title level requests" cannot be changed because it is in use by one or more requests',
       }),
     );
   },
