@@ -314,7 +314,6 @@ describe('Claimed Returned', () => {
         lostItemFeePolicyBody.name,
         'Suspended claim returned',
       );
-      // userAllFeesFines.clickWaiveEllipsis(0);
       FeeFineDetails.openActions();
       FeeFineDetails.openWaiveModal();
       WaiveFeeFinesModal.setWaiveAmount('25.00');
