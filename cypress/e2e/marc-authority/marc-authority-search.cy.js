@@ -25,6 +25,7 @@ describe('MARC -› MARC Authority', () => {
       keyword: 'Keyword',
       nameTitle: 'Name-title',
     },
+    noResultsMessage: 'No results found for',
   };
 
   const searchQueriesC409449 = [
@@ -136,6 +137,34 @@ describe('MARC -› MARC Authority', () => {
       searchResultsDataC409449.forEach((result) => {
         MarcAuthorities.verifyResultsRowContent(result[1], result[0], result[2]);
       });
+      MarcAuthorities.checkRowsCount(searchResultsDataC409449.length);
+      MarcAuthorities.searchBy(testData.searchOptions.nameTitle, searchQueriesC409449[1]);
+      MarcAuthorities.verifyResultsRowContent(
+        searchResultsDataC409449[0][1],
+        searchResultsDataC409449[0][0],
+        searchResultsDataC409449[0][2],
+      );
+      MarcAuthorities.checkRowsCount(1);
+      MarcAuthorities.searchBy(testData.searchOptions.nameTitle, searchQueriesC409449[2]);
+      MarcAuthorities.verifyResultsRowContent(
+        searchResultsDataC409449[4][1],
+        searchResultsDataC409449[4][0],
+        searchResultsDataC409449[4][2],
+      );
+      MarcAuthorities.checkRowsCount(1);
+      MarcAuthorities.searchBy(testData.searchOptions.nameTitle, searchQueriesC409449[3]);
+      MarcAuthorities.verifyResultsRowContent(
+        searchResultsDataC409449[8][1],
+        searchResultsDataC409449[8][0],
+        searchResultsDataC409449[8][2],
+      );
+      MarcAuthorities.checkRowsCount(1);
+      MarcAuthorities.searchBy(testData.searchOptions.nameTitle, searchQueriesC409449[4]);
+      MarcAuthorities.checkNoResultsMessage(testData.noResultsMessage);
+      MarcAuthorities.searchBy(testData.searchOptions.nameTitle, searchQueriesC409449[5]);
+      MarcAuthorities.checkNoResultsMessage(testData.noResultsMessage);
+      MarcAuthorities.searchBy(testData.searchOptions.nameTitle, searchQueriesC409449[6]);
+      MarcAuthorities.checkNoResultsMessage(testData.noResultsMessage);
     },
   );
 });
