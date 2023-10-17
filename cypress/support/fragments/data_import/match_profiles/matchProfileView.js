@@ -38,7 +38,7 @@ export default {
 
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
   verifyMatchProfileTitleName: (profileName) => cy.get('#view-match-profile-pane-content h2').should('have.text', profileName),
-  verifyMatchProfile(
+  verifyMatchProfileWithIncomingAndExistingValue(
     { profileName, incomingRecordFields, existingRecordFields, existingRecordType },
     recordType,
   ) {
@@ -68,5 +68,15 @@ export default {
     cy.contains(`Existing ${recordType} record`)
       .parent()
       .should('include.text', existingRecordFields.subfield);
+  },
+  verifyMatchProfileWithFolioRecordValue(
+    { profileName, incomingRecordFields, instanceOption },
+    recordType,
+  ) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.field);
+    cy.contains('Existing Instance record field').parent().should('include.text', instanceOption);
   },
 };
