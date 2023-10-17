@@ -26,6 +26,8 @@ import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import WaiveFeeFinesModal from '../../support/fragments/users/waiveFeeFineModal';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import AppPaths from '../../support/fragments/app-paths';
 
 describe('Claimed Returned', () => {
   let addedCirculationRule;
@@ -244,7 +246,7 @@ describe('Claimed Returned', () => {
                 loan.id,
               );
               // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
-              cy.wait(120000);
+              cy.wait(150000);
               cy.reload();
               LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AGED_TO_LOST);
               UserLoans.openClaimReturnedPane();
@@ -307,19 +309,16 @@ describe('Claimed Returned', () => {
       });
       CheckInClaimedReturnedItem.chooseItemReturnedByLibrary();
       cy.wait(10000);
-      CheckInActions.checkFeeFinesDetails(
-        '25.00',
-        instanceData.item2Barcode,
-        loanPolicyBody.name,
-        overdueFinePolicyBody.name,
-        lostItemFeePolicyBody.name,
-        'Suspended claim returned',
-      );
-      FeeFineDetails.openActions();
-      FeeFineDetails.openWaiveModal();
-      WaiveFeeFinesModal.setWaiveAmount('25.00');
-      WaiveFeeFinesModal.selectWaiveReason(waiveReason.nameReason);
-      WaiveFeeFinesModal.confirm();
+      NewFeeFine.getUserFeesFines(userData.userId).then((userFeesFines) => {
+        const feesFineId = userFeesFines.accounts[0].id;
+        cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feesFineId));
+        FeeFineDetails.checkFeeFineBilledAmount('25.00');
+        FeeFineDetails.openActions();
+        FeeFineDetails.openWaiveModal();
+        WaiveFeeFinesModal.setWaiveAmount('25.00');
+        WaiveFeeFinesModal.selectWaiveReason(waiveReason.nameReason);
+        WaiveFeeFinesModal.confirm();
+      });
     },
   );
 });

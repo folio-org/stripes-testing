@@ -228,10 +228,8 @@ export default {
     loanPolicyName,
     OverdueFinePolicyName,
     LostItemFeePolicyName,
-    paymentStatus = 'Outstanding',
   ) {
     cy.do(availableActionsButton.click());
-    cy.wait(5000);
     cy.do(feeFineDetailsButton.click());
     cy.expect(Pane(including('Fee/fine details')).exists());
     cy.expect(feeFinePane.find(HTML(including('Overdue fine'))).exists());
@@ -241,7 +239,7 @@ export default {
         feeFinePane.find(HTML(including(`${billedAmount + 1}.00`))).exists(),
       ),
     );
-    cy.expect(feeFinePane.find(HTML(including(paymentStatus))).exists());
+    cy.expect(feeFinePane.find(HTML(including('Outstanding'))).exists());
     cy.expect(feeFinePane.find(HTML(including(instanceBarcode))).exists());
     cy.expect(feeFinePane.find(HTML(including(loanPolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(OverdueFinePolicyName))).exists());
