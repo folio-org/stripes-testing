@@ -24,6 +24,8 @@ import LoansPage from '../../support/fragments/loans/loansPage';
 import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import WaiveFeeFinesModal from '../../support/fragments/users/waiveFeeFineModal';
+import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 
 describe('Claimed Returned', () => {
   let addedCirculationRule;
@@ -80,18 +82,11 @@ describe('Claimed Returned', () => {
     lostItemProcessingFee: '25.00',
     chargeAmountItemPatron: true,
     chargeAmountItemSystem: true,
-    lostItemChargeFeeFine: {
-      duration: 6,
-      intervalId: 'Weeks',
-    },
+    lostItemChargeFeeFine: { duration: 2, intervalId: 'Days' },
     returnedLostItemProcessingFee: false,
     replacedLostItemProcessingFee: false,
     replacementProcessingFee: '0.00',
     replacementAllowed: false,
-    feesFinesShallRefunded: {
-      duration: 6,
-      intervalId: 'Months',
-    },
     lostItemReturned: 'Charge',
     id: uuid(),
   };
@@ -196,11 +191,9 @@ describe('Claimed Returned', () => {
           cy.createTempUser(
             [
               Permissions.uiUsersView.gui,
-
               Permissions.uiUsersViewLoans.gui,
               Permissions.uiFeeFines.gui,
               Permissions.uiFeeFinesCanWaive.gui,
-
               Permissions.okapiTimersPatch.gui,
               Permissions.checkinAll.gui,
             ],
@@ -230,18 +223,17 @@ describe('Claimed Returned', () => {
             userBarcode: userData.barcode,
           });
         });
-
+        cy.loginAsAdmin();
         UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
           const loansData = userLoans.loans;
-          cy.log(loansData);
           const newDueDate = new Date(loansData[0].loanDate);
           newDueDate.setDate(newDueDate.getDate() - 1);
           loansData.forEach((loan) => {
+            cy.visit(`users/${userData.userId}/loans/view/${loan.id}`);
             if (loan.item.barcode.includes(instanceData.item1Barcode)) {
-              UserLoans.claimItemReturnedViaApi(
-                { itemClaimedReturnedDateTime: moment.utc().format() },
-                loan.id,
-              );
+              UserLoans.openClaimReturnedPane();
+              ConfirmClaimReturnedModal.confirmClaimReturnedInLoanDetails();
+              LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.CLAIMED_RETURNED);
             } else if (loan.item.barcode.includes(instanceData.item2Barcode)) {
               UserLoans.changeDueDateViaApi(
                 {
@@ -252,11 +244,11 @@ describe('Claimed Returned', () => {
                 loan.id,
               );
               // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
-              cy.wait(160000);
-              UserLoans.claimItemReturnedViaApi(
-                { itemClaimedReturnedDateTime: moment.utc().format() },
-                loan.id,
-              );
+              cy.wait(100000);
+              cy.reload();
+              UserLoans.openClaimReturnedPane();
+              ConfirmClaimReturnedModal.confirmClaimReturnedInLoanDetails();
+              LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.CLAIMED_RETURNED);
             }
           });
         });
@@ -305,7 +297,6 @@ describe('Claimed Returned', () => {
       CheckInClaimedReturnedItem.chooseItemReturnedByLibrary();
       CheckInActions.openLoanDetails(userData.username);
       LoansPage.verifyResultsInTheRow([ITEM_STATUS_NAMES.FOUND_BY_LIBRARY]);
-
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
       CheckInActions.checkInItemGui(instanceData.item2Barcode);
@@ -314,13 +305,17 @@ describe('Claimed Returned', () => {
         barcode: instanceData.item2Barcode,
       });
       CheckInClaimedReturnedItem.chooseItemReturnedByLibrary();
+      cy.wait(10000);
       CheckInActions.checkFeeFinesDetails(
         '25.00',
         instanceData.item2Barcode,
         loanPolicyBody.name,
         overdueFinePolicyBody.name,
         lostItemFeePolicyBody.name,
+        'Suspended claim returned',
       );
+      // userAllFeesFines.clickWaiveEllipsis(0);
+      FeeFineDetails.openActions();
       FeeFineDetails.openWaiveModal();
       WaiveFeeFinesModal.setWaiveAmount('25.00');
       WaiveFeeFinesModal.selectWaiveReason(waiveReason.nameReason);
