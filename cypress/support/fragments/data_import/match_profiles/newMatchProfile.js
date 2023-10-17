@@ -10,6 +10,7 @@ import {
   SelectionOption,
   Dropdown,
   Section,
+  DropdownMenu,
 } from '../../../../../interactors';
 import { EXISTING_RECORDS_NAMES } from '../../../constants';
 
@@ -508,5 +509,12 @@ export default {
       const content = $element.text();
       expect(content).to.not.include(value);
     });
+  },
+  verifyIncomingRecordsDropdown: () => {
+    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
+    cy.expect([
+      DropdownMenu({ visible: true }).find(HTML('MARC Bibliographic')).exists(),
+      DropdownMenu({ visible: true }).find(HTML('Static value (submatch only)')).exists(),
+    ]);
   },
 };

@@ -96,28 +96,30 @@ describe('Search in Inventory', () => {
   before('Importing data', () => {
     cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
-      marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numberOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
-              });
-            }
-          },
-        );
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        marcFiles.forEach((marcFile) => {
+          cy.visit(TopMenu.dataImportPath, { waiter: DataImport.waitLoading });
+          DataImport.verifyUploadState();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+          JobProfiles.search(marcFile.jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(marcFile.fileName);
+          for (let i = 0; i < marcFile.numberOfRecords; i++) {
+            Logs.getCreatedItemsID(i).then((link) => {
+              createdRecordIDs.push(link.split('/')[5]);
+            });
+          }
+        });
       });
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
+    });
+  });
+
+  beforeEach('Login', () => {
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.inventoryPath,
+      waiter: InventoryInstances.waitContentLoading,
     });
   });
 
@@ -148,6 +150,7 @@ describe('Search in Inventory', () => {
     'C368038 Search for "Instance" by "Alternative title" field with special characters using "Keyword" search option (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
+      InventoryInstances.waitContentLoading();
       expectedTitlesC368038.forEach((expectedTitlesSet, index) => {
         InventoryInstance.searchByTitle(testData.searchQueriesC368038[index]);
         // wait for search results to be updated

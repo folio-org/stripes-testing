@@ -14,8 +14,6 @@ describe('eHoldings', () => {
       title: 'Chemical Engineering',
       publicationType: 'Journal',
       titleC9240: 'Wiley Hall',
-      label1: 'simple',
-      label2: '123',
       label1Value: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ${getRandomPostfix()}`,
       label2Value: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ${getRandomPostfix()}`,
     };
@@ -35,6 +33,10 @@ describe('eHoldings', () => {
         'filter[type]': testData.publicationType.toLowerCase(),
       }).then((res) => {
         testData.titleProps = res[0];
+      });
+      cy.getEHoldingsCustomLabelsViaAPI().then((labels) => {
+        testData.label1 = labels[0].attributes.displayLabel;
+        testData.label2 = labels[1].attributes.displayLabel;
       });
     });
 
