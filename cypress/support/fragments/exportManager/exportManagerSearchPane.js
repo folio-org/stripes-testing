@@ -86,6 +86,7 @@ export default {
         .find(MultiColumnListCell(integrationName))
         .click(),
     );
+    cy.wait(4000);
   },
 
   closeExportJobPane() {
