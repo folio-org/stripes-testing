@@ -193,13 +193,14 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       Users.deleteViaApi(testData.userProperties.userId);
-      InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-      MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
       // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      // delete records
+      InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
+      MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcBibFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
