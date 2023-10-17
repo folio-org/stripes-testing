@@ -12,7 +12,9 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
@@ -57,16 +59,22 @@ describe('Overdue fine', () => {
   const noticeTemplates = [
     createNoticeTemplate({
       name: 'Overdue_fine_returned_upon_at',
-      category: { name: 'Automated fee/fine charge' },
-      noticeOptions: { noticeName: 'FeeFine', noticeId: 'feeFine', send: 'Upon/At' },
+      category: NOTICE_CATEGORIES.AutomatedFeeFineCharge,
+      noticeOptions: {
+        noticeName: 'FeeFine',
+        noticeId: 'feeFine',
+        send: 'Upon/At',
+        action: 'Overdue fine, returned',
+      },
     }),
     createNoticeTemplate({
       name: 'Overdue_fine_returned_after_once',
-      category: { name: 'Automated fee/fine charge' },
+      category: NOTICE_CATEGORIES.AutomatedFeeFineCharge,
       noticeOptions: {
         noticeName: 'FeeFine',
         noticeId: 'feeFine',
         send: 'After',
+        action: 'Overdue fine, returned',
         sendBy: {
           duration: '1',
           interval: 'Minute(s)',
@@ -75,12 +83,13 @@ describe('Overdue fine', () => {
       },
     }),
     createNoticeTemplate({
-      name: `Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_recurring`,
-      category: { name: 'Automated fee/fine charge' },
+      name: 'Overdue_fine_returned_after_recurring',
+      category: NOTICE_CATEGORIES.AutomatedFeeFineCharge,
       noticeOptions: {
         noticeName: 'FeeFine',
         noticeId: 'feeFine',
         send: 'After',
+        action: 'Overdue fine, returned',
         sendBy: {
           duration: '1',
           interval: 'Minute(s)',
@@ -280,10 +289,7 @@ describe('Overdue fine', () => {
     () => {
       noticeTemplates.forEach((template, index) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
-        NewNoticePolicyTemplate.checkAfterSaving({
-          ...template,
-          category: 'AutomatedFeeFineCharge',
-        });
+        NewNoticePolicyTemplate.checkAfterSaving(template);
       });
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

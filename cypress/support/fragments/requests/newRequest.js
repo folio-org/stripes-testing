@@ -34,6 +34,12 @@ const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
 const selectItemPane = Pane({ id: 'items-dialog-instance-items-list' });
 const requestInfoSection = Section({ id: 'new-requester-info' });
+const title = 'Title';
+const tlRequest = 'Title level requests';
+const contributors = 'Contributor';
+const PublicationDate = 'Publication date';
+const edition = 'Edition';
+const isbn = 'ISBN(s)';
 
 function addRequester(userName) {
   cy.do(Button({ id: 'requestform-addrequest' }).click());
@@ -139,6 +145,16 @@ export default {
     ]);
   },
 
+  waitLoadingNewTitleRequestPage(TLR = false) {
+    cy.expect(Pane({ title: 'New request' }).exists());
+    if (TLR) cy.expect(titleLevelRequest.exists());
+    cy.expect([
+      Accordion('Title information').exists(),
+      Accordion('Request information').exists(),
+      Accordion('Requester information').exists(),
+    ]);
+  },
+
   enterItemInfo(barcode) {
     cy.do([itemBarcodeInput.fillIn(barcode), enterItemBarcodeButton.click()]);
   },
@@ -162,6 +178,18 @@ export default {
 
   verifyItemInformation: (allContentToCheck) => {
     return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'new-item-info' }, including(contentToCheck)).exists()));
+  },
+
+  verifyTitleInformation() {
+    this.verifyItemInformation([
+      tlRequest,
+      title,
+      contributors,
+      PublicationDate,
+      edition,
+      isbn,
+      PublicationDate,
+    ]);
   },
 
   chooseItemInSelectItemPane: (itemBarcode) => {
@@ -251,6 +279,13 @@ export default {
     cy.expect(
       Modal('Request not allowed').has({
         message: 'This requester already has an open request for this item',
+      }),
+    );
+  },
+  checkRequestIsNotAllowedInstanceModal() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: 'This requester already has an open request for this instance',
       }),
     );
   },

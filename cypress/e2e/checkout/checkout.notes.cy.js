@@ -47,7 +47,7 @@ describe('Check out - Notes', () => {
   });
 
   it(
-    'C356781: Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (Spitfire)',
+    'C356781: Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (Spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       const note1 = { title: 'Note 1', details: 'This is Note 1' };

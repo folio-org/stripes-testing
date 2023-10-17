@@ -18,6 +18,16 @@ const getDefaultOrder = ({ vendorId, poNumber, orderType = 'One-Time' } = {}) =>
   return defaultOrder;
 };
 
+const getDefaultOngoingOrder = ({ vendorId = '' }) => ({
+  id: uuid(),
+  vendor: vendorId,
+  ongoing: {
+    isSubscription: false,
+    manualRenewal: false,
+  },
+  orderType: 'Ongoing',
+});
+
 const defaultOneTimeOrder = {
   id: uuid(),
   vendor: '',
@@ -35,6 +45,7 @@ const defaultOngoingTimeOrder = {
 
 export default {
   getDefaultOrder,
+  getDefaultOngoingOrder,
   defaultOneTimeOrder,
   defaultOngoingTimeOrder,
   createViaApi(order = defaultOneTimeOrder) {

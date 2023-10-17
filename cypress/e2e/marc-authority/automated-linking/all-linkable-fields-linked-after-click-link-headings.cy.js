@@ -16,13 +16,21 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () => {
   const testData = {
     marcAuthIcon: 'Linked to MARC authority',
-    calloutAfterLinking:
+    successCalloutAfterLinking:
       'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 has been linked to MARC authority record(s).',
+    errorCalloutAfterLinking:
+      'Field 100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811, and 830 must be set manually by selecting the link icon.',
   };
 
   const marcFiles = [
     {
       marc: 'marcBibFileForC387538.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      numOfRecords: 1,
+    },
+    {
+      marc: 'marcBibFileForC388500.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numOfRecords: 1,
@@ -35,7 +43,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     },
   ];
 
-  const createdAuthorityIDs = [];
+  const createdRecordsIDs = [];
 
   const linkableFields = [
     100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811,
@@ -195,45 +203,48 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdAuthorityIDs.push(link.split('/')[5]);
-              });
-            }
-          },
-        );
+      cy.loginAsAdmin().then(() => {
+        marcFiles.forEach((marcFile) => {
+          cy.visit(TopMenu.dataImportPath);
+          DataImport.waitLoading();
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(marcFile.jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(marcFile.fileName);
+          for (let i = 0; i < marcFile.numOfRecords; i++) {
+            Logs.getCreatedItemsID(i).then((link) => {
+              createdRecordsIDs.push(link.split('/')[5]);
+            });
+          }
+        });
       });
+    });
+  });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
+  beforeEach('Sign in to application', () => {
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.inventoryPath,
+      waiter: InventoryInstances.waitContentLoading,
     });
   });
 
   after('Deleting created user and data', () => {
     Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-    createdAuthorityIDs.forEach((id, index) => {
-      if (index) MarcAuthority.deleteViaAPI(id);
-    });
+    InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
+    InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[1]);
+    for (let i = 2; i < 22; i++) {
+      MarcAuthority.deleteViaAPI(createdRecordsIDs[i]);
+    }
   });
 
   it(
     'C387538 All linkable fields are linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstance.searchByTitle(createdRecordsIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       linkableFields.forEach((tag) => {
@@ -249,7 +260,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       });
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       QuickMarcEditor.clickLinkHeadingsButton();
-      QuickMarcEditor.checkCallout(testData.calloutAfterLinking);
+      QuickMarcEditor.checkCallout(testData.successCalloutAfterLinking);
       fields.forEach((matchs) => {
         QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(matchs.rowIndex);
       });
@@ -268,7 +279,35 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         InventoryViewSource.contains(`${testData.marcAuthIcon}\n\t${field.tag}`);
       });
       InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
-      InventoryInstance.marcAuthViewIconClickUsingId(createdAuthorityIDs[1]);
+      InventoryInstance.marcAuthViewIconClickUsingId(createdRecordsIDs[2]);
+    },
+  );
+
+  it(
+    'C388500 All linkable fields are NOT linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      InventoryInstance.searchByTitle(createdRecordsIDs[1]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.editMarcBibliographicRecord();
+      linkableFields.forEach((tag) => {
+        QuickMarcEditor.setRulesForField(tag, true);
+      });
+      QuickMarcEditor.verifyEnabledLinkHeadingsButton();
+      QuickMarcEditor.clickLinkHeadingsButton();
+      QuickMarcEditor.checkCallout(testData.errorCalloutAfterLinking);
+      QuickMarcEditor.verifyEnabledLinkHeadingsButton();
+      QuickMarcEditor.checkButtonsDisabled();
+      QuickMarcEditor.updateExistingField(
+        fields[0].tag,
+        '$a Coates, Ta-Nehisi, $eauthor. $0 n2008001084',
+      );
+      QuickMarcEditor.checkButtonsEnabled();
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
+      InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Subject');
+      InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Title data');
     },
   );
 });

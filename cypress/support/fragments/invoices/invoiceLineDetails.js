@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   KeyValue,
   Link,
   MultiColumnListCell,
@@ -34,23 +35,40 @@ export default {
 
     return InvoiceLineEditForm;
   },
-  checkInvoiceLineDetails({ invoiceLineInformation = [] } = {}) {
+  checkInvoiceLineDetails({ invoiceLineInformation = [], checkboxes = [] } = {}) {
     invoiceLineInformation.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+    checkboxes.forEach(({ locator, conditions }) => {
+      cy.expect(informationSection.find(Checkbox(locator)).has(conditions));
     });
   },
   checkFundDistibutionTableContent(records = []) {
     records.forEach((record, index) => {
-      cy.expect([
-        fundDistributionsSection
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 0 }))
-          .has({ content: including(record.name) }),
-        fundDistributionsSection
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 5 }))
-          .has({ content: including(record.encumbrance) }),
-      ]);
+      if (record.name) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.name) }),
+        );
+      }
+      if (record.expenseClass) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.expenseClass) }),
+        );
+      }
+      if (record.encumbrance) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 5 }))
+            .has({ content: including(record.encumbrance) }),
+        );
+      }
     });
   },
   openFundDetailsPane(rowIndex = 0) {

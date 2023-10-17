@@ -35,11 +35,14 @@ describe('Patron Notices', () => {
       ).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-        cy.login(userData.username, userData.password, {
-          path: SettingsMenu.circulationPatronNoticeTemplatesPath,
-          waiter: NewNoticePolicyTemplate.waitLoading,
-        });
       });
+    });
+  });
+
+  beforeEach('Login', () => {
+    cy.login(userData.username, userData.password, {
+      path: SettingsMenu.circulationPatronNoticeTemplatesPath,
+      waiter: NewNoticePolicyTemplate.waitLoading,
     });
   });
 
