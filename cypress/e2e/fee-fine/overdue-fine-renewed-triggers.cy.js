@@ -60,7 +60,12 @@ describe('Overdue fine', () => {
     createNoticeTemplate({
       name: 'Overdue_fine_renewed_upon_at',
       category: NOTICE_CATEGORIES.AutomatedFeeFineCharge,
-      noticeOptions: { noticeName: 'FeeFine', noticeId: 'feeFine', send: 'Upon/At' },
+      noticeOptions: {
+        noticeName: 'FeeFine',
+        noticeId: 'feeFine',
+        send: 'Upon/At',
+        action: 'Overdue fine, renewed',
+      },
     }),
     createNoticeTemplate({
       name: 'Overdue_fine_renewed_after_once',
@@ -69,6 +74,7 @@ describe('Overdue fine', () => {
         noticeName: 'FeeFine',
         noticeId: 'feeFine',
         send: 'After',
+        action: 'Overdue fine, renewed',
         sendBy: {
           duration: '1',
           interval: 'Minute(s)',
@@ -83,6 +89,7 @@ describe('Overdue fine', () => {
         noticeName: 'FeeFine',
         noticeId: 'feeFine',
         send: 'After',
+        action: 'Overdue fine, renewed',
         sendBy: {
           duration: '1',
           interval: 'Minute(s)',
@@ -299,10 +306,7 @@ describe('Overdue fine', () => {
     () => {
       noticeTemplates.forEach((template, index) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
-        NewNoticePolicyTemplate.checkAfterSaving({
-          ...template,
-          category: 'AutomatedFeeFineCharge',
-        });
+        NewNoticePolicyTemplate.checkAfterSaving(template);
       });
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);

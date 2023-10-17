@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C405533 Verify Bulk Edit actions for Items notes - duplicate check in note to check out note (firebird)',
+      'C405535 Verify Bulk Edit actions for Items notes - duplicate check out note to check in note (firebird)',
       { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
@@ -80,7 +80,7 @@ describe('bulk-edit', () => {
 
         BulkEditActions.verifyItemOptions();
         BulkEditActions.verifyItemCheckInNoteActions();
-        BulkEditActions.duplicateCheckInNote();
+        BulkEditActions.duplicateCheckInNote('out');
 
         BulkEditActions.confirmChanges();
         const changes = [
@@ -88,8 +88,8 @@ describe('bulk-edit', () => {
           `Check in;${notes.checkInNote};false`,
           `Check out;${notes.checkOutNote};true`,
           `Check out;${notes.checkOutNote};false`,
-          `Check out;${notes.checkInNote};true`,
-          `Check out;${notes.checkInNote};false`,
+          `Check in;${notes.checkOutNote};true`,
+          `Check in;${notes.checkOutNote};false`,
         ];
         BulkEditActions.verifyChangesInAreYouSureForm('Circulation Notes', changes);
         BulkEditActions.commitChanges();
@@ -107,11 +107,8 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkCheckInNote(`${notes.checkInNote}${notes.checkInNote}`, 'Yes\nNo');
-        ItemRecordView.checkCheckOutNote(
-          `${notes.checkOutNote}${notes.checkOutNote}${notes.checkInNote}${notes.checkInNote}`,
-          'Yes\nNo\nYes\nNo',
-        );
+        ItemRecordView.checkCheckInNote(`${notes.checkInNote}${notes.checkInNote}${notes.checkOutNote}${notes.checkOutNote}`, 'Yes\nNo\nYes\nNo');
+        ItemRecordView.checkCheckOutNote(`${notes.checkOutNote}${notes.checkOutNote}`, 'Yes\nNo');
       },
     );
   });

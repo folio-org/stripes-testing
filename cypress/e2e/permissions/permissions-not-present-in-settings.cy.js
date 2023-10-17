@@ -27,7 +27,10 @@ describe('Users', () => {
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });
-      cy.createTempUser([permissions.uiUsersPermissions.gui], patronGroup.name)
+      cy.createTempUser(
+        [permissions.uiUsersPermissions.gui, permissions.uiUsersCreate.gui],
+        patronGroup.name,
+      )
         .then((userProperties) => {
           userData = userProperties;
           UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
@@ -51,7 +54,7 @@ describe('Users', () => {
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
-      UserEdit.addPermissions(['Users: Can create new user']);
+      UserEdit.addPermissions([permissions.uiUsersPermissionsView.gui]);
       UserEdit.verifyPermissionDoesNotExist('Settings (Users): Can view transfer criteria');
       UserEdit.verifyPermissionDoesNotExist(
         'Settings (Users): Can create, edit and remove transfer criteria',

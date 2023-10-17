@@ -16,6 +16,7 @@ import InvoiceLineEditForm from './invoiceLineEditForm';
 import InvoiceLineDetails from './invoiceLineDetails';
 import ApproveInvoiceModal from './modal/approveInvoiceModal';
 import PayInvoiceModal from './modal/payInvoiceModal';
+import CancelInvoiceModal from './modal/cancelInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
 
@@ -68,16 +69,23 @@ export default {
   },
   checkTableContent(records = []) {
     records.forEach((record, index) => {
-      cy.expect([
-        invoiceLinesSection
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 1 }))
-          .has({ content: including(record.poNumber) }),
-        invoiceLinesSection
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 2 }))
-          .has({ content: including(record.description) }),
-      ]);
+      if (record.poNumber) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.poNumber) }),
+        );
+      }
+
+      if (record.description) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .has({ content: including(record.description) }),
+        );
+      }
 
       if (record.receiptStatus) {
         cy.expect(
@@ -132,6 +140,12 @@ export default {
 
     PayInvoiceModal.verifyModalView();
     PayInvoiceModal.clickSubmitButton();
+  },
+  cancelInvoice() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Cancel').click()]);
+
+    CancelInvoiceModal.verifyModalView();
+    CancelInvoiceModal.clickSubmitButton();
   },
   openSelectOrderLineModal() {
     cy.do([invoiceLinesSection.find(actionsButton).click(), Button('Add line from POL').click()]);

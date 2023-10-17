@@ -120,26 +120,24 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
 
-      cy.loginAsAdmin().then(
-        () => {
-          marcFiles.forEach((marcFile) => {
-            cy.visit(TopMenu.dataImportPath);
-            DataImport.waitLoading();
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdAuthorityIDs.push(link.split('/')[5]);
-              });
-            }
-          });
-        }
-      );
+      cy.loginAsAdmin().then(() => {
+        marcFiles.forEach((marcFile) => {
+          cy.visit(TopMenu.dataImportPath);
+          DataImport.waitLoading();
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(marcFile.jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(marcFile.fileName);
+          for (let i = 0; i < marcFile.numOfRecords; i++) {
+            Logs.getCreatedItemsID(i).then((link) => {
+              createdAuthorityIDs.push(link.split('/')[5]);
+            });
+          }
+        });
+      });
     });
   });
 
@@ -296,11 +294,20 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       });
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
-      QuickMarcEditor.updateExistingField(testData.tags.tag245, '$a A New Record $0 3052044C388562');
-      QuickMarcEditor.updateExistingField(newFieldsForC388562[3].tag, `${newFieldsForC388562[3].content} $0 y015016`);
+      QuickMarcEditor.updateExistingField(
+        testData.tags.tag245,
+        '$a A New Record $0 3052044C388562',
+      );
+      QuickMarcEditor.updateExistingField(
+        newFieldsForC388562[3].tag,
+        `${newFieldsForC388562[3].content} $0 y015016`,
+      );
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
-      QuickMarcEditor.updateExistingField(newFieldsForC388562[0].tag, `${newFieldsForC388562[0].content} $0 y016017`);
+      QuickMarcEditor.updateExistingField(
+        newFieldsForC388562[0].tag,
+        `${newFieldsForC388562[0].content} $0 y016017`,
+      );
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout('Field 100 must be set manually by selecting the link icon.');
@@ -309,19 +316,37 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       InventoryInstance.verifySelectMarcAuthorityModal();
       InventoryInstance.searchResultsWithOption('Identifier (all)', '3052044C388562');
       InventoryInstance.clickLinkButton();
-      QuickMarcEditor.verifyAfterLinkingUsingRowIndex(newFieldsForC388562[0].tag, newFieldsForC388562[0].rowIndex + 1);
+      QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+        newFieldsForC388562[0].tag,
+        newFieldsForC388562[0].rowIndex + 1,
+      );
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
-      QuickMarcEditor.updateExistingField(newFieldsForC388562[1].tag, `${newFieldsForC388562[1].content} $0 n99036055`);
+      QuickMarcEditor.updateExistingField(
+        newFieldsForC388562[1].tag,
+        `${newFieldsForC388562[1].content} $0 n99036055`,
+      );
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-      QuickMarcEditor.updateExistingField(newFieldsForC388562[1].tag, newFieldsForC388562[1].content);
+      QuickMarcEditor.updateExistingField(
+        newFieldsForC388562[1].tag,
+        newFieldsForC388562[1].content,
+      );
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-      QuickMarcEditor.updateExistingField(newFieldsForC388562[1].tag, `${newFieldsForC388562[1].content} $0 y011022`);
+      QuickMarcEditor.updateExistingField(
+        newFieldsForC388562[1].tag,
+        `${newFieldsForC388562[1].content} $0 y011022`,
+      );
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-      QuickMarcEditor.updateExistingField(newFieldsForC388562[1].tag, newFieldsForC388562[1].content);
+      QuickMarcEditor.updateExistingField(
+        newFieldsForC388562[1].tag,
+        newFieldsForC388562[1].content,
+      );
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
-      QuickMarcEditor.updateExistingField(newFieldsForC388562[2].tag, `${newFieldsForC388562[1].content} $0 sh85095299C388562`);
+      QuickMarcEditor.updateExistingField(
+        newFieldsForC388562[2].tag,
+        `${newFieldsForC388562[1].content} $0 sh85095299C388562`,
+      );
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout('Field 650 has been linked to MARC authority record(s).');
