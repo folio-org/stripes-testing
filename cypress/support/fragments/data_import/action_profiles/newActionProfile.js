@@ -87,6 +87,12 @@ export default {
     ]);
   },
 
+  fillName: (profileName = defaultActionProfile.name) => cy.do(nameField.fillIn(profileName)),
+
+  chooseAction: (profileAction = action) => cy.do(actionSelect.choose(profileAction)),
+
+  saveProfile: () => cy.do(Button('Save as profile & Close').click()),
+
   linkMappingProfile: (specialMappingProfileName) => {
     cy.do(profileLinkButton.click());
     SelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
@@ -152,13 +158,17 @@ export default {
       });
   },
 
-  verifyPreviouslyPopulatedDataIsDisplayed: (profile) => {
+  verifyPreviouslyCreatedDataIsDisplayed: (profile) => {
     cy.expect([
       Pane('New action profile').exists(),
       nameField.has({ value: profile.name }),
       actionSelect.has({ content: including(profile.action) }),
       recordTypeselect.has({ content: including(profile.typeValue) }),
-      profileLinkSection.find(profileLinkButton).has({ disabled: true }),
     ]);
+  },
+
+  verifyPreviouslyPopulatedDataIsDisplayed(profile) {
+    this.verifyPreviouslyCreatedDataIsDisplayed(profile);
+    cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
   },
 };

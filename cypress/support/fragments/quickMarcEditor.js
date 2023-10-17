@@ -1522,6 +1522,10 @@ export default {
     cy.get('div[data-testid="bytes-field-col"]').should('have.length', count);
   },
 
+  checkTagAbsent(tag) {
+    cy.expect(getRowInteractorByTagName(tag).absent());
+  },
+
   checkLinkingAuthorityByTag: (tag) => {
     cy.expect(buttonLink.exists());
     cy.expect(Callout(`Field ${tag} has been linked to a MARC authority record.`).exists());

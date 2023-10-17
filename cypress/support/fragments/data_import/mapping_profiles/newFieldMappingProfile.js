@@ -14,6 +14,7 @@ import {
   Checkbox,
   Dropdown,
   DropdownMenu,
+  Callout,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -482,6 +483,9 @@ export default {
     if (profile.reEncumber) {
       cy.do(reEncumberField.fillIn(`"${profile.reEncumber}"`));
     }
+    if (profile.acquisitionsUnits) {
+      cy.do(TextField('Acquisitions units').fillIn(`"${profile.acquisitionsUnits}"`));
+    }
     // Order line information
     cy.do(titleField.fillIn(profile.title));
     if (profile.mustAcknowledgeReceivingNote) {
@@ -613,17 +617,37 @@ export default {
     );
   },
 
-  addStatisticalCode: (name, number, action = actions.addTheseToExisting) => {
+  selectActionForStatisticalCode(number, action = actions.addTheseToExisting) {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
     cy.do([
       Select({ name: statisticalCodeFieldName }).focus(),
       Select({ name: statisticalCodeFieldName }).choose(action),
+    ]);
+  },
+
+  addStatisticalCode(name, number, action) {
+    this.selectActionForStatisticalCode(number, action);
+    cy.do([
       Button('Add statistical code').click(),
       TextField('Statistical code').fillIn(`"${name}"`),
     ]);
     waitLoading();
+  },
+
+  addStatisticalCodeWithSeveralCodes(firstCode, secondCode, number, action) {
+    this.selectActionForStatisticalCode(number, action);
+    cy.do([
+      Button('Add statistical code').click(),
+      TextField({
+        name: `profile.mappingDetails.mappingFields[${number}].subfields.0.fields.0.value`,
+      }).fillIn(`"${firstCode}"`),
+      Button('Add statistical code').click(),
+      TextField({
+        name: `profile.mappingDetails.mappingFields[${number}].subfields.1.fields.0.value`,
+      }).fillIn(`"${secondCode}"`),
+    ]);
   },
 
   addAdministrativeNote: (note, number, action = actions.addTheseToExisting) => {
@@ -1024,5 +1048,9 @@ export default {
 
     cy.do(fieldName.click());
     cy.expect(fieldName.has({ error: 'Please enter a value' }));
+  },
+
+  checkCalloutMessage: (message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
   },
 };

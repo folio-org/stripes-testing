@@ -15,7 +15,17 @@ export default {
       budgetStatus: 'Active',
     };
   },
-  getBudgetViaApi(budgetId) {
+  getBudgetViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'finance/budgets',
+        searchParams,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+  getBudgetByIdViaApi(budgetId) {
     return cy
       .okapiRequest({
         path: `finance/budgets/${budgetId}`,

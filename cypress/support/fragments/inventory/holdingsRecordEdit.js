@@ -1,6 +1,7 @@
 import {
   Button,
   including,
+  not,
   HTML,
   TextField,
   Select,
@@ -28,6 +29,7 @@ const callNumber = rootForm.find(TextArea({ name: 'callNumber' }));
 const statisticalCodeFieldSet = FieldSet('Statistical code');
 const addStatisticalCodeButton = Button('Add statistical code');
 const callNumberType = rootForm.find(Select('Call number type'));
+const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
 
 export default {
   saveAndClose: () => {
@@ -67,6 +69,23 @@ export default {
   addStatisticalCode(code) {
     this.clickAddStatisticalCode();
     this.chooseStatisticalCode(code);
+  },
+  openStatisticalCodeDropdown() {
+    cy.do([statisticalCodeFieldSet.find(Selection()).find(Button()).click()]);
+  },
+  closeStatisticalCodeDropdown() {
+    cy.do(statisticalCodeFieldSet.find(Selection()).find(Button()).click());
+  },
+  filterStatisticalCodeByName(name) {
+    this.openStatisticalCodeDropdown();
+    cy.do([statisticalCodeSelectionList.filter(name)]);
+  },
+  verifyStatisticalCodeCount(codeCount, verifyTrue = true) {
+    if (verifyTrue) {
+      cy.expect(statisticalCodeSelectionList.has({ optionCount: codeCount }));
+    } else {
+      cy.expect(statisticalCodeSelectionList.has({ optionCount: not(codeCount) }));
+    }
   },
   removeStatisticalCode(code) {
     cy.do(

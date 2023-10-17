@@ -36,7 +36,7 @@ describe('Inventory: Contributors Browse', () => {
   });
 
   it(
-    'C353644 Apply "Name Type" filter to the browse result list (spitfire)',
+    'C353644 Apply "Name Type" filter to the browse result list (spitfire) (TaaS)',
     { tags: [testType.criticalPath, devTeams.spitfire] },
     () => {
       BrowseContributors.clickBrowseBtn();
