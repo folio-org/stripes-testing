@@ -38,7 +38,7 @@ describe('Users: Copy Manual charges', () => {
   });
 
   it(
-    'C442 Verify that you can copy manual charges of another fee/fine owner',
+    'C444 Verify that you can copy manual charges of another fee/fine owner (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       // add manual charges to first owner
