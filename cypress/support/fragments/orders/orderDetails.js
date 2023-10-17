@@ -11,6 +11,7 @@ import OrderLines from './orderLines';
 import OrderLineDetails from './orderLineDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
 import CreateInvoiceModal from './modals/createInvoiceModal';
+import OpenConfirmationModal from './modals/openConfirmationModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -39,6 +40,18 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
         .click(),
     );
+  },
+  openOrder({ orderNumber, confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Open').click());
+
+    if (orderNumber) {
+      OpenConfirmationModal.verifyModalView({ orderNumber });
+    }
+
+    if (confirm) {
+      OpenConfirmationModal.confirm();
+    }
   },
   unOpenOrder({ orderNumber, checkinItems = false, confirm = true } = {}) {
     this.expandActionsDropdown();
