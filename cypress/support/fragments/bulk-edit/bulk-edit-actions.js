@@ -457,8 +457,7 @@ export default {
           .find(Select({ content: 'Check out note' }))
           .has({ disabled: true }),
       );
-    }
-    else {
+    } else {
       cy.expect(
         RepeatableFieldItem({ index: rowIndex })
           .find(Select({ content: 'Check in note' }))
