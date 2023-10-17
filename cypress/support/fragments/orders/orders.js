@@ -67,7 +67,7 @@ const expandActionsDropdown = () => {
 
 export default {
   searchByParameter(parameter, value) {
-    cy.wait(2000);
+    cy.wait(4000);
     cy.do([searchField.selectIndex(parameter), searchField.fillIn(value)]);
     cy.expect(searchButton.has({ disabled: false }));
     cy.do(searchButton.click());
@@ -489,6 +489,7 @@ export default {
     ]);
   },
   selectVendorFilter: (invoice) => {
+    cy.wait(4000);
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
       Button('Organization look-up').click(),

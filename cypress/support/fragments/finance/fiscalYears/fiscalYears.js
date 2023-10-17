@@ -230,6 +230,7 @@ export default {
   }),
 
   selectFY: (FYName) => {
+    cy.wait(4000);
     cy.do(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).click());
   },
 
