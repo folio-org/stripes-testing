@@ -118,18 +118,29 @@ describe('Circulation log', () => {
     'C17094 Verify User barcode appears in Circulation log (volaris) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.volaris] },
     () => {
+      const firstItemSearchResultsData = {
+        userBarcode: firstUser.barcode,
+        itemBarcode: FIRST_ITEM_BARCODE,
+        object: 'Loan',
+        circAction: 'Checked out',
+        servicePoint: testData.servicePoint.name,
+        source: 'ADMINISTRATOR, Diku_admin',
+        desc: 'Checked out to proxy: no.',
+      };
+      const secondItemSearchResultsData = {
+        userBarcode: '-',
+        itemBarcode: SECOND_ITEM.barcodes[0],
+        object: 'Request',
+        circAction: 'Created',
+        servicePoint: testData.servicePoint.name,
+        source: 'ADMINISTRATOR, Diku_admin',
+        desc: 'Type: Page.',
+      };
       // Apply any filters in "Search & filter" pane to retrieve logs in "Circulation log" pane
       SearchPane.setFilterOptionFromAccordion('loan', 'Checked out');
       // User barcodes are displayed in "User barcode" column
       SearchPane.findResultRowIndexByContent(FIRST_ITEM_BARCODE).then((rowIndex) => {
-        SearchPane.checkResultSearch(
-          {
-            itemBarcode: FIRST_ITEM_BARCODE,
-            userBarcode: firstUser.barcode,
-            circAction: 'Checked out',
-          },
-          rowIndex,
-        );
+        SearchPane.checkResultSearch(firstItemSearchResultsData, rowIndex);
       });
       SearchPane.resetFilters();
 
@@ -137,14 +148,7 @@ describe('Circulation log', () => {
       SearchPane.setFilterOptionFromAccordion('request', 'Created');
       // "-" is displayed in "User barcode" column if the User doesn't have barcode
       SearchPane.findResultRowIndexByContent(SECOND_ITEM.barcodes[0]).then((rowIndex) => {
-        SearchPane.checkResultSearch(
-          {
-            itemBarcode: SECOND_ITEM.barcodes[0],
-            userBarcode: '-',
-            circAction: 'Created',
-          },
-          rowIndex,
-        );
+        SearchPane.checkResultSearch(secondItemSearchResultsData, rowIndex);
       });
     },
   );
