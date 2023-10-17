@@ -95,5 +95,6 @@ module.exports = defineConfig({
       return result;
     },
     baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    testIsolation: false,
   },
 });

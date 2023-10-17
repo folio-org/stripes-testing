@@ -400,6 +400,34 @@ export default {
       });
   },
 
+  createJobProfileWithLinkedMatchProfileViaApi: (nameProfile, matchProfileId) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile: {
+            name: nameProfile,
+            dataType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterProfileType: PROFILE_TYPE_NAMES.JOB_PROFILE,
+              detailProfileId: matchProfileId,
+              detailProfileType: PROFILE_TYPE_NAMES.MATCH_PROFILE,
+              order: 0,
+            },
+          ],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((responce) => {
+        return responce.body.id;
+      });
+  },
+
   unlinkProfile: (number) => {
     cy.wait(5000);
     cy.get('[id*="branch-ROOT-MATCH-MATCH-MATCH-editable"]')

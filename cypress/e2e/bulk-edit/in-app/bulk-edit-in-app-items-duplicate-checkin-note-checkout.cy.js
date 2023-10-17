@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'CC405533 Verify Bulk Edit actions for Items notes - duplicate check in note to check out note (firebird)',
+      'C405533 Verify Bulk Edit actions for Items notes - duplicate check in note to check out note (firebird)',
       { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
@@ -89,7 +89,7 @@ describe('bulk-edit', () => {
           `Check out;${notes.checkOutNote};true`,
           `Check out;${notes.checkOutNote};false`,
           `Check out;${notes.checkInNote};true`,
-          `Check out;${notes.checkInNote};false`
+          `Check out;${notes.checkInNote};false`,
         ];
         BulkEditActions.verifyChangesInAreYouSureForm('Circulation Notes', changes);
         BulkEditActions.commitChanges();
@@ -108,7 +108,10 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkCheckInNote(`${notes.checkInNote}${notes.checkInNote}`, 'Yes\nNo');
-        ItemRecordView.checkCheckOutNote(`${notes.checkOutNote}${notes.checkOutNote}${notes.checkInNote}${notes.checkInNote}`, 'Yes\nNo\nYes\nNo');
+        ItemRecordView.checkCheckOutNote(
+          `${notes.checkOutNote}${notes.checkOutNote}${notes.checkInNote}${notes.checkInNote}`,
+          'Yes\nNo\nYes\nNo',
+        );
       },
     );
   });

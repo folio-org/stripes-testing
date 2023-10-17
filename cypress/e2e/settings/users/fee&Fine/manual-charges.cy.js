@@ -39,7 +39,7 @@ describe('Users: Manual charges', () => {
   });
 
   it(
-    'C442 Verify that you can create/edit/delete manual charges for a fee/fine owner (vega)',
+    'C442 Verify that you can create/edit/delete manual charges for a fee/fine owner (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       ManualCharges.selectOwner(owners[0]);

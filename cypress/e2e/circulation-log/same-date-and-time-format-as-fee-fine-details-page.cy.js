@@ -90,7 +90,7 @@ describe('circulation-log', () => {
   });
 
   it(
-    'C350712 Check date and time --fee/fines (Firebird)',
+    'C350712 Check date and time --fee/fines (Firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
