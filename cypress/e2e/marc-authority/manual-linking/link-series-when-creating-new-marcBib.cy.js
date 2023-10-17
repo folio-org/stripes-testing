@@ -168,6 +168,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       MarcAuthorityBrowse.checkSearchOptions();
       MarcAuthorities.clickReset();
       MarcAuthorityBrowse.searchBy(newFields[1].searchOption, newFields[1].marcValue);
+      MarcAuthorities.checkRow(newFields[1].marcValue);
+      MarcAuthorities.selectTitle(newFields[1].marcValue);
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(newFields[1].tag, newFields[1].rowIndex);
       QuickMarcEditor.verifyTagFieldAfterLinking(
