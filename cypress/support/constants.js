@@ -58,6 +58,7 @@ export const ITEM_STATUS_NAMES = {
   MARKED_AS_MISSING: 'Marked as missing',
   AWAITING_DELIVERY: 'Awaiting delivery',
   FOUND_BY_LIBRARY: 'Checked in (found by library)',
+  AGED_TO_LOST: 'Aged to lost',
 };
 
 export const CY_ENV = {

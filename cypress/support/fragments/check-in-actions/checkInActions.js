@@ -231,6 +231,7 @@ export default {
     paymentStatus = 'Outstanding',
   ) {
     cy.do(availableActionsButton.click());
+    cy.wait(5000);
     cy.do(feeFineDetailsButton.click());
     cy.expect(Pane(including('Fee/fine details')).exists());
     cy.expect(feeFinePane.find(HTML(including('Overdue fine'))).exists());
