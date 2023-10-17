@@ -683,4 +683,22 @@ export default {
   closeAuthorityLinkingModal() {
     cy.do(closeLinkAuthorityModal.click());
   },
+
+  verifyResultsRowContent(heading, type, headingType) {
+    cy.expect(MultiColumnListRow(including(heading), { isContainer: false }).exists());
+    if (type) {
+      cy.expect(
+        MultiColumnListRow(including(heading), { isContainer: false })
+          .find(MultiColumnListCell(type))
+          .exists(),
+      );
+    }
+    if (headingType) {
+      cy.expect(
+        MultiColumnListRow(including(heading), { isContainer: false })
+          .find(MultiColumnListCell(headingType))
+          .exists(),
+      );
+    }
+  },
 };
