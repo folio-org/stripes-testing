@@ -13,6 +13,8 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFine from '../../support/fragments/users/payFeeFaine';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import CommentRequired from '../../support/fragments/settings/users/comment-required';
 
 describe('Pay Fees/Fines', () => {
   const testData = {
@@ -51,6 +53,7 @@ describe('Pay Fees/Fines', () => {
       Permissions.uiFeeFines.gui,
       Permissions.uiUsersManualPay.gui,
       Permissions.uiUsersfeefinesView.gui,
+      Permissions.uiUsersSettingsAllFeeFinesRelated.gui,
     ])
       .then((userProperties) => {
         userData = userProperties;
@@ -80,10 +83,6 @@ describe('Pay Fees/Fines', () => {
   });
 
   after('Delete test data', () => {
-    PayFeeFine.setPaymentMethod(paymentMethod);
-    PayFeeFine.setAmount(feeFineAccount.amount);
-    PayFeeFine.checkRestOfPay(0);
-    PayFeeFine.submitAndConfirm();
     ManualCharges.deleteViaApi(feeFineType.id);
     PaymentMethods.deleteViaApi(paymentMethod.id);
     NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
@@ -115,6 +114,37 @@ describe('Pay Fees/Fines', () => {
       UserAllFeesFines.paySelectedFeeFines();
       // The Pay fee/fine modal will open (as shown in attachment pay-ff-modal.JPG), with the Payment amount set to the total amount of the fee/fine you selected in step 5
       PayFeeFine.checkAmount(feeFineAccount.amount);
+    },
+  );
+
+  it(
+    'C460 Verify "Pay fee/fine" behavior when comments not required (vega) (TaaS)',
+    {
+      tags: [TestTypes.extendedPath, DevTeams.vega],
+    },
+    () => {
+      cy.visit(SettingsMenu.commentRequired);
+      CommentRequired.requireCommentForPaidFeeChooseOption('No');
+      // Go to user loans
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      // Find your active user's User Information
+      UsersSearchPane.searchByKeywords(userData.username);
+      UsersSearchPane.selectUserFromList(userData.username);
+      UsersCard.waitLoading();
+      // Expand the Fees/Fines section
+      UsersCard.openFeeFines();
+      // Click on the View all fees/fines link to open Fees/Fines History (aka Open/Closed/All Fees/Fines)
+      UsersCard.viewAllFeesFines();
+      // Select Pay from the ellipsis menu of the row the fee/fine you charged is on
+      UserAllFeesFines.clickRowCheckbox(0);
+      UserAllFeesFines.paySelectedFeeFines();
+      // The Pay fee/fine modal should open as shown in attached screen print pay-ff-modal-comment-not-required.JPG
+      PayFeeFine.checkAmount(feeFineAccount.amount);
+      // Select a Payment method and DO NOT enter Additional information for staff
+      PayFeeFine.setPaymentMethod(paymentMethod);
+      // Press the Pay button, then Confirm the payment
+      PayFeeFine.submitAndConfirm();
     },
   );
 });
