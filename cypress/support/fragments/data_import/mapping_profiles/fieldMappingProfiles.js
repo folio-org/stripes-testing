@@ -7,6 +7,7 @@ import {
   MultiColumnListRow,
   PaneContent,
   Form,
+  MultiColumnList,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import FieldMappingProfileEdit from './fieldMappingProfileEdit';
@@ -45,6 +46,10 @@ export default {
   openNewMappingProfileForm,
   search,
   mappingProfileForDuplicate,
+  clearSearchField: () => {
+    cy.do(searchField.focus());
+    cy.do(Button({ id: 'input-mapping-profiles-search-field-clear-button' }).click());
+  },
   waitLoading: () => cy.expect(MultiColumnListRow({ index: 0 }).exists()),
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
@@ -107,7 +112,14 @@ export default {
     cy.do(searchButton.click());
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
-  checkListOfExistingProfilesIsDisplayed: () => cy.expect(PaneContent({ id: 'pane-results-content' }).exists()),
+  checkListOfExistingProfilesIsDisplayed: () => {
+    cy.wait(2000);
+    cy.expect(
+      PaneContent({ id: 'pane-results-content' })
+        .find(MultiColumnList({ id: 'mapping-profiles-list' }))
+        .exists(),
+    );
+  },
   checkNewMappingProfileFormIsOpened: () => cy.expect(Form({ id: 'mapping-profiles-form' }).exists()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
   verifyMappingProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
