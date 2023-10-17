@@ -62,7 +62,6 @@ describe('Call Number Browse', () => {
         });
         InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {
           testData.callNumberTypes = res;
-          cy.log(JSON.stringify(res));
         });
         const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
         instance.defaultLocation = Location.getDefaultLocation(servicePoint.id);
@@ -86,12 +85,6 @@ describe('Call Number Browse', () => {
             const callNumberTypeId = testData.callNumberTypes.find(
               (el) => el.name === callNumber.type,
             ).id;
-            cy.log(
-              JSON.stringify({
-                itemLevelCallNumberTypeId: callNumberTypeId,
-                itemLevelCallNumber: callNumber.value,
-              }),
-            );
             return ItemRecordNew.createViaApi({
               holdingsId: instanceIds.holdingIds[0].id,
               itemBarcode: uuid(),
