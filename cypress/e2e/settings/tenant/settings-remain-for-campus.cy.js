@@ -27,13 +27,17 @@ describe('Settings: Tenant', () => {
       testData.servicePoint = servicePoint;
 
       [...Array(2)].forEach(() => {
-        const institution = Institutions.getDefaultInstitution();
+        const institution = Institutions.getDefaultInstitution({
+          name: `autotest_institution ${getRandomPostfix()}`,
+        });
 
         Institutions.createViaApi(institution).then((locinst) => {
           testData.institutions.push(locinst);
-
           [...Array(2)].forEach(() => {
-            const campus = Campuses.getDefaultCampuse({ institutionId: locinst.id });
+            const campus = Campuses.getDefaultCampuse({
+              name: `autotest_campus ${getRandomPostfix()}`,
+              institutionId: locinst.id,
+            });
 
             Campuses.createViaApi(campus).then((loccamp) => {
               testData.campuses.push(loccamp);
