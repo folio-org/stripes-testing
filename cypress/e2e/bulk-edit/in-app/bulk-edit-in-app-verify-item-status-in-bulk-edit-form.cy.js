@@ -2,6 +2,7 @@ import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -48,32 +49,35 @@ describe('bulk-edit', () => {
         // * "The Drag and drop" area consists of the label with "Select a file with item barcode" text
 
         // #2 Upload a .csv file from Preconditions with valid Item barcodes by dragging it on the "Drag & drop" area
+        BulkEditSearchPane.uploadFile('item_barcodes9.csv');
         // * The "Uploading <file name> and retrieving relevant data" message in the "Bulk edit" pane appears
         // * The progress bar starts running with "Retrieving" text below it
-
+        BulkEditSearchPane.waitFileUploading();
         // #3 Click "Actions" menu => Select "Start bulk edit"
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
         // * The "In-app bulk edit" form opens containing the "Bulk edits" accordion with following elements:
         //  * "Options" column with "Select option" dropdown
         //  * "Actions" column is not populated
+
         //  * "Plus" icon is enabled
         //  * "Garbage can" icon is disabled
 
+        // TODO:
+
         // #4 Select "Item status" option in the "Select option" dropdown
+        BulkEditActions.selectOption('Item status');
+
         // * "Select action" is filled with "Replace with" action (disabled)
         // * Following the "Replace with" action, the "Select item status" dropdown is displayed
 
+        // TODO:
+
         // #5 Click the "Select item status" dropdown
         // * "Select item status" dropdown is expanded
-        // * The list of available "Select item status" options contains:
-        //  * Available
-        //  * Withdrawn
-        //  * Missing
-        //  * In process (non-requestable)
-        //  * Intellectual item
-        //  * Long missing
-        //  * Restricted
-        //  * Unavailable
-        //  * Unknown
+        // * The list of available "Select item status" options contains: Available, Withdrawn, Missing, In process (non-requestable),
+        //    Intellectual item, Long missing, Restricted, Unavailable, Unknown
+        BulkEditActions.verifyItemStatusOptions();
       },
     );
   });
