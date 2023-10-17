@@ -20,11 +20,14 @@ import {
   Link,
   MultiColumnList,
   MultiSelectOption,
+  PaneHeader,
+  Select,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -336,6 +339,10 @@ export default {
       .eq(0)
       .find('a')
       .click();
+  },
+
+  checkNoTransactionOfType: (transactionType) => {
+    cy.expect(MultiColumnListCell(transactionType).absent());
   },
 
   increaseAllocation: () => {
@@ -706,6 +713,14 @@ export default {
     ]);
   },
 
+  selectPreviousBudgetDetailsByFY: (fund, fiscalYear) => {
+    cy.do([
+      Section({ id: 'previousBudgets' })
+        .find(MultiColumnListCell(`${fund.code}-${fiscalYear.code}`))
+        .click(),
+    ]);
+  },
+
   selectPlannedBudgetDetails: (rowNumber = 0) => {
     cy.do([
       Section({ id: 'plannedBudget' })
@@ -721,6 +736,12 @@ export default {
   editBudget: () => {
     cy.wait(4000);
     cy.do([actionsButton.click(), Button('Edit').click()]);
+  },
+
+  changeStatusOfBudget: (statusName, fund, fiscalYear) => {
+    cy.wait(4000);
+    cy.do([Select({ id: 'budget-status' }).choose(statusName), saveAndCloseButton.click()]);
+    InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${fiscalYear.code} has been saved`);
   },
 
   addExpensesClass: (firstExpenseClassName) => {
@@ -848,6 +869,14 @@ export default {
   closeTransactionDetails: () => {
     cy.do(
       Section({ id: 'pane-transaction-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  closeTransactionApp: (fund, fiscalYear) => {
+    cy.do(
+      PaneHeader(`${fund.code}-${fiscalYear.code}`)
         .find(Button({ icon: 'times' }))
         .click(),
     );

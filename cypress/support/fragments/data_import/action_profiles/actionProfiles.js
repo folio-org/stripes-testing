@@ -8,6 +8,7 @@ import {
   Callout,
   PaneContent,
   HTML,
+  MultiColumnList,
 } from '../../../../../interactors';
 import NewActionProfile from './newActionProfile';
 
@@ -55,6 +56,10 @@ export default {
   deleteActionProfile,
   close,
   search,
+  clearSearchField: () => {
+    cy.do(searchField.focus());
+    cy.do(Button({ id: 'input-action-profiles-search-field-clear-button' }).click());
+  },
   waitLoading: () => cy.expect(MultiColumnListRow({ index: 0 }).exists()),
   create: (actionProfile, mappingProfileName) => {
     openNewActionProfileForm();
@@ -88,7 +93,14 @@ export default {
     cy.do(Button('Save as profile & Close').click());
   },
 
-  checkListOfExistingProfilesIsDisplayed: () => cy.expect(PaneContent({ id: 'pane-results-content' }).exists()),
+  checkListOfExistingProfilesIsDisplayed: () => {
+    cy.wait(2000);
+    cy.expect(
+      PaneContent({ id: 'pane-results-content' })
+        .find(MultiColumnList({ id: 'action-profiles-list' }))
+        .exists(),
+    );
+  },
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
   verifyActionProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),

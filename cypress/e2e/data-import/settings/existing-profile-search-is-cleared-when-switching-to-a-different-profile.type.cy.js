@@ -96,7 +96,7 @@ describe('data-import', () => {
         ActionProfiles.verifySearchResult(actionProfile.name);
 
         cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.checkListOfExistingProfilesIsDisplayed();
+        MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.verifySearchFieldIsEmpty();
         MatchProfiles.search(matchProfile.profileName);
         MatchProfiles.verifySearchResult(matchProfile.profileName);
@@ -117,7 +117,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifySearchFieldIsEmpty();
-        MatchProfiles.checkListOfExistingProfilesIsDisplayed();
+        MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
 
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.verifySearchFieldIsEmpty();
