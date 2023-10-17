@@ -69,6 +69,8 @@ describe('Patron Notices', () => {
         name: newNoticeTemplateName,
         description: testData.noticeTemplateBody.description,
         category: testData.noticeTemplateBody.category,
+        subject: 'Email subject: Loan',
+        body: 'Email body {{item.title}}',
       });
     },
   );
