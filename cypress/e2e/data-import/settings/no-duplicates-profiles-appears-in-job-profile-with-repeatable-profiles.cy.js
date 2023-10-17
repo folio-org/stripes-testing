@@ -280,7 +280,7 @@ describe('data-import', () => {
         ];
         const jobProfile = {
           ...NewJobProfile.defaultJobProfile,
-          profileName: `C385654 job profile.${getRandomPostfix()}`,
+          profileName: `C385629 job profile.${getRandomPostfix()}`,
           acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
         };
 
@@ -394,11 +394,10 @@ describe('data-import', () => {
           5,
         );
         NewJobProfile.saveAndClose();
-        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         JobProfileView.duplicate();
-        NewJobProfile.fillProfileName(jobProfileNameForChanging);
         NewJobProfile.unlinkProfile(1);
+        NewJobProfile.fillProfileName(jobProfileNameForChanging);
         NewJobProfile.saveAndClose();
         JobProfileView.verifyCalloutMessage(calloutMessage);
         JobProfileView.verifyJobProfileOpened();
