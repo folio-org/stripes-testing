@@ -858,6 +858,7 @@ export default {
   },
 
   selectFund: (FundName) => {
+    cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
     cy.expect(fundDetailsPane.visible());
   },
