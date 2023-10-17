@@ -6,7 +6,9 @@ import {
   KeyValue,
   MultiColumnListCell,
 } from '../../../../interactors';
+import InteractorsTools from '../../utils/interactorsTools';
 import OrderLines from './orderLines';
+import OrderLineDetails from './orderLineDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
 import CreateInvoiceModal from './modals/createInvoiceModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
@@ -18,6 +20,10 @@ const polListingAccordion = Section({ id: 'POListing' });
 
 const openPolDetails = (title) => {
   cy.do(polListingAccordion.find(MultiColumnListCell({ content: title })).click());
+
+  OrderLineDetails.waitLoading();
+
+  return OrderLineDetails;
 };
 
 export default {
@@ -44,6 +50,16 @@ export default {
 
     if (confirm) {
       UnopenConfirmationModal.confirm();
+    }
+  },
+  reOpenOrder({ orderNumber, checkMessage = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Reopen').click());
+
+    if (checkMessage) {
+      InteractorsTools.checkCalloutMessage(
+        `The Purchase order - ${orderNumber} has been successfully reopened`,
+      );
     }
   },
   createNewInvoice({ confirm = true } = {}) {
