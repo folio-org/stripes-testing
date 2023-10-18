@@ -60,12 +60,12 @@ describe('inventory', () => {
           testData.testInstanceIds = specialInstanceIds;
 
           Array.from({ length: quantityOfItems }, () => {
-            return ItemRecordNew.createViaApi(
-              specialInstanceIds.holdingIds[0].id,
-              uuid(),
-              testData.materialTypeId,
-              testData.loanTypeId,
-            );
+            return ItemRecordNew.createViaApi({
+              holdingsId: specialInstanceIds.holdingIds[0].id,
+              itemBarcode: uuid(),
+              materialTypeId: testData.materialTypeId,
+              permanentLoanTypeId: testData.loanTypeId,
+            });
           });
         });
 
