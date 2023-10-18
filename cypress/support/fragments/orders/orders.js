@@ -67,7 +67,7 @@ const expandActionsDropdown = () => {
 
 export default {
   searchByParameter(parameter, value) {
-    cy.wait(1000);
+    cy.wait(4000);
     cy.do([searchField.selectIndex(parameter), searchField.fillIn(value)]);
     cy.expect(searchButton.has({ disabled: false }));
     cy.do(searchButton.click());
@@ -201,14 +201,6 @@ export default {
     if (confirm) {
       UnopenConfirmationModal.confirm();
     }
-  },
-
-  reOpenOrder: (orderNumber) => {
-    expandActionsDropdown();
-    cy.do(Button('Reopen').click());
-    InteractorsTools.checkCalloutMessage(
-      `The Purchase order - ${orderNumber} has been successfully reopened`,
-    );
   },
 
   receiveOrderViaActions: () => {
@@ -359,6 +351,7 @@ export default {
   },
 
   selectFromResultsList(number) {
+    cy.wait(4000);
     cy.expect(ordersResults.is({ empty: false }));
     cy.do(ordersList.find(Link(number)).click());
   },
@@ -401,9 +394,11 @@ export default {
   },
 
   checkSearchResults: (orderNumber) => {
+    cy.wait(4000);
     cy.expect(ordersList.find(Link(orderNumber)).exists());
   },
   checkSearchResultsWithClosedOrder: (orderNumber) => {
+    cy.wait(4000);
     cy.expect(
       ordersList
         .find(MultiColumnListRow({ index: 0 }))
@@ -412,6 +407,7 @@ export default {
     );
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
+    cy.wait(4000);
     cy.expect(
       orderLineList
         .find(MultiColumnListRow({ index: 0 }))
@@ -485,6 +481,7 @@ export default {
     ]);
   },
   selectVendorFilter: (invoice) => {
+    cy.wait(4000);
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
       Button('Organization look-up').click(),

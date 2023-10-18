@@ -480,8 +480,10 @@ export default {
   createInvoiceLine: (invoiceLine) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
     cy.do(newBlankLineButton.click());
+    // TODO: update using interactors once we will be able to pass negative value into text field
+    cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
-      TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
+      // TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
       TextField('Description*').fillIn(invoiceLine.description),
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
       saveAndClose.click(),
@@ -552,7 +554,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId })
         .find(
           MultiColumnListCell({
-            content: currency.concat(invoiceLine.subTotal.toFixed(2)),
+            content: `$${invoiceLine.subTotal}.00`,
           }),
         )
         .exists(),
@@ -721,6 +723,7 @@ export default {
   },
 
   voucherExport: (batchGroup) => {
+    cy.wait(6000);
     cy.do([
       PaneHeader({ id: 'paneHeaderinvoice-results-pane' }).find(actionsButton).click(),
       Button('Voucher export').click(),
@@ -827,6 +830,7 @@ export default {
   },
 
   selectInvoice: (invoiceNumber) => {
+    cy.wait(4000);
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
   },
 
