@@ -4,18 +4,13 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import {
-  ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
-} from '../../../support/constants';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import { ACCEPTED_DATA_TYPE_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 
@@ -39,22 +34,10 @@ describe('data-import', () => {
     };
     const matchProfile = {
       profileName: `C11116 autotest match profile ${getRandomPostfix()}`,
-      incomingRecordFields: {
-        field: '001',
-      },
-      existingRecordFields: {
-        field: '001',
-      },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-      instanceOption: 'Admin data: Instance HRID',
     };
     const mappingProfile = {
       name: `C11116 mapping profile ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
     };
-    const instanceStatusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED;
-    const catalogedDate = '###TODAY###';
     const jobProfile = {
       profileName: `C11116 autotest job profile ${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
@@ -66,29 +49,10 @@ describe('data-import', () => {
         cy.login(userProperties.username, userProperties.password);
 
         // create mapping profile
-        cy.visit(SettingsMenu.mappingProfilePath);
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        NewFieldMappingProfile.fillInstanceStatusTerm(instanceStatusTerm);
-        NewFieldMappingProfile.fillCatalogedDate(catalogedDate);
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(mappingProfile.name);
-
-        // create 3 action profiles
-        cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.create(actionProfile1, mappingProfile.name);
-        ActionProfileView.close();
-        ActionProfiles.waitLoading();
-        ActionProfiles.create(actionProfile2, mappingProfile.name);
-        ActionProfileView.close();
-        ActionProfiles.waitLoading();
-        ActionProfiles.create(actionProfile3, mappingProfile.name);
-        ActionProfileView.close();
-        ActionProfiles.waitLoading();
+        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name);
 
         // create match profile
-        cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.createMatchProfile(matchProfile);
+        NewMatchProfile.createMatchProfileViaApi(matchProfile.profileName);
       });
     });
 
@@ -106,6 +70,17 @@ describe('data-import', () => {
       'C11116 Unlinking a match or action profile from a job profile (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
+        // create 3 action profiles
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(actionProfile1, mappingProfile.name);
+        ActionProfileView.close();
+        ActionProfiles.waitLoading();
+        ActionProfiles.create(actionProfile2, mappingProfile.name);
+        ActionProfileView.close();
+        ActionProfiles.waitLoading();
+        ActionProfiles.create(actionProfile3, mappingProfile.name);
+        ActionProfileView.close();
+        ActionProfiles.waitLoading();
         // create Job profile with linked match and action profiles
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
