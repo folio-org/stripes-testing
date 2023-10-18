@@ -48,15 +48,22 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         Logs.getCreatedItemsID().then((link) => {
           createdInstanceIDs.push(link.split('/')[5]);
         });
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.waitLoading();
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, `${marcFile.fileName}_copy`);
+        JobProfiles.search(marcFile.jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(`${marcFile.fileName}_copy`);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(`${marcFile.fileName}_copy`);
+        Logs.getCreatedItemsID().then((link) => {
+          createdInstanceIDs.push(link.split('/')[5]);
+        });
       });
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
-      }).then(() => {
-        InventoryInstances.waitContentLoading();
-        InventoryInstance.searchByTitle(createdInstanceIDs[0]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
       });
     });
   });
@@ -64,12 +71,17 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   after('Deleting created users, Instances', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
+    InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[1]);
   });
 
   it(
     'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
+      InventoryInstances.waitContentLoading();
+      InventoryInstance.searchByTitle(createdInstanceIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.updateExistingTagValue(20, '');
       QuickMarcEditor.checkButtonsEnabled();
       QuickMarcEditor.clickSaveAndKeepEditingButton();
@@ -118,7 +130,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         waiter: InventoryInstances.waitContentLoading,
       });
       InventoryInstances.searchBySource('MARC');
-      InventoryInstance.searchByTitle(createdInstanceIDs[0]);
+      InventoryInstance.searchByTitle(createdInstanceIDs[1]);
       InventoryInstances.selectInstance();
       InventoryInstance.waitLoading();
       InventoryInstance.editMarcBibliographicRecord();
