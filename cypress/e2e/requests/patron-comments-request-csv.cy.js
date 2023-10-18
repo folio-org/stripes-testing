@@ -25,14 +25,13 @@ describe('Requests Export CSV File', () => {
   const fileName = 'export.csv';
 
   const userData = {};
-  let cancellationReason;
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
-
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
   let defaultLocation;
+  let cancellationReason;
 
   const requestData = {
     id: uuid(),
@@ -41,6 +40,7 @@ describe('Requests Export CSV File', () => {
     requestLevel: REQUEST_LEVELS.ITEM,
     requestDate: new Date().toISOString(),
     fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+    pickupServicePointId: null,
   };
 
   before('Create New Item and New User', () => {
@@ -61,6 +61,9 @@ describe('Requests Export CSV File', () => {
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
+        });
+        cy.getCancellationReasonsApi({ limit: 1 }).then((cancellationReasons) => {
+          cancellationReason = cancellationReasons[0].id;
         });
       })
       .then(() => {
@@ -87,34 +90,38 @@ describe('Requests Export CSV File', () => {
       })
       .then((specialInstanceIds) => {
         itemData.testInstanceIds = specialInstanceIds;
-      });
-
-    cy.createTempUser([Permissions.requestsAll.gui, Permissions.checkinAll.gui], userData.group)
-      .then((userProperties) => {
-        userData.username = userProperties.username;
-        userData.password = userProperties.password;
-        userData.userId = userProperties.userId;
-        userData.barcode = userProperties.barcode;
-        userData.firstName = userProperties.firstName;
+        requestData.instanceId = specialInstanceIds.id;
+        requestData.holdingsRecordId = specialInstanceIds.holdingIds[0].id;
+        requestData.itemId = specialInstanceIds.holdingIds[0].itemIds[0];
       })
       .then(() => {
-        cy.wrap(true)
-          .then(() => {
-            requestData.instanceId = itemData.testInstanceIds.instanceId;
-            requestData.holdingsRecordId = itemData.testInstanceIds.holdingIds[0].id;
-            requestData.itemId = itemData.testInstanceIds.holdingIds[0].itemIds[0];
-            requestData.requesterId = userData.userId;
-            requestData.pickupServicePointId = servicePoint.id;
-            requestData.patronComments = patronComment;
+        cy.createTempUser([Permissions.uiRequestsAll.gui])
+          .then((userProperties) => {
+            userData.username = userProperties.username;
+            userData.password = userProperties.password;
+            userData.userId = userProperties.userId;
+            userData.barcode = userProperties.barcode;
+            userData.firstName = userProperties.firstName;
           })
           .then(() => {
-            cy.createItemRequestApi(requestData);
+            cy.wrap(true)
+              .then(() => {
+                requestData.instanceId = itemData.testInstanceIds.instanceId;
+                requestData.holdingsRecordId = itemData.testInstanceIds.holdingIds[0].id;
+                requestData.itemId = itemData.testInstanceIds.holdingIds[0].itemIds[0];
+                requestData.requesterId = userData.userId;
+                requestData.pickupServicePointId = servicePoint.id;
+                requestData.patronComments = patronComment;
+              })
+              .then(() => {
+                cy.createItemRequestApi(requestData);
+              });
+
+            UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
+
+            cy.login(userData.username, userData.password);
+            cy.visit(TopMenu.requestsPath);
           });
-
-        UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
-
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.requestsPath);
       });
   });
 
@@ -126,7 +133,6 @@ describe('Requests Export CSV File', () => {
       cancellationReasonId: cancellationReason,
       cancelledDate: new Date().toISOString(),
     });
-
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
@@ -136,7 +142,9 @@ describe('Requests Export CSV File', () => {
       defaultLocation.libraryId,
       defaultLocation.id,
     );
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     ServicePoints.deleteViaApi(servicePoint.id);
+    Requests.deleteDownloadedFile(fileName);
   });
 
   it(
