@@ -81,16 +81,12 @@ export default {
     cy.do(searchField.fillIn(text));
   },
 
-  verifySearchButtonEnabled: () => cy.expect(searchButton.has({ disabled: false })),
-  verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
+  verifySearchButtonEnabled: (enabled = true) => cy.expect(searchButton.has({ disabled: !enabled })),
 
   verifyClearSearchButtonExists: () => cy.expect(clearButton.exists()),
   verifyClearSearchButtonAbsent: () => cy.expect(clearButton.absent()),
 
-  clearSearchField: () => {
-    cy.do(searchField.focus());
-    cy.do(clearButton.click());
-  },
+  clearSearchField: () => cy.do([searchField.focus(), clearButton.click()]),
 
   verifyFieldMappingProfilesSearchResult(text) {
     cy.get('body').then((body) => {

@@ -34,7 +34,7 @@ describe('Mapping profile  - setup', () => {
       cy.visit(SettingsMenu.exportMappingProfilePath);
       ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
       ExportFieldMappingProfiles.searchFieldMappingProfile(searchText);
-      ExportFieldMappingProfiles.verifySearchButtonEnabled();
+      ExportFieldMappingProfiles.verifySearchButtonEnabled(true);
       ExportFieldMappingProfiles.verifyClearSearchButtonExists();
       ExportFieldMappingProfiles.verifyFieldMappingProfilesSearchResult(searchText);
       ExportFieldMappingProfiles.clearSearchField();
@@ -42,7 +42,7 @@ describe('Mapping profile  - setup', () => {
       ExportFieldMappingProfiles.verifyFieldMappingProfilesSearchResult(searchWithoutResults);
       ExportFieldMappingProfiles.clearSearchField();
       ExportFieldMappingProfiles.verifyClearSearchButtonAbsent();
-      ExportFieldMappingProfiles.verifySearchButtonDisabled();
+      ExportFieldMappingProfiles.verifySearchButtonEnabled(false);
       ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
     },
   );
