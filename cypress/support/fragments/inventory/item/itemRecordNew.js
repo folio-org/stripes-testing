@@ -29,7 +29,7 @@ export default {
 
   save: () => cy.do(saveAndCloseBtn.click()),
 
-  createViaApi: (holdingsId, itemBarcode, materialTypeId, permanentLoanTypeId) => {
+  createViaApi: ({ holdingsId, itemBarcode, materialTypeId, permanentLoanTypeId, ...props }) => {
     cy.okapiRequest({
       method: 'POST',
       path: 'inventory/items',
@@ -40,6 +40,7 @@ export default {
         barcode: itemBarcode,
         materialType: { id: materialTypeId },
         permanentLoanType: { id: permanentLoanTypeId },
+        ...props,
       },
       isDefaultSearchParamsRequired: false,
     });
