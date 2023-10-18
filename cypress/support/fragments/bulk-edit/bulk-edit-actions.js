@@ -60,10 +60,10 @@ export default {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
-    cy.expect([
-      Button({ icon: 'plus-sign' }).exists(),
-      Button({ icon: 'trash', disabled: true }).exists(),
-    ]);
+    this.verifyRowIcons();
+  },
+  verifyRowIcons() {
+    cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
 
   verifyAreYouSureForm(count, cellContent) {
