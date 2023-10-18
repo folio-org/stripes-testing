@@ -6,6 +6,7 @@ import {
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListHeader,
+  Modal,
 } from '../../../../interactors';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import PaymentMethods from '../settings/users/paymentMethods';
@@ -97,5 +98,16 @@ export default {
   clickWaive: () => cy.do(waiveAllButton.click()),
   paySelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Pay'));
+  },
+  verifyPayModalIsOpen: () => {
+    cy.expect(Modal('Pay fee/fine').exists());
+  },
+  clickPayEllipsis: (rowIndex) => {
+    cy.do(
+      MultiColumnList({ id: 'list-accounts-history-view-feesfines' })
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .choose('Pay'),
+    );
   },
 };
