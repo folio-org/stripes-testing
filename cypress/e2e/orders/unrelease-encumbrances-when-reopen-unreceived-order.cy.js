@@ -4,6 +4,7 @@ import testType from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
+import OrderDetails from '../../support/fragments/orders/orderDetails';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -131,7 +132,7 @@ describe('Orders', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
-      Orders.reOpenOrder(orderNumber);
+      OrderDetails.reOpenOrder({ orderNumber });
       cy.visit(TopMenu.fundPath);
       Helper.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);
