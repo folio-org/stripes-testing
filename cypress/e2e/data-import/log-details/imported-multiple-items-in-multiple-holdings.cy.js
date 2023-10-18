@@ -27,17 +27,15 @@ import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScre
 describe('data-import', () => {
   describe('Log details', () => {
     let user;
-    const quantityOfCreatedHoldings = 5;
-    const quantityOfCreatedItems = 8;
-    const quantityOfErrors = 5;
-    const arrayOfHoldingsStatuses = [
-      'Created (KU/CC/DI/M)',
-      'Created (KU/CC/DI/A)',
-      'Created (E)',
-      'No action',
-      'No action',
+    const holdingsData = [
+      { permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI, itemsQuqntity: 3 },
+      { permanentLocation: LOCATION_NAMES.ANNEX_UI, itemsQuqntity: 2 },
+      { permanentLocation: LOCATION_NAMES.ONLINE_UI, itemsQuqntity: 1 },
     ];
-    const filePathForUpload = 'marcBibFileForMultiple.mrc';
+    const title =
+      'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.';
+    const fileWithErrorsPathForUpload = 'marcBibFileForMultipleWithErrors.mrc';
+    const fileWioutErrorsPathForUpload = 'marcBibFileForMultipleWithoutErrors.mrc';
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
@@ -70,7 +68,7 @@ describe('data-import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    before('login', () => {
+    before('create test data', () => {
       cy.createTempUser([
         Permissions.settingsDataImportEnabled.gui,
         Permissions.moduleDataImportEnabled.gui,
@@ -133,12 +131,12 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
         FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
       });
+      Users.deleteViaApi(user.userId);
     });
 
     it(
@@ -147,16 +145,22 @@ describe('data-import', () => {
       () => {
         let instanceHRID;
         const marcFileName = `C388506 multipleAutotestFileName.${getRandomPostfix()}`;
-        const holdingsData = {
-          permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
-          itemsQuqntity: 3,
-        };
+        const arrayOfHoldingsWithErrorsStatuses = [
+          'Created (KU/CC/DI/M)',
+          'Created (KU/CC/DI/A)',
+          'Created (E)',
+          'No action',
+          'No action',
+        ];
+        const quantityOfCreatedHoldings = 5;
+        const quantityOfCreatedItems = 8;
+        const quantityOfErrors = 5;
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathForUpload, marcFileName);
+        DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -169,7 +173,7 @@ describe('data-import', () => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.verifyMultipleHoldingsStatus(
-          arrayOfHoldingsStatuses,
+          arrayOfHoldingsWithErrorsStatuses,
           quantityOfCreatedHoldings,
         );
         FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
@@ -179,11 +183,11 @@ describe('data-import', () => {
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
 
-          InventoryInstance.checkIsHoldingsCreated([`${holdingsData.permanentLocation} >`]);
-          InventoryInstance.openHoldingsAccordion(`${holdingsData.permanentLocation} >`);
+          InventoryInstance.checkIsHoldingsCreated([`${holdingsData[0].permanentLocation} >`]);
+          InventoryInstance.openHoldingsAccordion(`${holdingsData[0].permanentLocation} >`);
           InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
-            holdingsData.permanentLocation,
-            holdingsData.itemsQuqntity,
+            holdingsData[0].permanentLocation,
+            holdingsData[0].itemsQuqntity,
           );
 
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
@@ -203,8 +207,16 @@ describe('data-import', () => {
       () => {
         let instanceHrid;
         const marcFileName = `C389502 multipleAutotestFileName.${getRandomPostfix()}`;
-        const title =
-          'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.';
+        const arrayOfHoldingsWithErrorsStatuses = [
+          'Created (KU/CC/DI/M)',
+          'Created (KU/CC/DI/A)',
+          'Created (E)',
+          'No action',
+          'No action',
+        ];
+        const quantityOfCreatedHoldings = 5;
+        const quantityOfCreatedItems = 8;
+        const quantityOfErrors = 5;
         const jsonHoldingsTestData = [
           'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
           'KU/CC/DI/M',
@@ -223,7 +235,7 @@ describe('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathForUpload, marcFileName);
+        DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -236,7 +248,7 @@ describe('data-import', () => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         FileDetails.verifyMultipleHoldingsStatus(
-          arrayOfHoldingsStatuses,
+          arrayOfHoldingsWithErrorsStatuses,
           quantityOfCreatedHoldings,
         );
         FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
@@ -253,9 +265,131 @@ describe('data-import', () => {
             instanceHrid = hrid;
 
             JsonScreenView.openHoldingsTab();
+
             jsonHoldingsTestData.forEach((value) => JsonScreenView.verifyContentInTab(value));
             JsonScreenView.openItemTab();
             jsonItemTestData.forEach((value) => JsonScreenView.verifyContentInTab(value));
+            itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
+
+            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+              (instance) => {
+                instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+                instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+                InventoryInstance.deleteInstanceViaApi(instance.id);
+              },
+            );
+          });
+        });
+      },
+    );
+
+    it(
+      'C388505 Check the log result table for imported multiple items in multiple holdings (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        const arrayOfHoldingsStatuses = [
+          'Created (KU/CC/DI/M)',
+          'Created (KU/CC/DI/A)',
+          'Created (E)',
+        ];
+        const quantityOfCreatedItems = 6;
+        const quantityOfCreatedHoldings = 3;
+        const marcFileName = `C388505 autotestFileName.${getRandomPostfix()}`;
+
+        // upload .mrc file
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
+        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFileName);
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        });
+        FileDetails.verifyMultipleHoldingsStatus(
+          arrayOfHoldingsStatuses,
+          quantityOfCreatedHoldings,
+        );
+        FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
+
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          const instanceHRID = initialInstanceHrId;
+
+          holdingsData.forEach((holdings) => {
+            InventoryInstance.checkIsHoldingsCreated([`${holdings.permanentLocation} >`]);
+            InventoryInstance.openHoldingsAccordion(`${holdings.permanentLocation} >`);
+            InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
+              holdings.permanentLocation,
+              holdings.itemsQuqntity,
+            );
+          });
+
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+            (instance) => {
+              instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+              instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+        });
+      },
+    );
+
+    it(
+      'C389587 Check the JSON screen for imported multiple items in multiple holdings (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        let instanceHrid;
+        const arrayOfHoldingsStatuses = [
+          'Created (KU/CC/DI/M)',
+          'Created (KU/CC/DI/A)',
+          'Created (E)',
+        ];
+        const quantityOfCreatedItems = 6;
+        const quantityOfCreatedHoldings = 3;
+        const marcFileName = `C389587 autotestFileName.${getRandomPostfix()}`;
+
+        // upload .mrc file
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
+        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFileName);
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.instance,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        });
+        FileDetails.verifyMultipleHoldingsStatus(
+          arrayOfHoldingsStatuses,
+          quantityOfCreatedHoldings,
+        );
+        FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
+        // get items hrids for checking json page
+        FileDetails.getItemHrids().then((hrids) => {
+          const itemHrids = hrids;
+
+          FileDetails.openJsonScreen(title);
+          JsonScreenView.verifyJsonScreenIsOpened();
+          // get Instance hrid for deleting
+          JsonScreenView.getInstanceHrid().then((hrid) => {
+            instanceHrid = hrid;
+
+            JsonScreenView.openHoldingsTab();
+            ['KU/CC/DI/M', 'KU/CC/DI/A', 'E'].forEach((value) => JsonScreenView.verifyContentInTab(value));
+            JsonScreenView.openItemTab();
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 
             cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(

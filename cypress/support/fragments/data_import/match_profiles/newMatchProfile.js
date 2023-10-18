@@ -9,6 +9,7 @@ import {
   Accordion,
   SelectionOption,
   Dropdown,
+  Callout,
   Section,
   DropdownMenu,
 } from '../../../../../interactors';
@@ -479,6 +480,11 @@ export default {
         return response;
       });
   },
+
+  checkCalloutMessage: (message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
+  },
+
   verifyExistingRecordSection: () => {
     cy.expect([
       matchProfileDetailsSection

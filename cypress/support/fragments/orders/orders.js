@@ -203,14 +203,6 @@ export default {
     }
   },
 
-  reOpenOrder: (orderNumber) => {
-    expandActionsDropdown();
-    cy.do(Button('Reopen').click());
-    InteractorsTools.checkCalloutMessage(
-      `The Purchase order - ${orderNumber} has been successfully reopened`,
-    );
-  },
-
   receiveOrderViaActions: () => {
     expandActionsDropdown();
     cy.do([Button('Receive').click(), PaneHeader('Receiving').is({ visible: true })]);

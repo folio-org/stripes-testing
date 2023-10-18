@@ -9,12 +9,22 @@ import Users from '../../support/fragments/users/users';
 describe('Organizations', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const contact = { ...NewOrganization.defaultContact };
+  const note = 'Twenty four characters24';
   let user;
 
   before(() => {
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
+
+      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.selectOrganization(organization.name);
+      Organizations.editOrganization();
+      Organizations.addNewContact(contact);
+      Organizations.closeContact();
+      Organizations.addContactToOrganization(contact);
+      Organizations.checkContactIsAdd(contact);
     });
     cy.createTempUser([permissions.uiOrganizationsViewEditCreate.gui]).then((userProperties) => {
       user = userProperties;
@@ -31,23 +41,17 @@ describe('Organizations', () => {
   });
 
   it(
-    'C726 Edit contact from an organization record (thunderjet)',
+    'C380642 Add a note to "Contact people" list in "Organization" app (thunderjet)',
     { tags: [TestType.criticalPath, devTeams.thunderjet] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);
-      Organizations.editOrganization();
-      Organizations.addNewContact(contact);
-      Organizations.closeContact();
-      Organizations.addContactToOrganization(contact);
-      Organizations.checkContactIsAdd(contact);
       Organizations.selectContact(contact);
       Organizations.editContact();
-      Organizations.editFirstAndLastNameInContact(contact);
+      Organizations.editNoteInContact(note);
       Organizations.closeContact();
-      contact.lastName = `${contact.lastName}-edited`;
-      contact.firstName = `${contact.firstName}-edited`;
-      Organizations.checkContactIsAdd(contact);
+      Organizations.editOrganization();
+      Organizations.checkContactInOrganizationEditForm(note);
     },
   );
 });
