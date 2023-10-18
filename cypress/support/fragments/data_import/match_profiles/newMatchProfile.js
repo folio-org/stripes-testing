@@ -1,4 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import { not } from 'bigtest';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   Select,
@@ -7,6 +9,9 @@ import {
   Accordion,
   SelectionOption,
   Dropdown,
+  Callout,
+  Section,
+  DropdownMenu,
 } from '../../../../../interactors';
 import { EXISTING_RECORDS_NAMES } from '../../../constants';
 
@@ -14,6 +19,8 @@ const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value
 const criterionValueTypeButton = Button({ id: 'criterion-value-type' });
 const matchProfileDetailsAccordion = Accordion({ id: 'match-profile-details' });
 const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
+const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
+const matchCriterionSelect = Select('Match criterion');
 
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
@@ -50,6 +57,20 @@ function fillIncomingRecordFields(value = '', selector) {
     subfield: 'profile.matchDetails[0].incomingMatchExpression.fields[3].value',
   };
   cy.do(TextField({ name: map[selector] }).fillIn(value));
+}
+
+function fillIncomingRecordSections({ incomingRecordFields }) {
+  fillIncomingRecordFields(incomingRecordFields.field, 'field');
+  fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+  fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+  fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+}
+
+function fillExistingRecordSections({ existingRecordFields }) {
+  fillExistingRecordFields(existingRecordFields.field, 'field');
+  fillExistingRecordFields(existingRecordFields.in1, 'in1');
+  fillExistingRecordFields(existingRecordFields.in2, 'in2');
+  fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
 }
 
 function fillName(profileName) {
@@ -116,7 +137,7 @@ function fillStaticValue(staticValue) {
 }
 
 function selectMatchCriterion(matchCriterion) {
-  cy.do(Select('Match criterion').choose(matchCriterion));
+  cy.do(matchCriterionSelect.choose(matchCriterion));
 }
 
 function selectExistingRecordField(existingRecordOption) {
@@ -151,6 +172,8 @@ export default {
   fillStaticValue,
   fillOnlyComparePartOfTheValue,
   fillQualifierInExistingComparisonPart,
+  fillIncomingRecordSections,
+  fillExistingRecordSections,
 
   saveAndClose: () => cy.do(Button('Save as profile & Close').click()),
 
@@ -456,5 +479,48 @@ export default {
       .then(({ response }) => {
         return response;
       });
+  },
+
+  checkCalloutMessage: (message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
+  },
+
+  verifyExistingRecordSection: () => {
+    cy.expect([
+      matchProfileDetailsSection
+        .find(
+          HTML(
+            including(
+              'Which type of existing record would you like to compare to the incoming MARC record?',
+            ),
+          ),
+        )
+        .exists(),
+      cy.get('#panel-existing-edit [data-id=INSTANCE]').should('exist'),
+      cy.get('#panel-existing-edit [data-id=HOLDINGS]').should('exist'),
+      cy.get('#panel-existing-edit [data-id=ITEM]').should('exist'),
+      cy.get('#panel-existing-edit [data-id=MARC_BIBLIOGRAPHIC]').should('exist'),
+      cy.get('#panel-existing-edit [data-id=MARC_AUTHORITY]').should('exist'),
+    ]);
+  },
+  verifyExistingRecordTypeIsSelected: (existingRecordType) => {
+    cy.get(`[data-test-compare-record=${existingRecordType}]`).should(
+      'contain',
+      'You are comparing\nto this record',
+    );
+  },
+  verifyMatchCriterion: (value) => {
+    cy.expect(matchCriterionSelect.has({ value: not(value) }));
+    cy.get('#match-criteria').should(($element) => {
+      const content = $element.text();
+      expect(content).to.not.include(value);
+    });
+  },
+  verifyIncomingRecordsDropdown: () => {
+    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
+    cy.expect([
+      DropdownMenu({ visible: true }).find(HTML('MARC Bibliographic')).exists(),
+      DropdownMenu({ visible: true }).find(HTML('Static value (submatch only)')).exists(),
+    ]);
   },
 };

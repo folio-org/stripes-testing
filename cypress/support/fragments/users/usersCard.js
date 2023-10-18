@@ -14,6 +14,7 @@ import {
   TextArea,
   TextField,
   and,
+  Badge,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -28,7 +29,7 @@ const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
   patronHasBlocksInPlace: 'Patron has block(s) in place',
 };
-const feesFinesAccourdion = rootSection.find(Accordion({ id: 'accountsSection' }));
+const feesFinesAccordion = rootSection.find(Accordion({ id: 'accountsSection' }));
 
 export default {
   errors,
@@ -80,7 +81,7 @@ export default {
     this.clickCurrentLoansLink();
   },
   openFeeFines() {
-    cy.do(feesFinesAccourdion.clickHeader());
+    cy.do(feesFinesAccordion.clickHeader());
   },
 
   openNotesSection() {
@@ -233,10 +234,13 @@ export default {
     cy.expect(rootSection.find(TextField({ value: errorMessage })).exists());
   },
   startFeeFineAdding() {
-    cy.do(feesFinesAccourdion.find(Button('Create fee/fine')).click());
+    cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
   },
   viewAllFeesFines() {
-    cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click());
+    cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewallaccounts' })).click());
+  },
+  viewAllClosedFeesFines() {
+    cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewclosedaccounts' })).click());
   },
   verifyPatronBlockValue(value = '') {
     cy.expect(KeyValue('Patron group').has({ value: including(value) }));
@@ -258,5 +262,9 @@ export default {
 
   verifyEmail(email) {
     cy.expect(KeyValue('Email').has({ value: email }));
+  },
+
+  verifyFeesFinesCount(count) {
+    cy.expect(feesFinesAccordion.find(Badge()).has({ text: count }));
   },
 };
