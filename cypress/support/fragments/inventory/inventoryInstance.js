@@ -280,6 +280,9 @@ export default {
   verifyContributor,
   verifyContributorWithMarcAppLink,
 
+  waitInventoryLoading() {
+    cy.expect(section.exists());
+  },
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -333,6 +336,10 @@ export default {
 
   checkInstanceTitle(title) {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
+  },
+
+  checkHoldingTitle(title) {
+    cy.expect(detailsPaneContent.has({ text: including(`Holdings: ${title}`) }));
   },
 
   startOverlaySourceBibRecord: () => {
