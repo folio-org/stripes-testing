@@ -37,6 +37,7 @@ describe('adding new tokens', () => {
   });
 
   after('Deleting created entities', () => {
+    EditStaffClips.editAndClearHold();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });

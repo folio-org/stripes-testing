@@ -26,20 +26,41 @@ export default {
   defaultUiEditStaffClips: {
     description: 'Created by autotest team',
   },
+  findPane() {
+    return cy.get('#root').then(($ele) => {
+      let pane;
+      if ($ele.find('#staff-slip-pane-content').length > 0) {
+        pane = staffSlipPaneContent;
+      } else {
+        pane = PaneSet({ id: 'settings-module-display' });
+      }
+      return pane;
+    });
+  },
   chooseStaffClip(name) {
     cy.do(NavListItem(name).click());
   },
   checkLastUpdateInfo(updatedBy = '', createdBy = '', updateTime) {
-    cy.expect(Button(matching(/^Record last updated: \d{1,2}\/\d{1,2}\/\d{2,4}/)).exists());
-    cy.do(Button(including('Record last updated')).click());
-    cy.expect([
-      MetaSection({ updatedByText: including(`Source: ${updatedBy}`) }).exists(),
-      MetaSection({ createdText: matching(/^Record created: \d{1,2}\/\d{1,2}\/\d{2,4}/) }).exists(),
-      MetaSection({ createdByText: including(`Source: ${createdBy}`) }).exists(),
-    ]);
-    if (updateTime) {
-      cy.expect(MetaSection({ createdText: including(updateTime) }).exists());
-    }
+    this.findPane().then((pane) => {
+      cy.expect(
+        pane.find(Button(matching(/^Record last updated: \d{1,2}\/\d{1,2}\/\d{2,4}/))).exists(),
+      );
+      cy.do(pane.find(Button(including('Record last updated'))).click());
+      cy.expect([
+        pane.find(MetaSection({ updatedByText: including(`Source: ${updatedBy}`) })).exists(),
+        pane
+          .find(
+            MetaSection({
+              createdText: matching(/^Record created: \d{1,2}\/\d{1,2}\/\d{2,4}/),
+            }),
+          )
+          .exists(),
+        pane.find(MetaSection({ createdByText: including(`Source: ${createdBy}`) })).exists(),
+      ]);
+      if (updateTime) {
+        cy.expect(pane.find(MetaSection({ createdText: including(updateTime) })).exists());
+      }
+    });
   },
   editHold() {
     cy.do([NavListItem('Hold').click(), editButton.click()]);
@@ -101,6 +122,7 @@ export default {
   },
   saveAndClose: () => {
     cy.do(saveButton.click());
+    cy.expect(staffSlipPaneContent.absent());
   },
   checkAfterUpdate(staffSlipType) {
     InteractorsTools.checkCalloutMessage(
@@ -128,13 +150,7 @@ export default {
     this.clearStaffClips();
   },
   collapseAll() {
-    cy.get('#root').then(($ele) => {
-      let pane;
-      if ($ele.find('#staff-slip-pane-content').length > 0) {
-        pane = staffSlipPaneContent;
-      } else {
-        pane = PaneSet({ id: 'settings-module-display' });
-      }
+    this.findPane().then((pane) => {
       cy.do(pane.find(Button('Collapse all')).click());
       cy.wrap(['General information', 'Template content']).each((accordion) => {
         cy.expect(pane.find(Button(accordion)).has({ ariaExpanded: 'false' }));
@@ -142,13 +158,7 @@ export default {
     });
   },
   expandAll() {
-    cy.get('#root').then(($ele) => {
-      let pane;
-      if ($ele.find('#staff-slip-pane-content').length > 0) {
-        pane = staffSlipPaneContent;
-      } else {
-        pane = PaneSet({ id: 'settings-module-display' });
-      }
+    this.findPane().then((pane) => {
       cy.do(pane.find(Button('Expand all')).click());
       cy.wrap(['General information', 'Template content']).each((accordion) => {
         cy.expect(pane.find(Button(accordion)).has({ ariaExpanded: 'true' }));
