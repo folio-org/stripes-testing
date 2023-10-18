@@ -4,9 +4,8 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 
-describe('Remote Storage', () => {
+describe('remote-storage-configuration', () => {
   const testData = {};
-
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       Configurations.createViaApi().then((res) => {
