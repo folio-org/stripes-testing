@@ -38,20 +38,23 @@ describe('Orders', () => {
             testData.orderLine = {
               ...BasicOrderLine.getDefaultOrderLine(),
               cost: {
-                listUnitPrice: 10,
+                listUnitPriceElectronic: 10,
                 currency: 'USD',
                 discountType: 'percentage',
-                quantityPhysical: 2,
+                quantityElectronic: 2,
               },
-              orderFormat: 'Physical Resource',
+              orderFormat: 'Electronic Resource',
               checkinItems: CHECKIN_ITEMS_VALUE[RECEIVING_WORKFLOWS.INDEPENDENT],
-              physical: {
+              eresource: {
+                activated: false,
                 createInventory: 'Instance, Holding, Item',
+                trial: false,
+                accessProvider: testData.organization.id,
                 materialType: materialTypeId,
               },
               locations: [
-                { locationId: testData.locations[0].id, quantityPhysical: 1 },
-                { locationId: testData.locations[1].id, quantityPhysical: 1 },
+                { locationId: testData.locations[0].id, quantity: 1, quantityElectronic: 1 },
+                { locationId: testData.locations[1].id, quantity: 1, quantityElectronic: 1 },
               ],
             };
 
@@ -91,7 +94,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C402352 Holdings records creation when open order with "Physical Resource" format PO line and Independent workflow (thunderjet) (TaaS)',
+    'C402353 Holdings records creation when open order with "Electronic Resource" format PO line and Independent workflow (thunderjet) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
     () => {
       // Open Order
@@ -108,11 +111,11 @@ describe('Orders', () => {
         locations: [
           [
             { key: 'Holding', value: testData.locations[0].name },
-            { key: 'Quantity physical', value: 1 },
+            { key: 'Quantity electronic', value: 1 },
           ],
           [
             { key: 'Holding', value: testData.locations[1].name },
-            { key: 'Quantity physical', value: 1 },
+            { key: 'Quantity electronic', value: 1 },
           ],
         ],
       });
