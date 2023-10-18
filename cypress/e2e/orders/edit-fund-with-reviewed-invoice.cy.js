@@ -128,7 +128,7 @@ describe('ui-orders: Orders', () => {
   });
 
   it(
-    'C374190 Editing fund distribution in PO line when related Open invoice exists (thunderjet)',
+    'C368486 Editing fund distribution in PO line when related Reviewed invoice exists (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
