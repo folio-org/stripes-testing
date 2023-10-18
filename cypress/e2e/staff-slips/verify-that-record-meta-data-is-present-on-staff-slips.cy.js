@@ -8,12 +8,13 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import UserEdit from '../../support/fragments/users/userEdit';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import EditStaffClips from '../../support/fragments/circulation/editStaffClips';
+import dateTools from '../../support/utils/dateTools';
 
-describe('Staff slips', () => {
+describe('adding new tokens', () => {
   let userData;
   let servicePointId;
   const patronGroup = {
-    name: getTestEntityValue('groupUserChange'),
+    name: getTestEntityValue('groupToken'),
   };
 
   before('Preconditions', () => {
@@ -41,14 +42,22 @@ describe('Staff slips', () => {
   });
 
   it(
-    'C387437 Add metadata information to view of Staff Slips scenario 1,4,5 (volaris)',
+    'C411863 Verify that record meta data is present on staff slips (volaris)',
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
-      EditStaffClips.chooseStaffClip('Hold');
+      EditStaffClips.editHold();
       EditStaffClips.checkLastUpdateInfo();
+      EditStaffClips.editDescripton(getTestEntityValue('NewDescription'));
       EditStaffClips.collapseAll();
       EditStaffClips.expandAll();
+      EditStaffClips.editTemplateContent(getTestEntityValue('NewTemplateContent'));
+      EditStaffClips.saveAndClose();
+      EditStaffClips.checkLastUpdateInfo(
+        undefined,
+        'Unknown user',
+        dateTools.getCurrentUTCTime().replace(',', ''),
+      );
     },
   );
 });
