@@ -685,4 +685,12 @@ export default {
   checkSearchQueryText(text) {
     cy.expect(keywordInput.has({ value: text }));
   },
+
+  browseOptionsDropdownIncludesOptions(options) {
+    const browseOptionsDropdown = Select('Search field index');
+    cy.do(browseButton.click());
+    options.forEach((name) => {
+      cy.expect(browseOptionsDropdown.has({ content: including(name) }));
+    });
+  },
 };
