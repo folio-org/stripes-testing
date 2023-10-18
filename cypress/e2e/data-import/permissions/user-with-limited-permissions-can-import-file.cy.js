@@ -154,7 +154,7 @@ describe('data-import', () => {
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
         ActionProfiles.verifyActionMenuAbsent();
         cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.checkListOfExistingProfilesIsDisplayed();
+        MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.verifyActionMenuAbsent();
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();

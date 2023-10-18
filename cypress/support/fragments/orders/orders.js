@@ -67,7 +67,7 @@ const expandActionsDropdown = () => {
 
 export default {
   searchByParameter(parameter, value) {
-    cy.wait(1000);
+    cy.wait(4000);
     cy.do([searchField.selectIndex(parameter), searchField.fillIn(value)]);
     cy.expect(searchButton.has({ disabled: false }));
     cy.do(searchButton.click());
@@ -203,14 +203,6 @@ export default {
     }
   },
 
-  reOpenOrder: (orderNumber) => {
-    expandActionsDropdown();
-    cy.do(Button('Reopen').click());
-    InteractorsTools.checkCalloutMessage(
-      `The Purchase order - ${orderNumber} has been successfully reopened`,
-    );
-  },
-
   receiveOrderViaActions: () => {
     expandActionsDropdown();
     cy.do([Button('Receive').click(), PaneHeader('Receiving').is({ visible: true })]);
@@ -281,6 +273,23 @@ export default {
     });
   },
 
+  createApprovedOrderForRollover(order, isApproved = false, reEncumber = false) {
+    cy.do([actionsButton.click(), newButton.click()]);
+    this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
+    cy.do(Select('Order type*').choose(order.orderType));
+    if (isApproved === true) {
+      cy.do(Checkbox({ name: 'approved' }).click());
+    }
+    if (reEncumber === true) {
+      cy.do(Checkbox({ name: 'reEncumber' }).click());
+    }
+    cy.do(saveAndClose.click());
+    return cy.wait('@newOrder', getLongDelay()).then(({ response }) => {
+      return response.body;
+    });
+  },
+
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
@@ -342,6 +351,7 @@ export default {
   },
 
   selectFromResultsList(number) {
+    cy.wait(4000);
     cy.expect(ordersResults.is({ empty: false }));
     cy.do(ordersList.find(Link(number)).click());
   },
@@ -384,9 +394,11 @@ export default {
   },
 
   checkSearchResults: (orderNumber) => {
+    cy.wait(4000);
     cy.expect(ordersList.find(Link(orderNumber)).exists());
   },
   checkSearchResultsWithClosedOrder: (orderNumber) => {
+    cy.wait(4000);
     cy.expect(
       ordersList
         .find(MultiColumnListRow({ index: 0 }))
@@ -395,6 +407,7 @@ export default {
     );
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
+    cy.wait(4000);
     cy.expect(
       orderLineList
         .find(MultiColumnListRow({ index: 0 }))
@@ -468,6 +481,7 @@ export default {
     ]);
   },
   selectVendorFilter: (invoice) => {
+    cy.wait(4000);
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
       Button('Organization look-up').click(),

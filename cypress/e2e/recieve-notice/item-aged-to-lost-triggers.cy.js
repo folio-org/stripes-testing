@@ -297,7 +297,7 @@ describe('Loan notice triggers', () => {
           source: 'System',
           desc: `Template: ${template.name}. Triggering event: Aged to lost.`,
         };
-        SearchPane.checkSearchResultByBarcode({ barcode: instanceData.itemBarcode, searchResults });
+        SearchPane.checkSearchResultByBarcode({ barcode: testData.user.barcode, searchResults });
       });
 
       cy.visit(TopMenu.checkInPath);

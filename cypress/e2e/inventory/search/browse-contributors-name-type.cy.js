@@ -14,8 +14,10 @@ describe('Inventory: Contributors Browse', () => {
 
   before('Create test data', () => {
     instances = BrowseContributors.createInstancesWithContributor();
-    BrowseContributors.getContributorNameTypes({ searchParams: { limit: 3 } }).then((response) => {
-      contributors = response.body.contributorNameTypes.map(({ name }) => name);
+    BrowseContributors.getContributorNameTypes({
+      searchParams: { limit: 3, query: 'cql.allRecords=1 sortby ordering' },
+    }).then((contributorNameTypes) => {
+      contributors = contributorNameTypes.map(({ name }) => name);
     });
 
     cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
@@ -36,7 +38,7 @@ describe('Inventory: Contributors Browse', () => {
   });
 
   it(
-    'C353644 Apply "Name Type" filter to the browse result list (spitfire)',
+    'C353644 Apply "Name Type" filter to the browse result list (spitfire) (TaaS)',
     { tags: [testType.criticalPath, devTeams.spitfire] },
     () => {
       BrowseContributors.clickBrowseBtn();

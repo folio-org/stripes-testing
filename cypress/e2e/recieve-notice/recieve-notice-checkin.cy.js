@@ -31,7 +31,7 @@ describe('Receiving notice: Checkout', () => {
   let addedCirculationRule;
   const noticePolicyTemplate = {
     ...NewNoticePolicyTemplate.defaultUi,
-    category: NOTICE_CATEGORIES.loan.name,
+    category: NOTICE_CATEGORIES.loan,
   };
   const noticePolicy = {
     ...NewNoticePolicy.defaultUi,

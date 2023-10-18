@@ -104,7 +104,7 @@ describe('Invoices', () => {
       ]);
 
       // Replace value in "Sub-total" field with "96.99", Click "Save & close" button
-      InvoiceLineEditForm.fillInvoiceFields({
+      InvoiceLineEditForm.fillInvoiceLineFields({
         subTotal: '96',
       });
       InvoiceLineEditForm.clickSaveButton();

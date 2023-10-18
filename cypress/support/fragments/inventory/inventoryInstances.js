@@ -13,6 +13,7 @@ import {
   Select,
   TextInput,
   TextArea,
+  PaneHeader,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -22,10 +23,7 @@ import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import generateUniqueItemBarcodeWithShift from '../../utils/generateUniqueItemBarcodeWithShift';
-import {
-  AdvancedSearchModalInventory,
-  AdvancedSearchRowInventory,
-} from '../../../../interactors/advanced-search-inventory';
+import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -33,6 +31,7 @@ const actionsButton = rootSection.find(Button('Actions'));
 const singleRecordImportModal = Modal('Single record import');
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button('Search', { type: 'submit' });
+const paneHeaderSearch = PaneHeader('Inventory');
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
@@ -122,7 +121,18 @@ const waitContentLoading = () => {
   );
 };
 
+const getCallNumberTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'call-number-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.callNumberTypes;
+  });
+
 export default {
+  getCallNumberTypes,
   waitContentLoading,
   waitLoading: () => {
     cy.expect(
@@ -581,6 +591,28 @@ export default {
     cy.deleteHoldingRecordViaApi(instance.holdingId);
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
+
+  createLocalCallNumberTypeViaApi: (name) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'call-number-types',
+        body: {
+          id: uuid(),
+          name,
+          source: 'local',
+        },
+      })
+      .then((res) => {
+        return res.body.id;
+      });
+  },
+
+  deleteLocalCallNumberTypeViaApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `call-number-types/${id}`,
+  }),
+
   searchBySource: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-source' }).click());
     cy.do(Checkbox(source).click());
@@ -603,7 +635,7 @@ export default {
   clickAdvSearchButton() {
     cy.do(advSearchButton.click());
     cy.expect([
-      AdvancedSearchModalInventory({ rowCount: 6 }).exists(),
+      AdvancedSearch({ rowCount: 6 }).exists(),
       buttonSearchInAdvSearchModal.exists(),
       buttonCancelInAdvSearchModal.exists(),
     ]);
@@ -611,36 +643,32 @@ export default {
 
   checkAdvSearchInstancesModalFields(rowIndex) {
     if (rowIndex) {
-      cy.expect(
-        AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOperatorSelect).exists(),
-      );
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
       advSearchOperators.forEach((operator) => {
         cy.expect(
-          AdvancedSearchRowInventory({ index: rowIndex })
+          AdvancedSearchRow({ index: rowIndex })
             .find(advSearchOperatorSelect)
             .has({ content: including(operator) }),
         );
       });
     } else {
-      cy.expect(
-        AdvancedSearchRowInventory({ index: rowIndex }).has({ text: including('Search for') }),
-      );
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).has({ text: including('Search for') }));
     }
     cy.expect([
-      AdvancedSearchRowInventory({ index: rowIndex }).find(TextArea()).exists(),
-      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchModifierSelect).exists(),
-      AdvancedSearchRowInventory({ index: rowIndex }).find(advSearchOptionSelect).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(TextArea()).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchModifierSelect).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchOptionSelect).exists(),
     ]);
     advSearchModifiers.forEach((modifier) => {
       cy.expect(
-        AdvancedSearchRowInventory({ index: rowIndex })
+        AdvancedSearchRow({ index: rowIndex })
           .find(advSearchModifierSelect)
           .has({ content: including(modifier) }),
       );
     });
     advSearchInstancesOptions.forEach((option) => {
       cy.expect(
-        AdvancedSearchRowInventory({ index: rowIndex })
+        AdvancedSearchRow({ index: rowIndex })
           .find(advSearchOptionSelect)
           .has({ content: including(option) }),
       );
@@ -649,11 +677,11 @@ export default {
 
   fillAdvSearchRow(rowIndex, query, modifier, option, operator) {
     cy.do([
-      AdvancedSearchRowInventory({ index: rowIndex }).fillQuery(query),
-      AdvancedSearchRowInventory({ index: rowIndex }).selectModifier(rowIndex, modifier),
-      AdvancedSearchRowInventory({ index: rowIndex }).selectSearchOption(rowIndex, option),
+      AdvancedSearchRow({ index: rowIndex }).fillQuery(query),
+      AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, modifier),
+      AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, option),
     ]);
-    if (operator) cy.do(AdvancedSearchRowInventory({ index: rowIndex }).selectBoolean(rowIndex, operator));
+    if (operator) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, operator));
   },
 
   checkAdvSearchModalAbsence() {
@@ -663,19 +691,19 @@ export default {
   checkAdvSearchModalValues: (rowIndex, query, modifier, option, operator) => {
     cy.expect([
       advSearchModal.exists(),
-      AdvancedSearchRowInventory({ index: rowIndex })
+      AdvancedSearchRow({ index: rowIndex })
         .find(TextArea())
         .has({ value: including(query) }),
-      AdvancedSearchRowInventory({ index: rowIndex })
+      AdvancedSearchRow({ index: rowIndex })
         .find(advSearchModifierSelect)
         .has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
-      AdvancedSearchRowInventory({ index: rowIndex })
+      AdvancedSearchRow({ index: rowIndex })
         .find(advSearchOptionSelect)
         .has({ value: advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] }),
     ]);
     if (operator) {
       cy.expect(
-        AdvancedSearchRowInventory({ index: rowIndex })
+        AdvancedSearchRow({ index: rowIndex })
           .find(advSearchOperatorSelect)
           .has({ value: operator.toLowerCase() }),
       );
@@ -708,5 +736,13 @@ export default {
     searchInstancesOptions.forEach((searchOption) => {
       cy.expect(inventorySearchAndFilterInput.has({ content: including(searchOption) }));
     });
+  },
+
+  verifyInventorySearchPaneheader() {
+    cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
+  },
+
+  checkActionsButtonInSecondPane() {
+    cy.expect(actionsButton.exists());
   },
 };

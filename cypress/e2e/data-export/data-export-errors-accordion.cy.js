@@ -57,7 +57,7 @@ describe.skip('Data-export', () => {
   });
 
   it(
-    'C404374 Verify "Errors" accordion in the Search & filter pane on the "View all" screen (firebird)',
+    'C404374 Verify "Errors" accordion in the Search & filter pane on the "View all" screen (firebird) (TaaS)',
     { tags: [devTeams.firebird] },
     () => {
       DataExportViewAllLogs.openAllJobLogs();
