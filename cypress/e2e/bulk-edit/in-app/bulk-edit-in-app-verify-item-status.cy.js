@@ -6,7 +6,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
-    const testData = { csvFileName: 'cypress/fixtures/item_barcodes9.csv' };
+    const testData = { csvValidItemBarcodes: 'item_barcodes9.csv' };
 
     before('Create test data', () => {
       cy.createTempUser([
@@ -36,7 +36,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
         // #2 Upload a .csv file with valid Item barcodes
-        BulkEditSearchPane.uploadFile('item_barcodes9.csv');
+        BulkEditSearchPane.uploadFile(testData.csvValidItemBarcodes);
         BulkEditSearchPane.waitFileUploading();
 
         // #3 Click "Actions" menu => Select "Start bulk edit"
