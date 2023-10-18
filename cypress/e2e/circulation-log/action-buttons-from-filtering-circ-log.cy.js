@@ -35,7 +35,7 @@ describe('Circulation log', () => {
       ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Locations.getDefaultLocation({
         servicePointId: testData.servicePoint.id,
-      });
+      }).location;
       Locations.createViaApi(testData.defaultLocation).then((location) => {
         InventoryInstances.createFolioInstancesViaApi({
           folioInstances: testData.folioInstances,
