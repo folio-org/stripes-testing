@@ -82,7 +82,7 @@ const getDefaultOrderLine = ({
       referenceNumbers,
     },
   };
-  if (!defaultOrderLine.physical.materialType) {
+  if (specialLocationId && !specialMaterialTypeId) {
     NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType()).then((mtypes) => {
       defaultOrderLine.physical.materialType = mtypes.body.id;
     });
