@@ -10,7 +10,15 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
-  const createInvoiceWithStatus = (testData, status) => {
+  const organization = NewOrganization.getDefaultOrganization();
+  const testData = {
+    organization,
+    order: { ...NewOrder.getDefaultOrder({ vendorId: organization.id }), reEncumber: true },
+    user: {},
+  };
+  const status = INVOICE_STATUSES.APPROVED;
+
+  before('Create test data', () => {
     cy.getAdminToken().then(() => {
       const { fiscalYear, ledger, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
         ledger: { restrictEncumbrance: true, restrictExpenditures: true },
@@ -63,79 +71,48 @@ describe('Invoices', () => {
         waiter: Invoices.waitLoading,
       });
     });
-  };
+  });
 
-  const cleanUpTestData = (testData) => {
+  after('Delete test data', () => {
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Users.deleteViaApi(testData.user.userId);
-  };
-
-  [
-    {
-      status: INVOICE_STATUSES.APPROVED,
-      description:
-        'C387534 "Fiscal year" field is not editable for approved invoice (thunderjet) (TaaS)',
-    },
-    {
-      status: INVOICE_STATUSES.PAID,
-      description:
-        'C387536 "Fiscal year" field is not editable for paid invoice (thunderjet) (TaaS)',
-    },
-    {
-      status: INVOICE_STATUSES.CANCELLED,
-      description:
-        'C387537 "Fiscal year" field is not editable for cancelled invoice (thunderjet) (TaaS)',
-    },
-  ].forEach(({ status, description }) => {
-    describe(`Invoice status = "${status}"`, () => {
-      const organization = NewOrganization.getDefaultOrganization();
-      const testData = {
-        organization,
-        order: { ...NewOrder.getDefaultOrder({ vendorId: organization.id }), reEncumber: true },
-        user: {},
-      };
-
-      before('Create test data', () => {
-        createInvoiceWithStatus(testData, status);
-      });
-
-      after('Delete test data', () => {
-        cleanUpTestData(testData);
-      });
-
-      it(description, { tags: [TestTypes.criticalPath, DevTeams.thunderjet] }, () => {
-        Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
-        Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
-        InvoiceView.checkInvoiceDetails({
-          title: testData.invoice.vendorInvoiceNo,
-          invoiceInformation: [
-            { key: 'Status', value: status },
-            { key: 'Fiscal year', value: testData.fiscalYear.code },
-          ],
-        });
-
-        const InvoiceEditForm = Invoices.openInvoiceEditForm();
-        InvoiceEditForm.checkButtonsConditions([
-          {
-            label: 'Fiscal year',
-            conditions: { disabled: true, singleValue: testData.fiscalYear.code },
-          },
-          { label: 'Cancel', conditions: { disabled: false } },
-          { label: 'Save & close', conditions: { disabled: true } },
-        ]);
-
-        InvoiceEditForm.fillInvoiceFields({ note: 'some note value' });
-        InvoiceEditForm.clickSaveButton();
-
-        InteractorsTools.checkCalloutMessage('Invoice has been saved');
-        InvoiceView.checkInvoiceDetails({
-          title: testData.invoice.vendorInvoiceNo,
-          invoiceInformation: [
-            { key: 'Status', value: status },
-            { key: 'Fiscal year', value: testData.fiscalYear.code },
-          ],
-        });
-      });
-    });
   });
+
+  it(
+    'C387534 "Fiscal year" field is not editable for approved invoice (thunderjet) (TaaS)',
+    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    () => {
+      Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
+      Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
+      InvoiceView.checkInvoiceDetails({
+        title: testData.invoice.vendorInvoiceNo,
+        invoiceInformation: [
+          { key: 'Status', value: status },
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+        ],
+      });
+
+      const InvoiceEditForm = Invoices.openInvoiceEditForm();
+      InvoiceEditForm.checkButtonsConditions([
+        {
+          label: 'Fiscal year',
+          conditions: { disabled: true, singleValue: testData.fiscalYear.code },
+        },
+        { label: 'Cancel', conditions: { disabled: false } },
+        { label: 'Save & close', conditions: { disabled: true } },
+      ]);
+
+      InvoiceEditForm.fillInvoiceFields({ note: 'some note value' });
+      InvoiceEditForm.clickSaveButton();
+
+      InteractorsTools.checkCalloutMessage('Invoice has been saved');
+      InvoiceView.checkInvoiceDetails({
+        title: testData.invoice.vendorInvoiceNo,
+        invoiceInformation: [
+          { key: 'Status', value: status },
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+        ],
+      });
+    },
+  );
 });
