@@ -29,7 +29,7 @@ describe('Circulation log', () => {
     ServicePoints.createViaApi(testData.secondServicePoint);
     testData.defaultLocation = Locations.getDefaultLocation({
       servicePointId: testData.secondServicePoint.id,
-    });
+    }).location;
     Locations.createViaApi(testData.defaultLocation).then((location) => {
       InventoryInstances.createFolioInstancesViaApi({
         folioInstances: testData.folioInstances,
