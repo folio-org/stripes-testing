@@ -7,6 +7,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
@@ -27,9 +28,7 @@ describe('Circulation log', () => {
     cy.getAdminToken();
     ServicePoints.createViaApi(testData.servicePoint);
     ServicePoints.createViaApi(testData.secondServicePoint);
-    testData.defaultLocation = Locations.getDefaultLocation({
-      servicePointId: testData.secondServicePoint.id,
-    });
+    testData.defaultLocation = Location.getDefaultLocation(testData.secondServicePoint.id);
     Locations.createViaApi(testData.defaultLocation).then((location) => {
       InventoryInstances.createFolioInstancesViaApi({
         folioInstances: testData.folioInstances,

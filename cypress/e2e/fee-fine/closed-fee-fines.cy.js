@@ -9,6 +9,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
@@ -35,9 +36,7 @@ describe('Manual Fees/Fines', () => {
   before('Create test data', () => {
     cy.getAdminToken();
     ServicePoints.createViaApi(testData.servicePoint);
-    testData.defaultLocation = Locations.getDefaultLocation({
-      servicePointId: testData.servicePoint.id,
-    });
+    testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
     Locations.createViaApi(testData.defaultLocation).then((location) => {
       InventoryInstances.createFolioInstancesViaApi({
         folioInstances: testData.folioInstances,

@@ -7,6 +7,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import UsersCard from '../../support/fragments/users/usersCard';
@@ -33,9 +34,7 @@ describe('Circulation log', () => {
       userData = userProperties;
 
       ServicePoints.createViaApi(testData.servicePoint);
-      testData.defaultLocation = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
-      });
+      testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
       Locations.createViaApi(testData.defaultLocation).then((location) => {
         InventoryInstances.createFolioInstancesViaApi({
           folioInstances: testData.folioInstances,
