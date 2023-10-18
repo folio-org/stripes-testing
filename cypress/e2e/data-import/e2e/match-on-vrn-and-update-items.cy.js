@@ -29,6 +29,7 @@ import {
   ORDER_STATUSES,
   VENDOR_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  LOCATION_NAMES,
 } from '../../../support/constants';
 
 describe('data-import', () => {
