@@ -120,9 +120,10 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }) {
+  createInvoiceViaApi({ vendorId, accountingCode, fiscalYearId, exportToAccounting }) {
     cy.getBatchGroups().then(({ id: batchGroupId }) => {
       const invoice = getDefaultInvoice({
+        fiscalYearId,
         batchGroupId,
         vendorId,
         accountingCode,
@@ -182,24 +183,27 @@ export default {
   createInvoiceWithInvoiceLineViaApi({
     vendorId,
     poLineId,
+    fiscalYearId,
     fundDistributions,
     accountingCode,
     releaseEncumbrance,
     exportToAccounting,
   }) {
-    this.createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }).then((resp) => {
-      cy.wrap(resp).as('invoice');
-      const { id: invoiceId, status: invoiceLineStatus } = resp;
-      const invoiceLine = getDefaultInvoiceLine({
-        invoiceId,
-        invoiceLineStatus,
-        poLineId,
-        fundDistributions,
-        accountingCode,
-        releaseEncumbrance,
-      });
-      this.createInviceLineViaApi(invoiceLine);
-    });
+    this.createInvoiceViaApi({ vendorId, accountingCode, fiscalYearId, exportToAccounting }).then(
+      (resp) => {
+        cy.wrap(resp).as('invoice');
+        const { id: invoiceId, status: invoiceLineStatus } = resp;
+        const invoiceLine = getDefaultInvoiceLine({
+          invoiceId,
+          invoiceLineStatus,
+          poLineId,
+          fundDistributions,
+          accountingCode,
+          releaseEncumbrance,
+        });
+        this.createInviceLineViaApi(invoiceLine);
+      },
+    );
     return cy.get('@invoice');
   },
   selectFolio() {
