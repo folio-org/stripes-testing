@@ -19,6 +19,7 @@ const marcViewSection = Section({ id: 'marc-view-pane' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
 const sourceKeyValue = KeyValue('Source');
 const instanceStatusTermKeyValue = KeyValue('Instance status term');
+const instanceHridKeyValue = KeyValue('Instance HRID');
 const actionsButton = Button('Actions');
 const viewSourceButton = Button('View source');
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
@@ -232,6 +233,8 @@ export default {
       }),
     );
   },
+
+  verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
 
   clickNextPaginationButton() {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());

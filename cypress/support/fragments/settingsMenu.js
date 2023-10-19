@@ -59,6 +59,7 @@ export default {
   tenantPath: 'settings/tenant-settings',
   tenantLibrariesPath: 'settings/tenant-settings/location-libraries',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
+  tenantCampusesPath: 'settings/tenant-settings/location-campuses',
   // Orders
   approvalsPath: 'settings/orders/approvals',
   acquisitionMethodsPath: 'settings/orders/acquisition-methods',
@@ -82,6 +83,7 @@ export default {
   manualCharges: 'settings/users/feefinestable',
   paymentsPath: 'settings/users/payments',
   refundReasons: 'settings/users/refunds',
+  commentRequired: 'settings/users/comments',
   transferAccounts: 'settings/users/transfers',
   conditionsPath: 'settings/users/conditions',
   limitsPath: 'settings/users/limits',

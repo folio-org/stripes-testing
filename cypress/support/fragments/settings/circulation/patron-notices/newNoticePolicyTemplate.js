@@ -59,7 +59,7 @@ export const createNoticeTemplate = ({
   const templateName = `${name}-${getRandomPostfix()}`;
   return {
     name: templateName,
-    category: category.requestId,
+    category,
     description: 'Created by autotest team',
     subject: `autotest_template_subject_${getRandomPostfix()}`,
     body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
@@ -218,11 +218,20 @@ export default {
     ]);
   },
   checkAfterSaving(noticePolicyTemplate) {
-    Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(
-      Pane(noticePolicyTemplate.name)
-        .find(KeyValue({ value: prop }))
-        .exists(),
-    ));
+    const propertiesToCheck = {
+      name: noticePolicyTemplate.name,
+      description: noticePolicyTemplate.description,
+      category: noticePolicyTemplate.category.requestId,
+      subject: noticePolicyTemplate.subject,
+      body: noticePolicyTemplate.body,
+    };
+    Object.values(propertiesToCheck).forEach((prop) => {
+      cy.expect(
+        Pane(propertiesToCheck.name)
+          .find(KeyValue({ value: prop }))
+          .exists(),
+      );
+    });
   },
 
   delete: () => {
@@ -267,7 +276,7 @@ export default {
       this.checkInitialState();
       this.addToken('item.title');
       this.create(template, false);
-      this.chooseCategory(template.category);
+      this.chooseCategory(template.category.name);
     }
 
     this.checkPreview(template.previewText);

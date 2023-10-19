@@ -5,6 +5,10 @@ const childIndex = (el) => [...el.parentElement.children].indexOf(el);
 
 const content = (el) => el.textContent;
 
+export const InfoRow = HTML.extend('info-row').selector('[class^=row-]').locator(content).filters({
+  index: childIndex,
+});
+
 export const MultiColumnListRow = HTML.extend('multi column list row')
   .selector('[data-row-inner],[class^=mclRowFormatterContainer-]')
   .locator(content)
@@ -47,6 +51,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     inputTextFieldNames: (el) => [...el.querySelectorAll('input')].map((input) => input.name),
     liValues: (el) => [...el.querySelectorAll('li')].map((li) => li.textContent),
     innerHTML: (el) => el.innerHTML,
+    innerText: (el) => el.innerText,
   })
   .actions({ hrefClick: ({ perform }) => perform((el) => el.querySelector('a').click()) });
 

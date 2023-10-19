@@ -9,6 +9,7 @@ import {
   Callout,
   PaneHeader,
   Link,
+  MultiColumnListCell,
 } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 
@@ -221,4 +222,10 @@ export default {
   changeItemBarcode: (barcode) => {
     cy.do([TextField({ id: 'additem_barcode' }).fillIn(barcode), saveAndCloseBtn.click()]);
   },
+
+  verifyStatisticalCode: (code) => cy.expect(
+    MultiColumnList({ id: 'item-list-statistical-codes' })
+      .find(MultiColumnListCell({ content: code }))
+      .exists(),
+  ),
 };

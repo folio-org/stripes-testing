@@ -280,6 +280,9 @@ export default {
   verifyContributor,
   verifyContributorWithMarcAppLink,
 
+  waitInventoryLoading() {
+    cy.expect(section.exists());
+  },
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -335,6 +338,14 @@ export default {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
   },
 
+  checkHoldingTitle(title, absent = false) {
+    if (!absent) {
+      cy.expect(detailsPaneContent.has({ text: including(`Holdings: ${title}`) }));
+    } else {
+      cy.expect(detailsPaneContent.find(HTML({ text: including(`Holdings: ${title}`) })).absent());
+    }
+  },
+
   startOverlaySourceBibRecord: () => {
     cy.do(actionsButton.click());
     cy.do(overlaySourceBibRecord.click());
@@ -363,9 +374,11 @@ export default {
     cy.expect(section.exists());
   },
 
-  searchByTitle(title) {
+  searchByTitle(title, result = true) {
     cy.do([filterPane.find(inputSearchField).fillIn(title), filterPane.find(searchButton).click()]);
-    cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    if (result) {
+      cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    }
   },
 
   clickViewAuthorityIconDisplayedInTagField(tag) {
@@ -639,7 +652,7 @@ export default {
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    cy.expect(Button('Actions').exists());
+    cy.expect(Pane({ titleLabel: including('Holdings') }).exists());
   },
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
@@ -907,6 +920,12 @@ export default {
     ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());
     cy.expect(HTML('MARC bibliographic record').exists());
+  },
+
+  checkNewRequestAtNewPane() {
+    cy.do(actionsButton.click());
+    cy.expect([Button({ id: 'edit-instance' }).exists(), Button({ id: 'copy-instance' }).exists()]);
+    cy.do(Button('New request').click());
   },
 
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),

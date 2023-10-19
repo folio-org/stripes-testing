@@ -18,10 +18,10 @@ describe('Inventory › Contributors Browse', () => {
         instance.instanceTypeId = res[0].id;
       });
 
-      BrowseContributors.getContributorNameTypes().then((res) => {
-        instance.contributors[0].contributorNameTypeId = res.body.contributorNameTypes[0].id;
-        instance.contributors[0].contributorNameType = res.body.contributorNameTypes[0].name;
-        instance.contributors[0].contributorTypeText = res.body.contributorNameTypes[0].name;
+      BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
+        instance.contributors[0].contributorNameTypeId = contributorNameTypes[0].id;
+        instance.contributors[0].contributorNameType = contributorNameTypes[0].name;
+        instance.contributors[0].contributorTypeText = contributorNameTypes[0].name;
       });
 
       BrowseContributors.createInstanceWithContributorViaApi(instance);
