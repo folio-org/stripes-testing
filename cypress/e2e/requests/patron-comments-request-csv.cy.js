@@ -19,6 +19,8 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
 
 describe('Requests Export CSV File', () => {
   const patronComment = 'patron test comment';
@@ -45,6 +47,23 @@ describe('Requests Export CSV File', () => {
 
   before('Create New Item and New User', () => {
     cy.getAdminToken()
+      .then(() => {
+        cy.getFirstUserGroupId({ limit: 1 });
+        const f = { limit: 1 };
+        cy.okapiRequest({
+          path: 'groups',
+          f,
+        }).then((response) => {
+          const userGroupIdx = 0;
+          const fd = response.body;
+          const r = response.body.usergroups[userGroupIdx].id;
+          cy.log(fd);
+          cy.log(r);
+          cy.wrap(fd);
+          cy.wrap(r);
+          return response.body.usergroups[userGroupIdx].id;
+        });
+      })
       .then(() => {
         ServicePoints.createViaApi(servicePoint);
         defaultLocation = Location.getDefaultLocation(servicePoint.id);
@@ -95,7 +114,7 @@ describe('Requests Export CSV File', () => {
         requestData.itemId = specialInstanceIds.holdingIds[0].itemIds[0];
       })
       .then(() => {
-        cy.createTempUser([Permissions.uiRequestsAll.gui])
+        cy.createTempUser([Permissions.uiRequestsAll.gui, Permissions.checkinAll.gui])
           .then((userProperties) => {
             userData.username = userProperties.username;
             userData.password = userProperties.password;
@@ -120,7 +139,6 @@ describe('Requests Export CSV File', () => {
             UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
 
             cy.login(userData.username, userData.password);
-            cy.visit(TopMenu.requestsPath);
           });
       });
   });
@@ -151,10 +169,21 @@ describe('Requests Export CSV File', () => {
     'C199705 Patron Comments are Displayed in Requests Export CSV File (vega)',
     { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
     () => {
+      cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
       Requests.exportRequestToCsv();
       Requests.checkCellInCsvFileContainsValue(fileName, 1, 30, patronComment);
+    },
+  );
+
+  it(
+    'C199708 Patron Comments are Displayed in the "Awaiting pickup for a request" Modal at Check In (vega)',
+    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    () => {
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.checkInItemGui(itemData.barcode);
+      AwaitingPickupForARequest.checkPatronComments(patronComment);
     },
   );
 });
