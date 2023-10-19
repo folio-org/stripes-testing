@@ -27,9 +27,7 @@ const dataSynchronizationSettingsAccordion = Accordion('Data synchronization set
 const saveAndCloseBtn = Button('Save & close');
 const saveBtn = Button('Save');
 const cancelButton = Button('Cancel');
-const deletelButton = Button('Delete');
 const confirmationModal = Modal({ id: 'save-confirmation-modal' });
-const deleteConfirmationModal = Modal({ title: including('Remove ') });
 const actionsBtn = Button('Actions');
 const xButton = Button({ icon: 'times' });
 const newButton = Button('+ New');
@@ -335,29 +333,7 @@ export default {
     cy.do(MultiColumnListCell({ content: name }).click());
   },
 
-  verifyDeleteConfigurationModal(configurationName) {
-    cy.expect([
-      deleteConfirmationModal.has({
-        content: including('Are you sure you want to delete the remote storage configuration?'),
-      }),
-      deleteConfirmationModal.has({
-        title: `Remove ${configurationName}`,
-      }),
-      deleteConfirmationModal.find(deletelButton).exists(),
-      deleteConfirmationModal.find(cancelButton).exists(),
-    ]);
-  },
-
-  cancelDeleteConfirmation() {
-    cy.do(deleteConfirmationModal.find(cancelButton).click());
-    cy.expect(deleteConfirmationModal.absent());
-  },
-  confirmDeleteConfiguration(name) {
-    cy.do([
-      Modal({ title: `Remove ${name}` })
-        .find(deletelButton)
-        .click(),
-    ]);
+  verifyDeletedConfiguration(name) {
     InteractorsTools.checkCalloutMessage(successfulDeleteCalloutMessage);
     cy.expect(configurationPane.find(MultiColumnListCell({ content: name })).absent());
   },

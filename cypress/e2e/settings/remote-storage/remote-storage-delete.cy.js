@@ -3,6 +3,7 @@ import RemoteStorage from '../../../support/fragments/settings/remote-storage/re
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
+import DeleteRemoteStorageModal from '../../../support/fragments/settings/remote-storage/madals/deleteRemoteStorageModal';
 
 describe('remote-storage-configuration', () => {
   const testData = {};
@@ -40,16 +41,17 @@ describe('remote-storage-configuration', () => {
       // * Text "Are you sure you want to delete the remote storage configuration?"
       // * "Cancel" active button
       // * "Delete" active button
-      Configurations.verifyDeleteConfigurationModal(testData.configuration.name);
+      DeleteRemoteStorageModal.verifyModalView(testData.configuration.name);
       // #7 Click **"Cancel"**
-      Configurations.cancelDeleteConfirmation();
+      DeleteRemoteStorageModal.cancelModal();
       // #8 Click **"Action"** => **"Delete"**
       Configurations.clickDeleteRemoteStorage(testData.configuration.name);
-      Configurations.verifyDeleteConfigurationModal(testData.configuration.name);
+      DeleteRemoteStorageModal.verifyModalView(testData.configuration.name);
       // #9 Click **"Delete"** button on the pop-up window
+      DeleteRemoteStorageModal.confirm();
       // * At the bottom of the screen appears notification "Remote storage configuration was successfully deleted."
       // * Configuration is deleted from the table
-      Configurations.confirmDeleteConfiguration(testData.configuration.name);
+      Configurations.verifyDeletedConfiguration(testData.configuration.name);
     },
   );
 });
