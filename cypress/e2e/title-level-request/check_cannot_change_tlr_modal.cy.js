@@ -5,7 +5,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../support/utils/stringTools';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Requests from '../../support/fragments/requests/requests';
