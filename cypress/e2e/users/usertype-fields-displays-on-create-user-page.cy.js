@@ -37,7 +37,12 @@ describe('user typy verify', () => {
         patronGroup.id = patronGroupResponse;
       });
       cy.createTempUser(
-        [permissions.uiUsersPermissions.gui, permissions.uiUsersPermissionsView.gui, permissions.uiUsersCreate.gui],
+        [
+          permissions.uiUsersPermissions.gui,
+          permissions.uiUsersPermissionsView.gui,
+          permissions.uiUsersCreate.gui,
+          permissions.uiUsersResetPassword.gui
+        ],
         patronGroup.name,
       ).then((userProperties) => {
         userData = userProperties;
