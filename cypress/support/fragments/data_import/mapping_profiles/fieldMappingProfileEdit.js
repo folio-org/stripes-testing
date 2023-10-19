@@ -22,6 +22,12 @@ export default {
     cy.wait(500);
   },
 
+  fillCatalogedDate: (date) => {
+    cy.do(TextField('Cataloged date').fillIn(date));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
+  },
+
   fillFundDistriction: (fundData) => {
     cy.do([
       TextField('Fund ID').fillIn(fundData.fundId),

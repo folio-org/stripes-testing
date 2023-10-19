@@ -16,8 +16,7 @@ const validItemUUIDsFileName = `validItemUUIDs_${getRandomPostfix()}.csv`;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: getRandomPostfix(),
-  instanceId: '',
+  itemBarcode: getRandomPostfix()
 };
 
 // TODO: identify how to stabilize flaky test
@@ -42,15 +41,13 @@ describe('bulk-edit', () => {
         user2 = userProperties;
       });
 
-      item.instanceId = InventoryInstances.createInstanceViaApi(
+      InventoryInstances.createInstanceViaApi(
         item.instanceName,
         item.itemBarcode,
       );
       cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
         .then((instance) => {
           item.itemId = instance.items[0].id;
-        })
-        .then(() => {
           FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
           FileManager.createFile(
             `cypress/fixtures/${userBarcodesFileName}`,

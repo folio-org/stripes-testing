@@ -688,7 +688,9 @@ export default {
       DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Former ids')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Instance (Title, Publisher, Publication date)')).has({ checked: false }),
+      DropdownMenu()
+        .find(Checkbox('Instance (Title, Publisher, Publication date)'))
+        .has({ checked: false }),
       DropdownMenu().find(Checkbox('Permanent location')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Temporary location')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Effective location')).has({ checked: false }),
@@ -712,7 +714,7 @@ export default {
       DropdownMenu().find(Checkbox('Copy number')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receiving history')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: true }),
       DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Source')).has({ checked: false }),
