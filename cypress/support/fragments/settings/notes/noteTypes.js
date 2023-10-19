@@ -11,6 +11,7 @@ const editIcon = Button({ id: including('clickable-edit-noteTypes-') });
 const deleteIcon = Button({ id: including('clickable-delete-noteTypes-') });
 const noteTypeInput = TextField();
 const noteTypePane = PaneSet({ id: 'noteTypes' });
+const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType) });
 
 export default {
   createNoteTypeViaApi: (noteTypeName) => {
@@ -69,41 +70,25 @@ export default {
     ConfirmDelete.confirmDelete();
   },
 
-  clickEditNoteType: (noteType) => cy.do(
-    MultiColumnListRow({ content: including(noteType) })
-      .find(editIcon)
-      .click(),
-  ),
+  clickEditNoteType: (noteType) => cy.do(rowWithText(noteType).find(editIcon).click()),
 
-  clickDeleteNoteType: (noteType) => cy.do(
-    MultiColumnListRow({ content: including(noteType) })
-      .find(deleteIcon)
-      .click(),
-  ),
+  clickDeleteNoteType: (noteType) => cy.do(rowWithText(noteType).find(deleteIcon).click()),
 
   checkNewNoteButtonEnabled: () => cy.expect(newNoteTypeButton.exists()),
 
-  checkNoteTypeIsDisplayed: (noteType) => cy.expect(MultiColumnListRow({ content: including(noteType) }).exists()),
+  checkNoteTypeIsDisplayed: (noteType) => cy.expect(rowWithText(noteType).exists()),
 
   checkEditAndDeleteIcons: (noteType) => {
     cy.expect([
-      MultiColumnListRow({ content: including(noteType) })
-        .find(editIcon)
-        .exists(),
-      MultiColumnListRow({ content: including(noteType) })
-        .find(deleteIcon)
-        .exists(),
+      rowWithText(noteType).find(editIcon).exists(),
+      rowWithText(noteType).find(deleteIcon).exists(),
     ]);
   },
 
   checkDeleteIconNotDisplayed: (noteType) => {
     cy.expect([
-      MultiColumnListRow({ content: including(noteType) })
-        .find(editIcon)
-        .exists(),
-      MultiColumnListRow({ content: including(noteType) })
-        .find(deleteIcon)
-        .absent(),
+      rowWithText(noteType).find(editIcon).exists(),
+      rowWithText(noteType).find(deleteIcon).absent(),
     ]);
   },
 };
