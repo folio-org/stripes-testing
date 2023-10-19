@@ -65,6 +65,7 @@ const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
+const itemStatusSearchField = TextField('itemStatus-field');
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -675,7 +676,11 @@ export default {
   },
 
   searchByStatus(status) {
-    cy.do([Button({ id: 'accordion-toggle-button-itemStatus' }).click(), Checkbox(status).click()]);
+    cy.do([
+      Button({ id: 'accordion-toggle-button-itemStatus' }).click(),
+      itemStatusSearchField.fillIn(status),
+      Checkbox(status).click(),
+    ]);
   },
 
   selectBrowseOption(option) {
