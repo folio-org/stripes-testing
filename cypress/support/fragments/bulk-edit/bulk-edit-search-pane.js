@@ -99,7 +99,7 @@ export default {
       bulkEditPane
         .find(
           HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
+            'Select a "record identifier" when on the Identifier tab',
           ),
         )
         .exists(),
@@ -162,7 +162,7 @@ export default {
       bulkEditPane
         .find(
           HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
+            'Select a "record identifier" when on the Identifier tab',
           ),
         )
         .exists(),
@@ -181,7 +181,7 @@ export default {
       bulkEditPane
         .find(
           HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
+            'Select a "record identifier" when on the Identifier tab',
           ),
         )
         .exists(),
@@ -214,7 +214,7 @@ export default {
       bulkEditPane
         .find(
           HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
+            'Select a "record identifier" when on the Identifier tab',
           ),
         )
         .exists(),
@@ -714,7 +714,7 @@ export default {
       DropdownMenu().find(Checkbox('Copy number')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receiving history')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Source')).has({ checked: false }),
