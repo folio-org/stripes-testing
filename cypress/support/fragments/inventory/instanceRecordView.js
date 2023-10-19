@@ -284,16 +284,6 @@ export default {
       id: 'copynumber',
       columnIndex: 3,
     },
-    // {
-    //   title: 'Loan type',
-    //   id: (including('list-column-loantype')),
-    //   columnIndex: 4,
-    // },
-    // {
-    //   title: 'Effective location',
-    //   id: 'copynumber',
-    //   columnIndex: 5,
-    // },
     {
       title: 'Enumeration',
       id: 'enumeration',
@@ -314,11 +304,6 @@ export default {
       id: 'yearcaption',
       columnIndex: 9,
     },
-    // {
-    //   title: 'Material type',
-    //   id: (including('list-column-materialtype')),
-    //   columnIndex: 10,
-    // },
   ],
 
   getSortOrder(title) {
