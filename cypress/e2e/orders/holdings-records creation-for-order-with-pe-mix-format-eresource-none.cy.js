@@ -38,20 +38,34 @@ describe('Orders', () => {
             testData.orderLine = {
               ...BasicOrderLine.getDefaultOrderLine(),
               cost: {
-                listUnitPrice: 10,
                 currency: 'USD',
                 discountType: 'percentage',
-                quantityPhysical: 2,
+                quantityPhysical: 1,
+                quantityElectronic: 1,
+                listUnitPriceElectronic: 10,
+                listUnitPrice: 10,
               },
-              orderFormat: 'Physical Resource',
+              orderFormat: 'P/E Mix',
               checkinItems: CHECKIN_ITEMS_VALUE[RECEIVING_WORKFLOWS.INDEPENDENT],
+              eresource: {
+                createInventory: 'None',
+                accessProvider: testData.organization.id,
+              },
               physical: {
                 createInventory: 'Instance, Holding, Item',
                 materialType: materialTypeId,
               },
               locations: [
-                { locationId: testData.locations[0].id, quantityPhysical: 1 },
-                { locationId: testData.locations[1].id, quantityPhysical: 1 },
+                {
+                  locationId: testData.locations[0].id,
+                  quantityPhysical: 1,
+                  quantityElectronic: 0,
+                },
+                {
+                  locationId: testData.locations[1].id,
+                  quantityPhysical: 0,
+                  quantityElectronic: 1,
+                },
               ],
             };
 
@@ -91,7 +105,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C402352 Holdings records creation when open order with "Physical Resource" format PO line and Independent workflow (thunderjet) (TaaS)',
+    'C402351 Holdings records creation when open order with "P/E mix" format PO line and Independent workflow, "Create inventory" in "E-resources details" = None (thunderjet) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
     () => {
       // Open Order
@@ -111,8 +125,8 @@ describe('Orders', () => {
             { key: 'Quantity physical', value: 1 },
           ],
           [
-            { key: 'Holding', value: testData.locations[1].name },
-            { key: 'Quantity physical', value: 1 },
+            { key: 'Name (code)', value: testData.locations[1].name },
+            { key: 'Quantity electronic', value: 1 },
           ],
         ],
       });
@@ -121,7 +135,7 @@ describe('Orders', () => {
       const InventoryInstance = OrderLineDetails.openInventoryItem();
       InventoryInstance.checkInstanceTitle(testData.orderLine.titleOrPackage);
       InventoryInstance.checkHoldingTitle(testData.locations[0].name);
-      InventoryInstance.checkHoldingTitle(testData.locations[1].name);
+      InventoryInstance.checkHoldingTitle(testData.locations[1].name, true);
     },
   );
 });

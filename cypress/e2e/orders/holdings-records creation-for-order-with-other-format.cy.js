@@ -43,7 +43,7 @@ describe('Orders', () => {
                 discountType: 'percentage',
                 quantityPhysical: 2,
               },
-              orderFormat: 'Physical Resource',
+              orderFormat: 'Other',
               checkinItems: CHECKIN_ITEMS_VALUE[RECEIVING_WORKFLOWS.INDEPENDENT],
               physical: {
                 createInventory: 'Instance, Holding, Item',
@@ -91,7 +91,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C402352 Holdings records creation when open order with "Physical Resource" format PO line and Independent workflow (thunderjet) (TaaS)',
+    'C402354 Holdings records creation when open order with "Other" format PO line and Independent workflow (thunderjet) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
     () => {
       // Open Order

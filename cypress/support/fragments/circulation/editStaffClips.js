@@ -7,9 +7,15 @@ import {
   Modal,
   RichEditor,
   Pane,
+  matching,
+  PaneContent,
+  MetaSection,
+  PaneSet,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import richTextEditor from '../../../../interactors/rich-text-editor';
 
+const staffSlipPaneContent = PaneContent({ id: 'staff-slip-pane-content' });
 const editButton = Button({ id: 'clickable-edit-item' });
 const staffClipsDescripton = TextArea({ id: 'input-staff-slip-description' });
 const textCheck = 'The Wines of Italyc.2';
@@ -20,11 +26,41 @@ export default {
   defaultUiEditStaffClips: {
     description: 'Created by autotest team',
   },
+  findPane() {
+    return cy.get('#root').then(($ele) => {
+      let pane;
+      if ($ele.find('#staff-slip-pane-content').length > 0) {
+        pane = staffSlipPaneContent;
+      } else {
+        pane = PaneSet({ id: 'settings-module-display' });
+      }
+      return pane;
+    });
+  },
   chooseStaffClip(name) {
     cy.do(NavListItem(name).click());
   },
-  openLastUpdateInfo() {
-    cy.do(Button(including('Record last updated')).click());
+  checkLastUpdateInfo(updatedBy = '', createdBy = '', updateTime) {
+    this.findPane().then((pane) => {
+      cy.expect(
+        pane.find(Button(matching(/^Record last updated: \d{1,2}\/\d{1,2}\/\d{2,4}/))).exists(),
+      );
+      cy.do(pane.find(Button(including('Record last updated'))).click());
+      cy.expect([
+        pane.find(MetaSection({ updatedByText: including(`Source: ${updatedBy}`) })).exists(),
+        pane
+          .find(
+            MetaSection({
+              createdText: matching(/^Record created: \d{1,2}\/\d{1,2}\/\d{2,4}/),
+            }),
+          )
+          .exists(),
+        pane.find(MetaSection({ createdByText: including(`Source: ${createdBy}`) })).exists(),
+      ]);
+      if (updateTime) {
+        cy.expect(pane.find(MetaSection({ createdText: including(updateTime) })).exists());
+      }
+    });
   },
   editHold() {
     cy.do([NavListItem('Hold').click(), editButton.click()]);
@@ -55,6 +91,14 @@ export default {
       saveButton.click(),
     ]);
   },
+  editDescripton(description) {
+    cy.do(staffClipsDescripton.fillIn(description));
+    cy.expect(staffClipsDescripton.has({ textContent: including(description) }));
+  },
+  editTemplateContent(content) {
+    cy.do(richTextEditor().fillIn(content));
+    cy.expect(richTextEditor().has({ value: including(content) }));
+  },
   previewStaffClips: () => {
     cy.do([Button('Preview').click(), Button('Close').click()]);
     cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
@@ -78,6 +122,7 @@ export default {
   },
   saveAndClose: () => {
     cy.do(saveButton.click());
+    cy.expect(staffSlipPaneContent.absent());
   },
   checkAfterUpdate(staffSlipType) {
     InteractorsTools.checkCalloutMessage(
@@ -105,15 +150,19 @@ export default {
     this.clearStaffClips();
   },
   collapseAll() {
-    cy.do(Button('Collapse all').click());
-    cy.wrap(['General information', 'Template content']).each((accordion) => {
-      cy.expect(Button(accordion).has({ ariaExpanded: 'false' }));
+    this.findPane().then((pane) => {
+      cy.do(pane.find(Button('Collapse all')).click());
+      cy.wrap(['General information', 'Template content']).each((accordion) => {
+        cy.expect(pane.find(Button(accordion)).has({ ariaExpanded: 'false' }));
+      });
     });
   },
   expandAll() {
-    cy.do(Button('Expand all').click());
-    cy.wrap(['General information', 'Template content']).each((accordion) => {
-      cy.expect(Button(accordion).has({ ariaExpanded: 'true' }));
+    this.findPane().then((pane) => {
+      cy.do(pane.find(Button('Expand all')).click());
+      cy.wrap(['General information', 'Template content']).each((accordion) => {
+        cy.expect(pane.find(Button(accordion)).has({ ariaExpanded: 'true' }));
+      });
     });
   },
 };
