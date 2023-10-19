@@ -39,7 +39,7 @@ describe('Check in', () => {
           testData.defaultLocation = Locations.getDefaultLocation({
             servicePointId: testData.servicePointB.id,
             secondaryServicePointId: testData.servicePointA.id,
-          });
+          }).location;
           Locations.createViaApi(testData.defaultLocation).then((location) => {
             InventoryInstances.createFolioInstancesViaApi({
               folioInstances: testData.folioInstances,
