@@ -714,7 +714,7 @@ export default {
       DropdownMenu().find(Checkbox('Copy number')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receiving history')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Source')).has({ checked: false }),
