@@ -47,8 +47,8 @@ export default {
           cy.expect(
             Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists(),
           );
-          cy.do(TLRCheckbox.click());
-          cy.do(saveButton.click());
+          this.clickOnTLRCheckbox();
+          this.clickOnSaveButton();
           this.checkUpdateTLRCalloutAppeared();
         } else if (checked && status === 'allow') {
           // If checkbox is already checked - to prevent test failing during parallel run
@@ -57,7 +57,7 @@ export default {
           cy.expect(
             Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists(),
           );
-          cy.do(TLRCheckbox.click());
+          this.clickOnTLRCheckbox();
           // need to wait if the popup module appears
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(7000);
@@ -65,7 +65,7 @@ export default {
             if (body.find('div[label*="Cannot change"]').length) {
               cy.do(Button('Close').click());
             } else {
-              cy.do(saveButton.click());
+              this.clickOnSaveButton();
               this.checkUpdateTLRCalloutAppeared();
             }
           });
