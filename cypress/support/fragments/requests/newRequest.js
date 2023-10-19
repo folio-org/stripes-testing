@@ -289,4 +289,11 @@ export default {
       }),
     );
   },
+  checkRequestIsNotAllowedLoanModal() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: 'This requester already has this item on loan',
+      }),
+    );
+  },
 };
