@@ -203,6 +203,24 @@ export default {
     }
   },
 
+  unOpenOrderAndDeleteItems() {
+    expandActionsDropdown();
+    cy.do([
+      Button('Unopen').click(),
+      Modal({ id: 'order-unopen-confirmation' })
+        .find(Button({ id: 'clickable-order-unopen-confirmation-confirm-keep-holdings' }))
+        .click(),
+    ]);
+  },
+
+  selectInvoiceInRelatedInvoicesList: (invoiceNumber) => {
+    cy.get(`div[class*=mclCell-]:contains("${invoiceNumber}")`)
+      .siblings('div[class*=mclCell-]')
+      .eq(0)
+      .find('a')
+      .click();
+  },
+
   receiveOrderViaActions: () => {
     expandActionsDropdown();
     cy.do([Button('Receive').click(), PaneHeader('Receiving').is({ visible: true })]);

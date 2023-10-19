@@ -338,8 +338,12 @@ export default {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
   },
 
-  checkHoldingTitle(title) {
-    cy.expect(detailsPaneContent.has({ text: including(`Holdings: ${title}`) }));
+  checkHoldingTitle(title, absent = false) {
+    if (!absent) {
+      cy.expect(detailsPaneContent.has({ text: including(`Holdings: ${title}`) }));
+    } else {
+      cy.expect(detailsPaneContent.find(HTML({ text: including(`Holdings: ${title}`) })).absent());
+    }
   },
 
   startOverlaySourceBibRecord: () => {

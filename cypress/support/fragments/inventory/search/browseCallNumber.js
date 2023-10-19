@@ -3,7 +3,6 @@ import {
   including,
   MultiColumnListCell,
   MultiColumnListHeader,
-  MultiColumnListRow,
   Section,
 } from '../../../../../interactors';
 

@@ -41,7 +41,7 @@ describe('data-import', () => {
       polNumber: 'RFF+SNA[2]',
       polVendorReferenceNumber: 'RFF+SLI[2]',
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
     };
     const actionProfile = {
       name: `C347926 Import Harrassowitz invoice.${getRandomPostfix()}`,
