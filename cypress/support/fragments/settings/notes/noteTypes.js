@@ -67,6 +67,8 @@ export default {
   deleteNoteType(noteType) {
     this.clickDeleteNoteType(noteType);
     ConfirmDelete.verifyDeleteMessage(noteType);
+    ConfirmDelete.verifyCancelButtonDisplayed();
+    ConfirmDelete.verifyDeleteButtonDisplayed();
     ConfirmDelete.confirmDelete();
   },
 
@@ -77,6 +79,7 @@ export default {
   checkNewNoteButtonEnabled: () => cy.expect(newNoteTypeButton.exists()),
 
   checkNoteTypeIsDisplayed: (noteType) => cy.expect(rowWithText(noteType).exists()),
+  checkNoteTypeIsNotDisplayed: (noteType) => cy.expect(rowWithText(noteType).absent()),
 
   checkEditAndDeleteIcons: (noteType) => {
     cy.expect([

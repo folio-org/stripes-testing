@@ -42,6 +42,7 @@ describe('Notes', () => {
       NoteTypes.saveNoteType(editedNoteType);
       NoteTypes.deleteNoteType(editedNoteType);
       InteractorsTools.checkCalloutMessage(getCalloutMessage(editedNoteType));
+      NoteTypes.checkNoteTypeIsNotDisplayed(editedNoteType);
     },
   );
 });
