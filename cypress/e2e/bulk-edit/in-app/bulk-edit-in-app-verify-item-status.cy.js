@@ -3,10 +3,19 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
-    const testData = { csvValidItemBarcodes: 'item_barcodes9.csv' };
+    let userData = {};
+    const instanceData = {
+      instanceName: `C353652 testBulkEdit_${getRandomPostfix()}`,
+      itemBarcode: getRandomPostfix(),
+    };
+    let fileContent = '';
+    const itemBarcodesFileName = `C353652 itemBarcodes_${getRandomPostfix()}.csv`;
 
     before('Create test data', () => {
       cy.createTempUser([
@@ -14,17 +23,23 @@ describe('bulk-edit', () => {
         Permissions.uiInventoryViewCreateEditDeleteItems.gui,
         Permissions.bulkEditView.gui,
       ]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
+        userData = userProperties;
+        cy.login(userData.username, userData.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
+        InventoryInstances.createInstanceViaApi(
+          instanceData.instanceName,
+          instanceData.itemBarcode,
+        );
+        fileContent += instanceData.itemBarcode;
+        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
       });
     });
 
     after('Delete test data', () => {
-      Users.deleteViaApi(testData.user.userId);
+      Users.deleteViaApi(userData.userId);
+      FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
     });
 
     it(
@@ -36,7 +51,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
         // #2 Upload a .csv file with valid Item barcodes
-        BulkEditSearchPane.uploadFile(testData.csvValidItemBarcodes);
+        BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
 
         // #3 Click "Actions" menu => Select "Start bulk edit"
