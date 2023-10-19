@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import { Invoices, InvoiceView } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
@@ -22,7 +22,7 @@ describe('Invoices', () => {
     cy.getAdminToken().then(() => {
       const { fiscalYear, ledger, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
         ledger: { restrictEncumbrance: true, restrictExpenditures: true },
-        budget: { allocated: '100' },
+        budget: { allocated: 100 },
       });
       testData.fund = fund;
       testData.ledger = ledger;
@@ -30,23 +30,25 @@ describe('Invoices', () => {
       testData.fiscalYear = fiscalYear;
 
       Organizations.createOrganizationViaApi(testData.organization).then(() => {
-        const orderLine = BasicOrderLine.getDefaultOrderLine({
-          listUnitPrice: 100,
+        testData.orderLine = BasicOrderLine.getDefaultOrderLine({
+          listUnitPrice: 98,
           fundDistribution: [{ code: fund.code, fundId: fund.id, value: 100 }],
         });
 
-        Orders.createOrderWithOrderLineViaApi(testData.order, orderLine).then((order) => {
+        Orders.createOrderWithOrderLineViaApi(testData.order, testData.orderLine).then((order) => {
           testData.order = order;
 
           Orders.updateOrderViaApi({ ...order, workflowStatus: 'Open' });
 
           OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
-            (resp) => {
+            (orderLines) => {
+              testData.orderLine = orderLines[0];
+
               Invoices.createInvoiceWithInvoiceLineViaApi({
                 vendorId: testData.organization.id,
                 fiscalYearId: testData.fiscalYear.id,
-                poLineId: orderLine.id,
-                fundDistributions: resp[0].fundDistribution,
+                poLineId: testData.orderLine.id,
+                fundDistributions: testData.orderLine.fundDistribution,
                 accountingCode: testData.organization.erpCode,
                 releaseEncumbrance: true,
               }).then((invoice) => {
@@ -80,7 +82,7 @@ describe('Invoices', () => {
 
   it(
     'C387536 "Fiscal year" field is not editable for paid invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
