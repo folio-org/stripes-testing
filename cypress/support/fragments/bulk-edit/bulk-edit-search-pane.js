@@ -99,7 +99,7 @@ export default {
       bulkEditPane
         .find(
           HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
+            'Select a "record identifier" when on the Identifier tab',
           ),
         )
         .exists(),
@@ -162,7 +162,7 @@ export default {
       bulkEditPane
         .find(
           HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
+            'Select a "record identifier" when on the Identifier tab',
           ),
         )
         .exists(),
@@ -181,7 +181,7 @@ export default {
       bulkEditPane
         .find(
           HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
+            'Select a "record identifier" when on the Identifier tab',
           ),
         )
         .exists(),
@@ -214,7 +214,7 @@ export default {
       bulkEditPane
         .find(
           HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
+            'Select a "record identifier" when on the Identifier tab',
           ),
         )
         .exists(),

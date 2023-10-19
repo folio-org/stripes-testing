@@ -5,6 +5,10 @@ const childIndex = (el) => [...el.parentElement.children].indexOf(el);
 
 const content = (el) => el.textContent;
 
+export const InfoRow = HTML.extend('info-row').selector('[class^=row-]').locator(content).filters({
+  index: childIndex,
+});
+
 export const MultiColumnListRow = HTML.extend('multi column list row')
   .selector('[data-row-inner],[class^=mclRowFormatterContainer-]')
   .locator(content)

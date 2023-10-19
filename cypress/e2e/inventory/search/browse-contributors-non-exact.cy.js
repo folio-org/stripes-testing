@@ -20,13 +20,13 @@ describe('Inventory -> Contributors Browse', () => {
       instanceZ.instanceTypeId = res[0].id;
     });
 
-    BrowseContributors.getContributorNameTypes().then((res) => {
-      instanceA.contributors[0].contributorNameTypeId = res.body.contributorNameTypes[0].id;
-      instanceA.contributors[0].contributorNameType = res.body.contributorNameTypes[0].name;
-      instanceA.contributors[0].contributorTypeText = res.body.contributorNameTypes[0].name;
-      instanceZ.contributors[0].contributorNameTypeId = res.body.contributorNameTypes[0].id;
-      instanceZ.contributors[0].contributorNameType = res.body.contributorNameTypes[0].name;
-      instanceZ.contributors[0].contributorTypeText = res.body.contributorNameTypes[0].name;
+    BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
+      instanceA.contributors[0].contributorNameTypeId = contributorNameTypes[0].id;
+      instanceA.contributors[0].contributorNameType = contributorNameTypes[0].name;
+      instanceA.contributors[0].contributorTypeText = contributorNameTypes[0].name;
+      instanceZ.contributors[0].contributorNameTypeId = contributorNameTypes[0].id;
+      instanceZ.contributors[0].contributorNameType = contributorNameTypes[0].name;
+      instanceZ.contributors[0].contributorTypeText = contributorNameTypes[0].name;
     });
 
     BrowseContributors.createInstanceWithContributorViaApi(instanceA);
