@@ -15,9 +15,15 @@ export default {
     cy.wait(1000);
     cy.expect(Accordion('Match criterion').exists());
   },
+
   duplicate() {
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Duplicate').click());
+  },
+
+  delete() {
+    cy.do(viewPane.find(actionsButton).click());
+    cy.do(Button('Delete').click());
   },
 
   closeViewMode: () => cy.do(viewPane.find(Button({ icon: 'times' })).click()),
@@ -31,4 +37,46 @@ export default {
   },
 
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
+  verifyMatchProfileTitleName: (profileName) => cy.get('#view-match-profile-pane-content h2').should('have.text', profileName),
+  verifyMatchProfileWithIncomingAndExistingValue(
+    { profileName, incomingRecordFields, existingRecordFields, existingRecordType },
+    recordType,
+  ) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.get(`[data-id="${existingRecordType}"]`).should('contain', recordType);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.field);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.in1);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.in2);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.subfield);
+    cy.contains(`Existing ${recordType} record`)
+      .parent()
+      .should('include.text', existingRecordFields.field);
+    cy.contains(`Existing ${recordType} record`)
+      .parent()
+      .should('include.text', existingRecordFields.in1);
+    cy.contains(`Existing ${recordType} record`)
+      .parent()
+      .should('include.text', existingRecordFields.in2);
+    cy.contains(`Existing ${recordType} record`)
+      .parent()
+      .should('include.text', existingRecordFields.subfield);
+  },
+  verifyMatchProfileWithFolioRecordValue(
+    { profileName, incomingRecordFields, instanceOption },
+    recordType,
+  ) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.field);
+    cy.contains('Existing Instance record field').parent().should('include.text', instanceOption);
+  },
 };

@@ -22,47 +22,47 @@ const getDefaultLocation = ({
   institutionId = uuid(),
   campusId = uuid(),
   libraryId = uuid(),
+  secondaryServicePointId,
 } = {}) => {
+  const institution = Institutions.getDefaultInstitution({
+    id: institutionId,
+    name: `autotest_institution_${getRandomPostfix()}`,
+  });
+  const campus = Campuses.getDefaultCampuse({
+    id: campusId,
+    name: `autotest_campuse_${getRandomPostfix()}`,
+    institutionId: institution.id,
+  });
+  const library = Libraries.getDefaultLibrary({
+    id: libraryId,
+    name: `autotest_library_${getRandomPostfix()}`,
+    campusId: campus.id,
+  });
   const location = {
     id: uuid(),
     isActive: true,
-    institutionId,
-    institutionName: `autotest_institution_${getRandomPostfix()}`,
-    campusId,
-    campusName: `autotest_campuse_${getRandomPostfix()}`,
-    libraryId,
-    libraryName: `autotest_library_${getRandomPostfix()}`,
+    institutionId: institution.id,
+    institutionName: institution.name,
+    campusId: campus.id,
+    campusName: campus.name,
+    libraryId: library.id,
+    libraryName: library.name,
     name: `autotest_location_name_${getRandomPostfix()}`,
     code: `autotest_location_code_${getRandomPostfix()}`,
     discoveryDisplayName: `autotest_name_${getRandomPostfix()}`,
     // servicePointIds must have real Servi point id
-    servicePointIds: [servicePointId],
+    servicePointIds: secondaryServicePointId
+      ? [servicePointId, secondaryServicePointId]
+      : [servicePointId],
     primaryServicePoint: servicePointId,
   };
 
-  Institutions.createViaApi(
-    Institutions.getDefaultInstitution({
-      id: location.institutionId,
-      name: location.institutionName,
-    }),
-  ).then(() => {
-    Campuses.createViaApi(
-      Campuses.getDefaultCampuse({
-        id: location.campusId,
-        name: location.campusName,
-        institutionId: location.institutionId,
-      }),
-    ).then(() => {
-      Libraries.createViaApi(
-        Libraries.getDefaultLibrary({
-          id: location.libraryId,
-          name: location.libraryName,
-          campusId: location.campusId,
-        }),
-      );
+  Institutions.createViaApi(institution).then(() => {
+    Campuses.createViaApi(campus).then(() => {
+      Libraries.createViaApi(library);
     });
   });
-  return location;
+  return { institution, campus, library, location };
 };
 
 const addButton = Button('New');

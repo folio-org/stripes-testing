@@ -8,6 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
@@ -24,6 +25,11 @@ describe('Search in Inventory', () => {
         testData.userProperties = createdUserProperties;
       },
     );
+    cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
+      (createdUserProperties) => {
+        testData.userPropertiesC358938 = createdUserProperties;
+      },
+    );
   });
 
   beforeEach('Creating data', () => {
@@ -35,6 +41,7 @@ describe('Search in Inventory', () => {
 
   after('Deleting data', () => {
     Users.deleteViaApi(testData.userProperties.userId);
+    Users.deleteViaApi(testData.userPropertiesC358938.userId);
     createdInstanceIDs.forEach((id) => {
       InventoryInstance.deleteInstanceViaApi(id);
     });
@@ -52,7 +59,7 @@ describe('Search in Inventory', () => {
 
       DataImport.uploadFile('Sauguet_Henri_5_Bib_records.mrc', fileNameForC360548);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForC360548);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -91,7 +98,7 @@ describe('Search in Inventory', () => {
 
       DataImport.uploadFile('two_bib_records_with_isbn_search_by_keyword.mrc', fileNameForC360555);
       JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForC360555);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -122,6 +129,25 @@ describe('Search in Inventory', () => {
         InventoryInstance.checkIdentifier(query);
         InventorySearchAndFilter.resetAll();
       });
+    },
+  );
+
+  it(
+    'C358938 Verify that "Instance" record will close when user switches to browse (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      cy.login(testData.userPropertiesC358938.username, testData.userPropertiesC358938.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      InventoryInstance.searchByTitle('*');
+      InventoryInstances.waitLoading();
+      InventoryInstances.selectInstance();
+      InventorySearchAndFilter.verifyInstanceDetailsView();
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.verifyCallNumberBrowsePane();
+      InventorySearchAndFilter.verifyKeywordsAsDefault();
+      InventorySearchAndFilter.verifyInstanceDetailsViewAbsent();
     },
   );
 });

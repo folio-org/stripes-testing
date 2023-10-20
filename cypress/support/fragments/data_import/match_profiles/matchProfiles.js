@@ -7,6 +7,8 @@ import {
   DropdownMenu,
   HTML,
   Callout,
+  TextField,
+  MultiColumnList,
 } from '../../../../../interactors';
 import NewMatchProfile from './newMatchProfile';
 
@@ -56,7 +58,10 @@ export default {
   openNewMatchProfileForm,
   deleteMatchProfile,
   search,
-
+  clearSearchField: () => {
+    cy.do(TextField({ id: 'input-search-match-profiles-field' }).focus());
+    cy.do(Button({ id: 'input-match-profiles-search-field-clear-button' }).click());
+  },
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileForm(profile);
@@ -104,16 +109,23 @@ export default {
     cy.expect(MultiColumnListCell(profileName).exists());
   },
 
-  checkCalloutMessage: (profileName) => {
+  checkCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(`The match profile "${profileName}" was successfully updated`),
+        textContent: including(message),
       }).exists(),
     );
   },
 
-  checkListOfExistingProfilesIsDisplayed: () => cy.expect(resultsPane.exists()),
+  verifyListOfExistingProfilesIsDisplayed: () => {
+    cy.wait(2000);
+    cy.expect(resultsPane.find(MultiColumnList({ id: 'match-profiles-list' })).exists());
+  },
   selectMatchProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
   verifyMatchProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifySearchFieldIsEmpty: () => cy.expect(TextField({ id: 'input-search-match-profiles-field' }).has({ value: '' })),
+  verifySearchResult: (profileName) => {
+    cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
 };

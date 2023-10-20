@@ -105,7 +105,6 @@ describe('orders: Settings', () => {
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
         'Purchase',
         location.institutionId,
         '4',
@@ -114,7 +113,6 @@ describe('orders: Settings', () => {
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 40);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-        `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
         'Purchase',
         location.institutionId,
         '4',

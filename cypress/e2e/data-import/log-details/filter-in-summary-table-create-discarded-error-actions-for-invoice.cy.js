@@ -31,7 +31,7 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
       batchGroup: BATCH_GROUP.AMHERST,
       organizationName: VENDOR_NAMES.EBSCO,
@@ -95,7 +95,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC357018.edi', marcFileName);
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);

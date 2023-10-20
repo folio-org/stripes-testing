@@ -36,7 +36,7 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
       acquisitionsUnits: `"${defaultAcquisitionUnit.name}"`,
       batchGroup: BATCH_GROUP.FOLIO,
@@ -116,7 +116,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileName);
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);

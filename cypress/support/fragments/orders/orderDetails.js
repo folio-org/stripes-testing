@@ -6,21 +6,84 @@ import {
   KeyValue,
   MultiColumnListCell,
 } from '../../../../interactors';
-import Orders from './orders';
+import InteractorsTools from '../../utils/interactorsTools';
 import OrderLines from './orderLines';
+import OrderLineDetails from './orderLineDetails';
 import InventoryInstance from '../inventory/inventoryInstance';
+import CreateInvoiceModal from './modals/createInvoiceModal';
+import OpenConfirmationModal from './modals/openConfirmationModal';
+import UnopenConfirmationModal from './modals/unopenConfirmationModal';
+
+const orderDetailsPane = Pane({ id: 'order-details' });
+const actionsButton = Button('Actions');
 
 const polListingAccordion = Section({ id: 'POListing' });
 
 const openPolDetails = (title) => {
   cy.do(polListingAccordion.find(MultiColumnListCell({ content: title })).click());
+
+  OrderLineDetails.waitLoading();
+
+  return OrderLineDetails;
 };
 
 export default {
   openPolDetails,
-  checkIsOrderOpened(value) {
-    Orders.selectStatusInSearch('Open');
-    cy.expect(Section({ id: 'POSummary' }).find(KeyValue('Workflow status')).has({ value }));
+  checkOrderStatus(orderStatus) {
+    cy.expect(
+      Section({ id: 'POSummary' }).find(KeyValue('Workflow status')).has({ value: orderStatus }),
+    );
+  },
+  expandActionsDropdown() {
+    cy.do(
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
+        .click(),
+    );
+  },
+  openOrder({ orderNumber, confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Open').click());
+
+    if (orderNumber) {
+      OpenConfirmationModal.verifyModalView({ orderNumber });
+    }
+
+    if (confirm) {
+      OpenConfirmationModal.confirm();
+    }
+  },
+  unOpenOrder({ orderNumber, checkinItems = false, confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Unopen').click());
+
+    if (orderNumber) {
+      UnopenConfirmationModal.verifyModalView({ orderNumber, checkinItems });
+    }
+
+    if (confirm) {
+      UnopenConfirmationModal.confirm();
+    }
+  },
+  reOpenOrder({ orderNumber, checkMessage = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Reopen').click());
+
+    if (checkMessage) {
+      InteractorsTools.checkCalloutMessage(
+        `The Purchase order - ${orderNumber} has been successfully reopened`,
+      );
+    }
+  },
+  createNewInvoice({ confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('New invoice').click());
+
+    CreateInvoiceModal.verifyModalView();
+
+    if (confirm) {
+      CreateInvoiceModal.confirm();
+    }
   },
   openReceive() {
     cy.do([

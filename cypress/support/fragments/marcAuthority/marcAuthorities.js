@@ -65,6 +65,7 @@ const checkBoxAllRecords = Checkbox({ ariaLabel: 'Select all records on this pag
 const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
+const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 
 export default {
   waitLoading() {
@@ -199,7 +200,7 @@ export default {
 
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
-  checkRowsCount: (expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount + 1 })).absent()),
+  checkRowsCount: (expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()),
 
   switchToBrowse: () => cy.do(Button({ id: 'segment-navigation-browse' }).click()),
 
@@ -363,6 +364,13 @@ export default {
     cy.do(
       MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]),
     );
+  },
+
+  verifyEmptyAuthorityField: () => {
+    cy.expect([
+      sourceFileAccordion.find(MultiSelect({ label: including('Authority source') })).exists(),
+      sourceFileAccordion.find(MultiSelect({ selectedCount: 0 })).exists(),
+    ]);
   },
 
   clickActionsButton() {
@@ -662,5 +670,35 @@ export default {
 
   checkDetailViewIncludesText(text) {
     cy.expect(marcViewSection.find(HTML(including(text))).exists());
+  },
+
+  verifyEnabledSearchButton() {
+    cy.expect(searchButton.has({ disabled: false }));
+  },
+
+  verifyDisabledSearchButton() {
+    cy.expect(searchButton.has({ disabled: true }));
+  },
+
+  closeAuthorityLinkingModal() {
+    cy.do(closeLinkAuthorityModal.click());
+  },
+
+  verifyResultsRowContent(heading, type, headingType) {
+    cy.expect(MultiColumnListRow(including(heading), { isContainer: false }).exists());
+    if (type) {
+      cy.expect(
+        MultiColumnListRow(including(heading), { isContainer: false })
+          .find(MultiColumnListCell(type))
+          .exists(),
+      );
+    }
+    if (headingType) {
+      cy.expect(
+        MultiColumnListRow(including(heading), { isContainer: false })
+          .find(MultiColumnListCell(headingType))
+          .exists(),
+      );
+    }
   },
 };

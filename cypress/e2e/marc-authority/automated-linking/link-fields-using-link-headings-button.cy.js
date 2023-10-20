@@ -34,12 +34,12 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   const linkingTagAndValues = [
     {
       rowIndex: 82,
-      value: 'Stelfreeze, Brian',
+      value: 'C388536 Stelfreeze, Brian',
       tag: 700,
     },
     {
       rowIndex: 83,
-      value: 'Sprouse, Chris',
+      value: 'C388536 Sprouse, Chris',
       tag: 700,
     },
   ];
@@ -55,62 +55,62 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     {
       rowIndex: 33,
       tag: '100',
-      naturalId: 'n2008001084',
+      naturalId: 'n2008001084C388536',
     },
     {
       rowIndex: 37,
       tag: '240',
-      naturalId: 'no2020024230',
+      naturalId: 'no2020024230C388536',
     },
     {
       rowIndex: 65,
       tag: '600',
-      naturalId: 'n2016004081',
+      naturalId: 'n2016004081C388536',
     },
     {
       rowIndex: 62,
       tag: '630',
-      naturalId: 'no2023006889',
+      naturalId: 'no2023006889C388536',
     },
     {
       rowIndex: 73,
       tag: '655',
-      naturalId: 'gf2014026266',
+      naturalId: 'gf2014026266C388536',
     },
     {
       rowIndex: 84,
       tag: '700',
-      naturalId: 'no2011137752',
+      naturalId: 'no2011137752C388536',
     },
     {
       rowIndex: 86,
       tag: '700',
-      naturalId: 'n77020008',
+      naturalId: 'n77020008C388536',
     },
     {
       rowIndex: 87,
       tag: '700',
-      naturalId: 'n91065740',
+      naturalId: 'n91065740C388536',
     },
     {
       rowIndex: 88,
       tag: '710',
-      naturalId: 'no2008081921',
+      naturalId: 'no2008081921C388536',
     },
     {
       rowIndex: 89,
       tag: '711',
-      naturalId: 'n84745425',
+      naturalId: 'n84745425C388536',
     },
     {
       rowIndex: 91,
       tag: '800',
-      naturalId: 'n79023811',
+      naturalId: 'n79023811C388536',
     },
     {
       rowIndex: 94,
       tag: '830',
-      naturalId: 'no2018018754',
+      naturalId: 'no2018018754C388536',
     },
   ];
 
@@ -185,9 +185,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
-            JobProfiles.searchJobProfileForImport(marcFile.jobProfileToRun);
+            JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(marcFile.fileName);
             Logs.checkStatusOfJobProfile('Completed');
@@ -251,9 +252,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '700',
         '1',
         '\\',
-        '$a Stelfreeze, Brian',
+        '$a C388536 Stelfreeze, Brian',
         '$e artist.',
-        '$0 id.loc.gov/authorities/names/n91065740',
+        '$0 id.loc.gov/authorities/names/n91065740C388536',
         '',
       );
       QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -261,7 +262,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '700',
         '1',
         '\\',
-        '$a Sprouse, Chris',
+        '$a C388536 Sprouse, Chris',
         '$e artist.',
         '$0 id.loc.gov/authorities/names/nb98017694',
         '',
@@ -289,9 +290,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '700',
         '1',
         '\\',
-        '$a Stelfreeze, Brian',
+        '$a C388536 Stelfreeze, Brian',
         '$e artist.',
-        '$0 id.loc.gov/authorities/names/n91065740',
+        '$0 id.loc.gov/authorities/names/n91065740C388536',
         '',
       );
       matchingNaturalIds.forEach((matchs) => {
@@ -317,7 +318,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '700',
         '1',
         '\\',
-        '$a Sprouse, Chris',
+        '$a C388536 Sprouse, Chris',
         '$e artist.',
         '$0 id.loc.gov/authorities/names/nb98017694',
         '',
@@ -327,7 +328,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '700',
         '1',
         '\\',
-        '$a Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262',
+        '$a C388536 Martin, Laura $c (Comic book artist), $e colorist. $0 n2014052262',
       );
 
       QuickMarcEditor.clickLinkHeadingsButton();
@@ -352,7 +353,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '700',
         '1',
         '\\',
-        '$a Sprouse, Chris',
+        '$a C388536 Sprouse, Chris',
         '$e artist.',
         '$0 id.loc.gov/authorities/names/nb98017694',
         '',
@@ -362,9 +363,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '700',
         '1',
         '\\',
-        '$a Stelfreeze, Brian',
+        '$a C388536 Stelfreeze, Brian',
         '$e artist.',
-        '$0 id.loc.gov/authorities/names/n91065740',
+        '$0 id.loc.gov/authorities/names/n91065740C388536',
         '',
       );
       // Wait for requests to be finished.

@@ -6,22 +6,26 @@ export const RECEIVING_WORKFLOWS = {
   SYNCHRONIZED: 'Synchronized order and receipt quantity',
   INDEPENDENT: 'Independent order and receipt quantity',
 };
+export const CHECKIN_ITEMS_VALUE = {
+  [RECEIVING_WORKFLOWS.SYNCHRONIZED]: false,
+  [RECEIVING_WORKFLOWS.INDEPENDENT]: true,
+};
 
 const getDefaultOrderLine = ({
-  quantity = '1',
+  quantity = 1,
   title = `autotest_po_line_name-${getRandomPostfix()}`,
   instanceId,
   checkinItems = false,
   specialLocationId,
   specialMaterialTypeId,
   acquisitionMethod = '',
-  listUnitPrice = '1.0',
-  poLineEstimatedPrice = '1.0',
+  listUnitPrice = 1,
+  poLineEstimatedPrice,
   fundDistribution = [],
   productIds = [],
   referenceNumbers = [],
   vendorAccount = '1234',
-}) => {
+} = {}) => {
   const defaultOrderLine = {
     id: uuid(),
     checkinItems,
@@ -43,21 +47,28 @@ const getDefaultOrderLine = ({
     },
     fundDistribution,
     isPackage: false,
-    locations: [
-      {
-        locationId: specialLocationId,
-        quantity,
-        quantityPhysical: quantity,
-      },
-    ],
-    orderFormat: 'Physical Resource',
+    locations: specialLocationId
+      ? [
+        {
+          locationId: specialLocationId,
+          quantity,
+          quantityPhysical: quantity,
+        },
+      ]
+      : [],
+    orderFormat: specialLocationId ? 'Physical Resource' : 'Other',
     paymentStatus: 'Pending',
-    physical: {
-      createInventory: 'Instance, Holding, Item',
-      materialType: specialMaterialTypeId,
-      materialSupplier: null,
-      volumes: [],
-    },
+    physical: specialLocationId
+      ? {
+        createInventory: 'Instance, Holding, Item',
+        materialType: specialMaterialTypeId,
+        materialSupplier: null,
+        volumes: [],
+      }
+      : {
+        createInventory: 'None',
+        materialSupplier: 'c2b9b8a0-3d87-42d4-aa26-03fd90b22ebd',
+      },
     eresource: {
       activated: false,
       createInventory: 'None',
@@ -75,7 +86,7 @@ const getDefaultOrderLine = ({
       referenceNumbers,
     },
   };
-  if (!defaultOrderLine.physical.materialType) {
+  if (specialLocationId && !specialMaterialTypeId) {
     NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType()).then((mtypes) => {
       defaultOrderLine.physical.materialType = mtypes.body.id;
     });

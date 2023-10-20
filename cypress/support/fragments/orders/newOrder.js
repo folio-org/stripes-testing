@@ -1,12 +1,12 @@
 import uuid from 'uuid';
 import NewOrganization from '../organizations/newOrganization';
 
-const getDefaultOrder = ({ vendorId, poNumber } = {}) => {
+const getDefaultOrder = ({ vendorId, poNumber, orderType = 'One-Time' } = {}) => {
   const defaultOrder = {
     id: uuid(),
     poNumber,
     vendor: vendorId,
-    orderType: 'One-Time',
+    orderType,
   };
   if (!vendorId) {
     NewOrganization.createViaApi(NewOrganization.getDefaultOrganization()).then(
@@ -17,6 +17,16 @@ const getDefaultOrder = ({ vendorId, poNumber } = {}) => {
   }
   return defaultOrder;
 };
+
+const getDefaultOngoingOrder = ({ vendorId = '' }) => ({
+  id: uuid(),
+  vendor: vendorId,
+  ongoing: {
+    isSubscription: false,
+    manualRenewal: false,
+  },
+  orderType: 'Ongoing',
+});
 
 const defaultOneTimeOrder = {
   id: uuid(),
@@ -35,6 +45,7 @@ const defaultOngoingTimeOrder = {
 
 export default {
   getDefaultOrder,
+  getDefaultOngoingOrder,
   defaultOneTimeOrder,
   defaultOngoingTimeOrder,
   createViaApi(order = defaultOneTimeOrder) {

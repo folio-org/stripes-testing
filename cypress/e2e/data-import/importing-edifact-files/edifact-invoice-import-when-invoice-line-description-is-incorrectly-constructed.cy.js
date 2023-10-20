@@ -41,7 +41,7 @@ describe('data-import', () => {
       polNumber: 'RFF+SNA[2]',
       polVendorReferenceNumber: 'RFF+SLI[2]',
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
     };
     const actionProfile = {
       name: `C347926 Import Harrassowitz invoice.${getRandomPostfix()}`,
@@ -103,7 +103,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileName);
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);

@@ -20,11 +20,14 @@ import {
   Link,
   MultiColumnList,
   MultiSelectOption,
+  PaneHeader,
+  Select,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -336,6 +339,10 @@ export default {
       .eq(0)
       .find('a')
       .click();
+  },
+
+  checkNoTransactionOfType: (transactionType) => {
+    cy.expect(MultiColumnListCell(transactionType).absent());
   },
 
   increaseAllocation: () => {
@@ -698,6 +705,22 @@ export default {
     cy.expect(fundDetailsPane.visible());
   },
 
+  selectPreviousBudgetDetails: (rowNumber = 0) => {
+    cy.do([
+      Section({ id: 'previousBudgets' })
+        .find(MultiColumnListRow({ index: rowNumber }))
+        .click(),
+    ]);
+  },
+
+  selectPreviousBudgetDetailsByFY: (fund, fiscalYear) => {
+    cy.do([
+      Section({ id: 'previousBudgets' })
+        .find(MultiColumnListCell(`${fund.code}-${fiscalYear.code}`))
+        .click(),
+    ]);
+  },
+
   selectPlannedBudgetDetails: (rowNumber = 0) => {
     cy.do([
       Section({ id: 'plannedBudget' })
@@ -713,6 +736,12 @@ export default {
   editBudget: () => {
     cy.wait(4000);
     cy.do([actionsButton.click(), Button('Edit').click()]);
+  },
+
+  changeStatusOfBudget: (statusName, fund, fiscalYear) => {
+    cy.wait(4000);
+    cy.do([Select({ id: 'budget-status' }).choose(statusName), saveAndCloseButton.click()]);
+    InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${fiscalYear.code} has been saved`);
   },
 
   addExpensesClass: (firstExpenseClassName) => {
@@ -829,6 +858,7 @@ export default {
   },
 
   selectFund: (FundName) => {
+    cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
     cy.expect(fundDetailsPane.visible());
   },
@@ -840,6 +870,14 @@ export default {
   closeTransactionDetails: () => {
     cy.do(
       Section({ id: 'pane-transaction-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  closeTransactionApp: (fund, fiscalYear) => {
+    cy.do(
+      PaneHeader(`${fund.code}-${fiscalYear.code}`)
         .find(Button({ icon: 'times' }))
         .click(),
     );
@@ -866,5 +904,15 @@ export default {
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
+  },
+
+  varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
+      transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
+      transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
+      transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
+    );
   },
 };

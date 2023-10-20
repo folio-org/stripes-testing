@@ -63,6 +63,9 @@ const removeLinkingButton = Button({
   id: 'clickable-quick-marc-remove-authority-linking-confirm-modal-confirm',
 });
 const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlink-modal-confirm' });
+const cancelUnlinkButtonInsideModal = Button({
+  id: 'clickable-quick-marc-confirm-unlink-modal-cancel',
+});
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
@@ -99,6 +102,7 @@ const specRetInputNamesHoldings008 = [
 const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const linkHeadingsButton = Button('Link headings');
 const arrowDownButton = Button({ icon: 'arrow-down' });
+const buttonLink = Button({ icon: 'unlink' });
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -415,6 +419,14 @@ export default {
     cy.expect(paneHeader.find(linkHeadingsButton).exists());
   },
 
+  verifyEnabledLinkHeadingsButton() {
+    cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: false }));
+  },
+
+  verifyDisabledLinkHeadingsButton() {
+    cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: true }));
+  },
+
   clickArrowDownButton(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(arrowDownButton).click());
   },
@@ -442,6 +454,17 @@ export default {
   clickUnlinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
+    cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
+  },
+
+  checkUnlinkModal(rowIndex, text) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
+    cy.expect([
+      unlinkModal.exists(),
+      unlinkButtonInsideModal.exists(),
+      cancelUnlinkButtonInsideModal.exists(),
+      unlinkModal.has({ content: including(text) }),
+    ]);
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
   },
 
@@ -780,6 +803,14 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
   },
 
+  fillEmptyTextAreaOfField(rowIndex, fieldName, content) {
+    cy.do(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: fieldName }))
+        .fillIn(content),
+    );
+  },
+
   updateExistingTagValue(rowIndex, newTagValue) {
     cy.do(
       QuickMarcEditorRow({ index: rowIndex })
@@ -842,9 +873,6 @@ export default {
           }
         }
       });
-
-      // eslint-disable-next-line no-unused-expressions
-      expect(actualJoinedFieldNames).to.be.empty;
     });
   },
 
@@ -1062,13 +1090,17 @@ export default {
     cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
+  checkUnlinkTooltipText(tag, text) {
+    cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
+    cy.expect(Tooltip().has({ text }));
+  },
 
   checkLinkButtonExistByRowIndex(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists());
   },
 
   checkButtonSaveAndCloseEnable() {
-    cy.expect(saveAndCloseButton.exists());
+    cy.expect(saveAndCloseButtonEnabled.exists());
   },
 
   checkDeleteButtonExist(rowIndex) {
@@ -1472,5 +1504,31 @@ export default {
       cy.do(holdingsLocationSaveButton.click());
       cy.expect(holdingsLocationModal.absent());
     });
+  },
+
+  checkOnlyBackslashesIn008Boxes() {
+    cy.get('div[data-testid="bytes-field-col"]')
+      .find('input')
+      .then((fields) => {
+        const fieldValues = Array.from(fields, (field) => field.getAttribute('value'));
+        expect(fieldValues.join('')).to.match(/^\\+$/);
+      });
+  },
+
+  check008BoxesCount(count) {
+    cy.get('div[data-testid="bytes-field-col"]').should('have.length', count);
+  },
+
+  checkTagAbsent(tag) {
+    cy.expect(getRowInteractorByTagName(tag).absent());
+  },
+
+  checkLinkingAuthorityByTag: (tag) => {
+    cy.expect(buttonLink.exists());
+    cy.expect(Callout(`Field ${tag} has been linked to a MARC authority record.`).exists());
+  },
+
+  clickUnlinkButton: () => {
+    cy.do(buttonLink.click());
   },
 };

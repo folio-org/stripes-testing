@@ -77,7 +77,7 @@ describe('data-import', () => {
         DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
         // wait until file will be uploaded
         cy.wait(10000);
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(fileName);
 

@@ -17,12 +17,11 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  instanceId: '',
 };
 
 // TODO: identify how to stabilize flaky test
 
-describe.skip('bulk-edit', () => {
+describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser(
@@ -42,21 +41,19 @@ describe.skip('bulk-edit', () => {
         user2 = userProperties;
       });
 
-      item.instanceId = InventoryInstances.createInstanceViaApi(
-        item.instanceName,
-        item.itemBarcode,
-      );
-      cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
-        .then((instance) => {
-          item.itemId = instance.items[0].id;
-        })
-        .then(() => {
-          FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
-          FileManager.createFile(
-            `cypress/fixtures/${userBarcodesFileName}`,
-            `${user1.barcode}\n${user2.barcode}`,
-          );
-        });
+      InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"items.barcode"=="${item.itemBarcode}"`,
+      }).then((instance) => {
+        item.itemId = instance.items[0].id;
+        FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
+        FileManager.createFile(
+          `cypress/fixtures/${userBarcodesFileName}`,
+          `${user1.barcode}\n${user2.barcode}`,
+        );
+      });
     });
 
     after('delete test data', () => {

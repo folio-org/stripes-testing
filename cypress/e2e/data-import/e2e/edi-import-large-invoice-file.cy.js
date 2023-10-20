@@ -27,7 +27,7 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `Import Large Harrassowitz Serials Invoice ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
       batchGroup: BATCH_GROUP.FOLIO,
       organizationName: VENDOR_NAMES.HARRASSOWITZ,
@@ -82,7 +82,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC347615.edi', fileName);
         DataImport.waitFileIsUploaded();
-        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);

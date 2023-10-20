@@ -306,7 +306,8 @@ describe('data-import', () => {
           Orders.checkIsOrderCreated(firstOrderNumber);
           // open the first PO with POL
           openOrder(firstOrderNumber);
-          OrderDetails.checkIsOrderOpened(ORDER_STATUSES.OPEN);
+          Orders.selectStatusInSearch(ORDER_STATUSES.OPEN);
+          OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
           OrderDetails.checkIsItemsInInventoryCreated(firstItem.title, location.name);
           // check receiving pieces are created
           checkReceivedPiece(firstOrderNumber, firstItem.title);
@@ -337,7 +338,8 @@ describe('data-import', () => {
             Orders.checkIsOrderCreated(secondOrderNumber);
             // open the second PO
             openOrder(secondOrderNumber);
-            OrderDetails.checkIsOrderOpened(ORDER_STATUSES.OPEN);
+            Orders.selectStatusInSearch(ORDER_STATUSES.OPEN);
+            OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
             OrderDetails.checkIsItemsInInventoryCreated(secondItem.title, location.name);
             // check receiving pieces are created
             checkReceivedPiece(secondOrderNumber, secondItem.title);
@@ -393,7 +395,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
-        JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
+        JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile();

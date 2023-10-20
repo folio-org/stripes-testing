@@ -12,6 +12,7 @@ import Locations from '../../support/fragments/settings/tenant/location-setup/lo
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import Users from '../../support/fragments/users/users';
+import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Orders', () => {
   const testData = {
@@ -46,7 +47,7 @@ describe('Orders', () => {
       .then(() => {
         ServicePoints.createViaApi(testData.servicePoint).then(() => {
           Locations.createViaApi(
-            Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }),
+            Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }).location,
           ).then((location) => {
             testData.location = location;
 
@@ -105,11 +106,11 @@ describe('Orders', () => {
       { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
       () => {
         // Click on "PO number" link on "Orders" pane
-        Orders.selectOrderByPONumber(testData.order.poNumber);
-        Orders.checkOrderStatus('Open');
+        const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
 
         // Click "Actions" button, Select "Unopen" option
-        Orders.unOpenOrder({
+        OrderDetails.unOpenOrder({
           orderNumber: testData.order.poNumber,
           checkinItems: testData.instance.checkinItems,
           confirm: false,
@@ -117,7 +118,7 @@ describe('Orders', () => {
 
         // Click "Keep Holdings" button
         UnopenConfirmationModal.confirm({ keepHoldings: false });
-        Orders.checkOrderStatus('Pending');
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
 
         // Click on PO line record in "PO lines" accordion
         OrderLines.selectPOLInOrder();
@@ -131,8 +132,8 @@ describe('Orders', () => {
       { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
       () => {
         // Click on "PO number" link on "Orders" pane
-        Orders.selectOrderByPONumber(testData.order.poNumber);
-        Orders.checkOrderStatus('Open');
+        const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
 
         // Click on PO line record in "PO lines" accordion
         OrderLines.selectPOLInOrder();
@@ -150,7 +151,7 @@ describe('Orders', () => {
         OrderLines.backToEditingOrder();
 
         // Click "Actions" button, Select "Unopen" option
-        Orders.unOpenOrder({
+        OrderDetails.unOpenOrder({
           orderNumber: testData.order.poNumber,
           checkinItems: testData.instance.checkinItems,
           confirm: false,
@@ -160,7 +161,7 @@ describe('Orders', () => {
         UnopenConfirmationModal.closeModal();
 
         // Click "Actions" button, Select "Unopen" option
-        Orders.unOpenOrder({
+        OrderDetails.unOpenOrder({
           orderNumber: testData.order.poNumber,
           checkinItems: testData.instance.checkinItems,
           confirm: false,
@@ -168,7 +169,7 @@ describe('Orders', () => {
 
         // Click "Delete items" button
         UnopenConfirmationModal.confirm({ keepHoldings: true });
-        Orders.checkOrderStatus('Pending');
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
 
         // Click on PO line record in "PO lines" accordion
         OrderLines.selectPOLInOrder();
@@ -201,11 +202,11 @@ describe('Orders', () => {
       { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
       () => {
         // Click on "PO number" link on "Orders" pane
-        Orders.selectOrderByPONumber(testData.order.poNumber);
-        Orders.checkOrderStatus('Open');
+        const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
 
         // Click "Actions" button, Select "Unopen" option
-        Orders.unOpenOrder({
+        OrderDetails.unOpenOrder({
           orderNumber: testData.order.poNumber,
           checkinItems: testData.instance.checkinItems,
           confirm: false,
@@ -215,7 +216,7 @@ describe('Orders', () => {
         UnopenConfirmationModal.closeModal();
 
         // Click "Actions" button, Select "Unopen" option
-        Orders.unOpenOrder({
+        OrderDetails.unOpenOrder({
           orderNumber: testData.order.poNumber,
           checkinItems: testData.instance.checkinItems,
           confirm: false,
@@ -223,7 +224,7 @@ describe('Orders', () => {
 
         // Click "Keep Holdings" button
         UnopenConfirmationModal.confirm({ keepHoldings: true });
-        Orders.checkOrderStatus('Pending');
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
 
         // Click on PO line record in "PO lines" accordion
         OrderLines.selectPOLInOrder();
@@ -237,11 +238,11 @@ describe('Orders', () => {
       { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
       () => {
         // Click on "PO number" link on "Orders" pane
-        Orders.selectOrderByPONumber(testData.order.poNumber);
-        Orders.checkOrderStatus('Open');
+        const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
 
         // Click "Actions" button, Select "Unopen" option
-        Orders.unOpenOrder({
+        OrderDetails.unOpenOrder({
           orderNumber: testData.order.poNumber,
           checkinItems: testData.instance.checkinItems,
           confirm: false,
@@ -249,7 +250,7 @@ describe('Orders', () => {
 
         // Click "Delete Holdings" button
         UnopenConfirmationModal.confirm({ keepHoldings: false });
-        Orders.checkOrderStatus('Pending');
+        OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
 
         // Click on PO line record in "PO lines" accordion
         OrderLines.selectPOLInOrder();

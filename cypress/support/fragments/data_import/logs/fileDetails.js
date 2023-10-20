@@ -6,6 +6,7 @@ import {
   MultiColumnListRow,
   Link,
   PaneHeader,
+  Section,
   Button,
   Pane,
 } from '../../../../../interactors';
@@ -185,14 +186,16 @@ function validateNumsAscendingOrder(prev) {
   cy.expect(itemsClone).to.deep.equal(prev);
 }
 
-function getMultiColumnListCellsValues() {
+function getMultiColumnListCellsValuesInResultsList(cell) {
   const cells = [];
+
   // get MultiColumnList rows and loop over
   return cy
-    .get('[data-row-index]')
+    .get('#search-results-list')
+    .find('[data-row-index]')
     .each(($row) => {
       // from each row, choose specific cell
-      cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
         // extract its text content
         .invoke('text')
         .then((cellValue) => {
@@ -208,7 +211,6 @@ export default {
   status,
   invoiceNumberFromEdifactFile,
   validateNumsAscendingOrder,
-  getMultiColumnListCellsValues,
   checkStatusInColumn,
   checkItemsStatusesInResultList,
   checkItemsQuantityInSummaryTable,
@@ -271,6 +273,14 @@ export default {
         );
       }),
     );
+  },
+
+  openJsonScreen: (title) => {
+    cy.get('#search-results-list')
+      .find('*[class^="mclCell"]')
+      .contains(title)
+      .invoke('removeAttr', 'target')
+      .click();
   },
 
   filterRecordsWithError: (quantity) => {
@@ -384,10 +394,12 @@ export default {
   },
 
   verifyRecordsSortingOrder() {
-    getMultiColumnListCellsValues(1).then((cells) => {
-      const dates = cells.map((cell) => new Date(cell));
-      validateNumsAscendingOrder(dates);
-    });
+    getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex).then(
+      (cells) => {
+        const dates = cells.map((cell) => new Date(cell));
+        validateNumsAscendingOrder(dates);
+      },
+    );
   },
 
   verifyQuantityOfRecordsWithError: (number) => {
@@ -402,31 +414,12 @@ export default {
     cy.expect(jobSummaryTable.absent());
   },
 
-  getMultiColumnListCellsValuesInResultsList(cell) {
-    const cells = [];
-
-    // get MultiColumnList rows and loop over
-    return cy
-      .get('#search-results-list')
-      .find('[data-row-index]')
-      .each(($row) => {
-        // from each row, choose specific cell
-        cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
-          // extract its text content
-          .invoke('text')
-          .then((cellValue) => {
-            cells.push(cellValue);
-          });
-      })
-      .then(() => cells);
-  },
-
   verifyRecordColumnHasStandardSequentialNumberingForRecords() {
-    this.getMultiColumnListCellsValuesInResultsList(
-      visibleColumnsInResultsList.RECORD.columnIndex,
-    ).then((cells) => {
-      validateNumsAscendingOrder(cells);
-    });
+    getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex).then(
+      (cells) => {
+        validateNumsAscendingOrder(cells);
+      },
+    );
   },
 
   verifyStatusHasLinkToOrder: (rowNumber) => {
@@ -473,5 +466,37 @@ export default {
 
   verifyLogDetailsPageIsOpened: (fileName) => {
     cy.expect(Pane(fileName).exists());
+  },
+
+  verifyInstanceStatusIsHiperlink: (itmStatus, rowNumber = 0) => {
+    cy.expect(
+      resultsList
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 3 }))
+        .find(Link(itmStatus))
+        .exists(),
+    );
+  },
+
+  getInvoiceNumber: (vendorInvoiceNumber) => {
+    cy.do(
+      Section()
+        .find(MultiColumnListCell(including(vendorInvoiceNumber)))
+        .perform((el) => {
+          cy.wrap(el.innerText.split('-')[0]).as('invoiceNumber');
+        }),
+    );
+    return cy.get('@invoiceNumber');
+  },
+
+  getItemHrids: () => {
+    return getMultiColumnListCellsValuesInResultsList(
+      visibleColumnsInResultsList.ITEM.columnIndex,
+    ).then((cells) => {
+      let extractedValues;
+      cells.forEach((value) => {
+        extractedValues = value.match(/it(\d+)/g);
+      });
+      return extractedValues;
+    });
   },
 };

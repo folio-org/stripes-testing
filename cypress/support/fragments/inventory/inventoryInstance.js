@@ -37,6 +37,7 @@ import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovemen
 import ItemRecordView from './item/itemRecordView';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
+import Badge from '../../../../interactors/badge';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -103,6 +104,7 @@ const mclLinkHeader = MultiColumnListHeader({ id: 'list-column-link' });
 const mclAuthRefTypeHeader = MultiColumnListHeader({ id: 'list-column-authreftype' });
 const mclHeadingRef = MultiColumnListHeader({ id: 'list-column-headingref' });
 const mclHeadingType = MultiColumnListHeader({ id: 'list-column-headingtype' });
+const contributorsList = MultiColumnList({ id: 'list-contributors' });
 const buttonPrevPageDisabled = Button({
   id: 'authority-result-list-prev-paging-button',
   disabled: true,
@@ -128,7 +130,9 @@ const detailsPaneContent = PaneContent({ id: 'pane-instancedetails-content' });
 const administrativeDataAccordion = Accordion('Administrative data');
 const unlinkIconButton = Button({ icon: 'unlink' });
 const itemBarcodeField = TextField({ name: 'barcode' });
+const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
+const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
 
 const validOCLC = {
   id: '176116217',
@@ -211,10 +215,20 @@ const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
 const verifyContributor = (indexRow, indexColumn, value) => {
   cy.expect(
     contributorAccordion
-      .find(MultiColumnList({ id: 'list-contributors' }))
+      .find(contributorsList)
       .find(MultiColumnListRow({ index: indexRow }))
       .find(MultiColumnListCell({ columnIndex: indexColumn }))
       .has({ content: value }),
+  );
+};
+
+const verifyContributorWithMarcAppLink = (indexRow, indexColumn, value) => {
+  cy.expect(
+    contributorAccordion
+      .find(contributorsList)
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell({ columnIndex: indexColumn }))
+      .has({ content: including(value) }),
   );
 };
 
@@ -264,7 +278,11 @@ export default {
   openItemByBarcode,
   verifyAlternativeTitle,
   verifyContributor,
+  verifyContributorWithMarcAppLink,
 
+  waitInventoryLoading() {
+    cy.expect(section.exists());
+  },
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -320,6 +338,14 @@ export default {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
   },
 
+  checkHoldingTitle(title, absent = false) {
+    if (!absent) {
+      cy.expect(detailsPaneContent.has({ text: including(`Holdings: ${title}`) }));
+    } else {
+      cy.expect(detailsPaneContent.find(HTML({ text: including(`Holdings: ${title}`) })).absent());
+    }
+  },
+
   startOverlaySourceBibRecord: () => {
     cy.do(actionsButton.click());
     cy.do(overlaySourceBibRecord.click());
@@ -348,9 +374,11 @@ export default {
     cy.expect(section.exists());
   },
 
-  searchByTitle(title) {
+  searchByTitle(title, result = true) {
     cy.do([filterPane.find(inputSearchField).fillIn(title), filterPane.find(searchButton).click()]);
-    cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    if (result) {
+      cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    }
   },
 
   clickViewAuthorityIconDisplayedInTagField(tag) {
@@ -380,8 +408,20 @@ export default {
     });
   },
 
+  marcAuthViewIconClickUsingId(id) {
+    cy.do(Link({ href: including(`/${id}`) }).click());
+  },
+
   goToPreviousPage() {
     cy.go('back');
+  },
+
+  verifyRecordAndMarcAuthIcon(accordion, expectedText) {
+    cy.expect(
+      Accordion(accordion)
+        .find(HTML(including(expectedText)))
+        .exists(),
+    );
   },
 
   checkExistanceOfAuthorityIconInInstanceDetailPane(accordion) {
@@ -574,6 +614,11 @@ export default {
     cy.expect(Section({ id: 'acc01' }).exists());
   },
 
+  clickAddItemByHoldingName(holdingName) {
+    const holdingSection = section.find(Accordion(including(holdingName)));
+    cy.do(holdingSection.find(addItemButton).click());
+  },
+
   fillItemRequiredFields() {
     cy.do(Select({ id: 'additem_materialType' }).choose('book'));
     cy.do(Select({ id: 'additem_loanTypePerm' }).choose('Can circulate'));
@@ -607,7 +652,7 @@ export default {
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    cy.expect(Button('Actions').exists());
+    cy.expect(Pane({ titleLabel: including('Holdings') }).exists());
   },
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
@@ -877,6 +922,12 @@ export default {
     cy.expect(HTML('MARC bibliographic record').exists());
   },
 
+  checkNewRequestAtNewPane() {
+    cy.do(actionsButton.click());
+    cy.expect([Button({ id: 'edit-instance' }).exists(), Button({ id: 'copy-instance' }).exists()]);
+    cy.do(Button('New request').click());
+  },
+
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
   overlayWithOclc: (oclc) => {
@@ -907,7 +958,7 @@ export default {
     cy.expect(section.find(Button(including('Contributor'))).exists());
     cy.expect(
       Accordion('Contributor')
-        .find(MultiColumnList({ id: 'list-contributors' }))
+        .find(contributorsList)
         .find(MultiColumnListCell(including(text)))
         .exists(),
     );
@@ -976,5 +1027,33 @@ export default {
   openHoldingViewByID: (holdingsID) => {
     cy.do(viewHoldingsButtonByID(holdingsID).click());
     cy.expect(Button('Actions').exists());
+  },
+
+  checkMarcAppIconExist: (indexRow) => {
+    cy.expect(
+      contributorAccordion
+        .find(contributorsList)
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(marcAuthorityAppIcon)
+        .exists(),
+    );
+  },
+
+  checkMarcAppIconAbsent: (indexRow) => {
+    cy.expect(
+      contributorAccordion
+        .find(contributorsList)
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(marcAuthorityAppIcon)
+        .absent(),
+    );
+  },
+  verifyCheckedOutDate: (date) => {
+    cy.expect(itemStatusKeyValue.has({ subValue: including(date) }));
+  },
+
+  verifyNumberOfItemsInHoldingByName(holdingName, numOfItems) {
+    const holdingSection = section.find(Accordion(including(holdingName)));
+    cy.expect(holdingSection.find(Badge()).has({ value: `${numOfItems}` }));
   },
 };

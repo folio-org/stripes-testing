@@ -51,14 +51,21 @@ export default {
     cy.do(Button('Start bulk edit').click());
     cy.wait(1000);
   },
+  selectOption(optionName, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(optionName),
+    );
+  },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
-    cy.expect([
-      Button({ icon: 'plus-sign' }).exists(),
-      Button({ icon: 'trash', disabled: true }).exists(),
-    ]);
+    this.verifyRowIcons();
+  },
+  verifyRowIcons() {
+    cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
 
   verifyAreYouSureForm(count, cellContent) {
@@ -69,6 +76,30 @@ export default {
       areYouSureForm.find(Button('Commit changes')).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists(),
     ]);
+  },
+
+  verifyChangesInAreYouSureForm(column, changes) {
+    changes.forEach((value) => {
+      cy.expect(
+        areYouSureForm.find(MultiColumnListCell({ column, content: including(value) })).exists(),
+      );
+    });
+  },
+
+  verifyItemStatusOptions(rowIndex = 0) {
+    const options = [
+      'Available',
+      'Withdrawn',
+      'Missing',
+      'In process (non-requestable)',
+      'Intellectual item',
+      'Long missing',
+      'Restricted',
+      'Unavailable',
+      'Unknown',
+    ];
+    cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).click()]);
+    this.verifyPossibleActions(options);
   },
 
   downloadPreview() {
@@ -376,23 +407,15 @@ export default {
 
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
     cy.do([
-      RepeatableFieldItem({ index: rowIndex })
-        .find(bulkPageSelections.valueType)
-        .choose(noteType),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(bulkPageSelections.action)
-        .choose('Find'),
-      RepeatableFieldItem({ index: rowIndex })
-        .find(TextArea())
-        .fillIn(oldNote),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
+      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(oldNote),
       RepeatableFieldItem({ index: rowIndex })
         .find(Select({ value: '' }))
-        .choose('Replace with')
+        .choose('Replace with'),
     ]);
     // TODO: redesign with interactors
-    cy.xpath(
-      `//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`,
-    ).type(newNote);
+    cy.xpath(`//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`).type(newNote);
   },
 
   addItemNote(type, value, rowIndex = 0) {
@@ -464,6 +487,30 @@ export default {
     cy.expect(HTML('No matching options').exists());
   },
 
+  duplicateCheckInNote(note = 'in', rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(`Check ${note} note`),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Duplicate to'),
+    ]);
+    if (note === 'in') {
+      cy.expect(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(Select({ content: 'Check out note' }))
+          .has({ disabled: true }),
+      );
+    } else {
+      cy.expect(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(Select({ content: 'Check in note' }))
+          .has({ disabled: true }),
+      );
+    }
+  },
+
   verifyMatchingOptionsForLocationFilter(location) {
     cy.expect(HTML(including(location)).exists());
   },
@@ -485,11 +532,6 @@ export default {
 
   downloadErrors() {
     cy.do(Button('Download errors (CSV)').click());
-    BulkEditSearchPane.waitingFileDownload();
-  },
-
-  downloadMatchedErrors() {
-    cy.do(Button('Download matched records (CSV)').click());
     BulkEditSearchPane.waitingFileDownload();
   },
 

@@ -330,7 +330,7 @@ describe('Request notice triggers', () => {
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
 
       const dublicate = true;
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest, dublicate);
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.recallRequest);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.recallRequest);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.awaitingPickUp, dublicate);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.awaitingPickUp);

@@ -46,7 +46,7 @@ describe('data-import', () => {
       {
         mappingProfile: {
           incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-          existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+          typeValue: FOLIO_RECORD_TYPE.INVOICE,
           name: `C345353 Test Harrassowitz invoice with space.${getRandomPostfix()}`,
           description: '',
           batchGroup: BATCH_GROUP.FOLIO,
@@ -74,7 +74,7 @@ describe('data-import', () => {
       {
         mappingProfile: {
           incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-          existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+          typeValue: FOLIO_RECORD_TYPE.INVOICE,
           name: `C345353 Test Harrassowitz invoice with hyphen.${getRandomPostfix()}`,
           invoiceNote: 'RFF+API[2] "-" NAD+SU+++[1]',
           subscriptionInfo: 'IMD+L+085+[4-5] "-" IMD+L+086+[4-5]',
@@ -162,7 +162,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileNameForFirstImport);
-        JobProfiles.searchJobProfileForImport(collectionOfProfiles[0].jobProfile.profileName);
+        JobProfiles.search(collectionOfProfiles[0].jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForFirstImport);
@@ -184,7 +184,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileNameForSecondImport);
-        JobProfiles.searchJobProfileForImport(collectionOfProfiles[1].jobProfile.profileName);
+        JobProfiles.search(collectionOfProfiles[1].jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForSecondImport);

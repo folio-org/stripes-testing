@@ -19,6 +19,7 @@ import {
   Link,
   Card,
   ListRow,
+  Select,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -50,10 +51,15 @@ const cancelButton = Button('Cancel');
 const calloutSuccess = Callout({ type: 'success' });
 const notesSection = Section({ id: 'notes' });
 const viewAgreementPane = Pane({ id: 'pane-view-agreement' });
+const newAgreementLineButton = Button({ id: 'add-agreement-line-button' });
+const viewInAgreementLineSearchButton = Button({ id: 'agreement-line-search' });
+const noteTypeDropdown = Select({ name: 'type' });
+const agreementLineFilter = Button({ id: 'clickable-nav-agreementLines' });
 
 function openAgreementLineAccordion() {
   cy.do(agreementLine.click());
 }
+
 function selectAgreementLine() {
   cy.do(
     Section({ id: 'lines' })
@@ -61,6 +67,7 @@ function selectAgreementLine() {
       .click(),
   );
 }
+
 function addNewNote() {
   cy.do(newNoteButton.click());
 }
@@ -137,8 +144,11 @@ export default {
     cy.expect(supplementaryDocumentsAccordion.has({ open: true }));
   },
 
-  createNote(specialNote = NewNote.defaultNote) {
+  createNote(specialNote = NewNote.defaultNote, noteType) {
     addNewNote();
+    if (noteType) {
+      cy.do(noteTypeDropdown.choose(noteType));
+    }
     NewNote.fill(specialNote);
     NewNote.save();
   },
@@ -409,6 +419,17 @@ export default {
     cy.expect(viewAgreementPane.find(MultiColumnListCell({ content: name, row: 0 })).exists());
   },
 
+  deletionOfAgreementLine() {
+    openAgreementLineAccordion();
+    selectAgreementLine();
+    cy.do([
+      Section({ id: 'pane-view-agreement-line' }).find(actionsButton).click(),
+      deleteButton.click(),
+      agreementLineDeleteModel.find(deleteButton).click(),
+    ]);
+    cy.expect([calloutSuccess.exists(), calloutSuccess.has({ text: 'Agreement line deleted' })]);
+  },
+
   openLinkFromSupplementaryDocument(documentName) {
     const urlLink = supplementaryDocumentsAccordion
       .find(Card({ headerStart: documentName }))
@@ -427,5 +448,18 @@ export default {
     cy.wait('@downloadFile').then((res) => {
       expect(res.response.statusCode).to.eq(200);
     });
+  },
+
+  clickActionsForAgreementLines() {
+    cy.do([agreementLinesAccordion.find(actionsButton).click()]);
+    cy.expect([newAgreementLineButton.exists(), viewInAgreementLineSearchButton.exists()]);
+  },
+
+  clickNewAgreementLine() {
+    cy.do(newAgreementLineButton.click());
+  },
+
+  openAgreementLineFilter() {
+    cy.do(agreementLineFilter.click());
   },
 };

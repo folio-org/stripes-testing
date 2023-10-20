@@ -284,7 +284,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
-        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -320,7 +320,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
-          JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+          JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameForProtect);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -369,7 +369,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
-          JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
+          JobProfiles.search(jobProfileForOverride.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameForOverride);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);

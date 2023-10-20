@@ -86,6 +86,7 @@ export default {
         .find(MultiColumnListCell(integrationName))
         .click(),
     );
+    cy.wait(4000);
   },
 
   closeExportJobPane() {
@@ -285,6 +286,18 @@ export default {
         .find(KeyValue('End time'))
         .has({ value: including(expectedValuesObject.startDate) }),
     ]);
+  },
+
+  verifyJobStatusInDetailView(status) {
+    cy.expect(jobDetailsPane.find(KeyValue('Status')).has({ value: status }));
+  },
+
+  verifyJobOrganizationInDetailView(organization) {
+    cy.expect(jobDetailsPane.find(KeyValue('Organization')).has({ value: organization.name }));
+  },
+
+  verifyJobExportMethodInDetailView(integrationName) {
+    cy.expect(jobDetailsPane.find(KeyValue('Export method')).has({ value: integrationName }));
   },
 
   verifyExportedFileName(actualName) {

@@ -57,6 +57,8 @@ export const ITEM_STATUS_NAMES = {
   DECLARED_LOST: 'Declared lost',
   MARKED_AS_MISSING: 'Marked as missing',
   AWAITING_DELIVERY: 'Awaiting delivery',
+  FOUND_BY_LIBRARY: 'Checked in (found by library)',
+  AGED_TO_LOST: 'Aged to lost',
 };
 
 export const CY_ENV = {
@@ -173,6 +175,16 @@ export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
 };
 
+export const RECEIPT_STATUS_SELECTED = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt not required',
+};
+
+export const RECEIPT_STATUS_VIEW = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
+};
+
 export const RECEIVING_WORKFLOW_NAMES = {
   SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
   INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
@@ -216,6 +228,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   OTHER_SCHEME: 'Other scheme',
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
+  DEWAY_DECIMAL: 'Dewey Decimal classification',
 };
 
 export const EXPORT_TRANSFORMATION_NAMES = {
@@ -289,4 +302,14 @@ export const REMOTE_STORAGE_PROVIDER_NAMES = {
   Dematic_EMS: 'Dematic EMS (API)',
   DDEMATIC_STAGING_DIRECTOR: 'Dematic StagingDirector (TCP/IP)',
   CAIA_SOFT: 'CaiaSoft',
+};
+
+export const BROWSE_CALL_NUMBER_OPTIONS = {
+  CALL_NUMBERS_ALL: 'Call numbers (all)',
+  DEWEY_DECIMAL: 'Dewey Decimal classification',
+  LIBRARY_OF_CONGRESS: 'Library of Congress classification',
+  LOCAL: 'Local',
+  LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
+  OTHER_SCHEME: 'Other scheme',
+  SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
 };

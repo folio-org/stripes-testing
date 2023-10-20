@@ -187,7 +187,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
-        JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfile.profileName);
+        JobProfiles.search(createInstanceAndEHoldingsJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForCreateMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
@@ -203,7 +203,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
-          JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfile.profileName);
+          JobProfiles.search(updateEHoldingsJobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameForUpdateCreateMarcFile);
           Logs.checkStatusOfJobProfile();
