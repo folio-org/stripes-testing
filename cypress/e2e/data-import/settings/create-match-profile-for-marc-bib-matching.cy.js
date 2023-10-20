@@ -24,6 +24,38 @@ describe('data-import', () => {
     });
 
     it(
+      'C9321 Create match profile for MARC Bib matching to a FOLIO record type (folijet) (TaaS)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      () => {
+        const matchProfile = {
+          profileName: `C9321 autotest match profile_${getRandomPostfix()}`,
+          incomingRecordFields: {
+            field: '001',
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
+          instanceOption: NewMatchProfile.optionsList.instanceHrid,
+        };
+
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
+        MatchProfiles.openNewMatchProfileForm();
+        NewMatchProfile.fillName(matchProfile.profileName);
+        NewMatchProfile.verifyExistingRecordSection();
+        NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
+        NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
+        NewMatchProfile.verifyIncomingRecordsDropdown();
+        NewMatchProfile.fillIncomingRecordSections(matchProfile);
+        NewMatchProfile.selectExistingRecordField(matchProfile.instanceOption);
+        NewMatchProfile.saveAndClose();
+        MatchProfileView.verifyMatchProfileOpened();
+        MatchProfileView.verifyMatchProfileWithFolioRecordValue(matchProfile, incomingRecordType);
+
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      },
+    );
+
+    it(
       'C9322 Create match profile for MARC Bib matching to a MARC record type (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
@@ -69,11 +101,11 @@ describe('data-import', () => {
     );
 
     it(
-      'C9321 Create match profile for MARC Bib matching to a FOLIO record type (folijet) (TaaS)',
+      'C9323 Create match profile for Static value TEXT match (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         const matchProfile = {
-          profileName: `C368009 001 to Instance HRID ${getRandomPostfix()}`,
+          profileName: `C9323 autotest match profile_${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '001',
           },
@@ -86,17 +118,7 @@ describe('data-import', () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.openNewMatchProfileForm();
         NewMatchProfile.fillName(matchProfile.profileName);
-        NewMatchProfile.verifyExistingRecordSection();
-        NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
-        NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
-        NewMatchProfile.verifyIncomingRecordsDropdown();
-        NewMatchProfile.fillIncomingRecordSections(matchProfile);
-        NewMatchProfile.selectExistingRecordField(matchProfile.instanceOption);
-        NewMatchProfile.saveAndClose();
-        MatchProfileView.verifyMatchProfileOpened();
-        MatchProfileView.verifyMatchProfileWithFolioRecordValue(matchProfile, incomingRecordType);
-
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        // fillMatchProfileWithStaticValue
       },
     );
   });
