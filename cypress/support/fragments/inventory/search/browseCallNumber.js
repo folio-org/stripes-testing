@@ -3,7 +3,6 @@ import {
   including,
   MultiColumnListCell,
   MultiColumnListHeader,
-  MultiColumnListRow,
   Section,
 } from '../../../../../interactors';
 
@@ -77,7 +76,7 @@ export default {
       MultiColumnListCell({ content: rows[0] }).perform((element) => {
         const rowNumber = parseInt(element.parentElement.getAttribute('data-row-inner'), 10);
         rows.forEach((el, i) => {
-          cy.expect(MultiColumnListRow({ index: rowNumber + i }).has({ content: including(el) }));
+          cy.expect(MultiColumnListCell(el).has({ row: rowNumber + i }));
         });
       }),
     );

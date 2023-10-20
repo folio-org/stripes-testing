@@ -12,6 +12,7 @@ import {
   RepeatableFieldItem,
   Select,
   TextArea,
+  Selection,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -19,6 +20,7 @@ import BulkEditSearchPane from './bulk-edit-search-pane';
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
+const cancelButton = Button('Cancel');
 const createBtn = Button({ id: 'clickable-create-widget' });
 const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
@@ -28,6 +30,7 @@ const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const calendarButton = Button({ icon: 'calendar' });
+const locationLookupModal = Modal('Select permanent location');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -49,14 +52,21 @@ export default {
     cy.do(Button('Start bulk edit').click());
     cy.wait(1000);
   },
+  selectOption(optionName, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(optionName),
+    );
+  },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
-    cy.expect([
-      Button({ icon: 'plus-sign' }).exists(),
-      Button({ icon: 'trash', disabled: true }).exists(),
-    ]);
+    this.verifyRowIcons();
+  },
+  verifyRowIcons() {
+    cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
 
   verifyAreYouSureForm(count, cellContent) {
@@ -75,6 +85,22 @@ export default {
         areYouSureForm.find(MultiColumnListCell({ column, content: including(value) })).exists(),
       );
     });
+  },
+
+  verifyItemStatusOptions(rowIndex = 0) {
+    const options = [
+      'Available',
+      'Withdrawn',
+      'Missing',
+      'In process (non-requestable)',
+      'Intellectual item',
+      'Long missing',
+      'Restricted',
+      'Unavailable',
+      'Unknown',
+    ];
+    cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).click()]);
+    this.verifyPossibleActions(options);
   },
 
   downloadPreview() {
@@ -141,6 +167,26 @@ export default {
     );
     getEmailField().first().type(oldEmailDomain);
     getEmailField().eq(2).type(newEmailDomain);
+  },
+
+  clickLocationLookup() {
+    cy.do(Button('Location look-up').click());
+  },
+
+  verifyLocationLookupModal() {
+    cy.expect([
+      locationLookupModal.exists(),
+      Select({ label: 'Institution' }).exists(),
+      Select({ label: 'Campus' }).exists(),
+      Select({ label: 'Library' }).exists(),
+      Selection('Location').exists(),
+      locationLookupModal.find(cancelButton).has({ disabled: false }),
+      Button('Save and close').has({ disabled: true }),
+    ]);
+  },
+
+  locationLookupModalCancel() {
+    cy.do(locationLookupModal.find(cancelButton).click());
   },
 
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
@@ -442,20 +488,28 @@ export default {
     cy.expect(HTML('No matching options').exists());
   },
 
-  duplicateCheckInNote(rowIndex = 0) {
+  duplicateCheckInNote(note = 'in', rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
-        .choose('Check in note'),
+        .choose(`Check ${note} note`),
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Duplicate to'),
     ]);
-    cy.expect(
-      RepeatableFieldItem({ index: rowIndex })
-        .find(Select({ content: 'Check out note' }))
-        .has({ disabled: true }),
-    );
+    if (note === 'in') {
+      cy.expect(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(Select({ content: 'Check out note' }))
+          .has({ disabled: true }),
+      );
+    } else {
+      cy.expect(
+        RepeatableFieldItem({ index: rowIndex })
+          .find(Select({ content: 'Check in note' }))
+          .has({ disabled: true }),
+      );
+    }
   },
 
   verifyMatchingOptionsForLocationFilter(location) {
@@ -479,11 +533,6 @@ export default {
 
   downloadErrors() {
     cy.do(Button('Download errors (CSV)').click());
-    BulkEditSearchPane.waitingFileDownload();
-  },
-
-  downloadMatchedErrors() {
-    cy.do(Button('Download matched records (CSV)').click());
     BulkEditSearchPane.waitingFileDownload();
   },
 

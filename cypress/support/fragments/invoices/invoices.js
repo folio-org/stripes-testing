@@ -120,9 +120,10 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }) {
+  createInvoiceViaApi({ vendorId, accountingCode, fiscalYearId, exportToAccounting }) {
     cy.getBatchGroups().then(({ id: batchGroupId }) => {
       const invoice = getDefaultInvoice({
+        fiscalYearId,
         batchGroupId,
         vendorId,
         accountingCode,
@@ -182,24 +183,27 @@ export default {
   createInvoiceWithInvoiceLineViaApi({
     vendorId,
     poLineId,
+    fiscalYearId,
     fundDistributions,
     accountingCode,
     releaseEncumbrance,
     exportToAccounting,
   }) {
-    this.createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }).then((resp) => {
-      cy.wrap(resp).as('invoice');
-      const { id: invoiceId, status: invoiceLineStatus } = resp;
-      const invoiceLine = getDefaultInvoiceLine({
-        invoiceId,
-        invoiceLineStatus,
-        poLineId,
-        fundDistributions,
-        accountingCode,
-        releaseEncumbrance,
-      });
-      this.createInviceLineViaApi(invoiceLine);
-    });
+    this.createInvoiceViaApi({ vendorId, accountingCode, fiscalYearId, exportToAccounting }).then(
+      (resp) => {
+        cy.wrap(resp).as('invoice');
+        const { id: invoiceId, status: invoiceLineStatus } = resp;
+        const invoiceLine = getDefaultInvoiceLine({
+          invoiceId,
+          invoiceLineStatus,
+          poLineId,
+          fundDistributions,
+          accountingCode,
+          releaseEncumbrance,
+        });
+        this.createInviceLineViaApi(invoiceLine);
+      },
+    );
     return cy.get('@invoice');
   },
   selectFolio() {
@@ -286,6 +290,82 @@ export default {
       buttonNew.click(),
       Selection('Status*').open(),
       SelectionList().select(invoice.status),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(organization);
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select('FOLIO'),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').checked(false),
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  createRolloverInvoiceWithAjustmentAndFund(
+    invoice,
+    organization,
+    descriptionInput,
+    valueInput,
+    percentOrDollar,
+    proRate,
+    realtioToTotal,
+    exportToAccounting = false,
+    fund,
+  ) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(organization);
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select('FOLIO'),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').checked(false),
+    ]);
+    cy.do([
+      Button({ id: 'adjustments-add-button' }).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+    ]);
+    if (percentOrDollar === '$') {
+      cy.do(Button('$').click());
+    } else if (percentOrDollar === '%') {
+      cy.do(Button('%').click());
+    }
+    cy.do([
+      Select({ name: 'adjustments[0].prorate' }).choose(proRate),
+      Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
+    ]);
+    if (exportToAccounting === true) {
+      cy.do(Checkbox({ name: 'adjustments[0].exportToAccounting' }).click());
+    }
+    cy.do([
+      Button({ id: 'adjustments[0].fundDistributions-add-button' }).click(),
+      Button({ id: 'adjustments[0].fundDistributions[0].fundId' }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  createRolloverInvoiceWithFY(invoice, organization, fiscalYear) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      Selection('Fiscal year').open(),
+      SelectionList().select(fiscalYear.code),
       TextField('Invoice date*').fillIn(invoice.invoiceDate),
       TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
     ]);
@@ -403,8 +483,24 @@ export default {
     // TODO: update using interactors once we will be able to pass negative value into text field
     cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
+      // TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
       TextField('Description*').fillIn(invoiceLine.description),
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
+      saveAndClose.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+  },
+
+  createInvoiceLineWithFund: (invoiceLine, fund) => {
+    cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
+    cy.do(newBlankLineButton.click());
+    cy.do([
+      TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
+      TextField('Description*').fillIn(invoiceLine.description),
+      TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
+      Button({ id: 'fundDistributions-add-button' }).click(),
+      Button({ name: 'fundDistributions[0].fundId' }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
       saveAndClose.click(),
     ]);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
@@ -458,7 +554,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId })
         .find(
           MultiColumnListCell({
-            content: currency.concat(invoiceLine.subTotal.toFixed(2)),
+            content: `${currency}${invoiceLine.subTotal}.00`,
           }),
         )
         .exists(),
@@ -627,6 +723,7 @@ export default {
   },
 
   voucherExport: (batchGroup) => {
+    cy.wait(6000);
     cy.do([
       PaneHeader({ id: 'paneHeaderinvoice-results-pane' }).find(actionsButton).click(),
       Button('Voucher export').click(),
@@ -733,6 +830,7 @@ export default {
   },
 
   selectInvoice: (invoiceNumber) => {
+    cy.wait(4000);
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
   },
 
@@ -752,6 +850,23 @@ export default {
     ]);
   },
 
+  editInvoice: () => {
+    cy.wait(4000);
+    cy.do([
+      PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click(),
+      Button('Edit').click(),
+    ]);
+  },
+
+  changeFY: (fiscalYear) => {
+    cy.wait(6000);
+    cy.do([
+      Selection('Fiscal year*').open(),
+      SelectionList().select(fiscalYear),
+      saveAndClose.click(),
+    ]);
+  },
+
   addAdjustment: (descriptionInput, valueInput, typeToggle, realtioToTotal) => {
     cy.do([
       Button({ id: 'adjustments-add-button' }).click(),
@@ -761,6 +876,34 @@ export default {
       Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
       saveAndClose.click(),
     ]);
+  },
+
+  addAdjustmentToInvoice: (
+    descriptionInput,
+    valueInput,
+    percentOrDollar,
+    proRate,
+    realtioToTotal,
+    exportToAccounting = false,
+  ) => {
+    cy.do([
+      Button({ id: 'adjustments-add-button' }).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+    ]);
+    if (percentOrDollar === '$') {
+      cy.do(Button('$').click());
+    } else if (percentOrDollar === '%') {
+      cy.do(Button('%').click());
+    }
+    cy.do([
+      Select({ name: 'adjustments[0].prorate' }).choose(proRate),
+      Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
+    ]);
+    if (exportToAccounting === true) {
+      cy.do(Checkbox({ name: 'adjustments[0].exportToAccounting' }).click());
+    }
+    cy.do(saveAndClose.click());
   },
 
   selectStatusFilter: (status) => {
@@ -851,5 +994,37 @@ export default {
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();
+  },
+
+  openPOLFromInvoiceLineInCurrentPage: (polNumber) => {
+    cy.get('#invoiceLineInformation')
+      .find('a')
+      .contains(polNumber)
+      .invoke('removeAttr', 'target')
+      .click();
+  },
+
+  checkApproveButtonIsDissabled: () => {
+    cy.wait(6000);
+    cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
+    cy.expect(Button('Approve').is({ disabled: true }));
+  },
+
+  checkPayButtonIsDissabled: () => {
+    cy.wait(6000);
+    cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
+    cy.expect(Button('Pay').is({ disabled: true }));
+  },
+
+  clickOnOrganizationFromInvoice: (organizationName) => {
+    cy.do(Section({ id: 'vendorDetails' }).find(Link(organizationName)).click());
+  },
+
+  selectFundInInvoiceLine: (fund) => {
+    cy.do(
+      Section({ id: 'invoiceLineFundDistribution' })
+        .find(Link(`${fund.name}(${fund.code})`))
+        .click(),
+    );
   },
 };

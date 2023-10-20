@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'CC405533 Verify Bulk Edit actions for Items notes - duplicate check in note to check out note (firebird)',
+      'C405533 Verify Bulk Edit actions for Items notes - duplicate check in note to check out note (firebird)',
       { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
         BulkEditSearchPane.checkItemsRadio();

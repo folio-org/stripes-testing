@@ -14,56 +14,60 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi, {
-  NOTICE_CATEGORIES,
-} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyApi from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
-import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NewNoticePolicyTemplate, {
+  createNoticeTemplate,
+} from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../support/utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Triggers: Check Out, Loan due date change, Check in', () => {
   let addedCirculationRule;
-  const defaultTemplate = {
-    name: `TestName${getRandomPostfix()}`,
-    description: 'Created by autotest team',
-    body: 'Test_email_body',
-    category: 'Loan',
-    previewText: 'Test_email_body',
-  };
-  const checkOutTemplate = { ...defaultTemplate };
-  checkOutTemplate.name += ' Check out';
-  checkOutTemplate.subject = checkOutTemplate.name;
-  checkOutTemplate.body = `{{#loans}}${checkOutTemplate.body} {{item.title}} {{loan.initialBorrowDateTime}}{{/loans}}`;
-  const loanDueDateChangeTemplate = { ...defaultTemplate };
-  loanDueDateChangeTemplate.name += ' Loan due date change';
-  loanDueDateChangeTemplate.subject = loanDueDateChangeTemplate.name;
-  loanDueDateChangeTemplate.body += ' {{item.title}} {{loan.dueDateTime}}';
-  const checkInTemplate = { ...defaultTemplate };
-  checkInTemplate.name += ' Check in';
-  checkInTemplate.subject = checkInTemplate.name;
-  checkInTemplate.body = `{{#loans}}${checkInTemplate.body} {{item.title}} {{loan.checkedInDateTime}}{{/loans}}`;
-  let loanPolicyId;
-  const noticePolicy = {
-    name: `${defaultTemplate.name} Check out + Loan due date change + Check in`,
-    description: 'Created by autotest team',
-    selectOptions(template) {
-      return {
-        noticeName: NOTICE_CATEGORIES.loan.name,
-        noticeId: 'loan',
-        templateName: template.name,
-        format: 'Email',
-        action: template.name.substring(template.name.indexOf(' ') + 1),
-      };
+  const noticeTemplates = [
+    {
+      ...createNoticeTemplate({
+        name: 'Check_out',
+        noticeOptions: {
+          action: 'Check out',
+        },
+      }),
+      body: '{{#loans}}Test_email_body {{item.title}} {{loan.initialBorrowDateTime}}{{/loans}}',
+      previewText: 'Test_email_body',
     },
+    {
+      ...createNoticeTemplate({
+        name: 'Loan_due_date_change',
+        noticeOptions: {
+          action: 'Loan due date change',
+        },
+      }),
+      body: 'Test_email_body {{item.title}} {{loan.dueDateTime}}',
+      previewText: 'Test_email_body',
+    },
+    {
+      ...createNoticeTemplate({
+        name: 'Check_in',
+        noticeOptions: {
+          action: 'Check in',
+        },
+      }),
+      body: '{{#loans}}Test_email_body {{item.title}} {{loan.checkedInDateTime}}{{/loans}}',
+      previewText: 'Test_email_body',
+    },
+  ];
+  const noticePolicy = {
+    name: getTestEntityValue('Overdue fine, returned'),
+    description: 'Created by autotest team',
   };
+  let loanPolicyId;
   const patronGroup = {
     name: 'groupToTestNoticeCheckout' + getRandomPostfix(),
   };
@@ -88,7 +92,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     // TODO: add check for date with format <C6/8/2022, 6:46 AM>
     servicePoint: testData.userServicePoint.name,
     source: 'System',
-    desc: `Template: ${checkOutTemplate.name}. Triggering event: Check out.`,
+    desc: `Template: ${noticeTemplates[0].name}. Triggering event: Check out.`,
   };
 
   const checkNoticeIsSent = (checkParams) => {
@@ -236,47 +240,25 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${checkOutTemplate.name}` }).then(
-      (templateId) => {
+    noticeTemplates.forEach((template) => {
+      NoticePolicyTemplateApi.getViaApi({ query: `name=${template.name}` }).then((templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
-      },
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${loanDueDateChangeTemplate.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      },
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${checkInTemplate.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      },
-    );
+      });
+    });
   });
 
   it(
     'C347862 Check out + Loan due date change + Check in triggers (volaris)',
     { tags: [TestTypes.smoke, devTeams.volaris] },
     () => {
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkOutTemplate);
-      delete checkOutTemplate.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving(checkOutTemplate);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(loanDueDateChangeTemplate);
-      delete loanDueDateChangeTemplate.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving(loanDueDateChangeTemplate);
-      NewNoticePolicyTemplate.createPatronNoticeTemplate(checkInTemplate);
-      delete checkInTemplate.previewText;
-      NewNoticePolicyTemplate.checkAfterSaving(checkInTemplate);
+      noticeTemplates.forEach((template) => {
+        NewNoticePolicyTemplate.createPatronNoticeTemplate(template);
+        NewNoticePolicyTemplate.checkAfterSaving(template);
+      });
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
-      NewNoticePolicy.startAdding();
-      NewNoticePolicy.checkInitialState();
-      NewNoticePolicy.fillGeneralInformation(noticePolicy);
-      NewNoticePolicy.addNotice(noticePolicy.selectOptions(checkOutTemplate));
-      NewNoticePolicy.addNotice(noticePolicy.selectOptions(loanDueDateChangeTemplate), 1);
-      NewNoticePolicy.addNotice(noticePolicy.selectOptions(checkInTemplate), 2);
-      NewNoticePolicy.save();
-      NewNoticePolicy.waitLoading();
+      NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
@@ -318,7 +300,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       LoansPage.openChangeDueDate();
       ChangeDueDateForm.fillDate('10/07/2030');
       ChangeDueDateForm.saveAndClose();
-      searchResultsData.desc = `Template: ${loanDueDateChangeTemplate.name}. Triggering event: Manual due date change.`;
+      searchResultsData.desc = `Template: ${noticeTemplates[1].name}. Triggering event: Manual due date change.`;
       checkNoticeIsSent(searchResultsData);
 
       cy.visit(TopMenu.checkInPath);
@@ -327,7 +309,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
         CheckInActions.verifyLastCheckInItem(item.barcode);
       });
       CheckInActions.endCheckInSession();
-      searchResultsData.desc = `Template: ${checkInTemplate.name}. Triggering event: Check in.`;
+      searchResultsData.desc = `Template: ${noticeTemplates[2].name}. Triggering event: Check in.`;
       checkNoticeIsSent(searchResultsData);
     },
   );

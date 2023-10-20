@@ -1,3 +1,4 @@
+import registerCypressGrep from '@cypress/grep/src/support';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { setInteractorTimeout } from '@interactors/globals';
 
@@ -18,10 +19,10 @@ import 'cypress-file-upload';
 import './data-import';
 import './commands';
 
+registerCypressGrep();
 setInteractorTimeout(100_000);
 
 require('cypress-xpath');
-require('cypress-grep')();
 require('@shelex/cypress-allure-plugin');
 
 // try to fix the issue with cached location in cypress

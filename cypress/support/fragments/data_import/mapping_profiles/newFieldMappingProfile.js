@@ -617,17 +617,37 @@ export default {
     );
   },
 
-  addStatisticalCode: (name, number, action = actions.addTheseToExisting) => {
+  selectActionForStatisticalCode(number, action = actions.addTheseToExisting) {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
     cy.do([
       Select({ name: statisticalCodeFieldName }).focus(),
       Select({ name: statisticalCodeFieldName }).choose(action),
+    ]);
+  },
+
+  addStatisticalCode(name, number, action) {
+    this.selectActionForStatisticalCode(number, action);
+    cy.do([
       Button('Add statistical code').click(),
       TextField('Statistical code').fillIn(`"${name}"`),
     ]);
     waitLoading();
+  },
+
+  addStatisticalCodeWithSeveralCodes(firstCode, secondCode, number, action) {
+    this.selectActionForStatisticalCode(number, action);
+    cy.do([
+      Button('Add statistical code').click(),
+      TextField({
+        name: `profile.mappingDetails.mappingFields[${number}].subfields.0.fields.0.value`,
+      }).fillIn(`"${firstCode}"`),
+      Button('Add statistical code').click(),
+      TextField({
+        name: `profile.mappingDetails.mappingFields[${number}].subfields.1.fields.0.value`,
+      }).fillIn(`"${secondCode}"`),
+    ]);
   },
 
   addAdministrativeNote: (note, number, action = actions.addTheseToExisting) => {

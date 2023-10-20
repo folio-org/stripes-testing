@@ -100,7 +100,27 @@ export default {
       saveButton.has({ disabled: true }),
     ]);
     // wait for setting to apply
-    cy.wait(2000);
+    cy.expect(calloutEditLabelSettings.exists());
+    let timeCounter = 0;
+    function checkCustomLabel(name) {
+      cy.okapiRequest({
+        path: 'eholdings/custom-labels',
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body }) => {
+        if (
+          body.data.filter((label) => label.attributes.displayLabel === name).length === 1 ||
+          timeCounter >= '15000'
+        ) {
+          cy.log(`Custom label value "${name}" saved`);
+        } else {
+          // wait 1 second before retrying request
+          cy.wait(1000);
+          checkCustomLabel(name);
+          timeCounter++;
+        }
+      });
+    }
+    checkCustomLabel(labelName);
   },
 
   setFullTextFinderForLabel(labelIndex) {
