@@ -1,7 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
 import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
-
 import TopMenu from '../../support/fragments/topMenu';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
