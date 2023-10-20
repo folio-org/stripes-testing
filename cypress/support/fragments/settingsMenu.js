@@ -59,6 +59,7 @@ export default {
   tenantPath: 'settings/tenant-settings',
   tenantLibrariesPath: 'settings/tenant-settings/location-libraries',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
+  tenantCampusesPath: 'settings/tenant-settings/location-campuses',
   // Orders
   approvalsPath: 'settings/orders/approvals',
   acquisitionMethodsPath: 'settings/orders/acquisition-methods',

@@ -49,14 +49,21 @@ export default {
     cy.do(Button('Start bulk edit').click());
     cy.wait(1000);
   },
+  selectOption(optionName, rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.valueType)
+        .choose(optionName),
+    );
+  },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
-    cy.expect([
-      Button({ icon: 'plus-sign' }).exists(),
-      Button({ icon: 'trash', disabled: true }).exists(),
-    ]);
+    this.verifyRowIcons();
+  },
+  verifyRowIcons() {
+    cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
 
   verifyAreYouSureForm(count, cellContent) {
@@ -75,6 +82,22 @@ export default {
         areYouSureForm.find(MultiColumnListCell({ column, content: including(value) })).exists(),
       );
     });
+  },
+
+  verifyItemStatusOptions(rowIndex = 0) {
+    const options = [
+      'Available',
+      'Withdrawn',
+      'Missing',
+      'In process (non-requestable)',
+      'Intellectual item',
+      'Long missing',
+      'Restricted',
+      'Unavailable',
+      'Unknown',
+    ];
+    cy.do([RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.itemStatus).click()]);
+    this.verifyPossibleActions(options);
   },
 
   downloadPreview() {
@@ -487,11 +510,6 @@ export default {
 
   downloadErrors() {
     cy.do(Button('Download errors (CSV)').click());
-    BulkEditSearchPane.waitingFileDownload();
-  },
-
-  downloadMatchedErrors() {
-    cy.do(Button('Download matched records (CSV)').click());
     BulkEditSearchPane.waitingFileDownload();
   },
 
