@@ -27,7 +27,7 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `Import Large Harrassowitz Serials Invoice ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
       batchGroup: BATCH_GROUP.FOLIO,
       organizationName: VENDOR_NAMES.HARRASSOWITZ,

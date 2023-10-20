@@ -461,4 +461,13 @@ export default {
         .exists(),
     ]);
   },
+
+  verifyFileIsImported(fileName) {
+    cy.expect(
+      Pane({ id: 'pane-upload' })
+        .find(HTML(including(fileName)))
+        .exists(),
+    );
+    cy.get('#job-profiles-list').should('exist');
+  },
 };
