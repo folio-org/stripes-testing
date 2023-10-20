@@ -87,6 +87,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         });
       });
     });
+
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -146,6 +147,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Invoices.approveInvoice();
       Invoices.payInvoice();
     });
+
     cy.createTempUser([
       permissions.uiFinanceExecuteFiscalYearRollover.gui,
       permissions.uiFinanceViewFiscalYear.gui,
