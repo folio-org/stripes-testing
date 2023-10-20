@@ -69,7 +69,7 @@ describe('user typy verify', () => {
 
   it(
     'C410760 "User type" field is displayed on create user page (Poppy +) (Thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
     () => {
       usersSearchResultsPane.openNewUser();
       UserEdit.verifySaveAndColseIsDisabled(true);
