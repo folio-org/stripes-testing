@@ -31,6 +31,9 @@ const chooseParameterField = Select('Select a field to search');
 const subjectKeyValue = KeyValue('Subjects');
 const availableProxies = ['chalmers', 'Inherited - ezproxY-T', 'None', 'MJProxy'];
 const proxySelect = Select('Proxy');
+const customCoverageDate = KeyValue('Custom coverage dates');
+const startDateInput = TextField({ id: 'begin-coverage-0' });
+const endDateInput = TextField({ id: 'end-coverage-0' });
 
 const defaultPackage = {
   data: {
@@ -286,5 +289,19 @@ export default {
 
   verifyDetailsPaneAbsent: (packageName) => {
     cy.expect(Pane(including(packageName)).absent());
+  },
+
+  verifyCustomCoverageDates(startDate, endDate) {
+    cy.expect([
+      customCoverageDate.has({ value: including(startDate) }),
+      customCoverageDate.has({ value: including(endDate) }),
+    ]);
+  },
+
+  fillDateCoverage(startDate, endDate) {
+    cy.do([
+      startDateInput.fillIn(startDate),
+      endDateInput.fillIn(endDate),
+    ]);
   },
 };

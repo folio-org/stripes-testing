@@ -106,17 +106,6 @@ describe.skip('Create a custom package', () => {
       eHolding.checkToken();
     },
   );
-  it(
-    'C699 Add or edit package custom coverage (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHolding.switchToPackage();
-      organizations.editOrganization();
-      eHolding.generateRandomDates();
-      eHolding.verifyAlternativeDates();
-    },
-  );
   it('C343241 Access eholdings app menu (spitfire)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsNewCustomPackage.clickOneHoldingCarat();
