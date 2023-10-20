@@ -13,6 +13,7 @@ import {
   Select,
   TextInput,
   TextArea,
+  PaneHeader,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -30,6 +31,7 @@ const actionsButton = rootSection.find(Button('Actions'));
 const singleRecordImportModal = Modal('Single record import');
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button('Search', { type: 'submit' });
+const paneHeaderSearch = PaneHeader('Inventory');
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
@@ -119,7 +121,18 @@ const waitContentLoading = () => {
   );
 };
 
+const getCallNumberTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'call-number-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.callNumberTypes;
+  });
+
 export default {
+  getCallNumberTypes,
   waitContentLoading,
   waitLoading: () => {
     cy.expect(
@@ -578,6 +591,28 @@ export default {
     cy.deleteHoldingRecordViaApi(instance.holdingId);
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
+
+  createLocalCallNumberTypeViaApi: (name) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'call-number-types',
+        body: {
+          id: uuid(),
+          name,
+          source: 'local',
+        },
+      })
+      .then((res) => {
+        return res.body.id;
+      });
+  },
+
+  deleteLocalCallNumberTypeViaApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `call-number-types/${id}`,
+  }),
+
   searchBySource: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-source' }).click());
     cy.do(Checkbox(source).click());
@@ -701,5 +736,13 @@ export default {
     searchInstancesOptions.forEach((searchOption) => {
       cy.expect(inventorySearchAndFilterInput.has({ content: including(searchOption) }));
     });
+  },
+
+  verifyInventorySearchPaneheader() {
+    cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
+  },
+
+  checkActionsButtonInSecondPane() {
+    cy.expect(actionsButton.exists());
   },
 };

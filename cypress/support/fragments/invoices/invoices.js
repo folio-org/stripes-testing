@@ -120,9 +120,10 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }) {
+  createInvoiceViaApi({ vendorId, accountingCode, fiscalYearId, exportToAccounting }) {
     cy.getBatchGroups().then(({ id: batchGroupId }) => {
       const invoice = getDefaultInvoice({
+        fiscalYearId,
         batchGroupId,
         vendorId,
         accountingCode,
@@ -182,24 +183,27 @@ export default {
   createInvoiceWithInvoiceLineViaApi({
     vendorId,
     poLineId,
+    fiscalYearId,
     fundDistributions,
     accountingCode,
     releaseEncumbrance,
     exportToAccounting,
   }) {
-    this.createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }).then((resp) => {
-      cy.wrap(resp).as('invoice');
-      const { id: invoiceId, status: invoiceLineStatus } = resp;
-      const invoiceLine = getDefaultInvoiceLine({
-        invoiceId,
-        invoiceLineStatus,
-        poLineId,
-        fundDistributions,
-        accountingCode,
-        releaseEncumbrance,
-      });
-      this.createInviceLineViaApi(invoiceLine);
-    });
+    this.createInvoiceViaApi({ vendorId, accountingCode, fiscalYearId, exportToAccounting }).then(
+      (resp) => {
+        cy.wrap(resp).as('invoice');
+        const { id: invoiceId, status: invoiceLineStatus } = resp;
+        const invoiceLine = getDefaultInvoiceLine({
+          invoiceId,
+          invoiceLineStatus,
+          poLineId,
+          fundDistributions,
+          accountingCode,
+          releaseEncumbrance,
+        });
+        this.createInviceLineViaApi(invoiceLine);
+      },
+    );
     return cy.get('@invoice');
   },
   selectFolio() {
@@ -476,8 +480,10 @@ export default {
   createInvoiceLine: (invoiceLine) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
     cy.do(newBlankLineButton.click());
+    // TODO: update using interactors once we will be able to pass negative value into text field
+    cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
-      TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
+      // TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
       TextField('Description*').fillIn(invoiceLine.description),
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
       saveAndClose.click(),
@@ -548,7 +554,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId })
         .find(
           MultiColumnListCell({
-            content: currency.concat(invoiceLine.subTotal.toFixed(2)),
+            content: `${currency}${invoiceLine.subTotal}.00`,
           }),
         )
         .exists(),
@@ -717,6 +723,7 @@ export default {
   },
 
   voucherExport: (batchGroup) => {
+    cy.wait(6000);
     cy.do([
       PaneHeader({ id: 'paneHeaderinvoice-results-pane' }).find(actionsButton).click(),
       Button('Voucher export').click(),
@@ -823,6 +830,7 @@ export default {
   },
 
   selectInvoice: (invoiceNumber) => {
+    cy.wait(4000);
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
   },
 
@@ -988,10 +996,24 @@ export default {
       .click();
   },
 
+  openPOLFromInvoiceLineInCurrentPage: (polNumber) => {
+    cy.get('#invoiceLineInformation')
+      .find('a')
+      .contains(polNumber)
+      .invoke('removeAttr', 'target')
+      .click();
+  },
+
   checkApproveButtonIsDissabled: () => {
     cy.wait(6000);
     cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
     cy.expect(Button('Approve').is({ disabled: true }));
+  },
+
+  checkPayButtonIsDissabled: () => {
+    cy.wait(6000);
+    cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
+    cy.expect(Button('Pay').is({ disabled: true }));
   },
 
   clickOnOrganizationFromInvoice: (organizationName) => {

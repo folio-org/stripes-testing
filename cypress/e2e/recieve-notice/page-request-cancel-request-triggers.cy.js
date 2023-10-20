@@ -256,15 +256,15 @@ describe('Request notice triggers', () => {
       NewRequest.waitLoadingNewRequestPage();
       NewRequest.enterItemInfo(itemData.barcode);
       NewRequest.verifyItemInformation([itemData.barcode, itemData.title]);
-      NewRequest.enterRequesterInfo({
-        requesterBarcode: userData.barcode,
-        pickupServicePoint: testData.userServicePoint.name,
-      });
-      NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
-      NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
-      // needed to prevent from error "Cannot create a request without Instance ID"
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(3000);
+
+      NewRequest.enterRequesterInfoWithRequestType(
+        {
+          requesterBarcode: userData.barcode,
+          pickupServicePoint: testData.userServicePoint.name,
+        },
+        REQUEST_TYPES.PAGE,
+      );
+      NewRequest.verifyRequestInformation(REQUEST_TYPES.HOLD);
       NewRequest.saveRequestAndClose();
       NewRequest.waitLoading();
 

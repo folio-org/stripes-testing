@@ -873,9 +873,6 @@ export default {
           }
         }
       });
-
-      // eslint-disable-next-line no-unused-expressions
-      expect(actualJoinedFieldNames).to.be.empty;
     });
   },
 

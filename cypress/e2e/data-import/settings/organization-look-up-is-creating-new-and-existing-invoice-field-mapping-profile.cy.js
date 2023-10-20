@@ -6,6 +6,7 @@ import FieldMappingProfiles from '../../../support/fragments/data_import/mapping
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
+import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -28,6 +29,10 @@ describe('data-import', () => {
           waiter: FieldMappingProfiles.waitLoading,
         });
       });
+    });
+
+    after('delete user', () => {
+      Users.deleteViaApi(user.userId);
     });
 
     it(

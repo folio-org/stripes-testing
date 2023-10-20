@@ -119,8 +119,10 @@ export default {
   },
 
   editFiscalYearDetails: () => {
-    cy.wait(5000);
-    cy.do([actionsButton.click(), editButton.click()]);
+    cy.wait(6000);
+    cy.do(actionsButton.click());
+    cy.wait(6000);
+    cy.do(editButton.click());
   },
 
   checkCreatedFiscalYear: (fiscalYearName) => {
@@ -230,6 +232,7 @@ export default {
   }),
 
   selectFY: (FYName) => {
+    cy.wait(4000);
     cy.do(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).click());
   },
 

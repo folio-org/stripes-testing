@@ -43,7 +43,7 @@ describe('Check In - Actions', () => {
             ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
             testData.defaultLocation = Locations.getDefaultLocation({
               servicePointId: testData.servicePointS1.id,
-            });
+            }).location;
             Locations.createViaApi(testData.defaultLocation).then((location) => {
               InventoryInstances.createFolioInstancesViaApi({
                 folioInstances: testData.folioInstances,

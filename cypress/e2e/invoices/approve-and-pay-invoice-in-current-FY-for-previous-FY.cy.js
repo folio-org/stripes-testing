@@ -19,7 +19,7 @@ import Invoices from '../../support/fragments/invoices/invoices';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -93,14 +93,14 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     FinanceHelp.searchByName(firstFiscalYear.name);
     FiscalYears.selectFY(firstFiscalYear.name);
     FiscalYears.editFiscalYearDetails();
-    FiscalYears.filltheStartAndEndDateoncalenderstartDateField(
+    FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
       periodStartForFirstFY,
       periodEndForFirstFY,
     );
     FinanceHelp.searchByName(secondFiscalYear.name);
     FiscalYears.selectFY(secondFiscalYear.name);
     FiscalYears.editFiscalYearDetails();
-    FiscalYears.filltheStartAndEndDateoncalenderstartDateField(
+    FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
       periodStartForSecondFY,
       periodEndForSecondFY,
     );

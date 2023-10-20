@@ -21,4 +21,10 @@ export default {
   verifyBilledDateValue: (expectedBilledDateValue) => {
     cy.expect(KeyValue('Billed date').has({ value: expectedBilledDateValue }));
   },
+  checkFeeFineBilledAmount(amount) {
+    cy.expect([
+      Pane(including('Fee/fine details')).exists(),
+      KeyValue('Billed amount').has({ value: amount }),
+    ]);
+  },
 };

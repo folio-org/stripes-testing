@@ -419,6 +419,17 @@ export default {
     cy.expect(viewAgreementPane.find(MultiColumnListCell({ content: name, row: 0 })).exists());
   },
 
+  deletionOfAgreementLine() {
+    openAgreementLineAccordion();
+    selectAgreementLine();
+    cy.do([
+      Section({ id: 'pane-view-agreement-line' }).find(actionsButton).click(),
+      deleteButton.click(),
+      agreementLineDeleteModel.find(deleteButton).click(),
+    ]);
+    cy.expect([calloutSuccess.exists(), calloutSuccess.has({ text: 'Agreement line deleted' })]);
+  },
+
   openLinkFromSupplementaryDocument(documentName) {
     const urlLink = supplementaryDocumentsAccordion
       .find(Card({ headerStart: documentName }))
