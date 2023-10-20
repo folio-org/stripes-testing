@@ -36,7 +36,7 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `C345356 GOBI invoice - Acq Units.${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
       acquisitionsUnits: `"${defaultAcquisitionUnit.name}"`,
       batchGroup: BATCH_GROUP.FOLIO,
