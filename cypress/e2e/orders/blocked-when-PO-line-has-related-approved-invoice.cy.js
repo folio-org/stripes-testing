@@ -125,9 +125,9 @@ describe('Orders', () => {
     });
   });
 
-  // after(() => {
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it(
     'C368485 Editing fund distribution is blocked when PO line has related approved invoice (thunderjet)',
