@@ -31,7 +31,7 @@ describe('settings: data-export: Field mapping profiles', () => {
   });
 
   it(
-    'C345342 Hide placeholder attribute once user populates the first row (firebird)',
+    'C345342 Hide placeholder attribute once user populates the first row (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, devTeams.firebird] },
     () => {
       ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
