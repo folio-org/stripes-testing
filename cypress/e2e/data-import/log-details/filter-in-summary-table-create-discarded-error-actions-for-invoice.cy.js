@@ -31,9 +31,9 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
-      batchGroup: BATCH_GROUP.AMHERST,
+      batchGroup: BATCH_GROUP.FOLIO,
       organizationName: VENDOR_NAMES.EBSCO,
       paymentMethod: PAYMENT_METHOD.CREDIT_CARD,
     };

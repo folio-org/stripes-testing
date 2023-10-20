@@ -32,7 +32,7 @@ describe('data-import', () => {
       firstAlternativeTitle:
         'Tibet in dialogue with its neighbour : history, culture and art of central and western Tibet, 8th to 15th century',
       secondAlternativeTitle: '8-15世纪中西部西藏的历史, 文化与艺术',
-      contributerName: 'Forte, Erika',
+      contributerName: 'Forte, Erika,',
       firstPublisher: 'Zhongguo Zang xue chu ban she',
       secondPublisher: '中国藏学出版社',
       language: 'Chinese, English',
