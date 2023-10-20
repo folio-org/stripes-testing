@@ -7,7 +7,6 @@ import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const newFirstName = `testNewFirstName_${getRandomPostfix()}`;
@@ -62,7 +61,7 @@ describe('bulk-edit', () => {
         BulkEditActions.clickNext();
         BulkEditSearchPane.verifyCsvUploadModal(editedFileName);
         BulkEditActions.cancel();
-        
+
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
         BulkEditSearchPane.uploadFile(editedFileName);
