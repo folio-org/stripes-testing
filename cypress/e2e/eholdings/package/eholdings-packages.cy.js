@@ -12,7 +12,7 @@ import DateTools from '../../../support/utils/dateTools';
 describe('eHoldings', () => {
   describe('Package', () => {
     let userId;
-    let defaultPackage = { ...EHoldingsPackages.getdefaultPackage() };
+    const defaultPackage = { ...EHoldingsPackages.getdefaultPackage() };
 
     afterEach(() => {
       Users.deleteViaApi(userId);

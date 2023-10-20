@@ -4,7 +4,6 @@ import eHoldingsProviderEdit from '../../../support/fragments/eholdings/eHolding
 import eHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import organizations from '../../../support/fragments/organizations/organizations';
 import newRequest from '../../../support/fragments/requests/newRequest';
 import topMenu from '../../../support/fragments/topMenu';
 import eHolding from './eHolding';
