@@ -148,9 +148,13 @@ export default {
       Select({ label: 'Campus' }).exists(),
       Select({ label: 'Library' }).exists(),
       Selection('Location').exists(),
-      cancelBtn.has({ disabled: false }),
+      locationLookupModal.find(cancelButton).has({ disabled: false }),
       Button('Save and close').has({ disabled: true }),
     ]);
+  },
+
+  locationLookupModalCancel() {
+    cy.do(locationLookupModal.find(cancelButton).click());
   },
 
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {

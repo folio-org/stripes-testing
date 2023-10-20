@@ -60,10 +60,11 @@ describe('bulk-edit', () => {
         BulkEditActions.replacePermanentLocation(newLocation);
         BulkEditActions.clickLocationLookup();
         BulkEditActions.verifyLocationLookupModal();
-        BulkEditActions.replaceTemporaryLocation(newLocation);
+        BulkEditActions.locationLookupModalCancel();
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.clearTemporaryLocation();
-        BulkEditActions.verifyModifyLandingPageAfterModifying();
+        BulkEditActions.clearTemporaryLoanType(1);
+        BulkEditActions.addNewBulkEditFilterString();
+        BulkEditActions.clearTemporaryLocation('item', 2);
       },
     );
   });
