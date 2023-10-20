@@ -1,6 +1,8 @@
 # Change history for stripes-testing
 
-## 4.6.1 IN PROGRESS
+## [4.6.1](https://github.com/folio-org/stripes-testing/tree/v4.6.1) (2023-10-19)
+
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.6.0...v4.6.1)
 
 - Updated `<AdvancedSearch>` interactor for search match support. Updated e2e tests. Refs UITEST-111.
 
