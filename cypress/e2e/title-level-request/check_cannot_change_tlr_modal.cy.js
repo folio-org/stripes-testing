@@ -8,6 +8,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Requests from '../../support/fragments/requests/requests';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Title Level Request. Request notice. Title level request -Settings', () => {
   let userData = {};
@@ -27,6 +28,7 @@ describe('Title Level Request. Request notice. Title level request -Settings', (
         location,
       });
     });
+    OtherSettings.setOtherSettingsViaApi({ titleLevelRequestsFeatureEnabled: true });
     cy.createTempUser([
       Permissions.uiRequestsCreate.gui,
       Permissions.uiRequestsView.gui,
@@ -40,12 +42,10 @@ describe('Title Level Request. Request notice. Title level request -Settings', (
         userData.userId,
         testData.servicePoint.id,
       );
-
       cy.login(userData.username, userData.password, {
         path: SettingsMenu.circulationTitleLevelRequestsPath,
         waiter: TitleLevelRequests.waitLoading,
       });
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         instanceId: testData.folioInstances[0].instanceId,
