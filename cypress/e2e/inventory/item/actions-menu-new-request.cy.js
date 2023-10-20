@@ -6,7 +6,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import TopMenu from '../../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import Users from '../../../support/fragments/users/users';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import UserEdit from '../../../support/fragments/users/userEdit';
@@ -99,6 +98,36 @@ describe('inventory', () => {
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
+            {
+              barcode: uuid(),
+              status: { name: ITEM_STATUS_NAMES.DECLARED_LOST },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+            {
+              barcode: uuid(),
+              status: { name: ITEM_STATUS_NAMES.CLAIMED_RETURNED },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+            {
+              barcode: uuid(),
+              status: { name: ITEM_STATUS_NAMES.LOST_AND_PAID },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+            {
+              barcode: uuid(),
+              status: { name: ITEM_STATUS_NAMES.WITHDRAWN },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+            {
+              barcode: uuid(),
+              status: { name: ITEM_STATUS_NAMES.ORDER_CLOSED },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
           ];
 
           InventoryInstances.createFolioInstanceViaApi({
@@ -126,8 +155,30 @@ describe('inventory', () => {
         user = userProperties;
         ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {
           UserEdit.addServicePointViaApi(servicePoints[0].id, user.userId, servicePoints[0].id);
-          cy.login(userProperties.username, userProperties.password);
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
+        InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
+        InstanceRecordView.verifyInstanceRecordViewOpened();
+        cy.wait(1000);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
+      });
+    });
+
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"title"=="${testData.instanceTitle}"`,
+      }).then((instance) => {
+        instance.items.forEach((item) => {
+          cy.deleteItemViaApi(item.id);
+        });
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     });
 
@@ -146,11 +197,6 @@ describe('inventory', () => {
           'Missing',
           'Paged',
         ].forEach((itemStatus) => {
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
-          InstanceRecordView.verifyInstanceRecordViewOpened();
-          cy.wait(1000);
-          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
           InventoryInstance.openItemByStatus(itemStatus);
           ItemActions.openActions();
           ItemActions.clickNewRequestButton();
@@ -160,9 +206,21 @@ describe('inventory', () => {
             LOCATION_NAMES.MAIN_LIBRARY_UI,
             itemStatus,
           );
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
+          InstanceRecordView.verifyInstanceRecordViewOpened();
         });
 
-        // ['Declared lost', 'Claimed returned', 'Lost and paid', 'Withdrawn', 'Order closed']
+        ['Declared lost', 'Claimed returned', 'Lost and paid', 'Withdrawn', 'Order closed'].forEach(
+          (itemStatus) => {
+            cy.visit(TopMenu.inventoryPath);
+            InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
+            InstanceRecordView.verifyInstanceRecordViewOpened();
+            InventoryInstance.openItemByStatus(itemStatus);
+            ItemActions.openActions();
+            ItemActions.verifyNewRequestButtonIsAbsent();
+          },
+        );
       },
     );
   });
