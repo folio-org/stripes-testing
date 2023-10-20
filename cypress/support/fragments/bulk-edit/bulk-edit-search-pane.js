@@ -558,8 +558,7 @@ export default {
 
   verifyChangesUnderColumns(columnName, value) {
     cy.expect(
-      changesAccordion
-        .find(MultiColumnListCell({ column: columnName, content: including(value) }))
+      MultiColumnListCell({ column: columnName, content: including(value) })
         .exists(),
     );
   },
@@ -577,8 +576,7 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${
-          validRecordCount + invalidRecordCount
+        `${fileName}: ${validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -589,8 +587,7 @@ export default {
       Accordion('Errors')
         .find(
           HTML(
-            `${fileName}: ${
-              validRecordCount + invalidRecordCount
+            `${fileName}: ${validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
           ),
         )
