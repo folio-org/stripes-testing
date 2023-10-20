@@ -38,6 +38,7 @@ const orChooseFilesButton = Button('or choose files');
 const cancelImportJobModal = Modal('Cancel import job?');
 const yesButton = Button('Yes, cancel import job');
 const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
+const importBlockedModal = Modal('Import blocked');
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
@@ -450,5 +451,23 @@ export default {
 
   verifyDataImportProfiles(profiles) {
     cy.expect(dataImportNavSection.find(NavListItem(profiles)).exists());
+  },
+
+  verifyImportBlockedModal() {
+    cy.expect([
+      importBlockedModal.exists(),
+      importBlockedModal
+        .find(HTML(including('You cannot upload files with this file extension')))
+        .exists(),
+    ]);
+  },
+
+  verifyFileIsImported(fileName) {
+    cy.expect(
+      Pane({ id: 'pane-upload' })
+        .find(HTML(including(fileName)))
+        .exists(),
+    );
+    cy.get('#job-profiles-list').should('exist');
   },
 };

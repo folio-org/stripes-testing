@@ -40,7 +40,7 @@ describe('Orders: Inventory interaction', () => {
         ServicePoints.createViaApi(testData.servicePoint).then(() => {
           testData.location = Locations.getDefaultLocation({
             servicePointId: testData.servicePoint.id,
-          });
+          }).location;
 
           Locations.createViaApi(testData.location).then(() => {
             Orders.createOrderViaApi(

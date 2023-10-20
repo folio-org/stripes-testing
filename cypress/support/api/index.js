@@ -19,3 +19,4 @@ import './instance';
 import './loan-history';
 import './authority';
 import './auto-linking';
+import './eholdings';

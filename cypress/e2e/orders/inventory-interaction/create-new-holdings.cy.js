@@ -49,7 +49,7 @@ describe('Orders: Inventory interaction', () => {
       .then(() => {
         ServicePoints.createViaApi(testData.servicePoint).then(() => {
           Locations.createViaApi(
-            Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }),
+            Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }).location,
           ).then((location) => {
             testData.locations.push(location);
 
@@ -81,7 +81,7 @@ describe('Orders: Inventory interaction', () => {
             });
 
             Locations.createViaApi(
-              Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }),
+              Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }).location,
             ).then((secondLocation) => {
               testData.locations.push(secondLocation);
             });

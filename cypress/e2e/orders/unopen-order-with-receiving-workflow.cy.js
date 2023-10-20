@@ -47,7 +47,7 @@ describe('Orders', () => {
       .then(() => {
         ServicePoints.createViaApi(testData.servicePoint).then(() => {
           Locations.createViaApi(
-            Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }),
+            Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }).location,
           ).then((location) => {
             testData.location = location;
 

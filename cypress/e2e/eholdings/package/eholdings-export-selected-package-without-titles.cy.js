@@ -38,7 +38,7 @@ describe('eHoldings', () => {
           waiter: EHoldingsTitlesSearch.waitLoading,
         });
         EHoldingSearch.switchToPackages();
-        cy.wait(8000);
+        cy.wait(10000);
       });
     });
 
