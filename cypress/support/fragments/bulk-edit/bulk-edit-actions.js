@@ -20,6 +20,7 @@ import BulkEditSearchPane from './bulk-edit-search-pane';
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
+const cancelButton = Button('Cancel');
 const createBtn = Button({ id: 'clickable-create-widget' });
 const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
