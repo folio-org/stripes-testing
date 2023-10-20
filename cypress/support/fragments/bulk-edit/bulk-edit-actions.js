@@ -490,11 +490,6 @@ export default {
     BulkEditSearchPane.waitingFileDownload();
   },
 
-  downloadMatchedErrors() {
-    cy.do(Button('Download matched records (CSV)').click());
-    BulkEditSearchPane.waitingFileDownload();
-  },
-
   prepareBulkEditFileWithDuplicates(fileMask, finalFileName, stringToBeReplaced, replaceString) {
     FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
       const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
