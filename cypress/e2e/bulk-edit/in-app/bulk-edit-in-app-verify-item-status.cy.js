@@ -14,7 +14,6 @@ describe('bulk-edit', () => {
       instanceName: `C353652 testBulkEdit_${getRandomPostfix()}`,
       itemBarcode: getRandomPostfix(),
     };
-    let fileContent = '';
     const itemBarcodesFileName = `C353652 itemBarcodes_${getRandomPostfix()}.csv`;
 
     before('Create test data', () => {
@@ -32,14 +31,17 @@ describe('bulk-edit', () => {
           instanceData.instanceName,
           instanceData.itemBarcode,
         );
-        fileContent += instanceData.itemBarcode;
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
+        FileManager.createFile(
+          `cypress/fixtures/${itemBarcodesFileName}`,
+          instanceData.itemBarcode,
+        );
       });
     });
 
     after('Delete test data', () => {
       Users.deleteViaApi(userData.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
     });
 
     it(
