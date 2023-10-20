@@ -93,7 +93,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDragNDropItemFormerIdentifierArea();
         BulkEditSearchPane.verifyDragNDropItemAccessionNumberArea();
         BulkEditSearchPane.verifyDragNDropItemHoldingsUUIDsArea();
-  
+
         BulkEditSearchPane.verifyHoldingIdentifiers();
         BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
         BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
