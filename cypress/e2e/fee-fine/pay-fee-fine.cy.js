@@ -13,6 +13,7 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFine from '../../support/fragments/users/payFeeFaine';
+import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import CommentRequired from '../../support/fragments/settings/users/comment-required';
 
@@ -113,6 +114,60 @@ describe('Pay Fees/Fines', () => {
       // Choose Pay in the Actions menu
       UserAllFeesFines.paySelectedFeeFines();
       // The Pay fee/fine modal will open (as shown in attachment pay-ff-modal.JPG), with the Payment amount set to the total amount of the fee/fine you selected in step 5
+      PayFeeFine.checkAmount(feeFineAccount.amount);
+    },
+  );
+
+  it(
+    'C457 Verify behavior when "Pay" ellipsis option selected from Fee/Fine History page (vega) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    () => {
+      // Go to User Information for your test patron
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      UsersSearchPane.searchByKeywords(userData.username);
+      UsersSearchPane.selectUserFromList(userData.username);
+      UsersCard.waitLoading();
+      // Before expanding the Fees/Fines section, you should see a number representing the total number of outstanding fees/fines on the closed accordion (see attachment closed-ff-section.JPG as an example)
+      cy.reload();
+      UsersCard.verifyFeesFinesCount('1');
+      // Expand the Fees/Fines section to see details about the fees/fines owned by the patron, verifying that the count and amount of open fees/fines is correct (see attachment open-ff-section.JPG as an example)
+      UsersCard.openFeeFines();
+      UsersCard.verifyOpenedFeeFines(1, feeFineAccount.amount);
+      // Click on the View all fees/fines link to open Fees/Fines History (aka Open/Closed/All Fees/Fines)
+      UsersCard.viewAllFeesFines();
+      // Click on the ellipsis option for the row in Fees/Fines History that represents the Manual fee/fine charge you created
+      // Select Pay from the ellipsis menu
+      UserAllFeesFines.clickPayEllipsis(0);
+      // The Pay fee/fine modal will open (as shown in attachment pay-ff-modal.JPG), with the Payment amount set to the total amount of the fee/fine you selected in step 5.
+      UserAllFeesFines.verifyPayModalIsOpen();
+      PayFeeFine.checkAmount(feeFineAccount.amount);
+    },
+  );
+
+  it(
+    'C458 Verify behavior when "Pay" button pressed from Fee/Fine Details page (vega) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    () => {
+      //  Go to User Information for your test patron
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      UsersSearchPane.searchByKeywords(userData.username);
+      UsersSearchPane.selectUserFromList(userData.username);
+      UsersCard.waitLoading();
+      // Before expanding the Fees/Fines section, you should see a number representing the total number of outstanding fees/fines on the closed accordian (see attachment closed-ff-section.JPG as an example)
+      cy.reload();
+      UsersCard.verifyFeesFinesCount('1');
+      // Expand the Fees/Fines section to see details about the fees/fines owned by the patron, verifying that the count and amount of open fees/fines is correct (see attachment open-ff-section.JPG as an example)
+      UsersCard.openFeeFines();
+      //  Click on the View all fees/fines link to open Fees/Fines History (aka Open/Closed/All Fees/Fines)
+      UsersCard.viewAllFeesFines();
+      // Click on the row in Fees/Fines History that represents the Manual fee/fine charge you created, which will open Fee/Fine Details
+      UserAllFeesFines.clickOnRowByIndex(0);
+      // Choose Pay in the Actions menu on the Fee/Fine Details page
+      FeeFinesDetails.openActions();
+      FeeFinesDetails.openPayModal();
+      //  The Pay fee/fine modal will open (as shown in attachment pay-ff-modal.JPG), with the Payment amount set to the total amount of the fee/fine you selected in step 5
       PayFeeFine.checkAmount(feeFineAccount.amount);
     },
   );
