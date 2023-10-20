@@ -208,7 +208,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
         path: SettingsMenu.acquisitionUnitsPath,
         waiter: AcquisitionUnits.waitLoading,
       });
-      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name, user);
 
       cy.login(user.username, user.password, { path: TopMenu.fundPath, waiter: Funds.waitLoading });
       FinanceHelp.searchByName(defaultFund.name);

@@ -43,7 +43,7 @@ describe('orders: create an order', () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;
         Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
         OrderLines.checkConnectedInstance();
       });
     },

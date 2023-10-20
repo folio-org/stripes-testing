@@ -89,8 +89,7 @@ describe('ui-finance: Orders', () => {
           path: SettingsMenu.acquisitionUnitsPath,
           waiter: AcquisitionUnits.waitLoading,
         });
-        AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
-
+        AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name, user);
         cy.login(user.username, user.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,

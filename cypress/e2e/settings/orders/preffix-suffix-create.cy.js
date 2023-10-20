@@ -61,7 +61,7 @@ describe('orders: Settings', () => {
   });
 
   it(
-    'C671 Add a couple PO prefixes and suffixes, then create a couple POs and PO lines, selecting various prefixes and suffixes; also create a couple PO Lines to ensure that the prefixes/suffixes carry down to the PO Line numbers as well (thunderjet)',
+    'C671 Create prefix and suffix for purchase order (thunderjet)',
     { tags: [TestType.criticalPath, devTeams.thunderjet] },
     () => {
       Orders.createOrderWithPONumberPreffixSuffix(

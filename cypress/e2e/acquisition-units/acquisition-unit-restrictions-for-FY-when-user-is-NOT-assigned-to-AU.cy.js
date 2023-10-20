@@ -80,7 +80,7 @@ describe('Acquisition Units', () => {
   });
 
   it(
-    'C375073 Acquisition unit restrictions for "Fiscal year" records (Edit, Create, Delete options are active) when user is NOT assigned to acquisition unit (thunderjet)',
+    'C375073 Acquisition unit restrictions for "Fiscal year" records (View, Edit, Create, Delete options are restricted) when user is NOT assigned to acquisition unit (thunderjet)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByAll(defaultFiscalYear.name);

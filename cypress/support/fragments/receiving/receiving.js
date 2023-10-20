@@ -167,12 +167,11 @@ export default {
     InteractorsTools.checkCalloutMessage(unreceivingSuccessful);
   },
 
-  checkUnreceivedPiece: (rowNumber = 0, caption) => {
+  checkUnreceivedPiece: (caption) => {
     // Need to wait, while data will be loaded before start checking
     cy.wait(2000);
     cy.expect(
       Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: caption }))
         .exists(),
     );

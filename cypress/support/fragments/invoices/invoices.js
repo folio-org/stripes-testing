@@ -302,6 +302,7 @@ export default {
     ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+    cy.wait(4000);
   },
 
   createRolloverInvoiceWithAjustmentAndFund(
@@ -554,7 +555,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId })
         .find(
           MultiColumnListCell({
-            content: `$${invoiceLine.subTotal}.00`,
+            content: `${currency}${invoiceLine.subTotal}.00`,
           }),
         )
         .exists(),
