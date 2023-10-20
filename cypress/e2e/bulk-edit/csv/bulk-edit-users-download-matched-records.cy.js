@@ -6,7 +6,6 @@ import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 
@@ -50,20 +49,20 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-  
+
         BulkEditActions.prepareValidBulkEditFile(
           matchedRecordsFileName,
           editedFileName,
           user.firstName,
           newFirstName,
         );
-  
+
         BulkEditActions.openStartBulkEditForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.clickNext();
         BulkEditActions.commitChanges();
-  
+
         BulkEditSearchPane.verifyChangedResults(newFirstName);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
