@@ -44,6 +44,9 @@ export default {
     const cell = MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(
       MultiColumnListCell({ content: matching(dateRegEx) }),
     );
-    return cy.wrap(cell).invoke('content');
+    return cy
+      .wrap(cell)
+      .invoke('content')
+      .then((content) => content);
   },
 };
