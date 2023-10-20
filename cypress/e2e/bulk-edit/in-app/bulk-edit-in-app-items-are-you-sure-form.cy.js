@@ -42,7 +42,7 @@ describe('bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
-            res.permanentLocation = { id: item.locationId }
+            res.permanentLocation = { id: item.locationId };
             ItemActions.editItemViaApi(res);
             FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
           },
@@ -85,7 +85,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadPreview();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        
+
         BulkEditActions.openActions();
         BulkEditActions.verifyActionsDownloadChangedCSV();
         ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [newLocation]);
