@@ -554,7 +554,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId })
         .find(
           MultiColumnListCell({
-            content: `$${invoiceLine.subTotal}.00`,
+            content: `${currency}${invoiceLine.subTotal}.00`,
           }),
         )
         .exists(),

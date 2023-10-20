@@ -61,7 +61,7 @@ describe('orders: duplicate', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
