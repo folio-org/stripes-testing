@@ -8,15 +8,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
 let user;
 const barcode = `barcode-${getRandomPostfix()}`;
-let item = {
+const item = {
   instanceName: `instanceName-${getRandomPostfix()}`,
   firstBarcode: barcode,
   secondBarcode: `secondBarcode_${barcode}`,
