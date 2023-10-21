@@ -506,6 +506,15 @@ export default {
     cy.expect(MultiColumnList().exists());
   },
 
+  verifyCsvUploadModal(filename) {
+    cy.expect(Modal(including(filename)).exists());
+    cy.expect([
+      HTML(including('records will be updated if the Commit changes button is clicked.')).exists(),
+      Button('Cancel').exists(),
+      Button('Commit changes').exists(),
+    ]);
+  },
+
   verifyModalName(name) {
     cy.expect(Modal(name).exists());
     cy.do(Button('Cancel').click());
