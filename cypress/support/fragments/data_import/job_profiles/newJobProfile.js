@@ -31,6 +31,9 @@ const getDefaultJobProfile = (name) => {
 const actionsButton = Button('Action');
 const matchButton = Button('Match');
 const saveAndCloseButton = Button('Save as profile & Close');
+const profileNameField = TextField({ name: 'profile.name' });
+const overviewAccordion = Accordion('Overview');
+const dataTypeSelect = Select({ name: 'profile.dataType' });
 
 function linkActionProfileByName(profileName) {
   // TODO move to const and rewrite functions
@@ -42,11 +45,7 @@ function linkActionProfileByName(profileName) {
   cy.do(actionsButton.click());
   ModalSelectProfile.searchProfileByName(profileName);
   ModalSelectProfile.selectProfile(profileName);
-  cy.expect(
-    Accordion('Overview')
-      .find(HTML(including(profileName)))
-      .exists(),
-  );
+  cy.expect(overviewAccordion.find(HTML(including(profileName))).exists());
 }
 
 function linkMatchProfileForMatches(matchProfileName, forMatchesOrder = 0) {
@@ -54,11 +53,7 @@ function linkMatchProfileForMatches(matchProfileName, forMatchesOrder = 0) {
   cy.do(matchButton.click());
   ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
   ModalSelectProfile.selectProfile(matchProfileName);
-  cy.expect(
-    Accordion('Overview')
-      .find(HTML(including(matchProfileName)))
-      .exists(),
-  );
+  cy.expect(overviewAccordion.find(HTML(including(matchProfileName))).exists());
 }
 
 function linkMatchProfileForSubMatches(matchProfileName, forMatchesOrder = 0) {
@@ -66,11 +61,7 @@ function linkMatchProfileForSubMatches(matchProfileName, forMatchesOrder = 0) {
   cy.do(matchButton.click());
   ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
   ModalSelectProfile.selectProfile(matchProfileName);
-  cy.expect(
-    Accordion('Overview')
-      .find(HTML(including(matchProfileName)))
-      .exists(),
-  );
+  cy.expect(overviewAccordion.find(HTML(including(matchProfileName))).exists());
 }
 
 function linkActionProfileForMatches(actionProfileName, forMatchesOrder = 0) {
@@ -79,11 +70,7 @@ function linkActionProfileForMatches(actionProfileName, forMatchesOrder = 0) {
   cy.do(actionsButton.click());
   ModalSelectProfile.searchProfileByName(actionProfileName);
   ModalSelectProfile.selectProfile(actionProfileName);
-  cy.expect(
-    Accordion('Overview')
-      .find(HTML(including(actionProfileName)))
-      .exists(),
-  );
+  cy.expect(overviewAccordion.find(HTML(including(actionProfileName))).exists());
 }
 
 function linkActionProfileForSubMatches(actionProfileName, forMatchesOrder = 0) {
@@ -91,11 +78,7 @@ function linkActionProfileForSubMatches(actionProfileName, forMatchesOrder = 0) 
   cy.do(actionsButton.click());
   ModalSelectProfile.searchProfileByName(actionProfileName);
   ModalSelectProfile.selectProfile(actionProfileName);
-  cy.expect(
-    Accordion('Overview')
-      .find(HTML(including(actionProfileName)))
-      .exists(),
-  );
+  cy.expect(overviewAccordion.find(HTML(including(actionProfileName))).exists());
 }
 
 function waitLoading() {
@@ -113,14 +96,14 @@ export default {
   waitLoading,
   defaultJobProfile,
 
-  fillProfileName: (profileName) => cy.do(TextField({ name: 'profile.name' }).fillIn(profileName)),
+  fillProfileName: (profileName) => cy.do(profileNameField.fillIn(profileName)),
   fillDescription: (description) => cy.do(TextArea({ name: 'profile.description' }).fillIn(description)),
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
-    cy.do(TextField({ name: 'profile.name' }).fillIn(specialJobProfile.profileName));
-    cy.expect(TextField({ name: 'profile.name' }).has({ value: specialJobProfile.profileName }));
-    cy.do(Select({ name: 'profile.dataType' }).choose(specialJobProfile.acceptedType));
-    cy.expect(Select({ name: 'profile.dataType' }).has({ value: specialJobProfile.acceptedType }));
+    cy.do(profileNameField.fillIn(specialJobProfile.profileName));
+    cy.expect(profileNameField.has({ value: specialJobProfile.profileName }));
+    cy.do(dataTypeSelect.choose(specialJobProfile.acceptedType));
+    cy.expect(dataTypeSelect.has({ value: specialJobProfile.acceptedType }));
   },
 
   linkActionProfile(specialActionProfile) {
@@ -132,11 +115,7 @@ export default {
     cy.do(actionsButton.click());
     ModalSelectProfile.searchProfileByName(specialActionProfile.name);
     ModalSelectProfile.selectProfile(specialActionProfile.name);
-    cy.expect(
-      Accordion('Overview')
-        .find(HTML(including(specialActionProfile.name)))
-        .exists(),
-    );
+    cy.expect(overviewAccordion.find(HTML(including(specialActionProfile.name))).exists());
   },
 
   linkMatchProfile(matchProfileName) {
@@ -148,11 +127,7 @@ export default {
     cy.do(matchButton.click());
     ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
     ModalSelectProfile.selectProfile(matchProfileName, 'match');
-    cy.expect(
-      Accordion('Overview')
-        .find(HTML(including(matchProfileName)))
-        .exists(),
-    );
+    cy.expect(overviewAccordion.find(HTML(including(matchProfileName))).exists());
   },
 
   linkActionProfileForNonMatches(profileName, forMatchesOrder = 1) {
@@ -161,11 +136,7 @@ export default {
     cy.do(actionsButton.click());
     ModalSelectProfile.searchProfileByName(profileName);
     ModalSelectProfile.selectProfile(profileName);
-    cy.expect(
-      Accordion('Overview')
-        .find(HTML(including(profileName)))
-        .exists(),
-    );
+    cy.expect(overviewAccordion.find(HTML(including(profileName))).exists());
   },
 
   linkMatchProfileForNonMatches(profileName, forMatchesOrder = 1) {
@@ -174,11 +145,7 @@ export default {
     cy.do(matchButton.click());
     ModalSelectProfile.searchProfileByName(profileName, 'match');
     ModalSelectProfile.selectProfile(profileName, 'match');
-    cy.expect(
-      Accordion('Overview')
-        .find(HTML(including(profileName)))
-        .exists(),
-    );
+    cy.expect(overviewAccordion.find(HTML(including(profileName))).exists());
   },
 
   linkMatchAndActionProfilesForSubMatches(
@@ -192,11 +159,7 @@ export default {
     cy.do(actionsButton.click());
     ModalSelectProfile.searchProfileByName(actionProfileName);
     ModalSelectProfile.selectProfile(actionProfileName);
-    cy.expect(
-      Accordion('Overview')
-        .find(HTML(including(actionProfileName)))
-        .exists(),
-    );
+    cy.expect(overviewAccordion.find(HTML(including(actionProfileName))).exists());
   },
 
   linkMatchAndTwoActionProfilesForSubMatches(
@@ -217,22 +180,14 @@ export default {
     cy.do(matchButton.click());
     ModalSelectProfile.searchProfileByName(matchProfileName, 'match');
     ModalSelectProfile.selectProfile(matchProfileName, 'match');
-    cy.expect(
-      Accordion('Overview')
-        .find(HTML(including(matchProfileName)))
-        .exists(),
-    );
+    cy.expect(overviewAccordion.find(HTML(including(matchProfileName))).exists());
     waitLoading();
     // link action profile to match profile
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
     cy.do(actionsButton.click());
     ModalSelectProfile.searchProfileByName(actionProfileName);
     ModalSelectProfile.selectProfile(actionProfileName);
-    cy.expect(
-      Accordion('Overview')
-        .find(HTML(including(actionProfileName)))
-        .exists(),
-    );
+    cy.expect(overviewAccordion.find(HTML(including(actionProfileName))).exists());
   },
 
   linkMatchAndTwoActionProfiles(
@@ -248,7 +203,7 @@ export default {
     ModalSelectProfile.selectProfile(matchProfileName, 'match');
     cy.expect(
       Pane('New job profile')
-        .find(Accordion('Overview'))
+        .find(overviewAccordion)
         .find(HTML(including(matchProfileName)))
         .exists(),
     );
@@ -260,7 +215,7 @@ export default {
     ModalSelectProfile.selectProfile(firstActionProfileName);
     cy.expect(
       Pane('New job profile')
-        .find(Accordion('Overview'))
+        .find(overviewAccordion)
         .find(HTML(including(firstActionProfileName)))
         .exists(),
     );
@@ -272,7 +227,7 @@ export default {
     ModalSelectProfile.selectProfile(secondActionProfileName);
     cy.expect(
       Pane('New job profile')
-        .find(Accordion('Overview'))
+        .find(overviewAccordion)
         .find(HTML(including(secondActionProfileName)))
         .exists(),
     );
@@ -292,7 +247,7 @@ export default {
     ModalSelectProfile.selectProfile(matchProfileName, 'match');
     cy.expect(
       Pane('New job profile')
-        .find(Accordion('Overview'))
+        .find(overviewAccordion)
         .find(HTML(including(matchProfileName)))
         .exists(),
     );
@@ -304,7 +259,7 @@ export default {
     ModalSelectProfile.selectProfile(firstActionProfileName);
     cy.expect(
       Pane('New job profile')
-        .find(Accordion('Overview'))
+        .find(overviewAccordion)
         .find(HTML(including(firstActionProfileName)))
         .exists(),
     );
@@ -316,7 +271,7 @@ export default {
     ModalSelectProfile.selectProfile(secondActionProfileName);
     cy.expect(
       Pane('New job profile')
-        .find(Accordion('Overview'))
+        .find(overviewAccordion)
         .find(HTML(including(secondActionProfileName)))
         .exists(),
     );
@@ -328,7 +283,7 @@ export default {
     ModalSelectProfile.selectProfile(thirdActionProfileName);
     cy.expect(
       Pane('New job profile')
-        .find(Accordion('Overview'))
+        .find(overviewAccordion)
         .find(HTML(including(thirdActionProfileName)))
         .exists(),
     );
@@ -433,5 +388,13 @@ export default {
         .find(Button({ icon: 'times' }))
         .click(),
     );
+  },
+
+  checkPreviouslyPopulatedDataIsDisplayed: (profile, actionProfileName) => {
+    cy.expect([
+      profileNameField.has({ value: profile.profileName }),
+      dataTypeSelect.has({ value: profile.acceptedType }),
+      overviewAccordion.find(HTML(including(actionProfileName))).exists(),
+    ]);
   },
 };
