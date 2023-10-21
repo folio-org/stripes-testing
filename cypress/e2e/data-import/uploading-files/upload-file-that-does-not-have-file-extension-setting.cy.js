@@ -27,7 +27,7 @@ describe('data-import', () => {
       'C2356 Upload a file that does not have a file extension SETTING (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        const filePathWithNotExistingFileExtension = 'fileForC2328.txt';
+        const filePathWithNotExistingFileExtension = 'file.txt';
         const fileNameWithNotExistingFileExtension = `C2356 autotestFile.${getRandomPostfix()}.txt`;
         const filePathWithBlockedFileExtension = 'fileForC2356.mrk';
         const fileNameWithBlockedFileExtension = `C2356 autotestFile.${getRandomPostfix()}.mrk`;
