@@ -101,6 +101,40 @@ describe('data-import', () => {
     );
 
     it(
+      'C9323 Create match profile for Static value TEXT match (folijet) (TaaS)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      () => {
+        const matchProfile = {
+          profileName: `C9323 autotest match profile_${getRandomPostfix()}`,
+          incomingStaticValue: 'Online',
+          incomingStaticRecordValue: 'Text',
+          matchCriterion: 'Existing value contains incoming value',
+          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordOption: NewMatchProfile.optionsList.holdingsHrid,
+        };
+
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
+        MatchProfiles.openNewMatchProfileForm();
+        NewMatchProfile.fillName(matchProfile.profileName);
+        NewMatchProfile.verifyExistingRecordSection();
+        NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
+        NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
+        NewMatchProfile.fillStaticValue(
+          matchProfile.incomingStaticValue,
+          matchProfile.incomingStaticRecordValue,
+        );
+        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
+        NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
+        NewMatchProfile.saveAndClose();
+        MatchProfileView.verifyMatchProfileOpened();
+        MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
+
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      },
+    );
+
+    it(
       'C9324 Create match profile for Static value NUMBER match (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
