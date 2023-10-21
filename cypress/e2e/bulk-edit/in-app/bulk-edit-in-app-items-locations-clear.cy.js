@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
           query: `"barcode"=="${item.itemBarcode}"`,
         }).then((res) => {
           res.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
-          res.permanentLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0'};
+          res.permanentLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
           ItemActions.editItemViaApi(res);
         });
       });
