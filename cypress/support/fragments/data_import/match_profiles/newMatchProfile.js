@@ -1,7 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { not } from 'bigtest';
 import { HTML, including } from '@interactors/html';
-import DateTools from '../../../utils/dateTools';
 import {
   Button,
   Select,
@@ -163,10 +162,10 @@ function fillStaticValue(staticValue, recordValue) {
     cy.do([
       TextField({
         name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.fromDate',
-      }).fillIn(DateTools.getCurrentDay()),
+      }).fillIn(staticValue),
       TextField({
         name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.toDate',
-      }).fillIn(DateTools.getTomorrowDay()),
+      }).fillIn(staticValue),
     ]);
   }
 }
