@@ -79,4 +79,17 @@ export default {
       .should('include.text', incomingRecordFields.field);
     cy.contains('Existing Instance record field').parent().should('include.text', instanceOption);
   },
+  verifyMatchProfileWithStaticValueAndFolioRecordValue({
+    profileName,
+    incomingStaticValue,
+    existingRecordOption,
+  }) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.contains('Incoming Static value (submatch only) record')
+      .parent()
+      .should('include.text', incomingStaticValue);
+    cy.contains('Existing Holdings record field')
+      .parent()
+      .should('include.text', existingRecordOption);
+  },
 };

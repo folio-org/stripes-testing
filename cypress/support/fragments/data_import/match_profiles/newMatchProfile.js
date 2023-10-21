@@ -148,6 +148,7 @@ function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeList.find(SelectionOption(existingRecordOption)).click());
   // TODO wait until option will be selected
   cy.wait(1500);
+  cy.get('#selected-criterion-value-type-item').contains(existingRecordOption);
 }
 
 function fillOnlyComparePartOfTheValue(value) {
@@ -509,7 +510,7 @@ export default {
       'You are comparing\nto this record',
     );
   },
-  verifyMatchCriterion: (value) => {
+  verifyMatchCriterionNotContains: (value) => {
     cy.expect(matchCriterionSelect.has({ value: not(value) }));
     cy.get('#match-criteria').should(($element) => {
       const content = $element.text();

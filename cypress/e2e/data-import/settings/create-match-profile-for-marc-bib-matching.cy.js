@@ -87,7 +87,7 @@ describe('data-import', () => {
         NewMatchProfile.fillIncomingRecordSections(matchProfile);
         NewMatchProfile.fillExistingRecordSections(matchProfile);
         ['MARC Holdings', 'Order', 'Invoice'].forEach((option) => {
-          NewMatchProfile.verifyMatchCriterion(option);
+          NewMatchProfile.verifyMatchCriterionNotContains(option);
         });
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
@@ -106,19 +106,26 @@ describe('data-import', () => {
       () => {
         const matchProfile = {
           profileName: `C9323 autotest match profile_${getRandomPostfix()}`,
-          incomingRecordFields: {
-            field: '001',
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
-          instanceOption: NewMatchProfile.optionsList.instanceHrid,
+          incomingStaticValue: 'Online',
+          matchCriterion: 'Existing value contains incoming value',
+          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordOption: NewMatchProfile.optionsList.holdingsHrid,
         };
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.openNewMatchProfileForm();
         NewMatchProfile.fillName(matchProfile.profileName);
-        // fillMatchProfileWithStaticValue
+        NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
+        NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
+        NewMatchProfile.fillStaticValue(matchProfile.incomingStaticValue);
+        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
+        NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
+        NewMatchProfile.saveAndClose();
+        MatchProfileView.verifyMatchProfileOpened();
+        MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
+
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       },
     );
   });
