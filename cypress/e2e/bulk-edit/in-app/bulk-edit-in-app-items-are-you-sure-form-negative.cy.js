@@ -41,14 +41,19 @@ describe('bulk-edit', () => {
             ItemActions.editItemViaApi(res);
           },
         );
-        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.secondBarcode}"` }).then(
-          (res) => {
-            res.temporaryLocation = { id: item.annexId };
-            res.permanentLocation = { id: item.annexId };
-            ItemActions.editItemViaApi(res);
-          },
+        cy.getItems({
+          limit: 1,
+          expandAll: true,
+          query: `"barcode"=="${item.secondBarcode}"`,
+        }).then((res) => {
+          res.temporaryLocation = { id: item.annexId };
+          res.permanentLocation = { id: item.annexId };
+          ItemActions.editItemViaApi(res);
+        });
+        FileManager.createFile(
+          `cypress/fixtures/${itemBarcodesFileName}`,
+          `${item.firstBarcode}\r\n${item.secondBarcode}`,
         );
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, `${item.firstBarcode}\r\n${item.secondBarcode}`);
       });
     });
 

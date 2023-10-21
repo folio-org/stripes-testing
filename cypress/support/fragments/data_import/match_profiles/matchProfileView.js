@@ -92,25 +92,28 @@ export default {
     cy.contains('Incoming Static value (submatch only) record')
       .parent()
       .should('include.text', incomingStaticRecordValue);
-    cy.contains('Incoming Static value (submatch only) record')
-      .parent()
-      .should('include.text', incomingStaticValue);
-    cy.contains('Existing Holdings record field')
-      .parent()
-      .should('include.text', existingRecordOption);
-  },
-  verifyMatchProfileWithStaticValueDateAndFolioRecordValue({
-    profileName,
-    incomingStaticRecordValue,
-    existingRecordOption,
-  }) {
-    this.verifyMatchProfileTitleName(profileName);
-    cy.contains('Incoming Static value (submatch only) record')
-      .parent()
-      .should('include.text', incomingStaticRecordValue);
-    cy.contains('Incoming Static value (submatch only) record')
-      .parent()
-      .should('include.text', DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY'));
+    if (incomingStaticRecordValue === 'Date') {
+      cy.contains('Incoming Static value (submatch only) record')
+        .parent()
+        .should('include.text', DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY'));
+    }
+    if (incomingStaticRecordValue === 'Date range') {
+      cy.contains('Incoming Static value (submatch only) record')
+        .parent()
+        .invoke('text')
+        .then((text) => {
+          const startDate = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+          const endDate = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+          const expectedText = `From${startDate}To${endDate}`;
+
+          cy.wrap(text).should('include', expectedText);
+        });
+    }
+    if (incomingStaticRecordValue === 'Text' || incomingStaticRecordValue === 'Number') {
+      cy.contains('Incoming Static value (submatch only) record')
+        .parent()
+        .should('include.text', incomingStaticValue);
+    }
     cy.contains('Existing Holdings record field')
       .parent()
       .should('include.text', existingRecordOption);
