@@ -195,7 +195,40 @@ describe('data-import', () => {
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
-        MatchProfileView.verifyMatchProfileWithStaticValueDateAndFolioRecordValue(matchProfile);
+        MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
+
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      },
+    );
+
+    it(
+      'C9326 Create match profile for Static value DATE RANGE match (folijet) (TaaS)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      () => {
+        const matchProfile = {
+          profileName: `C9325 autotest match profile_${getRandomPostfix()}`,
+          incomingStaticValue: DateTools.getFormattedDate({ date: new Date() }),
+          incomingStaticRecordValue: 'Date range',
+          matchCriterion: 'Existing value contains incoming value',
+          existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
+          existingRecordOption: NewMatchProfile.optionsList.holdingsHrid,
+        };
+
+        cy.visit(SettingsMenu.matchProfilePath);
+        MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
+        MatchProfiles.openNewMatchProfileForm();
+        NewMatchProfile.fillName(matchProfile.profileName);
+        NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
+        NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
+        NewMatchProfile.fillStaticValue(
+          matchProfile.incomingStaticValue,
+          matchProfile.incomingStaticRecordValue,
+        );
+        NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
+        NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
+        NewMatchProfile.saveAndClose();
+        MatchProfileView.verifyMatchProfileOpened();
+        MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
         MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       },

@@ -91,10 +91,7 @@ describe('bulk-edit', () => {
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter(
-          'Barcode',
-          item.barcode,
-        );
+        InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.verifyPermanentLocation(newLocation);
       },
