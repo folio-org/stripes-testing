@@ -195,7 +195,7 @@ describe('data-import', () => {
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
         MatchProfileView.verifyMatchProfileOpened();
-        MatchProfileView.verifyMatchProfileWithStaticValueDateAndFolioRecordValue(matchProfile);
+        MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
         MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       },

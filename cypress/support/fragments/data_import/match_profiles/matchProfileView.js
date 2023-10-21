@@ -118,20 +118,4 @@ export default {
       .parent()
       .should('include.text', existingRecordOption);
   },
-  verifyMatchProfileWithStaticValueDateAndFolioRecordValue({
-    profileName,
-    incomingStaticRecordValue,
-    existingRecordOption,
-  }) {
-    this.verifyMatchProfileTitleName(profileName);
-    cy.contains('Incoming Static value (submatch only) record')
-      .parent()
-      .should('include.text', incomingStaticRecordValue);
-    cy.contains('Incoming Static value (submatch only) record')
-      .parent()
-      .should('include.text', DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY'));
-    cy.contains('Existing Holdings record field')
-      .parent()
-      .should('include.text', existingRecordOption);
-  },
 };
