@@ -211,6 +211,7 @@ describe('data-import', () => {
             matchProfile: {
               profileName: `C397983 Instance status submatch - Electronic Resource ${getRandomPostfix()}`,
               incomingStaticValue: 'Electronic Resource',
+              incomingStaticRecordValue: 'Text',
               matchCriterion: 'Exactly matches',
               existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
               existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm,
@@ -559,6 +560,7 @@ describe('data-import', () => {
             matchProfile: {
               profileName: `C397383 Instance status submatch - Electronic Resource ${getRandomPostfix()}`,
               incomingStaticValue: 'Electronic Resource',
+              incomingStaticRecordValue: 'Text',
               matchCriterion: 'Exactly matches',
               existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
               existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm,
@@ -568,6 +570,7 @@ describe('data-import', () => {
             matchProfile: {
               profileName: `C397383 Holdings type electronic ${getRandomPostfix()}`,
               incomingStaticValue: 'Electronic',
+              incomingStaticRecordValue: 'Text',
               matchCriterion: 'Exactly matches',
               existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
               existingRecordOption: NewMatchProfile.optionsList.holdingsType,

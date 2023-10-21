@@ -374,6 +374,10 @@ export default {
     cy.do(ordersList.find(Link(number)).click());
   },
 
+  checkAbsentExportDetails() {
+    cy.expect(orderDetailsPane.find(Accordion('Export details')).absent());
+  },
+
   deleteOrderViaActions: () => {
     cy.wait(4000);
     expandActionsDropdown();
