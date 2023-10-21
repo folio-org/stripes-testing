@@ -29,6 +29,7 @@ const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
+const startBulkEditButton = Button('Start bulk edit');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 
@@ -49,8 +50,11 @@ export default {
     cy.do(startBulkEditLocalButton.click());
   },
   openInAppStartBulkEditFrom() {
-    cy.do(Button('Start bulk edit').click());
+    cy.do(startBulkEditButton.click());
     cy.wait(1000);
+  },
+  startBulkEditAbsent() {
+    cy.expect(startBulkEditButton.absent());
   },
   selectOption(optionName, rowIndex = 0) {
     cy.do(
