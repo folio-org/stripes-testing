@@ -990,6 +990,14 @@ export default {
     cy.get('[class^="mclCell-"]').contains(barcode).eq(0).click();
   },
 
+  openItemByStatus: (status) => {
+    cy.get('div[class^="mclRow--"]')
+      .contains('div[class^="mclCell-"]', status)
+      .then((elem) => {
+        elem.parent()[0].querySelector('[href]').click();
+      });
+  },
+
   verifyCellsContent: (...content) => {
     content.forEach((itemContent) => {
       cy.expect(MultiColumnListCell({ content: itemContent }).exists());
