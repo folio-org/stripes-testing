@@ -375,7 +375,6 @@ describe('data-import', () => {
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
-          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.checkItemAdministrativeNote(note);
         });

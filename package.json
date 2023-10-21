@@ -47,6 +47,7 @@
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/eslint-parser": "^7.19.1",
+    "@cypress/grep": "^4.0.1",
     "@cypress/request": "2.88.7",
     "@folio/eslint-config-stripes": "^6.4.0",
     "@interactors/with-cypress": "^1.0.0-rc1.3",
@@ -54,7 +55,6 @@
     "bigtest": "^0.14.0",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
-    "cypress-grep": "^3.0.3",
     "cypress-recurse": "^1.13.1",
     "cypress-xpath": "^1.6.2",
     "eslint": "^7.32.0",

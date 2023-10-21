@@ -34,12 +34,12 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
   const linkingTagAndValues = [
     {
       rowIndex: 76,
-      value: 'Sprouse, Chris',
+      value: 'C365602 Sprouse, Chris',
       tag: 700,
     },
     {
       rowIndex: 77,
-      value: 'Martin, Laura',
+      value: 'C365602 Martin, Laura',
       tag: 700,
     },
   ];
@@ -127,7 +127,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
         '700',
         '1',
         '\\',
-        '$a Sprouse, Chris',
+        '$a C365602 Sprouse, Chris',
         '$e artist.',
         '$0 1357871',
         '',
@@ -139,7 +139,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
         '700',
         '1',
         '\\',
-        '$a Sprouse, Chris $e artist. $0 1357871',
+        '$a C365602 Sprouse, Chris $e artist. $0 1357871',
       );
 
       QuickMarcEditor.pressSaveAndClose();

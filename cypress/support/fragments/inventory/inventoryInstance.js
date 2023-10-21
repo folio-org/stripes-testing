@@ -280,6 +280,9 @@ export default {
   verifyContributor,
   verifyContributorWithMarcAppLink,
 
+  waitInventoryLoading() {
+    cy.expect(section.exists());
+  },
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -333,6 +336,14 @@ export default {
 
   checkInstanceTitle(title) {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
+  },
+
+  checkHoldingTitle(title, absent = false) {
+    if (!absent) {
+      cy.expect(detailsPaneContent.has({ text: including(`Holdings: ${title}`) }));
+    } else {
+      cy.expect(detailsPaneContent.find(HTML({ text: including(`Holdings: ${title}`) })).absent());
+    }
   },
 
   startOverlaySourceBibRecord: () => {
@@ -975,7 +986,16 @@ export default {
   },
 
   openItemByBarcodeAndIndex: (barcode) => {
+    cy.wait(4000);
     cy.get('[class^="mclCell-"]').contains(barcode).eq(0).click();
+  },
+
+  openItemByStatus: (status) => {
+    cy.get('div[class^="mclRow--"]')
+      .contains('div[class^="mclCell-"]', status)
+      .then((elem) => {
+        elem.parent()[0].querySelector('[href]').click();
+      });
   },
 
   verifyCellsContent: (...content) => {

@@ -7,6 +7,7 @@ import {
   MultiColumnListCell,
   Callout,
   TextField,
+  MultiColumnListRow,
 } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 
@@ -22,7 +23,27 @@ const defaultFileExtension = {
   dataTypes: ['MARC'],
 };
 
+function getFileExtensionNames() {
+  const cells = [];
+
+  cy.wait(2000);
+  return cy
+    .get('div[class^="mclRowContainer--"]')
+    .find('[data-row-index]')
+    .each(($row) => {
+      // from each row, choose specific cell
+      cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+
 export default {
+  getFileExtensionNames,
   createViaApi: () => {
     return cy
       .okapiRequest({
@@ -57,29 +78,33 @@ export default {
   verifyCalloutMessage: (message) => {
     cy.expect(Callout({ textContent: including(message) }).exists());
   },
-  verifyDeletedFileExtensionAbsent: (extention) => {
-    const cells = [];
 
-    cy.wait(2000);
-    return cy
-      .get('div[class^="mclRowContainer--"]')
-      .find('[data-row-index]')
-      .each(($row) => {
-        // from each row, choose specific cell
-        cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
-          // extract its text content
-          .invoke('text')
-          .then((cellValue) => {
-            cells.push(cellValue);
-          });
-      })
-      .then(() => {
-        cy.expect(cells).to.not.deep.equal(extention);
-      });
+  verifyDeletedFileExtensionAbsent: (extention) => {
+    getFileExtensionNames().then((cells) => {
+      cy.expect(cells).to.not.deep.equal(extention);
+    });
+  },
+  verifyCreateFileExtensionPresented: (extention) => {
+    getFileExtensionNames().then((cells) => {
+      cy.expect(cells).to.include(extention);
+    });
   },
   verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (extension) => {
     cy.wait(2000);
     cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: extension })).exists());
+  },
+  verifyCreatedFileExtension: (extension, importStatus) => {
+    cy.do(
+      MultiColumnListCell({ content: extension }).perform((element) => {
+        const rowNumber = element.closest('[data-row-index').getAttribute('data-row-index');
+
+        cy.expect(
+          MultiColumnListRow({ rowIndexInParent: rowNumber })
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: importStatus }),
+        );
+      }),
+    );
   },
 };

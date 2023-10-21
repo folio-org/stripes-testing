@@ -12,6 +12,7 @@ import {
   Label,
   MultiSelect,
   Callout,
+  TextField,
 } from '../../../../interactors';
 import eHoldingsPackages from './eHoldingsPackages';
 
@@ -29,6 +30,14 @@ const selectedTitleFieldsRadioButton = RadioButton({
   ariaLabel: 'Export selected fields',
 });
 const getCalloutMessageText = () => cy.then(() => Callout({ type: 'success' }).textContent());
+const addAgreementButton = Button({ id: 'find-agreement-trigger' });
+const findAgreementModal = Modal({ id: 'plugin-find-agreement-modal' });
+const agreementSearchInputField = findAgreementModal.find(
+  TextField({ id: 'input-agreement-search' }),
+);
+const searchAgreementButton = findAgreementModal.find(
+  Button({ id: 'clickable-search-agreements' }),
+);
 
 export default {
   getCalloutMessageText,
@@ -66,6 +75,27 @@ export default {
 
   createNewAgreement() {
     cy.do(Accordion({ id: 'packageShowAgreements' }).find(Button('New')).click());
+  },
+
+  addExistingAgreement() {
+    cy.do(addAgreementButton.click());
+  },
+
+  searchForExistingAgreement(agreementName) {
+    cy.expect(findAgreementModal.exists());
+    cy.do([agreementSearchInputField.fillIn(agreementName), searchAgreementButton.click()]);
+  },
+
+  clickOnFoundAgreementInModal(agreementName) {
+    cy.do(findAgreementModal.find(MultiColumnListCell(agreementName)).click());
+  },
+
+  clickOnAgreementInAgreementSection(agreementName) {
+    cy.do(
+      Accordion('Agreements')
+        .find(MultiColumnListCell({ content: agreementName }))
+        .click(),
+    );
   },
 
   export() {

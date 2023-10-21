@@ -67,7 +67,7 @@ const expandActionsDropdown = () => {
 
 export default {
   searchByParameter(parameter, value) {
-    cy.wait(1000);
+    cy.wait(4000);
     cy.do([searchField.selectIndex(parameter), searchField.fillIn(value)]);
     cy.expect(searchButton.has({ disabled: false }));
     cy.do(searchButton.click());
@@ -203,12 +203,22 @@ export default {
     }
   },
 
-  reOpenOrder: (orderNumber) => {
+  unOpenOrderAndDeleteItems() {
     expandActionsDropdown();
-    cy.do(Button('Reopen').click());
-    InteractorsTools.checkCalloutMessage(
-      `The Purchase order - ${orderNumber} has been successfully reopened`,
-    );
+    cy.do([
+      Button('Unopen').click(),
+      Modal({ id: 'order-unopen-confirmation' })
+        .find(Button({ id: 'clickable-order-unopen-confirmation-confirm-keep-holdings' }))
+        .click(),
+    ]);
+  },
+
+  selectInvoiceInRelatedInvoicesList: (invoiceNumber) => {
+    cy.get(`div[class*=mclCell-]:contains("${invoiceNumber}")`)
+      .siblings('div[class*=mclCell-]')
+      .eq(0)
+      .find('a')
+      .click();
   },
 
   receiveOrderViaActions: () => {
@@ -359,8 +369,13 @@ export default {
   },
 
   selectFromResultsList(number) {
+    cy.wait(4000);
     cy.expect(ordersResults.is({ empty: false }));
     cy.do(ordersList.find(Link(number)).click());
+  },
+
+  checkAbsentExportDetails() {
+    cy.expect(orderDetailsPane.find(Accordion('Export details')).absent());
   },
 
   deleteOrderViaActions: () => {
@@ -401,9 +416,11 @@ export default {
   },
 
   checkSearchResults: (orderNumber) => {
+    cy.wait(4000);
     cy.expect(ordersList.find(Link(orderNumber)).exists());
   },
   checkSearchResultsWithClosedOrder: (orderNumber) => {
+    cy.wait(4000);
     cy.expect(
       ordersList
         .find(MultiColumnListRow({ index: 0 }))
@@ -412,6 +429,7 @@ export default {
     );
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
+    cy.wait(4000);
     cy.expect(
       orderLineList
         .find(MultiColumnListRow({ index: 0 }))
@@ -485,6 +503,7 @@ export default {
     ]);
   },
   selectVendorFilter: (invoice) => {
+    cy.wait(4000);
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
       Button('Organization look-up').click(),
