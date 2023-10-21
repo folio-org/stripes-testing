@@ -2,11 +2,16 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
 import { Button, Modal } from '../../../../../interactors';
 
+const newRequestButton = Button('New request');
+
 function openActions() {
   cy.do(Button('Actions').click());
 }
 function clickMissingButton() {
   cy.do(Button('Missing').click());
+}
+function clickNewRequestButton() {
+  cy.do(newRequestButton.click());
 }
 function confirmMarkAsMissing() {
   cy.do(Modal('Confirm item status: Missing').find(Button('Confirm')).click());
@@ -18,6 +23,8 @@ function cancelMarkAsMissing() {
 export default {
   confirmMarkAsMissing,
   cancelMarkAsMissing,
+  openActions,
+  clickNewRequestButton,
   edit() {
     cy.wait(5000);
     openActions();
@@ -104,5 +111,8 @@ export default {
       path: `inventory/items/${itemId}`,
       isDefaultSearchParamsRequired: false,
     });
+  },
+  verifyNewRequestButtonIsAbsent() {
+    cy.expect(newRequestButton.absent());
   },
 };
