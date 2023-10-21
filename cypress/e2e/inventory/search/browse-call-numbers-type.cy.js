@@ -22,8 +22,8 @@ describe('Inventory', () => {
       },
     ];
     const callNumbers = [
-      { type: 'Dewey Decimal classification', value: '348.12' },
-      { type: 'National Library of Medicine classification', value: 'QS 55 .GA8 Q9 2023' },
+      { type: 'Dewey Decimal classification', value: '414.972' },
+      { type: 'National Library of Medicine classification', value: 'QS 41 .GC4 Q9 2077' },
     ];
 
     before('Create test data', () => {
