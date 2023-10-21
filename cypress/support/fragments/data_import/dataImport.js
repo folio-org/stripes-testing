@@ -40,6 +40,7 @@ const yesButton = Button('Yes, cancel import job');
 const cancelButton = Button('No, do not cancel import');
 const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
 const importBlockedModal = Modal('Import blocked');
+const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
@@ -461,6 +462,30 @@ export default {
     upload();
   },
 
+  uploadBunchOfFilesWithDifferentFileExtensions(
+    firstFileName,
+    secondFileName,
+    firstFinalFileName,
+    secondFinalFileName,
+  ) {
+    const arrayOfFiles = [];
+
+    FileManager.readFile(`cypress/fixtures/${firstFileName}`).then((actualContent) => {
+      const fileName = `${firstFinalFileName}.mrc`;
+
+      FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
+      arrayOfFiles.push(fileName);
+    });
+    FileManager.readFile(`cypress/fixtures/${secondFileName}`).then((actualContent) => {
+      const fileName = `${secondFinalFileName}.txt`;
+
+      FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
+      arrayOfFiles.push(fileName);
+    });
+
+    cy.get('input[type=file]').attachFile(arrayOfFiles);
+  },
+
   verifyDataImportProfiles(profiles) {
     cy.expect(dataImportNavSection.find(NavListItem(profiles)).exists());
   },
@@ -481,5 +506,21 @@ export default {
         .exists(),
     );
     cy.get('#job-profiles-list').should('exist');
+  },
+  verifyInconsistentFileExtensionsModal() {
+    cy.expect([
+      inconsistentFileExtensionsModal.exists(),
+      inconsistentFileExtensionsModal
+        .find(
+          HTML(
+            including(
+              'You cannot upload files with different extensions. Please upload files with the same extension',
+            ),
+          ),
+        )
+        .exists(),
+      inconsistentFileExtensionsModal.find(Button('Cancel')).exists(),
+      inconsistentFileExtensionsModal.find(Button('Choose other files to upload')).exists(),
+    ]);
   },
 };
