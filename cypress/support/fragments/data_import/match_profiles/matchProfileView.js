@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { HTML, including } from '@interactors/html';
 import { Button, Pane, Accordion } from '../../../../../interactors';
+import DateTools from '../../../utils/dateTools';
 
 const viewPane = Pane({ id: 'view-match-profile-pane' });
 const actionsButton = Button('Actions');
@@ -94,6 +95,22 @@ export default {
     cy.contains('Incoming Static value (submatch only) record')
       .parent()
       .should('include.text', incomingStaticValue);
+    cy.contains('Existing Holdings record field')
+      .parent()
+      .should('include.text', existingRecordOption);
+  },
+  verifyMatchProfileWithStaticValueDateAndFolioRecordValue({
+    profileName,
+    incomingStaticRecordValue,
+    existingRecordOption,
+  }) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.contains('Incoming Static value (submatch only) record')
+      .parent()
+      .should('include.text', incomingStaticRecordValue);
+    cy.contains('Incoming Static value (submatch only) record')
+      .parent()
+      .should('include.text', DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY'));
     cy.contains('Existing Holdings record field')
       .parent()
       .should('include.text', existingRecordOption);
