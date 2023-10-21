@@ -131,6 +131,10 @@ export default {
     cy.expect(Button('Download matched records (CSV)').exists());
   },
 
+  downloadMatchedRecordsAbsent() {
+    cy.expect(Button('Download matched records (CSV)').absent());
+  },
+
   downloadErrorsExists() {
     cy.expect(Button('Download errors (CSV)').exists());
   },
