@@ -279,7 +279,7 @@ export default {
   checkRequestIsNotAllowedModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'This requester already has an open request for this item',
+        message: 'Not allowed to move title level page request to the same item',
       }),
     );
   },
