@@ -18,6 +18,7 @@ const orderLineDetailsSection = Section({ id: 'order-lines-details' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
   PaneHeader({ id: 'paneHeaderorder-lines-details' }),
 );
+const backToOrderButton = Button({ id: 'clickable-backToPO' });
 const actionsButton = Button('Actions');
 
 const itemDetailsSection = orderLineDetailsSection.find(Section({ id: 'ItemDetails' }));
@@ -28,6 +29,9 @@ const locationDetailsSection = orderLineDetailsSection.find(Section({ id: 'locat
 export default {
   waitLoading() {
     cy.expect(orderLineDetailsSection.exists());
+  },
+  backToOrderDetails() {
+    cy.do(backToOrderButton.click());
   },
   checkOrderLineDetails({ purchaseOrderLineInformation = [] } = {}) {
     purchaseOrderLineInformation.forEach(({ key, value }) => {
@@ -85,6 +89,10 @@ export default {
         );
       }
     });
+
+    if (!records.length) {
+      cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
+    }
   },
   checkLocationsSection({ locations = [] }) {
     locations.forEach((locationInformation, index) => {

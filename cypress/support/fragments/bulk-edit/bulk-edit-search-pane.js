@@ -96,13 +96,7 @@ export default {
   verifyBulkEditPaneItems() {
     cy.expect([
       bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists(),
-      bulkEditPane
-        .find(
-          HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
-          ),
-        )
-        .exists(),
+      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
     ]);
   },
 
@@ -159,13 +153,7 @@ export default {
       recordIdentifierDropdown.find(HTML('User Barcodes')).exists(),
       recordIdentifierDropdown.find(HTML('External IDs')).exists(),
       recordIdentifierDropdown.find(HTML('Usernames')).exists(),
-      bulkEditPane
-        .find(
-          HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
-          ),
-        )
-        .exists(),
+      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
     ]);
   },
 
@@ -178,13 +166,7 @@ export default {
       recordIdentifierDropdown.find(HTML('Holdings HRIDs')).exists(),
       recordIdentifierDropdown.find(HTML('Instance HRIDs')).exists(),
       recordIdentifierDropdown.find(HTML('Item barcodes')).exists(),
-      bulkEditPane
-        .find(
-          HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
-          ),
-        )
-        .exists(),
+      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
     ]);
   },
 
@@ -211,13 +193,7 @@ export default {
       recordIdentifierDropdown.find(HTML('Item former identifier')).exists(),
       recordIdentifierDropdown.find(HTML('Item accession number')).exists(),
       recordIdentifierDropdown.find(HTML('Holdings UUIDs')).exists(),
-      bulkEditPane
-        .find(
-          HTML(
-            'Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab',
-          ),
-        )
-        .exists(),
+      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab')).exists(),
     ]);
   },
 
@@ -581,11 +557,7 @@ export default {
   },
 
   verifyChangesUnderColumns(columnName, value) {
-    cy.expect(
-      changesAccordion
-        .find(MultiColumnListCell({ column: columnName, content: including(value) }))
-        .exists(),
-    );
+    cy.expect(MultiColumnListCell({ column: columnName, content: including(value) }).exists());
   },
 
   verifyNonMatchedResults(...values) {
@@ -714,7 +686,7 @@ export default {
       DropdownMenu().find(Checkbox('Copy number')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receiving history')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Suppress from discovery')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Source')).has({ checked: false }),

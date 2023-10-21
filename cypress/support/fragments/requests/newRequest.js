@@ -15,6 +15,7 @@ import {
   Option,
   including,
   Modal,
+  KeyValue,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import dateTools from '../../utils/dateTools';
@@ -278,7 +279,7 @@ export default {
   checkRequestIsNotAllowedModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'This requester already has an open request for this item',
+        message: 'Not allowed to move title level page request to the same item',
       }),
     );
   },
@@ -288,5 +289,14 @@ export default {
         message: 'This requester already has an open request for this instance',
       }),
     );
+  },
+  checkItemInformationSecton(instanceTitle, location, itemStatus) {
+    cy.expect([
+      // itemBarcodeInput.has({ value: barcode }),
+      // KeyValue('Item barcode').has({ value: barcode }),
+      KeyValue('Title').has({ value: instanceTitle }),
+      KeyValue('Effective location').has({ value: location }),
+      KeyValue('Item status').has({ value: itemStatus }),
+    ]);
   },
 };

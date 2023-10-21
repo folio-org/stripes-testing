@@ -219,7 +219,7 @@ describe('data-import', () => {
           );
           HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ONLINE_UI);
           HoldingsRecordView.close();
-          InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.ONLINE_UI);
+          InventoryInstance.openHoldings(LOCATION_NAMES.ONLINE_UI);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.verifyStatisticalCode(
             collectionOfMappingAndActionProfiles[2].mappingProfile.firstStatisticalCodeUI,
