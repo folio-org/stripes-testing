@@ -258,6 +258,20 @@ export default {
     cy.wait(4000);
   },
 
+  addPlannedBudget: (allocatedQuantity, fiscalYear) => {
+    cy.do(Accordion('Planned budget').find(newButton).click());
+    cy.expect(Modal('Planned budget').exists());
+    cy.do([
+      Select({ name: 'fiscalYearId' }).choose(fiscalYear),
+      Modal('Planned budget')
+        .find(TextField({ name: 'allocated' }))
+        .fillIn(allocatedQuantity.toString()),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
+    cy.do([Button('Save').click()]);
+  },
+
   viewTransactions: () => {
     cy.do(Link('View transactions').click());
   },
