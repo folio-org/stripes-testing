@@ -107,6 +107,7 @@ describe('data-import', () => {
         const matchProfile = {
           profileName: `C9323 autotest match profile_${getRandomPostfix()}`,
           incomingStaticValue: 'Online',
+          incomingStaticRecordValue: 'Text',
           matchCriterion: 'Existing value contains incoming value',
           existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
           existingRecordOption: NewMatchProfile.optionsList.holdingsHrid,
@@ -119,7 +120,10 @@ describe('data-import', () => {
         NewMatchProfile.verifyExistingRecordSection();
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
-        NewMatchProfile.fillStaticValue(matchProfile.incomingStaticValue);
+        NewMatchProfile.fillStaticValue(
+          matchProfile.incomingStaticValue,
+          matchProfile.incomingStaticRecordValue,
+        );
         NewMatchProfile.selectMatchCriterion(matchProfile.matchCriterion);
         NewMatchProfile.selectExistingRecordField(matchProfile.existingRecordOption);
         NewMatchProfile.saveAndClose();
