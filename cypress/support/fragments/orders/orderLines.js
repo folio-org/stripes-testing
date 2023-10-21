@@ -382,6 +382,14 @@ export default {
     ]);
   },
 
+  viewPO: () => {
+    cy.wait(6000);
+    cy.do([
+      orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
+      Button('View PO').click(),
+    ]);
+  },
+
   checkCalloutMessageInEditedPOL: (orderNumber, numberOfPOL) => {
     InteractorsTools.checkCalloutMessage(
       `The purchase order line ${orderNumber}-${numberOfPOL} was successfully updated`,

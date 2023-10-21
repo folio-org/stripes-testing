@@ -108,7 +108,6 @@ const viewHoldingsButton = Button('View holdings');
 const holdingsTypeKeyValue = KeyValue('Holdings type');
 const callNumberTypeKeyValue = KeyValue('Call number type');
 const permanentLocationKeyValue = KeyValue('Permanent');
-const holdingsAccordionButton = Button(including('Holdings: Main Library'));
 const itemStatusKeyValue = KeyValue('Item status');
 const itemBarcodeKeyValue = KeyValue('Item barcode');
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
@@ -364,7 +363,7 @@ function verifyHoldingsUpdated() {
 }
 
 function verifyItemUpdated(itemBarcode) {
-  cy.do([holdingsAccordionButton.click(), Link(itemBarcode).click()]);
+  cy.do(Link(itemBarcode).click());
   cy.expect(itemStatusKeyValue.has({ value: ITEM_STATUS_NAMES.AVAILABLE }));
   cy.expect(itemBarcodeKeyValue.has({ value: itemBarcode }));
 
