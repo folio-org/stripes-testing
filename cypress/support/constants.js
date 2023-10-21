@@ -59,6 +59,9 @@ export const ITEM_STATUS_NAMES = {
   AWAITING_DELIVERY: 'Awaiting delivery',
   FOUND_BY_LIBRARY: 'Checked in (found by library)',
   AGED_TO_LOST: 'Aged to lost',
+  LOST_AND_PAID: 'Lost and paid',
+  WITHDRAWN: 'Withdrawn',
+  ORDER_CLOSED: 'Order closed',
 };
 
 export const CY_ENV = {

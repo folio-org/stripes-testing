@@ -12,6 +12,8 @@ import {
   Callout,
   Section,
   DropdownMenu,
+  Pane,
+  TextArea,
 } from '../../../../../interactors';
 import { EXISTING_RECORDS_NAMES } from '../../../constants';
 
@@ -21,6 +23,7 @@ const matchProfileDetailsAccordion = Accordion({ id: 'match-profile-details' });
 const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
 const matchCriterionSelect = Select('Match criterion');
+const nameTextField = TextField('Name*');
 
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
@@ -74,7 +77,7 @@ function fillExistingRecordSections({ existingRecordFields }) {
 }
 
 function fillName(profileName) {
-  cy.do(TextField('Name*').fillIn(profileName));
+  cy.do(nameTextField.fillIn(profileName));
   // wait for data to be loaded
   cy.wait(10000);
 }
@@ -521,6 +524,22 @@ export default {
     cy.expect([
       DropdownMenu({ visible: true }).find(HTML('MARC Bibliographic')).exists(),
       DropdownMenu({ visible: true }).find(HTML('Static value (submatch only)')).exists(),
+    ]);
+  },
+  verifyNewMatchProfileFormIsOpened: () => {
+    cy.expect(Pane('New match profile').exists());
+  },
+  verifyPreviouslyPopulatedDataIsDisplayed: (profile, recordType) => {
+    cy.get(`[data-id="${profile.existingRecordType}"]`).should('contain', recordType);
+    cy.expect([
+      nameTextField.has({ value: profile.name }),
+      TextArea('Description').has({ value: profile.description }),
+      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value' }).has({
+        value: profile.incomingRecordFields.field,
+      }),
+      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[0].value' }).has({
+        value: profile.existingRecordFields.field,
+      }),
     ]);
   },
 };
