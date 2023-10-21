@@ -1,8 +1,9 @@
+import DevTeams from '../../support/dictionary/devTeams';
+import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
-import testTypes from '../../support/dictionary/testTypes';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Users', () => {
@@ -39,8 +40,8 @@ describe('Users', () => {
   });
 
   it(
-    'C421 Create: new user; required: contact info, email, phone, external system ID, address (Prokopovych)',
-    { tags: [testTypes.ideaLabsTests] },
+    'C421 Create: new user; required: contact info, email, phone, external system ID, address (volaris)',
+    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
     () => {
       Users.createViaUi(user).then((id) => {
         user.id = id;
