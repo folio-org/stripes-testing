@@ -8,27 +8,9 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import DateTools from '../../../support/utils/dateTools';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../../support/fragments/invoices/newInvoice';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('Finance: Ledgers', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
-  const secondFiscalYear = {
-    name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
-    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
-    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FYTA',
-  };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -38,25 +20,9 @@ describe('Finance: Ledgers', () => {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
-  const firstOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'Ongoing',
-    ongoing: { isSubscription: false, manualRenewal: false },
-    approved: true,
-    reEncumber: true,
-  };
-  const secondOrder = {
-    approved: true,
-    reEncumber: true,
-  };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantityForFirstFund = '100';
   const allocatedQuantityForSecondFund = '0';
   let user;
-  let orderNumber;
-  let servicePointId;
-  let location;
 
   before(() => {
     cy.getAdminToken();
