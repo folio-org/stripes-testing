@@ -92,7 +92,7 @@ export default {
       records.map(({ feeFineType: name, amount: code }) => ({ name, code })),
     );
   },
-  checkDefaultEditButtonIsDiabled() {
+  checkDefaultEditButtonIsDisabled() {
     cy.expect(
       Section({ id: 'controlled-vocab-pane' })
         .find(Button({ id: 'charge-notice-primary' }))

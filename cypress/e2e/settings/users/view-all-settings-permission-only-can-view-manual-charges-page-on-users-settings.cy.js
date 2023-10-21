@@ -80,12 +80,12 @@ describe('Settings Users', () => {
     { tags: [TestTypes.extendedPath, devTeams.volaris] },
     () => {
       ManualCharges.selectOwner(ownerOne);
-      ManualCharges.checkDefaultEditButtonIsDiabled();
+      ManualCharges.checkDefaultEditButtonIsDisabled();
       ManualCharges.checkManualCharge({ ...testData.manualCharge, amount: '10.00' });
       UsersSettingsGeneral.checkEditDeleteNewButtonsNotDisplayed();
 
       ManualCharges.selectOwner(ownerTwo);
-      ManualCharges.checkDefaultEditButtonIsDiabled();
+      ManualCharges.checkDefaultEditButtonIsDisabled();
       SettingsPane.checkAddNewBtnAbsent();
       ManualCharges.checkEmptyTableContent('There are no Fee/fine: Manual charges');
     },
