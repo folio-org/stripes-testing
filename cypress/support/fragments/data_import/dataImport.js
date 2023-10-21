@@ -496,6 +496,8 @@ export default {
       importBlockedModal
         .find(HTML(including('You cannot upload files with this file extension')))
         .exists(),
+      importBlockedModal.find(Button('Cancel')).exists(),
+      importBlockedModal.find(Button('Choose other files to upload')).exists(),
     ]);
   },
 
