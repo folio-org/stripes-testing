@@ -5,6 +5,7 @@ import {
   RadioButton,
   Button,
   Modal,
+  Section,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import SettingsPane from '../settingsPane';
@@ -89,6 +90,13 @@ export default {
   checkResultsTableContent(records = []) {
     SettingsPane.checkResultsTableContent(
       records.map(({ feeFineType: name, amount: code }) => ({ name, code })),
+    );
+  },
+  checkDefaultEditButtonIsDiabled() {
+    cy.expect(
+      Section({ id: 'controlled-vocab-pane' })
+        .find(Button({ id: 'charge-notice-primary' }))
+        .absent(),
     );
   },
   checkManualCharge({ feeFineType, amount, chargeNoticeId = '', actionNoticeId = '' }) {
