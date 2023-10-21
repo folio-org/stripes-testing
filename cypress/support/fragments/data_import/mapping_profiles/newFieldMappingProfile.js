@@ -15,6 +15,7 @@ import {
   Dropdown,
   DropdownMenu,
   Callout,
+  Pane,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -240,6 +241,9 @@ const fillSummaryInMappingProfile = (specialMappingProfile = defaultMappingProfi
     existingRecordType.choose(specialMappingProfile.typeValue),
   ]);
 };
+const fillFolioRecordType = (profile) => {
+  cy.do(existingRecordType.choose(profile.typeValue));
+};
 const getDefaultInstanceMappingProfile = (name) => {
   const defaultInstanceMappingProfile = {
     profile: {
@@ -338,6 +342,7 @@ export default {
   waitLoading,
   fillSummaryInMappingProfile,
   fillInvoiceLineDescription,
+  fillFolioRecordType,
   selectOrganizationByName,
   save,
 
@@ -1070,6 +1075,18 @@ export default {
 
   checkCalloutMessage: (message) => {
     cy.expect(Callout({ textContent: including(message) }).exists());
+  },
+
+  checkNewMatchProfileFormIsOpened: () => {
+    cy.expect(Pane('New field mapping profile').exists());
+  },
+  checkPreviouslyPopulatedDataIsDisplayed: (profile) => {
+    cy.expect([
+      nameField.has({ value: profile.name }),
+      incomingRecordTypeField.has({ value: profile.incomingRecordType }),
+      existingRecordType.has({ value: including(profile.recordType) }),
+      TextArea({ name: 'profile.description' }).has({ value: profile.description }),
+    ]);
   },
 
   checkOrganizationsAddedToFields: (profile) => {
