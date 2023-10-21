@@ -287,6 +287,17 @@ export default {
     return hours + ':' + minutes + ' ' + ampm;
     // return value in format HH:MM AM/PM
   },
+  getUTCDateFor2Scheduling() {
+    const today = new Date();
+    let hours = today.getUTCHours();
+    let minutes = today.getUTCMinutes() + 3;
+    const ampm = hours >= 12 ? 'P' : 'A';
+    hours %= 12;
+    hours = hours || 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    return hours + ':' + minutes + ' ' + ampm;
+    // return value in format HH:MM AM/PM
+  },
   getCurrentUTCTime() {
     const currentDate = new Date();
     const options = {
