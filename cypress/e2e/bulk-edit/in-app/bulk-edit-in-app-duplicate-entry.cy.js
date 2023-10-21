@@ -7,8 +7,6 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import FileManager from '../../../support/utils/fileManager';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
@@ -52,7 +50,6 @@ describe('bulk-edit', () => {
       'C350933 Verify Errors accordion with repeated records (firebird) (TaaS)',
       { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
-
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -67,6 +64,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(itemBarcodesFileName, 1, 1);
         BulkEditSearchPane.verifyReasonForError('Duplicate entry');
-      });
+      }
+    );
   });
 });
