@@ -858,6 +858,11 @@ export default {
     ]);
   },
 
+  cancelEditInvoice: () => {
+    cy.wait(4000);
+    cy.do(Button('Cancel').click());
+  },
+
   changeFY: (fiscalYear) => {
     cy.wait(6000);
     cy.do([
@@ -1026,5 +1031,13 @@ export default {
         .find(Link(`${fund.name}(${fund.code})`))
         .click(),
     );
+  },
+
+  checkAbsentFYOptionInInvoice: (fiscalYear) => {
+    cy.do(Selection('Fiscal year*').open());
+    cy.get('div[class*=selectionListRoot-]').then(($element) => {
+      const text = $element.text();
+      expect(text).to.not.include(`${fiscalYear}`);
+    });
   },
 };
