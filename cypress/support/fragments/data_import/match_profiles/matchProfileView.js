@@ -17,6 +17,7 @@ export default {
   },
 
   duplicate() {
+    cy.wait(2000);
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Duplicate').click());
   },
@@ -78,5 +79,23 @@ export default {
       .parent()
       .should('include.text', incomingRecordFields.field);
     cy.contains('Existing Instance record field').parent().should('include.text', instanceOption);
+  },
+
+  verifyMatchProfileWithStaticValueAndFolioRecordValue({
+    profileName,
+    incomingStaticValue,
+    incomingStaticRecordValue,
+    existingRecordOption,
+  }) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.contains('Incoming Static value (submatch only) record')
+      .parent()
+      .should('include.text', incomingStaticRecordValue);
+    cy.contains('Incoming Static value (submatch only) record')
+      .parent()
+      .should('include.text', incomingStaticValue);
+    cy.contains('Existing Holdings record field')
+      .parent()
+      .should('include.text', existingRecordOption);
   },
 };
