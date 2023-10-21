@@ -83,6 +83,7 @@ describe('data-import', () => {
         matchProfile: {
           profileName: `Instance Status Batch Loaded.${getRandomPostfix()}`,
           incomingStaticValue: 'Batch Loaded',
+          incomingStaticRecordValue: 'Text',
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
           existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm,
@@ -92,6 +93,7 @@ describe('data-import', () => {
         matchProfile: {
           profileName: `Holdings type electronic.${getRandomPostfix()}`,
           incomingStaticValue: 'Electronic',
+          incomingStaticRecordValue: 'Text',
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
           existingRecordOption: NewMatchProfile.optionsList.holdingsType,

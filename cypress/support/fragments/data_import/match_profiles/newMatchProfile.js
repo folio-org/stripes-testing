@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { not } from 'bigtest';
 import { HTML, including } from '@interactors/html';
+import DateTools from '../../../utils/dateTools';
 import {
   Button,
   Select,
@@ -126,14 +127,45 @@ function fillQualifierInExistingPart(qualifierType, qualifierValue) {
   ]);
 }
 
-function fillStaticValue(staticValue) {
+function fillStaticValue(staticValue, recordValue) {
   cy.do([
     Dropdown({ id: 'record-selector-dropdown' }).open(),
     Button('Static value (submatch only)').click(),
-    TextField({
-      name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.text',
-    }).fillIn(staticValue),
+    Select({
+      name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.staticValueType',
+    }).choose(recordValue),
   ]);
+  if (recordValue === 'Text') {
+    cy.do(
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.text',
+      }).fillIn(staticValue),
+    );
+  }
+  if (recordValue === 'Number') {
+    cy.do(
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.number',
+      }).fillIn(staticValue),
+    );
+  }
+  if (recordValue === 'Date') {
+    cy.do(
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.exactDate',
+      }).fillIn(staticValue),
+    );
+  }
+  if (recordValue === 'Date range') {
+    cy.do([
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.fromDate',
+      }).fillIn(DateTools.getCurrentDay()),
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.toDate',
+      }).fillIn(DateTools.getTomorrowDay()),
+    ]);
+  }
 }
 
 function selectMatchCriterion(matchCriterion) {
@@ -148,6 +180,7 @@ function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeList.find(SelectionOption(existingRecordOption)).click());
   // TODO wait until option will be selected
   cy.wait(1500);
+  cy.get('#selected-criterion-value-type-item').contains(existingRecordOption);
 }
 
 function fillOnlyComparePartOfTheValue(value) {
@@ -284,10 +317,11 @@ export default {
     matchCriterion,
     existingRecordOption,
     existingRecordType,
+    incomingStaticRecordValue,
   }) {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
-    fillStaticValue(incomingStaticValue);
+    fillStaticValue(incomingStaticValue, incomingStaticRecordValue);
     selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
   },
@@ -509,7 +543,7 @@ export default {
       'You are comparing\nto this record',
     );
   },
-  verifyMatchCriterion: (value) => {
+  verifyMatchCriterionNotContains: (value) => {
     cy.expect(matchCriterionSelect.has({ value: not(value) }));
     cy.get('#match-criteria').should(($element) => {
       const content = $element.text();
