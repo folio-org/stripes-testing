@@ -194,7 +194,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstance.searchByTitle(createdRecordsIDs[0]);
-        console.log(createdRecordsIDs);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
 
