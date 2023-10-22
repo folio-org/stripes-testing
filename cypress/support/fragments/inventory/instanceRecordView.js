@@ -234,6 +234,22 @@ export default {
   },
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
+  verifyPrecedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'precedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
+  verifySucceedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'succeedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
 
   clickNextPaginationButton() {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());
