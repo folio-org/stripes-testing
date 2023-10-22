@@ -207,12 +207,10 @@ export default {
     cy.wait(1500);
     cy.expect(instanceDetailsPane.exists());
   },
-  verifyCalloutMessage: (number) => {
+  verifyCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(
-          `Record ${number} created. Results may take a few moments to become visible in Inventory`,
-        ),
+        textContent: including(message),
       }).exists(),
     );
   },
