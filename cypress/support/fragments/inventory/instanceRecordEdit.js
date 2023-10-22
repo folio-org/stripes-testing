@@ -9,6 +9,7 @@ import {
   Selection,
   including,
   RepeatableFieldItem,
+  PaneHeader,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -122,10 +123,13 @@ export default {
   chooseTemporaryLocation(locationName) {
     cy.do([Selection('Temporary').open(), Selection('Temporary').choose(including(locationName))]);
   },
+  chooseInstanceStatusTerm(statusTerm) {
+    cy.do(Select('Instance status term').choose(statusTerm));
+  },
   saveAndClose: () => {
     cy.wait(1500);
     cy.do(saveAndCloseButton.click());
-    cy.expect(actionsButton.exists());
+    cy.expect([actionsButton.exists(), PaneHeader(including('Edit instance')).absent()]);
   },
 
   clickAddContributor() {
