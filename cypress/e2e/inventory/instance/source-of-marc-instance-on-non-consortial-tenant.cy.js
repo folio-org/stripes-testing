@@ -15,6 +15,7 @@ describe('inventory', () => {
   describe('Instance', () => {
     let user;
     let instanceHrid;
+    const instanceSource = 'MARC';
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const fileName = `C402775 autotestFile.${getRandomPostfix()}.mrc`;
@@ -60,10 +61,10 @@ describe('inventory', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.verifyPanesExist();
         InventorySearchAndFilter.instanceTabIsDefault();
-        InventoryInstances.searchBySource('MARC');
+        InventoryInstances.searchBySource(instanceSource);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();
-        InstanceRecordView.verifyInstanceSource('MARC');
+        InstanceRecordView.verifyInstanceSource(instanceSource);
       },
     );
   });
