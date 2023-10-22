@@ -20,10 +20,12 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
+    const checked = true;
     const instanceTitle =
       "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.";
     const marcFileName = `C11087 autotestFile_${getRandomPostfix()}.mrc`;
@@ -52,16 +54,16 @@ describe('data-import', () => {
       });
     });
 
-    // after('delete test data', () => {
-    //   JobProfiles.deleteJobProfile(jobProfile.profileName);
-    //   ActionProfiles.deleteActionProfile(actionProfile.name);
-    //   FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-    //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-    //       (instance) => {
-    //         InventoryInstance.deleteInstanceViaApi(instance.id);
-    //       },
-    //     );
-    // });
+    after('delete test data', () => {
+      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      ActionProfiles.deleteActionProfile(actionProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        },
+      );
+    });
 
     it(
       'C11087 Instance field mapping: Confirm the "suppress" checkboxes when creating (folijet) (TaaS)',
@@ -106,9 +108,14 @@ describe('data-import', () => {
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
-          //
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+          InstanceRecordView.verifyNotMarkAsStaffSuppressed();
+          InstanceRecordView.verifyNotMarkAsPreviouslyHeld();
           InstanceRecordView.edit();
-          InstanceRecordEdit.verify();
+          InstanceRecordEdit.waitLoading();
+          InstanceRecordEdit.verifyDiscoverySuppressCheckbox(checked);
+          InstanceRecordEdit.verifyStaffSuppressCheckbox();
+          InstanceRecordEdit.verifyPreviouslyHeldCheckbox();
         });
       },
     );
