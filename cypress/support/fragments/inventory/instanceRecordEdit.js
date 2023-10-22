@@ -147,4 +147,17 @@ export default {
         .click(),
     );
   },
+
+  verifyAddButtonsDisabledForPrecedingSucceedingTitle() {
+    cy.expect([
+      Accordion('Title data')
+        .find(Button({ id: 'clickable-add-precedingTitle-add-button' }))
+        .has({ disabled: true }),
+      Accordion('Title data')
+        .find(Button({ id: 'clickable-add-succeedingTitle-add-button' }))
+        .has({ disabled: true }),
+    ]);
+    cy.get('#clickable-add-precedingTitle').find('#find-instance-trigger').should('be.disabled');
+    cy.get('#clickable-add-succeedingTitle').find('#find-instance-trigger').should('be.disabled');
+  },
 };
