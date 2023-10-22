@@ -24,6 +24,8 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('Create Item or Title level request', () => {
   let addedCirculationRule;
@@ -217,11 +219,6 @@ describe('Create Item or Title level request', () => {
       path: SettingsMenu.circulationTitleLevelRequestsPath,
       waiter: TitleLevelRequests.waitLoading,
     });
-    CheckInActions.checkinItemViaApi({
-      itemBarcode: instanceData.item1Barcode,
-      servicePointId: testData.userServicePoint.id,
-      checkInDate: new Date().toISOString(),
-    });
     Requests.getRequestApi({ query: `(instance.title=="${instanceData.title}")` }).then(
       (requestResponse) => {
         cy.log(requestResponse);
@@ -230,6 +227,11 @@ describe('Create Item or Title level request', () => {
         });
       },
     );
+    CheckInActions.checkinItemViaApi({
+      itemBarcode: instanceData.item2Barcode,
+      servicePointId: testData.userServicePoint.id,
+      checkInDate: new Date().toISOString(),
+    });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.item1Barcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
