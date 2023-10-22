@@ -31,6 +31,9 @@ const instanceDetailsPane = Pane({ id: 'pane-instancedetails' });
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
 };
+const verifyIndexTitle = (value) => {
+  cy.expect(KeyValue('Index title').has({ value }));
+};
 
 const verifyInstanceSource = (sourceValue) => cy.expect(sourceKeyValue.has({ value: sourceValue }));
 
@@ -165,6 +168,7 @@ export default {
   waitLoading,
   getMultiColumnListCellsValues,
   verifyResourceTitle,
+  verifyIndexTitle,
   verifyInstanceStatusCode,
   verifyResourceType,
   verifyCatalogedDate,
