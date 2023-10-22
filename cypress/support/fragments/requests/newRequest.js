@@ -297,8 +297,6 @@ export default {
   },
   checkItemInformationSecton(instanceTitle, location, itemStatus) {
     cy.expect([
-      // itemBarcodeInput.has({ value: barcode }),
-      // KeyValue('Item barcode').has({ value: barcode }),
       KeyValue('Title').has({ value: instanceTitle }),
       KeyValue('Effective location').has({ value: location }),
       KeyValue('Item status').has({ value: itemStatus }),
