@@ -337,6 +337,10 @@ export default {
     });
   },
 
+  verifyEdition(value) {
+    cy.expect(KeyValue('Edition').has({ value }));
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },
