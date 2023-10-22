@@ -1,4 +1,8 @@
-import * as Bigtest from '@interactors/html';
+verifyRequestSuccessfullyCreated(username) {
+  InteractorsTools.checkCalloutMessage(
+    including(`Request has been successfully created for ${username}`),
+  );
+},import * as Bigtest from '@interactors/html';
 
 export { Bigtest };
 export {
