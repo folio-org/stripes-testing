@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../support/dictionary';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   REQUEST_POLICY_NAMES,
   NOTICE_POLICY_NAMES,
@@ -10,37 +10,37 @@ import {
   LOAN_POLICY_NAMES,
   FULFILMENT_PREFERENCES,
   REQUEST_TYPES,
-} from '../../support/constants';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import TopMenu from '../../support/fragments/topMenu';
-import Helper from '../../support/fragments/finance/financeHelper';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import Receiving from '../../support/fragments/receiving/receiving';
-import permissions from '../../support/dictionary/permissions';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import CheckOut from '../../support/fragments/checkout/checkout';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import ConfirmItemStatusModal from '../../support/fragments/users/loans/confirmItemStatusModal';
-import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
-import OverrideAndRenewModal from '../../support/fragments/users/loans/overrideAndRenewModal';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import DateTools from '../../support/utils/dateTools';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+} from '../../../support/constants';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import TopMenu from '../../../support/fragments/topMenu';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import Receiving from '../../../support/fragments/receiving/receiving';
+import permissions from '../../../support/dictionary/permissions';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
+import NewRequest from '../../../support/fragments/requests/newRequest';
+import CheckOut from '../../../support/fragments/checkout/checkout';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
+import UserLoans from '../../../support/fragments/users/loans/userLoans';
+import ConfirmItemStatusModal from '../../../support/fragments/users/loans/confirmItemStatusModal';
+import RenewConfirmationModal from '../../../support/fragments/users/loans/renewConfirmationModal';
+import OverrideAndRenewModal from '../../../support/fragments/users/loans/overrideAndRenewModal';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import Users from '../../../support/fragments/users/users';
+import CheckOutActions from '../../../support/fragments/check-out-actions/check-out-actions';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import DateTools from '../../../support/utils/dateTools';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe.skip('inventory', () => {
   describe('Item', () => {

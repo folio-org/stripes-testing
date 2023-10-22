@@ -88,13 +88,15 @@ describe('inventory', () => {
       'C375122 Verify the modal window for ISRI Import/Create in inventory main actions menu for multiple target profiles (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
+        const calloutMessage = `Record ${testIdentifier} created. Results may take a few moments to become visible in Inventory`;
+
         InventoryActions.openSingleReportImportModal();
         SingleRecordImportModal.verifyInventorySingleRecordModalWithSeveralTargetProfiles();
         SingleRecordImportModal.selectExternalTarget(targetProfileName);
         SingleRecordImportModal.selectTheProfileToBeUsed(profile.createJobProfile);
         SingleRecordImportModal.fillEnterTestIdentifier(testIdentifier);
         SingleRecordImportModal.import();
-        InstanceRecordView.verifyCalloutMessage(testIdentifier);
+        InstanceRecordView.verifyCalloutMessage(calloutMessage);
         // need to wait because after the import the data in the instance is displayed for a long time
         // https://issues.folio.org/browse/MODCPCT-73
         cy.wait(10000);
