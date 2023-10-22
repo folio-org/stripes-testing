@@ -182,7 +182,7 @@ describe('circulation-log', () => {
     { tags: [TestTypes.smoke, devTeams.firebird] },
     () => {
       // login with user that has all permissions
-      cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+      cy.loginAsAdmin();
       cy.visit(TopMenu.usersPath);
 
       // find user
