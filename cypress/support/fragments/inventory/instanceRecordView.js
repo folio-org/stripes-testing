@@ -358,6 +358,23 @@ export default {
     cy.expect(KeyValue('Edition').has({ value }));
   },
 
+  verifyNotMarkAsStaffSuppressed() {
+    cy.expect(
+      instanceDetailsSection
+        .find(HTML(including('Warning: Instance is marked staff suppressed')))
+        .absent(),
+    );
+  },
+
+  verifyNotMarkAsPreviouslyHeld() {
+    cy.expect(
+      instanceDetailsSection
+        .find(Accordion('Administrative data'))
+        .find(HTML(including('Previously held')))
+        .absent(),
+    );
+  },
+
   verifyClassification(classType, classification) {
     cy.expect(
       classificationAccordion
