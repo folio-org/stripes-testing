@@ -2,7 +2,6 @@ import {
   Button,
   including,
   MultiColumnListCell,
-  MultiColumnListRow,
   MultiColumnListHeader,
   Section,
 } from '../../../../../interactors';
