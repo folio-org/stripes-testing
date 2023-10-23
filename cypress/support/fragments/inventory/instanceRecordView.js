@@ -12,6 +12,7 @@ import {
   Badge,
   MultiColumnListHeader,
 } from '../../../../interactors';
+import InstanceRecordEdit from './instanceRecordEdit';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -206,12 +207,10 @@ export default {
     cy.wait(1500);
     cy.expect(instanceDetailsPane.exists());
   },
-  verifyCalloutMessage: (number) => {
+  verifyCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(
-          `Record ${number} created. Results may take a few moments to become visible in Inventory`,
-        ),
+        textContent: including(message),
       }).exists(),
     );
   },
@@ -235,6 +234,22 @@ export default {
   },
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
+  verifyPrecedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'precedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
+  verifySucceedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'succeedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
 
   clickNextPaginationButton() {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());
@@ -337,7 +352,17 @@ export default {
     });
   },
 
+  verifyEdition(value) {
+    cy.expect(KeyValue('Edition').has({ value }));
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
+  },
+
+  edit: () => {
+    cy.do(instanceDetailsSection.find(actionsButton).click());
+    cy.do(Button('Edit instance').click());
+    InstanceRecordEdit.waitLoading();
   },
 };

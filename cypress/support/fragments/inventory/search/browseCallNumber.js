@@ -81,4 +81,13 @@ export default {
       }),
     );
   },
+
+  checkNumberOfTitlesForRow(callNumber, numberOfTitles) {
+    cy.do(
+      MultiColumnListCell(callNumber).perform((element) => {
+        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
+        cy.expect(MultiColumnListCell(numberOfTitles, { row: rowNumber }).exists());
+      }),
+    );
+  },
 };
