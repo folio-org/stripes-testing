@@ -19,6 +19,7 @@ const unSelectedStatusChechbox = Checkbox({ value: 'unselected' });
 const transformationsSearchTextfield = TextField({ name: 'searchValue' });
 const resetAllButton = Button('Reset all');
 const transformationsSaveAndCloseButton = ModalTransformation.find(Button('Save & close'));
+const transformationsCancelButton = ModalTransformation.find(Button('Cancel'));
 
 export default {
   searchItemTransformationsByName: (name) => {
@@ -149,7 +150,57 @@ export default {
       `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "subfield")]`,
     ).type(textfield4);
   },
+  fillInTransformationsFirstRowMarcTextField(textfield1, rowIndex = 0) {
+    cy.do(
+      ModalTransformation.find(
+        TextField({ name: `transformations[${rowIndex}].rawTransformation.marcField` }),
+      ).fillIn(textfield1),
+    );
+  },
   clickTransformationsSaveAndCloseButton() {
     cy.do(transformationsSaveAndCloseButton.click());
+  },
+  clickTransformationsCancelButton() {
+    cy.do(transformationsCancelButton.click());
+  },
+  clickKeepEditingBtn() {
+    cy.do(Modal('Are you sure?').find(Button('Keep Editing')).click());
+  },
+  verifyTransformationsFirstRowTextFieldsPlaceholders(
+    textfield1,
+    textfield2,
+    textfield3,
+    textfield4,
+  ) {
+    cy.expect([
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.marcField' }),
+      ).has({ placeholder: textfield1 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.indicator1' }),
+      ).has({ placeholder: textfield2 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.indicator2' }),
+      ).has({ placeholder: textfield3 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.subfield' }),
+      ).has({ placeholder: textfield4 }),
+    ]);
+  },
+  verifyTransformationsFirstRowTextFieldsValues(textfield1, textfield2, textfield3, textfield4) {
+    cy.expect([
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.marcField' }),
+      ).has({ value: textfield1 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.indicator1' }),
+      ).has({ value: textfield2 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.indicator2' }),
+      ).has({ value: textfield3 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.subfield' }),
+      ).has({ value: textfield4 }),
+    ]);
   },
 };
