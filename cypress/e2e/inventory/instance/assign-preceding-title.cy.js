@@ -1,12 +1,12 @@
-import TopMenu from '../../support/fragments/topMenu';
-import getRandomPostfix from '../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
-import Helper from '../../support/fragments/finance/financeHelper';
-import { DevTeams, TestTypes } from '../../support/dictionary';
-import { INSTANCE_SOURCE_NAMES } from '../../support/constants';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import { DevTeams, TestTypes } from '../../../support/dictionary';
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
   describe('Instance', () => {

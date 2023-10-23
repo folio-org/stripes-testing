@@ -63,7 +63,7 @@ describe('data-import', () => {
       'C2329 Create a file extension for an acceptable file type and upload a file (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        const filePath = 'fileForC2329.csv';
+        const filePath = 'file.csv';
         const fileName = `C2329 autotestFile.${getRandomPostfix()}.csv`;
         const testData = {
           fileExtension: '.csv',

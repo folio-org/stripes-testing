@@ -51,7 +51,7 @@ describe('data-import', () => {
         cy.wait(5000);
         DataImport.deleteImportJob(bigFileName);
         DataImport.verifyCancelImportJobModal();
-        DataImport.cancelImportJob();
+        DataImport.confirmDeleteImportJob();
         Logs.checkStatusOfJobProfile('Stopped by user');
         DataImport.selectLog();
         DataImport.openDeleteImportLogsModal();
