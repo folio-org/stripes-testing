@@ -10,6 +10,7 @@ import {
   including,
   RepeatableFieldItem,
   PaneHeader,
+  Checkbox,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -163,5 +164,20 @@ export default {
     ]);
     cy.get('#clickable-add-precedingTitle').find('#find-instance-trigger').should('be.disabled');
     cy.get('#clickable-add-succeedingTitle').find('#find-instance-trigger').should('be.disabled');
+  },
+  verifyDiscoverySuppressCheckbox(isChecked = false) {
+    if (isChecked) {
+      cy.expect(Checkbox({ name: 'discoverySuppress' }).has({ checked: true }));
+    } else cy.expect(Checkbox({ name: 'discoverySuppress' }).has({ checked: false }));
+  },
+  verifyStaffSuppressCheckbox(isChecked = false) {
+    if (isChecked) {
+      cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: true }));
+    } else cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: false }));
+  },
+  verifyPreviouslyHeldCheckbox(isChecked = false) {
+    if (isChecked) {
+      cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: true }));
+    } else cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: false }));
   },
 };

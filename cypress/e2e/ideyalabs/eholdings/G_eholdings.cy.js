@@ -4,7 +4,6 @@ import eHoldingsProviderEdit from '../../../support/fragments/eholdings/eHolding
 import eHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import organizations from '../../../support/fragments/organizations/organizations';
 import newRequest from '../../../support/fragments/requests/newRequest';
 import topMenu from '../../../support/fragments/topMenu';
 import eHolding from './eHolding';
@@ -104,17 +103,6 @@ describe.skip('Create a custom package', () => {
       eHolding.editActions();
       eHolding.providerToken();
       eHolding.checkToken();
-    },
-  );
-  it(
-    'C699 Add or edit package custom coverage (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHolding.switchToPackage();
-      organizations.editOrganization();
-      eHolding.generateRandomDates();
-      eHolding.verifyAlternativeDates();
     },
   );
   it('C343241 Access eholdings app menu (spitfire)', { tags: [testTypes.ideaLabsTests] }, () => {
