@@ -21,6 +21,10 @@ export default {
       });
   },
 
+  openInstanceTab: () => {
+    cy.do(Button(including('Instance')).click());
+  },
+
   openHoldingsTab: () => {
     cy.do(Button(including('Holdings')).click());
   },
