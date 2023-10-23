@@ -506,6 +506,15 @@ export default {
     cy.expect(MultiColumnList().exists());
   },
 
+  verifyCsvUploadModal(filename) {
+    cy.expect(Modal(including(filename)).exists());
+    cy.expect([
+      HTML(including('records will be updated if the Commit changes button is clicked.')).exists(),
+      Button('Cancel').exists(),
+      Button('Commit changes').exists(),
+    ]);
+  },
+
   verifyModalName(name) {
     cy.expect(Modal(name).exists());
     cy.do(Button('Cancel').click());
@@ -557,10 +566,7 @@ export default {
   },
 
   verifyChangesUnderColumns(columnName, value) {
-    cy.expect(
-      MultiColumnListCell({ column: columnName, content: including(value) })
-        .exists(),
-    );
+    cy.expect(MultiColumnListCell({ column: columnName, content: including(value) }).exists());
   },
 
   verifyNonMatchedResults(...values) {
@@ -576,7 +582,8 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${validRecordCount + invalidRecordCount
+        `${fileName}: ${
+          validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -587,7 +594,8 @@ export default {
       Accordion('Errors')
         .find(
           HTML(
-            `${fileName}: ${validRecordCount + invalidRecordCount
+            `${fileName}: ${
+              validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
           ),
         )

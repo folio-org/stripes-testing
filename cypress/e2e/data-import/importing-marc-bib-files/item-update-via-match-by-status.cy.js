@@ -108,6 +108,7 @@ describe('data-import', () => {
     const matchProfileItemStatus = {
       profileName: `C357552 Item status = Available ${getRandomPostfix()}`,
       incomingStaticValue: 'Available',
+      incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
       existingRecordOption: NewMatchProfile.optionsList.status,

@@ -12,6 +12,7 @@ import {
   RepeatableFieldItem,
   Select,
   TextArea,
+  Selection,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -19,6 +20,7 @@ import BulkEditSearchPane from './bulk-edit-search-pane';
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
 const cancelBtn = Button({ id: 'clickable-cancel' });
+const cancelButton = Button('Cancel');
 const createBtn = Button({ id: 'clickable-create-widget' });
 const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
@@ -27,7 +29,9 @@ const areYouSureForm = Modal('Are you sure?');
 const downloadPreviewBtn = Button('Download preview');
 const newBulkEditButton = Button('New bulk edit');
 const startBulkEditLocalButton = Button('Start bulk edit (Local)');
+const startBulkEditButton = Button('Start bulk edit');
 const calendarButton = Button({ icon: 'calendar' });
+const locationLookupModal = Modal('Select permanent location');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -46,8 +50,11 @@ export default {
     cy.do(startBulkEditLocalButton.click());
   },
   openInAppStartBulkEditFrom() {
-    cy.do(Button('Start bulk edit').click());
+    cy.do(startBulkEditButton.click());
     cy.wait(1000);
+  },
+  startBulkEditAbsent() {
+    cy.expect(startBulkEditButton.absent());
   },
   selectOption(optionName, rowIndex = 0) {
     cy.do(
@@ -128,6 +135,10 @@ export default {
     cy.expect(Button('Download matched records (CSV)').exists());
   },
 
+  downloadMatchedRecordsAbsent() {
+    cy.expect(Button('Download matched records (CSV)').absent());
+  },
+
   downloadErrorsExists() {
     cy.expect(Button('Download errors (CSV)').exists());
   },
@@ -164,6 +175,26 @@ export default {
     );
     getEmailField().first().type(oldEmailDomain);
     getEmailField().eq(2).type(newEmailDomain);
+  },
+
+  clickLocationLookup() {
+    cy.do(Button('Location look-up').click());
+  },
+
+  verifyLocationLookupModal() {
+    cy.expect([
+      locationLookupModal.exists(),
+      Select({ label: 'Institution' }).exists(),
+      Select({ label: 'Campus' }).exists(),
+      Select({ label: 'Library' }).exists(),
+      Selection('Location').exists(),
+      locationLookupModal.find(cancelButton).has({ disabled: false }),
+      Button('Save and close').has({ disabled: true }),
+    ]);
+  },
+
+  locationLookupModalCancel() {
+    cy.do(locationLookupModal.find(cancelButton).click());
   },
 
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {

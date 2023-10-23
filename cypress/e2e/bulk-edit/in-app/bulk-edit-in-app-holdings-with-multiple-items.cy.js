@@ -40,13 +40,17 @@ describe('bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
 
-        item.instanceId = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.barcode,
-        );
+        item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
         cy.getInstanceById(item.instanceId).then((body) => {
-          body.publication = [{ publisher: item.publisher, place: item.publisher, role: item.publisher, dateOfPublication: item.dateOfPublication }];
+          body.publication = [
+            {
+              publisher: item.publisher,
+              place: item.publisher,
+              role: item.publisher,
+              dateOfPublication: item.dateOfPublication,
+            },
+          ];
           cy.updateInstance(body);
         });
         cy.getHoldings({
@@ -84,7 +88,9 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.downloadMatchedResults();
-        BulkEditSearchPane.changeShowColumnCheckbox('Instance (Title, Publisher, Publication date)');
+        BulkEditSearchPane.changeShowColumnCheckbox(
+          'Instance (Title, Publisher, Publication date)',
+        );
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Instance (Title, Publisher, Publication date)',
           instanceDetailsToCheck,
@@ -109,7 +115,10 @@ describe('bulk-edit', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToHoldings();
-        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+        InventorySearchAndFilter.searchByParameter(
+          'Keyword (title, contributor, identifier, HRID, UUID)',
+          item.instanceName,
+        );
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
         InventoryInstance.verifyHoldingsPermanentLocation(permLocation);
