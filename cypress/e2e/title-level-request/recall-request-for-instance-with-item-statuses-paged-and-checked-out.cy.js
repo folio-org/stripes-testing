@@ -252,7 +252,7 @@ describe('Create Item or Title level request', () => {
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
-    'C380490 Verify that user can create TLR: Recall request for instance with item statuses "Paged" and "Checked out" (vega)',
+    'C380490 Verify that user can create TLR: Recall request for instance with item statuses "Paged" and "Checked out" (vega) (Taas)',
     { tags: [testTypes.criticalPath, devTeams.vega] },
     () => {
       createTLR(users[1], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
