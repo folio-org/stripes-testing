@@ -107,4 +107,7 @@ export default {
   checkCalloutErrorMessage: (text, calloutType = calloutTypes.error) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
   },
+  checkTextFieldError: (fieldName, error) => {
+    cy.expect(TextField(fieldName).has({ error }));
+  },
 };

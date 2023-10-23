@@ -10,6 +10,10 @@ import {
 } from '../../../../interactors';
 
 const inventoryApplicationContextDropdown = Dropdown('InventoryApplication context dropdown');
+const keyboardShortcutModal = Modal({ id: 'keyboard-shortcuts-modal' });
+const closeKeyboardShortcutModalButton = keyboardShortcutModal.find(
+  Button({ id: 'keyboard-shortcuts-modal-close' }),
+);
 
 export default {
   verifyInventoryDropdownIsShown(isOpen) {
@@ -23,6 +27,17 @@ export default {
   openInventoryMenu() {
     cy.do(inventoryApplicationContextDropdown.open());
   },
+  verifyInventoryDropdownExists: () => cy.expect(inventoryApplicationContextDropdown.exists()),
+  verifyInventoryDrowdownOptions() {
+    cy.expect([
+      inventoryApplicationContextDropdown.find(HTML(including('Keyboard shortcuts'))).exists(),
+      inventoryApplicationContextDropdown.find(HTML(including('Inventory app search'))).exists(),
+    ]);
+  },
+  verifyCloseKeyboardShortcutsModalButtonIsActive: () => closeKeyboardShortcutModalButton.has({ disabled: false }),
+  openInventoryAppSearch() {
+    cy.do(inventoryApplicationContextDropdown.choose('Inventory app search'));
+  },
   openShortcuts() {
     cy.do(inventoryApplicationContextDropdown.choose('Keyboard shortcuts'));
   },
@@ -33,13 +48,7 @@ export default {
     cy.wait(6000);
     cy.get('body').type(hotKey);
   },
-  closeShortcuts() {
-    cy.do(
-      Modal({ id: 'keyboard-shortcuts-modal' })
-        .find(Button({ id: 'keyboard-shortcuts-modal-close' }))
-        .click(),
-    );
-  },
+  closeShortcuts: () => cy.do(closeKeyboardShortcutModalButton.click()),
   fillInstanceInfoAndSave: (instanceTitle) => {
     cy.do([
       TextArea({ name: 'title' }).fillIn(instanceTitle),

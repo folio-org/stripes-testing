@@ -7,7 +7,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import getRandomPostfix from '../../support/utils/stringTools';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import devTeams from '../../support/dictionary/devTeams';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -20,16 +20,19 @@ import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 
 describe('Check Out - Actions ', () => {
   const userData = {
-    group: `staff${getRandomPostfix()}`,
+    group: getTestEntityValue('staff$'),
     personal: {},
   };
   let patronGroupId = '';
   const testActiveUser = { ...DefaultUser.defaultUiPatron.body };
   testActiveUser.patronGroup = userData.group;
   testActiveUser.personal.lastname = testActiveUser.personal.lastName;
+  testActiveUser.personal.middleName = getTestEntityValue('midname');
+  testActiveUser.personal.preferredFirstName = getTestEntityValue('prefname');
+
   const itemData = {
     barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instanceTitle: getTestEntityValue('Instance'),
   };
   let defaultLocation;
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
