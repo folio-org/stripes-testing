@@ -12,6 +12,8 @@ import {
   Select,
   Pane,
   Link,
+  Accordion,
+  RadioButton,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
@@ -34,6 +36,7 @@ const proxySelect = Select('Proxy');
 const customCoverageDate = KeyValue('Custom coverage dates');
 const startDateInput = TextField({ id: 'begin-coverage-0' });
 const endDateInput = TextField({ id: 'end-coverage-0' });
+const selectionStatusAccordion = Accordion({ id: 'filter-titles-selected' });
 
 const defaultPackage = {
   data: {
@@ -270,6 +273,26 @@ export default {
     cy.do([searchIcon.click(), chooseParameterField.choose(searchParameter)]);
     cy.expect([Select({ value: searchParameter.toLowerCase() }).exists(), searchField.exists()]);
     cy.do([searchField.fillIn(searchValue), searchButton.click()]);
+  },
+
+  titlesSearchFilter: (searchParameter, searchValue, selectionStatus = 'All') => {
+    cy.expect(searchIcon.exists());
+    cy.wait(2000);
+    cy.do([searchIcon.click()]);
+
+    cy.do([chooseParameterField.choose(searchParameter), searchField.fillIn(searchValue)]);
+    // tags
+    // sort options
+    // selection status parameter
+    cy.do([
+      selectionStatusAccordion.clickHeader(),
+      selectionStatusAccordion.find(RadioButton(selectionStatus)).click(),
+    ]);
+
+    // publication type
+
+    // search
+    cy.do(searchButton.click());
   },
 
   changePackageRecordProxy: () => {
