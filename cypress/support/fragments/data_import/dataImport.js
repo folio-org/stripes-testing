@@ -33,7 +33,6 @@ const deleteLogsModalCancelButton = deleteLogsModal.find(Button('No, do not dele
 const deleteLogsModalConfirmButton = deleteLogsModal.find(Button('Yes, delete'));
 const logsPane = Pane('Logs');
 const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
-const jobsPane = Pane({ id: 'pane-jobs-title' });
 const orChooseFilesButton = Button('or choose files');
 const cancelImportJobModal = Modal('Cancel import job?');
 const yesButton = Button('Yes, cancel import job');
@@ -279,7 +278,7 @@ export default {
   checkMultiColumnListRowsCount: (count) => cy.expect(jobLogsList.has({ rowCount: count })),
 
   checkIsLandingPageOpened: () => {
-    cy.expect(jobsPane.find(orChooseFilesButton).exists());
+    cy.expect(sectionPaneJobsTitle.find(orChooseFilesButton).exists());
     cy.expect(logsPaneHeader.find(actionsButton).exists());
   },
 
@@ -342,11 +341,6 @@ export default {
     });
   },
 
-  clickDataImportNavButton: () => {
-    // TODO delete this function after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.do(Button({ id: 'app-list-item-clickable-data-import-module' }).click());
-  },
-
   // checks
   verifyDataImportLogsDeleted(oldLogsHrIds) {
     cy.get('body').then(($body) => {
@@ -406,6 +400,15 @@ export default {
     );
   },
 
+  clickResumeButton: () => {
+    cy.expect(sectionPaneJobsTitle.find(Button('Resume')).exists());
+    cy.do(sectionPaneJobsTitle.find(Button('Resume')).click());
+  },
+
+  clickDeleteFilesButton: () => {
+    cy.do(sectionPaneJobsTitle.find(Button('Delete files')).click());
+  },
+
   deleteImportJob: (fileName) => {
     cy.get('div[class^="listContainer-"]')
       .contains('li[class^="job-"]', fileName)
@@ -435,6 +438,7 @@ export default {
 
   cancelDeleteImportJob: () => {
     cy.do(cancelImportJobModal.find(cancelButton).click());
+    cy.expect(cancelImportJobModal.absent());
   },
 
   waitFileIsUploaded: () => {
@@ -524,5 +528,8 @@ export default {
       inconsistentFileExtensionsModal.find(Button('Cancel')).exists(),
       inconsistentFileExtensionsModal.find(Button('Choose other files to upload')).exists(),
     ]);
+  },
+  verifyUploadSectionHasNoUplodedFiles() {
+    cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
   },
 };
