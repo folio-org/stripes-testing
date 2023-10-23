@@ -10,7 +10,9 @@ import {
   Pane,
   Callout,
   Badge,
+  MultiColumnListHeader,
 } from '../../../../interactors';
+import InstanceRecordEdit from './instanceRecordEdit';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -140,9 +142,28 @@ const verifyElectronicAccessAbsent = (rowNumber = 0) => {
 };
 
 const waitLoading = () => cy.expect(actionsButton.exists());
+const getMultiColumnListCellsValues = (cell) => {
+  const cells = [];
+
+  // get MultiColumnList rows and loop over
+  return cy
+    .get('[id^="list-items-"]')
+    .find('[data-row-index]')
+    .each(($row) => {
+      // from each row, choose specific cell
+      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+};
 
 export default {
   waitLoading,
+  getMultiColumnListCellsValues,
   verifyResourceTitle,
   verifyInstanceStatusCode,
   verifyResourceType,
@@ -186,12 +207,10 @@ export default {
     cy.wait(1500);
     cy.expect(instanceDetailsPane.exists());
   },
-  verifyCalloutMessage: (number) => {
+  verifyCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(
-          `Record ${number} created. Results may take a few moments to become visible in Inventory`,
-        ),
+        textContent: including(message),
       }).exists(),
     );
   },
@@ -215,6 +234,22 @@ export default {
   },
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
+  verifyPrecedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'precedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
+  verifySucceedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'succeedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
 
   clickNextPaginationButton() {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());
@@ -225,5 +260,109 @@ export default {
     cy.expect(Button('Actions').exists());
   },
 
-  getAssignedHRID: () => cy.then(() => instanceHridKeyValue.value()),
+  getAssignedHRID: () => cy.then(() => KeyValue('Instance HRID').value()),
+
+  validateStringsAscendingOrder(prev) {
+    const itemsClone = [...prev];
+
+    itemsClone.sort((a, b) => {
+      // when sorting move falsy values to the end and localeCompare truthy values
+      if (!a) return 1;
+      if (!b) return -1;
+      return a.localeCompare(b);
+    });
+
+    expect(prev).to.deep.equal(itemsClone);
+  },
+
+  validateStringsDescendingOrder(prev) {
+    const itemsClone = [...prev];
+    // when sorting move falsy values to the beginning and localeCompare truthy values
+    itemsClone.sort((a, b) => {
+      if (!a) return -1;
+      if (!b) return 1;
+      return b.localeCompare(a);
+    });
+    expect(prev).to.deep.equal(itemsClone);
+  },
+
+  sortingColumns: [
+    {
+      title: 'Item: barcode',
+      id: including('clickable-list-column-barcode'),
+      columnIndex: 1,
+    },
+    {
+      title: 'Status',
+      id: 'status',
+      columnIndex: 2,
+    },
+    {
+      title: 'Copy number',
+      id: 'copynumber',
+      columnIndex: 3,
+    },
+    {
+      title: 'Enumeration',
+      id: 'enumeration',
+      columnIndex: 6,
+    },
+    {
+      title: 'Chronology',
+      id: 'chronology',
+      columnIndex: 7,
+    },
+    {
+      title: 'Volume',
+      id: 'chronology',
+      columnIndex: 8,
+    },
+    {
+      title: 'Year, caption',
+      id: 'yearcaption',
+      columnIndex: 9,
+    },
+  ],
+
+  getSortOrder(title) {
+    let order;
+    return cy
+      .do(
+        MultiColumnListHeader({ content: title }).perform((el) => {
+          order = el.attributes.getNamedItem('aria-sort').value;
+        }),
+      )
+      .then(() => order);
+  },
+
+  verifySortingOrder({ title, columnIndex }) {
+    cy.wait(3000);
+    if (title === 'Enumeration') {
+      cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
+    }
+
+    this.getSortOrder(title).then((order) => {
+      this.getMultiColumnListCellsValues(columnIndex).then((cells) => {
+        if (order === 'ascending') {
+          this.validateStringsAscendingOrder(cells);
+        } else if (order === 'descending') {
+          this.validateStringsDescendingOrder(cells);
+        }
+      });
+    });
+  },
+
+  verifyEdition(value) {
+    cy.expect(KeyValue('Edition').has({ value }));
+  },
+
+  scroll: () => {
+    cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
+  },
+
+  edit: () => {
+    cy.do(instanceDetailsSection.find(actionsButton).click());
+    cy.do(Button('Edit instance').click());
+    InstanceRecordEdit.waitLoading();
+  },
 };

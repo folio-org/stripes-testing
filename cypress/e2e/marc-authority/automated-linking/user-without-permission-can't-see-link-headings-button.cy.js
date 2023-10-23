@@ -34,7 +34,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
     ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
+      testData.userPropertiesC387521 = createdUserProperties;
 
       cy.loginAsAdmin().then(() => {
         marcFiles.forEach((marcFile) => {
@@ -52,16 +52,19 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
           });
         });
       });
+    });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
+    cy.createTempUser([
+      Permissions.inventoryAll.gui,
+      Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+    ]).then((createdUserProperties) => {
+      testData.userPropertiesC387523 = createdUserProperties;
     });
   });
 
   after('Deleting created user and data', () => {
-    Users.deleteViaApi(testData.userProperties.userId);
+    Users.deleteViaApi(testData.userPropertiesC387521.userId);
+    Users.deleteViaApi(testData.userPropertiesC387523.userId);
     InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
   });
 
@@ -69,9 +72,39 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     'C387521 User without permission "quickMARC: Can Link/unlink authority records to bib records" cant see "Link headings" button when edit "MARC bib" (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
+      cy.login(testData.userPropertiesC387521.username, testData.userPropertiesC387521.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+
       InventoryInstance.searchByTitle(createdRecordsIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
+      QuickMarcEditor.updateExistingField(testData.tag700, testData.tag700Content);
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(
+        testData.tag700RowIndex,
+        testData.tag700,
+        '1',
+        '\\',
+        `${testData.tag700Content}`,
+      );
+      QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
+    },
+  );
+
+  it(
+    'C387523 User without permission "quickMARC: Can Link/unlink authority records to bib records" cant see "Link headings" button when derive "MARC bib" (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      cy.login(testData.userPropertiesC387523.username, testData.userPropertiesC387523.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+
+      InventoryInstance.searchByTitle(createdRecordsIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.deriveNewMarcBibRecord();
       QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
       QuickMarcEditor.updateExistingField(testData.tag700, testData.tag700Content);
       QuickMarcEditor.verifyTagFieldAfterUnlinking(

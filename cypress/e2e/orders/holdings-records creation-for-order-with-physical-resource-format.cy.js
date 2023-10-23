@@ -1,6 +1,9 @@
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
-import { RECEIVING_WORKFLOWS } from '../../support/fragments/orders/basicOrderLine';
+import {
+  RECEIVING_WORKFLOWS,
+  CHECKIN_ITEMS_VALUE,
+} from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import TopMenu from '../../support/fragments/topMenu';
@@ -10,10 +13,6 @@ import { Locations, ServicePoints } from '../../support/fragments/settings/tenan
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Orders', () => {
-  const checkinItems = {
-    [RECEIVING_WORKFLOWS.SYNCHRONIZED]: false,
-    [RECEIVING_WORKFLOWS.INDEPENDENT]: true,
-  };
   const organization = NewOrganization.getDefaultOrganization();
   const testData = {
     organization,
@@ -45,7 +44,7 @@ describe('Orders', () => {
                 quantityPhysical: 2,
               },
               orderFormat: 'Physical Resource',
-              checkinItems: checkinItems[RECEIVING_WORKFLOWS.INDEPENDENT],
+              checkinItems: CHECKIN_ITEMS_VALUE[RECEIVING_WORKFLOWS.INDEPENDENT],
               physical: {
                 createInventory: 'Instance, Holding, Item',
                 materialType: materialTypeId,

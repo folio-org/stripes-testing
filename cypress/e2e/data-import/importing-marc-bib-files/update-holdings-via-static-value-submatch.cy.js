@@ -108,6 +108,7 @@ describe('data-import', () => {
     const holdingsMatchProfile = {
       profileName: `C11110 autotest holdings match profile.${getRandomPostfix()}`,
       incomingStaticValue: 'Main Library (KU/CC/DI/M)',
+      incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
       existingRecordOption: NewMatchProfile.optionsList.holdingsPermLoc,

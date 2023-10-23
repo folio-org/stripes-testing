@@ -15,6 +15,7 @@ import {
   Dropdown,
   DropdownMenu,
   Callout,
+  Pane,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -201,6 +202,30 @@ const addVendor = (profile) => {
   ]);
 };
 
+const addMaterialSupplier = (profile) => {
+  if (profile.materialSupplier) {
+    cy.do([
+      physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
+      organizationModal.find(searchField).fillIn(profile.materialSupplier),
+      organizationModal.find(searchButton).click(),
+      organizationModal.find(HTML(including('1 record found'))).exists(),
+      MultiColumnListCell(profile.materialSupplier).click({ row: 0, columnIndex: 0 }),
+    ]);
+  }
+};
+
+const addAccessProvider = (profile) => {
+  if (profile.accessProvider) {
+    cy.do([
+      Accordion('E-resources details').find(organizationLookUpButton).click(),
+      organizationModal.find(searchField).fillIn(profile.accessProvider),
+      organizationModal.find(searchButton).click(),
+      organizationModal.find(HTML(including('1 record found'))).exists(),
+      MultiColumnListCell(profile.accessProvider).click({ row: 0, columnIndex: 0 }),
+    ]);
+  }
+};
+
 const addVolume = (profile) => {
   if (profile.volume) {
     cy.do([
@@ -215,6 +240,9 @@ const fillSummaryInMappingProfile = (specialMappingProfile = defaultMappingProfi
     incomingRecordTypeField.choose(incomingRecordType.marcBib),
     existingRecordType.choose(specialMappingProfile.typeValue),
   ]);
+};
+const fillFolioRecordType = (profile) => {
+  cy.do(existingRecordType.choose(profile.typeValue));
 };
 const getDefaultInstanceMappingProfile = (name) => {
   const defaultInstanceMappingProfile = {
@@ -307,11 +335,14 @@ export default {
   addFundDistriction,
   addLocation,
   addVendor,
+  addMaterialSupplier,
+  addAccessProvider,
   addVolume,
   selectFromResultsList,
   waitLoading,
   fillSummaryInMappingProfile,
   fillInvoiceLineDescription,
+  fillFolioRecordType,
   selectOrganizationByName,
   save,
 
@@ -547,15 +578,7 @@ export default {
     }
     addFundDistriction(profile);
     addLocation(profile);
-    if (profile.materialSupplier) {
-      cy.do([
-        physicalResourceDetailsAccordion.find(organizationLookUpButton).click(),
-        organizationModal.find(searchField).fillIn(profile.materialSupplier),
-        organizationModal.find(searchButton).click(),
-        organizationModal.find(HTML(including('1 record found'))).exists(),
-        MultiColumnListCell(profile.vendor).click({ row: 0, columnIndex: 0 }),
-      ]);
-    }
+    addMaterialSupplier(profile);
     if (profile.createInventory) {
       cy.do(
         physicalResourceDetailsAccordion
@@ -1052,5 +1075,25 @@ export default {
 
   checkCalloutMessage: (message) => {
     cy.expect(Callout({ textContent: including(message) }).exists());
+  },
+
+  checkNewMatchProfileFormIsOpened: () => {
+    cy.expect(Pane('New field mapping profile').exists());
+  },
+  checkPreviouslyPopulatedDataIsDisplayed: (profile) => {
+    cy.expect([
+      nameField.has({ value: profile.name }),
+      incomingRecordTypeField.has({ value: profile.incomingRecordType }),
+      existingRecordType.has({ value: including(profile.recordType) }),
+      TextArea({ name: 'profile.description' }).has({ value: profile.description }),
+    ]);
+  },
+
+  checkOrganizationsAddedToFields: (profile) => {
+    cy.expect([
+      TextField('Vendor*').has({ value: `"${profile.vendor}"` }),
+      TextField('Material supplier').has({ value: `"${profile.materialSupplier}"` }),
+      TextField('Access provider').has({ value: `"${profile.accessProvider}"` }),
+    ]);
   },
 };

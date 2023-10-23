@@ -126,9 +126,11 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
       ItemRecordView.closeDetailView();
       InventoryInstance.openMoveItemsWithinAnInstance();
 
+      InventoryInstance.openHoldings([secondHolding]);
       InventoryInstance.moveItemToAnotherHolding(firstHolding, secondHolding);
       InteractorsTools.checkCalloutMessage(successCalloutMessage);
 
+      InventoryInstance.openHoldings([firstHolding]);
       InventoryInstance.returnItemToFirstHolding(firstHolding, secondHolding);
       InteractorsTools.checkCalloutMessage(successCalloutMessage);
     },

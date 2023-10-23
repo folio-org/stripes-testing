@@ -736,6 +736,10 @@ export default {
     internal: 'ui-organizations.settings',
     gui: 'Settings (Organizations): Can view and edit settings',
   },
+  uiSettingsOrganizationsCanViewOnlySettings: {
+    internal: 'ui-organizations.settings.view',
+    gui: 'Settings (Organizations): View settings',
+  },
   // Settings
   uiSettingsAcquisitionUnitsViewEditCreateDelete: {
     internal: 'ui-acquisition-units.settings.all',

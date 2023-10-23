@@ -1,6 +1,7 @@
 import { CheckBox } from '@interactors/html';
 import {
   Button,
+  Modal,
   Dropdown,
   HTML,
   MultiColumnList,
@@ -12,6 +13,7 @@ import PaymentMethods from '../settings/users/paymentMethods';
 import UserEdit from './userEdit';
 
 const waiveAllButton = Button({ id: 'open-closed-all-wave-button' });
+const feeFinesList = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
 
 export default {
   waiveFeeFine: (userId, amount, ownerId) => {
@@ -78,7 +80,7 @@ export default {
   },
   clickWaiveEllipsis: (rowIndex) => {
     cy.do(
-      MultiColumnList({ id: 'list-accounts-history-view-feesfines' })
+      feeFinesList
         .find(MultiColumnListRow({ index: rowIndex }))
         .find(Dropdown())
         .choose('Waive'),
@@ -86,7 +88,7 @@ export default {
   },
   checkWaiveEllipsisActive: (rowIndex, isActive) => {
     cy.do(
-      MultiColumnList({ id: 'list-accounts-history-view-feesfines' })
+      feeFinesList
         .find(MultiColumnListRow({ index: rowIndex }))
         .find(Dropdown())
         .open(),
@@ -97,5 +99,18 @@ export default {
   clickWaive: () => cy.do(waiveAllButton.click()),
   paySelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Pay'));
+  },
+
+  clickPayEllipsis: (rowIndex) => {
+    cy.do(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .choose('Pay'),
+    );
+  },
+
+  verifyPayModalIsOpen: () => {
+    cy.expect(Modal('Pay fee/fine').exists());
   },
 };
