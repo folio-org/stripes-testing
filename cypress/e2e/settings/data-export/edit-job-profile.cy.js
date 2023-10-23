@@ -62,7 +62,7 @@ describe('Job profile - setup', () => {
       SingleJobProfile.openActions();
       SingleJobProfile.clickEditButton();
       SingleJobProfile.verifyProfileDetailsEditable();
-      SingleJobProfile.verifySource('ADMINISTRATOR, Diku_admin');
+      SingleJobProfile.verifySource('folio-aqa');
       SingleJobProfile.clickCancelButton();
 
       ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);

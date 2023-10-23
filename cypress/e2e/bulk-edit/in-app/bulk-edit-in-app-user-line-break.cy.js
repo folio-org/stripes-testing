@@ -80,7 +80,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(...testUsersBarcodes);
         BulkEditActions.downloadMatchedResults();
-        BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
@@ -91,6 +90,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
+        BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
 
         BulkEditSearchPane.verifyChangedResults(...testUsersBarcodes);
         BulkEditSearchPane.verifyChangesUnderColumns(

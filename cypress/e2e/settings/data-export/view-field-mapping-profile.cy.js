@@ -16,7 +16,7 @@ const profileDetails = {
   recordType: 'Source record storage (entire record)',
   outputFormat: 'MARC',
   description: 'No value set-',
-  source: 'ADMINISTRATOR, Diku_admin',
+  source: 'folio-aqa',
 };
 
 describe('setting: data-export', () => {

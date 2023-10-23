@@ -1,8 +1,7 @@
-import { Button, Form, Link, Pane, Select } from '../../../../../../interactors';
+import { Button, Form, Pane, Select } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
 
 const rootPane = Form({ id: 'locale-form' });
-const changeSessionLocaleLink = rootPane.find(Link('Change session locale'));
 const localeSelect = rootPane.find(Select('Locale (for language display, date format etc.)'));
 const numberingSystemSelect = rootPane.find(Select('Numbering system'));
 const timeZoneSelect = rootPane.find(
@@ -31,7 +30,6 @@ export default {
   },
   checkPaneContent() {
     cy.expect([
-      changeSessionLocaleLink.exists(),
       localeSelect.exists(),
       numberingSystemSelect.exists(),
       timeZoneSelect.exists(),
