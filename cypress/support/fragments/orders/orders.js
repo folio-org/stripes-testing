@@ -119,6 +119,12 @@ export default {
     cy.wait(4000);
   },
 
+  checkModalDifferentAccountNumbers() {
+    cy.expect(Modal('Different account numbers').exists());
+    cy.do(Modal('Different account numbers').find(Button('Close')).click());
+    cy.expect(Modal('Different account numbers').absent());
+  },
+
   editOrder() {
     expandActionsDropdown();
     cy.do(Button('Edit').click());
@@ -372,6 +378,10 @@ export default {
     cy.wait(4000);
     cy.expect(ordersResults.is({ empty: false }));
     cy.do(ordersList.find(Link(number)).click());
+  },
+
+  checkAbsentExportDetails() {
+    cy.expect(orderDetailsPane.find(Accordion('Export details')).absent());
   },
 
   deleteOrderViaActions: () => {
