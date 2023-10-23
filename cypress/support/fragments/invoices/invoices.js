@@ -302,6 +302,7 @@ export default {
     ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+    cy.wait(4000);
   },
 
   createRolloverInvoiceWithAjustmentAndFund(

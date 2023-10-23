@@ -42,7 +42,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
   });
 
   it(
-    'C343209 Create a credit invoice (thunderjet)',
+    'C343209 Create, approve and pay a credit invoice (thunderjet)',
     { tags: [TestType.smoke, devTeams.thunderjet] },
     () => {
       const transactionFactory = new Transaction();

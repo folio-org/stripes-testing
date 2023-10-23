@@ -33,7 +33,7 @@ describe('data-import', () => {
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
-      batchGroup: BATCH_GROUP.AMHERST,
+      batchGroup: BATCH_GROUP.FOLIO,
       organizationName: VENDOR_NAMES.EBSCO,
       paymentMethod: PAYMENT_METHOD.CREDIT_CARD,
     };

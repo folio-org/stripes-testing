@@ -62,7 +62,7 @@ describe('orders: Unreceive piece from Order', () => {
         Receiving.checkReceivedPiece(0, caption, barcode);
         // Unreceive piece
         Receiving.unreceivePiece();
-        Receiving.checkUnreceivedPiece(1, caption);
+        Receiving.checkUnreceivedPiece(caption);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();

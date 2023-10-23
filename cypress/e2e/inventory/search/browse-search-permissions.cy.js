@@ -42,11 +42,11 @@ describe('permissions: inventory', () => {
     });
   });
 
-  after('Deleting data', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    Users.deleteViaApi(userWithOnlyViewPermissions.userId);
-    Users.deleteViaApi(userWithAllPermissions.userId);
-  });
+  // after('Deleting data', () => {
+  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+  //   Users.deleteViaApi(userWithOnlyViewPermissions.userId);
+  //   Users.deleteViaApi(userWithAllPermissions.userId);
+  // });
 
   it(
     'C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
@@ -54,6 +54,7 @@ describe('permissions: inventory', () => {
     () => {
       cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password);
       cy.visit(TopMenu.inventoryPath);
+      console.log(item);
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.selectBrowseCallNumbers();
       InventorySearchAndFilter.browseSearch(item.itemCallNumber);
