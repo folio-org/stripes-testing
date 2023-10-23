@@ -24,9 +24,10 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
+// test fails due to https://issues.folio.org/browse/MODINV-902
+// It is not possible to reproduce the 7th step of the test case
+// due to a bug, item details cannot be opened
 describe('Create Item or Title level request', () => {
   let addedCirculationRule;
   let originalCirculationRules;
