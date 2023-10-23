@@ -48,23 +48,6 @@ describe('Requests Export CSV File', () => {
   before('Create New Item and New User', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.getFirstUserGroupId({ limit: 1 });
-        const f = { limit: 1 };
-        cy.okapiRequest({
-          path: 'groups',
-          f,
-        }).then((response) => {
-          const userGroupIdx = 0;
-          const fd = response.body;
-          const r = response.body.usergroups[userGroupIdx].id;
-          cy.log(fd);
-          cy.log(r);
-          cy.wrap(fd);
-          cy.wrap(r);
-          return response.body.usergroups[userGroupIdx].id;
-        });
-      })
-      .then(() => {
         ServicePoints.createViaApi(servicePoint);
         defaultLocation = Location.getDefaultLocation(servicePoint.id);
         Location.createViaApi(defaultLocation);
