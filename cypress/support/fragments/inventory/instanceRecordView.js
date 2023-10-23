@@ -234,6 +234,22 @@ export default {
   },
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
+  verifyPrecedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'precedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
+  verifySucceedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'succeedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
 
   clickNextPaginationButton() {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());
@@ -334,6 +350,27 @@ export default {
         }
       });
     });
+  },
+
+  verifyEdition(value) {
+    cy.expect(KeyValue('Edition').has({ value }));
+  },
+
+  verifyNotMarkAsStaffSuppressed() {
+    cy.expect(
+      instanceDetailsSection
+        .find(HTML(including('Warning: Instance is marked staff suppressed')))
+        .absent(),
+    );
+  },
+
+  verifyNotMarkAsPreviouslyHeld() {
+    cy.expect(
+      instanceDetailsSection
+        .find(Accordion('Administrative data'))
+        .find(HTML(including('Previously held')))
+        .absent(),
+    );
   },
 
   scroll: () => {

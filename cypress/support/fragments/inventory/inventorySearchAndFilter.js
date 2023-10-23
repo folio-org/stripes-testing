@@ -664,6 +664,11 @@ export default {
     cy.expect(effectiveLocationInput.exists());
   },
 
+  verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
+  verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
+  verifyResetAllButtonDisabled: () => cy.expect(resetAllBtn.has({ disabled: true })),
+  verifyBrowseInventorySearchResults: () => cy.expect(inventorySearchResultsPane.exists()),
+
   verifyNoRecordsFound() {
     cy.expect([
       paneResultsSection.find(HTML(including('No results found for'))).exists(),

@@ -7,13 +7,19 @@ import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHolding
 import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import Users from '../../../support/fragments/users/users';
 import UHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
+import DateTools from '../../../support/utils/dateTools';
 
 describe('eHoldings', () => {
   describe('Package', () => {
     let userId;
+    const defaultPackage = { ...EHoldingsPackages.getdefaultPackage() };
 
     afterEach(() => {
       Users.deleteViaApi(userId);
+    });
+
+    after(() => {
+      EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
     });
 
     it(
@@ -170,6 +176,37 @@ describe('eHoldings', () => {
             EHoldingsPackage.removeExistingTags();
             cy.reload();
             EHoldingsPackage.verifyExistingTags();
+          });
+        });
+      },
+    );
+
+    it(
+      'C699 Add or edit package custom coverage (spitfire)',
+      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      () => {
+        cy.createTempUser([
+          Permissions.uieHoldingsRecordsEdit.gui,
+          Permissions.moduleeHoldingsEnabled.gui,
+        ]).then((userProperties) => {
+          userId = userProperties.userId;
+          EHoldingsPackages.createPackageViaAPI().then(() => {
+            cy.login(userProperties.username, userProperties.password, {
+              path: TopMenu.eholdingsPath,
+              waiter: EHoldingsPackages.waitLoading,
+            });
+
+            const yesterday = DateTools.getPreviousDayDate();
+            const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+            EHoldingSearch.switchToPackages();
+            // wait until package is created via API
+            cy.wait(10000);
+            UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
+            EHoldingsPackages.openPackage();
+            EHoldingsPackage.editProxyActions();
+            EHoldingsPackages.fillDateCoverage(yesterday, today);
+            EHoldingsPackage.saveAndClose();
+            EHoldingsPackages.verifyCustomCoverageDates(yesterday, today);
           });
         });
       },
