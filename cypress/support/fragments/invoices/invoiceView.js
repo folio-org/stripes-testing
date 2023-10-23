@@ -202,4 +202,8 @@ export default {
         .has({ value: acquisitionUnitName }),
     );
   },
+
+  verifyStatus: (status) => {
+    cy.expect(Pane({ id: 'pane-invoiceDetails' }).find(KeyValue('Status')).has({ value: status }));
+  },
 };
