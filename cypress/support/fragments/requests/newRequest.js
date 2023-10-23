@@ -297,6 +297,11 @@ export default {
       }),
     );
   },
+  verifyRequestSuccessfullyCreated(username) {
+    InteractorsTools.checkCalloutMessage(
+      including(`Request has been successfully created for ${username}`),
+    );
+  },
   checkItemInformationSecton(instanceTitle, location, itemStatus) {
     cy.expect([
       KeyValue('Title').has({ value: instanceTitle }),
