@@ -356,6 +356,23 @@ export default {
     cy.expect(KeyValue('Edition').has({ value }));
   },
 
+  verifyNotMarkAsStaffSuppressed() {
+    cy.expect(
+      instanceDetailsSection
+        .find(HTML(including('Warning: Instance is marked staff suppressed')))
+        .absent(),
+    );
+  },
+
+  verifyNotMarkAsPreviouslyHeld() {
+    cy.expect(
+      instanceDetailsSection
+        .find(Accordion('Administrative data'))
+        .find(HTML(including('Previously held')))
+        .absent(),
+    );
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },
