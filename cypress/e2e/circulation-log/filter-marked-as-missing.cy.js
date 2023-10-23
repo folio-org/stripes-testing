@@ -2,8 +2,6 @@ import moment from 'moment';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
 import devTeams from '../../support/dictionary/devTeams';
 import testTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';

@@ -4,7 +4,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import TestTypes from '../../../support/dictionary/testTypes';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import devTeams from '../../../support/dictionary/devTeams';
-import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('permissions: inventory', () => {
