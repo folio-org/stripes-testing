@@ -27,6 +27,8 @@ const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-li
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const instanceDetailsPane = Pane({ id: 'pane-instancedetails' });
+const classificationAccordion = Accordion('Classification');
+const listClassifications = MultiColumnList({ id: 'list-classifications' });
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -370,6 +372,21 @@ export default {
         .find(Accordion('Administrative data'))
         .find(HTML(including('Previously held')))
         .absent(),
+    );
+  },
+
+  verifyClassification(classType, classification) {
+    cy.expect(
+      classificationAccordion
+        .find(listClassifications)
+        .find(MultiColumnListCell({ columnIndex: 0, content: classType }))
+        .exists(),
+    );
+    cy.expect(
+      classificationAccordion
+        .find(listClassifications)
+        .find(MultiColumnListCell({ columnIndex: 1, content: classification }))
+        .exists(),
     );
   },
 

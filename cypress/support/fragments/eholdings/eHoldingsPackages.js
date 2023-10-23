@@ -299,9 +299,6 @@ export default {
   },
 
   fillDateCoverage(startDate, endDate) {
-    cy.do([
-      startDateInput.fillIn(startDate),
-      endDateInput.fillIn(endDate),
-    ]);
+    cy.do([startDateInput.fillIn(startDate), endDateInput.fillIn(endDate)]);
   },
 };
