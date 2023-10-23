@@ -1,4 +1,4 @@
-import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
