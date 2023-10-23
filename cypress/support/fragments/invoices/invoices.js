@@ -554,7 +554,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId })
         .find(
           MultiColumnListCell({
-            content: `$${invoiceLine.subTotal}.00`,
+            content: `${currency}${invoiceLine.subTotal}.00`,
           }),
         )
         .exists(),
@@ -858,6 +858,11 @@ export default {
     ]);
   },
 
+  cancelEditInvoice: () => {
+    cy.wait(4000);
+    cy.do(Button('Cancel').click());
+  },
+
   changeFY: (fiscalYear) => {
     cy.wait(6000);
     cy.do([
@@ -996,10 +1001,24 @@ export default {
       .click();
   },
 
+  openPOLFromInvoiceLineInCurrentPage: (polNumber) => {
+    cy.get('#invoiceLineInformation')
+      .find('a')
+      .contains(polNumber)
+      .invoke('removeAttr', 'target')
+      .click();
+  },
+
   checkApproveButtonIsDissabled: () => {
     cy.wait(6000);
     cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
     cy.expect(Button('Approve').is({ disabled: true }));
+  },
+
+  checkPayButtonIsDissabled: () => {
+    cy.wait(6000);
+    cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
+    cy.expect(Button('Pay').is({ disabled: true }));
   },
 
   clickOnOrganizationFromInvoice: (organizationName) => {
@@ -1012,5 +1031,13 @@ export default {
         .find(Link(`${fund.name}(${fund.code})`))
         .click(),
     );
+  },
+
+  checkAbsentFYOptionInInvoice: (fiscalYear) => {
+    cy.do(Selection('Fiscal year*').open());
+    cy.get('div[class*=selectionListRoot-]').then(($element) => {
+      const text = $element.text();
+      expect(text).to.not.include(`${fiscalYear}`);
+    });
   },
 };

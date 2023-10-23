@@ -18,7 +18,7 @@ import SettingsFinance from '../../support/fragments/settings/finance/settingsFi
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_2_year_${getRandomPostfix()}`,
@@ -56,7 +56,10 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
-  const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
+  const invoiceLine = {
+    ...NewInvoiceLine.defaultUiInvoiceLine,
+    subTotal: '2',
+  };
   const allocatedQuantity = '100';
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
   const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();

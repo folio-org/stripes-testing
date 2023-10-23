@@ -272,6 +272,10 @@ describe('data-import', () => {
           '\\',
           '$a Kirby, Steve, $e creator. $0 id.loc.gov/authorities/names/n77020008test',
         );
+
+        QuickMarcEditor.closeEditorPane();
+        InventoryInstance.viewSource();
+        InventoryInstance.checkAbsenceOfAuthorityIconInMarcViewPane();
       },
     );
   });

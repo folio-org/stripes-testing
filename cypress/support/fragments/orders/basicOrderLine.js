@@ -6,6 +6,10 @@ export const RECEIVING_WORKFLOWS = {
   SYNCHRONIZED: 'Synchronized order and receipt quantity',
   INDEPENDENT: 'Independent order and receipt quantity',
 };
+export const CHECKIN_ITEMS_VALUE = {
+  [RECEIVING_WORKFLOWS.SYNCHRONIZED]: false,
+  [RECEIVING_WORKFLOWS.INDEPENDENT]: true,
+};
 
 const getDefaultOrderLine = ({
   quantity = 1,
