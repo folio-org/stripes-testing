@@ -382,6 +382,14 @@ export default {
     ]);
   },
 
+  viewPO: () => {
+    cy.wait(6000);
+    cy.do([
+      orderLineDetailsPane.find(paneHeaderOrderLinesDetailes.find(actionsButton)).click(),
+      Button('View PO').click(),
+    ]);
+  },
+
   checkCalloutMessageInEditedPOL: (orderNumber, numberOfPOL) => {
     InteractorsTools.checkCalloutMessage(
       `The purchase order line ${orderNumber}-${numberOfPOL} was successfully updated`,
@@ -822,6 +830,37 @@ export default {
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
       SelectionOption(AUMethod).click(),
+    ]);
+    cy.do([
+      electronicUnitPriceTextField.fillIn(electronicUnitPrice),
+      quantityElectronicTextField.fillIn(quantityElectronic),
+      Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityElectronicField.fillIn(quantityElectronic),
+    ]);
+    cy.expect([
+      electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
+      quantityElectronicTextField.has({ value: quantityElectronic }),
+    ]);
+    cy.do(saveAndCloseButton.click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
+    cy.wait(2000);
+    submitOrderLine();
+  },
+
+  fillInPOLineInfoForExportWithLocationAndAccountNumber(AUMethod, institutionId, accountNumber) {
+    cy.wait(4000);
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
+      acquisitionMethodButton.click(),
+      acquisitionMethodButton.click(),
+      SelectionOption(AUMethod).click(),
+      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),

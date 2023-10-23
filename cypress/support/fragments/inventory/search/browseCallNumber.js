@@ -3,7 +3,6 @@ import {
   including,
   MultiColumnListCell,
   MultiColumnListHeader,
-  MultiColumnListRow,
   Section,
 } from '../../../../../interactors';
 
@@ -79,6 +78,15 @@ export default {
         rows.forEach((el, i) => {
           cy.expect(MultiColumnListCell(el).has({ row: rowNumber + i }));
         });
+      }),
+    );
+  },
+
+  checkNumberOfTitlesForRow(callNumber, numberOfTitles) {
+    cy.do(
+      MultiColumnListCell(callNumber).perform((element) => {
+        const rowNumber = +element.parentElement.getAttribute('data-row-inner');
+        cy.expect(MultiColumnListCell(numberOfTitles, { row: rowNumber }).exists());
       }),
     );
   },

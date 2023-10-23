@@ -73,4 +73,7 @@ export default {
     });
     cy.do(Accordion('Transformations').find(Button('Add transformations')).click());
   },
+  clickAddTransformationsButton() {
+    cy.do(Button('Add transformations').click());
+  },
 };
