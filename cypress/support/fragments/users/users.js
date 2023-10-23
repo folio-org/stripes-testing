@@ -19,7 +19,6 @@ const userDetailsPane = Pane({ id: 'pane-userdetails' });
 const contactInformationAccordion = Accordion('Contact information');
 const defaultUserName = `AutotestUser_${getRandomPostfix()}`;
 const editButton = Button('Edit');
-const barCode = TextField('Barcode');
 const deleteUser = Button({ id: 'clickable-checkdeleteuser' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const deleteYesButton = Button({ id: 'delete-user-button' });
@@ -86,9 +85,12 @@ export default {
         Dropdown('Actions').find(Button()).click(),
         Button({ id: 'clickable-newuser' }).click(),
         TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
+        TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),
+        TextField({ id: 'adduser_firstname' }).fillIn(userData.personal.firstName),
+        TextField({ id: 'adduser_preferredname' }).fillIn(userData.personal.preferredFirstName),
         Select({ id: 'adduser_group' }).choose(userData.patronGroup),
         TextField({ name: 'barcode' }).fillIn(userData.barcode),
-        TextField({ name: 'username' }).fillIn(userData.username),
+        TextField({ id: 'adduser_username' }).fillIn(userData.username),
         TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
         Button({ id: 'clickable-save' }).click(),
       ])
@@ -98,28 +100,8 @@ export default {
       });
   },
 
-  assertion: () => {
-    cy.do(barCode.has({ error: 'This barcode has already been taken' }));
-  },
-
   closeWithoutSavingButton: () => {
     cy.do([closeWithoutSavingButton.click()]);
-  },
-
-  createData: (userData) => {
-    return cy.do([
-      Dropdown('Actions').find(Button()).click(),
-      Button({ id: 'clickable-newuser' }).click(),
-      TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
-      TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),
-      TextField({ id: 'adduser_firstname' }).fillIn(userData.personal.firstName),
-      Select({ id: 'adduser_group' }).choose(userData.patronGroup),
-      TextField({ name: 'barcode' }).fillIn(userData.barcode),
-      TextField({ name: 'username' }).fillIn(userData.userName),
-      TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
-      TextField({ id: 'adduser_preferredname' }).fillIn(userData.personal.preferredFirstName),
-      Button({ id: 'clickable-save' }).click(),
-    ]);
   },
 
   checkIsUserCreated: (userData) => {
