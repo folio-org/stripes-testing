@@ -70,9 +70,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
 
-        BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
-
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillPatronGroup('staff (Staff Member)');
         BulkEditActions.confirmChanges();
@@ -84,6 +81,8 @@ describe('bulk-edit', () => {
           true,
         );
         BulkEditActions.commitChanges();
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Custom fields',
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
