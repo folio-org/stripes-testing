@@ -29,11 +29,13 @@ import {
   or,
   PaneContent,
 } from '../../../../interactors';
+import HoldingsRecordEdit from './holdingsRecordEdit';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
+import ItemRecordEdit from './item/itemRecordEdit';
 import ItemRecordView from './item/itemRecordView';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -49,6 +51,7 @@ const viewSourceButton = Button({ id: 'clickable-view-source' });
 const overlaySourceBibRecord = Button({ id: 'dropdown-clickable-reimport-record' });
 const deriveNewMarcBibRecord = Button({ id: 'duplicate-instance-marc' });
 const addMarcHoldingRecordButton = Button({ id: 'create-holdings-marc' });
+const addHoldingButton = section.find(Button('Add holdings'));
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
@@ -617,6 +620,10 @@ export default {
   clickAddItemByHoldingName(holdingName) {
     const holdingSection = section.find(Accordion(including(holdingName)));
     cy.do(holdingSection.find(addItemButton).click());
+
+    ItemRecordEdit.waitLoading('');
+
+    return ItemRecordEdit;
   },
 
   fillItemRequiredFields() {
@@ -641,15 +648,17 @@ export default {
 
   saveItemDataAndVerifyExistence(copyNumber) {
     cy.do(saveAndCloseButton.click());
-    cy.expect(Section({ id: 'pane-instancedetails' }).exists());
+    cy.expect(section.exists());
     cy.do(Button(including('Holdings:')).click());
-    cy.expect(
-      Section({ id: 'pane-instancedetails' })
-        .find(MultiColumnListCell({ row: 0, content: copyNumber }))
-        .exists(),
-    );
+    cy.expect(section.find(MultiColumnListCell({ row: 0, content: copyNumber })).exists());
   },
 
+  openEditHoldingsForm() {
+    cy.do(addHoldingButton.click());
+    HoldingsRecordEdit.waitLoading();
+
+    return HoldingsRecordEdit;
+  },
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
     cy.expect(Pane({ titleLabel: including('Holdings') }).exists());
@@ -887,6 +896,31 @@ export default {
 
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
+  },
+
+  checkHoldingsTableContent({ name, records = [] } = {}) {
+    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
+    cy.do(holdingsSection.clickHeader());
+
+    records.forEach((record, index) => {
+      if (record.barcode) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.barcode) }),
+        );
+      }
+
+      if (record.status) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.status) }),
+        );
+      }
+    });
   },
 
   verifyHoldingsPermanentLocation(permanentLocation) {
