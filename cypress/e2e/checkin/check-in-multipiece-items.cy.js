@@ -44,7 +44,6 @@ describe('Check In', () => {
         cy.getMaterialTypes({ limit: 1 }).then(({ id, name }) => {
           materialTypeName = { id, name };
         });
-        // cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 2 });
         cy.getInstanceTypes({ limit: 1 });
       })
