@@ -46,7 +46,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyNonMatchedResults(invalidItemBarcode);
         BulkEditActions.openActions();
         BulkEditActions.startBulkEditAbsent();
-      }
+      },
     );
   });
 });
