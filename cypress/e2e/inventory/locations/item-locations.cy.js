@@ -108,6 +108,7 @@ describe('ui-inventory: location', () => {
       InventoryInstance.closeInstancePage();
 
       // verify results
+      InventoryInstance.openHoldings(['']);
       InventoryInstance.checkHoldingsTable(
         toBeEditedLocationName,
         0,
@@ -131,7 +132,6 @@ describe('ui-inventory: location', () => {
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();
-      InventoryInstance.openHoldings(['']);
       InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
       // edit instance
@@ -141,6 +141,7 @@ describe('ui-inventory: location', () => {
       InventoryInstance.closeInstancePage();
 
       // verify results
+      InventoryInstance.openHoldings(['']);
       InventoryInstance.checkHoldingsTable(
         editedLocationName,
         0,
