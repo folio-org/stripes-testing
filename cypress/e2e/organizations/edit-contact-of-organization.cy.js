@@ -42,7 +42,8 @@ describe('Organizations', () => {
       Organizations.addContactToOrganization(contact);
       Organizations.checkContactIsAdd(contact);
       Organizations.selectContact(contact);
-      Organizations.editContact(contact);
+      Organizations.editContact();
+      Organizations.editFirstAndLastNameInContact(contact);
       Organizations.closeContact();
       contact.lastName = `${contact.lastName}-edited`;
       contact.firstName = `${contact.firstName}-edited`;

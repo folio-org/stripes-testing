@@ -119,6 +119,12 @@ export default {
     cy.wait(4000);
   },
 
+  checkModalDifferentAccountNumbers() {
+    cy.expect(Modal('Different account numbers').exists());
+    cy.do(Modal('Different account numbers').find(Button('Close')).click());
+    cy.expect(Modal('Different account numbers').absent());
+  },
+
   editOrder() {
     expandActionsDropdown();
     cy.do(Button('Edit').click());
@@ -201,6 +207,24 @@ export default {
     if (confirm) {
       UnopenConfirmationModal.confirm();
     }
+  },
+
+  unOpenOrderAndDeleteItems() {
+    expandActionsDropdown();
+    cy.do([
+      Button('Unopen').click(),
+      Modal({ id: 'order-unopen-confirmation' })
+        .find(Button({ id: 'clickable-order-unopen-confirmation-confirm-keep-holdings' }))
+        .click(),
+    ]);
+  },
+
+  selectInvoiceInRelatedInvoicesList: (invoiceNumber) => {
+    cy.get(`div[class*=mclCell-]:contains("${invoiceNumber}")`)
+      .siblings('div[class*=mclCell-]')
+      .eq(0)
+      .find('a')
+      .click();
   },
 
   receiveOrderViaActions: () => {
@@ -354,6 +378,10 @@ export default {
     cy.wait(4000);
     cy.expect(ordersResults.is({ empty: false }));
     cy.do(ordersList.find(Link(number)).click());
+  },
+
+  checkAbsentExportDetails() {
+    cy.expect(orderDetailsPane.find(Accordion('Export details')).absent());
   },
 
   deleteOrderViaActions: () => {
