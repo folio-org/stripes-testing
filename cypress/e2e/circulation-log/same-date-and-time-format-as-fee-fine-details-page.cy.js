@@ -90,8 +90,8 @@ describe('circulation-log', () => {
   });
 
   it(
-    'C350712 Check date and time --fee/fines (Firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    'C350712 Check date and time --fee/fines (volaris) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.setFilterOptionFromAccordion('fee', 'Billed');

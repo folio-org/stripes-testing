@@ -67,6 +67,13 @@ export default {
     cy.do(Pane({ id: 'fiscal-year-results-pane' }).find(Link(fiscalYear)).click());
   },
 
+  waitLoading: () => {
+    cy.expect([
+      Pane({ id: 'fiscal-year-filters-pane' }).exists,
+      Pane({ id: 'fiscal-year-results-pane' }).exists,
+    ]);
+  },
+
   waitForFiscalYearDetailsLoading: () => {
     cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists);
   },

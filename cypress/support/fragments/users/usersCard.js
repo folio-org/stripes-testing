@@ -15,6 +15,7 @@ import {
   TextField,
   and,
   Badge,
+  ListItem,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -266,5 +267,13 @@ export default {
 
   verifyFeesFinesCount(count) {
     cy.expect(feesFinesAccordion.find(Badge()).has({ text: count }));
+  },
+
+  verifyOpenedFeeFines(count, totalAmount) {
+    cy.expect(
+      feesFinesAccordion
+        .find(ListItem(including('open')))
+        .has({ text: including(`${count.toString()} open` && `Total: ${totalAmount.toString()}`) }),
+    );
   },
 };

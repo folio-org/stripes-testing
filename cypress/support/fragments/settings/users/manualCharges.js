@@ -1,4 +1,12 @@
-import { Select, TextField, MultiColumnListCell } from '../../../../../interactors';
+import {
+  Select,
+  TextField,
+  MultiColumnListCell,
+  RadioButton,
+  Button,
+  Modal,
+  Section,
+} from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import SettingsPane from '../settingsPane';
 
@@ -84,12 +92,35 @@ export default {
       records.map(({ feeFineType: name, amount: code }) => ({ name, code })),
     );
   },
+  checkDefaultEditButtonIsDisabled() {
+    cy.expect(
+      Section({ id: 'controlled-vocab-pane' })
+        .find(Button({ id: 'charge-notice-primary' }))
+        .absent(),
+    );
+  },
   checkManualCharge({ feeFineType, amount, chargeNoticeId = '', actionNoticeId = '' }) {
     cy.expect([
       MultiColumnListCell({ content: feeFineType }).exists(),
       MultiColumnListCell({ content: amount }).exists(),
       MultiColumnListCell({ content: chargeNoticeId }).exists(),
       MultiColumnListCell({ content: actionNoticeId }).exists(),
+    ]);
+  },
+  copyExistingFeeFineDialog(radioAction, ownerId, buttonAction) {
+    const modal = Modal('Copy existing fee/fine owner table entries?');
+    cy.expect([
+      modal.exists(),
+      modal.find(Select({ name: 'ownerId' })).exists(),
+      modal.find(RadioButton('Yes')).exists(),
+      modal.find(RadioButton('No')).exists(),
+      modal.find(Button('Continue')).exists(),
+      modal.find(Button('Cancel')).exists(),
+    ]);
+    cy.do([
+      modal.find(RadioButton(radioAction)).click(),
+      modal.find(Select({ name: 'ownerId' })).choose(ownerId),
+      modal.find(Button(buttonAction)).click(),
     ]);
   },
 };

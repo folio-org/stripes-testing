@@ -107,7 +107,7 @@ describe('data-import', () => {
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 2);
         // check Error counter in the Summary table
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 3);
-        FileDetails.filterRecordsWithError(quantityOfItems);
+        FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.INVOICE);
         FileDetails.verifyQuantityOfRecordsWithError(3);
         FileDetails.verifyLogSummaryTableIsHidden();
         FileDetails.verifyRecordsSortingOrder();

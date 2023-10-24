@@ -34,6 +34,7 @@ describe('data-import', () => {
         matchProfile: {
           profileName: `C399081 submatch match profile 1_${getRandomPostfix()}`,
           incomingStaticValue: `Text_${getRandomPostfix()}`,
+          incomingStaticRecordValue: 'Text',
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
           existingRecordOption: NewMatchProfile.optionsList.instanceHrid,
