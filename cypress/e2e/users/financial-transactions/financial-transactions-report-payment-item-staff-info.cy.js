@@ -195,6 +195,8 @@ describe('Financial Transactions Detail Report', () => {
       PaymentMethods.deleteViaApi(paymentMethod.id);
       NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
       UsersOwners.deleteViaApi(ownerData.id);
+      UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
+      ServicePoints.deleteViaApi(servicePoint.id);
       Users.deleteViaApi(userData.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
       Location.deleteViaApi(testData.defaultLocation.id);
