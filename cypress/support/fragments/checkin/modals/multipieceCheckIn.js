@@ -6,6 +6,7 @@ import {
   HTML,
   MultiColumnList,
 } from '../../../../../interactors';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const confirmModal = Modal('Confirm multipiece check in');
 const cancelButton = confirmModal.find(Button('Cancel'));
@@ -17,16 +18,35 @@ const descriptionOfMissingPiecesKeyValue = confirmModal.find(
   KeyValue('Description of missing pieces'),
 );
 
+const getItemProps = (numberOfPieces, hasDescription, hasMissingPieces, materialTypeName) => {
+  const defaultDescription = `autotest_description_${getRandomPostfix()}`;
+  const props = { materialTypeName };
+  if (numberOfPieces) {
+    props.numberOfPieces = numberOfPieces;
+  }
+  if (hasDescription) {
+    props.descriptionOfPieces = defaultDescription;
+  }
+  if (hasMissingPieces) {
+    props.numberOfMissingPieces = 2;
+    props.missingPieces = defaultDescription;
+  }
+  return props;
+};
+
 export default {
-  checkContent: ({
+  getItemProps,
+  checkContent({
+    barcodes: [barcode],
     instanceTitle,
-    materialTypeName,
-    barcode,
-    numberOfPieces = 'No value set-',
-    descriptionOfPieces = 'No value set-',
-    numberOfMissingPieces = '-',
-    missingPieces = '-',
-  }) => {
+    properties: {
+      materialTypeName,
+      numberOfPieces = 'No value set-',
+      descriptionOfPieces = '-',
+      numberOfMissingPieces = '-',
+      missingPieces = '-',
+    },
+  }) {
     cy.expect(
       confirmModal
         .find(
@@ -64,7 +84,7 @@ export default {
     cy.expect(confirmModal.exists());
   },
 
-  cancelMultipieceCheckInModal: (barcode) => {
+  cancelMultipieceCheckInModal(barcode) {
     cy.do(cancelButton.click());
     cy.expect([
       confirmModal.absent(),
