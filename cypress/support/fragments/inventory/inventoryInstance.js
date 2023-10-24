@@ -993,6 +993,7 @@ export default {
       .then((elem) => {
         elem.parent()[0].querySelector('[href]').click();
       });
+    cy.wait(2000);
   },
 
   verifyCellsContent: (...content) => {
