@@ -6,6 +6,7 @@ import {
   Organizations,
   Integrations,
 } from '../../support/fragments/organizations';
+import { Exports } from '../../support/fragments/exportManager';
 import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -44,7 +45,7 @@ describe('Orders', () => {
                   testData.orderLines.push(
                     BasicOrderLine.getDefaultOrderLine({
                       acquisitionMethod: acqMethod.id,
-                      automaticExport: true,
+                      automaticExport: !index,
                       purchaseOrderId: testData.order.id,
                       vendorAccount: `${organization.accounts[0].accountNo}-0{${index + 1}}`,
                     }),
@@ -75,21 +76,22 @@ describe('Orders', () => {
                     OrderLines.updateOrderLineViaApi({ ...orderLine, lastEDIExportDate: null });
                   });
                 });
+              })
+              .then(() => {
+                Exports.rerurnExportJob({ vendorId: organization.id });
               });
           });
         });
       });
 
-      cy.createTempUser([Permissions.exportManagerAll.gui, Permissions.uiOrdersView.gui]).then(
-        (userProperties) => {
-          testData.user = userProperties;
+      cy.createTempUser([Permissions.uiOrdersView.gui]).then((userProperties) => {
+        testData.user = userProperties;
 
-          cy.login(testData.user.username, testData.user.password, {
-            path: TopMenu.ordersPath,
-            waiter: Orders.waitLoading,
-          });
-        },
-      );
+        cy.login(testData.user.username, testData.user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      });
     });
 
     after('Delete test data', () => {
@@ -100,7 +102,7 @@ describe('Orders', () => {
     });
 
     it(
-      'C350545 "Purchase order" and "PO Line Details" display export details accordion for 2 exported order lines (thunderjet) (TaaS)',
+      'C350546 Verify if "Purchase order" and "PO Line Details" DO NOT display export details accordion for NOT exported order lines (thunderjet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
       () => {
         // Search for exported order and click on it
@@ -108,7 +110,7 @@ describe('Orders', () => {
         OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
 
         // Expand "Export details" accordion
-        // "Export details" table contains two records for each exported order lines
+        // "Export details" table has two records only for order line #1
         OrderDetails.checkExportDetailsTableContent([
           {
             date: now.utc().format('MM/DD/YYYY'),
@@ -118,21 +120,11 @@ describe('Orders', () => {
           {
             date: now.utc().format('MM/DD/YYYY'),
             name: testData.organization.code,
-            configName: testData.integrations[1].configName,
+            configName: testData.integrations[0].configName,
           },
         ]);
 
-        // Click on any "Export Job ID" link
-        const ExportDetails = OrderDetails.openExportJobDetails();
-        ExportDetails.checkExportJobDetails([
-          { key: 'Status', value: 'Successful' },
-          { key: 'Source', value: 'System' },
-          { key: 'Organization', value: testData.organization.name },
-          { key: 'Export method', value: testData.integrations[0].configName },
-        ]);
-
-        // Go back to "Orders" app and click on "PO line #1" record in "PO lines" accordion
-        cy.visit(TopMenu.ordersPath);
+        // Click on "PO line #1" record in "PO lines" accordion
         Orders.selectOrderByPONumber(testData.order.poNumber);
         const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLines[0].titleOrPackage);
 
@@ -151,16 +143,7 @@ describe('Orders', () => {
 
         // Click on "PO line #2" record in "PO lines" accordion
         OrderDetails.openPolDetails(testData.orderLines[1].titleOrPackage);
-
-        // Expand "Export details" accordion
-        OrderLineDetails.expandExportJobDetails();
-        OrderLineDetails.checkExportDetailsTableContent([
-          {
-            date: now.utc().format('MM/DD/YYYY'),
-            name: testData.organization.code,
-            configName: testData.integrations[1].configName,
-          },
-        ]);
+        OrderLineDetails.checkExportJobDetailsPresent(false);
       },
     );
   });

@@ -69,6 +69,13 @@ export default {
 
     cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
   },
+  checkExportJobDetailsPresent(present = true) {
+    if (present) {
+      cy.expect(exportDetailsSection.exists());
+    } else {
+      cy.expect(exportDetailsSection.absent());
+    }
+  },
   expandExportJobDetails() {
     cy.do(exportDetailsSection.find(Button('Export details')).click());
   },
