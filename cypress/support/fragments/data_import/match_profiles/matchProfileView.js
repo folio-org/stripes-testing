@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { HTML, including } from '@interactors/html';
 import { Button, Pane, Accordion } from '../../../../../interactors';
+import DateTools from '../../../utils/dateTools';
 
 const viewPane = Pane({ id: 'view-match-profile-pane' });
 const actionsButton = Button('Actions');
@@ -17,6 +18,7 @@ export default {
   },
 
   duplicate() {
+    cy.wait(2000);
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Duplicate').click());
   },
@@ -38,4 +40,82 @@ export default {
 
   verifyActionMenuAbsent: () => cy.expect(viewPane.find(actionsButton).absent()),
   verifyMatchProfileTitleName: (profileName) => cy.get('#view-match-profile-pane-content h2').should('have.text', profileName),
+  verifyMatchProfileWithIncomingAndExistingValue(
+    { profileName, incomingRecordFields, existingRecordFields, existingRecordType },
+    recordType,
+  ) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.get(`[data-id="${existingRecordType}"]`).should('contain', recordType);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.field);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.in1);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.in2);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.subfield);
+    cy.contains(`Existing ${recordType} record`)
+      .parent()
+      .should('include.text', existingRecordFields.field);
+    cy.contains(`Existing ${recordType} record`)
+      .parent()
+      .should('include.text', existingRecordFields.in1);
+    cy.contains(`Existing ${recordType} record`)
+      .parent()
+      .should('include.text', existingRecordFields.in2);
+    cy.contains(`Existing ${recordType} record`)
+      .parent()
+      .should('include.text', existingRecordFields.subfield);
+  },
+  verifyMatchProfileWithFolioRecordValue(
+    { profileName, incomingRecordFields, instanceOption },
+    recordType,
+  ) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.contains(`Incoming ${recordType} record`)
+      .parent()
+      .should('include.text', incomingRecordFields.field);
+    cy.contains('Existing Instance record field').parent().should('include.text', instanceOption);
+  },
+
+  verifyMatchProfileWithStaticValueAndFolioRecordValue({
+    profileName,
+    incomingStaticValue,
+    incomingStaticRecordValue,
+    existingRecordOption,
+  }) {
+    this.verifyMatchProfileTitleName(profileName);
+    cy.contains('Incoming Static value (submatch only) record')
+      .parent()
+      .should('include.text', incomingStaticRecordValue);
+    if (incomingStaticRecordValue === 'Date') {
+      cy.contains('Incoming Static value (submatch only) record')
+        .parent()
+        .should('include.text', DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY'));
+    }
+    if (incomingStaticRecordValue === 'Date range') {
+      cy.contains('Incoming Static value (submatch only) record')
+        .parent()
+        .invoke('text')
+        .then((text) => {
+          const startDate = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+          const endDate = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+          const expectedText = `From${startDate}To${endDate}`;
+
+          cy.wrap(text).should('include', expectedText);
+        });
+    }
+    if (incomingStaticRecordValue === 'Text' || incomingStaticRecordValue === 'Number') {
+      cy.contains('Incoming Static value (submatch only) record')
+        .parent()
+        .should('include.text', incomingStaticValue);
+    }
+    cy.contains('Existing Holdings record field')
+      .parent()
+      .should('include.text', existingRecordOption);
+  },
 };

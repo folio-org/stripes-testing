@@ -2,7 +2,7 @@ import exportJobs from '../../support/fragments/ideyalabs/exportJobs';
 import testTypes from '../../support/dictionary/testTypes';
 import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
-import invoices from '../../support/fragments/invoices/invoices';
+import Invoices from '../../support/fragments/invoices/invoices';
 import loansPage from '../../support/fragments/loans/loansPage';
 import topMenu from '../../support/fragments/topMenu';
 import fileManager from '../../support/utils/fileManager';
@@ -68,9 +68,8 @@ describe.skip('Eholdings - exports', () => {
     { tags: [testTypes.ideaLabsTests] },
     () => {
       cy.visit(topMenu.invoicesPath);
-      invoices.selectFolio();
-      invoices.voucherExportManualExport(testData.batchGroup);
-      invoices.verifyDownloadButtonAndClick();
+      Invoices.selectFolio();
+      Invoices.voucherExport();
       // In Voucher Export screen, when performing Run Manual Export Voucher, Export record status = 'Error' due to that download button is not visible.
     },
   );

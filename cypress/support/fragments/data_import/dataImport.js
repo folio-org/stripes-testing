@@ -33,11 +33,13 @@ const deleteLogsModalCancelButton = deleteLogsModal.find(Button('No, do not dele
 const deleteLogsModalConfirmButton = deleteLogsModal.find(Button('Yes, delete'));
 const logsPane = Pane('Logs');
 const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
-const jobsPane = Pane({ id: 'pane-jobs-title' });
 const orChooseFilesButton = Button('or choose files');
 const cancelImportJobModal = Modal('Cancel import job?');
 const yesButton = Button('Yes, cancel import job');
+const cancelButton = Button('No, do not cancel import');
 const dataImportNavSection = Pane({ id: 'app-settings-nav-pane' });
+const importBlockedModal = Modal('Import blocked');
+const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
@@ -276,7 +278,7 @@ export default {
   checkMultiColumnListRowsCount: (count) => cy.expect(jobLogsList.has({ rowCount: count })),
 
   checkIsLandingPageOpened: () => {
-    cy.expect(jobsPane.find(orChooseFilesButton).exists());
+    cy.expect(sectionPaneJobsTitle.find(orChooseFilesButton).exists());
     cy.expect(logsPaneHeader.find(actionsButton).exists());
   },
 
@@ -339,11 +341,6 @@ export default {
     });
   },
 
-  clickDataImportNavButton: () => {
-    // TODO delete this function after fix https://issues.folio.org/browse/MODDATAIMP-691
-    cy.do(Button({ id: 'app-list-item-clickable-data-import-module' }).click());
-  },
-
   // checks
   verifyDataImportLogsDeleted(oldLogsHrIds) {
     cy.get('body').then(($body) => {
@@ -403,24 +400,45 @@ export default {
     );
   },
 
+  clickResumeButton: () => {
+    cy.expect(sectionPaneJobsTitle.find(Button('Resume')).exists());
+    cy.do(sectionPaneJobsTitle.find(Button('Resume')).click());
+  },
+
+  clickDeleteFilesButton: () => {
+    cy.do(sectionPaneJobsTitle.find(Button('Delete files')).click());
+  },
+
   deleteImportJob: (fileName) => {
     cy.get('div[class^="listContainer-"]')
       .contains('li[class^="job-"]', fileName)
       .then((elem) => {
         elem.parent()[0].querySelector('button[icon="trash"]').click();
+
+        cy.get('div[class^="listContainer-"] button[icon="trash"]').should('not.be.visible');
       });
   },
 
   verifyCancelImportJobModal: () => {
+    const headerModalContent = 'Are you sure that you want to cancel this import job?';
+    const modalContent =
+      'Note: Cancelled jobs cannot be restarted. Records created or updated before\nthe job is cancelled cannot yet be reverted.';
     cy.expect([
       cancelImportJobModal.exists(),
-      cancelImportJobModal.find(yesButton).exists(),
-      cancelImportJobModal.find(Button('No, do not cancel import')).exists(),
+      cancelImportJobModal.find(HTML(including(headerModalContent))).exists(),
+      cancelImportJobModal.find(HTML(including(modalContent))).exists(),
+      cancelImportJobModal.find(cancelButton, { disabled: true }).exists(),
+      cancelImportJobModal.find(yesButton, { disabled: false }).exists(),
     ]);
   },
 
-  cancelImportJob: () => {
+  confirmDeleteImportJob: () => {
     cy.do(cancelImportJobModal.find(yesButton).click());
+  },
+
+  cancelDeleteImportJob: () => {
+    cy.do(cancelImportJobModal.find(cancelButton).click());
+    cy.expect(cancelImportJobModal.absent());
   },
 
   waitFileIsUploaded: () => {
@@ -448,7 +466,70 @@ export default {
     upload();
   },
 
+  uploadBunchOfFilesWithDifferentFileExtensions(
+    firstFileName,
+    secondFileName,
+    firstFinalFileName,
+    secondFinalFileName,
+  ) {
+    const arrayOfFiles = [];
+
+    FileManager.readFile(`cypress/fixtures/${firstFileName}`).then((actualContent) => {
+      const fileName = `${firstFinalFileName}.mrc`;
+
+      FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
+      arrayOfFiles.push(fileName);
+    });
+    FileManager.readFile(`cypress/fixtures/${secondFileName}`).then((actualContent) => {
+      const fileName = `${secondFinalFileName}.txt`;
+
+      FileManager.createFile(`cypress/fixtures/${fileName}`, actualContent);
+      arrayOfFiles.push(fileName);
+    });
+
+    cy.get('input[type=file]').attachFile(arrayOfFiles);
+  },
+
   verifyDataImportProfiles(profiles) {
     cy.expect(dataImportNavSection.find(NavListItem(profiles)).exists());
+  },
+
+  verifyImportBlockedModal() {
+    cy.expect([
+      importBlockedModal.exists(),
+      importBlockedModal
+        .find(HTML(including('You cannot upload files with this file extension')))
+        .exists(),
+      importBlockedModal.find(Button('Cancel')).exists(),
+      importBlockedModal.find(Button('Choose other files to upload')).exists(),
+    ]);
+  },
+
+  verifyFileIsImported(fileName) {
+    cy.expect(
+      Pane({ id: 'pane-upload' })
+        .find(HTML(including(fileName)))
+        .exists(),
+    );
+    cy.get('#job-profiles-list').should('exist');
+  },
+  verifyInconsistentFileExtensionsModal() {
+    cy.expect([
+      inconsistentFileExtensionsModal.exists(),
+      inconsistentFileExtensionsModal
+        .find(
+          HTML(
+            including(
+              'You cannot upload files with different extensions. Please upload files with the same extension',
+            ),
+          ),
+        )
+        .exists(),
+      inconsistentFileExtensionsModal.find(Button('Cancel')).exists(),
+      inconsistentFileExtensionsModal.find(Button('Choose other files to upload')).exists(),
+    ]);
+  },
+  verifyUploadSectionHasNoUplodedFiles() {
+    cy.expect(sectionPaneJobsTitle.find(Button('or choose files')).exists());
   },
 };

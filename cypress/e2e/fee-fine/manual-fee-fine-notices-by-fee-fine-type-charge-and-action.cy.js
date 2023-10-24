@@ -29,6 +29,7 @@ import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
 import RefundReasons from '../../support/fragments/settings/users/refundReasons';
 import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
+import { NOTICE_CATEGORIES } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 
 describe('Overdue fine', () => {
   const patronGroup = {
@@ -41,11 +42,11 @@ describe('Overdue fine', () => {
   const noticeTemplates = {
     manualFeeFineCharge: createNoticeTemplate({
       name: 'Manual_fee_fine_charge',
-      category: { name: 'Manual fee/fine charge' },
+      category: NOTICE_CATEGORIES.FeeFineCharge,
     }),
     manualFeeFineAction: createNoticeTemplate({
       name: 'Manual_fee_fine_action',
-      category: { name: 'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)' },
+      category: NOTICE_CATEGORIES.FeeFineAction,
     }),
   };
   const openUserFeeFine = (userId, feeFineId) => {
@@ -181,15 +182,9 @@ describe('Overdue fine', () => {
       };
 
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineCharge);
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.manualFeeFineCharge,
-        category: 'FeeFineCharge',
-      });
+      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.manualFeeFineCharge);
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.manualFeeFineAction);
-      NewNoticePolicyTemplate.checkAfterSaving({
-        ...noticeTemplates.manualFeeFineAction,
-        category: 'FeeFineAction',
-      });
+      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.manualFeeFineAction);
 
       cy.visit(SettingsMenu.manualCharges);
       ManualCharges.waitLoading();

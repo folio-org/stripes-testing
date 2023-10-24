@@ -22,20 +22,20 @@ describe('Management of waive reasons', () => {
       WaiveReasons.checkSaveButtonState({ isDisabled: true });
       WaiveReasons.checkReasonValidatorMessage();
       // create
-      testReason = { reason: `testReason${getRandomPostfix()}`, description: '' };
+      testReason = { name: `testReason${getRandomPostfix()}`, description: '' };
       WaiveReasons.fillReasonParameters(testReason);
       WaiveReasons.checkSaveButtonState({ isDisabled: false });
       WaiveReasons.trySave();
       UsersSettingsGeneral.checkEntityInTable(testReason);
       // update
       testReason.description = 'test description';
-      WaiveReasons.startEdit(testReason.reason);
+      WaiveReasons.startEdit(testReason.name);
       WaiveReasons.fillReasonParameters(testReason);
       WaiveReasons.checkSaveButtonState({ isDisabled: false });
       WaiveReasons.trySave();
       UsersSettingsGeneral.checkEntityInTable(testReason);
       // delete
-      WaiveReasons.delete(testReason.reason);
+      WaiveReasons.delete(testReason.name);
     },
   );
 });

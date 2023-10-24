@@ -22,7 +22,7 @@ import NewExpenceClass from '../../support/fragments/settings/finance/newExpense
 import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_2_year_${getRandomPostfix()}`,

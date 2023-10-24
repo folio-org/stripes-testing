@@ -26,9 +26,11 @@ import InteractorsTools from '../../utils/interactorsTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceEditForm from './invoiceEditForm';
+import VoucherExportForm from './voucherExportForm';
 import { INVOICE_STATUSES } from '../../constants';
 import InvoiceStates from './invoiceStates';
 
+const invoiceResultsHeaderPane = PaneHeader({ id: 'paneHeaderinvoice-results-pane' });
 const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
@@ -112,6 +114,7 @@ const getDefaultInvoiceLine = ({
 
 export default {
   getDefaultInvoice,
+  getDefaultInvoiceLine,
   getInvoiceViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -120,14 +123,14 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }) {
-    cy.getBatchGroups().then(({ id: batchGroupId }) => {
-      const invoice = getDefaultInvoice({
-        batchGroupId,
-        vendorId,
-        accountingCode,
-        exportToAccounting,
-      });
+  createInvoiceViaApi({
+    vendorId,
+    accountingCode,
+    fiscalYearId,
+    batchGroupId,
+    exportToAccounting,
+  }) {
+    const create = (invoice) => {
       cy.okapiRequest({
         method: 'POST',
         path: 'invoice/invoices',
@@ -135,7 +138,23 @@ export default {
       }).then(({ body }) => {
         cy.wrap(body).as('invoice');
       });
+    };
+    const invoice = getDefaultInvoice({
+      fiscalYearId,
+      batchGroupId,
+      vendorId,
+      accountingCode,
+      exportToAccounting,
     });
+
+    if (batchGroupId) {
+      create(invoice);
+    } else {
+      cy.getBatchGroups().then(({ id }) => {
+        create({ ...invoice, batchGroupId: id });
+      });
+    }
+
     return cy.get('@invoice');
   },
   updateInvoiceViaApi(invoiceProperties) {
@@ -170,7 +189,7 @@ export default {
       }
     });
   },
-  createInviceLineViaApi(invoiceLineProperties) {
+  createInvoiceLineViaApi(invoiceLineProperties) {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -182,12 +201,20 @@ export default {
   createInvoiceWithInvoiceLineViaApi({
     vendorId,
     poLineId,
+    fiscalYearId,
+    batchGroupId,
     fundDistributions,
     accountingCode,
     releaseEncumbrance,
     exportToAccounting,
   }) {
-    this.createInvoiceViaApi({ vendorId, accountingCode, exportToAccounting }).then((resp) => {
+    this.createInvoiceViaApi({
+      vendorId,
+      accountingCode,
+      fiscalYearId,
+      batchGroupId,
+      exportToAccounting,
+    }).then((resp) => {
       cy.wrap(resp).as('invoice');
       const { id: invoiceId, status: invoiceLineStatus } = resp;
       const invoiceLine = getDefaultInvoiceLine({
@@ -198,7 +225,7 @@ export default {
         accountingCode,
         releaseEncumbrance,
       });
-      this.createInviceLineViaApi(invoiceLine);
+      this.createInvoiceLineViaApi(invoiceLine);
     });
     return cy.get('@invoice');
   },
@@ -300,14 +327,14 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
-  createRolloverInvoiceWithAdjustmentAndFund(
+  createRolloverInvoiceWithAjustmentAndFund(
     invoice,
     organization,
-    description,
-    value,
-    percentOrCurrency,
+    descriptionInput,
+    valueInput,
+    percentOrDollar,
     proRate,
-    relationToTotal,
+    realtioToTotal,
     exportToAccounting = false,
     fund,
   ) {
@@ -325,23 +352,54 @@ export default {
       Selection('Batch group*').open(),
       SelectionList().select('FOLIO'),
       Select({ id: 'invoice-payment-method' }).choose('Cash'),
-      // Checkbox({ name: 'exportToAccounting' }).click(),
+      Checkbox('Export to accounting').checked(false),
+    ]);
+    cy.do([
       Button({ id: 'adjustments-add-button' }).click(),
-      TextField({ name: 'adjustments[0].description' }).fillIn(description),
-      TextField({ name: 'adjustments[0].value' }).fillIn(value),
-      Section({ id: 'invoiceForm-invoiceAdjustments' }).find(Button(percentOrCurrency)).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+    ]);
+    if (percentOrDollar === '$') {
+      cy.do(Button('$').click());
+    } else if (percentOrDollar === '%') {
+      cy.do(Button('%').click());
+    }
+    cy.do([
       Select({ name: 'adjustments[0].prorate' }).choose(proRate),
-      Select({ name: 'adjustments[0].relationToTotal' }).choose(relationToTotal),
+      Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
     ]);
     if (exportToAccounting === true) {
       cy.do(Checkbox({ name: 'adjustments[0].exportToAccounting' }).click());
     }
     cy.do([
       Button({ id: 'adjustments[0].fundDistributions-add-button' }).click(),
-      Button({ name: 'adjustments[0].fundDistributions[0].fundId' }).click(),
+      Button({ id: 'adjustments[0].fundDistributions[0].fundId' }).click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      saveAndClose.click(),
     ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  createRolloverInvoiceWithFY(invoice, organization, fiscalYear) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      Selection('Fiscal year').open(),
+      SelectionList().select(fiscalYear.code),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(organization);
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select('FOLIO'),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').checked(false),
+    ]);
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
@@ -448,8 +506,24 @@ export default {
     // TODO: update using interactors once we will be able to pass negative value into text field
     cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
+      // TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
       TextField('Description*').fillIn(invoiceLine.description),
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
+      saveAndClose.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+  },
+
+  createInvoiceLineWithFund: (invoiceLine, fund) => {
+    cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
+    cy.do(newBlankLineButton.click());
+    cy.do([
+      TextField({ name: 'subTotal' }).fillIn(invoiceLine.subTotal),
+      TextField('Description*').fillIn(invoiceLine.description),
+      TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
+      Button({ id: 'fundDistributions-add-button' }).click(),
+      Button({ name: 'fundDistributions[0].fundId' }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
       saveAndClose.click(),
     ]);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
@@ -503,7 +577,7 @@ export default {
       Accordion({ id: invoiceLinesAccordionId })
         .find(
           MultiColumnListCell({
-            content: currency.concat(invoiceLine.subTotal.toFixed(2)),
+            content: `${currency}${invoiceLine.subTotal}.00`,
           }),
         )
         .exists(),
@@ -670,55 +744,19 @@ export default {
   closeSearchPlugin: () => {
     cy.do(Button('Close').click());
   },
+  openExportVoucherForm() {
+    cy.do([invoiceResultsHeaderPane.find(actionsButton).click(), Button('Voucher export').click()]);
 
-  voucherExport: (batchGroup) => {
-    cy.do([
-      PaneHeader({ id: 'paneHeaderinvoice-results-pane' }).find(actionsButton).click(),
-      Button('Voucher export').click(),
-      Select().choose(batchGroup),
-      Button('Run manual export').click(),
-      Button({
-        id: 'clickable-run-manual-export-confirmation-confirm',
-      }).click(),
-    ]);
-    cy.wait(2000);
-    cy.do(
-      MultiColumnList({ id: 'batch-voucher-exports' })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .find(Button({ icon: 'download' }))
-        .click(),
-    );
+    VoucherExportForm.waitLoading();
+
+    return VoucherExportForm;
   },
+  voucherExport(batchGroup) {
+    this.openExportVoucherForm();
 
-  voucherExportManualExport: (batchGroup) => {
-    cy.do([
-      PaneHeader({ id: 'paneHeaderinvoice-results-pane' }).find(actionsButton).click(),
-      Button('Voucher export').click(),
-      Select().choose(batchGroup),
-      Button('Run manual export').click(),
-      Button({
-        id: 'clickable-run-manual-export-confirmation-confirm',
-      }).click(),
-    ]);
-    cy.wait(2000);
-  },
-
-  verifyDownloadButtonAndClick: () => {
-    cy.expect(
-      MultiColumnList({ id: 'batch-voucher-exports' })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .find(Button({ icon: 'download' }))
-        .exists(),
-    );
-    cy.do(
-      MultiColumnList({ id: 'batch-voucher-exports' })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .find(Button({ icon: 'download' }))
-        .click(),
-    );
+    VoucherExportForm.selectBatchGroup({ batchGroup });
+    VoucherExportForm.clickRunManualExportButton();
+    VoucherExportForm.downloadVoucher();
   },
 
   getSearchParamsMap(orderNumber, orderLine) {
@@ -778,6 +816,7 @@ export default {
   },
 
   selectInvoice: (invoiceNumber) => {
+    cy.wait(4000);
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
   },
 
@@ -797,6 +836,28 @@ export default {
     ]);
   },
 
+  editInvoice: () => {
+    cy.wait(4000);
+    cy.do([
+      PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click(),
+      Button('Edit').click(),
+    ]);
+  },
+
+  cancelEditInvoice: () => {
+    cy.wait(4000);
+    cy.do(Button('Cancel').click());
+  },
+
+  changeFY: (fiscalYear) => {
+    cy.wait(6000);
+    cy.do([
+      Selection('Fiscal year*').open(),
+      SelectionList().select(fiscalYear),
+      saveAndClose.click(),
+    ]);
+  },
+
   addAdjustment: (descriptionInput, valueInput, typeToggle, realtioToTotal) => {
     cy.do([
       Button({ id: 'adjustments-add-button' }).click(),
@@ -806,6 +867,34 @@ export default {
       Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
       saveAndClose.click(),
     ]);
+  },
+
+  addAdjustmentToInvoice: (
+    descriptionInput,
+    valueInput,
+    percentOrDollar,
+    proRate,
+    realtioToTotal,
+    exportToAccounting = false,
+  ) => {
+    cy.do([
+      Button({ id: 'adjustments-add-button' }).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+    ]);
+    if (percentOrDollar === '$') {
+      cy.do(Button('$').click());
+    } else if (percentOrDollar === '%') {
+      cy.do(Button('%').click());
+    }
+    cy.do([
+      Select({ name: 'adjustments[0].prorate' }).choose(proRate),
+      Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
+    ]);
+    if (exportToAccounting === true) {
+      cy.do(Checkbox({ name: 'adjustments[0].exportToAccounting' }).click());
+    }
+    cy.do(saveAndClose.click());
   },
 
   selectStatusFilter: (status) => {
@@ -896,5 +985,45 @@ export default {
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();
+  },
+
+  openPOLFromInvoiceLineInCurrentPage: (polNumber) => {
+    cy.get('#invoiceLineInformation')
+      .find('a')
+      .contains(polNumber)
+      .invoke('removeAttr', 'target')
+      .click();
+  },
+
+  checkApproveButtonIsDissabled: () => {
+    cy.wait(6000);
+    cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
+    cy.expect(Button('Approve').is({ disabled: true }));
+  },
+
+  checkPayButtonIsDissabled: () => {
+    cy.wait(6000);
+    cy.do(PaneHeader({ id: 'paneHeaderpane-invoiceDetails' }).find(actionsButton).click());
+    cy.expect(Button('Pay').is({ disabled: true }));
+  },
+
+  clickOnOrganizationFromInvoice: (organizationName) => {
+    cy.do(Section({ id: 'vendorDetails' }).find(Link(organizationName)).click());
+  },
+
+  selectFundInInvoiceLine: (fund) => {
+    cy.do(
+      Section({ id: 'invoiceLineFundDistribution' })
+        .find(Link(`${fund.name}(${fund.code})`))
+        .click(),
+    );
+  },
+
+  checkAbsentFYOptionInInvoice: (fiscalYear) => {
+    cy.do(Selection('Fiscal year*').open());
+    cy.get('div[class*=selectionListRoot-]').then(($element) => {
+      const text = $element.text();
+      expect(text).to.not.include(`${fiscalYear}`);
+    });
   },
 };

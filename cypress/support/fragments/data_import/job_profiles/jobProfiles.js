@@ -21,6 +21,7 @@ const waitSelector = Pane({ id: 'view-job-profile-pane' });
 const closeButton = Button({ icon: 'times' });
 const paneResults = Pane({ id: 'pane-results' });
 const searchButton = Button('Search');
+const searchField = TextField({ id: 'input-search-job-profiles-field' });
 
 const openNewJobProfileForm = () => {
   cy.do([paneResults.find(actionsButton).click(), Button('New job profile').click()]);
@@ -70,9 +71,7 @@ const createJobProfile = (jobProfile) => {
 const search = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
-  cy.do(
-    paneResults.find(TextField({ id: 'input-search-job-profiles-field' })).fillIn(jobProfileTitle),
-  );
+  cy.do(paneResults.find(searchField).fillIn(jobProfileTitle));
   cy.do(searchButton.click());
 };
 
@@ -88,6 +87,10 @@ export default {
   deleteJobProfile,
   createJobProfile,
   closeJobProfile,
+  clearSearchField: () => {
+    cy.do(searchField.focus());
+    cy.do(Button({ id: 'input-job-profiles-search-field-clear-button' }).click());
+  },
 
   checkJobProfilePresented: (jobProfileTitle) => {
     search(jobProfileTitle);
@@ -145,7 +148,7 @@ export default {
     cy.expect(PaneHeader(fileName).exists());
   },
 
-  checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.exists()),
+  checkListOfExistingProfilesIsDisplayed: () => cy.expect(paneResults.find(MultiColumnList({ id: 'job-profiles-list' })).exists()),
 
   checkCalloutMessage: (message) => {
     cy.expect(
@@ -157,8 +160,49 @@ export default {
 
   verifyActionMenuAbsent: () => cy.expect(paneResults.find(actionsButton).absent()),
   verifyJobProfileAbsent: () => cy.expect(paneResults.find(HTML(including('The list contains no items'))).exists()),
-  verifySearchFieldIsEmpty: () => cy.expect(TextField({ id: 'input-search-job-profiles-field' }).has({ value: '' })),
+  verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
   verifySearchResult: (profileName) => {
     cy.expect(paneResults.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
+  deleteUploadedFile: (fileName) => {
+    cy.get('#pane-upload')
+      .contains('div[class^="fileItemHeader-"]', fileName)
+      .then((elem) => {
+        elem.parent()[0].querySelectorAll('button[icon="trash"]')[0].click();
+      });
+  },
+  verifyDeleteUploadedFileModal: () => {
+    const modalContent =
+      'Are you sure that you want to delete this uploaded file? Deleted files will be permanently removed and cannot be retrieved';
+    cy.expect([
+      Modal('Delete uploaded file?').exists(),
+      Modal('Delete uploaded file?')
+        .find(HTML(including(modalContent)))
+        .exists(),
+      Modal('Delete uploaded file?').find(Button('No, do not delete'), { disabled: true }).exists(),
+      Modal('Delete uploaded file?').find(Button('Yes, delete'), { disabled: false }).exists(),
+    ]);
+  },
+  cancelDeleteUploadedFile: () => {
+    cy.do(Modal('Delete uploaded file?').find(Button('No, do not delete')).click());
+    cy.expect([
+      Modal('Delete uploaded file?').absent(),
+      Pane({ id: 'pane-upload' })
+        .find(HTML(including('will be deleted')))
+        .absent(),
+    ]);
+  },
+  confirmDeleteUploadedFile: () => {
+    cy.do(Modal('Delete uploaded file?').find(Button('Yes, delete')).click());
+    cy.expect(Modal('Delete uploaded file?').absent());
+  },
+  verifyFileListArea: (fileName, quantityOfUploadedFiles = 1) => {
+    cy.get('#pane-upload')
+      .contains('div[class^="fileItemHeader-"]', fileName)
+      .then((elems) => {
+        const trashButtons = Array.from(elems).map((elem) => elem.parentElement.querySelector('button[icon="trash"]'));
+        const numberOfTrashButtons = trashButtons.length;
+        cy.expect(numberOfTrashButtons).to.equal(quantityOfUploadedFiles);
+      });
   },
 };

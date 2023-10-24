@@ -96,6 +96,13 @@ export default {
     )}/${currentDate.getFullYear()}`;
   },
 
+  getSomeDaysAfterTomorrowDateForFiscalYear: (days) => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
+      currentDate.getDate() + days,
+    )}`;
+  },
+
   getDayTomorrowDateForFiscalYear: () => {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(
@@ -273,6 +280,17 @@ export default {
     const today = new Date();
     let hours = today.getUTCHours();
     let minutes = today.getUTCMinutes() + 2;
+    const ampm = hours >= 12 ? 'P' : 'A';
+    hours %= 12;
+    hours = hours || 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    return hours + ':' + minutes + ' ' + ampm;
+    // return value in format HH:MM AM/PM
+  },
+  getUTCDateFor2Scheduling() {
+    const today = new Date();
+    let hours = today.getUTCHours();
+    let minutes = today.getUTCMinutes() + 3;
     const ampm = hours >= 12 ? 'P' : 'A';
     hours %= 12;
     hours = hours || 12;

@@ -249,6 +249,7 @@ export default {
       schedulingSection.find(TextField('Time*')).fillIn(`${UTCTime}`),
     ]);
     cy.do(saveAndClose.click());
+    cy.wait(4000);
   },
 
   fillIntegrationInformationWithoutScheduling: (
@@ -293,6 +294,29 @@ export default {
       ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICodeEdited),
       saveAndClose.click(),
     ]);
+  },
+
+  editIntegration: () => {
+    cy.do([actionsButton.click(), editButton.click()]);
+  },
+
+  changeDayOnTommorowInIntegation: (tomorrowDate) => {
+    cy.do([
+      schedulingSection
+        .find(
+          TextField({
+            name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulingDate',
+          }),
+        )
+        .fillIn(`${tomorrowDate}`),
+      saveAndClose.click(),
+    ]);
+    cy.wait(4000);
+  },
+
+  checkChangeDayOnTommorowInIntegation: (tomorrowDate) => {
+    cy.expect(schedulingSection.find(KeyValue({ value: tomorrowDate })));
+    cy.wait(4000);
   },
 
   expectColorFromList: () => {
@@ -403,6 +427,12 @@ export default {
     cy.do(actionsButton.click());
     cy.expect(editButton.exists());
     cy.do(editButton.click());
+  },
+
+  changeOrganizationStatus: (status) => {
+    cy.wait(4000);
+    cy.do([organizationStatus.choose(status), saveAndClose.click()]);
+    cy.wait(6000);
   },
 
   verifyNewCategory: (category) => {
@@ -551,14 +581,30 @@ export default {
     ]);
   },
 
-  editContact: (contact) => {
+  editContact: () => {
+    cy.do([actionsButton.click(), editButton.click()]);
+  },
+
+  editFirstAndLastNameInContact: (contact) => {
     cy.do([
-      actionsButton.click(),
-      editButton.click(),
       lastNameField.fillIn(`${contact.lastName}-edited`),
       firstNameField.fillIn(`${contact.firstName}-edited`),
       saveButtonInCotact.click(),
     ]);
+  },
+
+  editNoteInContact: (note) => {
+    cy.do([TextArea({ name: 'notes' }).fillIn(note), saveButtonInCotact.click()]);
+  },
+
+  checkContactInOrganizationEditForm: (note) => {
+    cy.do(Button({ id: 'accordion-toggle-button-contactPeopleSection' }).click());
+    cy.expect(
+      Section({ id: 'contactPeopleSection' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .has({ content: note }),
+    );
   },
 
   checkIntegrationsAdd: (integrationName, integartionDescription) => {

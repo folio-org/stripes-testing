@@ -7,7 +7,7 @@ import { NOTICE_CATEGORIES } from '../../../../support/fragments/settings/circul
 describe('ui-circulation-settings: create patron notice template', () => {
   const patronNoticeTemplate = {
     ...NewNoticePolicyTemplate.defaultUi,
-    category: NOTICE_CATEGORIES.loan.name,
+    category: NOTICE_CATEGORIES.loan,
   };
   beforeEach('login', () => {
     cy.loginAsAdmin({

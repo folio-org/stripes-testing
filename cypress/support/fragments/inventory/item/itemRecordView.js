@@ -9,6 +9,7 @@ import {
   Callout,
   PaneHeader,
   Link,
+  MultiColumnListCell,
 } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 
@@ -112,6 +113,10 @@ export default {
 
   duplicateItem() {
     cy.do([Button('Actions').click(), Button('Duplicate').click()]);
+  },
+
+  createNewRequest() {
+    cy.do([Button('Actions').click(), Button('New request').click()]);
   },
 
   verifyEffectiveLocation: (location) => {
@@ -221,4 +226,10 @@ export default {
   changeItemBarcode: (barcode) => {
     cy.do([TextField({ id: 'additem_barcode' }).fillIn(barcode), saveAndCloseBtn.click()]);
   },
+
+  verifyStatisticalCode: (code) => cy.expect(
+    MultiColumnList({ id: 'item-list-statistical-codes' })
+      .find(MultiColumnListCell({ content: code }))
+      .exists(),
+  ),
 };

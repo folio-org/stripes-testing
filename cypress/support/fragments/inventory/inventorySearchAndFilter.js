@@ -65,6 +65,7 @@ const previousButton = Button({ id: 'browse-results-list-callNumbers-prev-paging
 const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-inventory' }));
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
+const itemStatusSearchField = TextField('itemStatus-field');
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -251,6 +252,14 @@ export default {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(ONE_SECOND);
     cy.do(browseSearchAndFilterInput.choose('Other scheme'));
+  },
+
+  selectBrowseDeweyDecimal() {
+    cy.do(browseButton.click());
+    // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(ONE_SECOND);
+    cy.do(browseSearchAndFilterInput.choose('Dewey Decimal classification'));
   },
 
   showsOnlyNameTypeAccordion() {
@@ -581,8 +590,12 @@ export default {
     cy.expect(instanceDetailsSection.exists());
   },
 
-  verifyInstanceDisplayed(instanceTitle) {
-    cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+  verifyInstanceDisplayed(instanceTitle, byInnerText = false) {
+    if (byInnerText) {
+      cy.expect(MultiColumnListCell({ innerText: instanceTitle }).exists());
+    } else {
+      cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+    }
   },
 
   verifyShelvingOrder(val) {
@@ -651,6 +664,11 @@ export default {
     cy.expect(effectiveLocationInput.exists());
   },
 
+  verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
+  verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
+  verifyResetAllButtonDisabled: () => cy.expect(resetAllBtn.has({ disabled: true })),
+  verifyBrowseInventorySearchResults: () => cy.expect(inventorySearchResultsPane.exists()),
+
   verifyNoRecordsFound() {
     cy.expect([
       paneResultsSection.find(HTML(including('No results found for'))).exists(),
@@ -663,10 +681,26 @@ export default {
   },
 
   searchByStatus(status) {
-    cy.do([Button({ id: 'accordion-toggle-button-itemStatus' }).click(), Checkbox(status).click()]);
+    cy.do([
+      Button({ id: 'accordion-toggle-button-itemStatus' }).click(),
+      itemStatusSearchField.fillIn(status),
+      Checkbox(status).click(),
+    ]);
   },
 
   selectBrowseOption(option) {
     cy.do(browseSearchAndFilterInput.choose(option));
+  },
+
+  checkSearchQueryText(text) {
+    cy.expect(keywordInput.has({ value: text }));
+  },
+
+  browseOptionsDropdownIncludesOptions(options) {
+    const browseOptionsDropdown = Select('Search field index');
+    cy.do(browseButton.click());
+    options.forEach((name) => {
+      cy.expect(browseOptionsDropdown.has({ content: including(name) }));
+    });
   },
 };

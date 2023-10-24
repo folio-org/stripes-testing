@@ -1,6 +1,4 @@
-import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import getRandomPostfix from '../../support/utils/stringTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
@@ -62,6 +60,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   const adjustmentDescription = `test_description${getRandomPostfix()}`;
   const barcode = FinanceHelp.getRandomBarcode();
   const caption = 'autotestCaption';
+  firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
   let orderNumber;
   let servicePointId;
@@ -106,7 +105,6 @@ describe('ui-finance: Fiscal Year Rollover', () => {
           (firstOrderResponse) => {
             defaultOrder.id = firstOrderResponse.id;
             orderNumber = firstOrderResponse.poNumber;
-            Orders.checkCreatedOrder(defaultOrder);
             OrderLines.addPOLine();
             OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
             OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
@@ -164,15 +162,15 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     );
 
     cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiFinanceViewEditFiscalYear.gui,
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.viewEditCreateInvoiceInvoiceLine.gui,
-      permissions.viewEditDeleteInvoiceInvoiceLine.gui,
-      permissions.uiInvoicesPayInvoices.gui,
-      permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
+      Permissions.uiFinanceExecuteFiscalYearRollover.gui,
+      Permissions.uiFinanceViewFundAndBudget.gui,
+      Permissions.uiFinanceViewLedger.gui,
+      Permissions.uiFinanceViewEditFiscalYear.gui,
+      Permissions.uiInvoicesApproveInvoices.gui,
+      Permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      Permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+      Permissions.uiInvoicesPayInvoices.gui,
+      Permissions.uiInvoicesPayInvoicesInDifferentFiscalYear.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
@@ -182,15 +180,15 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     });
   });
 
-  //   after(() => {
-  //     Users.deleteViaApi(user.userId);
-  //   });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it(
     'C396373 Save invoice fiscal year after adding adjustment on invoice level if FY was undefined and pay against previous FY (thunderjet) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
     () => {
-      Invoices.createRolloverInvoiceWithAdjustmentAndFund(
+      Invoices.createRolloverInvoiceWithAjustmentAndFund(
         invoice,
         organization.name,
         adjustmentDescription,
@@ -201,6 +199,8 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         false,
         defaultFund,
       );
+      Invoices.editInvoice();
+      Invoices.changeFY(firstFiscalYear.code);
       Invoices.createInvoiceLineFromPol(orderNumber);
       // Need to wait, while data will be loaded
       cy.wait(4000);
@@ -228,7 +228,6 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       cy.visit(TopMenu.ledgerPath);
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
-      Ledgers.clickonViewledgerDetails();
       Ledgers.rollover();
       Ledgers.fillInRolloverWithoutCheckboxCloseBudgetsOneTimeOrders(
         thirdFiscalYear.code,
@@ -286,7 +285,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Funds.closeBudgetDetails();
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.selectTransactionInList('Encumbrance');
+      Funds.selectTransactionInList('Allocation');
       Funds.checkNoTransactionOfType('Encumbrance');
       Funds.checkNoTransactionOfType('Pending payment');
       Funds.checkNoTransactionOfType('Expended');
