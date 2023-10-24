@@ -34,8 +34,14 @@ describe('bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, `${item.itemBarcode}\n${item.itemBarcode}`);
-        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, `${user.barcode}\n${user.barcode}`);
+        FileManager.createFile(
+          `cypress/fixtures/${itemBarcodesFileName}`,
+          `${item.itemBarcode}\n${item.itemBarcode}`,
+        );
+        FileManager.createFile(
+          `cypress/fixtures/${userBarcodesFileName}`,
+          `${user.barcode}\n${user.barcode}`,
+        );
       });
     });
 
@@ -64,7 +70,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(itemBarcodesFileName, 1, 1);
         BulkEditSearchPane.verifyReasonForError('Duplicate entry');
-      }
+      },
     );
   });
 });
