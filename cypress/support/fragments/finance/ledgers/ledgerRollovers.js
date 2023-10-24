@@ -38,7 +38,6 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `finance/ledger-rollovers/${ledgerId}`,
-      isDefaultSearchParamsRequired: false,
     });
   },
 };
