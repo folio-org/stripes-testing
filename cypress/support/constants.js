@@ -175,6 +175,7 @@ export const ORDER_FORMAT_NAMES_IN_PROFILE = {
 
 export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   APPROVAL_PLAN: 'Approval plan',
+  PURCHASE: 'Purchase',
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
 };
 
