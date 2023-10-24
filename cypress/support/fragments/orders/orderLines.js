@@ -1523,14 +1523,27 @@ export default {
       })
       .then(({ body }) => body.poLines);
   },
+  getOrderLineByIdViaApi(orderLineId) {
+    return cy
+      .okapiRequest({
+        path: `orders/order-lines/${orderLineId}`,
+      })
+      .then(({ body }) => body);
+  },
   createOrderLineViaApi(orderLine) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'orders/order-lines',
         body: orderLine,
-        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
+  },
+  updateOrderLineViaApi(orderLine) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `orders/order-lines/${orderLine.id}`,
+      body: orderLine,
+    });
   },
 };
