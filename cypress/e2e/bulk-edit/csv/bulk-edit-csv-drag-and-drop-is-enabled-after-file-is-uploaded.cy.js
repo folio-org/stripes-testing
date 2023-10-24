@@ -5,7 +5,7 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('Bulk Edit -- Users- Local approach', () => {
+describe('bulk-edit', () => {
   const testData = {};
   const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
   const invalidUserUUID = getRandomPostfix();
