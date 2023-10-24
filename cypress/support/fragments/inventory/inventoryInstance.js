@@ -906,7 +906,7 @@ export default {
   },
 
   checkIsItemCreated: (itemBarcode) => {
-    cy.expect(Link(itemBarcode).exists());
+    cy.expect(Link(including(itemBarcode)).exists());
   },
 
   checkMARCSourceAtNewPane() {
@@ -1064,5 +1064,9 @@ export default {
   verifyNumberOfItemsInHoldingByName(holdingName, numOfItems) {
     const holdingSection = section.find(Accordion(including(holdingName)));
     cy.expect(holdingSection.find(Badge()).has({ value: `${numOfItems}` }));
+  },
+
+  verifyItemStatus: (itemStatus) => {
+    cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
 };
