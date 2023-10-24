@@ -38,7 +38,6 @@ describe('Circulation log', () => {
       Permissions.uiRequestsCreate.gui,
       Permissions.uiRequestsView.gui,
       Permissions.uiRequestsEdit.gui,
-      Permissions.requestsAll.gui,
       Permissions.checkoutAll.gui,
       Permissions.circulationLogAll.gui,
     ]).then((userProperties) => {
@@ -49,6 +48,10 @@ describe('Circulation log', () => {
         testData.servicePoint.id,
       );
       itemBarcode = testData.folioInstances[0].barcodes[0];
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.requestsPath,
+        waiter: RequestsSearchResultsPane.waitLoading,
+      });
     });
   });
 
@@ -77,12 +80,7 @@ describe('Circulation log', () => {
     'C360553 Verify that user barcodes shown in request actions (Volaris) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.volaris] },
     () => {
-      cy.login(userData.username, userData.password, {
-        path: TopMenu.requestsPath,
-        waiter: RequestsSearchResultsPane.waitLoading,
-      });
       // Create new request with item barcode anf requester barcode
-      cy.visit(TopMenu.requestsPath);
       NewRequest.openNewRequestPane();
       NewRequest.enterItemInfo(itemBarcode);
       NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.AVAILABLE]);
