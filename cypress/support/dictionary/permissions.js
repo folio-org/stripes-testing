@@ -772,6 +772,10 @@ export default {
     internal: 'ui - tenant - settings.settings.location.view',
     gui: 'Settings (Tenant): View locations',
   },
+  settingsTenantView: {
+    internal: 'ui-tenant-settings.settings.view',
+    gui: 'Settings (Tenant): View',
+  },
   settingsTenantEditLanguageLocationAndCurrency: {
     internal: 'ui-tenant-settings.settings.locale',
     gui: 'Settings (tenant): Can edit language, localization, and currency',
