@@ -7,5 +7,4 @@ export default {
   volaris: 'volaris',
   ideaLabsTests: 'ideaLabsTests',
   erm: 'erm',
-  bama: 'BAMA',
 };
