@@ -110,14 +110,7 @@ export default {
       }),
     );
   },
-  creatNewFileExtension: (fileExtension) => {
-    openNewFileExtensionForm();
-    cy.do([
-      TextField({ name: 'extension' }).fillIn(fileExtension),
-      Checkbox('Block import').click(),
-      Button('Save as file extension & Close').click(),
-    ]);
-  },
+
   verifyListIsSortedInAlphabeticalOrder: () => {
     getFileExtensionNames().then((cells) => {
       cy.expect(cells).to.deep.equal(cells.sort());

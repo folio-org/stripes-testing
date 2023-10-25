@@ -43,4 +43,11 @@ export default {
       MultiSelect({ id: 'multiselect-3' }).has({ filterValue: '' }),
     ]);
   },
+  creatNewFileExtension: (fileExtension) => {
+    cy.do([
+      TextField({ name: 'extension' }).fillIn(fileExtension),
+      Checkbox('Block import').click(),
+      Button('Save as file extension & Close').click(),
+    ]);
+  },
 };

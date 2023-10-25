@@ -3,6 +3,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import Users from '../../../support/fragments/users/users';
 import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
+import NewFileExtension from '../../../support/fragments/settings/dataImport/fileExtensions/newFileExtension';
 
 describe('data-import: Settings', () => {
   let user;
@@ -30,7 +31,8 @@ describe('data-import: Settings', () => {
       cy.visit(SettingsMenu.fileExtensionsPath);
       FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
       FileExtensions.verifyListIsSortedInAlphabeticalOrder();
-      FileExtensions.creatNewFileExtension(fileExtensionName);
+      FileExtensions.openNewFileExtensionForm();
+      NewFileExtension.creatNewFileExtension(fileExtensionName);
       FileExtensions.verifyListIsSortedInAlphabeticalOrder();
     },
   );
