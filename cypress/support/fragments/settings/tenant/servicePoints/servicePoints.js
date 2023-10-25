@@ -1,8 +1,19 @@
 import uuid from 'uuid';
+
 import getRandomPostfix from '../../../../utils/stringTools';
-import { NavListItem, Pane, Button, TextField } from '../../../../../../interactors';
+import { NavListItem, Pane, Button, TextField, KeyValue } from '../../../../../../interactors';
 
 const servicePointsPane = Pane('Service points');
+const closeButton = Button({
+  icon: 'times',
+});
+const collapseAllButton = Button('Collapse all');
+const generalInfo = Button({
+  id: 'accordion-toggle-button-generalInformation',
+});
+const locationSection = Button({
+  id: 'accordion-toggle-button-locationSection',
+});
 
 const defaultServicePoint = {
   code: `autotest_code_${getRandomPostfix()}`,
@@ -88,5 +99,39 @@ export default {
     if (newCode) cy.do(TextField({ name: 'code' }).fillIn(newCode));
     if (newDisplayName) cy.do(TextField({ name: 'discoveryDisplayName' }).fillIn(newDisplayName));
     cy.do(Button('Save & close').click());
+  },
+
+  openServicePointDetails(name) {
+    cy.do(Button(name).click());
+    cy.expect(Pane(name).exists());
+  },
+
+  checkPaneContent({ name, code, discoveryDisplayName }) {
+    cy.expect([
+      closeButton.exists(),
+      collapseAllButton.exists(),
+      Button('Edit').absent(),
+      KeyValue('Name').has({ value: name }),
+      KeyValue('Code').has({ value: code }),
+      KeyValue('Discovery display name').has({ value: discoveryDisplayName }),
+    ]);
+  },
+
+  collapseSection() {
+    cy.do(collapseAllButton.click());
+    cy.expect(
+      Button('Expand all').exists(),
+      generalInfo.has({
+        ariaExpanded: false,
+      }),
+      locationSection.has({
+        ariaExpanded: false,
+      }),
+    );
+  },
+
+  closeServicePointPane(name) {
+    cy.do(closeButton.click());
+    cy.expect(Pane(name).absent());
   },
 };
