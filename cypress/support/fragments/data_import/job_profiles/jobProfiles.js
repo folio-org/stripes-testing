@@ -164,4 +164,45 @@ export default {
   verifySearchResult: (profileName) => {
     cy.expect(paneResults.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
   },
+  deleteUploadedFile: (fileName) => {
+    cy.get('#pane-upload')
+      .contains('div[class^="fileItemHeader-"]', fileName)
+      .then((elem) => {
+        elem.parent()[0].querySelectorAll('button[icon="trash"]')[0].click();
+      });
+  },
+  verifyDeleteUploadedFileModal: () => {
+    const modalContent =
+      'Are you sure that you want to delete this uploaded file? Deleted files will be permanently removed and cannot be retrieved';
+    cy.expect([
+      Modal('Delete uploaded file?').exists(),
+      Modal('Delete uploaded file?')
+        .find(HTML(including(modalContent)))
+        .exists(),
+      Modal('Delete uploaded file?').find(Button('No, do not delete'), { disabled: true }).exists(),
+      Modal('Delete uploaded file?').find(Button('Yes, delete'), { disabled: false }).exists(),
+    ]);
+  },
+  cancelDeleteUploadedFile: () => {
+    cy.do(Modal('Delete uploaded file?').find(Button('No, do not delete')).click());
+    cy.expect([
+      Modal('Delete uploaded file?').absent(),
+      Pane({ id: 'pane-upload' })
+        .find(HTML(including('will be deleted')))
+        .absent(),
+    ]);
+  },
+  confirmDeleteUploadedFile: () => {
+    cy.do(Modal('Delete uploaded file?').find(Button('Yes, delete')).click());
+    cy.expect(Modal('Delete uploaded file?').absent());
+  },
+  verifyFileListArea: (fileName, quantityOfUploadedFiles = 1) => {
+    cy.get('#pane-upload')
+      .contains('div[class^="fileItemHeader-"]', fileName)
+      .then((elems) => {
+        const trashButtons = Array.from(elems).map((elem) => elem.parentElement.querySelector('button[icon="trash"]'));
+        const numberOfTrashButtons = trashButtons.length;
+        cy.expect(numberOfTrashButtons).to.equal(quantityOfUploadedFiles);
+      });
+  },
 };

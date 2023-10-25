@@ -2,8 +2,6 @@ import moment from 'moment';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
 import devTeams from '../../support/dictionary/devTeams';
 import testTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
@@ -12,6 +10,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
+import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 
 let user;
 let servicePointId;
@@ -49,7 +48,8 @@ describe('circulation-log', () => {
             });
           });
         });
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+      ItemActions.markItemAsMissingByUserIdViaApi(user.userId);
+      cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
     });
   });
 
@@ -62,25 +62,22 @@ describe('circulation-log', () => {
     'C17001 Filter circulation log by marked as missing (firebird)',
     { tags: [testTypes.criticalPath, devTeams.firebird] },
     () => {
-      UsersSearchPane.searchByKeywords(user.userId);
-      UsersSearchPane.openUser(user.userId);
-      UsersCard.viewCurrentLoans();
-      const ConfirmItemStatusModal = UserLoans.markAsMissing(item.barcode);
-      ConfirmItemStatusModal.confirmItemStatus('this is a test');
-
-      cy.visit(TopMenu.circulationLogPath);
       SearchPane.searchByMarkedAsMissing();
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch({
-        itemBarcode: item.barcode,
-        circAction: 'Marked as missing',
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch({
+          itemBarcode: item.barcode,
+          circAction: 'Marked as missing',
+        }, rowIndex);
       });
       SearchPane.resetResults();
 
       SearchPane.searchByItemBarcode(item.barcode);
-      SearchPane.checkResultSearch({
-        itemBarcode: item.barcode,
-        circAction: 'Marked as missing',
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch({
+          itemBarcode: item.barcode,
+          circAction: 'Marked as missing',
+        }, rowIndex);
       });
     },
   );

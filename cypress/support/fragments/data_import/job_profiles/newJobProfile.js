@@ -7,6 +7,7 @@ import {
   Pane,
   TextArea,
   Callout,
+  Modal,
 } from '../../../../../interactors';
 import ModalSelectProfile from './modalSelectProfile';
 import { ACCEPTED_DATA_TYPE_NAMES, PROFILE_TYPE_NAMES } from '../../../constants';
@@ -31,9 +32,9 @@ const getDefaultJobProfile = (name) => {
 const actionsButton = Button('Action');
 const matchButton = Button('Match');
 const saveAndCloseButton = Button('Save as profile & Close');
-const profileNameField = TextField({ name: 'profile.name' });
 const overviewAccordion = Accordion('Overview');
 const dataTypeSelect = Select({ name: 'profile.dataType' });
+const nameField = TextField({ name: 'profile.name' });
 
 function linkActionProfileByName(profileName) {
   // TODO move to const and rewrite functions
@@ -96,14 +97,14 @@ export default {
   waitLoading,
   defaultJobProfile,
 
-  fillProfileName: (profileName) => cy.do(profileNameField.fillIn(profileName)),
+  fillProfileName: (profileName) => cy.do(nameField.fillIn(profileName)),
   fillDescription: (description) => cy.do(TextArea({ name: 'profile.description' }).fillIn(description)),
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
-    cy.do(profileNameField.fillIn(specialJobProfile.profileName));
-    cy.expect(profileNameField.has({ value: specialJobProfile.profileName }));
-    cy.do(dataTypeSelect.choose(specialJobProfile.acceptedType));
-    cy.expect(dataTypeSelect.has({ value: specialJobProfile.acceptedType }));
+    cy.do(nameField.fillIn(specialJobProfile.profileName));
+    cy.expect(nameField.has({ value: specialJobProfile.profileName }));
+    cy.do(Select({ name: 'profile.dataType' }).choose(specialJobProfile.acceptedType));
+    cy.expect(Select({ name: 'profile.dataType' }).has({ value: specialJobProfile.acceptedType }));
   },
 
   linkActionProfile(specialActionProfile) {
@@ -381,6 +382,17 @@ export default {
       });
   },
 
+  unlinkProfile: (number) => {
+    cy.wait(5000);
+    cy.get('[id*="branch-ROOT-MATCH-MATCH-MATCH-editable"]')
+      .eq(number)
+      .find('button[icon="unlink"]')
+      .click();
+    cy.wait(1000);
+    cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
+    cy.wait(5000);
+  },
+
   checkCalloutMessage: (message) => {
     cy.expect(Callout({ textContent: including(message) }).exists());
     cy.do(
@@ -392,7 +404,7 @@ export default {
 
   checkPreviouslyPopulatedDataIsDisplayed: (profile, actionProfileName) => {
     cy.expect([
-      profileNameField.has({ value: profile.profileName }),
+      nameField.has({ value: profile.profileName }),
       dataTypeSelect.has({ value: profile.acceptedType }),
       overviewAccordion.find(HTML(including(actionProfileName))).exists(),
     ]);

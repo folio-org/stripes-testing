@@ -158,10 +158,15 @@ describe('circulation-log', () => {
       SearchPane.setFilterOptionFromAccordion('notice', 'Send');
       SearchPane.verifyResultCells();
       SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
 
       SearchPane.searchByUserBarcode(user.barcode);
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
     },
   );
 });

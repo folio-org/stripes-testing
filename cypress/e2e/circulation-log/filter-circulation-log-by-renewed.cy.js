@@ -90,7 +90,7 @@ describe('Circulation log', () => {
         object: 'Loan',
         circAction: 'Renewed',
         servicePoint: testData.servicePoint.name,
-        source: 'ADMINISTRATOR, Diku_admin',
+        source: 'folio-aqa',
       };
       // Expand the Loans section
       UsersCard.viewCurrentLoans();
