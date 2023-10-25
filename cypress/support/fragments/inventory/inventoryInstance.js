@@ -30,6 +30,7 @@ import {
   PaneContent,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
+import HoldingsRecordView from './holdingsRecordView';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
@@ -662,7 +663,10 @@ export default {
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    cy.expect(Pane({ titleLabel: including('Holdings') }).exists());
+
+    HoldingsRecordView.waitLoading();
+
+    return HoldingsRecordView;
   },
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
