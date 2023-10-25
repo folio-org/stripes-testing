@@ -13,21 +13,27 @@ import {
 import OrderLineEditForm from './orderLineEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
 import TransactionDetails from '../finance/transactions/transactionDetails';
+import ExportDetails from '../exportManager/exportDetails';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
   PaneHeader({ id: 'paneHeaderorder-lines-details' }),
 );
+const backToOrderButton = Button({ id: 'clickable-backToPO' });
 const actionsButton = Button('Actions');
 
 const itemDetailsSection = orderLineDetailsSection.find(Section({ id: 'ItemDetails' }));
 const purchaseOrderLineSection = orderLineDetailsSection.find(Section({ id: 'poLine' }));
 const fundDistributionsSection = orderLineDetailsSection.find(Section({ id: 'FundDistribution' }));
 const locationDetailsSection = orderLineDetailsSection.find(Section({ id: 'location' }));
+const exportDetailsSection = orderLineDetailsSection.find(Section({ id: 'exportDetails' }));
 
 export default {
   waitLoading() {
     cy.expect(orderLineDetailsSection.exists());
+  },
+  backToOrderDetails() {
+    cy.do(backToOrderButton.click());
   },
   checkOrderLineDetails({ purchaseOrderLineInformation = [] } = {}) {
     purchaseOrderLineInformation.forEach(({ key, value }) => {
@@ -63,6 +69,28 @@ export default {
 
     cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
   },
+  checkExportJobDetailsPresent(present = true) {
+    if (present) {
+      cy.expect(exportDetailsSection.exists());
+    } else {
+      cy.expect(exportDetailsSection.absent());
+    }
+  },
+  expandExportJobDetails() {
+    cy.do(exportDetailsSection.find(Button('Export details')).click());
+  },
+  openExportJobDetails({ rowIndex = 0, columnIndex = 0 } = {}) {
+    cy.do(
+      exportDetailsSection
+        .find(MultiColumnListRow({ rowIndexInParent: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ columnIndex }))
+        .find(Link())
+        .click(),
+    );
+    ExportDetails.waitLoading();
+
+    return ExportDetails;
+  },
   checkWarningMessage(message) {
     cy.expect(orderLineDetailsSection.find(Warning()).has({ message }));
   },
@@ -82,6 +110,38 @@ export default {
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
             .find(MultiColumnListCell({ columnIndex: 5 }))
             .has({ content: including(record.encumbrance) }),
+        );
+      }
+    });
+
+    if (!records.length) {
+      cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
+    }
+  },
+  checkExportDetailsTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.date) {
+        cy.expect(
+          exportDetailsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.date) }),
+        );
+      }
+      if (record.fileName) {
+        cy.expect(
+          exportDetailsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .has({ content: including(record.fileName) }),
+        );
+      }
+      if (record.configName) {
+        cy.expect(
+          exportDetailsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 3 }))
+            .has({ content: including(record.configName) }),
         );
       }
     });

@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   Button,
   TextField,
@@ -25,11 +26,26 @@ const checkboxAll = Checkbox();
 const searchButton = Button('Search');
 const nameTextField = TextField({ name: 'name' });
 
+const getDefaultAcquisitionUnit = ({
+  name,
+  protectRead = false,
+  protectUpdate = true,
+  protectCreate = true,
+  protectDelete = true,
+} = {}) => ({
+  protectRead,
+  protectUpdate,
+  protectCreate,
+  protectDelete,
+  name: name || `autotest_acq_unit_${getRandomPostfix()}`,
+  id: uuid(),
+});
+
 export default {
   defaultAcquisitionUnit: {
     name: `AU_${getRandomPostfix()}`,
   },
-
+  getDefaultAcquisitionUnit,
   waitLoading: () => {
     cy.expect(auListPane.exists());
   },
@@ -138,5 +154,29 @@ export default {
     cy.expect(assignedUsersSection.exists());
     cy.do([Checkbox('Edit').click(), saveAUButton.click()]);
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+  },
+  getAcquisitionUnitViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'acquisitions-units/units',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
+  createAcquisitionUnitViaApi(acqUnit) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'acquisitions-units/units',
+        body: acqUnit,
+      })
+      .then(({ body }) => body);
+  },
+  deleteAcquisitionUnitViaApi(acqUnitId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `acquisitions-units/units/${acqUnitId}`,
+    });
   },
 };

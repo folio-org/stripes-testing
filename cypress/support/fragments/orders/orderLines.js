@@ -853,6 +853,37 @@ export default {
     submitOrderLine();
   },
 
+  fillInPOLineInfoForExportWithLocationAndAccountNumber(AUMethod, institutionId, accountNumber) {
+    cy.wait(4000);
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
+      acquisitionMethodButton.click(),
+      acquisitionMethodButton.click(),
+      SelectionOption(AUMethod).click(),
+      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
+    ]);
+    cy.do([
+      electronicUnitPriceTextField.fillIn(electronicUnitPrice),
+      quantityElectronicTextField.fillIn(quantityElectronic),
+      Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityElectronicField.fillIn(quantityElectronic),
+    ]);
+    cy.expect([
+      electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
+      quantityElectronicTextField.has({ value: quantityElectronic }),
+    ]);
+    cy.do(saveAndCloseButton.click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated
+    cy.wait(2000);
+    submitOrderLine();
+  },
+
   fillInPOLineInfoForExportWithLocationForPhysicalResource(AUMethod, institutionName, quantity) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
@@ -1492,14 +1523,27 @@ export default {
       })
       .then(({ body }) => body.poLines);
   },
+  getOrderLineByIdViaApi(orderLineId) {
+    return cy
+      .okapiRequest({
+        path: `orders/order-lines/${orderLineId}`,
+      })
+      .then(({ body }) => body);
+  },
   createOrderLineViaApi(orderLine) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'orders/order-lines',
         body: orderLine,
-        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => body);
+  },
+  updateOrderLineViaApi(orderLine) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `orders/order-lines/${orderLine.id}`,
+      body: orderLine,
+    });
   },
 };
