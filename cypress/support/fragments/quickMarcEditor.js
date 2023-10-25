@@ -261,6 +261,7 @@ defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQui
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
 const readOnlyHoldingsTags = ['001', '004', '005', '999'];
+const expectedFields = ['LDR', '001', '008', '005', '245', '999'];
 
 const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor().find(QuickMarcEditorRow({ index: specialRowNumber }));
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor().find(QuickMarcEditorRow({ tagValue: tagName }));
@@ -1530,5 +1531,15 @@ export default {
 
   clickUnlinkButton: () => {
     cy.do(buttonLink.click());
+  },
+
+  checkDefaultContent() {
+    this.checkContent('00000n\\\\\\a2200000uu\\4500', 0);
+    this.checkFieldsExist(expectedFields);
+    this.checkEmptyContent('001');
+    this.checkEmptyContent('005');
+    this.checkEmptyContent('999');
+    this.checkEmptyContent('008');
+    this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
   },
 };
