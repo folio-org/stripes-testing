@@ -75,13 +75,10 @@ describe('Settings: Tenant', () => {
 
     cy.createTempUser([
       Permissions.uiTenantSettingsSettingsLocation.gui,
-      Permissions.inventoryAll.gui,
+      Permissions.uiInventoryViewInstances.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-      cy.login(testData.user.username, testData.user.password, {
-        path: SettingsMenu.tenantPath,
-        waiter: TenantPane.waitLoading,
-      });
+      cy.login(testData.user.username, testData.user.password);
     });
   });
 
@@ -106,7 +103,8 @@ describe('Settings: Tenant', () => {
     'C399083 Verify that selected settings remain for "Locations" (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
-      TenantPane.selectTenant(TENANTS.LOCATIONS);
+      cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
+      cy.visit(SettingsMenu.tenantLocationsPath);
       // #1 Select **"Institution A"** from Preconditions #1 in "Institution" dropdown on "Locations" pane
       Locations.selectOption('Institution', testData.institutions[0]);
       Locations.checkEmptyTableContent();
