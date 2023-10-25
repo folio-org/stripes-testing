@@ -311,7 +311,7 @@ export default {
     internal: 'ui-users.delete',
     gui: 'Users: Can delete user profile if user does not have any open transactions',
   },
-  uiUsersResetPassword: {
+  uiUsersCreateResetPassword: {
     internal: 'ui-users.reset.password',
     gui: 'Users: Create/reset password',
   },

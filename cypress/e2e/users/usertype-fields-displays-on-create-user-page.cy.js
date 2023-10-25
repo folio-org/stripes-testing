@@ -1,6 +1,9 @@
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import getRandomPostfix, { getTestEntityValue, randomFourDigitNumber } from '../../support/utils/stringTools';
+import getRandomPostfix, {
+  getTestEntityValue,
+  randomFourDigitNumber,
+} from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
@@ -10,7 +13,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import usersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
 
-describe('user typy verify', () => {
+describe('Users', () => {
   let userData;
   let servicePointId;
   let newUserId;
@@ -41,7 +44,7 @@ describe('user typy verify', () => {
           permissions.uiUsersPermissions.gui,
           permissions.uiUsersPermissionsView.gui,
           permissions.uiUsersCreate.gui,
-          permissions.uiUsersResetPassword.gui
+          permissions.uiUsersCreateResetPassword.gui,
         ],
         patronGroup.name,
       ).then((userProperties) => {
@@ -51,7 +54,7 @@ describe('user typy verify', () => {
     });
   });
 
-  beforeEach('Login', () => {
+  before('Login', () => {
     cy.login(userData.username, userData.password, {
       path: TopMenu.usersPath,
       waiter: UsersSearchPane.waitLoading,
@@ -59,11 +62,8 @@ describe('user typy verify', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.log(newUserId);
     Users.deleteViaApi(userData.userId);
-    if (newUserId) {
-      Users.deleteViaApi(newUserId);
-    }
+    Users.deleteViaApi(newUserId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });
 
@@ -79,7 +79,6 @@ describe('user typy verify', () => {
       UserEdit.chooseRequestType('Staff');
       UserEdit.verifySaveAndColseIsDisabled(false);
       UserEdit.enterValidValueToCreateViaUi(userOne).then((id) => {
-        cy.log(id);
         newUserId = id;
       });
       UsersSearchPane.waitLoading();

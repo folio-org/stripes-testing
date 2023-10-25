@@ -20,6 +20,7 @@ import {
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
+import select from '../../../../interactors/select';
 
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const userSearch = TextField('User search');
@@ -37,6 +38,7 @@ const permissionsSearch = SearchField();
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const selectRequestType = Select({ id: 'type' });
+const cancelButton = Button('Cancel');
 let totalRows;
 
 // servicePointIds is array of ids
@@ -113,7 +115,7 @@ export default {
   },
 
   verifyCancelIsDisable: (status) => {
-    cy.expect(Button('Cancel', { disabled: status }).exists());
+    cy.expect(cancelButton.has({ disabled: status }));
   },
 
   verifyUserInformation: (allContentToCheck) => {
@@ -281,8 +283,10 @@ export default {
   },
 
   verifyUserTypeItems() {
-    this.chooseRequestType('Patron');
-    this.chooseRequestType('Staff');
+    cy.expect([
+      selectRequestType.has({ content: including('Patron') }),
+      selectRequestType.has({ content: including('Staff') }),
+    ]);
   },
 
   enterValidValueToCreateViaUi: (userData) => {
