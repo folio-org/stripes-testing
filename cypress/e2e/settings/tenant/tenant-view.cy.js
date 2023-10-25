@@ -38,6 +38,8 @@ describe('Permissions -> Tenant', () => {
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: [testData.institution] });
+      // reload is needed because sometimes Location setup section is not displayed
+      cy.reload();
       // Select "Institutions" option on the "Location setup" subsection
       const Institutions = TenantPane.selectTenant(TENANTS.INSTITUTIONS);
       Institutions.checkNoActionButtons();
