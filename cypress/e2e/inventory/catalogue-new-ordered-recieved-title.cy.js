@@ -165,8 +165,7 @@ describe('inventory', () => {
         ItemActions.edit();
         ItemRecordEdit.waitLoading(instanceTitle);
         ItemRecordEdit.addBarcode(barcode);
-        ItemRecordEdit.save();
-        ItemRecordView.checkCalloutMessage();
+        ItemRecordEdit.saveAndClose({ itemSaved: true });
         ItemRecordView.waitLoading();
         ItemRecordView.checkBarcode(barcode);
 
