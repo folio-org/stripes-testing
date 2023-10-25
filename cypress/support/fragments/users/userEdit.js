@@ -20,7 +20,6 @@ import {
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
-import select from '../../../../interactors/select';
 
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const userSearch = TextField('User search');

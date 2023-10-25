@@ -1,11 +1,9 @@
-import devTeams from '../../support/dictionary/devTeams';
-import permissions from '../../support/dictionary/permissions';
+import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
 import getRandomPostfix, {
   getTestEntityValue,
   randomFourDigitNumber,
 } from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -41,10 +39,10 @@ describe('Users', () => {
       });
       cy.createTempUser(
         [
-          permissions.uiUsersPermissions.gui,
-          permissions.uiUsersPermissionsView.gui,
-          permissions.uiUsersCreate.gui,
-          permissions.uiUsersCreateResetPassword.gui,
+          Permissions.uiUsersPermissions.gui,
+          Permissions.uiUsersPermissionsView.gui,
+          Permissions.uiUsersCreate.gui,
+          Permissions.uiUsersCreateResetPassword.gui,
         ],
         patronGroup.name,
       ).then((userProperties) => {
@@ -69,7 +67,7 @@ describe('Users', () => {
 
   it(
     'C410760 "User type" field is displayed on create user page (Poppy +) (Thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
+    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
     () => {
       usersSearchResultsPane.openNewUser();
       UserEdit.verifySaveAndColseIsDisabled(true);
