@@ -54,7 +54,7 @@ export default {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({
           date: new Date(),
-        })} by folio-aqa`;
+        })} by folio-aqa, folio-aqa`;
         cy.expect(
           getEditableListRow(rowNumber)
             .find(MultiColumnListCell({ columnIndex: 0 }))

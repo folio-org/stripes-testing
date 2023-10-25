@@ -144,6 +144,7 @@ describe('Orders: Inventory interaction', () => {
       // Need to wait,while instance will be saved
       cy.wait(7000);
       ItemActions.closeItem();
+      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemActions.edit();
       ItemRecordEdit.addBarcode(barcodeForSecondItem);
@@ -151,6 +152,7 @@ describe('Orders: Inventory interaction', () => {
       // Need to wait,while instance will be saved
       cy.wait(7000);
       ItemActions.closeItem();
+      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
       ItemRecordView.checkItemDetails(
         testData.locations[1].name,
@@ -158,6 +160,7 @@ describe('Orders: Inventory interaction', () => {
         ITEM_STATUS_NAMES.ON_ORDER,
       );
       ItemActions.closeItem();
+      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
       ItemRecordView.checkItemDetails(
         testData.locations[1].name,

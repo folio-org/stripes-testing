@@ -205,6 +205,7 @@ export default {
 
   receiveFromExpectedSection: () => {
     cy.do([Section({ id: 'expected' }).find(actionsButton).click(), receiveButton.click()]);
+    cy.wait(6000);
   },
 
   receiveFromExpectedSectionWithClosePOL: () => {

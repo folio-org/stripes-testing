@@ -100,7 +100,7 @@ export default {
 
   unAssignAdmin: (AUName) => {
     cy.do(auListPane.find(Button(AUName)).click());
-    cy.get('div[class*=mclCell-]:contains("folio-aqa  ")')
+    cy.get('div[class*=mclCell-]:contains("folio-aqa, folio-aqa ")')
       .parents('div[class*=mclRow-]')
       .eq(0)
       .find('button')
