@@ -40,7 +40,7 @@ export default {
   verifyPreviouslyPopulatedDataIsNotDisplayed: () => {
     cy.expect([
       TextField({ name: 'extension' }).has({ value: '' }),
-      MultiSelect({ id: 'multiselect-3' }).has({ filterValue: '' }),
+      dataTypeSelect.has({ filterValue: '' }),
     ]);
   },
 };
