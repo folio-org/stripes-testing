@@ -1,11 +1,8 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import FileManager from '../../../support/utils/fileManager';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 
 describe('data-import', () => {
