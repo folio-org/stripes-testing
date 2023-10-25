@@ -77,7 +77,7 @@ describe('Inventory -> Call Number Browse', () => {
         // #5 Click "Save & close"
         HoldingsRecordEdit.saveAndClose();
         // #6 Click "Add item" button next to added holding line in detail view
-        InventoryInstance.clickAddItemByHoldingName(callNumber);
+        InventoryInstance.clickAddItemByHoldingName({ holdingName: callNumber });
         // #7 Input:
         // * select any value in "Material type" dropdown
         // * select any value in "Permanent loan type" dropdown
@@ -105,7 +105,9 @@ describe('Inventory -> Call Number Browse', () => {
       // * "SC DAH"
       itemsCallNumbers.forEach((callNumber, index) => {
         // #13 Click "Add item" button next to added holding line in detail view
-        InventoryInstance.clickAddItemByHoldingName(LOCATION_NAMES.MAIN_LIBRARY_UI);
+        InventoryInstance.clickAddItemByHoldingName({
+          holdingName: LOCATION_NAMES.MAIN_LIBRARY_UI,
+        });
         // #14 Input:
         // * select any value in "Material type" dropdown
         // * select any value in "Permanent loan type" dropdown
@@ -189,7 +191,7 @@ describe('Inventory -> Call Number Browse', () => {
         // #5 Click "Save & close"
         HoldingsRecordEdit.saveAndClose();
         // #6 Click "Add item" button next to added holding line in detail view
-        InventoryInstance.clickAddItemByHoldingName(callNumber);
+        InventoryInstance.clickAddItemByHoldingName({ holdingName: callNumber });
         // #7 Input:
         // * select any value in "Material type" dropdown
         // * select any value in "Permanent loan type" dropdown
@@ -217,7 +219,9 @@ describe('Inventory -> Call Number Browse', () => {
       // * "331.02"
       itemsCallNumbers.forEach((callNumber, index) => {
         // #13 Click "Add item" button next to added holding line in detail view
-        InventoryInstance.clickAddItemByHoldingName(LOCATION_NAMES.MAIN_LIBRARY_UI);
+        InventoryInstance.clickAddItemByHoldingName({
+          holdingName: LOCATION_NAMES.MAIN_LIBRARY_UI,
+        });
         // #14 Input:
         // * select any value in "Material type" dropdown
         // * select any value in "Permanent loan type" dropdown
