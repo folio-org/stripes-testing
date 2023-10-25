@@ -1,4 +1,4 @@
-import { including } from 'bigtest';
+import { including } from '@interactors/html';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';

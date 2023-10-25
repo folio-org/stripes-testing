@@ -107,6 +107,8 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
 
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
         BulkEditSearchPane.verifyChangedResults(permLocation);
         BulkEditActions.verifySuccessBanner(1);
 

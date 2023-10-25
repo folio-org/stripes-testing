@@ -671,9 +671,6 @@ export default {
   ) => {
     const accordionHeader = `Holdings: ${locationName} >`;
     const indexRowNumber = `row-${rowNumber}`;
-    // wait for data to be loaded
-    cy.intercept('/inventory/items?*').as('getItems');
-    cy.wait('@getItems');
     cy.do(Accordion(accordionHeader).clickHeader());
 
     const row = Accordion(accordionHeader).find(MultiColumnListRow({ indexRow: indexRowNumber }));
@@ -986,7 +983,17 @@ export default {
   },
 
   openItemByBarcodeAndIndex: (barcode) => {
+    cy.wait(4000);
     cy.get('[class^="mclCell-"]').contains(barcode).eq(0).click();
+  },
+
+  openItemByStatus: (status) => {
+    cy.get('div[class^="mclRow--"]')
+      .contains('div[class^="mclCell-"]', status)
+      .then((elem) => {
+        elem.parent()[0].querySelector('[href]').click();
+      });
+    cy.wait(2000);
   },
 
   verifyCellsContent: (...content) => {

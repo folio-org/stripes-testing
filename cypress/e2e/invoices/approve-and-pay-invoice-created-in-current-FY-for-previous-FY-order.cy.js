@@ -56,7 +56,10 @@ describe('Invoices', () => {
   };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
-  const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
+  const invoiceLine = {
+    ...NewInvoiceLine.defaultUiInvoiceLine,
+    subTotal: '2',
+  };
   const allocatedQuantity = '100';
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
   const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();

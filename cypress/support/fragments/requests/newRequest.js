@@ -15,6 +15,7 @@ import {
   Option,
   including,
   Modal,
+  KeyValue,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import dateTools from '../../utils/dateTools';
@@ -288,5 +289,24 @@ export default {
         message: 'This requester already has an open request for this instance',
       }),
     );
+  },
+  checkRequestIsNotAllowedLoanModal() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: 'This requester already has this item on loan',
+      }),
+    );
+  },
+  verifyRequestSuccessfullyCreated(username) {
+    InteractorsTools.checkCalloutMessage(
+      including(`Request has been successfully created for ${username}`),
+    );
+  },
+  checkItemInformationSecton(instanceTitle, location, itemStatus) {
+    cy.expect([
+      KeyValue('Title').has({ value: instanceTitle }),
+      KeyValue('Effective location').has({ value: location }),
+      KeyValue('Item status').has({ value: itemStatus }),
+    ]);
   },
 };
