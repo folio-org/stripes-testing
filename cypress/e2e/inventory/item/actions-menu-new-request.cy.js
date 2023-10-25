@@ -209,6 +209,7 @@ describe('inventory', () => {
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
           InstanceRecordView.verifyInstanceRecordViewOpened();
+          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         });
 
         ['Declared lost', 'Claimed returned', 'Lost and paid', 'Withdrawn', 'Order closed'].forEach(
@@ -216,6 +217,7 @@ describe('inventory', () => {
             cy.visit(TopMenu.inventoryPath);
             InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
             InstanceRecordView.verifyInstanceRecordViewOpened();
+            InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
             InventoryInstance.openItemByStatus(itemStatus);
             ItemActions.openActions();
             ItemActions.verifyNewRequestButtonIsAbsent();

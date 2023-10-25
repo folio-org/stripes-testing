@@ -30,7 +30,7 @@ describe('data-import', () => {
       'C2328 Create a file extension for a blocked file type and ensure that file type cannot be uploaded (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        const filePath = 'fileForC2328.txt';
+        const filePath = 'file.txt';
         const fileName = `C2328 autotestFile.${getRandomPostfix()}.txt`;
         const testData = {
           fileExtension: '.txt',
