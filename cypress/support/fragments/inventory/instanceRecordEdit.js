@@ -9,6 +9,8 @@ import {
   Selection,
   including,
   RepeatableFieldItem,
+  PaneHeader,
+  Checkbox,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -122,10 +124,13 @@ export default {
   chooseTemporaryLocation(locationName) {
     cy.do([Selection('Temporary').open(), Selection('Temporary').choose(including(locationName))]);
   },
+  chooseInstanceStatusTerm(statusTerm) {
+    cy.do(Select('Instance status term').choose(statusTerm));
+  },
   saveAndClose: () => {
     cy.wait(1500);
     cy.do(saveAndCloseButton.click());
-    cy.expect(actionsButton.exists());
+    cy.expect([actionsButton.exists(), PaneHeader(including('Edit instance')).absent()]);
   },
 
   clickAddContributor() {
@@ -146,5 +151,33 @@ export default {
         .find(deleteButton)
         .click(),
     );
+  },
+
+  verifyAddButtonsDisabledForPrecedingSucceedingTitle() {
+    cy.expect([
+      Accordion('Title data')
+        .find(Button({ id: 'clickable-add-precedingTitle-add-button' }))
+        .has({ disabled: true }),
+      Accordion('Title data')
+        .find(Button({ id: 'clickable-add-succeedingTitle-add-button' }))
+        .has({ disabled: true }),
+    ]);
+    cy.get('#clickable-add-precedingTitle').find('#find-instance-trigger').should('be.disabled');
+    cy.get('#clickable-add-succeedingTitle').find('#find-instance-trigger').should('be.disabled');
+  },
+  verifyDiscoverySuppressCheckbox(isChecked = false) {
+    if (isChecked) {
+      cy.expect(Checkbox({ name: 'discoverySuppress' }).has({ checked: true }));
+    } else cy.expect(Checkbox({ name: 'discoverySuppress' }).has({ checked: false }));
+  },
+  verifyStaffSuppressCheckbox(isChecked = false) {
+    if (isChecked) {
+      cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: true }));
+    } else cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: false }));
+  },
+  verifyPreviouslyHeldCheckbox(isChecked = false) {
+    if (isChecked) {
+      cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: true }));
+    } else cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: false }));
   },
 };

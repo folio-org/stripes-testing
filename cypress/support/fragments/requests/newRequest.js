@@ -290,10 +290,20 @@ export default {
       }),
     );
   },
+  checkRequestIsNotAllowedLoanModal() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: 'This requester already has this item on loan',
+      }),
+    );
+  },
+  verifyRequestSuccessfullyCreated(username) {
+    InteractorsTools.checkCalloutMessage(
+      including(`Request has been successfully created for ${username}`),
+    );
+  },
   checkItemInformationSecton(instanceTitle, location, itemStatus) {
     cy.expect([
-      // itemBarcodeInput.has({ value: barcode }),
-      // KeyValue('Item barcode').has({ value: barcode }),
       KeyValue('Title').has({ value: instanceTitle }),
       KeyValue('Effective location').has({ value: location }),
       KeyValue('Item status').has({ value: itemStatus }),

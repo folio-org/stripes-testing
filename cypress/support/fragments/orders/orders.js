@@ -119,6 +119,12 @@ export default {
     cy.wait(4000);
   },
 
+  checkModalDifferentAccountNumbers() {
+    cy.expect(Modal('Different account numbers').exists());
+    cy.do(Modal('Different account numbers').find(Button('Close')).click());
+    cy.expect(Modal('Different account numbers').absent());
+  },
+
   editOrder() {
     expandActionsDropdown();
     cy.do(Button('Edit').click());
@@ -631,10 +637,18 @@ export default {
         return body.purchaseOrders;
       });
   },
-
-  deleteOrderViaApi: (id) => cy.okapiRequest({
+  getOrderByIdViaApi(orderId) {
+    return cy
+      .okapiRequest({
+        path: `orders/composite-orders/${orderId}`,
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+  deleteOrderViaApi: (orderId) => cy.okapiRequest({
     method: 'DELETE',
-    path: `orders/composite-orders/${id}`,
+    path: `orders/composite-orders/${orderId}`,
     isDefaultSearchParamsRequired: false,
   }),
 

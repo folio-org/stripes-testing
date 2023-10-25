@@ -671,9 +671,6 @@ export default {
   ) => {
     const accordionHeader = `Holdings: ${locationName} >`;
     const indexRowNumber = `row-${rowNumber}`;
-    // wait for data to be loaded
-    cy.intercept('/inventory/items?*').as('getItems');
-    cy.wait('@getItems');
     cy.do(Accordion(accordionHeader).clickHeader());
 
     const row = Accordion(accordionHeader).find(MultiColumnListRow({ indexRow: indexRowNumber }));
@@ -996,6 +993,7 @@ export default {
       .then((elem) => {
         elem.parent()[0].querySelector('[href]').click();
       });
+    cy.wait(2000);
   },
 
   verifyCellsContent: (...content) => {

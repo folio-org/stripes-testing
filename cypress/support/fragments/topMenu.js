@@ -77,4 +77,7 @@ export default {
   openInventoryApp: () => {
     cy.do(Link({ href: including(inventoryPath) }).click());
   },
+  openEHoldingsApp: () => {
+    cy.do(Link({ href: including('/eholdings') }).click());
+  },
 };

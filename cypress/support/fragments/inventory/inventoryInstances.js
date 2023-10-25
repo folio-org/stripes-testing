@@ -745,4 +745,13 @@ export default {
   checkActionsButtonInSecondPane() {
     cy.expect(actionsButton.exists());
   },
+
+  verifyActionMenuForNonConsortiaTenant() {
+    cy.do(actionsButton.click());
+    cy.expect([
+      Button('New').exists(),
+      Button('New local record').absent(),
+      Button('New shared record').absent(),
+    ]);
+  },
 };

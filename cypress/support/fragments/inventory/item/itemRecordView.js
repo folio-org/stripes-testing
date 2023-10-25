@@ -115,6 +115,10 @@ export default {
     cy.do([Button('Actions').click(), Button('Duplicate').click()]);
   },
 
+  createNewRequest() {
+    cy.do([Button('Actions').click(), Button('New request').click()]);
+  },
+
   verifyEffectiveLocation: (location) => {
     cy.expect(
       Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }),
