@@ -1,13 +1,8 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
-  ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
   CALL_NUMBER_TYPE_NAMES,
@@ -24,7 +19,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Users from '../../../support/fragments/users/users';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import Helper from '../../../support/fragments/finance/financeHelper';
