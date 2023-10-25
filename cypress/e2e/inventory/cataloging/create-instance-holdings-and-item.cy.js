@@ -1,14 +1,19 @@
+import moment from 'moment';
+
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
-import { LOCATION_NAMES } from '../../../support/constants';
 
 describe('Inventory', () => {
   describe('Cataloging', () => {
     const testData = {
       callNumber: '331.2',
+      barcode: getRandomPostfix(),
+      instanceTitle: `autotest_instance_title_${getRandomPostfix()}`,
       user: {},
     };
 
@@ -24,6 +29,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
       Users.deleteViaApi(testData.user.userId);
     });
 
@@ -36,13 +42,21 @@ describe('Inventory', () => {
 
         // Populate the required fields, Click 'Save and close'
         InventoryNewInstance.fillInstanceFields({
+          title: testData.instanceTitle,
+          contributor: { name: 'autotest_contributor', nameType: 'Personal name' },
+          publication: { place: 'autotest_publication_place', date: moment.utc().format() },
+          description: 'autotest_physical_description',
+          language: 'English',
           statusTerm: 'Cataloged (folio: cat)',
           mode: 'integrating resource',
         });
         InventoryNewInstance.clickSaveAndCloseButton();
+        InventoryInstance.checkInstanceDetails([
+          { key: 'Source', value: INSTANCE_SOURCE_NAMES.FOLIO },
+        ]);
 
         // Select "Add holdings"
-        const HoldingsRecordEdit = InventoryInstance.openEditHoldingsForm();
+        const HoldingsRecordEdit = InventoryInstance.pressAddHoldingsButton();
 
         // Populate the following fields: "Permanent location", "Call number"
         // Click on "Save & Close" button
@@ -53,20 +67,25 @@ describe('Inventory', () => {
         HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
 
         // Select "Add item"
-        const ItemRecordEdit = InventoryInstance.clickAddItemByHoldingName(testData.callNumber);
+        const ItemRecordEdit = InventoryInstance.clickAddItemByHoldingName({
+          holdingName: testData.callNumber,
+          instanceTitle: testData.instanceTitle,
+        });
 
         // Populate the following fields: "Material type", "Permanent loan type"
         // Click on "Save & Close" button
         ItemRecordEdit.fillItemRecordFields({
+          barcode: testData.barcode,
           materialType: 'book',
           loanType: 'Can circulate',
         });
         ItemRecordEdit.saveAndClose({ itemSaved: true });
+        InventoryInstance.verifyNumberOfItemsInHoldingByName(testData.callNumber, 1);
 
         // Expand the holdings accordion
         InventoryInstance.checkHoldingsTableContent({
           name: LOCATION_NAMES.ANNEX_UI,
-          records: [{ barcode: 'No barcode', status: 'Available' }],
+          records: [{ barcode: testData.barcode, status: 'Available' }],
         });
       },
     );

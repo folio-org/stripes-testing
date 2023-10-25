@@ -157,8 +157,10 @@ const validOCLC = {
 };
 
 const pressAddHoldingsButton = () => {
-  cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
-  InventoryNewHoldings.waitLoading();
+  cy.do(addHoldingButton.click());
+  HoldingsRecordEdit.waitLoading();
+
+  return HoldingsRecordEdit;
 };
 
 const waitLoading = () => cy.expect(actionsButton.exists());
@@ -617,11 +619,11 @@ export default {
     cy.expect(Section({ id: 'acc01' }).exists());
   },
 
-  clickAddItemByHoldingName(holdingName) {
+  clickAddItemByHoldingName({ holdingName, instanceTitle = '' } = {}) {
     const holdingSection = section.find(Accordion(including(holdingName)));
     cy.do(holdingSection.find(addItemButton).click());
 
-    ItemRecordEdit.waitLoading('');
+    ItemRecordEdit.waitLoading(instanceTitle);
 
     return ItemRecordEdit;
   },
@@ -653,12 +655,6 @@ export default {
     cy.expect(section.find(MultiColumnListCell({ row: 0, content: copyNumber })).exists());
   },
 
-  openEditHoldingsForm() {
-    cy.do(addHoldingButton.click());
-    HoldingsRecordEdit.waitLoading();
-
-    return HoldingsRecordEdit;
-  },
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
     cy.expect(Pane({ titleLabel: including('Holdings') }).exists());
@@ -877,7 +873,11 @@ export default {
       KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }),
     );
   },
-
+  checkInstanceDetails({ instanceInformation = [] } = {}) {
+    instanceInformation.forEach(({ key, value }) => {
+      cy.expect(section.find(KeyValue(key)).has({ value: including(value) }));
+    });
+  },
   getId() {
     cy.url()
       .then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)))
