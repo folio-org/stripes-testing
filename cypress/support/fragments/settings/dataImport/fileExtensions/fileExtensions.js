@@ -110,10 +110,10 @@ export default {
       }),
     );
   },
-  creatNewFileExtension: (fileName) => {
+  creatNewFileExtension: (fileExtension) => {
     openNewFileExtensionForm();
     cy.do([
-      TextField({ name: 'extension' }).fillIn(fileName),
+      TextField({ name: 'extension' }).fillIn(fileExtension),
       Checkbox('Block import').click(),
       Button('Save as file extension & Close').click(),
     ]);
