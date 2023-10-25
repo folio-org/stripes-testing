@@ -7,7 +7,10 @@ import NewFileExtension from '../../../support/fragments/settings/dataImport/fil
 
 describe('data-import: Settings', () => {
   let user;
-  const fileExtensionName = '.foc';
+  const testData = {
+    fileExtension: '.fod',
+    importStatus: 'Block import',
+  };
 
   before('login and create test data', () => {
     cy.createTempUser([
@@ -20,7 +23,7 @@ describe('data-import: Settings', () => {
   });
 
   after('delete user', () => {
-    FileExtensionView.delete(fileExtensionName);
+    FileExtensionView.delete(testData.fileExtension);
     Users.deleteViaApi(user.userId);
   });
 
@@ -32,7 +35,8 @@ describe('data-import: Settings', () => {
       FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();
       FileExtensions.verifyListIsSortedInAlphabeticalOrder();
       FileExtensions.openNewFileExtensionForm();
-      NewFileExtension.creatNewFileExtension(fileExtensionName);
+      NewFileExtension.fill(testData);
+      NewFileExtension.save();
       FileExtensions.verifyListIsSortedInAlphabeticalOrder();
     },
   );
