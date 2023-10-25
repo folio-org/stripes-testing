@@ -53,4 +53,7 @@ export default {
     // need to wait for changes to be applied
     cy.wait(2000);
   },
+  clickChangeSessionLocalLanguage() {
+    cy.do(changeSessionLocaleLink.click());
+  },
 };

@@ -8,7 +8,6 @@ import {
   Callout,
   TextField,
   MultiColumnListRow,
-  Checkbox,
 } from '../../../../../../interactors';
 import { REQUEST_METHOD } from '../../../../constants';
 
@@ -110,7 +109,6 @@ export default {
       }),
     );
   },
-
   verifyListIsSortedInAlphabeticalOrder: () => {
     getFileExtensionNames().then((cells) => {
       cy.expect(cells).to.deep.equal(cells.sort());

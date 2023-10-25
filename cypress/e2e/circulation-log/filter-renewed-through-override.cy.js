@@ -109,7 +109,7 @@ describe('circulation-log', () => {
         object: 'Loan',
         circAction: 'Renewed through override',
         servicePoint: testData.userServicePoint.name,
-        source: 'ADMINISTRATOR, Diku_admin',
+        source: 'ADMINISTRATOR, DIKU',
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
       SearchPane.verifyResultCells();
