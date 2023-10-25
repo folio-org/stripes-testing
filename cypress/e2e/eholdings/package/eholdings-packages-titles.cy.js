@@ -6,6 +6,7 @@ import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldi
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import Users from '../../../support/fragments/users/users';
 
 describe('eHoldings Package + Title', () => {
   const testData = {
@@ -13,13 +14,23 @@ describe('eHoldings Package + Title', () => {
     selectedStatus: 'Selected',
   };
 
-  before('logging in', () => {
-    cy.loginAsAdmin({
-      path: TopMenu.eholdingsPath,
-      waiter: EHoldingsTitlesSearch.waitLoading,
-    }).then(() => {
-      EHoldingSearch.switchToPackages();
+  before('Creating user, logging in', () => {
+    cy.createTempUser([
+      Permissions.moduleeHoldingsEnabled.gui,
+      Permissions.uieHoldingsRecordsEdit.gui,
+    ]).then((userProperties) => {
+      testData.userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.eholdingsPath,
+        waiter: EHoldingsTitlesSearch.waitLoading,
+      }).then(() => {
+        EHoldingSearch.switchToPackages();
+      });
     });
+  });
+
+  after('Deleting user, data', () => {
+    Users.deleteViaApi(testData.userId);
   });
 
   it(
