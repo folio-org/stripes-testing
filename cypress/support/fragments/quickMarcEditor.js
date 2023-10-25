@@ -243,6 +243,8 @@ const tag008DefaultValues = [
   { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
 ];
 
+const expectedFields = ['LDR', '001', '008', '005', '245', '999'];
+
 const defaultFieldValues = {
   content: 'qwe',
   subfieldPrefixInEditor: '$',
@@ -1530,5 +1532,15 @@ export default {
 
   clickUnlinkButton: () => {
     cy.do(buttonLink.click());
+  },
+
+  checkDefaultContent() {
+    this.checkContent('00000n\\\\\\a2200000uu\\4500', 0);
+    this.checkFieldsExist(expectedFields);
+    this.checkEmptyContent('001');
+    this.checkEmptyContent('005');
+    this.checkEmptyContent('999');
+    this.checkEmptyContent('008');
+    this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
   },
 };
