@@ -1,8 +1,8 @@
+import uuid from 'uuid';
 import moment from 'moment';
 
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -10,10 +10,11 @@ import Users from '../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Cataloging', () => {
+    const barcode = uuid();
     const testData = {
+      barcode,
       callNumber: '331.2',
-      barcode: getRandomPostfix(),
-      instanceTitle: `autotest_instance_title_${getRandomPostfix()}`,
+      instanceTitle: `autotest_instance_title_${barcode}`,
       user: {},
     };
 
