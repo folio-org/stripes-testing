@@ -123,6 +123,7 @@ export default {
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
@@ -142,7 +143,7 @@ export default {
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
@@ -161,7 +162,7 @@ export default {
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
@@ -187,7 +188,7 @@ export default {
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
@@ -211,7 +212,7 @@ export default {
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
@@ -220,7 +221,7 @@ export default {
     cy.get('body').then(($body) => {
       if ($body.find('[id=unpaid-invoice-list-modal]').length) {
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(4000);
+        cy.wait(6000);
         cy.do(Modal({ id: 'unpaid-invoice-list-modal' }).find(continueButton).click());
       } else {
         // do nothing if modal is not displayed
@@ -246,7 +247,7 @@ export default {
       addAvailableToSelect.choose(rolloverValueAs),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
@@ -280,7 +281,7 @@ export default {
       addAvailableToSelect.choose(rolloverValueAs),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
@@ -339,7 +340,7 @@ export default {
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do(rolloverConfirmButton.click());
   },
@@ -675,7 +676,7 @@ export default {
 
   clickRolloverAfterFillinData() {
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
@@ -699,7 +700,7 @@ export default {
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
