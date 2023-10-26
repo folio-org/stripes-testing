@@ -1541,5 +1541,6 @@ export default {
     this.checkEmptyContent('999');
     this.checkEmptyContent('008');
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
+    this.checkInitialContent(4);
   },
 };
