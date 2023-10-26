@@ -18,21 +18,25 @@ import MatchProfileView from '../../../support/fragments/data_import/match_profi
 describe('data-import', () => {
   describe('Settings', () => {
     let user;
-    const matchProfile1 = {
-      profileName: `C11139 autotest match profile ${getRandomPostfix()}`,
-    };
-    const matchProfile2 = {
-      profileName: `C11139 autotest match profile ${getRandomPostfix()}`,
-    };
-    const actionProfile1 = {
-      name: `C11139 autotest action profile1 ${getRandomPostfix()}`,
-    };
-    const actionProfile2 = {
-      name: `C11139 autotest action profile2 ${getRandomPostfix()}`,
-    };
-    const actionProfile3 = {
-      name: `C11139 autotest action profile3 ${getRandomPostfix()}`,
-    };
+    const collectionOfMatchProfiles = [
+      {
+        profileName: `C11139 autotest match profile1 ${getRandomPostfix()}`,
+      },
+      {
+        profileName: `C11139 autotest match profile2 ${getRandomPostfix()}`,
+      },
+    ];
+    const collectionOfActionProfiles = [
+      {
+        name: `C11139 autotest action profile1 ${getRandomPostfix()}`,
+      },
+      {
+        name: `C11139 autotest action profile2 ${getRandomPostfix()}`,
+      },
+      {
+        name: `C11139 autotest action profile3 ${getRandomPostfix()}`,
+      },
+    ];
     const mappingProfile = {
       name: `C11116 mapping profile ${getRandomPostfix()}`,
     };
@@ -51,48 +55,32 @@ describe('data-import', () => {
         // create 3 action profiles linked to mapping profile
         NewFieldMappingProfile.createMappingProfileViaApi(mappingProfile.name).then(
           (mappingProfileResponse) => {
-            NewActionProfile.createActionProfileViaApi(
-              actionProfile1.name,
-              mappingProfileResponse.body.id,
-            ).then((actionProfileResponse) => {
-              actionProfile1.id = actionProfileResponse.body.id;
-            });
-            NewActionProfile.createActionProfileViaApi(
-              actionProfile2.name,
-              mappingProfileResponse.body.id,
-            ).then((actionProfileResponse) => {
-              actionProfile2.id = actionProfileResponse.body.id;
-            });
-            NewActionProfile.createActionProfileViaApi(
-              actionProfile3.name,
-              mappingProfileResponse.body.id,
-            ).then((actionProfileResponse) => {
-              actionProfile3.id = actionProfileResponse.body.id;
+            collectionOfActionProfiles.forEach((profile) => {
+              NewActionProfile.createActionProfileViaApi(
+                profile.name,
+                mappingProfileResponse.body.id,
+              ).then((actionProfileResponse) => {
+                profile.id = actionProfileResponse.body.id;
+              });
             });
           },
         );
 
         // create 2 match profile
-        NewMatchProfile.createMatchProfileViaApi(matchProfile1.profileName).then(
-          (matchProfileResponse) => {
-            matchProfile1.id = matchProfileResponse.body.id;
-          },
-        );
-        NewMatchProfile.createMatchProfileViaApi(matchProfile2.profileName).then(
-          (matchProfileResponse) => {
-            matchProfile2.id = matchProfileResponse.body.id;
-          },
-        );
+        collectionOfMatchProfiles.forEach((profile) => {
+          NewMatchProfile.createMatchProfileViaApi(profile.profileName).then(
+            (matchProfileResponse) => {
+              profile.id = matchProfileResponse.body.id;
+            },
+          );
+        });
       });
     });
 
     after('Delete test data', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile1.name);
-      ActionProfiles.deleteActionProfile(actionProfile2.name);
-      ActionProfiles.deleteActionProfile(actionProfile3.name);
-      MatchProfiles.deleteMatchProfile(matchProfile1.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile2.profileName);
+      collectionOfMatchProfiles.forEach((profile) => MatchProfiles.deleteMatchProfile(profile.profileName));
+      collectionOfActionProfiles.forEach((profile) => ActionProfiles.deleteActionProfile(profile.name));
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       Users.deleteViaApi(user.userId);
     });
@@ -102,40 +90,40 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         JobProfiles.createJobProfile(jobProfile);
-        NewJobProfile.linkMatchProfile(matchProfile1.profileName);
-        NewJobProfile.linkMatchProfileForMatches(matchProfile2.profileName);
-        NewJobProfile.linkActionProfileForMatches(actionProfile1.name, 2);
-        NewJobProfile.linkActionProfileForMatches(actionProfile2.name, 2);
-        NewJobProfile.linkActionProfileForNonMatches(actionProfile3.name, 3);
+        NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[0].profileName);
+        NewJobProfile.linkMatchProfileForMatches(collectionOfMatchProfiles[1].profileName);
+        NewJobProfile.linkActionProfileForMatches(collectionOfActionProfiles[0].name, 2);
+        NewJobProfile.linkActionProfileForMatches(collectionOfActionProfiles[1].name, 2);
+        NewJobProfile.linkActionProfileForNonMatches(collectionOfActionProfiles[2].name, 3);
         NewJobProfile.saveAndClose();
         JobProfileView.verifyLinkedProfiles(
           [
-            matchProfile1.profileName,
-            matchProfile2.profileName,
-            actionProfile1.name,
-            actionProfile2.name,
-            actionProfile3.name,
+            collectionOfMatchProfiles[0].profileName,
+            collectionOfMatchProfiles[1].profileName,
+            collectionOfActionProfiles[0].name,
+            collectionOfActionProfiles[1].name,
+            collectionOfActionProfiles[2].name,
           ],
           5,
         );
-        JobProfileView.openLinkedProfileById(actionProfile1.id);
-        ActionProfileView.verifyActionProfileTitleName(actionProfile1.name);
+        JobProfileView.openLinkedProfileById(collectionOfActionProfiles[0].id);
+        ActionProfileView.verifyActionProfileTitleName(collectionOfActionProfiles[0].name);
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.select(jobProfile.profileName);
-        JobProfileView.openLinkedProfileById(actionProfile2.id);
-        ActionProfileView.verifyActionProfileTitleName(actionProfile2.name);
+        JobProfileView.openLinkedProfileById(collectionOfActionProfiles[1].id);
+        ActionProfileView.verifyActionProfileTitleName(collectionOfActionProfiles[1].name);
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.select(jobProfile.profileName);
-        JobProfileView.openLinkedProfileById(actionProfile3.id);
-        ActionProfileView.verifyActionProfileTitleName(actionProfile3.name);
+        JobProfileView.openLinkedProfileById(collectionOfActionProfiles[2].id);
+        ActionProfileView.verifyActionProfileTitleName(collectionOfActionProfiles[2].name);
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.select(jobProfile.profileName);
-        JobProfileView.openLinkedProfileById(matchProfile1.id);
-        MatchProfileView.verifyMatchProfileTitleName(matchProfile1.profileName);
+        JobProfileView.openLinkedProfileById(collectionOfMatchProfiles[0].id);
+        MatchProfileView.verifyMatchProfileTitleName(collectionOfMatchProfiles[0].profileName);
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.select(jobProfile.profileName);
-        JobProfileView.openLinkedProfileById(matchProfile2.id);
-        MatchProfileView.verifyMatchProfileTitleName(matchProfile2.profileName);
+        JobProfileView.openLinkedProfileById(collectionOfMatchProfiles[1].id);
+        MatchProfileView.verifyMatchProfileTitleName(collectionOfMatchProfiles[1].profileName);
       },
     );
   });
