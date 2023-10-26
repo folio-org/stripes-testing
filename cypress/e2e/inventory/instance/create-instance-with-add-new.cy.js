@@ -30,7 +30,10 @@ describe('inventory', () => {
       'C598 Create new instance with add "New" (folijet) (prokopovych)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
-        InventoryInstances.add(instanceTitle);
+        const InventoryNewInstance = InventoryInstances.addNewInventory();
+        InventoryNewInstance.fillRequiredValues(instanceTitle);
+        InventoryNewInstance.clickSaveAndCloseButton();
+
         InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
 
         cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
