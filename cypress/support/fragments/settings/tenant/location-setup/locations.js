@@ -208,5 +208,5 @@ export default {
     cy.expect(Pane('Tenant').exists());
     cy.do(NavListItem('Locations').click());
     cy.expect(Pane('Locations').exists());
-}
+  }
 };

@@ -2,6 +2,7 @@ import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import { ServicePoints, Locations } from '../../../support/fragments/settings/tenant';
 import Users from '../../../support/fragments/users/users';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Settings: Location', () => {
   const testData = {
