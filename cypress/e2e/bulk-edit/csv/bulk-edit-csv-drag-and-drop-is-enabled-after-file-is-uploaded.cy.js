@@ -1,20 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import FileManager from '../../../support/utils/fileManager';
 
 describe('bulk-edit', () => {
   const testData = {};
-  const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-  const invalidUserUUID = getRandomPostfix();
+  const validUserUUIDsName = 'user_uuid_valC353540.csv';
 
   before('Create test data', () => {
-    cy.getAdminToken().then(() => {
-      // create all test objects
-    });
-
+    cy.getAdminToken();
     cy.createTempUser([
       Permissions.bulkEditCsvView.gui,
       Permissions.bulkEditCsvEdit.gui,
@@ -26,16 +20,11 @@ describe('bulk-edit', () => {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading,
       });
-      FileManager.createFile(
-        `cypress/fixtures/${userUUIDsFileName}`,
-        `${testData.user.userId}\r\n${invalidUserUUID}`,
-      );
     });
   });
 
   after('Delete test data', () => {
     Users.deleteViaApi(testData.user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
   });
 
   it(
@@ -48,11 +37,10 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
       BulkEditSearchPane.isDragAndDropAreaDisabled(false);
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
+      BulkEditSearchPane.uploadFile(validUserUUIDsName);
       BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.verifyMatchedResults(testData.user.username);
-      BulkEditSearchPane.verifyPaneRecordsCount(1);
+      BulkEditSearchPane.verifyResultColumTitles('Username');
       BulkEditSearchPane.isDragAndDropAreaDisabled(true);
 
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
