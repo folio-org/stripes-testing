@@ -104,10 +104,10 @@ describe('inventory', () => {
       () => {
         cy.visit(TopMenu.inventoryPath);
         markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+        markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
         markItemAsMissing.getItemsToMarkAsMissing
           .call(markItemAsWithdrawn, createdItems)
           .forEach((item) => {
-            markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
             markItemAsMissing.openItem(item.barcode);
             markItemAsWithdrawn.checkActionButtonExists({
               isExist: true,
@@ -140,7 +140,6 @@ describe('inventory', () => {
         markItemAsMissing.getItemsNotToMarkAsMissing
           .call(markItemAsWithdrawn, createdItems)
           .forEach((item) => {
-            markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
             markItemAsMissing.openItem(item.barcode);
             markItemAsWithdrawn.checkActionButtonExists({
               isExist: false,
@@ -149,7 +148,6 @@ describe('inventory', () => {
             ItemRecordView.closeDetailView();
           });
 
-        markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
         markItemAsMissing.openItem(markItemAsWithdrawn.getWithdrawnItem(createdItems).barcode);
         markItemAsWithdrawn.checkActionButtonExists({
           isExist: false,

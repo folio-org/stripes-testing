@@ -5,6 +5,7 @@ import { Button, Modal } from '../../../../../interactors';
 const newRequestButton = Button('New request');
 
 function openActions() {
+  cy.wait(2000);
   cy.do(Button('Actions').click());
 }
 function clickMissingButton() {
