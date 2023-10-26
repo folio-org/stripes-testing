@@ -178,7 +178,12 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 
 const openItemByBarcode = (itemBarcode) => {
-  cy.do(Link(including(itemBarcode)).click());
+  cy.do(
+    Section({ id: 'pane-instancedetails' })
+      .find(MultiColumnListCell({ content: itemBarcode }))
+      .find(Button(including(itemBarcode)))
+      .click(),
+  );
   ItemRecordView.waitLoading();
 };
 

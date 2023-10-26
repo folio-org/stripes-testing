@@ -998,6 +998,22 @@ export default {
       .click();
   },
 
+  addFormerIdentifier: (value, action = actions.addTheseToExisting) => {
+    cy.do([
+      Select({ name: 'profile.mappingDetails.mappingFields[5].repeatableFieldAction' }).focus(),
+      Select({ name: 'profile.mappingDetails.mappingFields[5].repeatableFieldAction' }).choose(
+        action,
+      ),
+      Button('Add former identifier').click(),
+      TextField('Former Identifier').fillIn(`"${value}"`),
+    ]);
+    waitLoading();
+  },
+
+  fillMissingPieces: (value) => {
+    cy.do(TextField('Missing pieces').fillIn(value));
+  },
+
   verifyExpenseClassesIsPresentedInDropdown: (value) => {
     cy.expect(DropdownMenu({ visible: true }).find(HTML(value)).exists());
   },
