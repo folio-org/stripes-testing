@@ -113,4 +113,25 @@ describe('Waive Fees/Fines', () => {
       WaiveFeeFineModal.waiveModalIsExists();
     },
   );
+  it(
+    'C463 Verify behavior when "Waive" ellipsis option selected from Fee/Fine History page (vega) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    () => {
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      // Go to User Information for your test patron
+      UsersSearchPane.searchByKeywords(userData.username);
+      UsersSearchPane.selectUserFromList(userData.username);
+      UsersCard.waitLoading();
+      // Expand the Fees/Fines section to see details about the fees/fines owned by the patron, verifying that the count and amount of open fees/fines is correct (see attachment open-ff-section.JPG as an example)
+      UsersCard.openFeeFines();
+      // Click on the View all fees/fines link to open Fees/Fines History (aka Open/Closed/All Fees/Fines)
+      UsersCard.viewAllFeesFines();
+      //  Click on the ellipsis option for the row in Fees/Fines History the represents the Manual fee/fine charge you created
+      // Select Waive from the ellipsis menu
+      UserAllFeesFines.clickWaiveEllipsis(0);
+      WaiveFeeFineModal.waitLoading();
+      WaiveFeeFineModal.waiveModalIsExists();
+    },
+  );
 });
