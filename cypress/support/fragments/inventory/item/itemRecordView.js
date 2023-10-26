@@ -20,6 +20,7 @@ const itemDataAccordion = Accordion('Item data');
 const itemNotesAccordion = Accordion('Item notes');
 const circulationHistoryAccordion = Accordion('Circulation history');
 const saveAndCloseBtn = Button('Save & close');
+const electronicAccessAccordion = Accordion('Electronic access');
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -232,4 +233,17 @@ export default {
       .find(MultiColumnListCell({ content: code }))
       .exists(),
   ),
+
+  checkElectronicAccess: (relationshipValue, uriValue) => {
+    cy.expect(
+      electronicAccessAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
+        .exists(),
+    );
+    cy.expect(
+      electronicAccessAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+        .exists(),
+    );
+  },
 };
