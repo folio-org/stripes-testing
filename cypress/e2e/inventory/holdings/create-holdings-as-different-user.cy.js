@@ -52,7 +52,10 @@ describe('inventory', () => {
       'C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
-        InventoryInstances.add(recordsData.instanceTitle);
+        const InventoryNewInstance = InventoryInstances.addNewInventory();
+        InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);
+        InventoryNewInstance.clickSaveAndCloseButton();
+
         InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
         cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 

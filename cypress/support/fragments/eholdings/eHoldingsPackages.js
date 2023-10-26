@@ -22,7 +22,7 @@ const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
 const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
-const addNewPackageButton = Button('New');
+const addNewPackageButton = Button({ href: '/eholdings/packages/new' });
 const searchButton = Button('Search');
 const packageList = Section({ id: 'packageShowTitles' });
 const searchIcon = Button({ icon: 'search' });
@@ -167,12 +167,13 @@ export default {
     );
   },
 
-  verifyCustomPackage(packageName) {
+  verifyCustomPackage(packageName, contentType = undefined, calloutMessage) {
     cy.do(addNewPackageButton.click());
     eHoldingsNewCustomPackage.waitLoading();
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
+    if (contentType !== undefined) eHoldingsNewCustomPackage.chooseContentType(contentType);
     eHoldingsNewCustomPackage.saveAndClose();
-    eHoldingsNewCustomPackage.checkPackageCreatedCallout();
+    eHoldingsNewCustomPackage.checkPackageCreatedCallout(calloutMessage);
   },
 
   verifyPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 15) {
