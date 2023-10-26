@@ -13,7 +13,6 @@ import {
 } from '../../../support/fragments/settings/tenant';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Settings: Tenant', () => {

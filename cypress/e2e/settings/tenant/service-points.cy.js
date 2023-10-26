@@ -6,6 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
 const newServicePoint = {
@@ -20,10 +21,9 @@ describe('settings: service-points', () => {
     cy.createTempUser([permissions.uiTenantSettingsServicePointsCRUD.gui]).then(
       (userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
+        cy.login(user.username, user.password);
+        cy.wait(2000);
+        TopMenuNavigation.navigateToApp('Settings');
         ServicePoints.goToServicePointsTab();
       },
     );

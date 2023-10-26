@@ -1,6 +1,5 @@
 import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import { ServicePoints, Locations } from '../../../support/fragments/settings/tenant';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 
@@ -25,10 +24,10 @@ describe('Settings: Location', () => {
     cy.createTempUser([Permissions.settingsTenantViewLocation.gui]).then((userProperties) => {
       testData.user = userProperties;
 
-      cy.login(testData.user.username, testData.user.password, {
-        path: SettingsMenu.tenantPath,
-        waiter: TenantPane.waitLoading,
-      });
+      cy.login(testData.user.username, testData.user.password);
+      cy.wait(1000);
+      TopMenuNavigation.navigateToApp('Settings');
+      TenantPane.goToTenantTab();
     });
   });
 

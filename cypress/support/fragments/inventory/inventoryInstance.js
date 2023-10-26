@@ -178,7 +178,7 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 
 const openItemByBarcode = (itemBarcode) => {
-  cy.do(Link(including(itemBarcode)).click());
+  cy.do(Button(including(itemBarcode)).click());
   ItemRecordView.waitLoading();
 };
 
@@ -1007,7 +1007,7 @@ export default {
   verifyLoan: (content) => cy.expect(MultiColumnListCell({ content }).exists()),
 
   verifyLoanInItemPage(barcode, value) {
-    cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
+    cy.do(MultiColumnListCell({ content: barcode }).find(Button()).click());
     cy.expect(KeyValue('Temporary loan type').has({ value }));
     cy.do(Button({ icon: 'times' }).click());
   },
