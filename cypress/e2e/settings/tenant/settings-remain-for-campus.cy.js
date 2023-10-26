@@ -80,10 +80,7 @@ describe('Settings: Tenant', () => {
       Permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-      cy.login(testData.user.username, testData.user.password, {
-        path: SettingsMenu.tenantPath,
-        waiter: TenantPane.waitLoading,
-      });
+      cy.login(testData.user.username, testData.user.password);
     });
   });
 
@@ -109,8 +106,8 @@ describe('Settings: Tenant', () => {
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
+      cy.visit(SettingsMenu.tenantCampusesPath);
       // #1 Select **"Institution AB"** from Preconditions #1 in "Institution" dropdown on "Campuses" pane
-      TenantPane.selectTenant(TENANTS.CAMPUSES);
       Campuses.checkEmptyTableContent();
       Campuses.selectOption('Institution', testData.institutions[0]);
       // * **"Campus A"** and **"Campus B"** records are displayed in "Campuses" table
