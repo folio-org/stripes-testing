@@ -14,6 +14,7 @@ import {
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -78,10 +79,9 @@ describe('Settings: Tenant', () => {
       Permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
-      });
+      cy.login(testData.user.username, testData.user.password);
+      cy.wait(1000);
+      TopMenuNavigation.navigateToApp('Settings');
     });
   });
 
