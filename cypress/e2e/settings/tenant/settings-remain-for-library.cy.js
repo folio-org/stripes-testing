@@ -13,6 +13,7 @@ import {
 } from '../../../support/fragments/settings/tenant';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -78,8 +79,8 @@ describe('Settings: Tenant', () => {
     ]).then((userProperties) => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password, {
-        path: SettingsMenu.tenantPath,
-        waiter: TenantPane.waitLoading,
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
       });
     });
   });
@@ -99,6 +100,7 @@ describe('Settings: Tenant', () => {
     'C399077 Verify that selected settings remain for "Libraries" (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
+      TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       // Select "Institution AB" in "Institution" dropdown on "Libraries" pane
       let pane = TenantPane.selectTenant(TENANTS.LIBRARIES);
