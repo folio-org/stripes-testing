@@ -178,7 +178,12 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 
 const openItemByBarcode = (itemBarcode) => {
-  cy.do(Button(including(itemBarcode)).click());
+  cy.do(
+    Section({ id: 'pane-instancedetails' })
+      .find(MultiColumnListCell({ content: itemBarcode }))
+      .find(Button(including(itemBarcode)))
+      .click(),
+  );
   ItemRecordView.waitLoading();
 };
 
@@ -1025,7 +1030,7 @@ export default {
     cy.get('div[class^="mclRow--"]')
       .contains('div[class^="mclCell-"]', status)
       .then((elem) => {
-        elem.parent()[0].querySelector('[href]').click();
+        elem.parent()[0].querySelector('button[type="button"]').click();
       });
     cy.wait(2000);
   },
