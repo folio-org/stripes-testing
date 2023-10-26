@@ -34,7 +34,7 @@ const callNumberType = rootForm.find(Select('Call number type'));
 const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
 
 export default {
-  saveAndClose: ({ holdingSaved = false }) => {
+  saveAndClose: ({ holdingSaved = false } = {}) => {
     cy.do(rootForm.find(Button('Save & close')).click());
 
     if (holdingSaved) {
