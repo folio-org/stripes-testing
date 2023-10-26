@@ -5,7 +5,7 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 
 describe('bulk-edit', () => {
   const testData = {};
-  const validUserUUIDsName = 'user_uuid_valC353540.csv';
+  const validUserUUIDsFileName = 'user_uuid_valC353540.csv';
 
   before('Create test data', () => {
     cy.getAdminToken();
@@ -37,7 +37,7 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
       BulkEditSearchPane.isDragAndDropAreaDisabled(false);
-      BulkEditSearchPane.uploadFile(validUserUUIDsName);
+      BulkEditSearchPane.uploadFile(validUserUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditSearchPane.verifyResultColumTitles('Username');
