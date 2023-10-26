@@ -29,7 +29,6 @@ describe('data-import', () => {
       () => {
         const filesNames = ['C2378_File1.mrc', 'C2378_File2.MRC'];
         const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadBunchOfDifferentFiles(filesNames);
         JobProfiles.waitLoadingList();
