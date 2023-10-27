@@ -321,4 +321,20 @@ export default {
   closeEditConfiguration() {
     cy.do([editConfigurationPane.find(xButton).click()]);
   },
+
+  clickDeleteRemoteStorage(name) {
+    cy.do([
+      Pane({ title: name }).find(actionsBtn).click(),
+      Button({ id: 'clickable-delete-storage' }).click(),
+    ]);
+  },
+
+  selectRemoteStorage(name) {
+    cy.do(MultiColumnListCell({ content: name }).click());
+  },
+
+  verifyDeletedConfiguration(name) {
+    InteractorsTools.checkCalloutMessage(successfulDeleteCalloutMessage);
+    cy.expect(configurationPane.find(MultiColumnListCell({ content: name })).absent());
+  },
 };

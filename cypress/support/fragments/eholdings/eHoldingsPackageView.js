@@ -32,8 +32,12 @@ const selectedTitleFieldsRadioButton = RadioButton({
 const getCalloutMessageText = () => cy.then(() => Callout({ type: 'success' }).textContent());
 const addAgreementButton = Button({ id: 'find-agreement-trigger' });
 const findAgreementModal = Modal({ id: 'plugin-find-agreement-modal' });
-const agreementSearchInputField = findAgreementModal.find(TextField({ id: 'input-agreement-search' }));
-const searchAgreementButton = findAgreementModal.find(Button({ id: 'clickable-search-agreements' }));
+const agreementSearchInputField = findAgreementModal.find(
+  TextField({ id: 'input-agreement-search' }),
+);
+const searchAgreementButton = findAgreementModal.find(
+  Button({ id: 'clickable-search-agreements' }),
+);
 
 export default {
   getCalloutMessageText,
@@ -79,10 +83,7 @@ export default {
 
   searchForExistingAgreement(agreementName) {
     cy.expect(findAgreementModal.exists());
-    cy.do([
-      agreementSearchInputField.fillIn(agreementName),
-      searchAgreementButton.click(),
-    ]);
+    cy.do([agreementSearchInputField.fillIn(agreementName), searchAgreementButton.click()]);
   },
 
   clickOnFoundAgreementInModal(agreementName) {

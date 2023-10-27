@@ -5,18 +5,18 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import Parallelization from '../../../support/dictionary/parallelization';
 import {
@@ -81,6 +81,13 @@ describe('data-import', () => {
         numOfRecords: 1,
       },
     ];
+
+    const linkingTagAndValues = {
+      rowIndex: 17,
+      value: 'C375098 Chin, Staceyann, 1972-',
+      tag: '100',
+    };
+
     const createdAuthorityIDs = [];
 
     before('Creating user', () => {
@@ -88,17 +95,18 @@ describe('data-import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.dataExportEnableApp.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-        marcFiles.forEach((marcFile) => {
-          cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-            () => {
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+
+        cy.loginAsAdmin()
+          .then(() => {
+            marcFiles.forEach((marcFile) => {
+              cy.visit(TopMenu.dataImportPath);
+              DataImport.verifyUploadState();
+              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
@@ -110,35 +118,51 @@ describe('data-import', () => {
                   createdAuthorityIDs.push(link.split('/')[5]);
                 });
               }
-            },
-          );
-        });
-
-        cy.loginAsAdmin().then(() => {
-          // create Match profile
-          cy.visit(SettingsMenu.matchProfilePath);
-          MatchProfiles.createMatchProfile(matchProfile);
-          // create Field mapping profile
-          cy.visit(SettingsMenu.mappingProfilePath);
-          FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
-          FieldMappingProfileView.closeViewMode(mappingProfile.name);
-          FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
-          // create Action profile and link it to Field mapping profile
-          cy.visit(SettingsMenu.actionProfilePath);
-          ActionProfiles.create(actionProfile, mappingProfile.name);
-          ActionProfiles.checkActionProfilePresented(actionProfile.name);
-          // create Job profile
-          cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.openNewJobProfileForm();
-          NewJobProfile.fillJobProfile(jobProfile);
-          NewJobProfile.linkMatchProfile(matchProfile.profileName);
-          NewJobProfile.linkActionProfileByName(actionProfile.name);
-          // wait for the action profile to be linked
-          cy.wait(1000);
-          NewJobProfile.saveAndClose();
-          JobProfiles.waitLoadingList();
-          JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-        });
+            });
+          })
+          .then(() => {
+            cy.visit(TopMenu.inventoryPath);
+            InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.verifySearchOptions();
+            InventoryInstance.searchResults(linkingTagAndValues.value);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
+              linkingTagAndValues.tag,
+              linkingTagAndValues.rowIndex,
+            );
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+          })
+          .then(() => {
+            // create Match profile
+            cy.visit(SettingsMenu.matchProfilePath);
+            MatchProfiles.createMatchProfile(matchProfile);
+            // create Field mapping profile
+            cy.visit(SettingsMenu.mappingProfilePath);
+            FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
+            FieldMappingProfileView.closeViewMode(mappingProfile.name);
+            FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+            // create Action profile and link it to Field mapping profile
+            cy.visit(SettingsMenu.actionProfilePath);
+            ActionProfiles.create(actionProfile, mappingProfile.name);
+            ActionProfiles.checkActionProfilePresented(actionProfile.name);
+            // create Job profile
+            cy.visit(SettingsMenu.jobProfilePath);
+            JobProfiles.openNewJobProfileForm();
+            NewJobProfile.fillJobProfile(jobProfile);
+            NewJobProfile.linkMatchProfile(matchProfile.profileName);
+            NewJobProfile.linkActionProfileByName(actionProfile.name);
+            // wait for the action profile to be linked
+            cy.wait(1000);
+            NewJobProfile.saveAndClose();
+            JobProfiles.waitLoadingList();
+            JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+          });
 
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
@@ -168,17 +192,6 @@ describe('data-import', () => {
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon('100');
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.verifySearchOptions();
-        InventoryInstance.searchResults('Chin, Staceyann, 1972-');
-        InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingAuthority('100');
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
-
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -194,11 +207,11 @@ describe('data-import', () => {
         DataImport.editMarcFile(
           nameForExportedMarcFile,
           nameForUpdatedMarcFile,
-          ['aChin, Staceyann,', 'eauthor', 'aThe other side of paradise :'],
+          ['aC375098 Chin, Staceyann,', 'eauthor', 'aC375098 The other side of paradise :'],
           [
-            'aChin, S-nn',
+            'aC375098 Chin, S-nn',
             'eProducereNarratorctestutest4prf',
-            'aParadise of other side (updated title) :',
+            'aC375098 Paradise of other side (updated title) :',
           ],
         );
 
@@ -213,7 +226,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle('Paradise of other side (updated title)');
+        InventoryInstance.searchByTitle('C375098 Paradise of other side (updated title)');
         InventoryInstances.selectInstance();
         InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
         InventoryInstance.editMarcBibliographicRecord();
@@ -222,7 +235,7 @@ describe('data-import', () => {
           '100',
           '1',
           '\\',
-          '$a Chin, Staceyann, $d 1972-',
+          '$a C375098 Chin, Staceyann, $d 1972-',
           '$e Producer $e Narrator $u test',
           '$0 id.loc.gov/authorities/names/n2008052404',
           '$4 prf.',
@@ -232,7 +245,7 @@ describe('data-import', () => {
           '245',
           '1',
           '4',
-          '$a Paradise of other side (updated title) : $b a memoir / $c Staceyann Chin.',
+          '$a C375098 Paradise of other side (updated title) : $b a memoir / $c Staceyann Chin.',
         );
       },
     );

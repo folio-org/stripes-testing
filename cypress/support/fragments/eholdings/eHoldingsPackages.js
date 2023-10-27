@@ -12,6 +12,8 @@ import {
   Select,
   Pane,
   Link,
+  Accordion,
+  RadioButton,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
@@ -22,7 +24,7 @@ const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
 const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
-const addNewPackageButton = Button('New');
+const addNewPackageButton = Button({ href: '/eholdings/packages/new' });
 const searchButton = Button('Search');
 const packageList = Section({ id: 'packageShowTitles' });
 const searchIcon = Button({ icon: 'search' });
@@ -31,6 +33,10 @@ const chooseParameterField = Select('Select a field to search');
 const subjectKeyValue = KeyValue('Subjects');
 const availableProxies = ['chalmers', 'Inherited - ezproxY-T', 'None', 'MJProxy'];
 const proxySelect = Select('Proxy');
+const customCoverageDate = KeyValue('Custom coverage dates');
+const startDateInput = TextField({ id: 'begin-coverage-0' });
+const endDateInput = TextField({ id: 'end-coverage-0' });
+const selectionStatusAccordion = Accordion({ id: 'filter-titles-selected' });
 
 const defaultPackage = {
   data: {
@@ -164,12 +170,13 @@ export default {
     );
   },
 
-  verifyCustomPackage(packageName) {
+  verifyCustomPackage(packageName, contentType = undefined, calloutMessage) {
     cy.do(addNewPackageButton.click());
     eHoldingsNewCustomPackage.waitLoading();
     eHoldingsNewCustomPackage.fillInRequiredProperties(packageName);
+    if (contentType !== undefined) eHoldingsNewCustomPackage.chooseContentType(contentType);
     eHoldingsNewCustomPackage.saveAndClose();
-    eHoldingsNewCustomPackage.checkPackageCreatedCallout();
+    eHoldingsNewCustomPackage.checkPackageCreatedCallout(calloutMessage);
   },
 
   verifyPackageExistsViaAPI(packageName, isCustom = false, timeOutSeconds = 15) {
@@ -269,6 +276,26 @@ export default {
     cy.do([searchField.fillIn(searchValue), searchButton.click()]);
   },
 
+  titlesSearchFilter: (searchParameter, searchValue, selectionStatus = 'All') => {
+    cy.expect(searchIcon.exists());
+    cy.wait(2000);
+    cy.do([searchIcon.click()]);
+
+    cy.do([chooseParameterField.choose(searchParameter), searchField.fillIn(searchValue)]);
+    // tags
+    // sort options
+    // selection status parameter
+    cy.do([
+      selectionStatusAccordion.clickHeader(),
+      selectionStatusAccordion.find(RadioButton(selectionStatus)).click(),
+    ]);
+
+    // publication type
+
+    // search
+    cy.do(searchButton.click());
+  },
+
   changePackageRecordProxy: () => {
     return cy
       .then(() => proxySelect.value())
@@ -286,5 +313,16 @@ export default {
 
   verifyDetailsPaneAbsent: (packageName) => {
     cy.expect(Pane(including(packageName)).absent());
+  },
+
+  verifyCustomCoverageDates(startDate, endDate) {
+    cy.expect([
+      customCoverageDate.has({ value: including(startDate) }),
+      customCoverageDate.has({ value: including(endDate) }),
+    ]);
+  },
+
+  fillDateCoverage(startDate, endDate) {
+    cy.do([startDateInput.fillIn(startDate), endDateInput.fillIn(endDate)]);
   },
 };

@@ -8,7 +8,7 @@ describe('ui-organizations: View organization', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;

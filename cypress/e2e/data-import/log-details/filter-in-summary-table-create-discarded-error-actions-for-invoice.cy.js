@@ -31,7 +31,7 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
-      existingRecordType: FOLIO_RECORD_TYPE.INVOICE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
       description: '',
       batchGroup: BATCH_GROUP.AMHERST,
       organizationName: VENDOR_NAMES.EBSCO,
@@ -107,7 +107,7 @@ describe('data-import', () => {
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 2);
         // check Error counter in the Summary table
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 3);
-        FileDetails.filterRecordsWithError(quantityOfItems);
+        FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.INVOICE);
         FileDetails.verifyQuantityOfRecordsWithError(3);
         FileDetails.verifyLogSummaryTableIsHidden();
         FileDetails.verifyRecordsSortingOrder();

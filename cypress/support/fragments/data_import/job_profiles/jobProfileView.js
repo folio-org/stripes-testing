@@ -34,6 +34,7 @@ export default {
     cy.do(Button('Edit').click());
   },
   duplicate: () => {
+    cy.wait(2000);
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Duplicate').click());
   },
