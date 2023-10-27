@@ -47,32 +47,4 @@ describe.skip('servicepoints shift', () => {
       checkInItems.lostAndPaid();
     },
   );
-
-  it('C590 Check in: multipiece items (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
-    cy.visit(topMenu.checkInPath);
-    checkInItems.checkIn(testData.itemA);
-    checkInActions.openItemDetails(testData.itemA);
-    checkInActions.editItemDetails(testData.numberOfPiecesItemA, '', '');
-    cy.visit(topMenu.checkInPath);
-    checkInItems.cancelCheckInMultipleItem(testData.itemB);
-    checkInItems.checkIn(testData.itemB);
-    checkInActions.openItemDetails(testData.itemB);
-    checkInActions.editItemDetails(testData.numberOfPiecesItemA, '', testData.description);
-    cy.visit(topMenu.checkInPath);
-    checkInItems.checkInMultipleItem(testData.itemB);
-    checkInItems.checkIn(testData.itemC);
-    checkInActions.openItemDetails(testData.itemC);
-    checkInActions.editItemDetails(
-      testData.numberOfPiecesItemB,
-      testData.numberOfPiecesItemA,
-      testData.description,
-    );
-    cy.visit(topMenu.checkInPath);
-    checkInItems.checkInMultipleItem(testData.itemC);
-    checkInItems.checkIn(testData.itemD);
-    checkInActions.openItemDetails(testData.itemD);
-    checkInActions.editItemDetails('', testData.numberOfPiecesItemA, testData.description);
-    cy.visit(topMenu.checkInPath);
-    checkInItems.checkInMultipleItem(testData.itemD);
-  });
 });

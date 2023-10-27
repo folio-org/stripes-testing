@@ -140,14 +140,14 @@ describe('Orders: Inventory interaction', () => {
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemActions.edit();
       ItemRecordEdit.addBarcode(barcodeForFirstItem);
-      ItemRecordEdit.save();
+      ItemRecordEdit.saveAndClose();
       // Need to wait,while instance will be saved
       cy.wait(7000);
       ItemActions.closeItem();
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemActions.edit();
       ItemRecordEdit.addBarcode(barcodeForSecondItem);
-      ItemRecordEdit.save();
+      ItemRecordEdit.saveAndClose();
       // Need to wait,while instance will be saved
       cy.wait(7000);
       ItemActions.closeItem();
