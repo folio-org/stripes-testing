@@ -14,7 +14,7 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
@@ -94,67 +94,67 @@ describe('orders: Receiving and Check-in', () => {
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
               InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              ItemActions.edit();
+              InventoryItems.edit();
               ItemRecordEdit.addBarcode(barcodeForFirstItem);
               ItemRecordEdit.saveAndClose();
               // Need to wait,while instance will be saved
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
-              ItemActions.closeItem();
+              InventoryItems.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
               InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              ItemActions.edit();
+              InventoryItems.edit();
               ItemRecordEdit.addBarcode(barcodeForSecondItem);
               ItemRecordEdit.saveAndClose();
               // Need to wait,while instance will be saved
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
-              ItemActions.closeItem();
+              InventoryItems.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
               InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              ItemActions.edit();
+              InventoryItems.edit();
               ItemRecordEdit.addBarcode(barcodeForThirdItem);
               ItemRecordEdit.saveAndClose();
               // Need to wait,while instance will be saved
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
-              ItemActions.closeItem();
+              InventoryItems.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
               InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              ItemActions.edit();
+              InventoryItems.edit();
               ItemRecordEdit.addBarcode(barcodeForFourItem);
               ItemRecordEdit.saveAndClose();
               // Need to wait,while instance will be saved
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
-              ItemActions.closeItem();
+              InventoryItems.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
               InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              ItemActions.edit();
+              InventoryItems.edit();
               ItemRecordEdit.addBarcode(barcodeForFifthItem);
               ItemRecordEdit.saveAndClose();
               // Need to wait,while instance will be saved
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
-              ItemActions.closeItem();
+              InventoryItems.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
               InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              ItemActions.edit();
+              InventoryItems.edit();
               ItemRecordEdit.addBarcode(barcodeForSixthItem);
               ItemRecordEdit.saveAndClose();
               // Need to wait,while instance will be saved
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
-              ItemActions.closeItem();
+              InventoryItems.closeItem();
               InventoryInstance.openHoldingsAccordion(location.name);
               InventoryInstance.openItemByBarcodeAndIndex('No barcode');
-              ItemActions.edit();
+              InventoryItems.edit();
               ItemRecordEdit.addBarcode(barcodeForSeventhItem);
               ItemRecordEdit.saveAndClose();
               // Need to wait,while instance will be saved
               // eslint-disable-next-line cypress/no-unnecessary-waiting
               cy.wait(5000);
-              ItemActions.closeItem();
+              InventoryItems.closeItem();
             });
 
             cy.visit(TopMenu.checkInPath);
@@ -210,7 +210,7 @@ describe('orders: Receiving and Check-in', () => {
         barcodeForFirstItem,
         ITEM_STATUS_NAMES.AVAILABLE,
       );
-      ItemActions.closeItem();
+      InventoryItems.closeItem();
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
       ItemRecordView.checkItemDetails(
@@ -218,7 +218,7 @@ describe('orders: Receiving and Check-in', () => {
         barcodeForSecondItem,
         ITEM_STATUS_NAMES.AVAILABLE,
       );
-      ItemActions.closeItem();
+      InventoryItems.closeItem();
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForThirdItem);
       ItemRecordView.checkItemDetails(
@@ -226,7 +226,7 @@ describe('orders: Receiving and Check-in', () => {
         barcodeForThirdItem,
         `${ITEM_STATUS_NAMES.IN_TRANSIT} to Circ Desk 2`,
       );
-      ItemActions.closeItem();
+      InventoryItems.closeItem();
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForFourItem);
       ItemRecordView.checkItemDetails(
@@ -234,7 +234,7 @@ describe('orders: Receiving and Check-in', () => {
         barcodeForFourItem,
         `${ITEM_STATUS_NAMES.IN_TRANSIT} to Circ Desk 2`,
       );
-      ItemActions.closeItem();
+      InventoryItems.closeItem();
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForSixthItem);
       ItemRecordView.checkItemDetails(
@@ -242,7 +242,7 @@ describe('orders: Receiving and Check-in', () => {
         barcodeForSixthItem,
         ITEM_STATUS_NAMES.IN_PROCESS,
       );
-      ItemActions.closeItem();
+      InventoryItems.closeItem();
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForSeventhItem);
       ItemRecordView.checkItemDetails(

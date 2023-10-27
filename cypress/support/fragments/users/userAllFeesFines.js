@@ -1,4 +1,5 @@
 import { CheckBox } from '@interactors/html';
+
 import {
   Button,
   Modal,
@@ -30,7 +31,8 @@ export default {
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(
           (requestedServicePoints) => {
             const servicePointId = requestedServicePoints[0].id;
-            UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, userId);
+            cy.getAdminSourceRecord().then((adminSourceRecord) => {
               cy.okapiRequest({
                 method: 'POST',
                 path: `accounts/${accountId}/waive`,
@@ -41,7 +43,7 @@ export default {
                   notifyPatron: false,
                   servicePointId,
                   // all api methods run by diku
-                  userName: 'ADMINISTRATOR, DIKU',
+                  userName: adminSourceRecord,
                 },
                 isDefaultSearchParamsRequired: false,
               });
@@ -112,5 +114,9 @@ export default {
 
   verifyPayModalIsOpen: () => {
     cy.expect(Modal('Pay fee/fine').exists());
+  },
+
+  clickOnRowByIndex: (rowIndex) => {
+    cy.do(feeFinesList.find(MultiColumnListRow({ index: rowIndex })).click());
   },
 };
