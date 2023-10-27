@@ -12,7 +12,9 @@ describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
-    InventoryInstances.add();
+    const InventoryNewInstance = InventoryInstances.addNewInventory();
+    InventoryNewInstance.fillRequiredValues();
+    InventoryNewInstance.clickSaveAndCloseButton();
   });
   it(
     'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
