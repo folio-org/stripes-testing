@@ -1,3 +1,5 @@
+import { recurse } from 'cypress-recurse';
+
 const downloadsFolder = Cypress.config('downloadsFolder');
 
 export default {
@@ -57,6 +59,23 @@ export default {
 
       this.readFile(lastDownloadedFilename).then((actualContent) => {
         verifyContentFunc(actualContent, ...verifyContentFuncArgs);
+      });
+    });
+  },
+
+  verifyFileIncludes(fileName, content) {
+    cy.wait(Cypress.env('downloadTimeout'));
+
+    recurse(
+      () => this.findDownloadedFilesByMask(fileName),
+      (x) => typeof x === 'object' && !!x,
+    ).then((foundFiles) => {
+      const lastDownloadedFilename = foundFiles.sort()[foundFiles.length - 1];
+
+      this.readFile(lastDownloadedFilename).then((actualContent) => {
+        content.forEach((element) => {
+          expect(actualContent).to.include(element);
+        });
       });
     });
   },

@@ -637,10 +637,18 @@ export default {
         return body.purchaseOrders;
       });
   },
-
-  deleteOrderViaApi: (id) => cy.okapiRequest({
+  getOrderByIdViaApi(orderId) {
+    return cy
+      .okapiRequest({
+        path: `orders/composite-orders/${orderId}`,
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+  deleteOrderViaApi: (orderId) => cy.okapiRequest({
     method: 'DELETE',
-    path: `orders/composite-orders/${id}`,
+    path: `orders/composite-orders/${orderId}`,
     isDefaultSearchParamsRequired: false,
   }),
 

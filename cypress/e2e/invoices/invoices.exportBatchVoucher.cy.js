@@ -12,15 +12,14 @@ import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices'
 import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import NewBatchGroup from '../../support/fragments/settings/invoices/batch-groups';
-import BatchGrops from '../../support/api/batch-groups';
+import BatchGroups from '../../support/fragments/settings/invoices/batchGroups';
 
 describe('ui-invoices-settings: Export batch voucher', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const fund = { ...NewFund.defaultFund };
-  const batchGroup = { ...NewBatchGroup.defaultUiBatchGroups };
+  const batchGroup = { ...BatchGroups.getDefaultBatchGroup() };
   const subtotalValue = 100;
   const batchGroupConfiguration = {
     batchGroupId: '',
@@ -56,7 +55,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
       organization.addresses.find((address) => address.isPrimary === true),
     );
     invoice.vendorName = organization.name;
-    BatchGrops.createBatchGroupViaApi(batchGroup).then((response) => {
+    BatchGroups.createBatchGroupViaApi(batchGroup).then((response) => {
       invoice.batchGroup = response.name;
       batchGroupConfiguration.batchGroupId = response.id;
     });
