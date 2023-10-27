@@ -20,7 +20,7 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import Users from '../../support/fragments/users/users';
-import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('inventory', () => {
@@ -162,7 +162,7 @@ describe('inventory', () => {
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.waitLoading();
         ItemRecordView.checkBarcode('-');
-        ItemActions.edit();
+        InventoryItems.edit();
         ItemRecordEdit.waitLoading(instanceTitle);
         ItemRecordEdit.addBarcode(barcode);
         ItemRecordEdit.saveAndClose({ itemSaved: true });
