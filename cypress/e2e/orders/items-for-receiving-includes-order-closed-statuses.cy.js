@@ -89,7 +89,7 @@ describe('orders: Receiving and Check-in', () => {
           InventoryInstance.openItemByBarcodeAndIndex('No barcode');
           ItemActions.edit();
           ItemRecordEdit.addBarcode(barcodeForFirstItem);
-          ItemRecordEdit.save();
+          ItemRecordEdit.saveAndClose();
           // Need to wait,while instance will be saved
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(5000);
@@ -98,7 +98,7 @@ describe('orders: Receiving and Check-in', () => {
           InventoryInstance.openItemByBarcodeAndIndex('No barcode');
           ItemActions.edit();
           ItemRecordEdit.addBarcode(barcodeForSecondItem);
-          ItemRecordEdit.save();
+          ItemRecordEdit.saveAndClose();
           // Need to wait,while instance will be saved
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(5000);
@@ -107,7 +107,7 @@ describe('orders: Receiving and Check-in', () => {
           InventoryInstance.openItemByBarcodeAndIndex('No barcode');
           ItemActions.edit();
           ItemRecordEdit.addBarcode(barcodeForThirdItem);
-          ItemRecordEdit.save();
+          ItemRecordEdit.saveAndClose();
           // Need to wait,while instance will be saved
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(5000);
@@ -116,7 +116,7 @@ describe('orders: Receiving and Check-in', () => {
           InventoryInstance.openItemByBarcodeAndIndex('No barcode');
           ItemActions.edit();
           ItemRecordEdit.addBarcode(barcodeForFourItem);
-          ItemRecordEdit.save();
+          ItemRecordEdit.saveAndClose();
           // Need to wait,while instance will be saved
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(5000);

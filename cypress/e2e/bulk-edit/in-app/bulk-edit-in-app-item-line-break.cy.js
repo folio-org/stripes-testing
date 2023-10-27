@@ -60,8 +60,7 @@ describe('bulk-edit', () => {
         ItemRecordView.waitLoading();
         ItemActions.edit();
         ItemRecordEdit.addAdministrativeNote(note);
-        ItemRecordEdit.save();
-        ItemRecordView.checkCalloutMessage();
+        ItemRecordEdit.saveAndClose({ itemSaved: true });
         cy.visit(TopMenu.bulkEditPath);
       });
     });
