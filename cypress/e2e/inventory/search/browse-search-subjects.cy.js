@@ -6,14 +6,26 @@ import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Subject Browse', () => {
   const testData = {
-    subjectName: 'Rock music--1961-1970',
-    instanceTitle: 'The Beatles in mono.',
+    instanceTitle: `instanceName-${getRandomPostfix()}`,
+    subjectName: `subject-${getRandomPostfix()}`,
+    barcode: `barcode-${getRandomPostfix()}`,
   };
 
   before('create test data', () => {
+    const instanceId = InventoryInstances.createInstanceViaApi(
+      testData.instanceTitle,
+      testData.barcode,
+    );
+    cy.getInstanceById(instanceId).then((body) => {
+      const requestBody = body;
+      requestBody.subjects = [{ value: testData.subjectName }];
+      cy.updateInstance(requestBody);
+    });
+
     cy.createTempUser([permissions.uiSubjectBrowse.gui]).then((userProperties) => {
       testData.userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password, {
@@ -24,6 +36,7 @@ describe('Subject Browse', () => {
   });
 
   after('Delete test data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
     Users.deleteViaApi(testData.userId);
   });
 
