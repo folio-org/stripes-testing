@@ -12,7 +12,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 
@@ -58,7 +58,7 @@ describe('bulk-edit', () => {
         InventoryInstance.openHoldings(['']);
         InventoryInstance.openItemByBarcode(`secondBarcode_${items[0].itemBarcode}`);
         ItemRecordView.waitLoading();
-        ItemActions.edit();
+        InventoryItems.edit();
         ItemRecordEdit.addAdministrativeNote(note);
         ItemRecordEdit.saveAndClose({ itemSaved: true });
         cy.visit(TopMenu.bulkEditPath);

@@ -11,7 +11,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
 
 let user;
 const item = {
@@ -71,7 +71,7 @@ describe('inventory', () => {
             const itemData = res;
             itemData.effectiveLocation.id = item.secondLocationId;
             itemData.effectiveLocation.name = item.secondLocationName;
-            ItemActions.editItemViaApi(itemData);
+            InventoryItems.editItemViaApi(itemData);
           });
         })
         .then(() => {
