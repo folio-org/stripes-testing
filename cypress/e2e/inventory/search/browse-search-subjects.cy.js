@@ -1,4 +1,3 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import testTypes from '../../../support/dictionary/testTypes';
