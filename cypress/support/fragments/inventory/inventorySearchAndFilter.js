@@ -23,12 +23,24 @@ import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
+import InventoryInstance from './inventoryInstance';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const sourceAccordion = Accordion('Source');
 const languageInput = Accordion({ id: 'language' });
+const resourceTypeAccordion = Accordion({ id: 'resource' });
+const formatAccordion = Accordion({ id: 'format' });
+const modeOfIssuanceAccordion = Accordion({ id: 'mode' });
+const natureOfContentAccordion = Accordion({ id: 'natureOfContent' });
+const stuffSupressAccordion = Accordion({ id: 'staffSuppress' });
+const supressFromDiscoveryAccordion = Accordion({ id: 'instancesDiscoverySuppress' });
+const statisticalCodeAccordionInstanceToggle = Accordion({ id: 'statisticalCodeIds' });
+const dateCreatedAccordion = Accordion({ id: 'createdDate' });
+const dateUpdatedAccordion = Accordion({ id: 'updatedDate' });
+const instanceStatusAccordion = Accordion({ id: 'instanceStatus' });
+const tagsAccordion = Accordion({ id: 'instancesTags' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const searchTextField = TextField('Search ');
@@ -66,6 +78,9 @@ const instancesList = paneResultsSection.find(MultiColumnList({ id: 'list-invent
 
 const searchToggleButton = Button({ id: 'mode-navigation-search' });
 const itemStatusSearchField = TextField('itemStatus-field');
+const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
+const itemToggleButton = Button({ id: 'segment-navigation-items' });
+const searchTypeDropdown = Select('Search field index');
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -86,7 +101,9 @@ const searchHoldingsByHRID = (hrid) => {
 
 const searchInstanceByTitle = (title) => {
   cy.do([TextField({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
-  InventoryInstances.waitLoading();
+  InventoryInstance.waitLoading();
+
+  return InventoryInstance;
 };
 
 const getInstanceHRID = () => {
@@ -664,6 +681,11 @@ export default {
     cy.expect(effectiveLocationInput.exists());
   },
 
+  verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
+  verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
+  verifyResetAllButtonDisabled: () => cy.expect(resetAllBtn.has({ disabled: true })),
+  verifyBrowseInventorySearchResults: () => cy.expect(inventorySearchResultsPane.exists()),
+
   verifyNoRecordsFound() {
     cy.expect([
       paneResultsSection.find(HTML(including('No results found for'))).exists(),
@@ -697,5 +719,68 @@ export default {
     options.forEach((name) => {
       cy.expect(browseOptionsDropdown.has({ content: including(name) }));
     });
+  },
+
+  searchTabIsDefault() {
+    cy.do(
+      searchToggleButton.perform((element) => {
+        expect(element.classList[2]).to.include('primary');
+      }),
+    );
+  },
+
+  verifySearchAndFilterPane() {
+    this.searchTabIsDefault();
+    this.instanceTabIsDefault();
+    this.searchTypeDropdownDefaultValue('all');
+    this.verifySearchFieldIsEmpty();
+    cy.expect([
+      searchToggleButton.exists(),
+      browseButton.exists(),
+      holdingsToggleButton.exists(),
+      itemToggleButton.exists(),
+      searchButton.has({ disabled: true }),
+      resetAllButton.has({ disabled: true }),
+      effectiveLocationInput.has({ open: false }),
+      languageInput.has({ open: false }),
+      resourceTypeAccordion.has({ open: false }),
+      formatAccordion.has({ open: false }),
+      modeOfIssuanceAccordion.has({ open: false }),
+      natureOfContentAccordion.has({ open: false }),
+      stuffSupressAccordion.has({ open: false }),
+      supressFromDiscoveryAccordion.has({ open: false }),
+      statisticalCodeAccordionInstanceToggle.has({ open: false }),
+      dateCreatedAccordion.has({ open: false }),
+      dateUpdatedAccordion.has({ open: false }),
+      instanceStatusAccordion.has({ open: false }),
+      sourceAccordion.has({ open: false }),
+      tagsAccordion.has({ open: false }),
+    ]);
+  },
+
+  verifySearchAndFilterPaneBrowseToggle() {
+    this.verifyKeywordsAsDefault();
+    this.verifyCallNumberBrowseEmptyPane();
+    cy.expect([
+      searchButton.has({ disabled: true }),
+      resetAllBtn.has({ disabled: true }),
+      actionsButton.absent(),
+    ]);
+  },
+
+  searchTypeDropdownDefaultValue(value) {
+    cy.expect(searchTypeDropdown.has({ value }));
+  },
+
+  verifySearchFieldIsEmpty() {
+    cy.expect(keywordInput.has({ value: '' }));
+  },
+
+  verifyAccordionByNameExpanded(accordionName, status = true) {
+    cy.expect(Accordion(accordionName).has({ open: status }));
+  },
+
+  clickAccordionByName(accordionName) {
+    cy.do(Accordion(accordionName).clickHeader());
   },
 };

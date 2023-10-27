@@ -85,6 +85,9 @@ describe('Circulation log', () => {
             userBarcode: firstUser.barcode,
           });
         });
+      cy.getAdminSourceRecord().then((record) => {
+        testData.adminSourceRecord = record;
+      });
       // Open "Circulation log" by selecting it on the toolbar or "App" dropdown
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.circulationLogPath,
@@ -124,7 +127,7 @@ describe('Circulation log', () => {
         object: 'Loan',
         circAction: 'Checked out',
         servicePoint: testData.servicePoint.name,
-        source: 'ADMINISTRATOR, Diku_admin',
+        source: testData.adminSourceRecord,
         desc: 'Checked out to proxy: no.',
       };
       const secondItemSearchResultsData = {
@@ -133,7 +136,7 @@ describe('Circulation log', () => {
         object: 'Request',
         circAction: 'Created',
         servicePoint: testData.servicePoint.name,
-        source: 'ADMINISTRATOR, Diku_admin',
+        source: testData.adminSourceRecord,
         desc: 'Type: Page.',
       };
       // Apply any filters in "Search & filter" pane to retrieve logs in "Circulation log" pane

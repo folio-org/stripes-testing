@@ -7,7 +7,9 @@ import {
   Button,
   Accordion,
   MultiColumnListCell,
+  Link,
 } from '../../../../interactors';
+import ItemRecordView from '../inventory/item/itemRecordView';
 
 const requestDetailsSection = Pane({ id: 'instance-details' });
 const titleInformationSection = Section({ id: 'title-info' });
@@ -38,6 +40,16 @@ export default {
       titleInformationSection.find(KeyValue('Title level requests', { value: data.TLRs })).exists(),
       titleInformationSection.find(KeyValue('Title', { value: data.title })).exists(),
     ]);
+  },
+
+  checkItemStatus: (status) => {
+    cy.expect(itemInformationSection.find(KeyValue('Item status', { value: status })).exists());
+  },
+
+  checkRequestsOnItem: (requests) => {
+    cy.expect(
+      itemInformationSection.find(KeyValue('Requests on item', { value: requests })).exists(),
+    );
   },
 
   checkItemInformation: (data) => {
@@ -93,6 +105,10 @@ export default {
     cy.do(moveRequestButton.click());
   },
 
+  verifyMoveRequestButtonExists() {
+    cy.expect(moveRequestButton.exists());
+  },
+
   requestQueueOnInstance(instanceTitle) {
     cy.do([actionsButton.click(), Button('Reorder queue').click()]);
     cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
@@ -104,5 +120,10 @@ export default {
         .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
         .exists(),
     );
+  },
+
+  openItemByBarcode() {
+    cy.do(itemInformationSection.find(Link()).click());
+    ItemRecordView.waitLoading();
   },
 };
