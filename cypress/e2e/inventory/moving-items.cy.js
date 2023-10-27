@@ -127,7 +127,10 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
       InventoryInstance.openMoveItemsWithinAnInstance();
 
       InventoryInstance.openHoldings([secondHolding]);
-      InventoryInstance.moveItemToAnotherHolding(firstHolding, secondHolding);
+      InventoryInstance.moveItemToAnotherHolding({
+        fromHolding: firstHolding,
+        toHolding: secondHolding,
+      });
       InteractorsTools.checkCalloutMessage(successCalloutMessage);
 
       InventoryInstance.openHoldings([firstHolding]);

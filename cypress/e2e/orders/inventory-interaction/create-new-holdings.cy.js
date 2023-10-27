@@ -14,7 +14,6 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 
@@ -70,7 +69,7 @@ describe('Orders: Inventory interaction', () => {
               testData.orderNumber = order.poNumber;
 
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                InventoryInstances.createHoldingViaAPI({
+                InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: testData.instance.instanceId,
                   permanentLocationId: location.id,
                   sourceId: folioSource.id,
