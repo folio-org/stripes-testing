@@ -48,7 +48,8 @@ describe('Subject Browse', () => {
       InventorySearchAndFilter.verifyKeywordsAsDefault();
       BrowseSubjects.searchBrowseSubjects(testData.subjectName);
       BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);
-      InventorySearchAndFilter.clickResetAllButton();
+      BrowseSubjects.clearSearchTextfield();
+      BrowseSubjects.verifySearchTextFieldEmpty();
       InventorySearchAndFilter.verifySearchButtonDisabled();
       InventorySearchAndFilter.switchToSearchTab();
       InventorySearchAndFilter.selectSearchOptions('Subject', testData.subjectName);
