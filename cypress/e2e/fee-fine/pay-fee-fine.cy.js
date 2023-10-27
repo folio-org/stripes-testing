@@ -61,20 +61,22 @@ describe('Pay Fees/Fines', () => {
       })
       .then(() => {
         UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
-        feeFineAccount = {
-          id: uuid(),
-          ownerId: testData.ownerData.id,
-          feeFineId: feeFineType.id,
-          amount: 9,
-          userId: userData.userId,
-          feeFineType: feeFineType.name,
-          feeFineOwner: testData.ownerData.name,
-          createdAt: testData.servicePoint.id,
-          dateAction: moment.utc().format(),
-          source: 'ADMINISTRATOR, DIKU',
-        };
-        NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-          feeFineAccount.id = feeFineAccountId;
+        cy.getAdminSourceRecord().then((adminSourceRecord) => {
+          feeFineAccount = {
+            id: uuid(),
+            ownerId: testData.ownerData.id,
+            feeFineId: feeFineType.id,
+            amount: 9,
+            userId: userData.userId,
+            feeFineType: feeFineType.name,
+            feeFineOwner: testData.ownerData.name,
+            createdAt: testData.servicePoint.id,
+            dateAction: moment.utc().format(),
+            source: adminSourceRecord,
+          };
+          NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+            feeFineAccount.id = feeFineAccountId;
+          });
         });
         cy.login(userData.username, userData.password, {
           path: TopMenu.usersPath,

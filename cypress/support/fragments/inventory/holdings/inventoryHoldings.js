@@ -1,4 +1,4 @@
-import Items from '../inventoryItem/itemActions';
+import InventoryItems from '../item/inventoryItems';
 
 const getHoldingSources = (searchParams) => cy
   .okapiRequest({
@@ -13,7 +13,15 @@ export default {
   getHoldingsFolioSource: () => getHoldingSources().then(
     (holdingsSources) => holdingsSources.filter((specialSource) => specialSource.name === 'FOLIO')[0],
   ),
-
+  createHoldingRecordViaApi(holdingsRecord) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'holdings-storage/holdings',
+        body: holdingsRecord,
+      })
+      .then(({ body }) => body);
+  },
   getHoldingsRecordsViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -36,9 +44,11 @@ export default {
     this.getHoldingsRecordsViaApi({ query: `permanentLocationId="${locationId}"` }).then(
       (holdings) => {
         holdings.forEach(({ id: holdingId }) => {
-          Items.getItemViaApi({ query: `holdingsRecordId="${holdingId}"` }).then((items) => {
-            items.forEach(({ id: itemId }) => Items.deleteItemViaApi(itemId));
-          });
+          InventoryItems.getItemViaApi({ query: `holdingsRecordId="${holdingId}"` }).then(
+            (items) => {
+              items.forEach(({ id: itemId }) => InventoryItems.deleteItemViaApi(itemId));
+            },
+          );
           this.deleteHoldingRecordViaApi(holdingId);
         });
       },
