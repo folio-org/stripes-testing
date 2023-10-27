@@ -3,7 +3,8 @@ import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('data-import', () => {
   describe('Uploading files', () => {
@@ -35,8 +36,8 @@ describe('data-import', () => {
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(filesNames[0]);
-        JobProfileView.verifyInstanceImportStatus(0, 1, 'Completed');
-        JobProfileView.verifyInstanceImportStatus(1, 1, 'Completed');
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED, 0);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED, 1);
       },
     );
   });

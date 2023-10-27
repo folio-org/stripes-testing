@@ -165,13 +165,6 @@ export default {
         }),
     );
   },
-  verifyInstanceImportStatus: (row = 0, columnIndex = 3, status = 'Completed') => {
-    cy.do(
-      MultiColumnList({ id: 'job-logs-list' })
-        .find(MultiColumnListCell({ row, columnIndex, content: status }))
-        .exists(),
-    );
-  },
   // open the new tab in the current tab
   openLogDetailsPageView(fileName) {
     cy.get('#view-job-profile-pane')
