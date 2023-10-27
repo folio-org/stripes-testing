@@ -13,14 +13,3 @@ export const getFullName = (user) => {
 
   return fullName;
 };
-
-export const getAdminSourceRecord = () => cy
-  .getUsers({ limit: 1, query: `"username"="${Cypress.env('diku_login')}"` })
-  .then((user) => {
-    const { lastName, firstName } = user[0].personal;
-    return `${lastName}${(firstName && `, ${firstName}`) || ''}`;
-  })
-  .then((record) => {
-    Cypress.env('adminSourceRecord', record);
-    return record;
-  });
