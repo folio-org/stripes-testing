@@ -12,6 +12,7 @@ import {
 const viewPane = Pane({ id: 'view-action-profile-pane' });
 const resultsPane = Pane({ id: 'pane-results' });
 const actionsButton = Button('Actions');
+const closeButton = Button({ icon: 'times' });
 
 export default {
   edit: () => {
@@ -29,6 +30,8 @@ export default {
     cy.do(viewPane.find(Button('Actions')).click());
     cy.do(Button('Duplicate').click());
   },
+
+  close: () => cy.do(viewPane.find(closeButton).click()),
 
   verifyLinkedFieldMappingProfile: (profileName) => {
     cy.expect(
