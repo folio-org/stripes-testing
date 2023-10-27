@@ -93,6 +93,7 @@ describe('Circulation log', () => {
         object: 'Loan',
         circAction: 'Renewed',
         servicePoint: testData.servicePoint.name,
+        // source: 'folio-aqa',
         source: testData.adminSourceRecord,
       };
       // Expand the Loans section

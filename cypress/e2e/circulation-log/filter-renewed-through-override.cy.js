@@ -112,15 +112,20 @@ describe('circulation-log', () => {
         object: 'Loan',
         circAction: 'Renewed through override',
         servicePoint: testData.userServicePoint.name,
+        // source: 'folio-aqa',
         source: testData.adminSourceRecord,
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
 
       SearchPane.searchByItemBarcode(item.barcode);
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData);
+      SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
     },
   );
 });

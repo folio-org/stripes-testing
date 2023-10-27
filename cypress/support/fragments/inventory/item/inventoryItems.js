@@ -5,6 +5,7 @@ import { Button, Modal } from '../../../../../interactors';
 const newRequestButton = Button('New request');
 
 function openActions() {
+  // need to wait until page will be loaded
   cy.wait(2000);
   cy.do(Button('Actions').click());
 }

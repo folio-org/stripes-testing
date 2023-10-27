@@ -85,7 +85,7 @@ describe('data-import', () => {
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
-        InventoryInstance.importWithOclc(oclcForUpdating);
+        InventoryInstance.importInstance(oclcForUpdating);
         InventoryInstance.checkCalloutMessage(
           `Record ${oclcForUpdating} updated. Results may take a few moments to become visible in Inventory`,
         );

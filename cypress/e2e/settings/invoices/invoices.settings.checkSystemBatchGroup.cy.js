@@ -8,7 +8,7 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const systemBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const systemBatchGroupName = 'Amherst (AC)';
-  const systemBatchGroupDescription = 'Amherst College';
+  const systemBatchGroupDescription = 'System default';
   before(() => {
     cy.getAdminToken()
       .then(() => {

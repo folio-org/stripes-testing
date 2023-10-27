@@ -18,7 +18,6 @@ const userSearchModal = Modal('Select User');
 const searchTextField = TextField({ type: 'search' });
 const firstSearchResult = MultiColumnListCell({ row: 0, columnIndex: 0 });
 const saveButton = Button('Save');
-const trashButton = Button({ icon: 'trash' });
 const assignedUsersSection = Section({ id: 'memberships' });
 const actionsButton = Button('Actions');
 const auPaneDetails = Section({ id: 'pane-ac-units-details' });
@@ -77,36 +76,35 @@ export default {
       userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
     ]);
+    cy.wait(4000);
   },
 
   assignAdmin: () => {
     cy.do([
       findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn('diku'),
+      userSearchModal.find(searchTextField).fillIn('folio'),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
     ]);
   },
 
-  unAssignUser: (AUName) => {
-    cy.do([
-      auListPane.find(Button(AUName)).click(),
-      assignedUsersSection
-        .find(MultiColumnListCell({ row: 1, columnIndex: 2 }))
-        .find(trashButton)
-        .click(),
-    ]);
+  unAssignUser: (AUName, user) => {
+    cy.do(auListPane.find(Button(AUName)).click());
+    cy.get(`div[class*=mclCell-]:contains("${user.lastName}, ${user.firstName} testMiddleName")`)
+      .parents('div[class*=mclRow-]')
+      .eq(0)
+      .find('button')
+      .click();
   },
 
   unAssignAdmin: (AUName) => {
-    cy.do([
-      auListPane.find(Button(AUName)).click(),
-      assignedUsersSection
-        .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
-        .find(trashButton)
-        .click(),
-    ]);
+    cy.do(auListPane.find(Button(AUName)).click());
+    cy.get('div[class*=mclCell-]:contains("folio-aqa, folio-aqa ")')
+      .parents('div[class*=mclRow-]')
+      .eq(0)
+      .find('button')
+      .click();
   },
 
   delete: (AUName) => {

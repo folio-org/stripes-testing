@@ -61,7 +61,7 @@ describe('orders: create', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
     });
 
@@ -94,7 +94,7 @@ describe('orders: create', () => {
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
       InteractorsTools.checkCalloutMessage(
         `The purchase order line ${orderNumber}-1 was successfully updated`,

@@ -16,6 +16,7 @@ const profileDetails = {
   recordType: 'Source record storage (entire record)',
   outputFormat: 'MARC',
   description: 'No value set-',
+  source: 'folio-aqa',
 };
 
 describe('setting: data-export', () => {

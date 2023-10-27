@@ -1,5 +1,4 @@
 import { HTML, including } from '@interactors/html';
-
 import { Button, Form, Label, Link, Pane, Select } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
 
