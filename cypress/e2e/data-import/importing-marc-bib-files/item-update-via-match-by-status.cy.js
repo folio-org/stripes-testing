@@ -68,7 +68,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C357552 Create simple items ${getRandomPostfix()}`,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         },
@@ -81,7 +81,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C357552 Update Item by POL match ${getRandomPostfix()}`,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         },
         actionProfile: {
@@ -107,7 +107,7 @@ describe('data-import', () => {
 
     const matchProfileItemStatus = {
       profileName: `C357552 Item status = Available ${getRandomPostfix()}`,
-      incomingStaticValue: 'Available',
+      incomingStaticValue: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
       incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.ITEM,

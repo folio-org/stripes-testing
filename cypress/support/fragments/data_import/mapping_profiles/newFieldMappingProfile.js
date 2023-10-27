@@ -781,7 +781,7 @@ export default {
   },
 
   fillStatus: (itemStatus) => {
-    cy.do(TextField('Status').fillIn(`"${itemStatus}"`));
+    cy.do(TextField('Status').fillIn(itemStatus));
     waitLoading();
   },
 
