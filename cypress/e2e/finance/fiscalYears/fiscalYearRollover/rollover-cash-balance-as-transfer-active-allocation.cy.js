@@ -152,38 +152,43 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C376607: Rollover cash balance as transfer ("Allocation" option is active) (thunderjet) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: [testType.extendedPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
-      Ledgers.fillInTestRolloverInfoCashBalance(
-        secondFiscalYear.code,
-        'Cash balance',
-        'Allocation',
-      );
+      Ledgers.fillInTestRolloverInfoCashBalance(secondFiscalYear.code, 'Cash balance', 'Transfer');
       Ledgers.rolloverLogs();
       Ledgers.exportRollover(todayDate);
-      Ledgers.checkDownloadedFile(
+      Ledgers.checkDownloadedFileWithAllTansactions(
         `${fileNameDate}-result.csv`,
         defaultFund,
         secondFiscalYear,
         '100',
         '100',
+        '100',
+        '0',
+        '0',
+        '100',
+        '60',
         '160',
-        '160',
-        '160',
+        '0',
+        '0',
+        '0',
+        '0',
+        '0',
+        '0',
         '160',
         '160',
       );
       Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
       Ledgers.closeOpenedPage();
       Ledgers.rollover();
-      Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
+      Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Transfer');
       Ledgers.closeRolloverInfo();
       Ledgers.selectFundInLedger(defaultFund.name);
       Funds.selectPlannedBudgetDetails();
-      Funds.checkFundingInformation('$160.00', '$0.00', '$0.00', '$160.00', '$0.00', '$160.00');
+      Funds.checkFundingInformation('$100.00', '$0.00', '$0.00', '$100.00', '$60.00', '$160.00');
       Funds.checkFinancialActivityAndOverages('$0.00', '$0.00', '$0.00', '$0.00');
     },
   );
