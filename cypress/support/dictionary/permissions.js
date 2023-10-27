@@ -390,6 +390,10 @@ export default {
     internal: 'ui-users.settings.conditions',
     gui: 'Settings (Users): Can view and edit patron blocks conditions',
   },
+  uiUsersCanViewCustomFields: {
+    internal: 'ui-users.settings.customfields.view',
+    gui: 'Settings (Users): Can view custom fields',
+  },
   uiUsersCustomField: {
     internal: 'ui-users.settings.customfields.all',
     gui: 'Settings (Users): Can create, edit, view and delete custom fields',
