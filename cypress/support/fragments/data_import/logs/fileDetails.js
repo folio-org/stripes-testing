@@ -18,6 +18,7 @@ const invoiceNumberFromEdifactFile = '94999';
 const resultsList = MultiColumnList({ id: 'search-results-list' });
 const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
 const nextButton = Button({ id: 'search-results-list-next-paging-button' });
+const previousButton = Button({ id: 'search-results-list-prev-paging-button' });
 
 const columnNameInResultList = {
   srsMarc: resultsList.find(MultiColumnListHeader({ id: 'list-column-srsmarcstatus' })),
@@ -54,12 +55,15 @@ const status = {
 };
 
 const visibleColumnsInSummaryTable = {
+  SUMMARY: { columnIndex: 1 },
   SRS_MARC: { columnIndex: 2 },
   INSTANCE: { columnIndex: 3 },
   HOLDINGS: { columnIndex: 4 },
   ITEM: { columnIndex: 5 },
-  INVOICE: { columnIndex: 7 },
-  ERROR: { columnIndex: 8 },
+  AUTHORITY: { columnIndex: 6 },
+  ORDER: { columnIndex: 7 },
+  INVOICE: { columnIndex: 8 },
+  ERROR: { columnIndex: 9 },
 };
 
 const visibleColumnsInResultsList = {
@@ -214,6 +218,25 @@ function getMultiColumnListCellsValuesInResultsList(cell) {
     .then(() => cells);
 }
 
+function getMultiColumnListCellsValuesInSummaryTable(cell) {
+  const cells = [];
+
+  // get MultiColumnList rows and loop over
+  return cy
+    .get('#job-summary-table')
+    .find('[data-row-index]')
+    .each(($row) => {
+      // from each row, choose specific cell
+      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+
 export default {
   columnNameInResultList,
   columnNameInSummuryTable,
@@ -311,6 +334,10 @@ export default {
 
   clickNextPaginationButton: () => {
     cy.do(nextButton.click());
+  },
+
+  clickPreviousPaginationButton: () => {
+    cy.do(previousButton.click());
   },
 
   verifyMultipleHoldingsStatus: (expectedArray, expectedQuantity, rowNumber = 0) => {
@@ -491,6 +518,14 @@ export default {
         .find(Link(itmStatus))
         .exists(),
     );
+  },
+
+  verifyColumnValuesInSummaryTable: (columnIndex, value) => {
+    getMultiColumnListCellsValuesInSummaryTable(columnIndex).then((cells) => {
+      cells.forEach((cellValue) => {
+        cy.expect(value).to.eql(cellValue);
+      });
+    });
   },
 
   getInvoiceNumber: (vendorInvoiceNumber) => {
