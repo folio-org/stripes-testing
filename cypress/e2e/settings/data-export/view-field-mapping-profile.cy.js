@@ -31,6 +31,9 @@ describe('setting: data-export', () => {
         path: TopMenu.settingsPath,
         waiter: SettingsPane.waitLoading,
       });
+    });
+    cy.getAdminSourceRecord().then((adminSourceRecord) => {
+      profileDetails.source = adminSourceRecord;
       ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(profileDetails.name);
     });
   });

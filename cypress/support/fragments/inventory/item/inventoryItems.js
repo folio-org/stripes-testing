@@ -6,7 +6,7 @@ const newRequestButton = Button('New request');
 
 function openActions() {
   // need to wait until page will be loaded
-  cy.wait(1000);
+  cy.wait(2000);
   cy.do(Button('Actions').click());
 }
 function clickMissingButton() {

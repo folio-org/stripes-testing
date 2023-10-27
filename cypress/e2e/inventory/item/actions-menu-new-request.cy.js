@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import NewRequest from '../../../support/fragments/requests/newRequest';
 
 describe('inventory', () => {
@@ -198,8 +198,8 @@ describe('inventory', () => {
           'Paged',
         ].forEach((itemStatus) => {
           InventoryInstance.openItemByStatus(itemStatus);
-          ItemActions.openActions();
-          ItemActions.clickNewRequestButton();
+          InventoryItems.openActions();
+          InventoryItems.clickNewRequestButton();
           NewRequest.waitLoadingNewRequestPage();
           NewRequest.checkItemInformationSecton(
             testData.instanceTitle,
@@ -219,8 +219,8 @@ describe('inventory', () => {
             InstanceRecordView.verifyInstanceRecordViewOpened();
             InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
             InventoryInstance.openItemByStatus(itemStatus);
-            ItemActions.openActions();
-            ItemActions.verifyNewRequestButtonIsAbsent();
+            InventoryItems.openActions();
+            InventoryItems.verifyNewRequestButtonIsAbsent();
           },
         );
       },

@@ -13,10 +13,11 @@ import {
   TextArea,
   Link,
 } from '../../../../interactors';
+import HoldingsRecordEdit from './holdingsRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 
-const root = Section({ id: 'ui-inventory.holdingsRecordView' });
+const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = Button('Actions');
 const editInQuickMarcButton = Button({ id: 'clickable-edit-marc-holdings' });
 const editButton = Button({ id: 'edit-holdings' });
@@ -34,7 +35,7 @@ const uriTextarea = TextArea({ ariaLabel: 'URI' });
 const holdingsViewPane = Pane({ id: 'ui-inventory.holdingsRecordView' });
 
 function waitLoading() {
-  cy.expect(actionsButton.exists());
+  cy.expect([holdingsRecordViewSection.exists(), actionsButton.exists()]);
 }
 
 export default {
@@ -46,7 +47,7 @@ export default {
   // actions
   close: () => {
     cy.do(closeButton.click());
-    cy.expect(root.absent());
+    cy.expect(holdingsRecordViewSection.absent());
   },
   editInQuickMarc: () => {
     cy.do([actionsButton.click(), editInQuickMarcButton.click()]);
@@ -72,6 +73,10 @@ export default {
   },
   edit: () => {
     cy.do([actionsButton.click(), editButton.click()]);
+
+    HoldingsRecordEdit.waitLoading();
+
+    return HoldingsRecordEdit;
   },
 
   openAccordion: (name) => {
@@ -94,7 +99,11 @@ export default {
     cy.do(actionsButton.click());
   },
   checkSource: (sourceValue) => cy.expect(KeyValue('Source', { value: sourceValue }).exists()),
-  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(root.find(KeyValue('Instance HRID')).has({ value: expectedInstanceHrId })),
+  checkInstanceHrId: (expectedInstanceHrId) => cy.expect(
+    holdingsRecordViewSection
+      .find(KeyValue('Instance HRID'))
+      .has({ value: expectedInstanceHrId }),
+  ),
   checkHrId: (expectedHrId) => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
   checkPermanentLocation: (expectedLocation) => cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists()),
   checkTemporaryLocation: (expectedLocation) => cy.expect(KeyValue('Temporary', { value: expectedLocation }).exists()),
@@ -134,10 +143,14 @@ export default {
       .exists(),
   ),
   checkMarkAsSuppressedFromDiscovery: () => cy.expect(
-    root.find(HTML(including('Warning: Holdings is marked suppressed from discovery'))).exists(),
+    holdingsRecordViewSection
+      .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
+      .exists(),
   ),
   checkMarkAsSuppressedFromDiscoveryAbsent: () => cy.expect(
-    root.find(HTML(including('Warning: Holdings is marked suppressed from discovery'))).absent(),
+    holdingsRecordViewSection
+      .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
+      .absent(),
   ),
   checkElectronicAccess: (relationshipValue, uriValue, linkText = '-', urlPublicNote = '-') => {
     cy.expect(
@@ -193,7 +206,7 @@ export default {
   },
   closeSourceView() {
     cy.do(PaneHeader().find(closeButton).click());
-    cy.expect(root.exists());
+    cy.expect(holdingsRecordViewSection.exists());
     this.waitLoading();
   },
   checkHoldingsStatementAbsent: (statement) => cy.expect(

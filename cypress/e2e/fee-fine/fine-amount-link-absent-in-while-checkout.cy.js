@@ -72,20 +72,22 @@ describe('Fee fine amout link in checkout', () => {
         })
         .then(() => {
           UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
-          feeFineAccount = {
-            id: uuid(),
-            ownerId: ownerData.id,
-            feeFineId: feeFineType.id,
-            amount: 9,
-            userId: userData.userId,
-            feeFineType: feeFineType.name,
-            feeFineOwner: ownerData.name,
-            createdAt: servicePoint.id,
-            dateAction: moment.utc().format(),
-            source: 'ADMINISTRATOR, DIKU',
-          };
-          NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-            feeFineAccount.id = feeFineAccountId;
+          cy.getAdminSourceRecord().then((adminSourceRecord) => {
+            feeFineAccount = {
+              id: uuid(),
+              ownerId: ownerData.id,
+              feeFineId: feeFineType.id,
+              amount: 9,
+              userId: userData.userId,
+              feeFineType: feeFineType.name,
+              feeFineOwner: ownerData.name,
+              createdAt: servicePoint.id,
+              dateAction: moment.utc().format(),
+              source: adminSourceRecord,
+            };
+            NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+              feeFineAccount.id = feeFineAccountId;
+            });
           });
         });
     });

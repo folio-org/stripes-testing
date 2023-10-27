@@ -10,7 +10,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
-import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
 
 let user;
 let servicePointId;
@@ -48,7 +48,7 @@ describe('circulation-log', () => {
             });
           });
         });
-      ItemActions.markItemAsMissingByUserIdViaApi(user.userId);
+      InventoryItems.markItemAsMissingByUserIdViaApi(user.userId);
       cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
     });
   });
@@ -65,19 +65,25 @@ describe('circulation-log', () => {
       SearchPane.searchByMarkedAsMissing();
       SearchPane.verifyResultCells();
       SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
-        SearchPane.checkResultSearch({
-          itemBarcode: item.barcode,
-          circAction: 'Marked as missing',
-        }, rowIndex);
+        SearchPane.checkResultSearch(
+          {
+            itemBarcode: item.barcode,
+            circAction: 'Marked as missing',
+          },
+          rowIndex,
+        );
       });
       SearchPane.resetResults();
 
       SearchPane.searchByItemBarcode(item.barcode);
       SearchPane.findResultRowIndexByContent(item.barcode).then((rowIndex) => {
-        SearchPane.checkResultSearch({
-          itemBarcode: item.barcode,
-          circAction: 'Marked as missing',
-        }, rowIndex);
+        SearchPane.checkResultSearch(
+          {
+            itemBarcode: item.barcode,
+            circAction: 'Marked as missing',
+          },
+          rowIndex,
+        );
       });
     },
   );
