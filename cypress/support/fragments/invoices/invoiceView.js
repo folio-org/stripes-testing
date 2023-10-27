@@ -33,6 +33,10 @@ const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
+// voucher details
+const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
+const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
+
 export default {
   expandActionsDropdown() {
     cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
@@ -106,16 +110,28 @@ export default {
       }
     });
   },
-  checkInvoiceDetails({ title, invoiceInformation = [], invoiceLines } = {}) {
+  checkInvoiceDetails({
+    title,
+    invoiceInformation = [],
+    invoiceLines,
+    voucherExport = [],
+    voucherInformation = [],
+  } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
     }
 
-    if (invoiceInformation.length) {
-      invoiceInformation.forEach(({ key, value }) => {
-        cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
-      });
-    }
+    invoiceInformation.forEach(({ key, value }) => {
+      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    voucherExport.forEach(({ key, value }) => {
+      cy.expect(voucherExportDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    voucherInformation.forEach(({ key, value }) => {
+      cy.expect(voucherInformationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
 
     if (invoiceLines) {
       cy.expect(

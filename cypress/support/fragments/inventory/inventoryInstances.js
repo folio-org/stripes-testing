@@ -17,7 +17,7 @@ import {
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
-import inventoryNewInstance from './inventoryNewInstance';
+import InventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES } from '../../constants';
@@ -154,14 +154,13 @@ export default {
     cy.wait('@getView');
   },
 
-  add: (title) => {
-    cy.do(actionsButton.click());
-    cy.do(Button('New').click());
-    inventoryNewInstance.waitLoading();
-    inventoryNewInstance.fillRequiredValues(title);
-    inventoryNewInstance.save();
-  },
+  addNewInventory() {
+    cy.do([actionsButton.click(), Button('New').click()]);
 
+    InventoryNewInstance.waitLoading();
+
+    return InventoryNewInstance;
+  },
   resetAllFilters: () => {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
@@ -630,8 +629,9 @@ export default {
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
-  verifyInstanceDetailsView: () => cy.expect(Section({ id: 'pane-instancedetails' }).exists()),
-
+  verifyInstanceDetailsView() {
+    InventoryInstance.waitInventoryLoading();
+  },
   clickAdvSearchButton() {
     cy.do(advSearchButton.click());
     cy.expect([
