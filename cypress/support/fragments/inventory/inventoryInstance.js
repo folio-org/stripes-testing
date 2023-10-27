@@ -1111,9 +1111,4 @@ export default {
     const holdingSection = section.find(Accordion(including(holdingName)));
     cy.expect(holdingSection.find(Badge()).has({ value: `${numOfItems}` }));
   },
-
-  checkAbsenceOfNewMarcBibRecordOption() {
-    cy.do(paneResultsSection.find(actionsBtn).click());
-    cy.expect(newMarcBibButton.absent());
-  },
 };
