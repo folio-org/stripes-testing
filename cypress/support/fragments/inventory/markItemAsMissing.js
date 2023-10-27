@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { HTML, including, Link } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   KeyValue,
@@ -194,7 +194,12 @@ export default {
   },
 
   openItem(itemBarcode) {
-    cy.do(Link(itemBarcode).click());
+    cy.do(
+      Section({ id: 'pane-instancedetails' })
+        .find(MultiColumnListCell({ content: itemBarcode }))
+        .find(Button(including(itemBarcode)))
+        .click(),
+    );
   },
 
   checkIsMarkAsMissingExist(isExist) {

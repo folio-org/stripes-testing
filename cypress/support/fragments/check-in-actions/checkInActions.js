@@ -11,6 +11,7 @@ import {
   Modal,
   PaneContent,
   or,
+  MultiColumnListHeader,
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -49,6 +50,10 @@ const actionsButtons = {
   printHoldSlip: printHoldSlipButton,
 };
 const itemAnumberOfPieces = '2';
+const dateField = TextField('Date returned');
+const timeField = TextField('Time returned');
+const checkedInItemsList = MultiColumnList({ id: 'list-items-checked-in' });
+
 const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
   cy.expect(Button('End session').exists());
@@ -81,6 +86,9 @@ export default {
       descriptionOfmissingPieces.fillIn(missingPiecesDescription),
       Button('Save & close').click(),
     ]);
+  },
+  editDateAndTimeReturned(date, time) {
+    cy.do([Button('today').click(), dateField.fillIn(date), timeField.fillIn(time)]);
   },
   endSession() {
     cy.do(endSessionButton.click());
@@ -264,5 +272,15 @@ export default {
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
+  },
+
+  checkTimeReturned(row, time) {
+    cy.then(() => MultiColumnListHeader({ id: 'list-column-timereturned' }).index()).then(
+      (columnIndex) => {
+        cy.expect(
+          checkedInItemsList.find(MultiColumnListCell(time, { row, columnIndex })).exists(),
+        );
+      },
+    );
   },
 };

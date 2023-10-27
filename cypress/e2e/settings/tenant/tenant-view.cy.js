@@ -2,7 +2,7 @@ import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Permissions -> Tenant', () => {
   const testData = {
@@ -20,10 +20,10 @@ describe('Permissions -> Tenant', () => {
     cy.createTempUser([Permissions.settingsTenantView.gui]).then((userProperties) => {
       testData.user = userProperties;
 
-      cy.login(testData.user.username, testData.user.password, {
-        path: SettingsMenu.tenantPath,
-        waiter: TenantPane.waitLoading,
-      });
+      cy.login(testData.user.username, testData.user.password);
+      cy.wait(3000);
+      TopMenuNavigation.navigateToApp('Settings');
+      TenantPane.goToTenantTab();
     });
   });
 
