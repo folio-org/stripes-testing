@@ -29,11 +29,14 @@ import {
   or,
   PaneContent,
 } from '../../../../interactors';
+import HoldingsRecordEdit from './holdingsRecordEdit';
+import HoldingsRecordView from './holdingsRecordView';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
+import ItemRecordEdit from './item/itemRecordEdit';
 import ItemRecordView from './item/itemRecordView';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -49,6 +52,7 @@ const viewSourceButton = Button({ id: 'clickable-view-source' });
 const overlaySourceBibRecord = Button({ id: 'dropdown-clickable-reimport-record' });
 const deriveNewMarcBibRecord = Button({ id: 'duplicate-instance-marc' });
 const addMarcHoldingRecordButton = Button({ id: 'create-holdings-marc' });
+const addHoldingButton = section.find(Button('Add holdings'));
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
@@ -154,8 +158,10 @@ const validOCLC = {
 };
 
 const pressAddHoldingsButton = () => {
-  cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
-  InventoryNewHoldings.waitLoading();
+  cy.do(addHoldingButton.click());
+  HoldingsRecordEdit.waitLoading();
+
+  return HoldingsRecordEdit;
 };
 
 const waitLoading = () => cy.expect(actionsButton.exists());
@@ -173,7 +179,12 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 
 const openItemByBarcode = (itemBarcode) => {
-  cy.do(Link(including(itemBarcode)).click());
+  cy.do(
+    Section({ id: 'pane-instancedetails' })
+      .find(MultiColumnListCell({ content: itemBarcode }))
+      .find(Button(including(itemBarcode)))
+      .click(),
+  );
   ItemRecordView.waitLoading();
 };
 
@@ -614,9 +625,13 @@ export default {
     cy.expect(Section({ id: 'acc01' }).exists());
   },
 
-  clickAddItemByHoldingName(holdingName) {
+  clickAddItemByHoldingName({ holdingName, instanceTitle = '' } = {}) {
     const holdingSection = section.find(Accordion(including(holdingName)));
     cy.do(holdingSection.find(addItemButton).click());
+
+    ItemRecordEdit.waitLoading(instanceTitle);
+
+    return ItemRecordEdit;
   },
 
   fillItemRequiredFields() {
@@ -641,18 +656,17 @@ export default {
 
   saveItemDataAndVerifyExistence(copyNumber) {
     cy.do(saveAndCloseButton.click());
-    cy.expect(Section({ id: 'pane-instancedetails' }).exists());
+    cy.expect(section.exists());
     cy.do(Button(including('Holdings:')).click());
-    cy.expect(
-      Section({ id: 'pane-instancedetails' })
-        .find(MultiColumnListCell({ row: 0, content: copyNumber }))
-        .exists(),
-    );
+    cy.expect(section.find(MultiColumnListCell({ row: 0, content: copyNumber })).exists());
   },
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    cy.expect(Pane({ titleLabel: including('Holdings') }).exists());
+
+    HoldingsRecordView.waitLoading();
+
+    return HoldingsRecordView;
   },
   createHoldingsRecord: (permanentLocation) => {
     pressAddHoldingsButton();
@@ -868,7 +882,11 @@ export default {
       KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }),
     );
   },
-
+  checkInstanceDetails({ instanceInformation = [] } = {}) {
+    instanceInformation.forEach(({ key, value }) => {
+      cy.expect(section.find(KeyValue(key)).has({ value: including(value) }));
+    });
+  },
   getId() {
     cy.url()
       .then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)))
@@ -887,6 +905,31 @@ export default {
 
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
+  },
+
+  checkHoldingsTableContent({ name, records = [] } = {}) {
+    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
+    cy.do(holdingsSection.clickHeader());
+
+    records.forEach((record, index) => {
+      if (record.barcode) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.barcode) }),
+        );
+      }
+
+      if (record.status) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.status) }),
+        );
+      }
+    });
   },
 
   verifyHoldingsPermanentLocation(permanentLocation) {
@@ -973,7 +1016,7 @@ export default {
   verifyLoan: (content) => cy.expect(MultiColumnListCell({ content }).exists()),
 
   verifyLoanInItemPage(barcode, value) {
-    cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
+    cy.do(MultiColumnListCell({ content: barcode }).find(Button()).click());
     cy.expect(KeyValue('Temporary loan type').has({ value }));
     cy.do(Button({ icon: 'times' }).click());
   },
@@ -991,7 +1034,7 @@ export default {
     cy.get('div[class^="mclRow--"]')
       .contains('div[class^="mclCell-"]', status)
       .then((elem) => {
-        elem.parent()[0].querySelector('[href]').click();
+        elem.parent()[0].querySelector('button[type="button"]').click();
       });
     cy.wait(2000);
   },
