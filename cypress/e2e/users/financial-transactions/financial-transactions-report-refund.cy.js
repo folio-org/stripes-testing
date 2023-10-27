@@ -17,6 +17,7 @@ import Users from '../../../support/fragments/users/users';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import PayFeeFane from '../../../support/fragments/users/payFeeFaine';
 import RefundFeeFine from '../../../support/fragments/users/refundFeeFine';
+import { getAdminSourceRecord } from '../../../support/utils/users';
 
 describe('Financial Transactions Detail Report', () => {
   const reportName = 'Financial-Transactions-Detail-Report.csv';
@@ -78,6 +79,7 @@ describe('Financial Transactions Detail Report', () => {
               userData.userId = userProperties.userId;
               userData.barcode = userProperties.barcode;
               userData.firstName = userProperties.firstName;
+              getAdminSourceRecord();
             })
             .then(() => {
               UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
@@ -91,7 +93,7 @@ describe('Financial Transactions Detail Report', () => {
                 feeFineOwner: ownerData.name,
                 createdAt: servicePoint.id,
                 dateAction: moment.utc().format(),
-                source: 'ADMINISTRATOR, DIKU',
+                source: Cypress.env('adminSourceRecord'),
               };
               NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
                 feeFineAccount.id = feeFineAccountId;
@@ -100,14 +102,14 @@ describe('Financial Transactions Detail Report', () => {
                   paymentMethod: paymentMethod.name,
                   notifyPatron: false,
                   servicePointId: servicePoint.id,
-                  userName: 'ADMINISTRATOR, DIKU',
+                  userName: Cypress.env('adminSourceRecord'),
                 };
                 const refundBody = {
                   amount: actionAmount,
                   paymentMethod: refundReason.nameReason,
                   notifyPatron: false,
                   servicePointId: servicePoint.id,
-                  userName: 'ADMINISTRATOR, DIKU',
+                  userName: Cypress.env('adminSourceRecord'),
                 };
                 PayFeeFane.payFeeFineViaApi(payBody, feeFineAccountId);
                 RefundFeeFine.refundFeeFineViaApi(refundBody, feeFineAccountId);

@@ -11,6 +11,7 @@ import {
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import PaymentMethods from '../settings/users/paymentMethods';
 import UserEdit from './userEdit';
+import { getAdminSourceRecord } from '../../utils/users';
 
 const waiveAllButton = Button({ id: 'open-closed-all-wave-button' });
 const feeFinesList = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
@@ -30,7 +31,8 @@ export default {
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(
           (requestedServicePoints) => {
             const servicePointId = requestedServicePoints[0].id;
-            UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, userId);
+            getAdminSourceRecord().then((record) => {
               cy.okapiRequest({
                 method: 'POST',
                 path: `accounts/${accountId}/waive`,
@@ -41,7 +43,7 @@ export default {
                   notifyPatron: false,
                   servicePointId,
                   // all api methods run by diku
-                  userName: 'ADMINISTRATOR, DIKU',
+                  userName: record,
                 },
                 isDefaultSearchParamsRequired: false,
               });

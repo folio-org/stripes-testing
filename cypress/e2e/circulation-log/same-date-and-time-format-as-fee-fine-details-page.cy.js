@@ -13,6 +13,7 @@ import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import { getAdminSourceRecord } from '../../support/utils/users';
 
 describe('circulation-log', () => {
   const userData = {};
@@ -57,6 +58,7 @@ describe('circulation-log', () => {
             userData.username = userProperties.username;
             userData.password = userProperties.password;
             userData.userId = userProperties.userId;
+            getAdminSourceRecord();
           })
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, userData.userId);
@@ -70,7 +72,7 @@ describe('circulation-log', () => {
               feeFineOwner: ownerData.name,
               createdAt: servicePointId,
               dateAction: moment.utc().format(),
-              source: 'ADMINISTRATOR, DIKU',
+              source: Cypress.env('adminSourceRecord'),
             };
             NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
               feeFineAccount.id = feeFineAccountId;

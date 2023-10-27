@@ -28,6 +28,7 @@ import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
 import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
 import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
+import { getAdminSourceRecord } from '../../support/utils/users';
 
 describe('Circulation log', () => {
   const patronGroup = {
@@ -50,28 +51,28 @@ describe('Circulation log', () => {
     paymentMethod: waiveReason.nameReason,
     notifyPatron: false,
     servicePointId: testData.userServicePoint.id,
-    userName: 'ADMINISTRATOR, DIKU',
+    userName: Cypress.env('adminSourceRecord'),
   });
   const payBody = (amount) => ({
     amount,
     paymentMethod: testData.paymentMethodName,
     notifyPatron: false,
     servicePointId: testData.userServicePoint.id,
-    userName: 'ADMINISTRATOR, DIKU',
+    userName: Cypress.env('adminSourceRecord'),
   });
   const transferBody = (amount) => ({
     amount,
     paymentMethod: transferAccount.accountName,
     notifyPatron: false,
     servicePointId: testData.userServicePoint.id,
-    userName: 'ADMINISTRATOR, DIKU',
+    userName: Cypress.env('adminSourceRecord'),
   });
   const refundBody = (amount) => ({
     amount,
     paymentMethod: refundReason.nameReason,
     notifyPatron: false,
     servicePointId: testData.userServicePoint.id,
-    userName: 'ADMINISTRATOR, DIKU',
+    userName: Cypress.env('adminSourceRecord'),
   });
   const userOwnerBody = {
     id: uuid(),
@@ -112,7 +113,7 @@ describe('Circulation log', () => {
       circAction: filterName,
       // TODO: add check for date with format <C6/8/2022, 6:46 AM>
       servicePoint: testData.userServicePoint.name,
-      source: 'ADMINISTRATOR, DIKU',
+      source: Cypress.env('adminSourceRecord'),
       desc: `Fee/Fine type: ${testData.manualChargeName}.`,
     };
     cy.visit(TopMenu.circulationLogPath);
@@ -141,13 +142,14 @@ describe('Circulation log', () => {
       title: itemData.title,
       createdAt: testData.userServicePoint.id,
       dateAction: moment.utc().format(),
-      source: 'ADMINISTRATOR, DIKU',
+      source: Cypress.env('adminSourceRecord'),
     });
   };
 
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
+        getAdminSourceRecord();
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);

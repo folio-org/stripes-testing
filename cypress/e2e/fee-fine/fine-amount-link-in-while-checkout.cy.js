@@ -18,6 +18,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import UserFeeFines from '../../support/fragments/users/feeFines';
+import { getAdminSourceRecord } from '../../support/utils/users';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -73,6 +74,7 @@ describe('Fee fine amout link in checkout', () => {
           userData.userId = userProperties.userId;
           userData.barcode = userProperties.barcode;
           userData.firstName = userProperties.firstName;
+          getAdminSourceRecord();
         })
         .then(() => {
           UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
@@ -86,7 +88,7 @@ describe('Fee fine amout link in checkout', () => {
             feeFineOwner: ownerData.name,
             createdAt: servicePoint.id,
             dateAction: moment.utc().format(),
-            source: 'ADMINISTRATOR, DIKU',
+            source: Cypress.env('adminSourceRecord'),
           };
           NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
             feeFineAccount.id = feeFineAccountId;

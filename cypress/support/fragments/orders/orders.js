@@ -25,6 +25,7 @@ import {
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
+import { getAdminSourceRecord } from '../../utils/users';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import OrderDetails from './orderDetails';
@@ -40,7 +41,6 @@ const orderLineList = MultiColumnList({ id: 'order-line-list' });
 const orderDetailsPane = Pane({ id: 'order-details' });
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
-const createdByAdmin = 'ADMINISTRATOR, Diku_admin ';
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
 const admin = 'administrator';
@@ -353,12 +353,14 @@ export default {
   },
   checkOrderDetails(order) {
     cy.expect(orderDetailsPane.exists());
-    Object.values(order).forEach((value) => {
-      cy.expect(purchaseOrderSection.find(KeyValue({ value })).exists());
+    Object.values(order).forEach((contentToCheck) => {
+      cy.expect(purchaseOrderSection.find(KeyValue({ value: including(contentToCheck) })).exists());
     });
   },
   checkCreatedOrder(order) {
-    this.checkOrderDetails({ vendor: order.vendor, createdByAdmin });
+    getAdminSourceRecord().then((source) => {
+      this.checkOrderDetails({ vendor: order.vendor, source });
+    });
   },
   checkCreatedOngoingOrder(order) {
     this.checkOrderDetails({ vendor: order.vendor, orderType: order.orderType });

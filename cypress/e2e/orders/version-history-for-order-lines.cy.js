@@ -111,6 +111,9 @@ describe('Orders: orders', () => {
       );
       cy.then(() => {
         firstDate = DateTools.getCurrentUTCTime();
+        //
+        // TO DO: change ADMINISTRATOR, Diku_admin
+        //
         firstCard = `${firstDate}\nView this version\nSource: ADMINISTRATOR, Diku_admin\nOriginal version`;
       });
       // Need to wait for the next card in the order history to be created with a difference of a minute.

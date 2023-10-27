@@ -21,6 +21,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import GenerateItemBarcode from '../../../support/utils/generateItemBarcode';
 import GetRandomPostfix from '../../../support/utils/stringTools';
+import { getAdminSourceRecord } from '../../../support/utils/users';
 
 describe('Financial Transactions Detail Report', () => {
   const reportName = 'Financial-Transactions-Detail-Report.csv';
@@ -133,6 +134,7 @@ describe('Financial Transactions Detail Report', () => {
                   userData.userId = userProperties.userId;
                   userData.barcode = userProperties.barcode;
                   userData.firstName = userProperties.firstName;
+                  getAdminSourceRecord();
                 })
                 .then(() => {
                   UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
@@ -149,7 +151,7 @@ describe('Financial Transactions Detail Report', () => {
                     barcode: testData.itemBarcode,
                     itemId: testData.itemId,
                     dateAction: moment.utc().format(),
-                    source: 'ADMINISTRATOR, DIKU',
+                    source: Cypress.env('adminSourceRecord'),
                   };
                   NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
                     feeFineAccount.id = feeFineAccountId;
@@ -158,7 +160,7 @@ describe('Financial Transactions Detail Report', () => {
                       paymentMethod: paymentMethod.name,
                       notifyPatron: false,
                       servicePointId: servicePoint.id,
-                      userName: 'ADMINISTRATOR, DIKU',
+                      userName: Cypress.env('adminSourceRecord'),
                     };
 
                     PayFeeFane.payFeeFineViaApi(payBody, feeFineAccountId);

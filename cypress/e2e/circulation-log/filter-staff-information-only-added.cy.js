@@ -20,6 +20,7 @@ import SearchResults from '../../support/fragments/circulation-log/searchResults
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import { getAdminSourceRecord } from '../../support/utils/users';
 
 let userData = {};
 const ownerData = {};
@@ -71,6 +72,7 @@ describe('circulation-log', () => {
         cy.createTempUser([permissions.circulationLogAll.gui])
           .then((userProperties) => {
             userData = userProperties;
+            getAdminSourceRecord();
           })
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, userData.userId);
@@ -84,13 +86,17 @@ describe('circulation-log', () => {
               feeFineOwner: ownerData.name,
               createdAt: servicePointId,
               dateAction: moment.utc().format(),
-              source: 'ADMINISTRATOR, DIKU',
+              source: Cypress.env('adminSourceRecord'),
               instanceId: item.instanceId,
               itemId: item.itemId,
             };
             NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
               feeFineAccount.id = feeFineAccountId;
-              AddNewStaffInfo.addNewStaffInfoViaApi(userData.userId, newStaffInfoMessage);
+              AddNewStaffInfo.addNewStaffInfoViaApi(
+                userData.userId,
+                newStaffInfoMessage,
+                Cypress.env('adminSourceRecord'),
+              );
               cy.login(userData.username, userData.password, {
                 path: TopMenu.circulationLogPath,
                 waiter: SearchPane.waitLoading,
@@ -119,7 +125,7 @@ describe('circulation-log', () => {
         itemBarcode: item.barcode,
         object: 'Fee/fine',
         circAction: 'Staff information only added',
-        source: 'ADMINISTRATOR, Diku_admin',
+        source: Cypress.env('adminSourceRecord'),
       };
 
       SearchPane.setFilterOptionFromAccordion('fee', 'Staff information only added');

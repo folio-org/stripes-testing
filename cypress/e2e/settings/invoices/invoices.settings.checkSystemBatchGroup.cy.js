@@ -3,6 +3,7 @@ import NewBatchGroup from '../../../support/fragments/invoices/newBatchGroup';
 import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
 import TestType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
+import { getAdminSourceRecord } from '../../../support/utils/users';
 
 describe('ui-invoices-settings: System Batch Group deletion', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
@@ -10,6 +11,8 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
   const systemBatchGroupName = 'Amherst (AC)';
   const systemBatchGroupDescription = 'Amherst College';
   before(() => {
+    cy.getAdminToken();
+    getAdminSourceRecord();
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
   });
@@ -23,10 +26,12 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
       SettingsInvoices.waitBatchGroupsLoading();
       SettingsInvoices.checkNotDeletingGroup(systemBatchGroupName);
       SettingsInvoices.editBatchGroup(batchGroup, systemBatchGroupName);
+      batchGroup.source = Cypress.env('adminSourceRecord');
       SettingsInvoices.checkBatchGroup(batchGroup);
       SettingsInvoices.checkNotDeletingGroup(batchGroup.name);
       // revert changes in system batch group
       SettingsInvoices.editBatchGroup(systemBatchGroup, batchGroup.name);
+      systemBatchGroup.source = Cypress.env('adminSourceRecord');
       SettingsInvoices.checkBatchGroup(systemBatchGroup);
     },
   );

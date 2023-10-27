@@ -17,6 +17,7 @@ import AppPaths from '../../support/fragments/app-paths';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import PayFeeFine from '../../support/fragments/users/payFeeFaine';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
+import { getAdminSourceRecord } from '../../support/utils/users';
 
 describe('Fee/Fine history ', { retries: 1 }, () => {
   const userData = {};
@@ -78,6 +79,7 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
               userData.userId = userProperties.userId;
               userData.barcode = userProperties.barcode;
               userData.firstName = userProperties.firstName;
+              getAdminSourceRecord();
             })
             .then(() => {
               UserEdit.addServicePointViaApi(servicePointId, userData.userId);
@@ -92,7 +94,7 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
                 feeFineOwner: ownerData.name,
                 createdAt: servicePointId,
                 dateAction: moment.utc().format(),
-                source: 'ADMINISTRATOR, DIKU',
+                source: Cypress.env('adminSourceRecord'),
               };
               NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
                 feeFineAccount.id = feeFineAccountId;
