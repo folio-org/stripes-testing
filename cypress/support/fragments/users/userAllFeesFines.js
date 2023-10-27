@@ -1,4 +1,5 @@
 import { CheckBox } from '@interactors/html';
+
 import {
   Button,
   Modal,
@@ -113,5 +114,9 @@ export default {
 
   verifyPayModalIsOpen: () => {
     cy.expect(Modal('Pay fee/fine').exists());
+  },
+
+  clickOnRowByIndex: (rowIndex) => {
+    cy.do(feeFinesList.find(MultiColumnListRow({ index: rowIndex })).click());
   },
 };
