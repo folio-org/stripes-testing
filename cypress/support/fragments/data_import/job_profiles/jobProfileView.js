@@ -174,4 +174,8 @@ export default {
       .invoke('removeAttr', 'target')
       .click();
   },
+
+  openLinkedProfileById: (id) => {
+    cy.do(viewPane.find(Link({ href: including(`${id}`) })).click());
+  },
 };
