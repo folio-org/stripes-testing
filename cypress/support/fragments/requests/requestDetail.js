@@ -105,6 +105,10 @@ export default {
     cy.do(moveRequestButton.click());
   },
 
+  verifyMoveRequestButtonExists() {
+    cy.expect(moveRequestButton.exists());
+  },
+
   requestQueueOnInstance(instanceTitle) {
     cy.do([actionsButton.click(), Button('Reorder queue').click()]);
     cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
