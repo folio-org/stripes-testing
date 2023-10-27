@@ -40,7 +40,7 @@ import CheckOutActions from '../../../support/fragments/check-out-actions/check-
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import DateTools from '../../../support/utils/dateTools';
 import UserEdit from '../../../support/fragments/users/userEdit';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 
 describe.skip('inventory', () => {
   describe('Item', () => {
@@ -231,8 +231,8 @@ describe.skip('inventory', () => {
         checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
         // mark item as missing
-        ItemActions.markAsMissing();
-        ItemActions.confirmMarkAsMissing();
+        InventoryItems.markAsMissing();
+        InventoryItems.confirmMarkAsMissing();
         fullCheck(ItemRecordView.itemStatuses.missing);
 
         // check in item at service point assigned to its effective location

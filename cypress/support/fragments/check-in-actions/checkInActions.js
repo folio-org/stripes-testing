@@ -25,6 +25,7 @@ const printTransitSlipButton = Button('Print transit slip');
 const printHoldSlipButton = Button('Print hold slip');
 const newFeeFineButton = Button('New Fee/Fine');
 const checkInButton = Button('Check in');
+const checkInButtonNotes = Button('Check in Notes');
 const itemBarcodeField = TextField({ name: 'item.barcode' });
 const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
@@ -190,6 +191,17 @@ export default {
   openNewfeefinesPane: () => {
     cy.do([availableActionsButton.click(), newFeeFineButton.click()]);
     cy.expect(Modal(including('New fee/fine')).exists());
+  },
+
+  openCheckInNotes: () => {
+    cy.do([availableActionsButton.click(), checkInButtonNotes.click()]);
+    cy.expect(Modal(including('Check in notes')).exists());
+    cy.expect(Button('Close').exists());
+    cy.do(Button('Close').click());
+  },
+
+  verifyModalIsClosed() {
+    cy.expect(Modal(including('Check in notes')).absent());
   },
 
   checkinItemViaApi: (body) => {

@@ -14,7 +14,7 @@ export default {
   submit: () => cy.do(rootModal.find(Button('Save')).click()),
   checkStaffInfoModalClosed: () => cy.expect(rootModal.absent()),
 
-  addNewStaffInfoViaApi: (userId, staffText) => {
+  addNewStaffInfoViaApi: (userId, staffText, source) => {
     FeeFines.getUserFeesFines(userId).then((res) => {
       cy.okapiRequest({
         method: 'POST',
@@ -24,7 +24,7 @@ export default {
           comments: `STAFF : ${staffText}`,
           dateAction: moment.utc().format(),
           id: uuid(),
-          source: 'ADMINISTRATOR, Diku_admin',
+          source,
           transactionInformation: '',
           typeAction: 'Staff info only',
         },

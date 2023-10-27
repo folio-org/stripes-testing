@@ -15,7 +15,7 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 
@@ -133,10 +133,10 @@ describe('Orders: Receiving and Check-in', () => {
         barcodeForFirstItem,
         ITEM_STATUS_NAMES.IN_PROCESS,
       );
-      ItemActions.edit();
+      InventoryItems.edit();
       ItemRecordView.changeItemBarcode(changedBarcode);
       ItemRecordView.checkItemDetails(location.name, changedBarcode, ITEM_STATUS_NAMES.IN_PROCESS);
-      ItemActions.closeItem();
+      InventoryItems.closeItem();
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', barcodeForSecondItem);
       ItemRecordView.checkItemDetails(
@@ -144,7 +144,7 @@ describe('Orders: Receiving and Check-in', () => {
         barcodeForSecondItem,
         ITEM_STATUS_NAMES.IN_PROCESS,
       );
-      ItemActions.closeItem();
+      InventoryItems.closeItem();
       InventorySearchAndFilter.switchToItem();
     },
   );

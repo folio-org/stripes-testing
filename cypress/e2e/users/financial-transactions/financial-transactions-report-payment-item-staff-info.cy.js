@@ -146,39 +146,38 @@ describe('Financial Transactions Detail Report', () => {
                     userData.userId,
                     servicePoint.id,
                   );
-
-                  feeFineAccount = {
-                    id: uuid(),
-                    ownerId: ownerData.id,
-                    feeFineId: feeFineType.id,
-                    amount: 100,
-                    userId: userData.userId,
-                    feeFineType: feeFineType.name,
-                    feeFineOwner: ownerData.name,
-                    createdAt: servicePoint.id,
-                    title: instanceData.title,
-                    barcode: testData.itemBarcode,
-                    itemId: testData.itemId,
-                    dateAction: moment.utc().format(),
-                    source: 'ADMINISTRATOR, DIKU',
-                  };
-                  NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-                    feeFineAccount.id = feeFineAccountId;
-                    const payBody = {
-                      amount: actionAmount,
-                      comments: 'STAFF : ' + staffComment,
-                      paymentMethod: paymentMethod.name,
-                      notifyPatron: false,
-                      servicePointId: servicePoint.id,
-                      userName: 'ADMINISTRATOR, DIKU',
+                  cy.getAdminSourceRecord().then((adminSourceRecord) => {
+                    feeFineAccount = {
+                      id: uuid(),
+                      ownerId: ownerData.id,
+                      feeFineId: feeFineType.id,
+                      amount: 100,
+                      userId: userData.userId,
+                      feeFineType: feeFineType.name,
+                      feeFineOwner: ownerData.name,
+                      createdAt: servicePoint.id,
+                      title: instanceData.title,
+                      barcode: testData.itemBarcode,
+                      itemId: testData.itemId,
+                      dateAction: moment.utc().format(),
+                      source: adminSourceRecord,
                     };
-
-                    PayFeeFane.payFeeFineViaApi(payBody, feeFineAccountId);
-
-                    cy.login(userData.username, userData.password);
-                    cy.visit(TopMenu.usersPath);
-                    UsersSearchResultsPane.waitLoading();
+                    NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+                      feeFineAccount.id = feeFineAccountId;
+                      const payBody = {
+                        amount: actionAmount,
+                        comments: 'STAFF : ' + staffComment,
+                        paymentMethod: paymentMethod.name,
+                        notifyPatron: false,
+                        servicePointId: servicePoint.id,
+                        userName: adminSourceRecord,
+                      };
+                      PayFeeFane.payFeeFineViaApi(payBody, feeFineAccountId);
+                    });
                   });
+                  cy.login(userData.username, userData.password);
+                  cy.visit(TopMenu.usersPath);
+                  UsersSearchResultsPane.waitLoading();
                 });
             });
         });

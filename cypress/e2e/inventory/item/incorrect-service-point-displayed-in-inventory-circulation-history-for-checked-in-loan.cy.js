@@ -148,7 +148,6 @@ describe('inventory', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkItemCirculationHistory(
