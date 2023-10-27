@@ -1,6 +1,8 @@
 import {
   Button,
   including,
+  matching,
+  not,
   HTML,
   TextField,
   Select,
@@ -19,27 +21,44 @@ import {
   RepeatableField,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import InstanceStates from './instanceStates';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
 const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
 const sourceSelect = rootForm.find(Select({ name: 'sourceId' }));
 const readonlyFields = [holdingsHrId, sourceSelect];
-const callNumber = rootForm.find(TextArea({ name: 'callNumber' }));
+const callNumberField = rootForm.find(TextArea({ name: 'callNumber' }));
 const statisticalCodeFieldSet = FieldSet('Statistical code');
 const addStatisticalCodeButton = Button('Add statistical code');
 const callNumberType = rootForm.find(Select('Call number type'));
+const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
 
 export default {
-  saveAndClose: () => {
+  saveAndClose: ({ holdingSaved = false } = {}) => {
     cy.do(rootForm.find(Button('Save & close')).click());
+
+    if (holdingSaved) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(InstanceStates.holdingSavedSuccessfully)),
+      );
+    }
   },
   waitLoading: () => {
     cy.expect(rootForm.exists());
     cy.expect(Spinner().absent());
-    cy.expect(callNumber.exists());
+    cy.expect(callNumberField.exists());
   },
   checkReadOnlyFields: () => readonlyFields.forEach((element) => cy.expect(element.has({ disabled: true }))),
   closeWithoutSave: () => cy.do(rootForm.find(Button('Cancel')).click()),
+  fillHoldingFields({ permanentLocation, callNumber } = {}) {
+    if (permanentLocation) {
+      this.changePermanentLocation(permanentLocation);
+    }
+
+    if (callNumber) {
+      this.fillCallNumber(callNumber);
+    }
+  },
   changePermanentLocation: (location) => {
     cy.do([
       Button({ id: 'additem_permanentlocation' }).click(),
@@ -67,6 +86,23 @@ export default {
   addStatisticalCode(code) {
     this.clickAddStatisticalCode();
     this.chooseStatisticalCode(code);
+  },
+  openStatisticalCodeDropdown() {
+    cy.do([statisticalCodeFieldSet.find(Selection()).find(Button()).click()]);
+  },
+  closeStatisticalCodeDropdown() {
+    cy.do(statisticalCodeFieldSet.find(Selection()).find(Button()).click());
+  },
+  filterStatisticalCodeByName(name) {
+    this.openStatisticalCodeDropdown();
+    cy.do([statisticalCodeSelectionList.filter(name)]);
+  },
+  verifyStatisticalCodeCount(codeCount, verifyTrue = true) {
+    if (verifyTrue) {
+      cy.expect(statisticalCodeSelectionList.has({ optionCount: codeCount }));
+    } else {
+      cy.expect(statisticalCodeSelectionList.has({ optionCount: not(codeCount) }));
+    }
   },
   removeStatisticalCode(code) {
     cy.do(
@@ -100,7 +136,7 @@ export default {
     ]);
   },
   fillCallNumber(callNumberValue) {
-    cy.do(callNumber.fillIn(callNumberValue));
+    cy.do(callNumberField.fillIn(callNumberValue));
   },
   verifyNoCalloutErrorMessage() {
     cy.expect(Callout({ type: calloutTypes.error }).absent());

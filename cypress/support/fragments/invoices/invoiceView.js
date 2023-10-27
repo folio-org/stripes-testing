@@ -16,6 +16,7 @@ import InvoiceLineEditForm from './invoiceLineEditForm';
 import InvoiceLineDetails from './invoiceLineDetails';
 import ApproveInvoiceModal from './modal/approveInvoiceModal';
 import PayInvoiceModal from './modal/payInvoiceModal';
+import CancelInvoiceModal from './modal/cancelInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
 
@@ -31,6 +32,10 @@ const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }
 
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
+
+// voucher details
+const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
+const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
 
 export default {
   expandActionsDropdown() {
@@ -68,16 +73,23 @@ export default {
   },
   checkTableContent(records = []) {
     records.forEach((record, index) => {
-      cy.expect([
-        invoiceLinesSection
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 1 }))
-          .has({ content: including(record.poNumber) }),
-        invoiceLinesSection
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 2 }))
-          .has({ content: including(record.description) }),
-      ]);
+      if (record.poNumber) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.poNumber) }),
+        );
+      }
+
+      if (record.description) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .has({ content: including(record.description) }),
+        );
+      }
 
       if (record.receiptStatus) {
         cy.expect(
@@ -98,16 +110,28 @@ export default {
       }
     });
   },
-  checkInvoiceDetails({ title, invoiceInformation = [], invoiceLines } = {}) {
+  checkInvoiceDetails({
+    title,
+    invoiceInformation = [],
+    invoiceLines,
+    voucherExport = [],
+    voucherInformation = [],
+  } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
     }
 
-    if (invoiceInformation.length) {
-      invoiceInformation.forEach(({ key, value }) => {
-        cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
-      });
-    }
+    invoiceInformation.forEach(({ key, value }) => {
+      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    voucherExport.forEach(({ key, value }) => {
+      cy.expect(voucherExportDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    voucherInformation.forEach(({ key, value }) => {
+      cy.expect(voucherInformationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
 
     if (invoiceLines) {
       cy.expect(
@@ -132,6 +156,12 @@ export default {
 
     PayInvoiceModal.verifyModalView();
     PayInvoiceModal.clickSubmitButton();
+  },
+  cancelInvoice() {
+    cy.do([invoiceDetailsPaneHeader.find(actionsButton).click(), Button('Cancel').click()]);
+
+    CancelInvoiceModal.verifyModalView();
+    CancelInvoiceModal.clickSubmitButton();
   },
   openSelectOrderLineModal() {
     cy.do([invoiceLinesSection.find(actionsButton).click(), Button('Add line from POL').click()]);
@@ -187,5 +217,9 @@ export default {
         .find(KeyValue('Acquisition units'))
         .has({ value: acquisitionUnitName }),
     );
+  },
+
+  verifyStatus: (status) => {
+    cy.expect(Pane({ id: 'pane-invoiceDetails' }).find(KeyValue('Status')).has({ value: status }));
   },
 };

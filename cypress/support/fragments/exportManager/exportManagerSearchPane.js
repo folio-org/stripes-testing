@@ -51,6 +51,15 @@ export default {
   selectJob(content) {
     return cy.do(MultiColumnListCell(including(content)).click());
   },
+
+  sortByJobID() {
+    cy.do(
+      MultiColumnList({ id: 'export-edi-jobs-list' })
+        .find(Button({ id: 'clickable-list-column-jobid' }))
+        .click(),
+    );
+  },
+
   verifyResultAndClick(content) {
     cy.expect(MultiColumnListCell(including(content)).exists());
     cy.do(MultiColumnListRow({ index: 0 }).click());
@@ -86,6 +95,7 @@ export default {
         .find(MultiColumnListCell(integrationName))
         .click(),
     );
+    cy.wait(4000);
   },
 
   closeExportJobPane() {
@@ -115,6 +125,7 @@ export default {
   searchBySuccessful() {
     waitClick();
     cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-successful' })).click());
+    cy.wait(4000);
   },
 
   searchByFailed() {

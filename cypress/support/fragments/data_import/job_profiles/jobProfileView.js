@@ -34,6 +34,7 @@ export default {
     cy.do(Button('Edit').click());
   },
   duplicate: () => {
+    cy.wait(2000);
     cy.do(viewPane.find(actionsButton).click());
     cy.do(Button('Duplicate').click());
   },
@@ -172,5 +173,9 @@ export default {
       .contains(fileName)
       .invoke('removeAttr', 'target')
       .click();
+  },
+
+  openLinkedProfileById: (id) => {
+    cy.do(viewPane.find(Link({ href: including(`${id}`) })).click());
   },
 };

@@ -26,6 +26,7 @@ export default {
   },
 
   duplicate: () => {
+    cy.wait(2000);
     cy.do(viewPane.find(Button('Actions')).click());
     cy.do(Button('Duplicate').click());
   },

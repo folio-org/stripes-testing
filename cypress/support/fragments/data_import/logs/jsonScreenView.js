@@ -22,11 +22,11 @@ export default {
   },
 
   openHoldingsTab: () => {
-    cy.do(Button('Holdings*').click());
+    cy.do(Button(including('Holdings')).click());
   },
 
   openItemTab: () => {
-    cy.do(Button('Item*').click());
+    cy.do(Button(including('Item')).click());
   },
 
   openOrderTab: () => {

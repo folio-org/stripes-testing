@@ -254,6 +254,20 @@ export default {
         .fillIn(allocatedQuantity.toString()),
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.do([Button('Save').click()]);
+    cy.wait(4000);
+  },
+
+  addPlannedBudget: (allocatedQuantity, fiscalYear) => {
+    cy.do(Accordion('Planned budget').find(newButton).click());
+    cy.expect(Modal('Planned budget').exists());
+    cy.do([
+      Select({ name: 'fiscalYearId' }).choose(fiscalYear),
+      Modal('Planned budget')
+        .find(TextField({ name: 'allocated' }))
+        .fillIn(allocatedQuantity.toString()),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
     cy.do([Button('Save').click()]);
   },
@@ -360,6 +374,19 @@ export default {
     cy.do([actionsButton.click(), transferButton.click()]);
     this.fillAllocationFields({ toFund, fromFund, amount: '10' });
   },
+  moveSimpleAllocation(fromFund, toFund, amount) {
+    cy.do([
+      actionsButton.click(),
+      moveAllocationButton.click(),
+      addTransferModal.find(Button({ name: 'toFundId' })).click(),
+      SelectionOption(`${toFund.name} (${toFund.code})`).click(),
+      addTransferModal.find(Button({ name: 'fromFundId' })).click(),
+      SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
+      addTransferModal.find(amountTextField).fillIn(amount),
+      addTransferModal.find(confirmButton).click(),
+    ]);
+    cy.wait(4000);
+  },
   moveAllocation({ fromFund, toFund, amount }) {
     cy.do([actionsButton.click(), moveAllocationButton.click()]);
     this.fillAllocationFields({ toFund, fromFund, amount });
@@ -381,7 +408,6 @@ export default {
         SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
       ]);
     }
-
     cy.do([
       addTransferModal.find(amountTextField).fillIn(amount),
       addTransferModal.find(confirmButton).click(),
@@ -858,6 +884,7 @@ export default {
   },
 
   selectFund: (FundName) => {
+    cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
     cy.expect(fundDetailsPane.visible());
   },

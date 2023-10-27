@@ -83,6 +83,7 @@ describe('data-import', () => {
         matchProfile: {
           profileName: `Instance Status Batch Loaded.${getRandomPostfix()}`,
           incomingStaticValue: 'Batch Loaded',
+          incomingStaticRecordValue: 'Text',
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
           existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm,
@@ -92,6 +93,7 @@ describe('data-import', () => {
         matchProfile: {
           profileName: `Holdings type electronic.${getRandomPostfix()}`,
           incomingStaticValue: 'Electronic',
+          incomingStaticRecordValue: 'Text',
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
           existingRecordOption: NewMatchProfile.optionsList.holdingsType,
@@ -280,7 +282,7 @@ describe('data-import', () => {
         ];
         const jobProfile = {
           ...NewJobProfile.defaultJobProfile,
-          profileName: `Import job profile with the same match and action profiles.${getRandomPostfix()}`,
+          profileName: `C385629 job profile.${getRandomPostfix()}`,
           acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
         };
 
@@ -328,6 +330,84 @@ describe('data-import', () => {
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
         JobProfiles.deleteJobProfile(jobProfile.profileName);
+      },
+    );
+
+    it(
+      'C385654 Verify that no duplicates of match and actions profiles appear after duplicating job profile with repeatable profiles (folijet)',
+      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      () => {
+        const jobProfile = {
+          ...NewJobProfile.defaultJobProfile,
+          profileName: `Import job profile with the same match and action profiles.${getRandomPostfix()}`,
+          acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+        };
+        const jobProfileNameForChanging = `C385654 Import job profile with the same match and action profiles.${getRandomPostfix()}`;
+        const calloutMessage = `The job profile "${jobProfileNameForChanging}" was successfully created`;
+        const linkedProfileNames = [
+          collectionOfMatchProfiles[1].matchProfile.profileName,
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          collectionOfMatchProfiles[0].matchProfile.profileName,
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          collectionOfMappingAndActionProfiles[1].actionProfile.name,
+        ];
+
+        // create Job profile
+        cy.visit(SettingsMenu.jobProfilePath);
+        JobProfiles.createJobProfile(jobProfile);
+        NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
+        NewJobProfile.linkMatchProfileForMatches(
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+        );
+        NewJobProfile.waitLoading();
+        NewJobProfile.linkMatchProfileForMatches(
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+        );
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+        );
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[1].actionProfile.name,
+        );
+        NewJobProfile.linkMatchProfileForNonMatches(
+          collectionOfMatchProfiles[0].matchProfile.profileName,
+          5,
+        );
+        NewJobProfile.waitLoading();
+        NewJobProfile.linkMatchProfileForMatches(
+          collectionOfMatchProfiles[2].matchProfile.profileName,
+          5,
+        );
+        NewJobProfile.waitLoading();
+        NewJobProfile.linkMatchProfileForMatches(
+          collectionOfMatchProfiles[3].matchProfile.profileName,
+          5,
+        );
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[0].actionProfile.name,
+          5,
+        );
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[1].actionProfile.name,
+          5,
+        );
+        NewJobProfile.saveAndClose();
+
+        JobProfileView.duplicate();
+        NewJobProfile.unlinkProfile(1);
+        NewJobProfile.fillProfileName(jobProfileNameForChanging);
+        NewJobProfile.saveAndClose();
+        JobProfileView.verifyCalloutMessage(calloutMessage);
+        JobProfileView.verifyJobProfileOpened();
+        JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
+        JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
+
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfiles.deleteJobProfile(jobProfileNameForChanging);
       },
     );
   });

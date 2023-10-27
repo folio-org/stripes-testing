@@ -13,10 +13,11 @@ import {
   Select,
   TextInput,
   TextArea,
+  PaneHeader,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
-import inventoryNewInstance from './inventoryNewInstance';
+import InventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES } from '../../constants';
@@ -30,6 +31,7 @@ const actionsButton = rootSection.find(Button('Actions'));
 const singleRecordImportModal = Modal('Single record import');
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button('Search', { type: 'submit' });
+const paneHeaderSearch = PaneHeader('Inventory');
 
 const advSearchButton = Button('Advanced search');
 const advSearchModal = Modal('Advanced search');
@@ -119,7 +121,18 @@ const waitContentLoading = () => {
   );
 };
 
+const getCallNumberTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'call-number-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.callNumberTypes;
+  });
+
 export default {
+  getCallNumberTypes,
   waitContentLoading,
   waitLoading: () => {
     cy.expect(
@@ -141,14 +154,13 @@ export default {
     cy.wait('@getView');
   },
 
-  add: (title) => {
-    cy.do(actionsButton.click());
-    cy.do(Button('New').click());
-    inventoryNewInstance.waitLoading();
-    inventoryNewInstance.fillRequiredValues(title);
-    inventoryNewInstance.save();
-  },
+  addNewInventory() {
+    cy.do([actionsButton.click(), Button('New').click()]);
 
+    InventoryNewInstance.waitLoading();
+
+    return InventoryNewInstance;
+  },
   resetAllFilters: () => {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
@@ -578,6 +590,28 @@ export default {
     cy.deleteHoldingRecordViaApi(instance.holdingId);
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
+
+  createLocalCallNumberTypeViaApi: (name) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'call-number-types',
+        body: {
+          id: uuid(),
+          name,
+          source: 'local',
+        },
+      })
+      .then((res) => {
+        return res.body.id;
+      });
+  },
+
+  deleteLocalCallNumberTypeViaApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `call-number-types/${id}`,
+  }),
+
   searchBySource: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-source' }).click());
     cy.do(Checkbox(source).click());
@@ -595,8 +629,9 @@ export default {
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
-  verifyInstanceDetailsView: () => cy.expect(Section({ id: 'pane-instancedetails' }).exists()),
-
+  verifyInstanceDetailsView() {
+    InventoryInstance.waitInventoryLoading();
+  },
   clickAdvSearchButton() {
     cy.do(advSearchButton.click());
     cy.expect([
@@ -701,5 +736,22 @@ export default {
     searchInstancesOptions.forEach((searchOption) => {
       cy.expect(inventorySearchAndFilterInput.has({ content: including(searchOption) }));
     });
+  },
+
+  verifyInventorySearchPaneheader() {
+    cy.expect(paneHeaderSearch.find(HTML(including('records found'))));
+  },
+
+  checkActionsButtonInSecondPane() {
+    cy.expect(actionsButton.exists());
+  },
+
+  verifyActionMenuForNonConsortiaTenant() {
+    cy.do(actionsButton.click());
+    cy.expect([
+      Button('New').exists(),
+      Button('New local record').absent(),
+      Button('New shared record').absent(),
+    ]);
   },
 };

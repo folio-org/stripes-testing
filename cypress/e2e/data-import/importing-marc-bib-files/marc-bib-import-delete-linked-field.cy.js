@@ -1,3 +1,4 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -9,7 +10,6 @@ import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -60,18 +60,18 @@ describe('data-import', () => {
     const nameForCSVFile = `C376946autotestFile${getRandomPostfix()}.csv`;
     const nameForPreUpdatedMarcBibFile = 'C376946MarcBibPreUpdated.mrc';
     const mappingProfile = {
-      name: 'C376946 Update MARC Bib records by matching 999 ff $s subfield value',
+      name: `C376946 Update MARC Bib records by matching 999 ff $s subfield value_${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       update: true,
       permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      name: 'C376946 Update MARC Bib records by matching 999 ff $s subfield value',
+      name: `C376946 Update MARC Bib records by matching 999 ff $s subfield value_${getRandomPostfix()}`,
       action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const matchProfile = {
-      profileName: 'C376946 Update MARC Bib records by matching 999 ff $s subfield value',
+      profileName: `C376946 Update MARC Bib records by matching 999 ff $s subfield value_${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -89,7 +89,7 @@ describe('data-import', () => {
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: 'C376946 Update MARC Bib records by matching 999 ff $s subfield value',
+      profileName: `C376946 Update MARC Bib records by matching 999 ff $s subfield value_${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const marcFiles = [
@@ -193,13 +193,14 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       Users.deleteViaApi(testData.userProperties.userId);
-      InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-      MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
       // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      // delete records
+      InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
+      MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcBibFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

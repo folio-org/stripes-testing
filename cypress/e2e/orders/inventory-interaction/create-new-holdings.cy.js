@@ -49,7 +49,7 @@ describe('Orders: Inventory interaction', () => {
       .then(() => {
         ServicePoints.createViaApi(testData.servicePoint).then(() => {
           Locations.createViaApi(
-            Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }),
+            Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }).location,
           ).then((location) => {
             testData.locations.push(location);
 
@@ -81,7 +81,7 @@ describe('Orders: Inventory interaction', () => {
             });
 
             Locations.createViaApi(
-              Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }),
+              Locations.getDefaultLocation({ servicePointId: testData.servicePoint.id }).location,
             ).then((secondLocation) => {
               testData.locations.push(secondLocation);
             });
@@ -140,19 +140,17 @@ describe('Orders: Inventory interaction', () => {
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemActions.edit();
       ItemRecordEdit.addBarcode(barcodeForFirstItem);
-      ItemRecordEdit.save();
+      ItemRecordEdit.saveAndClose();
       // Need to wait,while instance will be saved
-      cy.wait(5000);
+      cy.wait(7000);
       ItemActions.closeItem();
-      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemActions.edit();
       ItemRecordEdit.addBarcode(barcodeForSecondItem);
-      ItemRecordEdit.save();
+      ItemRecordEdit.saveAndClose();
       // Need to wait,while instance will be saved
-      cy.wait(5000);
+      cy.wait(7000);
       ItemActions.closeItem();
-      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
       ItemRecordView.checkItemDetails(
         testData.locations[1].name,
@@ -160,7 +158,6 @@ describe('Orders: Inventory interaction', () => {
         ITEM_STATUS_NAMES.ON_ORDER,
       );
       ItemActions.closeItem();
-      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
       ItemRecordView.checkItemDetails(
         testData.locations[1].name,

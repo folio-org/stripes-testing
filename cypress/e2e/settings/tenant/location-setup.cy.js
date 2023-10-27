@@ -1,13 +1,12 @@
 import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { ServicePoints, Locations } from '../../../support/fragments/settings/tenant';
 import Users from '../../../support/fragments/users/users';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Settings: Location', () => {
   const testData = {
-    servicePoint: ServicePoints.defaultServicePoint,
+    servicePoint: ServicePoints.getDefaultServicePoint(),
     user: {},
     location: {},
   };
@@ -15,27 +14,26 @@ describe('Settings: Location', () => {
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       ServicePoints.createViaApi(testData.servicePoint);
-      testData.location = Location.getDefaultLocation(testData.servicePoint.id);
-      Location.createViaApi(testData.location);
+      const { institution, location } = Locations.getDefaultLocation({
+        servicePointId: testData.servicePoint.id,
+      });
+      testData.institution = institution;
+      testData.location = location;
+      Locations.createViaApi(testData.location);
     });
 
     cy.createTempUser([Permissions.settingsTenantViewLocation.gui]).then((userProperties) => {
       testData.user = userProperties;
 
-      cy.login(testData.user.username, testData.user.password, {
-        path: SettingsMenu.tenantPath,
-        waiter: TenantPane.waitLoading,
-      });
+      cy.login(testData.user.username, testData.user.password);
+      cy.wait(1000);
+      TopMenuNavigation.navigateToApp('Settings');
+      TenantPane.goToTenantTab();
     });
   });
 
   after('Delete test data', () => {
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
-      testData.location.institutionId,
-      testData.location.campusId,
-      testData.location.libraryId,
-      testData.location.id,
-    );
+    Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);
   });
@@ -44,6 +42,7 @@ describe('Settings: Location', () => {
     'C365628 Settings (tenant): View locations (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
+      cy.intercept('/location-units/institutions*', { locinsts: [testData.institution] });
       // Select "Institutions" option on the "Location setup" subsection
       const Institutions = TenantPane.selectTenant(TENANTS.INSTITUTIONS);
       Institutions.checkNoActionButtons();
@@ -73,7 +72,7 @@ describe('Settings: Location', () => {
 
       // Select "Locations" option on the "Location setup" subsection
       // Select any existing institution from the  "Select institution" dropdown
-      const Locations = TenantPane.selectTenant(TENANTS.LOCATIONS);
+      TenantPane.selectTenant(TENANTS.LOCATIONS);
       Locations.selectOption('Institution', {
         name: testData.location.institutionName,
         id: testData.location.institutionId,

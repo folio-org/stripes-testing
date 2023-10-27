@@ -236,4 +236,14 @@ export default {
     SearchResults.clickOnCell(barcode, 0);
     ItemRecordView.waitLoading();
   },
+
+  checkUserData(columnName, content, rowNumber) {
+    cy.expect(
+      MultiColumnListCell({
+        row: rowNumber,
+        column: columnName,
+        content,
+      }).exists(),
+    );
+  },
 };

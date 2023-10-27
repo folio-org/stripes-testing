@@ -6,6 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -13,8 +14,6 @@ describe('eHoldings', () => {
       servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('TestSP_1', uuid()),
       label1Value: 'Lorem ipsum dolor sit amet consectetur adipiscing elit et',
       label2Value: 'Label: custom',
-      label1OriginalValue: 'simple',
-      label2OriginalValue: '145',
       resourseUrl: '/eholdings/resources/58-473-185972',
     };
 
@@ -30,6 +29,10 @@ describe('eHoldings', () => {
           testData.userProperties.userId,
           testData.servicePoint.id,
         );
+        cy.getEHoldingsCustomLabelsViaAPI().then((labels) => {
+          testData.label1OriginalValue = labels[0].attributes.displayLabel;
+          testData.label2OriginalValue = labels[1].attributes.displayLabel;
+        });
         cy.login(testData.userProperties.username, testData.userProperties.password);
       });
     });
@@ -49,7 +52,7 @@ describe('eHoldings', () => {
 
     it(
       'C9236 Settings: Add/Edit a custom label(spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
       () => {
         cy.visit(SettingsMenu.eHoldingsPath).then(() => {
           EHoldingsPackage.updateCustomLabelInSettings(testData.label1Value, 1);

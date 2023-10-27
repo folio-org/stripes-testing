@@ -9,7 +9,11 @@ import {
   Accordion,
   SelectionOption,
   Dropdown,
+  Callout,
   Section,
+  DropdownMenu,
+  Pane,
+  TextArea,
 } from '../../../../../interactors';
 import { EXISTING_RECORDS_NAMES } from '../../../constants';
 
@@ -19,6 +23,7 @@ const matchProfileDetailsAccordion = Accordion({ id: 'match-profile-details' });
 const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
 const matchCriterionSelect = Select('Match criterion');
+const nameTextField = TextField('Name*');
 
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
@@ -72,7 +77,7 @@ function fillExistingRecordSections({ existingRecordFields }) {
 }
 
 function fillName(profileName) {
-  cy.do(TextField('Name*').fillIn(profileName));
+  cy.do(nameTextField.fillIn(profileName));
   // wait for data to be loaded
   cy.wait(10000);
 }
@@ -124,14 +129,45 @@ function fillQualifierInExistingPart(qualifierType, qualifierValue) {
   ]);
 }
 
-function fillStaticValue(staticValue) {
+function fillStaticValue(staticValue, recordValue) {
   cy.do([
     Dropdown({ id: 'record-selector-dropdown' }).open(),
     Button('Static value (submatch only)').click(),
-    TextField({
-      name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.text',
-    }).fillIn(staticValue),
+    Select({
+      name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.staticValueType',
+    }).choose(recordValue),
   ]);
+  if (recordValue === 'Text') {
+    cy.do(
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.text',
+      }).fillIn(staticValue),
+    );
+  }
+  if (recordValue === 'Number') {
+    cy.do(
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.number',
+      }).fillIn(staticValue),
+    );
+  }
+  if (recordValue === 'Date') {
+    cy.do(
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.exactDate',
+      }).fillIn(staticValue),
+    );
+  }
+  if (recordValue === 'Date range') {
+    cy.do([
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.fromDate',
+      }).fillIn(staticValue),
+      TextField({
+        name: 'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.toDate',
+      }).fillIn(staticValue),
+    ]);
+  }
 }
 
 function selectMatchCriterion(matchCriterion) {
@@ -146,6 +182,7 @@ function selectExistingRecordField(existingRecordOption) {
   cy.do(criterionValueTypeList.find(SelectionOption(existingRecordOption)).click());
   // TODO wait until option will be selected
   cy.wait(1500);
+  cy.get('#selected-criterion-value-type-item').contains(existingRecordOption);
 }
 
 function fillOnlyComparePartOfTheValue(value) {
@@ -189,9 +226,15 @@ export default {
     // select existing record type
     if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
       selectExistingRecordType(existingRecordType);
-      fillIncomingRecordSections(incomingRecordFields);
+      fillIncomingRecordFields(incomingRecordFields.field, 'field');
+      fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+      fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+      fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       selectMatchCriterion(matchCriterion);
-      fillExistingRecordSections(existingRecordFields);
+      fillExistingRecordFields(existingRecordFields.field, 'field');
+      fillExistingRecordFields(existingRecordFields.in1, 'in1');
+      fillExistingRecordFields(existingRecordFields.in2, 'in2');
+      fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
     } else if (existingRecordType === 'INSTANCE') {
       // wait for list with data to be loaded
       cy.wait(1500);
@@ -209,9 +252,15 @@ export default {
     } else if (existingRecordType === 'MARC_AUTHORITY') {
       selectExistingRecordType(existingRecordType);
       selectIncomingRecordType('MARC Authority');
-      fillIncomingRecordSections(incomingRecordFields);
+      fillIncomingRecordFields(incomingRecordFields.field, 'field');
+      fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+      fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+      fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
       selectMatchCriterion(matchCriterion);
-      fillExistingRecordSections(existingRecordFields);
+      fillExistingRecordFields(existingRecordFields.field, 'field');
+      fillExistingRecordFields(existingRecordFields.in1, 'in1');
+      fillExistingRecordFields(existingRecordFields.in2, 'in2');
+      fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
     } else if (existingRecordType === 'HOLDINGS') {
       // wait for list with data to be loaded
       cy.wait(1500);
@@ -256,7 +305,10 @@ export default {
   }) => {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
-    fillIncomingRecordSections(incomingRecordFields);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
   },
@@ -267,10 +319,11 @@ export default {
     matchCriterion,
     existingRecordOption,
     existingRecordType,
+    incomingStaticRecordValue,
   }) {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
-    fillStaticValue(incomingStaticValue);
+    fillStaticValue(incomingStaticValue, incomingStaticRecordValue);
     selectMatchCriterion(matchCriterion);
     selectExistingRecordField(existingRecordOption);
   },
@@ -288,7 +341,10 @@ export default {
   }) {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
-    fillIncomingRecordSections(incomingRecordFields);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.wait(2000);
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
     fillOnlyComparePartOfTheValue(compareValue);
@@ -328,7 +384,10 @@ export default {
   }) {
     fillName(profileName);
     selectExistingRecordType(existingRecordType);
-    fillIncomingRecordSections(incomingRecordFields);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     fillQualifierInIncomingPart(qualifierType, qualifierValue);
     selectMatchCriterion(matchCriterion);
     // wait for list will be loaded
@@ -457,6 +516,11 @@ export default {
         return response;
       });
   },
+
+  checkCalloutMessage: (message) => {
+    cy.expect(Callout({ textContent: including(message) }).exists());
+  },
+
   verifyExistingRecordSection: () => {
     cy.expect([
       matchProfileDetailsSection
@@ -481,11 +545,34 @@ export default {
       'You are comparing\nto this record',
     );
   },
-  verifyMatchCriterion: (value) => {
+  verifyMatchCriterionNotContains: (value) => {
     cy.expect(matchCriterionSelect.has({ value: not(value) }));
     cy.get('#match-criteria').should(($element) => {
       const content = $element.text();
       expect(content).to.not.include(value);
     });
+  },
+  verifyIncomingRecordsDropdown: () => {
+    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
+    cy.expect([
+      DropdownMenu({ visible: true }).find(HTML('MARC Bibliographic')).exists(),
+      DropdownMenu({ visible: true }).find(HTML('Static value (submatch only)')).exists(),
+    ]);
+  },
+  verifyNewMatchProfileFormIsOpened: () => {
+    cy.expect(Pane('New match profile').exists());
+  },
+  verifyPreviouslyPopulatedDataIsDisplayed: (profile, recordType) => {
+    cy.get(`[data-id="${profile.existingRecordType}"]`).should('contain', recordType);
+    cy.expect([
+      nameTextField.has({ value: profile.name }),
+      TextArea('Description').has({ value: profile.description }),
+      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value' }).has({
+        value: profile.incomingRecordFields.field,
+      }),
+      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[0].value' }).has({
+        value: profile.existingRecordFields.field,
+      }),
+    ]);
   },
 };
