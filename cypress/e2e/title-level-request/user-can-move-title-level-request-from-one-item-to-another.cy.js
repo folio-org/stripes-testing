@@ -144,7 +144,7 @@ describe('Title Level Request', () => {
   });
 
   it(
-    'C353976: Check that user can move Title Level Request from one Item to another (vega)(TaaS)',
+    'C353976: Check that user can move Title Level Request from one Item to another (vega) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       cy.get('@itemsToMove').each((item) => {
