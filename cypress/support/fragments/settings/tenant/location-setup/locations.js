@@ -16,6 +16,7 @@ import {
   Pane,
   Select,
   including,
+  NavListItem
 } from '../../../../../../interactors';
 
 const pane = Pane('Locations');
@@ -209,4 +210,10 @@ export default {
       }
     });
   },
+  goToLocationsTab() {
+    cy.do(NavListItem('Tenant').click());
+    cy.expect(Pane('Tenant').exists());
+    cy.do(NavListItem('Locations').click());
+    cy.expect(Pane('Locations').exists());
+  }
 };

@@ -12,7 +12,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 
 let user;
 
@@ -42,7 +42,7 @@ describe('bulk-edit', () => {
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
             res.permanentLocation = { id: item.locationId };
-            ItemActions.editItemViaApi(res);
+            InventoryItems.editItemViaApi(res);
             FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
           },
         );
