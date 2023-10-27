@@ -14,7 +14,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import { getAdminSourceRecord } from '../../support/utils/users';
 
 let user;
 const item = {
@@ -85,7 +84,9 @@ describe('circulation-log', () => {
         });
       });
     });
-    getAdminSourceRecord();
+    cy.getAdminSourceRecord().then((record) => {
+      testData.adminSourceRecord = record;
+    });
     cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
   });
 
@@ -111,7 +112,7 @@ describe('circulation-log', () => {
         object: 'Loan',
         circAction: 'Renewed through override',
         servicePoint: testData.userServicePoint.name,
-        source: Cypress.env('adminSourceRecord'),
+        source: testData.adminSourceRecord,
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
       SearchPane.verifyResultCells();

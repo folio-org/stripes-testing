@@ -17,7 +17,6 @@ import AppPaths from '../../support/fragments/app-paths';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import PayFeeFine from '../../support/fragments/users/payFeeFaine';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
-import { getAdminSourceRecord } from '../../support/utils/users';
 
 describe('Fee/Fine history ', { retries: 1 }, () => {
   const userData = {};
@@ -72,35 +71,33 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
             permissions.uiUsersManualCharge.gui,
             permissions.uiUsersManualPay.gui,
             permissions.uiUserAccounts.gui,
-          ])
-            .then((userProperties) => {
-              userData.username = userProperties.username;
-              userData.password = userProperties.password;
-              userData.userId = userProperties.userId;
-              userData.barcode = userProperties.barcode;
-              userData.firstName = userProperties.firstName;
-              getAdminSourceRecord();
-            })
-            .then(() => {
-              UserEdit.addServicePointViaApi(servicePointId, userData.userId);
-              feeFineAccount = {
-                id: uuid(),
-                ownerId: ownerData.id,
-                feeFineId: feeFineType.id,
-                // this test will be failed if the amount has two or more digits. Issue https://issues.folio.org/browse/UIU-2812
-                amount: 9,
-                userId: userData.userId,
-                feeFineType: feeFineType.name,
-                feeFineOwner: ownerData.name,
-                createdAt: servicePointId,
-                dateAction: moment.utc().format(),
-                source: Cypress.env('adminSourceRecord'),
-              };
-              NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-                feeFineAccount.id = feeFineAccountId;
-                cy.login(userData.username, userData.password);
-              });
+          ]).then((userProperties) => {
+            userData.username = userProperties.username;
+            userData.password = userProperties.password;
+            userData.userId = userProperties.userId;
+            userData.barcode = userProperties.barcode;
+            userData.firstName = userProperties.firstName;
+          });
+          cy.getAdminSourceRecord().then((adminSourceRecord) => {
+            UserEdit.addServicePointViaApi(servicePointId, userData.userId);
+            feeFineAccount = {
+              id: uuid(),
+              ownerId: ownerData.id,
+              feeFineId: feeFineType.id,
+              // this test will be failed if the amount has two or more digits. Issue https://issues.folio.org/browse/UIU-2812
+              amount: 9,
+              userId: userData.userId,
+              feeFineType: feeFineType.name,
+              feeFineOwner: ownerData.name,
+              createdAt: servicePointId,
+              dateAction: moment.utc().format(),
+              source: adminSourceRecord,
+            };
+            NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+              feeFineAccount.id = feeFineAccountId;
+              cy.login(userData.username, userData.password);
             });
+          });
         });
     },
   );

@@ -9,7 +9,6 @@ import ExportFieldMappingProfiles from '../../../support/fragments/data-export/e
 import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
 import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
 import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
-import { getAdminSourceRecord } from '../../../support/utils/users';
 
 let user;
 const profileDetails = {
@@ -25,19 +24,17 @@ describe('setting: data-export', () => {
       permissions.dataExportEnableSettings.gui,
       permissions.dataExportEnableApp.gui,
       permissions.uiUsersView.gui,
-    ])
-      .then((userProperties) => {
-        getAdminSourceRecord();
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
-      })
-      .then(() => {
-        profileDetails.source = Cypress.env('adminSourceRecord');
-        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(profileDetails.name);
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
       });
+    });
+    cy.getAdminSourceRecord().then((adminSourceRecord) => {
+      profileDetails.source = adminSourceRecord;
+      ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(profileDetails.name);
+    });
   });
 
   after('delete test data', () => {

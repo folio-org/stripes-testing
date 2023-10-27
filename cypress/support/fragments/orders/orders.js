@@ -25,7 +25,6 @@ import {
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
-import { getAdminSourceRecord } from '../../utils/users';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import OrderDetails from './orderDetails';
@@ -358,7 +357,7 @@ export default {
     });
   },
   checkCreatedOrder(order) {
-    getAdminSourceRecord().then((source) => {
+    cy.getAdminSourceRecord().then((source) => {
       this.checkOrderDetails({ vendor: order.vendor, source });
     });
   },

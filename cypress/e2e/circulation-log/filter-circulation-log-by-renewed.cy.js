@@ -14,7 +14,6 @@ import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import Users from '../../support/fragments/users/users';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import { getAdminSourceRecord } from '../../support/utils/users';
 
 const testData = {
   folioInstances: InventoryInstances.generateFolioInstances(),
@@ -54,7 +53,9 @@ describe('Circulation log', () => {
           userBarcode: userData.barcode,
         });
 
-        getAdminSourceRecord();
+        cy.getAdminSourceRecord().then((record) => {
+          testData.adminSourceRecord = record;
+        });
         cy.login(userData.username, userData.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
@@ -92,7 +93,7 @@ describe('Circulation log', () => {
         object: 'Loan',
         circAction: 'Renewed',
         servicePoint: testData.servicePoint.name,
-        source: Cypress.env('adminSourceRecord'),
+        source: testData.adminSourceRecord,
       };
       // Expand the Loans section
       UsersCard.viewCurrentLoans();

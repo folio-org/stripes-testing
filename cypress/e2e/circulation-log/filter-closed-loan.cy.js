@@ -11,7 +11,6 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
-import { getAdminSourceRecord } from '../../support/utils/users';
 
 let user;
 const item = {
@@ -50,7 +49,9 @@ describe('circulation-log', () => {
         checkInDate: moment.utc().format(),
       });
     });
-    getAdminSourceRecord();
+    cy.getAdminSourceRecord().then((record) => {
+      testData.adminSourceRecord = record;
+    });
     cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
   });
 
@@ -71,7 +72,7 @@ describe('circulation-log', () => {
         object: 'Loan',
         circAction: 'Closed loan',
         servicePoint: testData.userServicePoint.name,
-        source: Cypress.env('adminSourceRecord'),
+        source: testData.adminSourceRecord,
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Closed loan');
       SearchPane.verifyResultCells();

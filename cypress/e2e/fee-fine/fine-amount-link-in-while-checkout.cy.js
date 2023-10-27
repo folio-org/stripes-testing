@@ -18,7 +18,6 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import UserFeeFines from '../../support/fragments/users/feeFines';
-import { getAdminSourceRecord } from '../../support/utils/users';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -74,24 +73,25 @@ describe('Fee fine amout link in checkout', () => {
           userData.userId = userProperties.userId;
           userData.barcode = userProperties.barcode;
           userData.firstName = userProperties.firstName;
-          getAdminSourceRecord();
         })
         .then(() => {
           UserEdit.addServicePointViaApi(servicePoint.id, userData.userId);
-          feeFineAccount = {
-            id: uuid(),
-            ownerId: ownerData.id,
-            feeFineId: feeFineType.id,
-            amount: 9,
-            userId: userData.userId,
-            feeFineType: feeFineType.name,
-            feeFineOwner: ownerData.name,
-            createdAt: servicePoint.id,
-            dateAction: moment.utc().format(),
-            source: Cypress.env('adminSourceRecord'),
-          };
-          NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-            feeFineAccount.id = feeFineAccountId;
+          cy.getAdminSourceRecord().then((adminSourceRecord) => {
+            feeFineAccount = {
+              id: uuid(),
+              ownerId: ownerData.id,
+              feeFineId: feeFineType.id,
+              amount: 9,
+              userId: userData.userId,
+              feeFineType: feeFineType.name,
+              feeFineOwner: ownerData.name,
+              createdAt: servicePoint.id,
+              dateAction: moment.utc().format(),
+              source: adminSourceRecord,
+            };
+            NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+              feeFineAccount.id = feeFineAccountId;
+            });
           });
         });
     });

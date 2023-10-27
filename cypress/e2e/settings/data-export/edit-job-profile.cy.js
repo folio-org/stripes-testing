@@ -11,10 +11,10 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import ExportNewJobProfile from '../../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import SingleJobProfile from '../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
-import { getAdminSourceRecord } from '../../../support/utils/users';
 
 let user;
 let fieldMappingProfileId;
+let adminSourceRecord;
 const mappingProfileName = getTestEntityValue('fieldMappingProfile');
 const jobProfileName = getTestEntityValue('jobProfile');
 const jobProfileNewName = getTestEntityValue('jobProfileNew');
@@ -28,7 +28,6 @@ describe('Job profile - setup', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      getAdminSourceRecord();
       cy.login(user.username, user.password, {
         path: TopMenu.settingsPath,
         waiter: SettingsPane.waitLoading,
@@ -39,6 +38,9 @@ describe('Job profile - setup', () => {
           ExportNewJobProfile.createNewJobProfileViaApi(jobProfileName, response.body.id);
         },
       );
+      cy.getAdminSourceRecord().then((record) => {
+        adminSourceRecord = record;
+      });
     });
   });
 
@@ -64,7 +66,7 @@ describe('Job profile - setup', () => {
       SingleJobProfile.openActions();
       SingleJobProfile.clickEditButton();
       SingleJobProfile.verifyProfileDetailsEditable();
-      SingleJobProfile.verifySource(Cypress.env('adminSourceRecord'));
+      SingleJobProfile.verifySource(adminSourceRecord);
       SingleJobProfile.clickCancelButton();
 
       ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);

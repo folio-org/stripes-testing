@@ -20,7 +20,6 @@ import SearchResults from '../../support/fragments/circulation-log/searchResults
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import { getAdminSourceRecord } from '../../support/utils/users';
 
 let userData = {};
 const ownerData = {};
@@ -29,6 +28,7 @@ const paymentMethod = {};
 const transferAccount = TransferAccounts.getDefaultNewTransferAccount(uuid());
 let servicePointId;
 let feeFineAccount;
+let sourceRecord;
 const newStaffInfoMessage = 'information to check';
 const item = {
   instanceName: `test_${getRandomPostfix()}`,
@@ -72,35 +72,37 @@ describe('circulation-log', () => {
         cy.createTempUser([permissions.circulationLogAll.gui])
           .then((userProperties) => {
             userData = userProperties;
-            getAdminSourceRecord();
           })
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, userData.userId);
-            feeFineAccount = {
-              id: uuid(),
-              ownerId: ownerData.id,
-              feeFineId: feeFineType.id,
-              amount: 9,
-              userId: userData.userId,
-              feeFineType: feeFineType.name,
-              feeFineOwner: ownerData.name,
-              createdAt: servicePointId,
-              dateAction: moment.utc().format(),
-              source: Cypress.env('adminSourceRecord'),
-              instanceId: item.instanceId,
-              itemId: item.itemId,
-            };
-            NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-              feeFineAccount.id = feeFineAccountId;
-              AddNewStaffInfo.addNewStaffInfoViaApi(
-                userData.userId,
-                newStaffInfoMessage,
-                Cypress.env('adminSourceRecord'),
-              );
-              cy.login(userData.username, userData.password, {
-                path: TopMenu.circulationLogPath,
-                waiter: SearchPane.waitLoading,
+            cy.getAdminSourceRecord().then((adminSourceRecord) => {
+              sourceRecord = adminSourceRecord;
+              feeFineAccount = {
+                id: uuid(),
+                ownerId: ownerData.id,
+                feeFineId: feeFineType.id,
+                amount: 9,
+                userId: userData.userId,
+                feeFineType: feeFineType.name,
+                feeFineOwner: ownerData.name,
+                createdAt: servicePointId,
+                dateAction: moment.utc().format(),
+                source: adminSourceRecord,
+                instanceId: item.instanceId,
+                itemId: item.itemId,
+              };
+              NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+                feeFineAccount.id = feeFineAccountId;
+                AddNewStaffInfo.addNewStaffInfoViaApi(
+                  userData.userId,
+                  newStaffInfoMessage,
+                  adminSourceRecord,
+                );
               });
+            });
+            cy.login(userData.username, userData.password, {
+              path: TopMenu.circulationLogPath,
+              waiter: SearchPane.waitLoading,
             });
           });
       });
@@ -125,7 +127,7 @@ describe('circulation-log', () => {
         itemBarcode: item.barcode,
         object: 'Fee/fine',
         circAction: 'Staff information only added',
-        source: Cypress.env('adminSourceRecord'),
+        source: sourceRecord,
       };
 
       SearchPane.setFilterOptionFromAccordion('fee', 'Staff information only added');

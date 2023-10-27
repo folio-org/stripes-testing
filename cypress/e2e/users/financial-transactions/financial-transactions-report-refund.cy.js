@@ -17,7 +17,6 @@ import Users from '../../../support/fragments/users/users';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import PayFeeFane from '../../../support/fragments/users/payFeeFaine';
 import RefundFeeFine from '../../../support/fragments/users/refundFeeFine';
-import { getAdminSourceRecord } from '../../../support/utils/users';
 
 describe('Financial Transactions Detail Report', () => {
   const reportName = 'Financial-Transactions-Detail-Report.csv';
@@ -79,41 +78,41 @@ describe('Financial Transactions Detail Report', () => {
               userData.userId = userProperties.userId;
               userData.barcode = userProperties.barcode;
               userData.firstName = userProperties.firstName;
-              getAdminSourceRecord();
             })
             .then(() => {
               UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
-              feeFineAccount = {
-                id: uuid(),
-                ownerId: ownerData.id,
-                feeFineId: feeFineType.id,
-                amount: 100,
-                userId: userData.userId,
-                feeFineType: feeFineType.name,
-                feeFineOwner: ownerData.name,
-                createdAt: servicePoint.id,
-                dateAction: moment.utc().format(),
-                source: Cypress.env('adminSourceRecord'),
-              };
-              NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-                feeFineAccount.id = feeFineAccountId;
-                const payBody = {
-                  amount: actionAmount,
-                  paymentMethod: paymentMethod.name,
-                  notifyPatron: false,
-                  servicePointId: servicePoint.id,
-                  userName: Cypress.env('adminSourceRecord'),
+              cy.getAdminSourceRecord().then((adminSourceRecord) => {
+                feeFineAccount = {
+                  id: uuid(),
+                  ownerId: ownerData.id,
+                  feeFineId: feeFineType.id,
+                  amount: 100,
+                  userId: userData.userId,
+                  feeFineType: feeFineType.name,
+                  feeFineOwner: ownerData.name,
+                  createdAt: servicePoint.id,
+                  dateAction: moment.utc().format(),
+                  source: adminSourceRecord,
                 };
-                const refundBody = {
-                  amount: actionAmount,
-                  paymentMethod: refundReason.nameReason,
-                  notifyPatron: false,
-                  servicePointId: servicePoint.id,
-                  userName: Cypress.env('adminSourceRecord'),
-                };
-                PayFeeFane.payFeeFineViaApi(payBody, feeFineAccountId);
-                RefundFeeFine.refundFeeFineViaApi(refundBody, feeFineAccountId);
-
+                NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+                  feeFineAccount.id = feeFineAccountId;
+                  const payBody = {
+                    amount: actionAmount,
+                    paymentMethod: paymentMethod.name,
+                    notifyPatron: false,
+                    servicePointId: servicePoint.id,
+                    userName: adminSourceRecord,
+                  };
+                  const refundBody = {
+                    amount: actionAmount,
+                    paymentMethod: refundReason.nameReason,
+                    notifyPatron: false,
+                    servicePointId: servicePoint.id,
+                    userName: adminSourceRecord,
+                  };
+                  PayFeeFane.payFeeFineViaApi(payBody, feeFineAccountId);
+                  RefundFeeFine.refundFeeFineViaApi(refundBody, feeFineAccountId);
+                });
                 cy.login(userData.username, userData.password);
                 cy.visit(TopMenu.usersPath);
                 UsersSearchResultsPane.waitLoading();
