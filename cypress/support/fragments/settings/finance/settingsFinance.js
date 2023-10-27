@@ -54,7 +54,7 @@ export default {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({
           date: new Date(),
-        })} by ADMINISTRATOR, Diku_admin`;
+        })} by ${expenseClass.source}`;
         cy.expect(
           getEditableListRow(rowNumber)
             .find(MultiColumnListCell({ columnIndex: 0 }))
