@@ -18,14 +18,15 @@ describe('Title Level Request', () => {
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
-  const patronGroup = {
-    name: 'groupTLR' + getRandomPostfix(),
-  };
   const instanceTitle = `C411787${getRandomPostfix()}`;
   const itemBarcode = Helper.getRandomBarcode();
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.circulationTitleLevelRequestsPath,
+        waiter: TitleLevelRequests.waitLoading,
+      });
       instanceId = InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
       cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
         (instance) => {
@@ -34,10 +35,6 @@ describe('Title Level Request', () => {
           cy.deleteItemViaApi(instance.items[1].id);
         },
       );
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      });
       TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
       TitleLevelRequests.changeFailToCreateHoldForBlockedRequest('forbid');
       ServicePoints.createViaApi(testData.userServicePoint);
