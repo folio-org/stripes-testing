@@ -48,14 +48,11 @@ describe('Users', () => {
       ).then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
       });
-    });
-  });
-
-  before('Login', () => {
-    cy.login(userData.username, userData.password, {
-      path: TopMenu.usersPath,
-      waiter: UsersSearchPane.waitLoading,
     });
   });
 
