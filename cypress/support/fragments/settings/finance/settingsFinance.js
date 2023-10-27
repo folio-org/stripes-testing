@@ -40,10 +40,7 @@ export default {
   },
 
   verifyItemInDetailPanel() {
-    cy.expect([
-      actions.absent(),
-      newButton.has({ disabled: true }),
-    ]);
+    cy.expect([actions.absent(), newButton.has({ disabled: true })]);
   },
 
   fillRequiredFields: (expenseClasses) => {
@@ -98,6 +95,16 @@ export default {
             .find(MultiColumnListCell({ columnIndex: 3 }))
             .has({ content: createdByAdmin }),
         );
+      }),
+    );
+  },
+
+  checkEditDeleteIcon: (typeClass) => {
+    cy.do(
+      MultiColumnListCell({ content: typeClass.name }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.expect(getEditableListRow(rowNumber).find(editIconButton).absent());
+        cy.expect(getEditableListRow(rowNumber).find(deleteButton).absent());
       }),
     );
   },

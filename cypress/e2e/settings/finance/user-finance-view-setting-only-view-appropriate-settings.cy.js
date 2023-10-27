@@ -55,9 +55,11 @@ describe('Fund type view', () => {
       SettingsFinance.verifyItemInFinancePanel();
       SettingsFinance.verifyItemInDetailPanel();
       SettingsFinance.checkFundType(newFundTypes);
+      SettingsFinance.checkEditDeleteIcon(newFundTypes);
       SettingsFinance.clickExpenseClass();
       SettingsFinance.verifyItemInDetailPanel();
       SettingsFinance.checkExpenseClass(newExpenseClass);
+      SettingsFinance.checkEditDeleteIcon(newExpenseClass);
     },
   );
 });
