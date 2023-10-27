@@ -21,7 +21,7 @@ import InventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import InventoryItems from './item/inventoryItems';
 import Arrays from '../../utils/arrays';
-import { ITEM_STATUS_NAMES } from '../../constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import generateUniqueItemBarcodeWithShift from '../../utils/generateUniqueItemBarcodeWithShift';
 import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
@@ -181,7 +181,7 @@ export default {
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 50 });
+        cy.getLocations({ limit: 1, query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
           (holdingSources) => {
