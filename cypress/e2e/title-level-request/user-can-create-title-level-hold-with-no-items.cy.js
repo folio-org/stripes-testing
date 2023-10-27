@@ -23,11 +23,12 @@ describe('Title Level Request', () => {
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
+      instanceId = InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
       cy.loginAsAdmin({
         path: SettingsMenu.circulationTitleLevelRequestsPath,
         waiter: TitleLevelRequests.waitLoading,
       });
-      instanceId = InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
+      ServicePoints.createViaApi(testData.userServicePoint);
       cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
         (instance) => {
           instanceHRID = instance.hrid;
@@ -37,7 +38,6 @@ describe('Title Level Request', () => {
       );
       TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
       TitleLevelRequests.changeFailToCreateHoldForBlockedRequest('forbid');
-      ServicePoints.createViaApi(testData.userServicePoint);
       testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
       Location.createViaApi(testData.defaultLocation);
     });
@@ -49,10 +49,11 @@ describe('Title Level Request', () => {
           testData.userServicePoint.id,
           testData.user.userId,
           testData.userServicePoint.id,
-        );
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
+        ).then(() => {
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
         });
       },
     );
