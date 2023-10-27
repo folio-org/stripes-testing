@@ -15,9 +15,9 @@ import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Organizations from '../../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
 import NewInvoice from '../../../../support/fragments/invoices/newInvoice';
-import Invoices from '../../../../support/fragments/invoices/invoices';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
+import Invoices from '../../../../support/fragments/invoices/invoices';
 
 describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -27,48 +27,47 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
-    series: 'FY',
+    series: 'FYTA',
   };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const secondOrder = {
+  const defaultOrder = {
     ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true,
   };
-  const firstOrder = {
-    approved: true,
-    reEncumber: true,
-  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const allocatedQuantity = '100';
-  const todayDate = DateTools.getCurrentDate();
-  const fileNameDate = DateTools.getCurrentDateForFileNaming();
+  const allocatedQuantityForCurrentBudget = '1000';
+  const allocatedQuantityForPlannedBudget = '500';
   let user;
-  let firstOrderNumber;
   let servicePointId;
   let location;
+  let orderNumber;
 
   before(() => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
-
+        FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
+          secondFiscalYear.id = secondFiscalYearResponse.id;
+        });
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
 
           cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
+          Funds.addBudget(allocatedQuantityForCurrentBudget);
+          Funds.closeBudgetDetails();
+          Funds.addPlannedBudget(allocatedQuantityForPlannedBudget, secondFiscalYear.code);
+          Funds.closeBudgetDetails();
         });
       });
     });
@@ -78,65 +77,41 @@ describe('ui-finance: Fiscal Year Rollover', () => {
         location = res;
       });
     });
-    // Create second Fiscal Year for Rollover
-    FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
-      secondFiscalYear.id = secondFiscalYearResponse.id;
-    });
 
-    // Prepare 2 Open Orders for Rollover
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
       invoice.accountingCode = organization.erpCode;
-      firstOrder.orderType = 'One-time';
     });
-    secondOrder.vendor = organization.name;
-    firstOrder.vendor = organization.name;
+    defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(secondOrder).then((firstOrderResponse) => {
-      secondOrder.id = firstOrderResponse.id;
-      firstOrderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(secondOrder);
+    Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((firstOrderResponse) => {
+      defaultOrder.id = firstOrderResponse.id;
+      orderNumber = firstOrderResponse.poNumber;
+      Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 12);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         defaultFund,
-        '40',
+        '100',
         '1',
-        '40',
+        '100',
         location.institutionId,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(firstOrder).then((secondOrderResponse) => {
-        firstOrder.id = secondOrderResponse.id;
-        Orders.checkCreatedOrder(firstOrder);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-          defaultFund,
-          '10',
-          '1',
-          '10',
-          location.institutionId,
-        );
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(firstOrderNumber);
+      Invoices.createInvoiceLineFromPol(orderNumber);
       // Need to wait, while data will be loaded
       cy.wait(4000);
       Invoices.approveInvoice();
       Invoices.payInvoice();
     });
+
     cy.createTempUser([
       permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiFinanceViewLedger.gui,
-      permissions.uiOrdersView.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
@@ -157,39 +132,23 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
-      Ledgers.fillInTestRolloverInfoCashBalance(secondFiscalYear.code, 'Cash balance', 'Transfer');
-      Ledgers.rolloverLogs();
-      Ledgers.exportRollover(todayDate);
-      Ledgers.checkDownloadedFileWithAllTansactions(
-        `${fileNameDate}-result.csv`,
-        defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '60',
-        '160',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '160',
-        '160',
-      );
-      Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
-      Ledgers.closeOpenedPage();
-      Ledgers.rollover();
-      Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Transfer');
+      Ledgers.fillInRolloverInfoBasedOnRolloverEncumbrances(secondFiscalYear.code, 'None');
       Ledgers.closeRolloverInfo();
       Ledgers.selectFundInLedger(defaultFund.name);
+      Funds.selectBudgetDetails();
+      Funds.checkBudgetStatus('Closed');
+      Funds.closeBudgetDetails();
       Funds.selectPlannedBudgetDetails();
-      Funds.checkFundingInformation('$100.00', '$0.00', '$0.00', '$100.00', '$60.00', '$160.00');
-      Funds.checkFinancialActivityAndOverages('$0.00', '$0.00', '$0.00', '$0.00');
+      Funds.openTransactions();
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        secondFiscalYear.code,
+        '$0.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${defaultFund.name} (${defaultFund.code})`,
+      );
+      Funds.checkStatusInTransactionDetails('Unreleased');
     },
   );
 });
