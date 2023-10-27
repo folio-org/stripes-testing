@@ -23,6 +23,7 @@ import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
+import InventoryInstance from './inventoryInstance';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -86,7 +87,9 @@ const searchHoldingsByHRID = (hrid) => {
 
 const searchInstanceByTitle = (title) => {
   cy.do([TextField({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
-  InventoryInstances.waitLoading();
+  InventoryInstance.waitLoading();
+
+  return InventoryInstance;
 };
 
 const getInstanceHRID = () => {
@@ -663,6 +666,11 @@ export default {
     cy.do(searchToggleButton.click());
     cy.expect(effectiveLocationInput.exists());
   },
+
+  verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
+  verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
+  verifyResetAllButtonDisabled: () => cy.expect(resetAllBtn.has({ disabled: true })),
+  verifyBrowseInventorySearchResults: () => cy.expect(inventorySearchResultsPane.exists()),
 
   verifyNoRecordsFound() {
     cy.expect([

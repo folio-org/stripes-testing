@@ -249,6 +249,7 @@ export default {
       schedulingSection.find(TextField('Time*')).fillIn(`${UTCTime}`),
     ]);
     cy.do(saveAndClose.click());
+    cy.wait(4000);
   },
 
   fillIntegrationInformationWithoutScheduling: (
@@ -293,6 +294,29 @@ export default {
       ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICodeEdited),
       saveAndClose.click(),
     ]);
+  },
+
+  editIntegration: () => {
+    cy.do([actionsButton.click(), editButton.click()]);
+  },
+
+  changeDayOnTommorowInIntegation: (tomorrowDate) => {
+    cy.do([
+      schedulingSection
+        .find(
+          TextField({
+            name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulingDate',
+          }),
+        )
+        .fillIn(`${tomorrowDate}`),
+      saveAndClose.click(),
+    ]);
+    cy.wait(4000);
+  },
+
+  checkChangeDayOnTommorowInIntegation: (tomorrowDate) => {
+    cy.expect(schedulingSection.find(KeyValue({ value: tomorrowDate })));
+    cy.wait(4000);
   },
 
   expectColorFromList: () => {

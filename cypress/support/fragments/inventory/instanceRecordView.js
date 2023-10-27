@@ -12,6 +12,7 @@ import {
   Badge,
   MultiColumnListHeader,
 } from '../../../../interactors';
+import InstanceRecordEdit from './instanceRecordEdit';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -26,9 +27,14 @@ const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-li
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 const electronicAccessAccordion = Accordion('Electronic access');
 const instanceDetailsPane = Pane({ id: 'pane-instancedetails' });
+const classificationAccordion = Accordion('Classification');
+const listClassifications = MultiColumnList({ id: 'list-classifications' });
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
+};
+const verifyIndexTitle = (value) => {
+  cy.expect(KeyValue('Index title').has({ value }));
 };
 
 const verifyInstanceSource = (sourceValue) => cy.expect(sourceKeyValue.has({ value: sourceValue }));
@@ -90,8 +96,9 @@ const verifyImportedFieldExists = (field) => {
 };
 
 const viewSource = () => {
+  cy.wait(1000);
   cy.do(instanceDetailsSection.find(actionsButton).click());
-  cy.wait(2000);
+  cy.wait(1000);
   cy.do(viewSourceButton.click());
 };
 
@@ -164,6 +171,7 @@ export default {
   waitLoading,
   getMultiColumnListCellsValues,
   verifyResourceTitle,
+  verifyIndexTitle,
   verifyInstanceStatusCode,
   verifyResourceType,
   verifyCatalogedDate,
@@ -206,12 +214,10 @@ export default {
     cy.wait(1500);
     cy.expect(instanceDetailsPane.exists());
   },
-  verifyCalloutMessage: (number) => {
+  verifyCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(
-          `Record ${number} created. Results may take a few moments to become visible in Inventory`,
-        ),
+        textContent: including(message),
       }).exists(),
     );
   },
@@ -235,6 +241,22 @@ export default {
   },
 
   verifyInstanceHridValue: (hrid) => cy.expect(instanceHridKeyValue.has({ value: hrid })),
+  verifyPrecedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'precedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
+  verifySucceedingTitle: (title) => {
+    cy.expect(
+      Accordion('Title data')
+        .find(MultiColumnList({ id: 'succeedingTitles' }))
+        .find(MultiColumnListCell({ content: title }))
+        .exists(),
+    );
+  },
 
   clickNextPaginationButton() {
     cy.do(Pane({ id: 'pane-instancedetails' }).find(Button('Next')).click());
@@ -337,7 +359,49 @@ export default {
     });
   },
 
+  verifyEdition(value) {
+    cy.expect(KeyValue('Edition').has({ value }));
+  },
+
+  verifyNotMarkAsStaffSuppressed() {
+    cy.expect(
+      instanceDetailsSection
+        .find(HTML(including('Warning: Instance is marked staff suppressed')))
+        .absent(),
+    );
+  },
+
+  verifyNotMarkAsPreviouslyHeld() {
+    cy.expect(
+      instanceDetailsSection
+        .find(Accordion('Administrative data'))
+        .find(HTML(including('Previously held')))
+        .absent(),
+    );
+  },
+
+  verifyClassification(classType, classification) {
+    cy.expect(
+      classificationAccordion
+        .find(listClassifications)
+        .find(MultiColumnListCell({ columnIndex: 0, content: classType }))
+        .exists(),
+    );
+    cy.expect(
+      classificationAccordion
+        .find(listClassifications)
+        .find(MultiColumnListCell({ columnIndex: 1, content: classification }))
+        .exists(),
+    );
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
+  },
+
+  edit: () => {
+    cy.do(instanceDetailsSection.find(actionsButton).click());
+    cy.do(Button('Edit instance').click());
+    InstanceRecordEdit.waitLoading();
   },
 };

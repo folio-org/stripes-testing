@@ -40,7 +40,6 @@ const orderLineList = MultiColumnList({ id: 'order-line-list' });
 const orderDetailsPane = Pane({ id: 'order-details' });
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
-const createdByAdmin = 'ADMINISTRATOR, Diku_admin ';
 const searchField = SearchField({ id: 'input-record-search' });
 const searchButton = Button('Search');
 const admin = 'administrator';
@@ -117,6 +116,12 @@ export default {
     cy.do([Button('Open').click(), submitButton.click()]);
     // Need to wait,while order's data will be loaded
     cy.wait(4000);
+  },
+
+  checkModalDifferentAccountNumbers() {
+    cy.expect(Modal('Different account numbers').exists());
+    cy.do(Modal('Different account numbers').find(Button('Close')).click());
+    cy.expect(Modal('Different account numbers').absent());
   },
 
   editOrder() {
@@ -347,12 +352,14 @@ export default {
   },
   checkOrderDetails(order) {
     cy.expect(orderDetailsPane.exists());
-    Object.values(order).forEach((value) => {
-      cy.expect(purchaseOrderSection.find(KeyValue({ value })).exists());
+    Object.values(order).forEach((contentToCheck) => {
+      cy.expect(purchaseOrderSection.find(KeyValue({ value: including(contentToCheck) })).exists());
     });
   },
   checkCreatedOrder(order) {
-    this.checkOrderDetails({ vendor: order.vendor, createdByAdmin });
+    cy.getAdminSourceRecord().then((source) => {
+      this.checkOrderDetails({ vendor: order.vendor, source });
+    });
   },
   checkCreatedOngoingOrder(order) {
     this.checkOrderDetails({ vendor: order.vendor, orderType: order.orderType });
@@ -372,6 +379,10 @@ export default {
     cy.wait(4000);
     cy.expect(ordersResults.is({ empty: false }));
     cy.do(ordersList.find(Link(number)).click());
+  },
+
+  checkAbsentExportDetails() {
+    cy.expect(orderDetailsPane.find(Accordion('Export details')).absent());
   },
 
   deleteOrderViaActions: () => {
@@ -627,10 +638,18 @@ export default {
         return body.purchaseOrders;
       });
   },
-
-  deleteOrderViaApi: (id) => cy.okapiRequest({
+  getOrderByIdViaApi(orderId) {
+    return cy
+      .okapiRequest({
+        path: `orders/composite-orders/${orderId}`,
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+  deleteOrderViaApi: (orderId) => cy.okapiRequest({
     method: 'DELETE',
-    path: `orders/composite-orders/${id}`,
+    path: `orders/composite-orders/${orderId}`,
     isDefaultSearchParamsRequired: false,
   }),
 

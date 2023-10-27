@@ -1,5 +1,5 @@
 import { including } from '@interactors/html';
-import { TextField, Button, Select, Section, Pane } from '../../../../../interactors';
+import { TextField, Button, Select, Section, Pane, Callout } from '../../../../../interactors';
 import SelectMappingProfile from './modals/selectMappingProfile';
 import { FOLIO_RECORD_TYPE, PROFILE_TYPE_NAMES } from '../../../constants';
 
@@ -170,5 +170,13 @@ export default {
   verifyPreviouslyPopulatedDataIsDisplayed(profile) {
     this.verifyPreviouslyCreatedDataIsDisplayed(profile);
     cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
+  },
+
+  verifyCalloutMessage: (message) => {
+    cy.expect(
+      Callout({
+        textContent: including(message),
+      }).exists(),
+    );
   },
 };
