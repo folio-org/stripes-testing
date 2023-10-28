@@ -527,6 +527,13 @@ export default {
       .click();
   },
 
+  exportRolloverError: (dataFile) => {
+    cy.get('#rollover-logs-list')
+      .find('div[role="gridcell"]')
+      .contains('a', `${dataFile}-error`)
+      .click();
+  },
+
   checkRolloverLogs: (dataFile) => {
     cy.expect([
       MultiColumnList({ id: 'rollover-logs-list' })
@@ -628,6 +635,25 @@ export default {
       expect(actualData[25]).to.equal(overExpended);
       expect(actualData[26]).to.equal(cashBalance);
       expect(actualData[27]).to.equal(available);
+    });
+  },
+
+  checkDownloadedErrorFile(fileName, errorType, failedAction, amount, fundID) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      expect(fileRows[0].trim()).to.equal(
+        '"Ledger rollover ID","Error type","Failed action","Error message","Amount","Fund ID","Fund code","Purchase order ID","Purchase order line number","Purchase order line ID"',
+      );
+
+      const actualData = fileRows[1].trim().split(',');
+      expect(actualData[1]).to.equal(`"${errorType}"`);
+      expect(actualData[2]).to.equal(`"${failedAction}"`);
+      expect(actualData[5]).to.equal(amount);
+      expect(actualData[6]).to.equal(`"${fundID}"`);
     });
   },
 
@@ -806,8 +832,50 @@ export default {
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
-    cy.wait(4000);
+    cy.wait(6000);
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
+  },
+
+  fillInRolloverForOneTimeOrdersWithAllocation(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(6000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
+  fillInTestRolloverForOneTimeOrdersWithAllocation(
+    fiscalYear,
+    rolloverBudgetValue,
+    rolloverValueAs,
+  ) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
+    cy.wait(6000);
+    this.continueRollover();
+    cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },
 };
