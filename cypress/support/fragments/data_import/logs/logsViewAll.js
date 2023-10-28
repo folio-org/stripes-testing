@@ -446,4 +446,7 @@ export default {
       }
     });
   },
+  scroll: (position) => {
+    cy.get('[id^="list-data-import"] div.mclScrollable---JvHuN').scrollTo(`${position}`);
+  },
 };
