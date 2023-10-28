@@ -38,4 +38,8 @@ export default {
 
     return tenantSections[section];
   },
+  goToTenantTab() {
+    cy.do(NavListItem('Tenant').click());
+    cy.expect(Pane('Tenant').exists());
+  },
 };

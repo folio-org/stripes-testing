@@ -10,6 +10,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -80,10 +81,9 @@ describe('Settings: Tenant', () => {
       Permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-      cy.login(testData.user.username, testData.user.password, {
-        path: SettingsMenu.tenantPath,
-        waiter: TenantPane.waitLoading,
-      });
+      cy.login(testData.user.username, testData.user.password);
+      cy.wait(1000);
+      TopMenuNavigation.navigateToApp('Settings');
     });
   });
 
@@ -108,6 +108,8 @@ describe('Settings: Tenant', () => {
     'C397997 Verify that selected settings remain for "Campuses" (firebird) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
+      TenantPane.goToTenantTab();
+      cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       // #1 Select **"Institution AB"** from Preconditions #1 in "Institution" dropdown on "Campuses" pane
       TenantPane.selectTenant(TENANTS.CAMPUSES);
       Campuses.checkEmptyTableContent();
