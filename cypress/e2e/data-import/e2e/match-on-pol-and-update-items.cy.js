@@ -40,7 +40,7 @@ import Organizations from '../../../support/fragments/organizations/organization
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import FileManager from '../../../support/utils/fileManager';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
@@ -240,7 +240,7 @@ describe('data-import', () => {
 
           cy.getItems({ query: `"id"=="${itemId}"` }).then((item) => {
             item.barcode = itemBarcode;
-            ItemActions.editItemViaApi(item).then(() => {
+            InventoryItems.editItemViaApi(item).then(() => {
               CheckInActions.checkinItemViaApi({
                 itemBarcode: item.barcode,
                 servicePointId,

@@ -13,6 +13,7 @@ import {
   MultiColumnListHeader,
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
+import InventoryNewHoldings from './inventoryNewHoldings';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -96,8 +97,9 @@ const verifyImportedFieldExists = (field) => {
 };
 
 const viewSource = () => {
+  cy.wait(1000);
   cy.do(instanceDetailsSection.find(actionsButton).click());
-  cy.wait(2000);
+  cy.wait(1000);
   cy.do(viewSourceButton.click());
 };
 
@@ -394,6 +396,15 @@ export default {
     );
   },
 
+  verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
+    cy.expect(
+      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .find(HTML(including(itemBarcode)))
+        .exists(),
+    );
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },
@@ -402,5 +413,10 @@ export default {
     cy.do(instanceDetailsSection.find(actionsButton).click());
     cy.do(Button('Edit instance').click());
     InstanceRecordEdit.waitLoading();
+  },
+
+  addHoldings: () => {
+    cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
+    InventoryNewHoldings.waitLoading();
   },
 };

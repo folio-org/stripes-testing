@@ -17,7 +17,7 @@ describe('data-import', () => {
     const filePathForUpload = 'oneMarcBib.mrc';
     const fileName = `C359209 autotestFileName.${getRandomPostfix()}`;
     const editedMarcFileName = `C359209 editedMarcFile.${getRandomPostfix()}.mrc`;
-    const error =
+    const errorMessage =
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
 
     before('create test data', () => {
@@ -110,7 +110,7 @@ describe('data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable('3', 2);
         // check Error counter in the Summary table
         FileDetails.checkSrsRecordQuantityInSummaryTable('3', 3);
-        FileDetails.verifyErrorMessage(error);
+        FileDetails.verifyErrorMessage(errorMessage);
       },
     );
   });

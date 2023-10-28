@@ -81,37 +81,38 @@ describe('Financial Transactions Detail Report', () => {
             })
             .then(() => {
               UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
-              feeFineAccount = {
-                id: uuid(),
-                ownerId: ownerData.id,
-                feeFineId: feeFineType.id,
-                amount: 100,
-                userId: userData.userId,
-                feeFineType: feeFineType.name,
-                feeFineOwner: ownerData.name,
-                createdAt: servicePoint.id,
-                dateAction: moment.utc().format(),
-                source: 'ADMINISTRATOR, DIKU',
-              };
-              NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-                feeFineAccount.id = feeFineAccountId;
-                const payBody = {
-                  amount: actionAmount,
-                  paymentMethod: paymentMethod.name,
-                  notifyPatron: false,
-                  servicePointId: servicePoint.id,
-                  userName: 'ADMINISTRATOR, DIKU',
+              cy.getAdminSourceRecord().then((adminSourceRecord) => {
+                feeFineAccount = {
+                  id: uuid(),
+                  ownerId: ownerData.id,
+                  feeFineId: feeFineType.id,
+                  amount: 100,
+                  userId: userData.userId,
+                  feeFineType: feeFineType.name,
+                  feeFineOwner: ownerData.name,
+                  createdAt: servicePoint.id,
+                  dateAction: moment.utc().format(),
+                  source: adminSourceRecord,
                 };
-                const refundBody = {
-                  amount: actionAmount,
-                  paymentMethod: refundReason.nameReason,
-                  notifyPatron: false,
-                  servicePointId: servicePoint.id,
-                  userName: 'ADMINISTRATOR, DIKU',
-                };
-                PayFeeFane.payFeeFineViaApi(payBody, feeFineAccountId);
-                RefundFeeFine.refundFeeFineViaApi(refundBody, feeFineAccountId);
-
+                NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+                  feeFineAccount.id = feeFineAccountId;
+                  const payBody = {
+                    amount: actionAmount,
+                    paymentMethod: paymentMethod.name,
+                    notifyPatron: false,
+                    servicePointId: servicePoint.id,
+                    userName: adminSourceRecord,
+                  };
+                  const refundBody = {
+                    amount: actionAmount,
+                    paymentMethod: refundReason.nameReason,
+                    notifyPatron: false,
+                    servicePointId: servicePoint.id,
+                    userName: adminSourceRecord,
+                  };
+                  PayFeeFane.payFeeFineViaApi(payBody, feeFineAccountId);
+                  RefundFeeFine.refundFeeFineViaApi(refundBody, feeFineAccountId);
+                });
                 cy.login(userData.username, userData.password);
                 cy.visit(TopMenu.usersPath);
                 UsersSearchResultsPane.waitLoading();

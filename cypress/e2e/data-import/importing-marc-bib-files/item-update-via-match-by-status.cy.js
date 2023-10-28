@@ -24,7 +24,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
@@ -281,17 +281,17 @@ describe('data-import', () => {
         [
           {
             lineNumber: 0,
-            markFunction: ItemActions.markAsWithdrawn,
+            markFunction: InventoryItems.markAsWithdrawn,
             status: 'Withdrawn',
           },
           {
             lineNumber: 3,
-            markFunction: ItemActions.markAsInProcess,
+            markFunction: InventoryItems.markAsInProcess,
             status: 'In process (non-requestable)',
           },
           {
             lineNumber: 7,
-            markFunction: ItemActions.markAsUnknown,
+            markFunction: InventoryItems.markAsUnknown,
             status: 'Unknown',
           },
         ].forEach((marker) => {

@@ -13,7 +13,7 @@ import LoansPage from '../../support/fragments/loans/loansPage';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
-import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
 
 let user;
 let servicePointId;
@@ -50,7 +50,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
-    ItemActions.markItemAsMissingByUserIdViaApi(user.userId).then(() => {
+    InventoryItems.markItemAsMissingByUserIdViaApi(user.userId).then(() => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.ITEM_BARCODE);
       Users.deleteViaApi(user.userId);
     });
