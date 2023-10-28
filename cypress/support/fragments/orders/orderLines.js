@@ -476,6 +476,50 @@ export default {
     submitOrderLine();
   },
 
+  rolloverPOLineInfoforPhysicalMaterialWith2Funds(
+    firstFund,
+    unitPrice,
+    quantity,
+    firstFundValue,
+    secondFund,
+    secondFundValueInPercentage,
+    institutionId,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${firstFund.name} (${firstFund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(firstFundValue),
+      addFundDistributionButton.click(),
+      Button({ id: 'fundDistribution[1].fundId' }).click(),
+      SelectionOption(`${secondFund.name} (${secondFund.code})`).click(),
+      TextField({ name: 'fundDistribution[1].value' }).fillIn(secondFundValueInPercentage),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
   fillInPOLineInfoforPhysicalMaterialWithFundAndEC(
     fund,
     unitPrice,
