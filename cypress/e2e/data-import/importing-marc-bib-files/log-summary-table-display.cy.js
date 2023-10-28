@@ -33,54 +33,39 @@ describe('data-import', () => {
       () => {
         Logs.openFileDetails(fileName);
         FileDetails.verifyLogDetailsPageIsOpened();
-        cy.wrap(['Created', 'Updated', 'No action', 'Error']).each((rowValue) => {
-          FileDetails.verifyColumnValuesInSummaryTable(
-            FileDetails.visibleColumnsInSummaryTable.SUMMARY.columnIndex,
-            rowValue,
-          );
-        });
-        cy.wrap(['103', '0', '0', '0']).each((rowValue) => {
-          FileDetails.verifyColumnValuesInSummaryTable(
-            FileDetails.visibleColumnsInSummaryTable.SRS_MARC.columnIndex,
-            rowValue,
-          );
-        });
-        cy.wrap(['103', '0', '0', '0']).each((rowValue) => {
-          FileDetails.verifyColumnValuesInSummaryTable(
-            FileDetails.visibleColumnsInSummaryTable.INSTANCE.columnIndex,
-            rowValue,
-          );
-        });
-        cy.wrap(['-', '-', '-', '-']).each((rowValue) => {
-          FileDetails.verifyColumnValuesInSummaryTable(
-            FileDetails.visibleColumnsInSummaryTable.HOLDINGS.columnIndex,
-            rowValue,
-          );
-        });
-        cy.wrap(['-', '-', '-', '-']).each((rowValue) => {
-          FileDetails.verifyColumnValuesInSummaryTable(
-            FileDetails.visibleColumnsInSummaryTable.ITEM.columnIndex,
-            rowValue,
-          );
-        });
-        cy.wrap(['-', '-', '-', '-']).each((rowValue) => {
-          FileDetails.verifyColumnValuesInSummaryTable(
-            FileDetails.visibleColumnsInSummaryTable.ORDER.columnIndex,
-            rowValue,
-          );
-        });
-        cy.wrap(['-', '-', '-', '-']).each((rowValue) => {
-          FileDetails.verifyColumnValuesInSummaryTable(
-            FileDetails.visibleColumnsInSummaryTable.INVOICE.columnIndex,
-            rowValue,
-          );
-        });
-        cy.wrap(['-', '-', '-', '0']).each((rowValue) => {
-          FileDetails.verifyColumnValuesInSummaryTable(
-            FileDetails.visibleColumnsInSummaryTable.ERROR.columnIndex,
-            rowValue,
-          );
-        });
+
+        FileDetails.verifyColumnValuesInSummaryTable(
+          FileDetails.visibleColumnsInSummaryTable.SUMMARY.columnIndex,
+          ['Created', 'Updated', 'No action', 'Error'],
+        );
+        FileDetails.verifyColumnValuesInSummaryTable(
+          FileDetails.visibleColumnsInSummaryTable.SRS_MARC.columnIndex,
+          ['103', '0', '0', '0'],
+        );
+        FileDetails.verifyColumnValuesInSummaryTable(
+          FileDetails.visibleColumnsInSummaryTable.INSTANCE.columnIndex,
+          ['103', '0', '0', '0'],
+        );
+        FileDetails.verifyColumnValuesInSummaryTable(
+          FileDetails.visibleColumnsInSummaryTable.HOLDINGS.columnIndex,
+          ['No value set-', 'No value set-', 'No value set-', 'No value set-'],
+        );
+        FileDetails.verifyColumnValuesInSummaryTable(
+          FileDetails.visibleColumnsInSummaryTable.ITEM.columnIndex,
+          ['No value set-', 'No value set-', 'No value set-', 'No value set-'],
+        );
+        FileDetails.verifyColumnValuesInSummaryTable(
+          FileDetails.visibleColumnsInSummaryTable.ORDER.columnIndex,
+          ['No value set-', 'No value set-', 'No value set-', 'No value set-'],
+        );
+        FileDetails.verifyColumnValuesInSummaryTable(
+          FileDetails.visibleColumnsInSummaryTable.INVOICE.columnIndex,
+          ['No value set-', 'No value set-', 'No value set-', 'No value set-'],
+        );
+        FileDetails.verifyColumnValuesInSummaryTable(
+          FileDetails.visibleColumnsInSummaryTable.ERROR.columnIndex,
+          ['No value set-', 'No value set-', 'No value set-', '0'],
+        );
         FileDetails.clickNextPaginationButton();
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.clickPreviousPaginationButton();

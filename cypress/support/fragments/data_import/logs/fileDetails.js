@@ -522,9 +522,7 @@ export default {
 
   verifyColumnValuesInSummaryTable: (columnIndex, value) => {
     getMultiColumnListCellsValuesInSummaryTable(columnIndex).then((cells) => {
-      cells.forEach((cellValue) => {
-        cy.expect(value).to.eql(cellValue);
-      });
+      cy.wrap(cells).should('deep.equal', value);
     });
   },
 
