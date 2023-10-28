@@ -147,6 +147,24 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
+  fillInRolloverInfoBasedOnRolloverEncumbrances(fiscalYear, rolloverBudgetValue) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(6000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
   fillInCommonRolloverInfoWithCloseAllBudgets(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
     cy.wait(4000);
     cy.do(fiscalYearSelect.click());
