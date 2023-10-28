@@ -26,17 +26,17 @@ import InteractorsTools from '../../utils/interactorsTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceEditForm from './invoiceEditForm';
+import VoucherExportForm from './voucherExportForm';
 import { INVOICE_STATUSES } from '../../constants';
 import InvoiceStates from './invoiceStates';
 
+const invoiceResultsHeaderPane = PaneHeader({ id: 'paneHeaderinvoice-results-pane' });
 const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
-
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
-
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
@@ -62,6 +62,10 @@ const polLookUpButton = Button('POL look-up');
 const selectOrderLinesModal = Modal('Select order lines');
 const fundInInvoiceSection = Section({ id: 'invoiceLineForm-fundDistribution' });
 const searhInputId = 'input-record-search';
+const invoiceDateField = TextField('Invoice date*');
+const vendorInvoiceNumberField = TextField('Vendor invoice number*');
+const batchGroupSelection = Selection('Batch group*');
+const invoicePaymentMethodSelect = Select({ id: 'invoice-payment-method' });
 
 const getDefaultInvoice = ({
   batchGroupId,
@@ -112,6 +116,7 @@ const getDefaultInvoiceLine = ({
 
 export default {
   getDefaultInvoice,
+  getDefaultInvoiceLine,
   getInvoiceViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -120,15 +125,14 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createInvoiceViaApi({ vendorId, accountingCode, fiscalYearId, exportToAccounting }) {
-    cy.getBatchGroups().then(({ id: batchGroupId }) => {
-      const invoice = getDefaultInvoice({
-        fiscalYearId,
-        batchGroupId,
-        vendorId,
-        accountingCode,
-        exportToAccounting,
-      });
+  createInvoiceViaApi({
+    vendorId,
+    accountingCode,
+    fiscalYearId,
+    batchGroupId,
+    exportToAccounting,
+  }) {
+    const create = (invoice) => {
       cy.okapiRequest({
         method: 'POST',
         path: 'invoice/invoices',
@@ -136,7 +140,23 @@ export default {
       }).then(({ body }) => {
         cy.wrap(body).as('invoice');
       });
+    };
+    const invoice = getDefaultInvoice({
+      fiscalYearId,
+      batchGroupId,
+      vendorId,
+      accountingCode,
+      exportToAccounting,
     });
+
+    if (batchGroupId) {
+      create(invoice);
+    } else {
+      cy.getBatchGroups().then(({ id }) => {
+        create({ ...invoice, batchGroupId: id });
+      });
+    }
+
     return cy.get('@invoice');
   },
   updateInvoiceViaApi(invoiceProperties) {
@@ -171,7 +191,7 @@ export default {
       }
     });
   },
-  createInviceLineViaApi(invoiceLineProperties) {
+  createInvoiceLineViaApi(invoiceLineProperties) {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -184,26 +204,31 @@ export default {
     vendorId,
     poLineId,
     fiscalYearId,
+    batchGroupId,
     fundDistributions,
     accountingCode,
     releaseEncumbrance,
     exportToAccounting,
   }) {
-    this.createInvoiceViaApi({ vendorId, accountingCode, fiscalYearId, exportToAccounting }).then(
-      (resp) => {
-        cy.wrap(resp).as('invoice');
-        const { id: invoiceId, status: invoiceLineStatus } = resp;
-        const invoiceLine = getDefaultInvoiceLine({
-          invoiceId,
-          invoiceLineStatus,
-          poLineId,
-          fundDistributions,
-          accountingCode,
-          releaseEncumbrance,
-        });
-        this.createInviceLineViaApi(invoiceLine);
-      },
-    );
+    this.createInvoiceViaApi({
+      vendorId,
+      accountingCode,
+      fiscalYearId,
+      batchGroupId,
+      exportToAccounting,
+    }).then((resp) => {
+      cy.wrap(resp).as('invoice');
+      const { id: invoiceId, status: invoiceLineStatus } = resp;
+      const invoiceLine = getDefaultInvoiceLine({
+        invoiceId,
+        invoiceLineStatus,
+        poLineId,
+        fundDistributions,
+        accountingCode,
+        releaseEncumbrance,
+      });
+      this.createInvoiceLineViaApi(invoiceLine);
+    });
     return cy.get('@invoice');
   },
   selectFolio() {
@@ -248,16 +273,16 @@ export default {
       buttonNew.click(),
       Selection('Status*').open(),
       SelectionList().select(invoice.status),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
       Button({ name: 'accountNo' }).click(),
       SelectionList().select(`Default (${invoice.accountingCode})`),
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').click(),
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
@@ -271,16 +296,42 @@ export default {
     cy.wait(4000);
     cy.do([
       SelectionOption(fiscalYear).click(),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     cy.do([
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
-      Select({ id: 'invoice-payment-method' }).choose('EFT'),
+      invoicePaymentMethodSelect.choose('EFT'),
     ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  createInvoiceFromOrderWithoutFY(invoice) {
+    cy.do([
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+    ]);
+    cy.do([
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('EFT'),
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  cancellcreatingInvoiceFromOrderWithoutFY(invoice) {
+    cy.do([
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('EFT'),
+      Button('Cancel').click(),
+      Button({ id: 'clickable-cancel-editing-confirmation-cancel' }).click(),
+    ]);
   },
 
   createRolloverInvoice(invoice, organization) {
@@ -290,14 +341,14 @@ export default {
       buttonNew.click(),
       Selection('Status*').open(),
       SelectionList().select(invoice.status),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(organization);
     cy.do([
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select('FOLIO'),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').checked(false),
     ]);
     cy.do(saveAndClose.click());
@@ -321,14 +372,14 @@ export default {
       buttonNew.click(),
       Selection('Status*').open(),
       SelectionList().select(invoice.status),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(organization);
     cy.do([
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select('FOLIO'),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').checked(false),
     ]);
     cy.do([
@@ -366,14 +417,14 @@ export default {
       SelectionList().select(invoice.status),
       Selection('Fiscal year').open(),
       SelectionList().select(fiscalYear.code),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(organization);
     cy.do([
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select('FOLIO'),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').checked(false),
     ]);
     cy.do(saveAndClose.click());
@@ -387,16 +438,16 @@ export default {
       buttonNew.click(),
       Selection('Status*').open(),
       SelectionList().select(invoice.status),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
       Selection('Accounting code').open(),
       SelectionList().select(`Default (${invoice.accountingCode})`),
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').click(),
     ]);
     cy.do(saveAndClose.click());
@@ -721,56 +772,19 @@ export default {
   closeSearchPlugin: () => {
     cy.do(Button('Close').click());
   },
+  openExportVoucherForm() {
+    cy.do([invoiceResultsHeaderPane.find(actionsButton).click(), Button('Voucher export').click()]);
 
-  voucherExport: (batchGroup) => {
-    cy.wait(6000);
-    cy.do([
-      PaneHeader({ id: 'paneHeaderinvoice-results-pane' }).find(actionsButton).click(),
-      Button('Voucher export').click(),
-      Select().choose(batchGroup),
-      Button('Run manual export').click(),
-      Button({
-        id: 'clickable-run-manual-export-confirmation-confirm',
-      }).click(),
-    ]);
-    cy.wait(2000);
-    cy.do(
-      MultiColumnList({ id: 'batch-voucher-exports' })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .find(Button({ icon: 'download' }))
-        .click(),
-    );
+    VoucherExportForm.waitLoading();
+
+    return VoucherExportForm;
   },
+  voucherExport(batchGroup) {
+    this.openExportVoucherForm();
 
-  voucherExportManualExport: (batchGroup) => {
-    cy.do([
-      PaneHeader({ id: 'paneHeaderinvoice-results-pane' }).find(actionsButton).click(),
-      Button('Voucher export').click(),
-      Select().choose(batchGroup),
-      Button('Run manual export').click(),
-      Button({
-        id: 'clickable-run-manual-export-confirmation-confirm',
-      }).click(),
-    ]);
-    cy.wait(2000);
-  },
-
-  verifyDownloadButtonAndClick: () => {
-    cy.expect(
-      MultiColumnList({ id: 'batch-voucher-exports' })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .find(Button({ icon: 'download' }))
-        .exists(),
-    );
-    cy.do(
-      MultiColumnList({ id: 'batch-voucher-exports' })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .find(Button({ icon: 'download' }))
-        .click(),
-    );
+    VoucherExportForm.selectBatchGroup({ batchGroup });
+    VoucherExportForm.clickRunManualExportButton();
+    VoucherExportForm.downloadVoucher();
   },
 
   getSearchParamsMap(orderNumber, orderLine) {

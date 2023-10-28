@@ -42,8 +42,13 @@ function getFileExtensionNames() {
     .then(() => cells);
 }
 
+function openNewFileExtensionForm() {
+  cy.do([resultsPane.find(actionsButton).click(), Button('New file extension').click()]);
+}
+
 export default {
   getFileExtensionNames,
+  openNewFileExtensionForm,
   createViaApi: () => {
     return cy
       .okapiRequest({
@@ -58,9 +63,6 @@ export default {
     cy.do(
       extensionsList.find(MultiColumnListCell({ column: 'Extension', content: extension })).click(),
     );
-  },
-  openNewFileExtensionForm: () => {
-    cy.do([resultsPane.find(actionsButton).click(), Button('New file extension').click()]);
   },
   search: (value) => {
     // TODO: clarify with developers what should be waited
@@ -106,5 +108,10 @@ export default {
         );
       }),
     );
+  },
+  verifyListIsSortedInAlphabeticalOrder: () => {
+    getFileExtensionNames().then((cells) => {
+      cy.expect(cells).to.deep.equal(cells.sort());
+    });
   },
 };
