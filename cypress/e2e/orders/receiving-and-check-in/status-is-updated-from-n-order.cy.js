@@ -89,7 +89,7 @@ describe('Orders: Receiving and Check-in', () => {
       InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(copyNumber);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.checkStatus(ITEM_STATUS_NAMES.IN_PROCESS);
+      ItemRecordView.verifyStatus(ITEM_STATUS_NAMES.IN_PROCESS);
     },
   );
 });
