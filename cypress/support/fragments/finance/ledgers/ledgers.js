@@ -268,6 +268,23 @@ export default {
     this.continueRollover();
     cy.do([rolloverConfirmButton.click()]);
   },
+
+  fillInRolloverForCashBalanceWithoutAllocations(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(4000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
   selectFund: () => {
     cy.do(
       Section({ id: 'fund' })
@@ -311,6 +328,22 @@ export default {
     cy.do([
       Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+    ]);
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
+    cy.wait(6000);
+    this.continueRollover();
+    cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
+  },
+
+  fillInTestRolloverInfoOnlyTransferCashBalance(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
+    cy.do([
+      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
     ]);
