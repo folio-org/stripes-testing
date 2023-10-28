@@ -693,6 +693,10 @@ export default {
     internal: 'ui-finance.settings.all',
     gui: 'Settings (Finance): View, edit, create, delete',
   },
+  uiSettingsFinanceView: {
+    internal: 'ui-finance.settings.view',
+    gui: 'Settings (Finance): View settings',
+  },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
     internal: 'ui-finance.acq.unit.assignment.assign',
     gui: 'Finance: Assign acquisition units to new record',
