@@ -1,4 +1,4 @@
-import { Pane, Button, Select, Checkbox, NavListItem } from '../../../../../interactors';
+import { Pane, Button, Select, Checkbox, NavListItem, Modal } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const saveButton = Button('Save');
@@ -31,6 +31,10 @@ export default {
 
   clickOnSaveButton: () => {
     cy.do(saveButton.click());
+  },
+
+  clickOnTLRCheckbox: () => {
+    cy.do(TLRCheckbox.click());
   },
 
   changeTitleLevelRequestsStatus(status) {
@@ -70,5 +74,14 @@ export default {
 
   checkUpdateTLRCalloutAppeared() {
     InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
+  },
+
+  checkCannotChangeTLRModal() {
+    cy.expect(
+      Modal('Cannot change "Allow title level requests"').has({
+        message:
+          '"Allow title level requests" cannot be changed because it is in use by one or more requests',
+      }),
+    );
   },
 };

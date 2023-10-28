@@ -420,6 +420,7 @@ export default {
     gui: 'Remote storage: View',
   },
   // Requests
+  uiRequestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   uiRequestsEdit: { internal: 'ui-requests.edit', gui: 'Requests: View, edit, cancel' },
@@ -692,6 +693,10 @@ export default {
     internal: 'ui-finance.settings.all',
     gui: 'Settings (Finance): View, edit, create, delete',
   },
+  uiSettingsFinanceView: {
+    internal: 'ui-finance.settings.view',
+    gui: 'Settings (Finance): View settings',
+  },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
     internal: 'ui-finance.acq.unit.assignment.assign',
     gui: 'Finance: Assign acquisition units to new record',
@@ -771,6 +776,10 @@ export default {
   settingsTenantViewLocation: {
     internal: 'ui - tenant - settings.settings.location.view',
     gui: 'Settings (Tenant): View locations',
+  },
+  settingsTenantView: {
+    internal: 'ui-tenant-settings.settings.view',
+    gui: 'Settings (Tenant): View',
   },
   settingsTenantEditLanguageLocationAndCurrency: {
     internal: 'ui-tenant-settings.settings.locale',

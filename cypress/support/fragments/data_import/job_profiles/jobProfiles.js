@@ -22,6 +22,9 @@ const closeButton = Button({ icon: 'times' });
 const paneResults = Pane({ id: 'pane-results' });
 const searchButton = Button('Search');
 const searchField = TextField({ id: 'input-search-job-profiles-field' });
+const deleteUploadedFileModal = Modal('Delete uploaded file?');
+const modalNoButton = Button('No, do not delete');
+const modalYesButton = Button('Yes, delete');
 
 const openNewJobProfileForm = () => {
   cy.do([paneResults.find(actionsButton).click(), Button('New job profile').click()]);
@@ -175,26 +178,24 @@ export default {
     const modalContent =
       'Are you sure that you want to delete this uploaded file? Deleted files will be permanently removed and cannot be retrieved';
     cy.expect([
-      Modal('Delete uploaded file?').exists(),
-      Modal('Delete uploaded file?')
-        .find(HTML(including(modalContent)))
-        .exists(),
-      Modal('Delete uploaded file?').find(Button('No, do not delete'), { disabled: true }).exists(),
-      Modal('Delete uploaded file?').find(Button('Yes, delete'), { disabled: false }).exists(),
+      deleteUploadedFileModal.exists(),
+      deleteUploadedFileModal.find(HTML(including(modalContent))).exists(),
+      deleteUploadedFileModal.find(modalNoButton, { disabled: true }).exists(),
+      deleteUploadedFileModal.find(modalYesButton, { disabled: false }).exists(),
     ]);
   },
   cancelDeleteUploadedFile: () => {
-    cy.do(Modal('Delete uploaded file?').find(Button('No, do not delete')).click());
+    cy.do(deleteUploadedFileModal.find(modalNoButton).click());
     cy.expect([
-      Modal('Delete uploaded file?').absent(),
+      deleteUploadedFileModal.absent(),
       Pane({ id: 'pane-upload' })
         .find(HTML(including('will be deleted')))
         .absent(),
     ]);
   },
   confirmDeleteUploadedFile: () => {
-    cy.do(Modal('Delete uploaded file?').find(Button('Yes, delete')).click());
-    cy.expect(Modal('Delete uploaded file?').absent());
+    cy.do(deleteUploadedFileModal.find(modalYesButton).click());
+    cy.expect(deleteUploadedFileModal.absent());
   },
   verifyFileListArea: (fileName, quantityOfUploadedFiles = 1) => {
     cy.get('#pane-upload')
