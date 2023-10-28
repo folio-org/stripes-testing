@@ -17,4 +17,15 @@ export default {
       .click();
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
   },
+  unlinkMatchProfile: (number) => {
+    cy.get('[id*="branch-ROOT-MATCH-editable"]').eq(number).find('button[icon="unlink"]').click();
+    cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
+  },
+  unlinkNonMatchProfile: (number) => {
+    cy.get('[id*="branch-ROOT-NON_MATCH-editable"]')
+      .eq(number)
+      .find('button[icon="unlink"]')
+      .click();
+    cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
+  },
 };

@@ -35,10 +35,8 @@ const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 const invoiceDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-invoiceDetails' });
 const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }));
-
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
-
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
@@ -64,6 +62,10 @@ const polLookUpButton = Button('POL look-up');
 const selectOrderLinesModal = Modal('Select order lines');
 const fundInInvoiceSection = Section({ id: 'invoiceLineForm-fundDistribution' });
 const searhInputId = 'input-record-search';
+const invoiceDateField = TextField('Invoice date*');
+const vendorInvoiceNumberField = TextField('Vendor invoice number*');
+const batchGroupSelection = Selection('Batch group*');
+const invoicePaymentMethodSelect = Select({ id: 'invoice-payment-method' });
 
 const getDefaultInvoice = ({
   batchGroupId,
@@ -271,16 +273,16 @@ export default {
       buttonNew.click(),
       Selection('Status*').open(),
       SelectionList().select(invoice.status),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
       Button({ name: 'accountNo' }).click(),
       SelectionList().select(`Default (${invoice.accountingCode})`),
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').click(),
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
@@ -294,16 +296,42 @@ export default {
     cy.wait(4000);
     cy.do([
       SelectionOption(fiscalYear).click(),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     cy.do([
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
-      Select({ id: 'invoice-payment-method' }).choose('EFT'),
+      invoicePaymentMethodSelect.choose('EFT'),
     ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  createInvoiceFromOrderWithoutFY(invoice) {
+    cy.do([
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+    ]);
+    cy.do([
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('EFT'),
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  cancellcreatingInvoiceFromOrderWithoutFY(invoice) {
+    cy.do([
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('EFT'),
+      Button('Cancel').click(),
+      Button({ id: 'clickable-cancel-editing-confirmation-cancel' }).click(),
+    ]);
   },
 
   createRolloverInvoice(invoice, organization) {
@@ -313,14 +341,14 @@ export default {
       buttonNew.click(),
       Selection('Status*').open(),
       SelectionList().select(invoice.status),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(organization);
     cy.do([
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select('FOLIO'),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').checked(false),
     ]);
     cy.do(saveAndClose.click());
@@ -344,14 +372,14 @@ export default {
       buttonNew.click(),
       Selection('Status*').open(),
       SelectionList().select(invoice.status),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(organization);
     cy.do([
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select('FOLIO'),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').checked(false),
     ]);
     cy.do([
@@ -389,14 +417,14 @@ export default {
       SelectionList().select(invoice.status),
       Selection('Fiscal year').open(),
       SelectionList().select(fiscalYear.code),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(organization);
     cy.do([
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select('FOLIO'),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').checked(false),
     ]);
     cy.do(saveAndClose.click());
@@ -410,16 +438,16 @@ export default {
       buttonNew.click(),
       Selection('Status*').open(),
       SelectionList().select(invoice.status),
-      TextField('Invoice date*').fillIn(invoice.invoiceDate),
-      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
       Selection('Accounting code').open(),
       SelectionList().select(`Default (${invoice.accountingCode})`),
-      Selection('Batch group*').open(),
+      batchGroupSelection.open(),
       SelectionList().select(invoice.batchGroup),
-      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      invoicePaymentMethodSelect.choose('Cash'),
       Checkbox('Export to accounting').click(),
     ]);
     cy.do(saveAndClose.click());

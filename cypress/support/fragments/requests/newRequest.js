@@ -233,6 +233,14 @@ export default {
     cy.do(selectRequestType.choose(requestType));
   },
 
+  verifyRequestTypeHasOptions(...options) {
+    options.forEach((option) => {
+      cy.expect(HTML(option).exists());
+    });
+    // options.length + 1 (defalt option 'Select request type')
+    cy.get('[name="requestType"] option').should('have.length', options.length + 1);
+  },
+
   enterRequesterInfo(newRequest) {
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
