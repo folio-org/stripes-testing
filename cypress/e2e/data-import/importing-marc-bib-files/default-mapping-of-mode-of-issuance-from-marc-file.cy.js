@@ -25,7 +25,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      instanceHrids.forEach((hrid) => {
+      cy.wrap(instanceHrids).each((hrid) => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
           (instance) => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -46,7 +46,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
-        [
+        cy.wrap([
           {
             rowNumber: 0,
             modeOfIssuance: 'single unit',
@@ -59,12 +59,14 @@ describe('data-import', () => {
             rowNumber: 2,
             modeOfIssuance: 'single unit',
           },
-        ].forEach((instanceData) => {
+        ]).each((instanceData) => {
           FileDetails.openInstanceInInventory('Created', instanceData.rowNumber);
           InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrids.push(initialInstanceHrId);
           });
           InstanceRecordView.verifyModeOfIssuance(instanceData.modeOfIssuance);
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(fileName);
         });
       },
     );
