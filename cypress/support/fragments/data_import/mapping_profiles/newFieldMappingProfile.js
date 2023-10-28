@@ -686,6 +686,7 @@ export default {
   },
 
   addElectronicAccess: (
+    typeValue,
     relationship,
     uri,
     linkText = '',
@@ -693,10 +694,6 @@ export default {
     urlPublicNote = '',
   ) => {
     cy.do([
-      Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
-      Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(
-        actions.addTheseToExisting,
-      ),
       Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
       TextField('URI').fillIn(uri),
@@ -704,7 +701,22 @@ export default {
       TextField('Materials specified').fillIn(materialsSpecified),
       TextField('URL public note').fillIn(urlPublicNote),
     ]);
-    waitLoading();
+    if (typeValue === 'Holdings') {
+      cy.do([
+        Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
+        Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(
+          actions.addTheseToExisting,
+        ),
+      ]);
+    }
+    if (typeValue === 'Item') {
+      cy.do([
+        Select({ name: 'profile.mappingDetails.mappingFields[32].repeatableFieldAction' }).focus(),
+        Select({ name: 'profile.mappingDetails.mappingFields[32].repeatableFieldAction' }).choose(
+          actions.addTheseToExisting,
+        ),
+      ]);
+    }
   },
 
   addHoldingsStatements: (statement, action = actions.addTheseToExisting) => {
@@ -996,6 +1008,22 @@ export default {
     cy.get('#invoice-line-fund-distribution [class*=repeatableFieldItem]')
       .find('button:contains("Accepted values"):last')
       .click();
+  },
+
+  addFormerIdentifier: (value, action = actions.addTheseToExisting) => {
+    cy.do([
+      Select({ name: 'profile.mappingDetails.mappingFields[5].repeatableFieldAction' }).focus(),
+      Select({ name: 'profile.mappingDetails.mappingFields[5].repeatableFieldAction' }).choose(
+        action,
+      ),
+      Button('Add former identifier').click(),
+      TextField('Former Identifier').fillIn(`"${value}"`),
+    ]);
+    waitLoading();
+  },
+
+  fillMissingPieces: (value) => {
+    cy.do(TextField('Missing pieces').fillIn(value));
   },
 
   verifyExpenseClassesIsPresentedInDropdown: (value) => {

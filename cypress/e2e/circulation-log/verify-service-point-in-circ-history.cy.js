@@ -100,7 +100,7 @@ describe('Circulation log', () => {
       InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
       ItemRecordView.waitLoading();
       // The Item has status "In transit"
-      ItemRecordView.checkStatus(`In transit to ${testData.secondServicePoint.name}`);
+      ItemRecordView.verifyStatus(`In transit to ${testData.secondServicePoint.name}`);
       // Click on the "Circulation history" accordion to expand it => Check the "Most recent check in"
       ItemRecordView.checkItemCirculationHistory(
         todayDate,

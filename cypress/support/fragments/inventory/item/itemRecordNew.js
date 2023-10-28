@@ -57,6 +57,12 @@ export default {
   chooseCallNumberType: (type) => {
     cy.do(callNumberType.choose(type));
   },
+  addMaterialType: (materialType) => {
+    cy.do(Select({ id: 'additem_materialType' }).choose(materialType));
+  },
+  addPermanentLoanType: (loanType) => {
+    cy.do(Select({ id: 'additem_loanTypePerm' }).choose(loanType));
+  },
 
   save: () => cy.do(saveAndCloseBtn.click()),
 
