@@ -187,7 +187,7 @@ export default {
     );
   },
 
-  checkStatus: (status) => {
+  verifyStatus: (status) => {
     cy.expect(loanAccordion.find(KeyValue('Item status')).has({ value: status }));
   },
 
@@ -205,6 +205,10 @@ export default {
 
   checkNumberOfPieces: (number) => {
     cy.expect(itemDataAccordion.find(KeyValue('Number of pieces')).has({ value: number }));
+  },
+
+  verifyNumberOfMissingPieces: (number) => {
+    cy.expect(Accordion('Condition').find(KeyValue('Missing pieces')).has({ value: number }));
   },
 
   checkHotlinksToCreatedPOL: (number) => {
@@ -233,6 +237,13 @@ export default {
       .find(MultiColumnListCell({ content: code }))
       .exists(),
   ),
+
+  verifyFormerIdentifiers: (identifier) => cy.expect(KeyValue('Former identifier').has({ value: identifier })),
+  verifyItemPermanentLocation: (value) => {
+    cy.get('div[data-testid="item-permanent-location"]')
+      .find('div[class*=kvValue]')
+      .should('have.text', value);
+  },
 
   checkElectronicAccess: (relationshipValue, uriValue) => {
     cy.expect(

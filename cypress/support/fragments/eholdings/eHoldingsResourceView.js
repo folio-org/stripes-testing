@@ -12,8 +12,12 @@ import {
 import dateTools from '../../utils/dateTools';
 import eHoldingResourceEdit from './eHoldingResourceEdit';
 
+const actionsButton = Button('Actions');
 const holdingStatusSection = Section({ id: 'resourceShowHoldingStatus' });
 const addToHoldingButton = holdingStatusSection.find(Button('Add to holdings'));
+const exportButton = Button('Export title package (CSV)');
+const exportModal = Modal('Export settings');
+const cancelButtonInModal = exportModal.find(Button('Cancel'));
 
 const checkHoldingStatus = (holdingStatus) => {
   cy.expect(
@@ -90,5 +94,15 @@ export default {
   verifyCustomLabelValue(labelName, value = 'No value set-') {
     this.waitLoading();
     cy.expect(customLabelValue(labelName).has({ value }));
+  },
+
+  openExportModal() {
+    cy.do([actionsButton.click(), exportButton.click()]);
+    cy.expect(exportModal.exists());
+  },
+  closeExportModalViaCancel() {
+    cy.do(cancelButtonInModal.click());
+    cy.expect(exportModal.absent());
+    this.waitLoading();
   },
 };

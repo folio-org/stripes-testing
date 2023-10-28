@@ -1,17 +1,21 @@
-import { Button, Form, Link, Pane, Select } from '../../../../../../interactors';
+import { HTML, including } from '@interactors/html';
+
+import { Button, Form, Label, Link, Pane, Select } from '../../../../../../interactors';
 import InteractorsTools from '../../../../utils/interactorsTools';
+
+const localeLabel = 'Locale (for language display, date format etc.)';
+const timeZoneLabel = 'Time zone (time zone used when showing date time information)';
+const primaryCurrencyLabel = 'Primary currency (for currency symbol to display)';
+const numberingSystemLabel = 'Numbering system';
 
 const rootPane = Form({ id: 'locale-form' });
 const changeSessionLocaleLink = rootPane.find(Link('Change session locale'));
-const localeSelect = rootPane.find(Select('Locale (for language display, date format etc.)'));
-const numberingSystemSelect = rootPane.find(Select('Numbering system'));
-const timeZoneSelect = rootPane.find(
-  Select('Time zone (time zone used when showing date time information)'),
-);
-const primaryCurrencySystemSelect = rootPane.find(
-  Select('Primary currency (for currency symbol to display)'),
-);
+const localeSelect = rootPane.find(Select(including(localeLabel)));
+const numberingSystemSelect = rootPane.find(Select(including(numberingSystemLabel)));
+const timeZoneSelect = rootPane.find(Select(including(timeZoneLabel)));
+const primaryCurrencySystemSelect = rootPane.find(Select(including(primaryCurrencyLabel)));
 const saveButton = rootPane.find(Button({ type: 'submit' }));
+const lockIcon = HTML({ className: including('icon-lock') });
 
 export const LANGUAGES = {
   AMERICAN_ENGLISH: { name: 'American English / American English', value: 'en-US' },
@@ -29,13 +33,23 @@ export default {
   waitLoading() {
     cy.expect(Pane('Language and localization').exists());
   },
-  checkPaneContent() {
+  checkPaneContent(hasPermission = true) {
+    if (hasPermission) {
+      cy.expect([changeSessionLocaleLink.exists()]);
+    }
     cy.expect([
-      changeSessionLocaleLink.exists(),
       localeSelect.exists(),
       numberingSystemSelect.exists(),
       timeZoneSelect.exists(),
       primaryCurrencySystemSelect.exists(),
+    ]);
+  },
+  checkLockIcons() {
+    cy.expect([
+      Label(including(localeLabel)).find(lockIcon).exists(),
+      Label(including(numberingSystemLabel)).find(lockIcon).exists(),
+      Label(including(timeZoneLabel)).find(lockIcon).exists(),
+      Label(including(primaryCurrencyLabel)).find(lockIcon).exists(),
     ]);
   },
   changeLocalLanguage(language) {
