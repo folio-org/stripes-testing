@@ -1,4 +1,5 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { LOCATION_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -40,7 +41,7 @@ describe('MARC -> MARC Holdings', () => {
     ]).then((userProperties) => {
       user = userProperties;
 
-      cy.login(userProperties.username, userProperties.password, {
+      cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
@@ -61,10 +62,11 @@ describe('MARC -> MARC Holdings', () => {
     'C350756 Create a new "MARC Holdings" record for imported "Instance" record from "OCLC" (spitfire) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
-      const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
-
       InventorySearchAndFilter.searchByParameter('Identifier (all)', `(OCoLC)${testData.oclc}`);
       InstanceRecordView.verifyInstancePaneExists();
+      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+        instanceHrid = initialInstanceHrId;
+      });
       InventoryInstance.checkExpectedMARCSource();
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.waitLoading();
@@ -74,8 +76,7 @@ describe('MARC -> MARC Holdings', () => {
       QuickMarcEditor.checkAfterSaveHoldings();
       HoldingsRecordView.checkHoldingRecordViewOpened();
       HoldingsRecordView.viewSource();
-      // check step 9 A modal window of "View Source" is displayed with created "MARC Holdings" record.
-      InventoryViewSource.contains(changed008TagValue);
+      InventoryViewSource.contains(`"${LOCATION_NAMES.ONLINE}"`);
     },
   );
 });
