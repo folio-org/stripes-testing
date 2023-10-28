@@ -78,35 +78,34 @@ describe('Financial Transactions Detail Report', () => {
             })
             .then(() => {
               UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
-              feeFineAccount = {
-                id: uuid(),
-                ownerId: ownerData.id,
-                feeFineId: feeFineType.id,
-                amount: 100,
-                userId: userData.userId,
-                feeFineType: feeFineType.name,
-                feeFineOwner: ownerData.name,
-                createdAt: servicePoint.id,
-                dateAction: moment.utc().format(),
-                source: 'ADMINISTRATOR, DIKU',
-              };
-              NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-                feeFineAccount.id = feeFineAccountId;
-
-                const transferBody = {
-                  amount: actionAmount,
-                  paymentMethod: transferAccount.accountName,
-                  notifyPatron: false,
-                  servicePointId: servicePoint.id,
-                  userName: 'ADMINISTRATOR, DIKU',
+              cy.getAdminSourceRecord().then((adminSourceRecord) => {
+                feeFineAccount = {
+                  id: uuid(),
+                  ownerId: ownerData.id,
+                  feeFineId: feeFineType.id,
+                  amount: 100,
+                  userId: userData.userId,
+                  feeFineType: feeFineType.name,
+                  feeFineOwner: ownerData.name,
+                  createdAt: servicePoint.id,
+                  dateAction: moment.utc().format(),
+                  source: adminSourceRecord,
                 };
-
-                TransferFeeFine.transferFeeFineViaApi(transferBody, feeFineAccountId);
-
-                cy.login(userData.username, userData.password);
-                cy.visit(TopMenu.usersPath);
-                UsersSearchResultsPane.waitLoading();
+                NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+                  feeFineAccount.id = feeFineAccountId;
+                  const transferBody = {
+                    amount: actionAmount,
+                    paymentMethod: transferAccount.accountName,
+                    notifyPatron: false,
+                    servicePointId: servicePoint.id,
+                    userName: adminSourceRecord,
+                  };
+                  TransferFeeFine.transferFeeFineViaApi(transferBody, feeFineAccountId);
+                });
               });
+              cy.login(userData.username, userData.password);
+              cy.visit(TopMenu.usersPath);
+              UsersSearchResultsPane.waitLoading();
             });
         });
     },

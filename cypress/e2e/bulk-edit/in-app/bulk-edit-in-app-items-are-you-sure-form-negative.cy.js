@@ -8,7 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 
 let user;
 const barcode = `barcode-${getRandomPostfix()}`;
@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
           (res) => {
             res.temporaryLocation = { id: item.annexId };
             res.permanentLocation = { id: item.popularId };
-            ItemActions.editItemViaApi(res);
+            InventoryItems.editItemViaApi(res);
           },
         );
         cy.getItems({
@@ -48,7 +48,7 @@ describe('bulk-edit', () => {
         }).then((res) => {
           res.temporaryLocation = { id: item.annexId };
           res.permanentLocation = { id: item.annexId };
-          ItemActions.editItemViaApi(res);
+          InventoryItems.editItemViaApi(res);
         });
         FileManager.createFile(
           `cypress/fixtures/${itemBarcodesFileName}`,
