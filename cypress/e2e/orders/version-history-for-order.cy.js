@@ -43,10 +43,13 @@ describe('Orders: orders', () => {
   let orderNumber;
   let firstDate;
   let firstCard;
+  let adminSourceRecord;
 
   before(() => {
     cy.getAdminToken();
-
+    cy.getAdminSourceRecord().then((record) => {
+      adminSourceRecord = record;
+    });
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -73,7 +76,7 @@ describe('Orders: orders', () => {
     });
     cy.then(() => {
       firstDate = DateTools.getCurrentUTCTime();
-      firstCard = `${firstDate}\nView this version\nSource: ADMINISTRATOR, Diku_admin\nCurrent version\nChanged\nApproved\nnextPolNumber`;
+      firstCard = `${firstDate}\nView this version\nSource: ${adminSourceRecord}\nCurrent version\nChanged\nApproved\nnextPolNumber`;
     });
     // Need to wait for the next card in the order history to be created with a difference of a minute.
     cy.wait(70000);
