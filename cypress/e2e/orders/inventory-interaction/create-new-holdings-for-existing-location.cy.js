@@ -14,7 +14,6 @@ import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
 } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Orders: Inventory interaction', () => {
@@ -49,7 +48,7 @@ describe('Orders: Inventory interaction', () => {
               testData.order = order;
 
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                InventoryInstances.createHoldingViaAPI({
+                InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: testData.instance.instanceId,
                   permanentLocationId: testData.location.id,
                   sourceId: folioSource.id,

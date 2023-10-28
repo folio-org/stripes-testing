@@ -13,7 +13,15 @@ export default {
   getHoldingsFolioSource: () => getHoldingSources().then(
     (holdingsSources) => holdingsSources.filter((specialSource) => specialSource.name === 'FOLIO')[0],
   ),
-
+  createHoldingRecordViaApi(holdingsRecord) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'holdings-storage/holdings',
+        body: holdingsRecord,
+      })
+      .then(({ body }) => body);
+  },
   getHoldingsRecordsViaApi(searchParams) {
     return cy
       .okapiRequest({

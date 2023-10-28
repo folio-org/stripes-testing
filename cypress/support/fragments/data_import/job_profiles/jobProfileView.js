@@ -165,7 +165,6 @@ export default {
         }),
     );
   },
-
   // open the new tab in the current tab
   openLogDetailsPageView(fileName) {
     cy.get('#view-job-profile-pane')

@@ -50,7 +50,7 @@ export default {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
   },
 
-  checkStatusOfJobProfile: (status = 'Completed') => cy.do(MultiColumnListCell({ row: 0, content: status }).exists()),
+  checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
   openFileDetails: (fileName) => {
     cy.do(Link(fileName).click());
     // TODO need to wait until page is uploaded
