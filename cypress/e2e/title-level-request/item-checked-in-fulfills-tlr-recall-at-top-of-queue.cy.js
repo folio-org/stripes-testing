@@ -109,11 +109,12 @@ describe('Request queue. TLR', () => {
           );
         });
         cy.createTempUser([
-          permissions.requestsAll.gui,
+          permissions.uiRequestsView.gui,
+          permissions.uiRequestsCreate.gui,
+          permissions.uiRequestsAll.gui,
+          permissions.uiRequestsEdit.gui,
           permissions.checkinAll.gui,
-          permissions.checkoutAll.gui,
           permissions.inventoryAll.gui,
-          permissions.uiUsersView.gui,
         ]).then((userPropertiesForMainUser) => {
           users.mainUser = userPropertiesForMainUser;
           UserEdit.addServicePointViaApi(
