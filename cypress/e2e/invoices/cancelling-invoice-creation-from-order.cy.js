@@ -18,7 +18,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('Invoices', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultOrder = {
@@ -89,6 +89,7 @@ describe('Invoices', () => {
       Orders.openOrder();
     });
     cy.createTempUser([
+      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
       permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.uiOrdersView.gui,
     ]).then((userProperties) => {
@@ -101,17 +102,27 @@ describe('Invoices', () => {
   });
 
   after(() => {
+    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.selectFromResultsList();
+    Orders.unOpenOrder();
+    OrderLines.selectPOLInOrder(0);
+    OrderLines.deleteOrderLine();
+    Orders.deleteOrderViaApi(defaultOrder.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });
 
   it(
-    'C357056 Creating invoice from purchase order (thunderjet)',
+    'C357020 Cancelling invoice creation from order (thunderjet)',
     { tags: [testType.extendedPath, devTeams.thunderjet] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
+      Orders.cancelCreateNewInvoiceFromOrder();
       Orders.newInvoiceFromOrder();
-      Invoices.createInvoiceFromOrderWithoutFY(invoice);
+      Invoices.cancellcreatingInvoiceFromOrderWithoutFY(invoice);
+      Orders.waitLoading();
     },
   );
 });
