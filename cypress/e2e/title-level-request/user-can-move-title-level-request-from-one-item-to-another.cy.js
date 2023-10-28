@@ -93,7 +93,6 @@ describe('Title Level Request', () => {
     'C353976: Check that user can move Title Level Request from one Item to another (vega)(TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
-      cy.log(testData.currentItem);
       testData.folioInstances.forEach((item) => {
         item.barcodes.forEach((barcode) => {
           if (barcode !== testData.currentItem) {
