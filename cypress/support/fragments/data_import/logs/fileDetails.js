@@ -160,12 +160,6 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
   }
 };
 
-const checkColumnsInSummaryTable = (value, specialColumnName) => {
-  cy.then(() => specialColumnName.index()).then((index) => cy.expect(
-    jobSummaryTable.find(MultiColumnListCell({ columnIndex: index })).has({ content: value }),
-  ));
-};
-
 const checkStatusInColumn = (specialStatus, specialColumnName, rowIndex = 0) => {
   cy.then(() => specialColumnName.index()).then((index) => cy.expect(
     resultsList
@@ -255,7 +249,6 @@ export default {
   checkItemQuantityInSummaryTable,
   checkAuthorityQuantityInSummaryTable,
   checkErrorQuantityInSummaryTable,
-  checkColumnsInSummaryTable,
 
   openInstanceInInventory: (itemStatus, rowNumber = 0) => {
     cy.do(
@@ -535,6 +528,10 @@ export default {
         }),
     );
     return cy.get('@invoiceNumber');
+  },
+
+  verifyLogSummaryTableIsDisplayed: () => {
+    cy.expect(jobSummaryTable.exists());
   },
 
   getItemHrids: () => {

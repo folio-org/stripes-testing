@@ -68,8 +68,10 @@ describe('data-import', () => {
         );
         FileDetails.clickNextPaginationButton();
         FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogSummaryTableIsDisplayed();
         FileDetails.clickPreviousPaginationButton();
         FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogSummaryTableIsDisplayed();
       },
     );
   });
