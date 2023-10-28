@@ -16,7 +16,7 @@ import {
   Pane,
   Select,
   including,
-  NavListItem
+  NavListItem,
 } from '../../../../../../interactors';
 
 const pane = Pane('Locations');
@@ -215,5 +215,5 @@ export default {
     cy.expect(Pane('Tenant').exists());
     cy.do(NavListItem('Locations').click());
     cy.expect(Pane('Locations').exists());
-  }
+  },
 };

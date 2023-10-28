@@ -24,7 +24,12 @@ const contributorAccordion = Accordion('Contributor');
 const contributorButton = Button('Add contributor');
 const deleteButton = Button({ icon: 'trash' });
 
+function addNatureOfContent() {
+  cy.do(Button('Add nature of content').click());
+}
+
 export default {
+  addNatureOfContent,
   close: () => cy.do(closeButton.click()),
   waitLoading: () => cy.expect(Section({ id: 'instance-form' }).exists()),
   // related with Actions->Overlay
@@ -116,6 +121,9 @@ export default {
     InventoryInstanceModal.searchByTitle(precedingTitle);
     InventoryInstanceModal.selectInstance();
   },
+  selectNatureOfContent(value) {
+    cy.do(Select('Nature of content term').choose(value));
+  },
   choosePermanentLocation(locationName) {
     // wait fixes selection behavior
     cy.wait(1000);
@@ -142,6 +150,10 @@ export default {
     cy.do(TextArea({ name: `contributors[${indexRow}].name` }).fillIn(name));
     cy.do(Select({ name: `contributors[${indexRow}].contributorNameTypeId` }).choose(nameType));
     cy.do(Select({ name: `contributors[${indexRow}].contributorTypeId` }).choose(type));
+  },
+
+  fillResourceTitle(title) {
+    cy.do(TextArea({ id: 'input_instance_title' }).fillIn(title));
   },
 
   deleteContributor(rowIndex) {
