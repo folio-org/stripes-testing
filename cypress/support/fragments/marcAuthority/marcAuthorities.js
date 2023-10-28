@@ -447,10 +447,6 @@ export default {
     cy.do(buttonSearchInAdvancedModal.click());
   },
 
-  checkSearchOption(value) {
-    cy.expect(browseSearchAndFilterInput.has({ placeholder: value }));
-  },
-
   checkSearchInput(value) {
     cy.expect(searchInput.has({ value }));
   },
