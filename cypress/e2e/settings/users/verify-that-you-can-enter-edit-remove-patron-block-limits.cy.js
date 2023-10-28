@@ -1,6 +1,5 @@
 import TestType from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import Features from '../../../support/dictionary/features';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
