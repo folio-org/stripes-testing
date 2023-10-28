@@ -76,7 +76,58 @@ function checkByUserName(userName) {
   });
 }
 
+function getAllLogsColumnsResults(nameOfColumn) {
+  const cells = [];
+  let index;
+
+  switch (nameOfColumn) {
+    case 'File name':
+      index = 2;
+      break;
+    case 'Status':
+      index = 3;
+      break;
+    case 'Records':
+      index = 4;
+      break;
+    case 'Job profile':
+      index = 5;
+      break;
+    case 'Started running':
+      index = 6;
+      break;
+    case 'Ended running':
+      index = 7;
+      break;
+    case 'Run by':
+      index = 8;
+      break;
+    case 'ID':
+      index = 9;
+      break;
+    default:
+      index = 2;
+      break;
+  }
+
+  cy.wait(2000);
+  return cy
+    .get('div[class^="mclRowContainer--"]')
+    .find('[data-row-index]')
+    .each(($row) => {
+      // from each row, choose specific cell
+      cy.get(`[class*="mclCell-"]:nth-child(${index})`, { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+
 export default {
+  getAllLogsColumnsResults,
   verifyMessageOfDeleted,
   waitUIToBeFiltered,
   checkByErrorsInImport,
@@ -137,6 +188,14 @@ export default {
         .find(Checkbox({ id: 'clickable-filter-statusAny-committed' }))
         .click(),
     );
+  },
+
+  clickOnColumnName: (nameOfColumn) => {
+    if (nameOfColumn === 'Job profile') {
+      cy.do(Button({ id: 'clickable-list-column-jobprofilename' }).click());
+    } else {
+      cy.do(Button(`${nameOfColumn}`).click());
+    }
   },
 
   filterJobsByDate({ from, end }) {
@@ -378,5 +437,14 @@ export default {
         .find(HTML(including(`${quantity} logs found`)))
         .exists(),
     );
+  },
+  verifyColumnIsSorted: (nameOfColumn, isDescending) => {
+    getAllLogsColumnsResults(nameOfColumn).then((cells) => {
+      if (isDescending) {
+        cy.expect(cells).to.deep.equal(cells.sort().reverse());
+      } else {
+        cy.expect(cells).to.deep.equal(cells.sort());
+      }
+    });
   },
 };
