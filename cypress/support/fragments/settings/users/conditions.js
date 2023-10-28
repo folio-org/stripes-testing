@@ -1,15 +1,9 @@
 import { Checkbox, Section, NavListItem, TextArea, Button } from '../../../../../interactors';
+import { CONDITION_AND_LIMIT_TYPES } from '../../../constants';
 import Condition from './condition';
 
 const rootPaneset = Section({ id: 'app-settings-nav-pane' });
-const conditionsValues = [
-  'Maximum number of items charged out',
-  'Maximum number of lost items',
-  'Maximum number of overdue items',
-  'Maximum number of overdue recalls',
-  'Maximum outstanding fee/fine balance',
-  'Recall overdue by maximum number of days',
-];
+const conditionTypes = Object.values(CONDITION_AND_LIMIT_TYPES);
 const messageToBeDisplayed = TextArea({ id: 'message' });
 
 const resetCondition = (conditionValue) => {
@@ -51,11 +45,11 @@ export default {
     message: '',
   }),
   defaultConditions,
-  conditionsValues,
-  waitLoading: () => conditionsValues.forEach((conditionValue) => cy.expect(rootPaneset.find(NavListItem(conditionValue)).exists())),
-  select: (conditionValue = conditionsValues[0]) => cy.do(rootPaneset.find(NavListItem(conditionValue)).click()),
+  conditionTypes,
+  waitLoading: () => conditionTypes.forEach((conditionValue) => cy.expect(rootPaneset.find(NavListItem(conditionValue)).exists())),
+  select: (conditionValue = conditionTypes[0]) => cy.do(rootPaneset.find(NavListItem(conditionValue)).click()),
   resetCondition,
-  resetConditions: () => conditionsValues.forEach((conditionValue) => resetCondition(conditionValue)),
+  resetConditions: () => conditionTypes.forEach((conditionValue) => resetCondition(conditionValue)),
 
   getConditionsViaApi: () => cy
     .okapiRequest({
