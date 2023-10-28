@@ -21,7 +21,6 @@ describe('Waive Fees/Fines', () => {
     ownerData: {},
   };
   const feeFineType = {};
-  const paymentMethod = {};
   let userData;
   let feeFineAccount;
   const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
@@ -43,10 +42,6 @@ describe('Waive Fees/Fines', () => {
           feeFineType.id = manualCharge.id;
           feeFineType.name = manualCharge.feeFineType;
           feeFineType.amount = manualCharge.amount;
-        });
-        PaymentMethods.createViaApi(testData.ownerData.id).then(({ name, id }) => {
-          paymentMethod.name = name;
-          paymentMethod.id = id;
         });
       });
     WaiveReasons.createViaApi(waiveReason);
@@ -86,7 +81,6 @@ describe('Waive Fees/Fines', () => {
   after('Delete test data', () => {
     WaiveReasons.deleteViaApi(waiveReason.id);
     ManualCharges.deleteViaApi(feeFineType.id);
-    PaymentMethods.deleteViaApi(paymentMethod.id);
     NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
     UsersOwners.deleteViaApi(testData.ownerData.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
