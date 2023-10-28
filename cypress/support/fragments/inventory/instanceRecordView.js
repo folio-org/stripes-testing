@@ -401,7 +401,6 @@ export default {
       Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .find(HTML(including(itemBarcode)))
-        // .find(Link(including(itemBarcode)))
         .exists(),
     );
   },
