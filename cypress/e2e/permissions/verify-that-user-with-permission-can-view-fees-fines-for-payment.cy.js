@@ -14,7 +14,7 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import LoanPolicy from '../../support/fragments/circulation/loan-policy';
@@ -238,7 +238,7 @@ describe('Permissions --> Users', () => {
   });
 
   it(
-    'C380503 Verify that user with permission can view fees/fines for payment (Vega) (TaaS)',
+    'C380503 Verify that user with permission can view fees/fines for payment (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, devTeams.vega] },
     () => {
       CheckOutActions.checkOutUser(userData.barcode);
