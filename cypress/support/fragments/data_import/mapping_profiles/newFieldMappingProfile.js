@@ -686,6 +686,7 @@ export default {
   },
 
   addElectronicAccess: (
+    typeValue,
     relationship,
     uri,
     linkText = '',
@@ -693,10 +694,6 @@ export default {
     urlPublicNote = '',
   ) => {
     cy.do([
-      Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
-      Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(
-        actions.addTheseToExisting,
-      ),
       Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
       TextField('URI').fillIn(uri),
@@ -704,7 +701,22 @@ export default {
       TextField('Materials specified').fillIn(materialsSpecified),
       TextField('URL public note').fillIn(urlPublicNote),
     ]);
-    waitLoading();
+    if (typeValue === 'Holdings') {
+      cy.do([
+        Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
+        Select({ name: 'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(
+          actions.addTheseToExisting,
+        ),
+      ]);
+    }
+    if (typeValue === 'Item') {
+      cy.do([
+        Select({ name: 'profile.mappingDetails.mappingFields[32].repeatableFieldAction' }).focus(),
+        Select({ name: 'profile.mappingDetails.mappingFields[32].repeatableFieldAction' }).choose(
+          actions.addTheseToExisting,
+        ),
+      ]);
+    }
   },
 
   addHoldingsStatements: (statement, action = actions.addTheseToExisting) => {
