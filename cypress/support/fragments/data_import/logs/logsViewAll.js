@@ -115,7 +115,6 @@ function getAllLogsColumnsResults(nameOfColumn) {
     .get('div[class^="mclRowContainer--"]')
     .find('[data-row-index]')
     .each(($row) => {
-      // from each row, choose specific cell
       cy.get(`[class*="mclCell-"]:nth-child(${index})`, { withinSubject: $row })
         // extract its text content
         .invoke('text')
