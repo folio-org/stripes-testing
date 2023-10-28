@@ -25,8 +25,8 @@ describe('data-import', () => {
     let user;
     const quantityOfItems = {
       created: '2',
-      noAction: '1',
-      error: '1',
+      noAction: '5',
+      error: '5',
     };
     const marcFileName = `C357017 autotestFile.${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'marcBibFileForC357017.mrc';
@@ -86,6 +86,7 @@ describe('data-import', () => {
       });
     });
 
+    // test is failed UIDATIMP-1549
     it(
       'C357018 Check the filter in summary table with "create + no action + error" actions for the Item column (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
@@ -167,7 +168,7 @@ describe('data-import', () => {
         // check Error counter in the Summary table
         FileDetails.checkItemQuantityInSummaryTable(quantityOfItems.error, 3);
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.ITEM);
-        FileDetails.verifyQuantityOfRecordsWithError(3);
+        FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.error);
         FileDetails.verifyLogSummaryTableIsHidden();
         FileDetails.verifyRecordsSortingOrder();
       },
