@@ -285,7 +285,7 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
-  fillInTestRolloverInfoCashBalance: (fiscalYear, rolloverBudgetValue, rolloverValueAs) => {
+  fillInTestRolloverInfoCashBalance(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
     // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -297,7 +297,8 @@ export default {
       addAvailableToSelect.choose(rolloverValueAs),
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
-    cy.wait(2000);
+    cy.wait(6000);
+    this.continueRollover();
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },
 
@@ -519,6 +520,61 @@ export default {
       expect(actualData[14]).to.equal(initialAllocation);
       expect(actualData[17]).to.equal(totalAllocation);
       expect(actualData[19]).to.equal(totalFunding);
+      expect(actualData[26]).to.equal(cashBalance);
+      expect(actualData[27]).to.equal(available);
+    });
+  },
+
+  checkDownloadedFileWithAllTansactions(
+    fileName,
+    fund,
+    secondFiscalYear,
+    allowableEncumbrance,
+    allowableExpenditure,
+    initialAllocation,
+    increase,
+    decrease,
+    totalAllocation,
+    transfers,
+    totalFunding,
+    encumberedBudget,
+    awaitingPaymentBudget,
+    expendedBudget,
+    unavailable,
+    overEncumbered,
+    overExpended,
+    cashBalance,
+    available,
+  ) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      expect(fileRows[0].trim()).to.equal(
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Percentage of total expended"',
+      );
+
+      const actualData = fileRows[1].trim().split(',');
+      expect(actualData[0]).to.equal(`"${fund.name}"`);
+      expect(actualData[1]).to.equal(`"${fund.code}"`);
+      expect(actualData[9]).to.equal(`"${fund.description}"`);
+      expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
+      expect(actualData[12]).to.equal(allowableEncumbrance);
+      expect(actualData[13]).to.equal(allowableExpenditure);
+      expect(actualData[14]).to.equal(initialAllocation);
+      expect(actualData[15]).to.equal(increase);
+      expect(actualData[16]).to.equal(decrease);
+      expect(actualData[17]).to.equal(totalAllocation);
+      expect(actualData[18]).to.equal(transfers);
+      expect(actualData[19]).to.equal(totalFunding);
+      expect(actualData[20]).to.equal(encumberedBudget);
+      expect(actualData[21]).to.equal(awaitingPaymentBudget);
+      expect(actualData[22]).to.equal(expendedBudget);
+      expect(actualData[23]).to.equal(unavailable);
+      expect(actualData[24]).to.equal(overEncumbered);
+      expect(actualData[25]).to.equal(overExpended);
       expect(actualData[26]).to.equal(cashBalance);
       expect(actualData[27]).to.equal(available);
     });
