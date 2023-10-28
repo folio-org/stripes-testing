@@ -72,7 +72,7 @@ describe('bulk-edit', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-        ItemRecordView.checkStatus('Intellectual item');
+        ItemRecordView.verifyStatus('Intellectual item');
       },
     );
   });
