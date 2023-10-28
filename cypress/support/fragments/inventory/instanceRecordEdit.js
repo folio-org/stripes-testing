@@ -152,6 +152,10 @@ export default {
     cy.do(Select({ name: `contributors[${indexRow}].contributorTypeId` }).choose(type));
   },
 
+  fillResourceTitle(title) {
+    cy.do(TextArea({ id: 'input_instance_title' }).fillIn(title));
+  },
+
   deleteContributor(rowIndex) {
     cy.do(
       Section({ id: 'instanceSection04' })

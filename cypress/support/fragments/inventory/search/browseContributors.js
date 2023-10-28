@@ -358,4 +358,13 @@ export default {
       }),
     ]);
   },
+  verifyNameTypeOptions(nameTypes) {
+    nameTypes.forEach((name) => {
+      cy.expect(
+        MultiSelectMenu()
+          .find(MultiSelectOption(including(name)))
+          .exists(),
+      );
+    });
+  },
 };
