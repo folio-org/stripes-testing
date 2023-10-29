@@ -34,7 +34,7 @@ describe('Agreement Notes', () => {
     Agreements.createViaApi(customAgreement).then((agreement) => {
       secondAgreementId = agreement.id;
     });
-    NoteTypes.createNoteTypeViaApi(noteType)
+    NoteTypes.createNoteTypeViaApi({ name: noteType })
       .then((note) => {
         noteTypeId = note.id;
       })
