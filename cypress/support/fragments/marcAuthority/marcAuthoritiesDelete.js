@@ -64,6 +64,17 @@ export default {
     ]);
   },
 
+  verifyDeleteComplete(record) {
+    cy.expect([
+      deleteConfirmModal.absent(),
+      Callout()
+        .find(HTML(`MARC authority record ${record} has been deleted`))
+        .exists(),
+      searchResultPane.absent(),
+      MultiColumnListCell({ content: record }).absent(),
+    ]);
+  },
+
   checkDelete(headingReference) {
     cy.expect(
       Callout()
