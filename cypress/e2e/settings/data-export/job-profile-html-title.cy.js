@@ -36,7 +36,7 @@ describe('Job profile - setup', () => {
 
   it(
     'C410765 Verify "Data export -> Job profiles" settings HTML page title format (firebird) (TaaS)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: [testTypes.extendedPath, devTeams.firebird] },
     () => {
       TopMenuNavigation.navigateToApp('Settings');
       SettingsDataExport.verifyPageTitle('Settings - FOLIO');
