@@ -22,6 +22,8 @@ const singleRecordImportsAccordion = Accordion('Inventory single record imports'
 const dataImportList = MultiColumnList({ id: 'list-data-import' });
 const errorsInImportAccordion = Accordion('Errors in import');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
+const nextButton = Button({ id: 'list-data-import-next-paging-button' });
+const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
 
 function getCheckboxByRow(row) {
   return MultiColumnList()
@@ -369,6 +371,12 @@ export default {
   openFileDetails: (fileName) => {
     cy.do(MultiColumnList({ id: 'list-data-import' }).find(Link(fileName)).click());
   },
+  clickNextPaginationButton: () => {
+    cy.do(nextButton.click());
+  },
+  clickPreviousPaginationButton: () => {
+    cy.do(previousButton.click());
+  },
 
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(selectAllCheckbox.absent()),
 
@@ -378,5 +386,23 @@ export default {
         .find(HTML(including(`${quantity} logs found`)))
         .exists(),
     );
+  },
+  verifyPreviousPagination: () => {
+    cy.expect([
+      previousButton.has({ disabled: true }),
+      Pane({ id: 'pane-results-content' })
+        .find(HTML(including('1 - 100')))
+        .exists(),
+      nextButton.has({ disabled: false }),
+    ]);
+  },
+  verifyNextPagination: () => {
+    cy.expect([
+      previousButton.has({ disabled: false }),
+      nextButton.has({ disabled: false }),
+      Pane({ id: 'pane-results-content' })
+        .find(HTML(including('101 - 200')))
+        .exists(),
+    ]);
   },
 };
