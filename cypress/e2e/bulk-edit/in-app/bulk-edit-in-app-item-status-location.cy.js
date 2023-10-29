@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         const location = 'Annex';
-        const status = 'Intellectual item'
+        const status = 'Intellectual item';
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replaceTemporaryLocation(location);
         BulkEditActions.addNewBulkEditFilterString();
