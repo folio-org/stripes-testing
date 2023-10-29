@@ -54,10 +54,10 @@ const status = {
 };
 
 const visibleColumnsInSummaryTable = {
-  SRS_MARC: { columnIndex: 2 },
-  INSTANCE: { columnIndex: 3 },
-  HOLDINGS: { columnIndex: 4 },
-  ITEM: { columnIndex: 5 },
+  SRS_MARC: { columnIndex: 1 },
+  INSTANCE: { columnIndex: 2 },
+  HOLDINGS: { columnIndex: 3 },
+  ITEM: { columnIndex: 4 },
   INVOICE: { columnIndex: 7 },
   ERROR: { columnIndex: 8 },
 };
@@ -421,7 +421,7 @@ export default {
   verifyQuantityOfRecordsWithError: (number) => {
     cy.expect(
       PaneHeader({ id: 'paneHeaderpane-results' })
-        .find(HTML(including(`${number} records found`)))
+        .find(HTML(including(`${number} errors found`)))
         .exists(),
     );
   },
