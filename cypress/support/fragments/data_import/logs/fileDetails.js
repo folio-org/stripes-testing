@@ -441,7 +441,7 @@ export default {
   verifyQuantityOfRecordsWithError: (number) => {
     cy.expect(
       PaneHeader({ id: 'paneHeaderpane-results' })
-        .find(HTML(including(`${number} records found`)))
+        .find(HTML(including(`${number} errors found`)))
         .exists(),
     );
   },
