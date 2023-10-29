@@ -1,4 +1,4 @@
-import { TextField, Button, Select, Checkbox, Modal, Accordion } from '../../../../../interactors';
+import { TextField, Button, Select, Checkbox, Modal } from '../../../../../interactors';
 import modalSelectTransformations from './modalSelectTransformations';
 import { EXPORT_TRANSFORMATION_NAMES } from '../../../constants';
 
