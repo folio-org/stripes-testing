@@ -388,21 +388,25 @@ export default {
     );
   },
   verifyPreviousPagination: () => {
-    cy.expect([
-      previousButton.has({ disabled: true }),
-      Pane({ id: 'pane-results-content' })
-        .find(HTML(including('1 - 100')))
-        .exists(),
-      nextButton.has({ disabled: false }),
-    ]);
+    cy.expect([previousButton.has({ disabled: true }), nextButton.has({ disabled: false })]);
+    cy.get('#pane-results')
+      .find('div[class^="mclPrevNextPageInfoContainer-"]')
+      .invoke('text')
+      .should('include', '1');
+    cy.get('#pane-results')
+      .find('div[class^="mclPrevNextPageInfoContainer-"]')
+      .invoke('text')
+      .should('include', '100');
   },
   verifyNextPagination: () => {
-    cy.expect([
-      previousButton.has({ disabled: false }),
-      nextButton.has({ disabled: false }),
-      Pane({ id: 'pane-results-content' })
-        .find(HTML(including('101 - 200')))
-        .exists(),
-    ]);
+    cy.expect([previousButton.has({ disabled: false }), nextButton.has({ disabled: false })]);
+    cy.get('#pane-results')
+      .find('div[class^="mclPrevNextPageInfoContainer-"]')
+      .invoke('text')
+      .should('include', '101');
+    cy.get('#pane-results')
+      .find('div[class^="mclPrevNextPageInfoContainer-"]')
+      .invoke('text')
+      .should('include', '200');
   },
 };

@@ -9,7 +9,7 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
 
-    before('login', () => {
+    before('create user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -24,6 +24,10 @@ describe('data-import', () => {
       });
     });
 
+    after('delete user', () => {
+      Users.deleteViaApi(user.userId);
+    });
+
     it(
       'C353589 For the Data Import View all page, change from Load more to Paginated (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
@@ -32,6 +36,8 @@ describe('data-import', () => {
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.verifyPreviousPagination();
         LogsViewAll.clickNextPaginationButton();
+        LogsViewAll.verifyNextPagination();
+        LogsViewAll.clickPreviousPaginationButton();
         LogsViewAll.verifyPreviousPagination();
       },
     );
