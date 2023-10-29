@@ -14,7 +14,6 @@ import Orders from '../../../../support/fragments/orders/orders';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Organizations from '../../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../../../support/fragments/invoices/newInvoice';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 
@@ -194,7 +193,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C398023: Test rollover when PO line contains two fund distributions related to different ledgers and same fiscal year (Thunderjet) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: [testType.extendedPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByName(firstLedger.name);
       Ledgers.selectLedger(firstLedger.name);
