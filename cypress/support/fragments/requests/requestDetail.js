@@ -146,4 +146,8 @@ export default {
     cy.do(itemInformationSection.find(Link()).click());
     ItemRecordView.waitLoading();
   },
+
+  viewRequestsInQueue() {
+    cy.do(requestInfoSection.find(KeyValue('Position in queue').find(Link())).click());
+  },
 };
