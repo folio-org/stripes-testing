@@ -153,7 +153,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C402327: Test rollover is blocked once common rollover has been done for given ledger and FY (Thunderjet) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: [testType.extendedPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
