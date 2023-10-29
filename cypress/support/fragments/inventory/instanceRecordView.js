@@ -405,6 +405,10 @@ export default {
     );
   },
 
+  verifyModeOfIssuance(value) {
+    cy.expect(KeyValue('Mode of issuance').has({ value }));
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },
