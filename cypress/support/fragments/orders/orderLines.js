@@ -19,6 +19,7 @@ import {
   Section,
   KeyValue,
   Card,
+  TextArea,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
@@ -95,7 +96,7 @@ const agreementLinesSection = Section({ id: 'relatedAgreementLines' });
 const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
-
+const note = 'Edited by AQA team';
 // Edit form
 // PO Line details section
 const lineDetails = Section({ id: 'lineDetails' });
@@ -474,6 +475,76 @@ export default {
     ]);
     cy.wait(4000);
     submitOrderLine();
+  },
+
+  fillInPOLineInfoforPEMIXWithFund(fund, unitPrice, quantity, value, institutionId) {
+    cy.do([orderFormatSelect.choose(ORDER_FORMAT_NAMES.PE_MIX), acquisitionMethodButton.click()]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      electronicUnitPriceTextField.fillIn(unitPrice),
+      quantityElectronicTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      quantityElectronicField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
+  fillInPOLineInfoforOtherWithFund(fund, unitPrice, quantity, value, institutionId) {
+    cy.do([orderFormatSelect.choose(ORDER_FORMAT_NAMES.OTHER), acquisitionMethodButton.click()]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      Button('Location look-up').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
+  addReveivingNoteToItemDetailsAndSave(orderNumber) {
+    cy.do([TextArea('Receiving note').fillIn(note), saveAndCloseButton.click()]);
+    cy.wait(4000);
+    submitOrderLine();
+    InteractorsTools.checkCalloutMessage(
+      `The purchase order line ${orderNumber}-1 was successfully updated`,
+    );
   },
 
   rolloverPOLineInfoforPhysicalMaterialWith2Funds(
@@ -1237,6 +1308,10 @@ export default {
 
   deleteFundsInPOL() {
     cy.get('#fundDistributionAccordion').find('button[icon="trash"]').first().click();
+  },
+
+  deleteLocationsInPOL() {
+    cy.get('#location').find('button[icon="trash"]').first().click();
   },
 
   addContributorToPOL: () => {
