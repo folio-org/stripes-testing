@@ -7,8 +7,10 @@ import {
   MultiColumnListRow,
   TextField,
   HTML,
+  MultiColumnListHeader
 } from '../../../../../interactors';
-import exportNewJobProfile from './exportNewJobProfile';
+import ExportNewJobProfile from './exportNewJobProfile';
+import SettingsDataExport from '../settingsDataExport';
 
 const jobProfilesPane = Pane('Job profiles');
 const newButton = Button('New');
@@ -21,15 +23,21 @@ export default {
   openNewJobProfileForm,
   createJobProfile: (profileName, mappingProfile) => {
     openNewJobProfileForm();
-    exportNewJobProfile.fillJobProfile(profileName, mappingProfile);
-    exportNewJobProfile.saveJobProfile();
+    ExportNewJobProfile.fillJobProfile(profileName, mappingProfile);
+    ExportNewJobProfile.saveJobProfile();
   },
 
   goToJobProfilesTab() {
-    cy.do(NavListItem('Data export').click());
-    cy.expect(Pane('Data export').exists());
+    SettingsDataExport.goToSettingsDataExport();
     cy.do(NavListItem('Job profiles').click());
     cy.expect(jobProfilesPane.exists());
+  },
+
+  verifyJobProfilesElements() {
+    cy.do(NavListItem('Job profiles').click());
+    ['Name', 'Updated', 'Updated by'].forEach((title) => {
+      cy.expect(jobProfilesPane.find(MultiColumnListHeader(title)).exists());
+    });
   },
 
   verifyJobProfileInTheTable(jobProfileName) {
