@@ -46,7 +46,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356841 item mapping profile ${getRandomPostfix()}`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         },
         actionProfile: {
