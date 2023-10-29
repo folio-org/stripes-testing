@@ -74,6 +74,11 @@ describe('bulk-edit', () => {
 
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox(
+          'Status',
+          'Item temporary location',
+        );
         BulkEditSearchPane.verifyChangesUnderColumns('Item temporary location', location);
         BulkEditSearchPane.verifyChangesUnderColumns('Status', status);
 
