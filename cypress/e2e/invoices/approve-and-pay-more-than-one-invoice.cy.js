@@ -2,7 +2,6 @@ import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -50,9 +49,6 @@ describe('Invoices', () => {
   };
   const allocatedQuantity = '100';
   let user;
-  let firstOrderNumber;
-  let secondorderNumber;
-
   let servicePointId;
   let location;
 
@@ -96,7 +92,6 @@ describe('Invoices', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
-      firstOrderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
@@ -115,7 +110,6 @@ describe('Invoices', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.createOrderForRollover(secondOrder).then((secondOrderResponse) => {
       secondOrder.id = secondOrderResponse.id;
-      secondorderNumber = secondOrderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
