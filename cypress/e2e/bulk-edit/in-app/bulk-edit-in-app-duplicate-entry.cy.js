@@ -26,10 +26,11 @@ const item = {
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditCsvView.gui,
-        permissions.uiUsersView.gui,
-      ]).then((userProperties) => { viewUser = userProperties; });
+      cy.createTempUser([permissions.bulkEditCsvView.gui, permissions.uiUsersView.gui]).then(
+        (userProperties) => {
+          viewUser = userProperties;
+        },
+      );
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
@@ -106,7 +107,12 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyReasonForError('No match found');
         BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
         BulkEditActions.downloadErrors();
-        ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [user.barcode, invalidBarcode, 'Duplicate entry', 'No match found']);
+        ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+          user.barcode,
+          invalidBarcode,
+          'Duplicate entry',
+          'No match found',
+        ]);
       },
     );
   });
