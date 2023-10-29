@@ -485,6 +485,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber,
         );
         NewFieldMappingProfile.addElectronicAccess(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.typeValue,
           `"${collectionOfMappingAndActionProfiles[1].mappingProfile.relationship}"`,
           collectionOfMappingAndActionProfiles[1].mappingProfile.uri,
         );

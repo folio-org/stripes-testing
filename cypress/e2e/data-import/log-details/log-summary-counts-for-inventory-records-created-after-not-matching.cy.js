@@ -139,7 +139,12 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber(profile.callNumber);
-      NewFieldMappingProfile.addElectronicAccess(profile.relationship, profile.uri, profile.link);
+      NewFieldMappingProfile.addElectronicAccess(
+        profile.typeValue,
+        profile.relationship,
+        profile.uri,
+        profile.link,
+      );
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);
     };

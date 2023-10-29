@@ -326,7 +326,7 @@ describe('data-import', () => {
             ItemRecordView.checkAccessionNumber(
               collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.accessionNumberUI,
             );
-            ItemRecordView.checkNumberOfPieces(
+            ItemRecordView.verifyNumberOfPieces(
               collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.numberOfPiecesUI,
             );
             ItemRecordView.verifyPermanentLoanType(
@@ -335,7 +335,7 @@ describe('data-import', () => {
             ItemRecordView.verifyTemporaryLoanType(
               collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanTypeUI,
             );
-            ItemRecordView.checkStatus(
+            ItemRecordView.verifyStatus(
               collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status,
             );
 
@@ -438,7 +438,7 @@ describe('data-import', () => {
             HoldingsRecordView.close();
             InventoryInstance.openItemByBarcode(itemBarcode);
             ItemRecordView.checkAccessionNumber('-');
-            ItemRecordView.checkNumberOfPieces('-');
+            ItemRecordView.verifyNumberOfPieces('-');
             ItemRecordView.verifyTemporaryLoanType('-');
           });
         });
