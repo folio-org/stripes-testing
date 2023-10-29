@@ -9,7 +9,6 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../support/utils/stringTools';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
