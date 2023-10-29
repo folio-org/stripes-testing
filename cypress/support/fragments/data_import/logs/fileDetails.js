@@ -19,6 +19,7 @@ const resultsList = MultiColumnList({ id: 'search-results-list' });
 const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
 const nextButton = Button({ id: 'search-results-list-next-paging-button' });
 const previousButton = Button({ id: 'search-results-list-prev-paging-button' });
+const paneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 
 const columnNameInResultList = {
   srsMarc: resultsList.find(MultiColumnListHeader({ id: 'list-column-srsmarcstatus' })),
@@ -318,19 +319,26 @@ export default {
         .find(Link({ href: including('/data-import/job-summary') }))
         .click(),
     );
-    cy.expect(
-      PaneHeader({ id: 'paneHeaderpane-results' })
-        .find(HTML(including('errors found')))
-        .exists(),
-    );
+    cy.expect(paneHeader.find(HTML(including('errors found'))).exists());
   },
 
-  clickNextPaginationButton: () => {
+  clickNextPaginationButton() {
     cy.do(nextButton.click());
   },
 
   clickPreviousPaginationButton: () => {
     cy.do(previousButton.click());
+  },
+
+  paginateThroughAllPages(numberOfPages) {
+    for (let i = 0; i < numberOfPages; i++) {
+      this.clickNextPaginationButton();
+    }
+    cy.expect(nextButton.has({ disabled: true }));
+  },
+
+  close: () => {
+    cy.do(Button({ icon: 'times' }).click());
   },
 
   verifyMultipleHoldingsStatus: (expectedArray, expectedQuantity, rowNumber = 0) => {
@@ -439,11 +447,7 @@ export default {
   },
 
   verifyQuantityOfRecordsWithError: (number) => {
-    cy.expect(
-      PaneHeader({ id: 'paneHeaderpane-results' })
-        .find(HTML(including(`${number} errors found`)))
-        .exists(),
-    );
+    cy.expect(paneHeader.find(HTML(including(`${number} errors found`))).exists());
   },
 
   verifyLogSummaryTableIsHidden: () => {
@@ -544,5 +548,12 @@ export default {
       });
       return extractedValues;
     });
+  },
+
+  verifyHeader: (fileName, recordsNumber) => {
+    cy.expect([
+      paneHeader.find(HTML(including(fileName))).exists(),
+      paneHeader.find(HTML(including(`${recordsNumber} records found`))).exists(),
+    ]);
   },
 };
