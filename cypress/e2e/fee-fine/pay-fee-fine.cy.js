@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment/moment';
 import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -66,7 +67,7 @@ describe('Pay Fees/Fines', () => {
             id: uuid(),
             ownerId: testData.ownerData.id,
             feeFineId: feeFineType.id,
-            amount: 9,
+            amount: 20,
             userId: userData.userId,
             feeFineType: feeFineType.name,
             feeFineOwner: testData.ownerData.name,
@@ -93,6 +94,7 @@ describe('Pay Fees/Fines', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.userId);
+    CommentRequired.turnOffCommentRequiredFlags();
   });
 
   it(
@@ -197,11 +199,39 @@ describe('Pay Fees/Fines', () => {
       UserAllFeesFines.clickRowCheckbox(0);
       UserAllFeesFines.paySelectedFeeFines();
       // The Pay fee/fine modal should open as shown in attached screen print pay-ff-modal-comment-not-required.JPG
-      PayFeeFine.checkAmount(feeFineAccount.amount);
+      PayFeeFine.setAmount(10);
       // Select a Payment method and DO NOT enter Additional information for staff
       PayFeeFine.setPaymentMethod(paymentMethod);
       // Press the Pay button, then Confirm the payment
       PayFeeFine.submitAndConfirm();
+      PayFeeFine.checkConfirmModalClosed();
+    },
+  );
+
+  it(
+    'C461 Verify "Pay fee/fine" behavior when "Require comment when fee/fine fully/partially paid" is set to Yes (vega) (TaaS)',
+    {
+      tags: [TestTypes.extendedPath, DevTeams.vega],
+    },
+    () => {
+      cy.visit(SettingsMenu.commentRequired);
+      CommentRequired.requireCommentForPaidFeeChooseOption('Yes');
+      CommentRequired.clickSaveButton();
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      UsersSearchPane.searchByKeywords(userData.username);
+      UsersSearchPane.selectUserFromList(userData.username);
+      UsersCard.waitLoading();
+      UsersCard.openFeeFines();
+      UsersCard.viewAllFeesFines();
+      UserAllFeesFines.clickRowCheckbox(0);
+      UserAllFeesFines.paySelectedFeeFines();
+      PayFeeFine.setAmount(10);
+      PayFeeFine.setPaymentMethod(paymentMethod);
+      PayFeeFine.verifySaveIsDisabled();
+      PayFeeFine.fillInAdditionalInformation(getTestEntityValue('comment'));
+      PayFeeFine.submitAndConfirm();
+      PayFeeFine.checkConfirmModalClosed();
     },
   );
 });
