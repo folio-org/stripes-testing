@@ -23,8 +23,10 @@ export default {
     cy.expect(PaneHeader(name).exists());
   },
   verifyElements() {
-    actionsButton.has({ disabled: false }),
-    Button({ ariaLabel: 'Cancel' }).has({ disabled: false })
+    cy.expect([
+      actionsButton.has({ disabled: false }),
+      Button({ ariaLabel: 'Cancel' }).has({ disabled: false })
+    ]);
   },
   verifyProfileDetailsEditable() {
     cy.expect([

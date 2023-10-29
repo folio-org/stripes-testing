@@ -75,7 +75,7 @@ describe('Job profile - setup', () => {
       ExportJobProfiles.clickProfileNameFromTheList(jobProfile.newName);
       SettingsDataExport.verifyPageTitle(`Data export settings - ${jobProfile.newName} - FOLIO`);
       SingleJobProfile.deleteMappingProfile(jobProfile.newName);
-      SettingsDataExport.verifyPageTitle('Data export settings - Job profiles - FOLIO'); ''
+      SettingsDataExport.verifyPageTitle('Data export settings - Job profiles - FOLIO');
     },
   );
 });

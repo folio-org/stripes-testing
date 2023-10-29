@@ -15,6 +15,6 @@ export default {
     ]);
   },
   verifyPageTitle(title) {
-    cy.title().should('eq', title)
+    cy.title().should('eq', title);
   },
 };
