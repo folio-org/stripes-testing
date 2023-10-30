@@ -734,8 +734,8 @@ export default {
       cy.get(`[name='${name}']`).then((element) => {
         const checked = element.attr('checked');
         if (!checked) {
-          cy.do(DropdownMenu().find(Checkbox(name)).click())
-        };
+          cy.do(DropdownMenu().find(Checkbox(name)).click());
+        }
       });
     });
   },

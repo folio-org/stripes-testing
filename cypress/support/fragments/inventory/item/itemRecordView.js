@@ -10,7 +10,6 @@ import {
   PaneHeader,
   Link,
   MultiColumnListCell,
-  MultiColumnListRow,
 } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 
@@ -160,7 +159,7 @@ export default {
       cy.expect([
         KeyValue(itemNote.type).has({ value: itemNote.note }),
       ]);
-    })
+    });
   },
 
   checkCheckInNote: (note, staffValue = 'Yes') => {

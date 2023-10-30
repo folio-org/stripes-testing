@@ -35,7 +35,7 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
-        ItemNoteTypes.createNoteTypeViaApi(noteType).then((noteId) => { noteTypeId = noteId });
+        ItemNoteTypes.createNoteTypeViaApi(noteType).then((noteId) => { noteTypeId = noteId; });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
