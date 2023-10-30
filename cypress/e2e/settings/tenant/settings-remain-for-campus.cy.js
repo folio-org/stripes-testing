@@ -109,6 +109,7 @@ describe('Settings: Tenant', () => {
     { tags: [TestTypes.extendedPath, DevTeams.firebird] },
     () => {
       TenantPane.goToTenantTab();
+      cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       // #1 Select **"Institution AB"** from Preconditions #1 in "Institution" dropdown on "Campuses" pane
       TenantPane.selectTenant(TENANTS.CAMPUSES);
       Campuses.checkEmptyTableContent();

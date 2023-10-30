@@ -54,7 +54,7 @@ describe('data-import', () => {
           name: `Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,

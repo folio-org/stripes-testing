@@ -1,11 +1,12 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../utils/stringTools';
+
 import { Button, Modal } from '../../../../../interactors';
+import { ITEM_STATUS_NAMES } from '../../../constants';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const newRequestButton = Button('New request');
 
 function openActions() {
-  // need to wait until page will be loaded
   cy.wait(2000);
   cy.do(Button('Actions').click());
 }
@@ -98,7 +99,6 @@ export default {
   closeItem() {
     cy.do(Button({ icon: 'times' }).click());
   },
-
   getItemViaApi(searchParams) {
     return cy
       .okapiRequest({
@@ -107,12 +107,44 @@ export default {
       })
       .then(({ body }) => body.items);
   },
+  createItemViaApi(item) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'inventory/items',
+        body: item,
+      })
+      .then(({ body }) => body);
+  },
   deleteItemViaApi(itemId) {
     cy.okapiRequest({
       method: 'DELETE',
       path: `inventory/items/${itemId}`,
       isDefaultSearchParamsRequired: false,
     });
+  },
+  addItemToHoldingViaApi({
+    barcode = uuid(),
+    status = ITEM_STATUS_NAMES.AVAILABLE,
+    holdingsRecordId,
+  }) {
+    cy.then(() => {
+      cy.getLoanTypes({ limit: 1 });
+      cy.getMaterialTypes({ limit: 1 });
+    }).then(() => {
+      const item = {
+        id: uuid(),
+        barcode,
+        status: { name: status },
+        permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+        materialType: { id: Cypress.env('materialTypes')[0].id },
+        holdingsRecordId,
+      };
+      this.createItemViaApi(item);
+      cy.wrap(item).as('inventoryItem');
+    });
+
+    return cy.get('@inventoryItem');
   },
   verifyNewRequestButtonIsAbsent() {
     cy.expect(newRequestButton.absent());

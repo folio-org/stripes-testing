@@ -72,7 +72,6 @@ describe('circulation-log', () => {
         object: 'Loan',
         circAction: 'Closed loan',
         servicePoint: testData.userServicePoint.name,
-        // source: 'folio-aqa',
         source: testData.adminSourceRecord,
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Closed loan');

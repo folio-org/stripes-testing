@@ -10,6 +10,7 @@ import {
   Modal,
   MultiColumnList,
   Select,
+  Section,
   MultiSelect,
   TextArea,
   RadioButtonGroup,
@@ -35,6 +36,8 @@ const addPermissionsButton = Button({ id: 'clickable-add-permission' });
 const permissionsSearch = SearchField();
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
+const selectRequestType = Select({ id: 'type' });
+const cancelButton = Button('Cancel');
 let totalRows;
 
 // servicePointIds is array of ids
@@ -108,6 +111,14 @@ export default {
 
   verifySaveAndColseIsDisabled: (status) => {
     cy.expect(saveAndCloseBtn.has({ disabled: status }));
+  },
+
+  verifyCancelIsDisable: (status) => {
+    cy.expect(cancelButton.has({ disabled: status }));
+  },
+
+  verifyUserInformation: (allContentToCheck) => {
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'editUserInfo' }, including(contentToCheck)).exists()));
   },
 
   cancelChanges() {
@@ -264,6 +275,33 @@ export default {
 
   selectSingleSelectValue: ({ data }) => {
     cy.do(Select({ label: data.fieldLabel }).choose(data.firstLabel));
+  },
+
+  chooseRequestType(requestType) {
+    cy.do(selectRequestType.choose(requestType));
+  },
+
+  verifyUserTypeItems() {
+    cy.expect([
+      selectRequestType.has({ content: including('Patron') }),
+      selectRequestType.has({ content: including('Staff') }),
+    ]);
+  },
+
+  enterValidValueToCreateViaUi: (userData) => {
+    return cy
+      .do([
+        TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
+        Select({ id: 'adduser_group' }).choose(userData.patronGroup),
+        TextField({ name: 'barcode' }).fillIn(userData.barcode),
+        TextField({ name: 'username' }).fillIn(userData.username),
+        TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
+        saveAndCloseBtn.click(),
+      ])
+      .then(() => {
+        cy.intercept('/users').as('user');
+        return cy.wait('@user', { timeout: 80000 }).then((xhr) => xhr.response.body.id);
+      });
   },
 
   verifyUserPermissionsAccordion() {

@@ -66,7 +66,6 @@ describe('Job profile - setup', () => {
       SingleJobProfile.openActions();
       SingleJobProfile.clickEditButton();
       SingleJobProfile.verifyProfileDetailsEditable();
-      // SingleJobProfile.verifySource('folio-aqa');
       SingleJobProfile.verifySource(adminSourceRecord);
       SingleJobProfile.clickCancelButton();
 

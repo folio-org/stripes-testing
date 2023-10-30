@@ -32,8 +32,8 @@ export default {
 
   getCurrentDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getDate())}/${padWithZero(
-      currentDate.getMonth() + 1,
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
+      currentDate.getDate(),
     )}/${currentDate.getFullYear()}`;
   },
 
