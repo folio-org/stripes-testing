@@ -13,6 +13,7 @@ import {
   MultiColumnListHeader,
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
+import InventoryNewHoldings from './inventoryNewHoldings';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -395,6 +396,19 @@ export default {
     );
   },
 
+  verifyItemIsCreated: (holdingToBeOpened, itemBarcode) => {
+    cy.expect(
+      Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) })
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .find(HTML(including(itemBarcode)))
+        .exists(),
+    );
+  },
+
+  verifyModeOfIssuance(value) {
+    cy.expect(KeyValue('Mode of issuance').has({ value }));
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },
@@ -403,5 +417,10 @@ export default {
     cy.do(instanceDetailsSection.find(actionsButton).click());
     cy.do(Button('Edit instance').click());
     InstanceRecordEdit.waitLoading();
+  },
+
+  addHoldings: () => {
+    cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
+    InventoryNewHoldings.waitLoading();
   },
 };
