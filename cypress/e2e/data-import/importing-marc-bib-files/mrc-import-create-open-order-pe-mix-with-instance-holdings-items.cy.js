@@ -82,7 +82,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.COURSE_RESERVES,
-          status: ITEM_STATUS_NAMES.ON_ORDER,
+          status: `"${ITEM_STATUS_NAMES.ON_ORDER}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,

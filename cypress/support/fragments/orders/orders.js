@@ -796,4 +796,13 @@ export default {
       submitButton.click(),
     ]);
   },
+
+  cancelCreateNewInvoiceFromOrder() {
+    cy.wait(2000);
+    cy.do([
+      PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton).click(),
+      Button('New invoice').click(),
+      Button('Cancel').click(),
+    ]);
+  },
 };
