@@ -290,7 +290,7 @@ describe('data-import', () => {
           noteUI: 'Smith Family Foundation',
           staffOnly: 'Mark for all affected records',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -485,6 +485,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.callNumber,
         );
         NewFieldMappingProfile.addElectronicAccess(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.typeValue,
           `"${collectionOfMappingAndActionProfiles[1].mappingProfile.relationship}"`,
           collectionOfMappingAndActionProfiles[1].mappingProfile.uri,
         );

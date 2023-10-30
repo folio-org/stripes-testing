@@ -69,7 +69,7 @@ describe('data-import', () => {
           barcode: '945$a',
           materialType: MATERIAL_TYPE_NAMES.BOOK,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,

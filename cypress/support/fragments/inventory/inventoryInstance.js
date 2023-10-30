@@ -38,6 +38,7 @@ import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstan
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
 import ItemRecordEdit from './item/itemRecordEdit';
 import ItemRecordView from './item/itemRecordView';
+import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
 import Badge from '../../../../interactors/badge';
@@ -137,6 +138,10 @@ const itemBarcodeField = TextField({ name: 'barcode' });
 const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
+
+const messages = {
+  itemMovedSuccessfully: '1 item has been successfully moved.',
+};
 
 const validOCLC = {
   id: '176116217',
@@ -700,18 +705,24 @@ export default {
     }
   },
 
-  moveItemToAnotherHolding(firstHoldingName, secondHoldingName) {
-    openHoldings(firstHoldingName, secondHoldingName);
+  moveItemToAnotherHolding({ fromHolding, toHolding, shouldOpen = true, itemMoved = false }) {
+    if (shouldOpen) {
+      openHoldings(fromHolding, toHolding);
+    }
 
     cy.do([
-      Accordion({ label: including(`Holdings: ${firstHoldingName}`) })
+      Accordion({ label: including(`Holdings: ${fromHolding}`) })
         .find(MultiColumnListRow({ indexRow: 'row-0' }))
         .find(Checkbox())
         .click(),
-      Accordion({ label: including(`Holdings: ${firstHoldingName}`) })
+      Accordion({ label: including(`Holdings: ${fromHolding}`) })
         .find(Dropdown({ label: 'Move to' }))
-        .choose(including(secondHoldingName)),
+        .choose(including(toHolding)),
     ]);
+
+    if (itemMoved) {
+      InteractorsTools.checkCalloutMessage(messages.itemMovedSuccessfully);
+    }
   },
 
   confirmOrCancel(action) {
@@ -894,8 +905,10 @@ export default {
     return cy.get('@instanceId');
   },
 
-  checkIsHoldingsCreated: (...holdingToBeOpened) => {
-    cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
+  checkIsHoldingsCreated(holdings = []) {
+    holdings.forEach((holding) => {
+      cy.expect(Accordion({ label: including(`Holdings: ${holding}`) }).exists());
+    });
   },
 
   openHoldingsAccordion: (location) => {
@@ -907,16 +920,19 @@ export default {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
 
-  checkHoldingsTableContent({ name, records = [] } = {}) {
+  checkHoldingsTableContent({ name, records = [], columnIndex = 0, shouldOpen = true } = {}) {
     const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
-    cy.do(holdingsSection.clickHeader());
+
+    if (shouldOpen) {
+      cy.do(holdingsSection.clickHeader());
+    }
 
     records.forEach((record, index) => {
       if (record.barcode) {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .find(MultiColumnListCell({ columnIndex }))
             .has({ content: including(record.barcode) }),
         );
       }
@@ -925,7 +941,7 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .find(MultiColumnListCell({ columnIndex: columnIndex + 1 }))
             .has({ content: including(record.status) }),
         );
       }
@@ -946,7 +962,7 @@ export default {
   },
 
   checkIsItemCreated: (itemBarcode) => {
-    cy.expect(Link(itemBarcode).exists());
+    cy.expect(Link(including(itemBarcode)).exists());
   },
 
   checkMARCSourceAtNewPane() {
@@ -1105,5 +1121,9 @@ export default {
   verifyNumberOfItemsInHoldingByName(holdingName, numOfItems) {
     const holdingSection = section.find(Accordion(including(holdingName)));
     cy.expect(holdingSection.find(Badge()).has({ value: `${numOfItems}` }));
+  },
+
+  verifyItemStatus: (itemStatus) => {
+    cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
 };

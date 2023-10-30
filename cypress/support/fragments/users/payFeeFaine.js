@@ -1,4 +1,12 @@
-import { Button, HTML, matching, Modal, TextField, including } from '../../../../interactors';
+import {
+  Button,
+  HTML,
+  matching,
+  Modal,
+  TextField,
+  including,
+  TextArea,
+} from '../../../../interactors';
 
 const rootModal = Modal({ id: 'payment-modal' });
 const confirmationModal = Modal(including('Confirm fee/fine'));
@@ -10,6 +18,9 @@ export default {
   },
   checkAmount: (amount) => cy.expect(amountTextfield.has({ value: amount.toFixed(2) })),
   setPaymentMethod: ({ name: paymentMethodName }) => cy.get('div[class^=modal-] select[name=method]').select(paymentMethodName),
+  fillInAdditionalInformation: (comment) => {
+    cy.do(rootModal.find(TextArea({ name: 'comment' })).fillIn(comment));
+  },
   submitAndConfirm: () => {
     cy.do(rootModal.find(Button({ id: 'submit-button' })).click());
     cy.do(
@@ -33,4 +44,7 @@ export default {
     body: apiBody,
     isDefaultSearchParamsRequired: false,
   }),
+  verifySaveIsDisabled: () => {
+    cy.expect(rootModal.find(Button({ id: 'submit-button' })).is({ disabled: true }));
+  },
 };
