@@ -231,6 +231,11 @@ export default {
     cy.do(Button('Create fee/fine').click());
   },
 
+  startRequest: () => {
+    cy.do(actionsButton.click());
+    cy.do(Button('Create request').click());
+  },
+
   hasSaveError(errorMessage) {
     cy.expect(rootSection.find(TextField({ value: errorMessage })).exists());
   },

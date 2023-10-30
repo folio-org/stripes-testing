@@ -1,4 +1,6 @@
 import { HTML, including } from '@interactors/html';
+import ItemRecordView from '../inventory/item/itemRecordView';
+import InteractorsTools from '../../utils/interactorsTools';
 import {
   Pane,
   Section,
@@ -9,7 +11,6 @@ import {
   MultiColumnListCell,
   Link,
 } from '../../../../interactors';
-import ItemRecordView from '../inventory/item/itemRecordView';
 
 const requestDetailsSection = Pane({ id: 'instance-details' });
 const titleInformationSection = Section({ id: 'title-info' });
@@ -36,10 +37,16 @@ export default {
   },
 
   checkTitleInformation: (data) => {
-    cy.expect([
-      titleInformationSection.find(KeyValue('Title level requests', { value: data.TLRs })).exists(),
-      titleInformationSection.find(KeyValue('Title', { value: data.title })).exists(),
-    ]);
+    InteractorsTools.checkKeyValue(titleInformationSection, 'Title level requests', data.TLRs);
+    InteractorsTools.checkKeyValue(titleInformationSection, 'Title', data.title);
+    InteractorsTools.checkKeyValue(titleInformationSection, 'Contributor', data.contributor);
+    InteractorsTools.checkKeyValue(
+      titleInformationSection,
+      'Publication date',
+      data.publicationDate,
+    );
+    InteractorsTools.checkKeyValue(titleInformationSection, 'Edition', data.edition);
+    InteractorsTools.checkKeyValue(titleInformationSection, 'ISBN(s)', data.ISBNs);
   },
 
   checkItemStatus: (status) => {
@@ -54,17 +61,26 @@ export default {
 
   checkItemInformation: (data) => {
     if (data) {
-      cy.expect([
-        itemInformationSection.find(KeyValue('Item barcode', { value: data.itemBarcode })).exists(),
-        itemInformationSection.find(KeyValue('Title', { value: data.title })).exists(),
-        itemInformationSection
-          .find(KeyValue('Effective location', { value: data.effectiveLocation }))
-          .exists(),
-        itemInformationSection.find(KeyValue('Item status', { value: data.itemStatus })).exists(),
-        itemInformationSection
-          .find(KeyValue('Requests on item', { value: data.requestsOnItem }))
-          .exists(),
-      ]);
+      InteractorsTools.checkKeyValue(itemInformationSection, 'Item barcode', data.itemBarcode);
+      InteractorsTools.checkKeyValue(itemInformationSection, 'Title', data.title);
+      InteractorsTools.checkKeyValue(itemInformationSection, 'Contributor', data.contributor);
+      InteractorsTools.checkKeyValue(
+        itemInformationSection,
+        'Effective location',
+        data.effectiveLocation,
+      );
+      InteractorsTools.checkKeyValue(
+        itemInformationSection,
+        'Effective call number string',
+        data.callNumber,
+      );
+      InteractorsTools.checkKeyValue(itemInformationSection, 'Item status', data.itemStatus);
+      InteractorsTools.checkKeyValue(itemInformationSection, 'Current due date', data.dueDate);
+      InteractorsTools.checkKeyValue(
+        itemInformationSection,
+        'Requests on item',
+        data.requestsOnItem,
+      );
     } else {
       itemInformationSection.find(
         HTML(including('There is no item information for this request.')),
@@ -73,13 +89,21 @@ export default {
   },
 
   checkRequestInformation: (data) => {
-    cy.expect([
-      requestInfoSection.find(KeyValue('Request type', { value: data.type })).exists(),
-      requestInfoSection
-        .find(KeyValue('Request status', { value: including(data.status) }))
-        .exists(),
-      requestInfoSection.find(KeyValue('Request level', { value: data.level })).exists(),
-    ]);
+    InteractorsTools.checkKeyValue(requestInfoSection, 'Request type', data.type);
+    InteractorsTools.checkKeyValue(requestInfoSection, 'Request status', data.status);
+    InteractorsTools.checkKeyValue(
+      requestInfoSection,
+      'Request expiration date',
+      data.requestExpirationDate,
+    );
+    InteractorsTools.checkKeyValue(
+      requestInfoSection,
+      'Hold shelf expiration date',
+      data.holdShelfExpirationDate,
+    );
+    InteractorsTools.checkKeyValue(requestInfoSection, 'Position in queue', data.position);
+    InteractorsTools.checkKeyValue(requestInfoSection, 'Request level', data.level);
+    InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
   },
 
   checkRequesterInformation: (data) => {
@@ -87,14 +111,10 @@ export default {
       requesterInfoSection.find(Heading('Requester')).exists(),
       requesterInfoSection.find(HTML(including(data.lastName))).exists(),
       requesterInfoSection.find(HTML(including(data.barcode))).exists(),
-      requesterInfoSection.find(KeyValue('Requester patron group', { value: data.group })).exists(),
-      requesterInfoSection
-        .find(KeyValue('Fulfillment preference', { value: data.preference }))
-        .exists(),
-      requesterInfoSection
-        .find(KeyValue('Pickup service point', { value: data.pickupSP }))
-        .exists(),
     ]);
+    InteractorsTools.checkKeyValue(requesterInfoSection, 'Requester patron group', data.group);
+    InteractorsTools.checkKeyValue(requesterInfoSection, 'Fulfillment preference', data.preference);
+    InteractorsTools.checkKeyValue(requesterInfoSection, 'Pickup service point', data.pickupSP);
   },
 
   openActions() {
@@ -103,6 +123,10 @@ export default {
 
   openMoveRequest() {
     cy.do(moveRequestButton.click());
+  },
+
+  verifyMoveRequestButtonExists() {
+    cy.expect(moveRequestButton.exists());
   },
 
   requestQueueOnInstance(instanceTitle) {
@@ -121,5 +145,9 @@ export default {
   openItemByBarcode() {
     cy.do(itemInformationSection.find(Link()).click());
     ItemRecordView.waitLoading();
+  },
+
+  viewRequestsInQueue() {
+    cy.do(requestInfoSection.find(KeyValue('Position in queue').find(Link())).click());
   },
 };

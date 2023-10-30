@@ -5,6 +5,7 @@ const financialTransactionsReportButton = Button({ id: 'financial-transaction-re
 const actionsButtonInSearchResultsPane = Pane({ id: 'users-search-results-pane' }).find(
   Button('Actions'),
 );
+const newButton = Button({ id: 'clickable-newuser' });
 
 const actionsButtons = {
   financialTransactionsReport: financialTransactionsReportButton,
@@ -29,6 +30,10 @@ export default {
       actionsButtonInSearchResultsPane.click(),
       actionsButtons.financialTransactionsReport.click(),
     ]);
+  },
+
+  openNewUser: () => {
+    cy.do([actionsButtonInSearchResultsPane.click(), newButton.click()]);
   },
 
   clickActionsButton: () => {

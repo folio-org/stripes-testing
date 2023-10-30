@@ -311,6 +311,10 @@ export default {
     internal: 'ui-users.delete',
     gui: 'Users: Can delete user profile if user does not have any open transactions',
   },
+  uiUsersCreateResetPassword: {
+    internal: 'ui-users.reset.password',
+    gui: 'Users: Create/reset password',
+  },
   uiUsersCheckTransactions: {
     internal: 'ui-users.opentransactions',
     gui: 'Users: Can check open transactions',
@@ -692,6 +696,10 @@ export default {
   uiSettingsFinanceViewEditCreateDeleter: {
     internal: 'ui-finance.settings.all',
     gui: 'Settings (Finance): View, edit, create, delete',
+  },
+  uiSettingsFinanceView: {
+    internal: 'ui-finance.settings.view',
+    gui: 'Settings (Finance): View settings',
   },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
     internal: 'ui-finance.acq.unit.assignment.assign',

@@ -45,6 +45,14 @@ const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
+const uploadBunchOfDifferentFiles = (fileNames) => {
+  const arrayOfFiles = [];
+  for (let i = 0; i < fileNames.length; i++) {
+    arrayOfFiles.push(fileNames[i]);
+  }
+  cy.get('input[type=file]').attachFile(arrayOfFiles);
+};
+
 const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
   const arrayOfFiles = [];
 
@@ -192,6 +200,7 @@ export default {
   uploadFile,
   uploadBunchOfFiles,
   waitLoading,
+  uploadBunchOfDifferentFiles,
   uploadDefinitions,
   uploadBinaryMarcFile,
   processFile,
