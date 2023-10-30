@@ -131,6 +131,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocation,
         );
         NewFieldMappingProfile.addElectronicAccess(
+          collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.typeValue,
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.relationship,
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.uri,
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.linkText,

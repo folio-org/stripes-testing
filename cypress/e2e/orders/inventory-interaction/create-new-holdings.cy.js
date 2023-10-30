@@ -1,3 +1,4 @@
+/* eslint-disable spaced-comment */
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -14,7 +15,6 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 
@@ -70,7 +70,7 @@ describe('Orders: Inventory interaction', () => {
               testData.orderNumber = order.poNumber;
 
               InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
-                InventoryInstances.createHoldingViaAPI({
+                InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: testData.instance.instanceId,
                   permanentLocationId: location.id,
                   sourceId: folioSource.id,
@@ -144,7 +144,7 @@ describe('Orders: Inventory interaction', () => {
       // Need to wait,while instance will be saved
       cy.wait(7000);
       InventoryItems.closeItem();
-      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
+      //InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       InventoryItems.edit();
       ItemRecordEdit.addBarcode(barcodeForSecondItem);
@@ -152,7 +152,7 @@ describe('Orders: Inventory interaction', () => {
       // Need to wait,while instance will be saved
       cy.wait(7000);
       InventoryItems.closeItem();
-      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
+      //InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
       ItemRecordView.checkItemDetails(
         testData.locations[1].name,
@@ -160,7 +160,7 @@ describe('Orders: Inventory interaction', () => {
         ITEM_STATUS_NAMES.ON_ORDER,
       );
       InventoryItems.closeItem();
-      InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
+      //InventoryInstance.openHoldingsAccordion(testData.locations[1].name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
       ItemRecordView.checkItemDetails(
         testData.locations[1].name,

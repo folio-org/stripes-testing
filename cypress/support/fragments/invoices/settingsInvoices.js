@@ -63,7 +63,6 @@ export default {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({
           date: new Date(),
-          // })} by folio-aqa, folio-aqa`;
         })} by ${batchGroup.source}`;
         cy.expect(
           getEditableListRow(rowNumber)

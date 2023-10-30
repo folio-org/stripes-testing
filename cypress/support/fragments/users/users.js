@@ -162,6 +162,10 @@ export default {
     );
   },
 
+  verifyUserTypeOnUserDetailsPane(userType) {
+    cy.expect(userDetailsPane.find(KeyValue('User type')).has({ value: `${userType}` }));
+  },
+
   verifyCustomFieldOnUserDetailsPane(name, text) {
     cy.expect(userDetailsPane.find(KeyValue(name)).has({ value: text }));
   },
