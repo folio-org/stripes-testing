@@ -32,19 +32,25 @@ describe('data-import', () => {
       });
     });
 
-    // after('delete test data', () => {
-    //   Users.deleteViaApi(user.userId);
-    //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-    //     (instance) => {
-    //       InventoryInstance.deleteInstanceViaApi(instance.id);
-    //     },
-    //   );
-    // });
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        },
+      );
+    });
 
     it(
       'C6691 Check the default mapping of publisher info (260/264) from the MARC record to the Inventory Instance Publication fields (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
+        const publisherInfo = {
+          publisher: 'Crown House Publishing',
+          role: 'No value set-',
+          place: 'Carmarthen, Wales ; Bethel, Conn.',
+          date: 'c2009',
+        };
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
@@ -59,6 +65,7 @@ describe('data-import', () => {
 
           InstanceRecordView.waitLoading();
           InstanceRecordView.verifyInstanceRecordViewOpened();
+          InstanceRecordView.verifyPublisher(publisherInfo);
         });
       },
     );
