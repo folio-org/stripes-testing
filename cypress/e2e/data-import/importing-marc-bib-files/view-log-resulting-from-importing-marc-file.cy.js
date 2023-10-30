@@ -21,21 +21,19 @@ describe('data-import', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {
-      cy.getAdminToken().then(() => {
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.waitLoading();
-        DataImport.uploadFile(filePathToUpload, fileNameToUpload);
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameToUpload);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-      });
+      cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
       });
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.waitLoading();
+      DataImport.uploadFile(filePathToUpload, fileNameToUpload);
+      JobProfiles.search(jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameToUpload);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     });
 
     after('delete test data', () => {
