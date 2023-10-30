@@ -1,4 +1,7 @@
+import { including, Link } from '@interactors/html';
+
 import TenantPane, { getDefaultTenant as getDefaultInstitution } from '../baseTenantPane';
+import { MultiColumnListCell, MultiColumnListRow } from '../../../../../../interactors';
 
 export default {
   ...TenantPane,
@@ -19,9 +22,14 @@ export default {
     ]);
     TenantPane.checkResultsTableContent(records);
   },
-  // checkEmptyTableContent() {
-  //   TenantPane.checkEmptyTableContent('Please select an institution and campus to continue.');
-  // },
+  clickOnCampusesHyperlink(institution) {
+    cy.do(
+      MultiColumnListRow(including(institution))
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .find(Link())
+        .click(),
+    );
+  },
   getViaApi() {
     return TenantPane.getViaApi({ path: 'location-units/institutions' });
   },
