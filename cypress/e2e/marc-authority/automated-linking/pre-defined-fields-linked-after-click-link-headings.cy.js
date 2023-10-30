@@ -18,7 +18,6 @@ import BrowseSubjects from '../../../support/fragments/inventory/search/browseSu
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () => {
   let userData = {};
-  const marcAuthIcon = 'Linked to MARC authority';
 
   const marcFiles = [
     {
@@ -287,7 +286,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         );
       });
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
-      //QuickMarcEditor.verifyDisabledLinkHeadingsButton();
       QuickMarcEditor.updateExistingField(fields[14].tag, '$a Delaware $0 n84745425C389486');
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout('Field 711 has been linked to MARC authority record(s).');
