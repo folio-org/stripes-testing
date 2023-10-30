@@ -131,6 +131,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocation,
         );
         NewFieldMappingProfile.addElectronicAccess(
+          collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.typeValue,
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.relationship,
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.uri,
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.linkText,
@@ -211,6 +212,7 @@ describe('data-import', () => {
             matchProfile: {
               profileName: `C397983 Instance status submatch - Electronic Resource ${getRandomPostfix()}`,
               incomingStaticValue: 'Electronic Resource',
+              incomingStaticRecordValue: 'Text',
               matchCriterion: 'Exactly matches',
               existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
               existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm,
@@ -559,6 +561,7 @@ describe('data-import', () => {
             matchProfile: {
               profileName: `C397383 Instance status submatch - Electronic Resource ${getRandomPostfix()}`,
               incomingStaticValue: 'Electronic Resource',
+              incomingStaticRecordValue: 'Text',
               matchCriterion: 'Exactly matches',
               existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
               existingRecordOption: NewMatchProfile.optionsList.instanceStatusTerm,
@@ -568,6 +571,7 @@ describe('data-import', () => {
             matchProfile: {
               profileName: `C397383 Holdings type electronic ${getRandomPostfix()}`,
               incomingStaticValue: 'Electronic',
+              incomingStaticRecordValue: 'Text',
               matchCriterion: 'Exactly matches',
               existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
               existingRecordOption: NewMatchProfile.optionsList.holdingsType,

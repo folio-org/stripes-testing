@@ -15,6 +15,7 @@ import {
   Option,
   including,
   Modal,
+  KeyValue,
 } from '../../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../constants';
 import dateTools from '../../utils/dateTools';
@@ -232,6 +233,14 @@ export default {
     cy.do(selectRequestType.choose(requestType));
   },
 
+  verifyRequestTypeHasOptions(...options) {
+    options.forEach((option) => {
+      cy.expect(HTML(option).exists());
+    });
+    // options.length + 1 (defalt option 'Select request type')
+    cy.get('[name="requestType"] option').should('have.length', options.length + 1);
+  },
+
   enterRequesterInfo(newRequest) {
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
@@ -278,7 +287,7 @@ export default {
   checkRequestIsNotAllowedModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'This requester already has an open request for this item',
+        message: 'Not allowed to move title level page request to the same item',
       }),
     );
   },
@@ -288,5 +297,24 @@ export default {
         message: 'This requester already has an open request for this instance',
       }),
     );
+  },
+  checkRequestIsNotAllowedLoanModal() {
+    cy.expect(
+      Modal('Request not allowed').has({
+        message: 'This requester already has this item on loan',
+      }),
+    );
+  },
+  verifyRequestSuccessfullyCreated(username) {
+    InteractorsTools.checkCalloutMessage(
+      including(`Request has been successfully created for ${username}`),
+    );
+  },
+  checkItemInformationSecton(instanceTitle, location, itemStatus) {
+    cy.expect([
+      KeyValue('Title').has({ value: instanceTitle }),
+      KeyValue('Effective location').has({ value: location }),
+      KeyValue('Item status').has({ value: itemStatus }),
+    ]);
   },
 };

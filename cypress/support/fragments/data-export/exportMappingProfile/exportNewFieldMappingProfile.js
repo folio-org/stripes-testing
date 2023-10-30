@@ -1,4 +1,4 @@
-import { TextField, Button, Select, Checkbox, Modal, Accordion } from '../../../../../interactors';
+import { TextField, Button, Select, Checkbox, Modal } from '../../../../../interactors';
 import modalSelectTransformations from './modalSelectTransformations';
 import { EXPORT_TRANSFORMATION_NAMES } from '../../../constants';
 
@@ -71,6 +71,17 @@ export default {
     recordTypes.forEach((recordType) => {
       cy.do(Checkbox(recordType).click());
     });
-    cy.do(Accordion('Transformations').find(Button('Add transformations')).click());
+    this.clickAddTransformationsButton();
+  },
+
+  createNewFieldMappingProfileWithoutTransformations(name, recordType = 'Source record storage (entire record)') {
+    cy.do([
+      TextField('Name*').fillIn(name),
+      Checkbox(recordType).click()
+    ]);
+  },
+
+  clickAddTransformationsButton() {
+    cy.do(Button('Add transformations').click());
   },
 };

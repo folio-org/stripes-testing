@@ -59,6 +59,9 @@ export const ITEM_STATUS_NAMES = {
   AWAITING_DELIVERY: 'Awaiting delivery',
   FOUND_BY_LIBRARY: 'Checked in (found by library)',
   AGED_TO_LOST: 'Aged to lost',
+  LOST_AND_PAID: 'Lost and paid',
+  WITHDRAWN: 'Withdrawn',
+  ORDER_CLOSED: 'Order closed',
 };
 
 export const CY_ENV = {
@@ -172,6 +175,7 @@ export const ORDER_FORMAT_NAMES_IN_PROFILE = {
 
 export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
   APPROVAL_PLAN: 'Approval plan',
+  PURCHASE: 'Purchase',
   PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
 };
 
@@ -312,4 +316,13 @@ export const BROWSE_CALL_NUMBER_OPTIONS = {
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
   OTHER_SCHEME: 'Other scheme',
   SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
+};
+
+export const CONDITION_AND_LIMIT_TYPES = {
+  MAX_ITEMS_CHARGED_OUT: 'Maximum number of items charged out',
+  MAX_LOST_ITEMS: 'Maximum number of lost items',
+  MAX_OVERDUE_ITEMS: 'Maximum number of overdue items',
+  MAX_OVERDUE_RECALLS: 'Maximum number of overdue recalls',
+  MAX_OUTSTANDING_FEE_FINE_BALANCE: 'Maximum outstanding fee/fine balance',
+  MAX_NUMBER_OF_DAYS: 'Recall overdue by maximum number of days',
 };

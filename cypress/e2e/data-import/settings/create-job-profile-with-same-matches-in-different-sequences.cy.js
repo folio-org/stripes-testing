@@ -34,6 +34,7 @@ describe('data-import', () => {
         matchProfile: {
           profileName: `C399081 submatch match profile 1_${getRandomPostfix()}`,
           incomingStaticValue: `Text_${getRandomPostfix()}`,
+          incomingStaticRecordValue: 'Text',
           matchCriterion: 'Exactly matches',
           existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
           existingRecordOption: NewMatchProfile.optionsList.instanceHrid,
@@ -70,7 +71,7 @@ describe('data-import', () => {
     });
 
     it(
-      'C367994 Edit an existing action profile with associated job profile (folijet)',
+      'C399081 Verify the ability to create job profile with the same matches in different sequences (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
         cy.visit(SettingsMenu.matchProfilePath);

@@ -15,6 +15,7 @@ import {
   TextField,
   and,
   Badge,
+  ListItem,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -230,6 +231,11 @@ export default {
     cy.do(Button('Create fee/fine').click());
   },
 
+  startRequest: () => {
+    cy.do(actionsButton.click());
+    cy.do(Button('Create request').click());
+  },
+
   hasSaveError(errorMessage) {
     cy.expect(rootSection.find(TextField({ value: errorMessage })).exists());
   },
@@ -266,5 +272,13 @@ export default {
 
   verifyFeesFinesCount(count) {
     cy.expect(feesFinesAccordion.find(Badge()).has({ text: count }));
+  },
+
+  verifyOpenedFeeFines(count, totalAmount) {
+    cy.expect(
+      feesFinesAccordion
+        .find(ListItem(including('open')))
+        .has({ text: including(`${count.toString()} open` && `Total: ${totalAmount.toString()}`) }),
+    );
   },
 };

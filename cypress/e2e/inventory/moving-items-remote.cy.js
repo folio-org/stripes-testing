@@ -87,12 +87,20 @@ describe('inventory', () => {
       ItemRecordView.closeDetailView();
       InventoryInstance.openMoveItemsWithinAnInstance();
 
-      InventoryInstance.moveItemToAnotherHolding(item.firstLocationName, item.secondLocationName);
+      InventoryInstance.moveItemToAnotherHolding({
+        fromHolding: item.firstLocationName,
+        toHolding: item.secondLocationName,
+      });
       InventoryInstance.confirmOrCancel('Continue');
       InteractorsTools.checkCalloutMessage(successCalloutMessage);
+      InventoryInstance.openHoldings([item.secondLocationName]);
       InventoryInstancesMovement.verifyHoldingsMoved(item.secondLocationName, '1');
 
-      InventoryInstance.moveItemToAnotherHolding(item.firstLocationName, item.secondLocationName);
+      InventoryInstance.openHoldings([item.firstLocationName]);
+      InventoryInstance.moveItemToAnotherHolding({
+        fromHolding: item.firstLocationName,
+        toHolding: item.secondLocationName,
+      });
       InventoryInstance.confirmOrCancel('Cancel');
     },
   );

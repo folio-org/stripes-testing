@@ -71,7 +71,7 @@ describe('data-import', () => {
           secondStatisticalCodeUI: 'Book, print (books)',
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -219,7 +219,7 @@ describe('data-import', () => {
           );
           HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ONLINE_UI);
           HoldingsRecordView.close();
-          InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.ONLINE_UI);
+          InventoryInstance.openHoldings(LOCATION_NAMES.ONLINE_UI);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.verifyStatisticalCode(
             collectionOfMappingAndActionProfiles[2].mappingProfile.firstStatisticalCodeUI,

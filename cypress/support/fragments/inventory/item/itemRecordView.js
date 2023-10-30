@@ -20,6 +20,7 @@ const itemDataAccordion = Accordion('Item data');
 const itemNotesAccordion = Accordion('Item notes');
 const circulationHistoryAccordion = Accordion('Circulation history');
 const saveAndCloseBtn = Button('Save & close');
+const electronicAccessAccordion = Accordion('Electronic access');
 
 const verifyItemBarcode = (value) => {
   cy.expect(KeyValue('Item barcode').has({ value }));
@@ -115,6 +116,10 @@ export default {
     cy.do([Button('Actions').click(), Button('Duplicate').click()]);
   },
 
+  createNewRequest() {
+    cy.do([Button('Actions').click(), Button('New request').click()]);
+  },
+
   verifyEffectiveLocation: (location) => {
     cy.expect(
       Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }),
@@ -190,7 +195,7 @@ export default {
     );
   },
 
-  checkStatus: (status) => {
+  verifyStatus: (status) => {
     cy.expect(loanAccordion.find(KeyValue('Item status')).has({ value: status }));
   },
 
@@ -208,6 +213,10 @@ export default {
 
   checkNumberOfPieces: (number) => {
     cy.expect(itemDataAccordion.find(KeyValue('Number of pieces')).has({ value: number }));
+  },
+
+  verifyNumberOfMissingPieces: (number) => {
+    cy.expect(Accordion('Condition').find(KeyValue('Missing pieces')).has({ value: number }));
   },
 
   checkHotlinksToCreatedPOL: (number) => {
@@ -236,4 +245,24 @@ export default {
       .find(MultiColumnListCell({ content: code }))
       .exists(),
   ),
+
+  verifyFormerIdentifiers: (identifier) => cy.expect(KeyValue('Former identifier').has({ value: identifier })),
+  verifyItemPermanentLocation: (value) => {
+    cy.get('div[data-testid="item-permanent-location"]')
+      .find('div[class*=kvValue]')
+      .should('have.text', value);
+  },
+
+  checkElectronicAccess: (relationshipValue, uriValue) => {
+    cy.expect(
+      electronicAccessAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: relationshipValue }))
+        .exists(),
+    );
+    cy.expect(
+      electronicAccessAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
+        .exists(),
+    );
+  },
 };

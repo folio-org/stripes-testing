@@ -8,6 +8,8 @@ import {
   Checkbox,
   Callout,
   calloutTypes,
+  KeyValue,
+  including,
 } from '../../../interactors';
 
 const deleteButton = Button({ ariaLabel: 'remove fields for ' });
@@ -96,6 +98,9 @@ export default {
       cy.expect(element.has({ disabled: true }));
     });
   },
+  checkKeyValue: (section, key, value) => {
+    cy.expect(section.find(KeyValue(key)).has({ value: value || including('') }));
+  },
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
   },
@@ -106,5 +111,8 @@ export default {
   ),
   checkCalloutErrorMessage: (text, calloutType = calloutTypes.error) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
+  },
+  checkTextFieldError: (fieldName, error) => {
+    cy.expect(TextField(fieldName).has({ error }));
   },
 };

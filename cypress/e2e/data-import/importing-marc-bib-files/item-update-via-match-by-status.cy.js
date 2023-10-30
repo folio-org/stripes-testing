@@ -24,7 +24,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
@@ -68,7 +68,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C357552 Create simple items ${getRandomPostfix()}`,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         },
@@ -81,7 +81,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C357552 Update Item by POL match ${getRandomPostfix()}`,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         },
         actionProfile: {
@@ -107,7 +107,8 @@ describe('data-import', () => {
 
     const matchProfileItemStatus = {
       profileName: `C357552 Item status = Available ${getRandomPostfix()}`,
-      incomingStaticValue: 'Available',
+      incomingStaticValue: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+      incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
       existingRecordOption: NewMatchProfile.optionsList.status,
@@ -280,17 +281,17 @@ describe('data-import', () => {
         [
           {
             lineNumber: 0,
-            markFunction: ItemActions.markAsWithdrawn,
+            markFunction: InventoryItems.markAsWithdrawn,
             status: 'Withdrawn',
           },
           {
             lineNumber: 3,
-            markFunction: ItemActions.markAsInProcess,
+            markFunction: InventoryItems.markAsInProcess,
             status: 'In process (non-requestable)',
           },
           {
             lineNumber: 7,
-            markFunction: ItemActions.markAsUnknown,
+            markFunction: InventoryItems.markAsUnknown,
             status: 'Unknown',
           },
         ].forEach((marker) => {

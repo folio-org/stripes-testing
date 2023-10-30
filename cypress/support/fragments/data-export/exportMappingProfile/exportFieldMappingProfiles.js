@@ -8,6 +8,7 @@ import {
   MultiColumnListRow,
   MultiColumnListCell,
   Modal,
+  HTML,
 } from '../../../../../interactors';
 import exportNewFieldMappingProfile from './exportNewFieldMappingProfile';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -16,6 +17,8 @@ const saveAndCloseButton = Button('Save & close');
 const fieldMappingProfilesPane = Pane('Field mapping profiles');
 const newButton = Button('New');
 const searchButton = Button('Search');
+const searchField = TextField('Search Field mapping profiles');
+const clearButton = Button({ id: 'input-search-field-clear-button' });
 const deleteButton = Button('Delete');
 const actionsButton = Button('Actions');
 
@@ -29,6 +32,7 @@ const saveMappingProfile = () => {
 };
 
 export default {
+  openNewMappingProfileForm,
   saveMappingProfile,
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
@@ -74,6 +78,33 @@ export default {
       });
   },
 
+  searchFieldMappingProfile(text) {
+    cy.do(searchField.fillIn(text));
+  },
+
+  verifySearchButtonEnabled: (enabled = true) => cy.expect(searchButton.has({ disabled: !enabled })),
+
+  verifyClearSearchButtonExists: () => cy.expect(clearButton.exists()),
+  verifyClearSearchButtonAbsent: () => cy.expect(clearButton.absent()),
+
+  clearSearchField: () => cy.do([searchField.focus(), clearButton.click()]),
+
+  verifyFieldMappingProfilesSearchResult(text) {
+    cy.get('body').then((body) => {
+      const element = body.find('[class^=mclEndOfListContainer]');
+      if (element) {
+        const itemAmount = element.attr('data-end-of-list');
+        for (let i = 0; i < itemAmount; i++) {
+          cy.expect(
+            fieldMappingProfilesPane
+              .find(MultiColumnListCell({ column: 'Name', content: including(text) }))
+              .exists(),
+          );
+        }
+      } else cy.expect(HTML('The list contains no items').exists());
+    });
+  },
+
   verifyFieldMappingProfilesPane() {
     cy.expect([
       fieldMappingProfilesPane.exists(),
@@ -113,6 +144,10 @@ export default {
   },
 
   verifyProfileNameOnTheList(name) {
-    cy.expect([MultiColumnListRow(including(name)).exists()]);
+    cy.expect(MultiColumnListRow(including(name)).exists());
+  },
+
+  clickProfileNameFromTheList(name) {
+    cy.do(MultiColumnListCell(including(name)).click());
   },
 };

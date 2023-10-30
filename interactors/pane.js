@@ -9,7 +9,10 @@ function title(el) {
 
 export const PaneHeader = HTML.extend('pane header')
   .selector('[class^=paneHeader-]')
-  .locator(title);
+  .locator(title)
+  .filters({
+    title,
+  });
 
 export const PaneSet = HTML.extend('pane set')
   .selector('[class^=paneset-]')

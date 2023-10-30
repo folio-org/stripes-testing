@@ -60,22 +60,24 @@ describe('circulation-log', () => {
           })
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, userData.userId);
-            feeFineAccount = {
-              id: uuid(),
-              ownerId: ownerData.id,
-              feeFineId: feeFineType.id,
-              amount: 1,
-              userId: userData.userId,
-              feeFineType: feeFineType.name,
-              feeFineOwner: ownerData.name,
-              createdAt: servicePointId,
-              dateAction: moment.utc().format(),
-              source: 'ADMINISTRATOR, DIKU',
-            };
-            NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-              feeFineAccount.id = feeFineAccountId;
-              cy.login(userData.username, userData.password);
+            cy.getAdminSourceRecord().then((adminSourceRecord) => {
+              feeFineAccount = {
+                id: uuid(),
+                ownerId: ownerData.id,
+                feeFineId: feeFineType.id,
+                amount: 1,
+                userId: userData.userId,
+                feeFineType: feeFineType.name,
+                feeFineOwner: ownerData.name,
+                createdAt: servicePointId,
+                dateAction: moment.utc().format(),
+                source: adminSourceRecord,
+              };
+              NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+                feeFineAccount.id = feeFineAccountId;
+              });
             });
+            cy.login(userData.username, userData.password);
           });
       });
   });
@@ -90,8 +92,8 @@ describe('circulation-log', () => {
   });
 
   it(
-    'C350712 Check date and time --fee/fines (Firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    'C350712 Check date and time --fee/fines (volaris) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.setFilterOptionFromAccordion('fee', 'Billed');

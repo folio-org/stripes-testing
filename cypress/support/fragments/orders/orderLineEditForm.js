@@ -1,4 +1,12 @@
-import { Button, Section, Select, matching } from '../../../../interactors';
+import {
+  Button,
+  Section,
+  Select,
+  Selection,
+  SelectionList,
+  including,
+  matching,
+} from '../../../../interactors';
 import OrderStates from './orderStates';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -34,6 +42,22 @@ export default {
     if (orderLine.paymentStatus) {
       cy.do(orderLineFields.paymentStatus.choose(orderLine.paymentStatus));
     }
+  },
+  addFundDistribution() {
+    cy.do(Button('Add fund distribution').click());
+  },
+  selectDropDownValue(label, option) {
+    cy.do([
+      Selection(including(label)).open(),
+      SelectionList().filter(option),
+      SelectionList().select(including(option)),
+    ]);
+  },
+  selectFundDistribution(fund) {
+    this.selectDropDownValue('Fund ID', fund);
+  },
+  selectExpenseClass(expenseClass) {
+    this.selectDropDownValue('Expense class', expenseClass);
   },
   clickCancelButton() {
     cy.do(cancelButtom.click());

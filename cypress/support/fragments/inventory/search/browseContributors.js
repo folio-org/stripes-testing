@@ -95,8 +95,8 @@ export default {
       });
     });
 
-    this.getContributorNameTypes().then((res) => {
-      const { id, name } = res.body.contributorNameTypes[0];
+    this.getContributorNameTypes().then((contributorNameTypes) => {
+      const { id, name } = contributorNameTypes[0];
       instances.forEach((instance) => {
         instance.contributors[0].contributorNameTypeId = id;
         instance.contributors[0].contributorNameType = name;
@@ -319,11 +319,16 @@ export default {
     cy.do(resetAllButton.click());
   },
 
-  getContributorNameTypes({ searchParams = { limit: 1 } } = {}) {
-    return cy.okapiRequest({
-      path: 'contributor-name-types',
-      searchParams,
-    });
+  getContributorNameTypes({
+    searchParams = { limit: 1, query: 'cql.allRecords=1 sortby ordering' },
+  } = {}) {
+    return cy
+      .okapiRequest({
+        path: 'contributor-name-types',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.contributorNameTypes);
   },
 
   createInstanceWithContributorViaApi(instanceWithContributor) {
@@ -352,5 +357,14 @@ export default {
         content: including(`${browseQuery}would be here`),
       }),
     ]);
+  },
+  verifyNameTypeOptions(nameTypes) {
+    nameTypes.forEach((name) => {
+      cy.expect(
+        MultiSelectMenu()
+          .find(MultiSelectOption(including(name)))
+          .exists(),
+      );
+    });
   },
 };

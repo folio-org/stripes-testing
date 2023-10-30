@@ -8,7 +8,7 @@ import Users from '../../../../support/fragments/users/users';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import ItemActions from '../../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../../support/fragments/inventory/item/inventoryItems';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
@@ -47,7 +47,7 @@ describe('Bulk Edit - Logs', () => {
         (inventoryItem) => {
           inventoryItem.discoverySuppress = true;
           inventoryEntity.itemId = inventoryItem.id;
-          ItemActions.editItemViaApi(inventoryItem);
+          InventoryItems.editItemViaApi(inventoryItem);
         },
       );
       FileManager.createFile(

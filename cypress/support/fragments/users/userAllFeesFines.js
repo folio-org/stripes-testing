@@ -1,6 +1,8 @@
 import { CheckBox } from '@interactors/html';
+
 import {
   Button,
+  Modal,
   Dropdown,
   HTML,
   MultiColumnList,
@@ -12,6 +14,7 @@ import PaymentMethods from '../settings/users/paymentMethods';
 import UserEdit from './userEdit';
 
 const waiveAllButton = Button({ id: 'open-closed-all-wave-button' });
+const feeFinesList = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
 
 export default {
   waiveFeeFine: (userId, amount, ownerId) => {
@@ -28,7 +31,8 @@ export default {
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(
           (requestedServicePoints) => {
             const servicePointId = requestedServicePoints[0].id;
-            UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, userId);
+            cy.getAdminSourceRecord().then((adminSourceRecord) => {
               cy.okapiRequest({
                 method: 'POST',
                 path: `accounts/${accountId}/waive`,
@@ -39,7 +43,7 @@ export default {
                   notifyPatron: false,
                   servicePointId,
                   // all api methods run by diku
-                  userName: 'ADMINISTRATOR, DIKU',
+                  userName: adminSourceRecord,
                 },
                 isDefaultSearchParamsRequired: false,
               });
@@ -78,7 +82,7 @@ export default {
   },
   clickWaiveEllipsis: (rowIndex) => {
     cy.do(
-      MultiColumnList({ id: 'list-accounts-history-view-feesfines' })
+      feeFinesList
         .find(MultiColumnListRow({ index: rowIndex }))
         .find(Dropdown())
         .choose('Waive'),
@@ -86,7 +90,7 @@ export default {
   },
   checkWaiveEllipsisActive: (rowIndex, isActive) => {
     cy.do(
-      MultiColumnList({ id: 'list-accounts-history-view-feesfines' })
+      feeFinesList
         .find(MultiColumnListRow({ index: rowIndex }))
         .find(Dropdown())
         .open(),
@@ -97,5 +101,22 @@ export default {
   clickWaive: () => cy.do(waiveAllButton.click()),
   paySelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Pay'));
+  },
+
+  clickPayEllipsis: (rowIndex) => {
+    cy.do(
+      feeFinesList
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(Dropdown())
+        .choose('Pay'),
+    );
+  },
+
+  verifyPayModalIsOpen: () => {
+    cy.expect(Modal('Pay fee/fine').exists());
+  },
+
+  clickOnRowByIndex: (rowIndex) => {
+    cy.do(feeFinesList.find(MultiColumnListRow({ index: rowIndex })).click());
   },
 };

@@ -12,6 +12,7 @@ import SelectJobProfile from '../../support/fragments/data-export/selectJobProfi
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
 
 let user;
 
@@ -59,8 +60,10 @@ describe('data-export', () => {
 
       DataExportLogs.waitLoading();
       DataExportResults.verifyLastLog(emptyFile, 'Fail');
-      DataExportResults.verifyFileNameIsDisabled(0);
-      DataExportResults.verifyErrorMessage(0, emptyFile);
+      SearchPane.findResultRowIndexByContent(user.username).then((rowIndex) => {
+        DataExportResults.verifyFileNameIsDisabled(Number(rowIndex));
+        DataExportResults.verifyErrorMessage(Number(rowIndex), emptyFile);
+      });
       TopMenuNavigation.navigateToApp('Data export');
       DataExportLogs.waitLoading();
     },

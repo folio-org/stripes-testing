@@ -46,7 +46,7 @@ describe('Staff slips', () => {
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.chooseStaffClip('Hold');
-      EditStaffClips.openLastUpdateInfo();
+      EditStaffClips.checkLastUpdateInfo();
       EditStaffClips.collapseAll();
       EditStaffClips.expandAll();
     },

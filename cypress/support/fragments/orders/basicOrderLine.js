@@ -6,15 +6,21 @@ export const RECEIVING_WORKFLOWS = {
   SYNCHRONIZED: 'Synchronized order and receipt quantity',
   INDEPENDENT: 'Independent order and receipt quantity',
 };
+export const CHECKIN_ITEMS_VALUE = {
+  [RECEIVING_WORKFLOWS.SYNCHRONIZED]: false,
+  [RECEIVING_WORKFLOWS.INDEPENDENT]: true,
+};
 
 const getDefaultOrderLine = ({
   quantity = 1,
   title = `autotest_po_line_name-${getRandomPostfix()}`,
   instanceId,
   checkinItems = false,
+  purchaseOrderId,
   specialLocationId,
   specialMaterialTypeId,
   acquisitionMethod = '',
+  automaticExport = false,
   listUnitPrice = 1,
   poLineEstimatedPrice,
   fundDistribution = [],
@@ -27,6 +33,7 @@ const getDefaultOrderLine = ({
     checkinItems,
     instanceId,
     acquisitionMethod,
+    automaticExport,
     alerts: [],
     claims: [],
     contributors: [],
@@ -71,7 +78,7 @@ const getDefaultOrderLine = ({
       trial: false,
       accessProvider: null,
     },
-    purchaseOrderId: '',
+    purchaseOrderId,
     receiptStatus: 'Pending',
     reportingCodes: [],
     source: 'User',
@@ -82,7 +89,7 @@ const getDefaultOrderLine = ({
       referenceNumbers,
     },
   };
-  if (!defaultOrderLine.physical.materialType) {
+  if (specialLocationId && !specialMaterialTypeId) {
     NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType()).then((mtypes) => {
       defaultOrderLine.physical.materialType = mtypes.body.id;
     });
