@@ -55,9 +55,9 @@ describe('data-import', () => {
         // check created counter in the Summary table
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems.created, 0);
         // check No action counter in the Summary table
-        FileDetails.checkInstanceQuantityInSummaryTable('1', 2);
+        FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems.noAction, 2);
         // check Error counter in the Summary table
-        FileDetails.checkInstanceQuantityInSummaryTable('1', 3);
+        FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems.error, 3);
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.INSTANCE);
         FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.error);
         FileDetails.verifyLogSummaryTableIsHidden();
