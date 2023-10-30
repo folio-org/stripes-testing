@@ -36,8 +36,7 @@ describe('bulk-edit', () => {
           waiter: UsersSearchPane.waitLoading,
         });
         FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-      },
-      );
+      });
     });
 
     after('delete test data', () => {
@@ -104,7 +103,7 @@ describe('bulk-edit', () => {
             BulkEditSearchPane.downloadFileWithUpdatedRecords();
             ExportFile.verifyFileIncludes(updatedRecordsFileName, ['graduate']);
 
-            cy.visit(TopMenu.usersPath)
+            cy.visit(TopMenu.usersPath);
             UsersSearchPane.searchByKeywords(user.username);
             UsersSearchPane.openUser(user.username);
             UsersCard.verifyExpirationDate(todayDate);
