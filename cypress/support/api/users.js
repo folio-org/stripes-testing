@@ -82,7 +82,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName) => {
 
   cy.getAdminToken();
 
-  cy.getFirstUserGroupId({ limit: patronGroupName ? 100 : 1 }, patronGroupName).then(
+  cy.getFirstUserGroupId({ limit: patronGroupName ? 1000 : 1 }, patronGroupName).then(
     (userGroupdId) => {
       const queryField = 'displayName';
       cy.getPermissionsApi({
