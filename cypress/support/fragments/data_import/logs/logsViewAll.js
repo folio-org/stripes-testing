@@ -430,12 +430,15 @@ export default {
     );
   },
   verifyColumnIsSorted: (nameOfColumn, isDescending) => {
+    if (nameOfColumn === 'ID') {
+      cy.xpath('//*[@id="list-data-import"]/div[@class="mclScrollable---JvHuN"]').scrollTo('right');
+    }
     cy.do(dataImportList.clickHeader(nameOfColumn));
     getAllLogsColumnsResults(nameOfColumn).then((cells) => {
       if (isDescending) {
-        cy.expect(cells).to.deep.equal(cells.slice().sort().reverse());
+        cy.expect(cells).to.deep.equal(cells.sort().reverse());
       } else {
-        cy.expect(cells).to.deep.equal(cells.slice().sort());
+        cy.expect(cells).to.deep.equal(cells.sort());
       }
     });
   },
