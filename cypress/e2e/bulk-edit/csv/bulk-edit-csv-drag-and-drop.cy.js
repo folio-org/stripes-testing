@@ -58,5 +58,26 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isDragAndDropAreaDisabled(false);
       },
     );
+
+    it(
+      'C353538 Verify link record identifier with the drag and drop area on the landing page (firebird) (TaaS)',
+      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      () => {
+        cy.visit(TopMenu.bulkEditPath);
+        BulkEditSearchPane.verifyDefaultFilterState();
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.isDragAndDropAreaDisabled(true);
+        BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
+        BulkEditSearchPane.selectRecordIdentifier('Select record identifier');
+        BulkEditSearchPane.isDragAndDropAreaDisabled(true);
+        BulkEditSearchPane.verifyDragNDropExternalIDsArea();
+        BulkEditSearchPane.selectRecordIdentifier('Select record identifier');
+        BulkEditSearchPane.isDragAndDropAreaDisabled(true);
+        BulkEditSearchPane.verifyDragNDropUsernamesArea();
+        BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+      },
+    );
   });
 });
