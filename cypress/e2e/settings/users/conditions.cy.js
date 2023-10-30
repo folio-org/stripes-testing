@@ -22,9 +22,9 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
     { tags: [TestType.smoke, Features.patronBlocks, DevTeams.vega] },
     () => {
       Object.values(Condition.blockCheckboxes).forEach((specialCheckBox) => {
-        const conditionValue = Conditions.conditionsValues[5];
-        Conditions.select(conditionValue);
-        const specialCondition = new Condition(conditionValue);
+        const conditionType = Conditions.conditionTypes[5];
+        Conditions.select(conditionType);
+        const specialCondition = new Condition(conditionType);
         specialCondition.checkInitialState();
 
         // If Borrowing and/or Renewals and/or Requests is check marked, then Message to be displayed
@@ -45,10 +45,10 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
         specialCondition.checkRequiredCheckboxValidation();
         // save change based on validator error message
         specialCondition.clickByCheckbox(specialCheckBox);
-        specialCondition.save(conditionValue);
+        specialCondition.save(conditionType);
 
         // revert changed condition into initial state
-        Conditions.resetCondition(conditionValue);
+        Conditions.resetCondition(conditionType);
         cy.reload();
       });
     },

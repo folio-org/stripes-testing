@@ -125,7 +125,7 @@ describe('data-import', () => {
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
       NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
-      NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
+      NewFieldMappingProfile.addElectronicAccess(profile.typeValue, '"Resource"', '856$u', '856$z');
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);
     };

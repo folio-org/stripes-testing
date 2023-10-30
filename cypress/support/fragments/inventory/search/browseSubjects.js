@@ -11,6 +11,7 @@ import {
   Section,
   TextInput,
   Select,
+  Accordion,
 } from '../../../../../interactors';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
@@ -181,5 +182,9 @@ export default {
         content: 'Linked to MARC authority' + value,
       }).exists(),
     );
+  },
+
+  verifyNoAccordionsOnPane() {
+    cy.expect(Accordion().absent());
   },
 };
