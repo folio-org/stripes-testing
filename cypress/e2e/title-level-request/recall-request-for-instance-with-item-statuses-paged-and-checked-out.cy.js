@@ -222,7 +222,6 @@ describe('Create Item or Title level request', () => {
     });
     Requests.getRequestApi({ query: `(instance.title=="${instanceData.title}")` }).then(
       (requestResponse) => {
-        cy.log(requestResponse);
         requestResponse.forEach((request) => {
           Requests.deleteRequestViaApi(request.id);
         });

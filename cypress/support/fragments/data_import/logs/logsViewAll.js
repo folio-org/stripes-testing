@@ -22,6 +22,8 @@ const singleRecordImportsAccordion = Accordion('Inventory single record imports'
 const dataImportList = MultiColumnList({ id: 'list-data-import' });
 const errorsInImportAccordion = Accordion('Errors in import');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
+const nextButton = Button({ id: 'list-data-import-next-paging-button' });
+const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
 
 function getCheckboxByRow(row) {
   return MultiColumnList()
@@ -419,6 +421,12 @@ export default {
   openFileDetails: (fileName) => {
     cy.do(MultiColumnList({ id: 'list-data-import' }).find(Link(fileName)).click());
   },
+  clickNextPaginationButton: () => {
+    cy.do(nextButton.click());
+  },
+  clickPreviousPaginationButton: () => {
+    cy.do(previousButton.click());
+  },
 
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(selectAllCheckbox.absent()),
 
@@ -429,6 +437,7 @@ export default {
         .exists(),
     );
   },
+
   verifyColumnIsSorted: (nameOfColumn, isDescending) => {
     if (nameOfColumn === 'ID') {
       cy.xpath('//*[@id="list-data-import"]/div[@class="mclScrollable---JvHuN"]').scrollTo('right');
@@ -441,5 +450,29 @@ export default {
         cy.expect(cells).to.deep.equal(cells.sort());
       }
     });
+
+  verifyPreviousPagination: () => {
+    cy.expect([previousButton.has({ disabled: true }), nextButton.has({ disabled: false })]);
+    cy.get('#pane-results')
+      .find('div[class^="mclPrevNextPageInfoContainer-"]')
+      .invoke('text')
+      .should('include', '1');
+    cy.get('#pane-results')
+      .find('div[class^="mclPrevNextPageInfoContainer-"]')
+      .invoke('text')
+      .should('include', '100');
+  },
+    
+  verifyNextPagination: () => {
+    cy.expect([previousButton.has({ disabled: false }), nextButton.has({ disabled: false })]);
+    cy.get('#pane-results')
+      .find('div[class^="mclPrevNextPageInfoContainer-"]')
+      .invoke('text')
+      .should('include', '101');
+    cy.get('#pane-results')
+      .find('div[class^="mclPrevNextPageInfoContainer-"]')
+      .invoke('text')
+      .should('include', '200');
+
   },
 };
