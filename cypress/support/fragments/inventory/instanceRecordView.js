@@ -15,6 +15,7 @@ import {
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
+import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
@@ -446,5 +447,11 @@ export default {
   addHoldings: () => {
     cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
     InventoryNewHoldings.waitLoading();
+  },
+
+  editMarcBibliographicRecord: () => {
+    cy.do(actionsButton.click());
+    cy.do(Button({ id: 'edit-instance-marc' }).click());
+    InventoryEditMarcRecord.checkEditableQuickMarcFormIsOpened();
   },
 };
