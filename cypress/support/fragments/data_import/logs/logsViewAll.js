@@ -189,10 +189,6 @@ export default {
     );
   },
 
-  clickOnColumnName: (nameOfColumn) => {
-    dataImportList.clickHeader(nameOfColumn);
-  },
-
   filterJobsByDate({ from, end }) {
     cy.do([
       Accordion({ id: 'completedDate' }).clickHeader(),
@@ -434,11 +430,12 @@ export default {
     );
   },
   verifyColumnIsSorted: (nameOfColumn, isDescending) => {
+    cy.do(dataImportList.clickHeader(nameOfColumn));
     getAllLogsColumnsResults(nameOfColumn).then((cells) => {
       if (isDescending) {
-        cy.expect(cells).to.deep.equal(cells.sort().reverse());
+        cy.expect(cells).to.deep.equal(cells.slice().sort().reverse());
       } else {
-        cy.expect(cells).to.deep.equal(cells.sort());
+        cy.expect(cells).to.deep.equal(cells.slice().sort());
       }
     });
   },

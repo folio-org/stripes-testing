@@ -31,39 +31,21 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         const descending = true;
+        const columnHeaders = [
+          'File name',
+          'Status',
+          'Records',
+          'Job profile',
+          'Started running',
+          'Ended running',
+          'Run by',
+          'ID',
+        ];
         Logs.openViewAllLogs();
-        LogsViewAll.clickOnColumnName('File name');
-        LogsViewAll.verifyColumnIsSorted('File name');
-        LogsViewAll.clickOnColumnName('File name');
-        LogsViewAll.verifyColumnIsSorted('File name', descending);
-        LogsViewAll.clickOnColumnName('Status');
-        LogsViewAll.verifyColumnIsSorted('Status');
-        LogsViewAll.clickOnColumnName('Status');
-        LogsViewAll.verifyColumnIsSorted('Status', descending);
-        LogsViewAll.clickOnColumnName('Records');
-        LogsViewAll.verifyColumnIsSorted('Records');
-        LogsViewAll.clickOnColumnName('Records');
-        LogsViewAll.verifyColumnIsSorted('Records', descending);
-        LogsViewAll.clickOnColumnName('Job profile');
-        LogsViewAll.verifyColumnIsSorted('Job profile');
-        LogsViewAll.clickOnColumnName('Job profile');
-        LogsViewAll.verifyColumnIsSorted('Job profile', descending);
-        LogsViewAll.clickOnColumnName('Started running');
-        LogsViewAll.verifyColumnIsSorted('Started running');
-        LogsViewAll.clickOnColumnName('Started running');
-        LogsViewAll.verifyColumnIsSorted('Started running', descending);
-        LogsViewAll.clickOnColumnName('Ended running');
-        LogsViewAll.verifyColumnIsSorted('Ended running');
-        LogsViewAll.clickOnColumnName('Ended running');
-        LogsViewAll.verifyColumnIsSorted('Ended running', descending);
-        LogsViewAll.clickOnColumnName('Run by');
-        LogsViewAll.verifyColumnIsSorted('Run by');
-        LogsViewAll.clickOnColumnName('Run by');
-        LogsViewAll.verifyColumnIsSorted('Run by', descending);
-        LogsViewAll.clickOnColumnName('ID');
-        LogsViewAll.verifyColumnIsSorted('ID');
-        LogsViewAll.clickOnColumnName('ID');
-        LogsViewAll.verifyColumnIsSorted('ID', descending);
+        columnHeaders.forEach((columnName) => {
+          LogsViewAll.verifyColumnIsSorted(columnName);
+          LogsViewAll.verifyColumnIsSorted(columnName, descending);
+        });
       },
     );
   });
