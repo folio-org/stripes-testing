@@ -436,13 +436,14 @@ export default {
   },
   generateFolioInstances({
     count = 1,
+    barcodes,
     status = ITEM_STATUS_NAMES.AVAILABLE,
     properties = {},
   } = {}) {
     return [...Array(count).keys()].map((index) => ({
       instanceId: uuid(),
       instanceTitle: `Instance-${getRandomPostfix()}`,
-      barcodes: [generateUniqueItemBarcodeWithShift(index)],
+      barcodes: barcodes || [generateUniqueItemBarcodeWithShift(index)],
       status,
       properties: Array.isArray(properties) ? properties[index] : properties,
     }));

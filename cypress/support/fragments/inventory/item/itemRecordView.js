@@ -159,6 +159,14 @@ export default {
     cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
   },
 
+  checkMultipleItemNotes: (...itemNotes) => {
+    itemNotes.forEach((itemNote) => {
+      cy.expect([
+        KeyValue(itemNote.type).has({ value: itemNote.note }),
+      ]);
+    });
+  },
+
   checkCheckInNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
     cy.expect(HTML(staffValue).exists());
