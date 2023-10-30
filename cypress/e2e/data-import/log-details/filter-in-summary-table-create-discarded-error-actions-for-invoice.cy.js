@@ -24,10 +24,15 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 describe('data-import', () => {
   describe('Log details', () => {
     let user;
+    const quantityOfItems = {
+      created: '3',
+      noAction: '3',
+      error: '3',
+    };
     const invoiceNumber = '1024200';
-    const quantityOfItems = '1';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
     const marcFileName = `C357018 autotest file ${getRandomPostfix()}`;
+    const filePathForUpload = 'ediFileForC357018.edi';
     const mappingProfile = {
       name: `C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
@@ -70,6 +75,7 @@ describe('data-import', () => {
       cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
     });
 
+    // test is failed UIDATIMP-1549
     it(
       'C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
@@ -94,7 +100,7 @@ describe('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('ediFileForC357018.edi', marcFileName);
+        DataImport.uploadFile(filePathForUpload, marcFileName);
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -102,13 +108,13 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileName);
 
         // check created counter in the Summary table
-        FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 0);
+        FileDetails.checkInvoiceInSummaryTable(quantityOfItems.created, 0);
         // check No action counter in the Summary table
-        FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 2);
+        FileDetails.checkInvoiceInSummaryTable(quantityOfItems.noAction, 2);
         // check Error counter in the Summary table
-        FileDetails.checkInvoiceInSummaryTable(quantityOfItems, 3);
+        FileDetails.checkInvoiceInSummaryTable(quantityOfItems.error, 3);
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.INVOICE);
-        FileDetails.verifyQuantityOfRecordsWithError(3);
+        FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.error);
         FileDetails.verifyLogSummaryTableIsHidden();
         FileDetails.verifyRecordsSortingOrder();
       },
