@@ -190,11 +190,7 @@ export default {
   },
 
   clickOnColumnName: (nameOfColumn) => {
-    if (nameOfColumn === 'Job profile') {
-      cy.do(Button({ id: 'clickable-list-column-jobprofilename' }).click());
-    } else {
-      cy.do(Button(`${nameOfColumn}`).click());
-    }
+    dataImportList.clickHeader(nameOfColumn);
   },
 
   filterJobsByDate({ from, end }) {
@@ -445,8 +441,5 @@ export default {
         cy.expect(cells).to.deep.equal(cells.sort());
       }
     });
-  },
-  scroll: (position) => {
-    cy.get('[id^="list-data-import"] div.mclScrollable---JvHuN').scrollTo(`${position}`);
   },
 };

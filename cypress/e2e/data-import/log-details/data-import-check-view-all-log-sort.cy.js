@@ -60,7 +60,6 @@ describe('data-import', () => {
         LogsViewAll.verifyColumnIsSorted('Run by');
         LogsViewAll.clickOnColumnName('Run by');
         LogsViewAll.verifyColumnIsSorted('Run by', descending);
-        LogsViewAll.scroll('right');
         LogsViewAll.clickOnColumnName('ID');
         LogsViewAll.verifyColumnIsSorted('ID');
         LogsViewAll.clickOnColumnName('ID');
