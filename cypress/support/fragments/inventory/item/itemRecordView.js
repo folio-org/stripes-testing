@@ -10,6 +10,7 @@ import {
   PaneHeader,
   Link,
   MultiColumnListCell,
+  MultiColumnListRow,
 } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 
@@ -152,6 +153,14 @@ export default {
   checkItemNote: (note, staffValue = 'Yes', value = 'Note') => {
     cy.expect(itemNotesAccordion.find(KeyValue(value)).has({ value: note }));
     cy.expect(itemNotesAccordion.find(KeyValue('Staff only')).has({ value: staffValue }));
+  },
+
+  checkMultipleItemNotes: (...itemNotes) => {
+    itemNotes.forEach((itemNote) => {
+      cy.expect([
+        KeyValue(itemNote.type).has({ value: itemNote.note }),
+      ]);
+    })
   },
 
   checkCheckInNote: (note, staffValue = 'Yes') => {
