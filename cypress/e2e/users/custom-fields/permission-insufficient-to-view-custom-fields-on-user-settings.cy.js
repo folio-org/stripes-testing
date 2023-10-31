@@ -16,11 +16,14 @@ describe('Permissions --> My Profile', () => {
       ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
         servicePointId = servicePoints[0].id;
       });
-      cy.createTempUser([permissions.uiUsersCanViewCustomFields.gui]).then((userProperties) => {
-        userData = userProperties;
-        UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-      });
-      cy.login(userData.username, userData.password);
+      cy.createTempUser([permissions.uiUsersCanViewCustomFields.gui])
+        .then((userProperties) => {
+          userData = userProperties;
+          UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
+        })
+        .then(() => {
+          cy.login(userData.username, userData.password);
+        });
     });
   });
 
