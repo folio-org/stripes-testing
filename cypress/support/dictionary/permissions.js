@@ -842,4 +842,38 @@ export default {
     internal: 'settings.loan-policies.all',
     gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
   },
+  // Consortia
+  consortiaSettingsConsortiaAffiliationsEdit: {
+    internal: 'ui-consortia-settings.consortia.affiliations.edit',
+    gui: 'Consortia: Assign and unassign affiliations',
+  },
+  consortiaSettingsConsortiaAffiliationsView: {
+    internal: 'ui-consortia-settings.consortia.affiliations.view',
+    gui: 'Consortia: View affiliations',
+  },
+  consortiaInventoryShareLocalInstance: {
+    internal: 'consortia.inventory.share.local.instance',
+    gui: 'Inventory: Share local instance with consortium',
+  },
+  consortiaSettingsSettingsMembershipEdit: {
+    internal: 'ui-consortia-settings.settings.membership.edit',
+    gui: 'Settings (Consortia): Can view and edit consortia membership',
+  },
+  consortiaSettingsSettingsMembershipView: {
+    internal: 'ui-consortia-settings.settings.membership.view',
+    gui: 'Settings (Consortia): Can view consortia membership',
+  },
+  // Consortium manager
+  consortiaSettingsConsortiumManagerEdit: {
+    internal: 'ui-consortia-settings.consortium-manager.edit',
+    gui: 'Consortium manager: Can create, edit and remove settings',
+  },
+  consortiaSettingsConsortiumManagerShare: {
+    internal: 'ui-consortia-settings.consortium-manager.share',
+    gui: 'Consortium manager: Can share settings to all members',
+  },
+  consortiaSettingsConsortiumManagerView: {
+    internal: 'ui-consortia-settings.consortium-manager.view',
+    gui: 'Consortium manager: Can view existing settings',
+  },
 };
