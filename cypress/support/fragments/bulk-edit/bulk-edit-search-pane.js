@@ -710,6 +710,23 @@ export default {
     });
   },
 
+  changeShowColumnCheckboxIfNotYet(...names) {
+    names.forEach((name) => {
+      cy.get(`[name='${name}']`).then((element) => {
+        const checked = element.attr('checked');
+        if (!checked) {
+          cy.do(DropdownMenu().find(Checkbox(name)).click());
+        }
+      });
+    });
+  },
+
+  verifyResultsUnderColumns(columnName, value) {
+    cy.expect(
+      resultsAccordion.find(MultiColumnListCell({ column: columnName, content: value })).exists(),
+    );
+  },
+
   verifyResultColumTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },

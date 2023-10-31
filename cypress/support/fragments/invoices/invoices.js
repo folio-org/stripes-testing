@@ -322,6 +322,18 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
 
+  cancellcreatingInvoiceFromOrderWithoutFY(invoice) {
+    cy.do([
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('EFT'),
+      Button('Cancel').click(),
+      Button({ id: 'clickable-cancel-editing-confirmation-cancel' }).click(),
+    ]);
+  },
+
   createRolloverInvoice(invoice, organization) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());

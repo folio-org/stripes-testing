@@ -684,7 +684,19 @@ export default {
   verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
   verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
   verifyResetAllButtonDisabled: () => cy.expect(resetAllBtn.has({ disabled: true })),
-  verifyBrowseInventorySearchResults: () => cy.expect(inventorySearchResultsPane.exists()),
+  verifyBrowseInventorySearchResults({ records = [] } = {}) {
+    cy.expect(inventorySearchResultsPane.exists());
+
+    records.forEach((record) => {
+      cy.expect(
+        inventorySearchResultsPane
+          .find(
+            MultiColumnListCell({ innerHTML: including(`<strong>${record.callNumber}</strong>`) }),
+          )
+          .exists(),
+      );
+    });
+  },
 
   verifyNoRecordsFound() {
     cy.expect([

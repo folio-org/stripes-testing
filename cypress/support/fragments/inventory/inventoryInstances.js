@@ -436,15 +436,18 @@ export default {
   },
   generateFolioInstances({
     count = 1,
+    barcodes,
     status = ITEM_STATUS_NAMES.AVAILABLE,
     properties = {},
+    callNumbers = [],
   } = {}) {
     return [...Array(count).keys()].map((index) => ({
       instanceId: uuid(),
       instanceTitle: `Instance-${getRandomPostfix()}`,
-      barcodes: [generateUniqueItemBarcodeWithShift(index)],
+      barcodes: barcodes || [generateUniqueItemBarcodeWithShift(index)],
       status,
       properties: Array.isArray(properties) ? properties[index] : properties,
+      callNumbers,
     }));
   },
   createFolioInstancesViaApi({ folioInstances = [], location = {}, sourceId } = {}) {
@@ -481,6 +484,7 @@ export default {
               holdingsTypeId: types.holdingTypeId,
               permanentLocationId: location.id,
               sourceId,
+              callNumber: item.callNumbers[index],
             },
           ],
           items: item.barcodes.map((barcode) => ({

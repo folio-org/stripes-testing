@@ -137,19 +137,19 @@ describe('Orders: Receiving and Check-in', () => {
       InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(firstPiece.copyNumber);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.checkStatus('In process');
+      ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
       ItemRecordView.findRowAndClickLink(secondPiece.enumeration);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.checkStatus('In process');
+      ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
       ItemRecordView.findRowAndClickLink(thirdPiece.chronology);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.checkStatus('In process');
+      ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
       ItemRecordView.findRowAndClickLink(fourthPiece.copyNumber);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.checkStatus('In process');
+      ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
     },
   );

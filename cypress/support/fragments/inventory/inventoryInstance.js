@@ -350,6 +350,11 @@ export default {
     cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
   },
 
+  checkAbsenceOfNewMarcBibRecordOption() {
+    cy.do(paneResultsSection.find(actionsBtn).click());
+    cy.expect(newMarcBibButton.absent());
+  },
+
   checkInstanceTitle(title) {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
   },
@@ -845,11 +850,17 @@ export default {
     cy.expect(instanceDetailsPane.find(MultiColumnListCell(content)).exists());
   },
 
-  createInstanceViaApi() {
+  createInstanceViaApi({
+    instanceTitle = `Instance ${getRandomPostfix()}`,
+    instanceId = uuid(),
+    instanceTypeId,
+    contributors,
+  } = {}) {
     const instanceData = {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-      instanceId: uuid(),
-      instanceTypeId: null,
+      instanceTitle,
+      instanceId,
+      instanceTypeId,
+      contributors,
     };
 
     return cy
@@ -962,7 +973,7 @@ export default {
   },
 
   checkIsItemCreated: (itemBarcode) => {
-    cy.expect(Link(itemBarcode).exists());
+    cy.expect(Link(including(itemBarcode)).exists());
   },
 
   checkMARCSourceAtNewPane() {
@@ -1121,5 +1132,9 @@ export default {
   verifyNumberOfItemsInHoldingByName(holdingName, numOfItems) {
     const holdingSection = section.find(Accordion(including(holdingName)));
     cy.expect(holdingSection.find(Badge()).has({ value: `${numOfItems}` }));
+  },
+
+  verifyItemStatus: (itemStatus) => {
+    cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
 };

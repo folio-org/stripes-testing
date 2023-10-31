@@ -1,16 +1,19 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../support/fragments/users/users';
 
 describe('Inventory', () => {
-  describe('Cataloging -> Maintaining the catalog', () => {
+  describe('Call Number Browse', () => {
+    const firstCallNumber = 'QS 11 .GA1 E99 2005';
+    const secondCallNumber = 'D15.H63 A3 2002';
     const testData = {
-      callNumber: `${randomFourDigitNumber()}`,
-      folioInstances: InventoryInstances.generateFolioInstances(),
+      folioInstances: InventoryInstances.generateFolioInstances({
+        count: 2,
+        callNumbers: [firstCallNumber, secondCallNumber],
+      }),
       servicePoint: ServicePoints.getDefaultServicePoint(),
     };
 
@@ -41,38 +44,32 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
-        testData.folioInstances[0].instanceId,
-      );
+      testData.folioInstances.forEach(({ instanceId }) => {
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instanceId);
+      });
       Locations.deleteViaApi(testData.location);
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       Users.deleteViaApi(testData.user.userId);
     });
 
-    // Test is failing because of an Issue:
-    // https://issues.folio.org/browse/UIIN-2452
-    // TODO: remove comment once issue is fixed
     it(
-      'C3500 An item is being moved from one shelf to another. Change the call number of the associated holdings record! (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      'C407697 Browse for Call number without specified call number type, which match with any call number type format (spitfire) (TaaS)',
+      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
-        // Find the instance from precondition
-        const InventoryInstance = InventorySearchAndFilter.searchInstanceByTitle(
-          testData.folioInstances[0].instanceTitle,
-        );
+        // Click on the "Select a browse option" dropdown and select "Call numbers (all)" browse option.
+        InventorySearchAndFilter.selectBrowseCallNumbers();
 
-        // Click on the instance name -> Click on "View holdings"
-        const HoldingsRecordView = InventoryInstance.openHoldingView();
+        // Fill in the search box with call number #1, Click on the "Search" button
+        InventorySearchAndFilter.browseSearch(firstCallNumber);
+        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+          records: [{ callNumber: firstCallNumber }],
+        });
 
-        // Click on "Actions" menu, Select "Edit"
-        const HoldingsRecordEdit = HoldingsRecordView.edit();
-
-        // Change the Call number -> Click "Save & Close" button
-        HoldingsRecordEdit.fillCallNumber(testData.callNumber);
-        HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
-        InventoryInstance.checkIsHoldingsCreated([
-          `${testData.location.name} >  ${testData.callNumber}`,
-        ]);
+        // Fill in the search box with call number #2, Click on the "Search" button
+        InventorySearchAndFilter.browseSearch(secondCallNumber);
+        InventorySearchAndFilter.verifyBrowseInventorySearchResults({
+          records: [{ callNumber: secondCallNumber }],
+        });
       },
     );
   });
