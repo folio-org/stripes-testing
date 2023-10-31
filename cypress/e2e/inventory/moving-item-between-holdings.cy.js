@@ -120,6 +120,7 @@ describe('Inventory', () => {
           itemMoved: true,
         });
 
+        InventoryInstance.openHoldings([testData.locations[1].name]);
         // Both items are now displaying under the second "Holdings"
         InventoryInstance.checkHoldingsTableContent({
           name: testData.locations[1].name,

@@ -42,6 +42,11 @@ describe('bulk-edit', () => {
           query: `"instanceId"="${instanceId}"`,
         }).then((holdings) => {
           holdingHRID = holdings[0].hrid;
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            // Annex
+            permanentLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+          });
           FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
         });
       });
