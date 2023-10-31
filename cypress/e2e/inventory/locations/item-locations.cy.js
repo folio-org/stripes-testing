@@ -132,6 +132,7 @@ describe('ui-inventory: location', () => {
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();
+      InventoryInstance.openHoldings(['']);
       InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
       // edit instance

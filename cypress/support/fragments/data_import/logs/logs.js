@@ -10,6 +10,7 @@ import {
   Checkbox,
   Link,
 } from '../../../../../interactors';
+import FileDetails from './fileDetails';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
 const actionsButton = Button('Actions');
@@ -54,6 +55,8 @@ export default {
   openFileDetails: (fileName) => {
     const newFileName = fileName.replace('.mrc', '');
     cy.do(Link(including(newFileName)).click());
+    FileDetails.verifyLogDetailsPageIsOpened(fileName);
+    FileDetails.verifyResultsListIsVisible();
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },
