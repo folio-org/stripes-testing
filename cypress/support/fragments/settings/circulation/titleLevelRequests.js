@@ -75,26 +75,8 @@ export default {
       });
   },
 
-  changeFailToCreateHoldForBlockedRequest(status) {
-    cy.wait(2000);
-    cy.get(titleLevelHoldCirculationRulesCheckbox)
-      .invoke('is', ':checked')
-      .then((checked) => {
-        if (!checked && status === 'allow') {
-          cy.expect(titleLevelHoldCirculationRulesCheckbox({ disabled: false }).exists());
-          cy.do(titleLevelHoldCirculationRulesCheckbox.click());
-          cy.do(saveButton.click());
-          this.checkUpdateTLRCalloutAppeared();
-        } else if (checked && status === 'allow') {
-          // If checkbox is already checked - to prevent test failing during parallel run
-          cy.log('TLR checkbox is already checked');
-        } else if (checked && status === 'forbid') {
-          cy.expect(titleLevelHoldCirculationRulesCheckbox({ disabled: false }).exists());
-          cy.do(titleLevelHoldCirculationRulesCheckbox.click());
-          cy.do(saveButton.click());
-          this.checkUpdateTLRCalloutAppeared();
-        }
-      });
+  uncheckFailToCreateHoldForBlockedRequestCheckBox() {
+    cy.do(titleLevelHoldCirculationRulesCheckbox.uncheckIfSelected());
   },
 
   checkUpdateTLRCalloutAppeared() {

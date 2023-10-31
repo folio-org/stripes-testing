@@ -37,7 +37,7 @@ describe('Title Level Request', () => {
         },
       );
       TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-      TitleLevelRequests.changeFailToCreateHoldForBlockedRequest('forbid');
+      TitleLevelRequests.uncheckFailToCreateHoldForBlockedRequestCheckBox();
       testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
       Location.createViaApi(testData.defaultLocation);
     });
