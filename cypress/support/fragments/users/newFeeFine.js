@@ -13,6 +13,7 @@ import {
 const rootModal = Modal({ id: 'new-modal' });
 const feeFineTypeSelect = rootModal.find(Select({ id: 'feeFineType' }));
 const amountTextField = rootModal.find(TextField({ name: 'amount' }));
+const ownerTypeSelect = rootModal.find(Select({ id: 'ownerId' }));
 
 const getChargeFeeFine = ({ amount, userId, feeFineType, id, dateAction, createdAt, source }) => ({
   accountId: id,
@@ -118,6 +119,10 @@ export default {
   setFeeFineOwner: (ownerName) => {
     // TODO: fix iterators issue related with select
     cy.get('div[id=new-modal] select[name=ownerId]').select(ownerName);
+  },
+
+  checkNotExistFeeFineOwner: (ownerName) => {
+    cy.expect(ownerTypeSelect.find(Option(ownerName)).absent());
   },
 
   checkFilteredFeeFineType: (feefineTypeName) => {
