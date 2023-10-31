@@ -52,7 +52,8 @@ export default {
 
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
   openFileDetails: (fileName) => {
-    cy.do(Link(fileName).click());
+    const newFileName = fileName.replace('.mrc', '');
+    cy.do(Link(including(newFileName)).click());
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },

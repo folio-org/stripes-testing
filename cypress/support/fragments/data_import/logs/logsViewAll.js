@@ -236,7 +236,7 @@ export default {
 
       // verify every string in result table
       for (let i = 0; i < resultCount; i++) {
-        cy.expect(MultiColumnListCell({ content: jobProfileName, row: i }).exists());
+        cy.expect(MultiColumnListCell({ content: including(jobProfileName), row: i }).exists());
       }
     });
   },
