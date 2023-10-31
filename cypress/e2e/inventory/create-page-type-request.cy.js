@@ -39,7 +39,7 @@ describe('ui-inventory: Create page type request', () => {
             permissions.uiInventoryViewInstances.gui,
             permissions.uiUsersView.gui,
             permissions.uiUserEdit.gui,
-            permissions.uiUserCreate.gui,
+            permissions.uiUsersCreate.gui,
             permissions.uiUsersEdituserservicepoints.gui,
             permissions.uiUserAccounts.gui,
             permissions.usersViewRequests.gui,
