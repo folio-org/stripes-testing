@@ -311,6 +311,10 @@ export default {
     internal: 'ui-users.delete',
     gui: 'Users: Can delete user profile if user does not have any open transactions',
   },
+  uiUsersCreateResetPassword: {
+    internal: 'ui-users.reset.password',
+    gui: 'Users: Create/reset password',
+  },
   uiUsersCheckTransactions: {
     internal: 'ui-users.opentransactions',
     gui: 'Users: Can check open transactions',
@@ -420,6 +424,7 @@ export default {
     gui: 'Remote storage: View',
   },
   // Requests
+  uiRequestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   uiRequestsEdit: { internal: 'ui-requests.edit', gui: 'Requests: View, edit, cancel' },
@@ -692,6 +697,10 @@ export default {
     internal: 'ui-finance.settings.all',
     gui: 'Settings (Finance): View, edit, create, delete',
   },
+  uiSettingsFinanceView: {
+    internal: 'ui-finance.settings.view',
+    gui: 'Settings (Finance): View settings',
+  },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
     internal: 'ui-finance.acq.unit.assignment.assign',
     gui: 'Finance: Assign acquisition units to new record',
@@ -771,6 +780,10 @@ export default {
   settingsTenantViewLocation: {
     internal: 'ui - tenant - settings.settings.location.view',
     gui: 'Settings (Tenant): View locations',
+  },
+  settingsTenantView: {
+    internal: 'ui-tenant-settings.settings.view',
+    gui: 'Settings (Tenant): View',
   },
   settingsTenantEditLanguageLocationAndCurrency: {
     internal: 'ui-tenant-settings.settings.locale',

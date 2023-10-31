@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 
 let user;
 const item = {
@@ -42,7 +42,7 @@ describe('bulk-edit', () => {
         }).then((res) => {
           res.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
           res.permanentLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
-          ItemActions.editItemViaApi(res);
+          InventoryItems.editItemViaApi(res);
         });
       });
     });
@@ -77,7 +77,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.verifyPermanentLocation('');
+        ItemRecordView.verifyPermanentLocation('-');
         ItemRecordView.verifyTemporaryLocation('-');
       },
     );

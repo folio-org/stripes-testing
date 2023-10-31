@@ -1,4 +1,5 @@
 import { CheckBox } from '@interactors/html';
+
 import {
   Button,
   Modal,
@@ -30,7 +31,8 @@ export default {
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(
           (requestedServicePoints) => {
             const servicePointId = requestedServicePoints[0].id;
-            UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, userId);
+            cy.getAdminSourceRecord().then((adminSourceRecord) => {
               cy.okapiRequest({
                 method: 'POST',
                 path: `accounts/${accountId}/waive`,
@@ -41,7 +43,7 @@ export default {
                   notifyPatron: false,
                   servicePointId,
                   // all api methods run by diku
-                  userName: 'ADMINISTRATOR, DIKU',
+                  userName: adminSourceRecord,
                 },
                 isDefaultSearchParamsRequired: false,
               });
@@ -72,6 +74,9 @@ export default {
   checkWaiveButtonActive: (isActive) => {
     cy.expect(waiveAllButton.has({ disabled: !isActive }));
   },
+  clickOnRowByIndex: (rowIndex) => {
+    cy.do(feeFinesList.find(MultiColumnListRow({ index: rowIndex })).click());
+  },
   clickRowCheckbox: (rowIndex) => {
     cy.get('#list-accounts-history-view-feesfines')
       .find(`[data-row-index="row-${rowIndex}"]`)
@@ -100,7 +105,9 @@ export default {
   paySelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Pay'));
   },
-
+  waiveSelectedFeeFines: () => {
+    cy.do(Dropdown('Actions').choose('Waive'));
+  },
   clickPayEllipsis: (rowIndex) => {
     cy.do(
       feeFinesList

@@ -262,6 +262,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile,
         );
         NewFieldMappingProfile.addElectronicAccess(
+          collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.typeValue,
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.relationship,
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.uri,
           collectionOfMappingAndActionProfilesForUpdate[2].mappingProfile.linkText,

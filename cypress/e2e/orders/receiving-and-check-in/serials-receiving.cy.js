@@ -114,7 +114,7 @@ describe('Orders: Receiving and Check-in', () => {
       );
       Receiving.selectPiece(firstPiece.caption);
       Receiving.selectConnectedInEditPiece();
-      ItemRecordView.checkStatus(ITEM_STATUS_NAMES.ON_ORDER);
+      ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.ON_ORDER);
     },
   );
 });

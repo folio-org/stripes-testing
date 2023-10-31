@@ -36,6 +36,8 @@ const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
 const resultsPane = Pane({ id: 'pane-results' });
+const actionsButtonInResultsPane = resultsPane.find(Button('Actions'));
+const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
@@ -105,6 +107,7 @@ function createRequestApi(
     fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
     pickupServicePointId: null,
   };
+
   let createdUser;
   let cancellationReasonId;
 
@@ -146,14 +149,16 @@ function createRequestApi(
       });
     })
     .then(() => {
-      users.createViaApi(userData).then((user) => {
-        createdUser = user;
-        requestData.requesterId = user.id;
-        userRequestPreferences.userId = user.id;
-      });
-    })
-    .then(() => {
-      cy.createUserRequestPreferencesApi(userRequestPreferences);
+      users
+        .createViaApi(userData)
+        .then((user) => {
+          createdUser = user;
+          requestData.requesterId = user.id;
+          userRequestPreferences.userId = user.id;
+        })
+        .then(() => {
+          cy.createUserRequestPreferencesApi(userRequestPreferences);
+        });
     })
     .then(() => {
       cy.createInstance({
@@ -583,5 +588,26 @@ export default {
       MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).focus(),
       MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).select(servicePoint),
     ]);
+  },
+
+  exportRequestToCsv: () => {
+    cy.wait(1000);
+    cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
+  },
+
+  checkCellInCsvFileContainsValue(fileName, rowNumber = 1, columnNumber, value) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+      const actualData = fileRows[rowNumber].trim().split(',');
+      expect(actualData[columnNumber]).to.contains(value);
+    });
+  },
+
+  deleteDownloadedFile(fileName) {
+    const filePath = `cypress\\downloads\\${fileName}`;
+    cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
   },
 };
