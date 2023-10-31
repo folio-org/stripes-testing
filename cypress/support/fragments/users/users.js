@@ -215,4 +215,9 @@ export default {
   verifyUserDetailsPane() {
     cy.expect(userDetailsPane.exists());
   },
+
+  getUserAddressTypesApi: (addressTypeId) => cy
+    .okapiRequest({
+      path: `addresstypes/${addressTypeId}`
+    }).then(({ body }) => body ),
 };
