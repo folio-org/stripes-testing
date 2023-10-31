@@ -450,9 +450,8 @@ export default {
     cy.expect(paneHeader.find(HTML(including(`${number} errors found`))).exists());
   },
 
-  verifyLogSummaryTableIsHidden: () => {
-    cy.expect(jobSummaryTable.absent());
-  },
+  verifyLogSummaryTableIsHidden: () => cy.expect(jobSummaryTable.absent()),
+  verifyResultsListIsVisible: () => cy.expect(resultsList.exists()),
 
   verifyRecordColumnHasStandardSequentialNumberingForRecords() {
     getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex).then(
