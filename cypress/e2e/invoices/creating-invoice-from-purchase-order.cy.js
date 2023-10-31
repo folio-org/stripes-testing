@@ -109,7 +109,7 @@ describe('Invoices', () => {
     { tags: [testType.extendedPath, devTeams.thunderjet] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.newInvoiceFromOrder();
       Invoices.createInvoiceFromOrderWithoutFY(invoice);
     },

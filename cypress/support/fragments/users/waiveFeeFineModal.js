@@ -9,8 +9,10 @@ export default {
   waitLoading: () => {
     cy.expect(rootModal.exists());
   },
+  waiveModalIsExists: () => cy.expect(rootModal.exists()),
   confirmModalLoaded: () => cy.expect(confirmModal.exists()),
   isClosed: () => cy.expect(rootModal.absent()),
+  waiveModalIsExists: () => cy.expect(rootModal.exists()),
   checkWaiveMessage: (feeFinesNumber, totalAmount) => {
     if (feeFinesNumber > 1) {
       cy.expect(
