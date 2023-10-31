@@ -56,15 +56,15 @@ const status = {
 };
 
 const visibleColumnsInSummaryTable = {
-  SUMMARY: { columnIndex: 1 },
-  SRS_MARC: { columnIndex: 2 },
-  INSTANCE: { columnIndex: 3 },
-  HOLDINGS: { columnIndex: 4 },
-  ITEM: { columnIndex: 5 },
-  AUTHORITY: { columnIndex: 6 },
-  ORDER: { columnIndex: 7 },
-  INVOICE: { columnIndex: 8 },
-  ERROR: { columnIndex: 9 },
+  SUMMARY: { columnIndex: 0 },
+  SRS_MARC: { columnIndex: 1 },
+  INSTANCE: { columnIndex: 2 },
+  HOLDINGS: { columnIndex: 3 },
+  ITEM: { columnIndex: 4 },
+  AUTHORITY: { columnIndex: 5 },
+  ORDER: { columnIndex: 6 },
+  INVOICE: { columnIndex: 7 },
+  ERROR: { columnIndex: 8 },
 };
 
 const visibleColumnsInResultsList = {
@@ -450,9 +450,8 @@ export default {
     cy.expect(paneHeader.find(HTML(including(`${number} errors found`))).exists());
   },
 
-  verifyLogSummaryTableIsHidden: () => {
-    cy.expect(jobSummaryTable.absent());
-  },
+  verifyLogSummaryTableIsHidden: () => cy.expect(jobSummaryTable.absent()),
+  verifyResultsListIsVisible: () => cy.expect(resultsList.exists()),
 
   verifyRecordColumnHasStandardSequentialNumberingForRecords() {
     getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex).then(
