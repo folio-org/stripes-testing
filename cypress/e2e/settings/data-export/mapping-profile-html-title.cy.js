@@ -11,12 +11,11 @@ import ExportFieldMappingProfiles from '../../../support/fragments/data-export/e
 import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
 import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
 
-
 let user;
 const mappingProfile = {
   name: `Mapping-Profile-${getRandomPostfix()}`,
   newName: `New-Mapping-Profile-${getRandomPostfix()}`,
-  newDescription: `New-Mapping-Profile-${getRandomPostfix()}`
+  newDescription: `New-Mapping-Profile-${getRandomPostfix()}`,
 };
 const callout = `The field mapping profile ${mappingProfile.name} has been successfully created`;
 
@@ -49,14 +48,22 @@ describe('Job profile - setup', () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default holdings mapping profile');
       SingleFieldMappingProfilePane.waitLoading();
       SingleFieldMappingProfilePane.verifyElements();
-      SettingsDataExport.verifyPageTitle('Data export settings - Default holdings mapping profile - FOLIO');
+      SettingsDataExport.verifyPageTitle(
+        'Data export settings - Default holdings mapping profile - FOLIO',
+      );
       SingleFieldMappingProfilePane.openActions();
       SingleFieldMappingProfilePane.clickDuplicateButton();
-      SettingsDataExport.verifyPageTitle('Data export settings - New field mapping profile - FOLIO');
+      SettingsDataExport.verifyPageTitle(
+        'Data export settings - New field mapping profile - FOLIO',
+      );
       SingleFieldMappingProfilePane.clickCancelButton();
       ExportFieldMappingProfiles.openNewMappingProfileForm();
-      SettingsDataExport.verifyPageTitle('Data export settings - New field mapping profile - FOLIO');
-      ExportNewFieldMappingProfile.createNewFieldMappingProfileWithoutTransformations(mappingProfile.name);
+      SettingsDataExport.verifyPageTitle(
+        'Data export settings - New field mapping profile - FOLIO',
+      );
+      ExportNewFieldMappingProfile.createNewFieldMappingProfileWithoutTransformations(
+        mappingProfile.name,
+      );
       ExportFieldMappingProfiles.saveMappingProfile();
       InteractorsTools.checkCalloutMessage(callout);
       ExportFieldMappingProfiles.verifyProfileNameOnTheList(mappingProfile.name);
@@ -64,11 +71,16 @@ describe('Job profile - setup', () => {
       ExportJobProfiles.clickProfileNameFromTheList(mappingProfile.name);
       SettingsDataExport.verifyPageTitle(`Data export settings - ${mappingProfile.name} - FOLIO`);
       SingleFieldMappingProfilePane.openActions();
-      SingleFieldMappingProfilePane.editFieldMappingProfile(mappingProfile.newName, mappingProfile.newDescription);
+      SingleFieldMappingProfilePane.editFieldMappingProfile(
+        mappingProfile.newName,
+        mappingProfile.newDescription,
+      );
       ExportFieldMappingProfiles.saveMappingProfile();
       ExportFieldMappingProfiles.verifyProfileNameOnTheList(mappingProfile.newName);
       ExportFieldMappingProfiles.clickProfileNameFromTheList(mappingProfile.newName);
-      SettingsDataExport.verifyPageTitle(`Data export settings - ${mappingProfile.newName} - FOLIO`);
+      SettingsDataExport.verifyPageTitle(
+        `Data export settings - ${mappingProfile.newName} - FOLIO`,
+      );
       ExportFieldMappingProfiles.deleteMappingProfile(mappingProfile.newName);
       SettingsDataExport.verifyPageTitle('Data export settings - Field mapping profiles - FOLIO');
     },
