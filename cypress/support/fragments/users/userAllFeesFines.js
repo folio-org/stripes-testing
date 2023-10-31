@@ -74,6 +74,12 @@ export default {
   checkWaiveButtonActive: (isActive) => {
     cy.expect(waiveAllButton.has({ disabled: !isActive }));
   },
+  clickOnRowByIndex: (index) => {
+    cy.do(MultiColumnListRow({ index }).click());
+  },
+  waiveSelectedFeeFines: () => {
+    cy.do(Dropdown('Actions').choose('Waive'));
+  },
   clickRowCheckbox: (rowIndex) => {
     cy.get('#list-accounts-history-view-feesfines')
       .find(`[data-row-index="row-${rowIndex}"]`)
@@ -102,7 +108,9 @@ export default {
   paySelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Pay'));
   },
-
+  waiveSelectedFeeFines: () => {
+    cy.do(Dropdown('Actions').choose('Waive'));
+  },
   clickPayEllipsis: (rowIndex) => {
     cy.do(
       feeFinesList

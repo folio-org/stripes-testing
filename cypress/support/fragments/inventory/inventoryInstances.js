@@ -19,8 +19,9 @@ import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import InventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
+import InventoryItems from './item/inventoryItems';
 import Arrays from '../../utils/arrays';
-import { ITEM_STATUS_NAMES } from '../../constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import generateUniqueItemBarcodeWithShift from '../../utils/generateUniqueItemBarcodeWithShift';
 import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
@@ -98,21 +99,6 @@ const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   body: instanceWithSpecifiedNewId,
 });
 
-const createHoldingViaAPI = (holdingWithIds) => {
-  return cy
-    .okapiRequest({
-      method: 'POST',
-      path: 'holdings-storage/holdings',
-      body: holdingWithIds,
-    })
-    .then(({ body }) => body);
-};
-
-const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
-  method: 'POST',
-  path: 'inventory/items',
-  body: itemWithIds,
-});
 const waitContentLoading = () => {
   cy.expect(
     rootSection
@@ -195,7 +181,7 @@ export default {
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 50 });
+        cy.getLocations({ limit: 1, query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
           (holdingSources) => {
@@ -450,15 +436,18 @@ export default {
   },
   generateFolioInstances({
     count = 1,
+    barcodes,
     status = ITEM_STATUS_NAMES.AVAILABLE,
     properties = {},
+    callNumbers = [],
   } = {}) {
     return [...Array(count).keys()].map((index) => ({
       instanceId: uuid(),
       instanceTitle: `Instance-${getRandomPostfix()}`,
-      barcodes: [generateUniqueItemBarcodeWithShift(index)],
+      barcodes: barcodes || [generateUniqueItemBarcodeWithShift(index)],
       status,
       properties: Array.isArray(properties) ? properties[index] : properties,
+      callNumbers,
     }));
   },
   createFolioInstancesViaApi({ folioInstances = [], location = {}, sourceId } = {}) {
@@ -495,6 +484,7 @@ export default {
               holdingsTypeId: types.holdingTypeId,
               permanentLocationId: location.id,
               sourceId,
+              callNumber: item.callNumbers[index],
             },
           ],
           items: item.barcodes.map((barcode) => ({
@@ -537,7 +527,7 @@ export default {
               instanceId: instanceWithSpecifiedNewId.id,
               sourceId: folioSource.id,
             };
-            createHoldingViaAPI(holdingWithIds).then(() => {
+            InventoryHoldings.createHoldingRecordViaApi(holdingWithIds).then(() => {
               const itemIds = [];
               cy.wrap(
                 items.forEach((item) => {
@@ -547,7 +537,7 @@ export default {
                     holdingsRecordId: holdingWithIds.id,
                   };
                   itemIds.push(itemWithIds.id);
-                  createItemViaAPI(itemWithIds);
+                  InventoryItems.createItemViaApi(itemWithIds);
                 }),
               ).then(() => {
                 ids.holdingIds.push({ id: holdingWithIds.id, itemIds });
@@ -561,7 +551,6 @@ export default {
     });
     return cy.get('@ids');
   },
-  createHoldingViaAPI,
   getInstanceIdApi: (searchParams) => {
     return cy
       .okapiRequest({

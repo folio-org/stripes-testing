@@ -18,6 +18,8 @@ const invoiceNumberFromEdifactFile = '94999';
 const resultsList = MultiColumnList({ id: 'search-results-list' });
 const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
 const nextButton = Button({ id: 'search-results-list-next-paging-button' });
+const previousButton = Button({ id: 'search-results-list-prev-paging-button' });
+const paneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 
 const columnNameInResultList = {
   srsMarc: resultsList.find(MultiColumnListHeader({ id: 'list-column-srsmarcstatus' })),
@@ -54,10 +56,13 @@ const status = {
 };
 
 const visibleColumnsInSummaryTable = {
-  SRS_MARC: { columnIndex: 2 },
-  INSTANCE: { columnIndex: 3 },
-  HOLDINGS: { columnIndex: 4 },
-  ITEM: { columnIndex: 5 },
+  SUMMARY: { columnIndex: 0 },
+  SRS_MARC: { columnIndex: 1 },
+  INSTANCE: { columnIndex: 2 },
+  HOLDINGS: { columnIndex: 3 },
+  ITEM: { columnIndex: 4 },
+  AUTHORITY: { columnIndex: 5 },
+  ORDER: { columnIndex: 6 },
   INVOICE: { columnIndex: 7 },
   ERROR: { columnIndex: 8 },
 };
@@ -156,12 +161,6 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
   }
 };
 
-const checkColumnsInSummaryTable = (value, specialColumnName) => {
-  cy.then(() => specialColumnName.index()).then((index) => cy.expect(
-    jobSummaryTable.find(MultiColumnListCell({ columnIndex: index })).has({ content: value }),
-  ));
-};
-
 const checkStatusInColumn = (specialStatus, specialColumnName, rowIndex = 0) => {
   cy.then(() => specialColumnName.index()).then((index) => cy.expect(
     resultsList
@@ -214,6 +213,25 @@ function getMultiColumnListCellsValuesInResultsList(cell) {
     .then(() => cells);
 }
 
+function getMultiColumnListCellsValuesInSummaryTable(cell) {
+  const cells = [];
+
+  // get MultiColumnList rows and loop over
+  return cy
+    .get('#job-summary-table')
+    .find('[data-row-index]')
+    .each(($row) => {
+      // from each row, choose specific cell
+      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+
 export default {
   columnNameInResultList,
   columnNameInSummuryTable,
@@ -232,7 +250,6 @@ export default {
   checkItemQuantityInSummaryTable,
   checkAuthorityQuantityInSummaryTable,
   checkErrorQuantityInSummaryTable,
-  checkColumnsInSummaryTable,
 
   openInstanceInInventory: (itemStatus, rowNumber = 0) => {
     cy.do(
@@ -302,15 +319,26 @@ export default {
         .find(Link({ href: including('/data-import/job-summary') }))
         .click(),
     );
-    cy.expect(
-      PaneHeader({ id: 'paneHeaderpane-results' })
-        .find(HTML(including('errors found')))
-        .exists(),
-    );
+    cy.expect(paneHeader.find(HTML(including('errors found'))).exists());
   },
 
-  clickNextPaginationButton: () => {
+  clickNextPaginationButton() {
     cy.do(nextButton.click());
+  },
+
+  clickPreviousPaginationButton: () => {
+    cy.do(previousButton.click());
+  },
+
+  paginateThroughAllPages(numberOfPages) {
+    for (let i = 0; i < numberOfPages; i++) {
+      this.clickNextPaginationButton();
+    }
+    cy.expect(nextButton.has({ disabled: true }));
+  },
+
+  close: () => {
+    cy.do(Button({ icon: 'times' }).click());
   },
 
   verifyMultipleHoldingsStatus: (expectedArray, expectedQuantity, rowNumber = 0) => {
@@ -419,16 +447,11 @@ export default {
   },
 
   verifyQuantityOfRecordsWithError: (number) => {
-    cy.expect(
-      PaneHeader({ id: 'paneHeaderpane-results' })
-        .find(HTML(including(`${number} records found`)))
-        .exists(),
-    );
+    cy.expect(paneHeader.find(HTML(including(`${number} errors found`))).exists());
   },
 
-  verifyLogSummaryTableIsHidden: () => {
-    cy.expect(jobSummaryTable.absent());
-  },
+  verifyLogSummaryTableIsHidden: () => cy.expect(jobSummaryTable.absent()),
+  verifyResultsListIsVisible: () => cy.expect(resultsList.exists()),
 
   verifyRecordColumnHasStandardSequentialNumberingForRecords() {
     getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex).then(
@@ -493,6 +516,12 @@ export default {
     );
   },
 
+  verifyColumnValuesInSummaryTable: (columnIndex, value) => {
+    getMultiColumnListCellsValuesInSummaryTable(columnIndex).then((cells) => {
+      cy.wrap(cells).should('deep.equal', value);
+    });
+  },
+
   getInvoiceNumber: (vendorInvoiceNumber) => {
     cy.do(
       Section()
@@ -502,6 +531,10 @@ export default {
         }),
     );
     return cy.get('@invoiceNumber');
+  },
+
+  verifyLogSummaryTableIsDisplayed: () => {
+    cy.expect(jobSummaryTable.exists());
   },
 
   getItemHrids: () => {
@@ -514,5 +547,12 @@ export default {
       });
       return extractedValues;
     });
+  },
+
+  verifyHeader: (fileName, recordsNumber) => {
+    cy.expect([
+      paneHeader.find(HTML(including(fileName))).exists(),
+      paneHeader.find(HTML(including(`${recordsNumber} records found`))).exists(),
+    ]);
   },
 };

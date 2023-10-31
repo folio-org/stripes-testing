@@ -17,6 +17,7 @@ const deleteButton = Button('Delete');
 const nameTextfield = TextField('Name*');
 const descriptionTextarea = TextArea('Description');
 const saveAndCloseButton = Button('Save & close');
+const cancelButton = Button('Cancel');
 
 export default {
   clickProfileNameFromTheList(name) {
@@ -39,8 +40,15 @@ export default {
     ]);
   },
 
+  verifyElements() {
+    cy.expect([
+      actionsButton.has({ disabled: false }),
+      Button({ ariaLabel: 'Cancel' }).has({ disabled: false })
+    ]);
+  },
+
   verifyOnlyDuplicateOptionAvailable() {
-    cy.do(actionsButton.click());
+    this.openActions();
     cy.expect([
       editButton.has({ disabled: true }),
       duplicateButton.has({ disabled: false }),
@@ -49,7 +57,7 @@ export default {
   },
 
   verifyActionOptions() {
-    cy.do(actionsButton.click());
+    this.openActions();
     cy.expect([
       editButton.has({ disabled: false }),
       duplicateButton.has({ disabled: false }),
@@ -58,7 +66,7 @@ export default {
   },
 
   editFieldMappingProfile(newName, newDescription) {
-    cy.do(editButton.click());
+    this.clickEditButton();
     // Need to wait for page to reload
     cy.wait(2000);
     cy.do([
@@ -78,5 +86,21 @@ export default {
 
   checkRecordType(recordType) {
     cy.do(Checkbox(recordType).click());
+  },
+
+  openActions() {
+    cy.do(actionsButton.click());
+  },
+
+  clickEditButton() {
+    cy.do(editButton.click());
+  },
+
+  clickDuplicateButton() {
+    cy.do(duplicateButton.click());
+  },
+
+  clickCancelButton() {
+    cy.do(cancelButton.click());
   },
 };
