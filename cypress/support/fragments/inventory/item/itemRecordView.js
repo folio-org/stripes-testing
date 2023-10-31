@@ -40,7 +40,7 @@ const waitLoading = () => {
   cy.expect(Pane(including('Item')).exists());
 };
 const verifyItemStatus = (itemStatus) => {
-  cy.expect(loanAccordion.find(HTML(including(itemStatus))).exists());
+  cy.expect(loanAccordion.find(KeyValue('Item status')).has({ value: itemStatus }));
 };
 const verifyItemStatusInPane = (itemStatus) => {
   cy.expect(PaneHeader(including(itemStatus)).exists());
@@ -119,6 +119,10 @@ export default {
     cy.do([Button('Actions').click(), Button('New request').click()]);
   },
 
+  openRequest() {
+    cy.do(loanAccordion.find(Link({ href: including('/requests?filters=requestStatus') })).click());
+  },
+
   verifyEffectiveLocation: (location) => {
     cy.expect(
       Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }),
@@ -186,10 +190,6 @@ export default {
     );
   },
 
-  checkStatus: (status) => {
-    cy.expect(loanAccordion.find(KeyValue('Item status')).has({ value: status }));
-  },
-
   checkItemDetails(location, barcode, status) {
     this.verifyEffectiveLocation(location);
     this.checkBarcode(barcode);
@@ -232,4 +232,18 @@ export default {
       .find(MultiColumnListCell({ content: code }))
       .exists(),
   ),
+
+  verifyLoanAndAvailabilitySection: (data) => {
+    verifyPermanentLoanType(data.permanentLoanType);
+    verifyTemporaryLoanType(data.temporaryLoanType);
+    verifyItemStatus(data.itemStatus);
+    cy.expect([
+      loanAccordion.find(KeyValue('Requests', { value: data.requestQuantity })).exists(),
+      loanAccordion.find(KeyValue('Borrower', { value: data.borrower })).exists(),
+      loanAccordion.find(KeyValue('Loan date', { value: data.loanDate })).exists(),
+      loanAccordion.find(KeyValue('Due date', { value: data.dueDate })).exists(),
+      loanAccordion.find(KeyValue('Staff only', { value: data.staffOnly })).exists(),
+      loanAccordion.find(KeyValue('Note', { value: data.note })).exists(),
+    ]);
+  },
 };
