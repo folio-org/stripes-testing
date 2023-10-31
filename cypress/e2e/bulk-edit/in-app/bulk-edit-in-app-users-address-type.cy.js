@@ -67,6 +67,7 @@ describe('bulk-edit', () => {
             addressType = body.addressType;
           }).then(() => {
             cy.visit(TopMenu.bulkEditPath);
+
             BulkEditSearchPane.checkUsersRadio();
             BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
             BulkEditSearchPane.uploadFile(userBarcodesFileName);
