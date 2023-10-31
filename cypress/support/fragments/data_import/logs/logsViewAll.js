@@ -450,6 +450,7 @@ export default {
         cy.expect(cells).to.deep.equal(cells.sort());
       }
     });
+  },
 
   verifyPreviousPagination: () => {
     cy.expect([previousButton.has({ disabled: true }), nextButton.has({ disabled: false })]);
@@ -462,7 +463,7 @@ export default {
       .invoke('text')
       .should('include', '100');
   },
-    
+
   verifyNextPagination: () => {
     cy.expect([previousButton.has({ disabled: false }), nextButton.has({ disabled: false })]);
     cy.get('#pane-results')
@@ -473,6 +474,5 @@ export default {
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
       .should('include', '200');
-
   },
 };
