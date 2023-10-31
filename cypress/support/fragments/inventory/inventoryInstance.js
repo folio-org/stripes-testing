@@ -850,11 +850,17 @@ export default {
     cy.expect(instanceDetailsPane.find(MultiColumnListCell(content)).exists());
   },
 
-  createInstanceViaApi() {
+  createInstanceViaApi({
+    instanceTitle = `Instance ${getRandomPostfix()}`,
+    instanceId = uuid(),
+    instanceTypeId,
+    contributors,
+  } = {}) {
     const instanceData = {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-      instanceId: uuid(),
-      instanceTypeId: null,
+      instanceTitle,
+      instanceId,
+      instanceTypeId,
+      contributors,
     };
 
     return cy
