@@ -69,7 +69,7 @@ describe('Holdings', () => {
     () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.searchHoldingsByHRID(testData.item.holdingHRID);
-      InventoryInstance.openHoldingView();
+      InventorySearchAndFilter.selectViewHoldings();
       HoldingsRecordView.checkSource('-');
     },
   );

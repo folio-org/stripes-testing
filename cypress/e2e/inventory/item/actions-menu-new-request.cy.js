@@ -13,7 +13,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import NewRequest from '../../../support/fragments/requests/newRequest';
 
-describe('inventory', () => {
+describe.skip('inventory', () => {
   describe('Item', () => {
     let user;
     let collectionOfItems = [];

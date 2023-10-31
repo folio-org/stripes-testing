@@ -1,5 +1,7 @@
 import uuid from 'uuid';
 
+import Configs from '../configs';
+
 export default {
   generateApprovalConfig(isApprovePayEnabled = false) {
     return {
@@ -10,39 +12,18 @@ export default {
     };
   },
   getApprovalConfigViaApi() {
-    return cy
-      .okapiRequest({
-        path: 'configurations/entries',
-        searchParams: { query: '(module==INVOICE and configName==approvals)' },
-      })
-      .then(({ body }) => body.configs);
-  },
-  createApprovalConfigViaApi(config) {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'configurations/entries',
-        body: config,
-      })
-      .then(({ body }) => body);
-  },
-  updateApprovalConfigViaApi(config) {
-    return cy.okapiRequest({
-      method: 'PUT',
-      path: `configurations/entries/${config.id}`,
-      body: config,
-    });
+    return Configs.getConfigViaApi({ query: '(module==INVOICE and configName==approvals)' });
   },
   setApprovePayValue(isApprovePayEnabled) {
     this.getApprovalConfigViaApi().then((configs) => {
       if (configs[0]) {
-        this.updateApprovalConfigViaApi({
+        Configs.updateConfigViaApi({
           ...configs[0],
           value: JSON.stringify({ isApprovePayEnabled }),
         });
       } else {
         const config = this.generateApprovalConfig(isApprovePayEnabled);
-        this.createApprovalConfigViaApi(config);
+        Configs.createConfigViaApi(config);
       }
     });
   },

@@ -60,7 +60,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Email');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Email');
         BulkEditActions.openInAppStartBulkEditFrom();
         const newEmailDomain = 'google.com';
         BulkEditActions.replaceEmail('folio.org', newEmailDomain);
