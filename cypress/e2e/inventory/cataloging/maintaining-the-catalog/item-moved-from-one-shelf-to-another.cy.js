@@ -1,10 +1,10 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import Users from '../../../support/fragments/users/users';
+import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
+import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
+import { randomFourDigitNumber } from '../../../../support/utils/stringTools';
+import TopMenu from '../../../../support/fragments/topMenu';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import Users from '../../../../support/fragments/users/users';
 
 describe('Inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
