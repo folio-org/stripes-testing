@@ -43,6 +43,7 @@ const inconsistentFileExtensionsModal = Modal('Inconsistent file extensions');
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
+  cy.wait(1500);
 };
 
 const uploadBunchOfDifferentFiles = (fileNames) => {
