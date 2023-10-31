@@ -84,7 +84,7 @@ describe('data-import', () => {
           name: `C388570 Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.ON_ORDER,
+          status: `"${ITEM_STATUS_NAMES.ON_ORDER}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
