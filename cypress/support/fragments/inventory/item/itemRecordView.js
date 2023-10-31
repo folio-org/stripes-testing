@@ -200,7 +200,7 @@ export default {
   checkItemDetails(location, barcode, status) {
     this.verifyEffectiveLocation(location);
     this.checkBarcode(barcode);
-    this.checkStatus(status);
+    this.verifyStatus(status);
   },
 
   checkAccessionNumber: (number) => {
