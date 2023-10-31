@@ -44,6 +44,10 @@ export default {
     contains(content);
   },
 
+  verifyAbsenceOfValue(expectedText) {
+    cy.expect(rootSection.find(HTML(including(expectedText))).absent());
+  },
+
   verifyRecordNotContainsDuplicatedContent: (value) => {
     cy.get(`td:contains("${value}")`).then((elements) => elements.length === 1);
   },

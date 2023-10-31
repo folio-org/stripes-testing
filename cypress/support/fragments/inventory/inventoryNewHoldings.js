@@ -1,4 +1,4 @@
-import { Button, including, HTML, Selection, Select } from '../../../../interactors';
+import { Button, including, HTML, Selection, Select, TextArea } from '../../../../interactors';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
 const sourceValues = {
@@ -18,5 +18,14 @@ export default {
   },
   checkSource: (expectedSource = sourceValues.folio) => {
     cy.expect(Select('Source').has({ value: expectedSource }));
+  },
+  fillPermanentLocation: (permanentLocation) => {
+    cy.do(Selection('Permanent*').choose(permanentLocation));
+  },
+  fillCallNumber: (callNumber) => {
+    cy.do(TextArea({ name: 'callNumber' }).fillIn(callNumber));
+  },
+  fillCallNumberSuffix: (callNumberSuffix) => {
+    cy.do(TextArea({ name: 'callNumberSuffix' }).fillIn(callNumberSuffix));
   },
 };

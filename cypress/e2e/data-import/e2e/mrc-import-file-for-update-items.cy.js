@@ -256,7 +256,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `autotestMappingItem${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         },
         actionProfile: {
@@ -399,7 +399,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillPermanentLocation(profile.permanentLocation);
       NewFieldMappingProfile.fillCallNumberType(profile.callNumberType);
       NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
-      NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
+      NewFieldMappingProfile.addElectronicAccess(profile.typeValue, '"Resource"', '856$u');
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);
     };

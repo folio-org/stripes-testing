@@ -163,7 +163,7 @@ describe('Permission Sets', () => {
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
-      Conditions.select(Arrays.getRandomElement(Conditions.conditionsValues));
+      Conditions.select(Arrays.getRandomElement(Conditions.conditionTypes));
       Conditions.verifyConditionsCantBeChanged();
     },
   );
