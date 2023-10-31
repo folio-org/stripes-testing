@@ -4,6 +4,7 @@ import {
   MultiColumnList,
   Section,
   MultiColumnListCell,
+  MultiColumnListRow,
   Button,
   Accordion,
   Link,
@@ -30,6 +31,8 @@ const electronicAccessAccordion = Accordion('Electronic access');
 const instanceDetailsPane = Pane({ id: 'pane-instancedetails' });
 const classificationAccordion = Accordion('Classification');
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
+const descriptiveDataAccordion = Accordion('Descriptive data');
+const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -407,6 +410,27 @@ export default {
 
   verifyModeOfIssuance(value) {
     cy.expect(KeyValue('Mode of issuance').has({ value }));
+  },
+
+  verifyPublisher: ({ publisher, role, place, date }, indexRow = 0) => {
+    cy.expect([
+      publisherList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: publisher }),
+      publisherList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: role }),
+      publisherList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: place }),
+      publisherList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .has({ content: date }),
+    ]);
   },
 
   scroll: () => {

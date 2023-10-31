@@ -88,7 +88,7 @@ describe('data-import', () => {
 
     // test is failed UIDATIMP-1549
     it(
-      'C357018 Check the filter in summary table with "create + no action + error" actions for the Item column (folijet) (TaaS)',
+      'C357017 Check the filter in summary table with "create + no action + error" actions for the Item column (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         // create field mapping profiles
