@@ -107,6 +107,7 @@ describe('Title Level Request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
+    cy.deleteLoanType(testData.loanTypeId);
   });
 
   it(
