@@ -74,8 +74,8 @@ export default {
   checkWaiveButtonActive: (isActive) => {
     cy.expect(waiveAllButton.has({ disabled: !isActive }));
   },
-  clickOnRowByIndex: (index) => {
-    cy.do(MultiColumnListRow({ index }).click());
+  clickOnRowByIndex: (rowIndex) => {
+    cy.do(feeFinesList.find(MultiColumnListRow({ index: rowIndex })).click());
   },
   waiveSelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Waive'));
@@ -108,9 +108,6 @@ export default {
   paySelectedFeeFines: () => {
     cy.do(Dropdown('Actions').choose('Pay'));
   },
-  waiveSelectedFeeFines: () => {
-    cy.do(Dropdown('Actions').choose('Waive'));
-  },
   clickPayEllipsis: (rowIndex) => {
     cy.do(
       feeFinesList
@@ -122,9 +119,5 @@ export default {
 
   verifyPayModalIsOpen: () => {
     cy.expect(Modal('Pay fee/fine').exists());
-  },
-
-  clickOnRowByIndex: (rowIndex) => {
-    cy.do(feeFinesList.find(MultiColumnListRow({ index: rowIndex })).click());
   },
 };

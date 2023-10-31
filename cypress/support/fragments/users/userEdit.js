@@ -350,9 +350,6 @@ export default {
   },
 
   addAddress(type = 'Home') {
-    cy.do([
-      Button('Add address').click(),
-      Select('Address Type*').choose(type)
-    ]);
+    cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
   },
 };

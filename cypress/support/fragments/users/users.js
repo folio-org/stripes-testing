@@ -218,6 +218,7 @@ export default {
 
   getUserAddressTypesApi: (addressTypeId) => cy
     .okapiRequest({
-      path: `addresstypes/${addressTypeId}`
-    }).then(({ body }) => body ),
+      path: `addresstypes/${addressTypeId}`,
+    })
+    .then(({ body }) => body),
 };

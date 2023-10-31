@@ -10,16 +10,15 @@ Cypress.Commands.add(
     cy.get('input[type=file]', getLongDelay()).attachFile(name);
     cy.expect(
       Section({ id: 'pane-upload' })
-        .find(HTML(including(name)))
+        .find(HTML(including(name.replace('.mrc', ''))))
         .exists(),
     );
     cy.expect(Button({ icon: 'trash' }).exists());
-
     JobProfiles.search(jobProfileToRun);
     // run file with given jobProfile
     cy.do(MultiColumnListCell(jobProfileToRun).click());
     cy.do([Button('Actions').click(), Button('Run').click()]);
     cy.do(Modal({ id: 'run-job-profile-modal' }).find(Button('Run')).click());
-    cy.get('#pane-logs-title').contains(name);
+    cy.get('#pane-logs-title').contains(name.replace('.mrc', ''));
   },
 );
