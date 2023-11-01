@@ -1,7 +1,4 @@
-import {
-  Pane,
-  NavListItem
-} from '../../../../interactors';
+import { Pane, NavListItem } from '../../../../interactors';
 
 const dataExportPane = Pane('Data export');
 

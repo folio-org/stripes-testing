@@ -129,7 +129,7 @@ describe('inventory', () => {
         InventoryInstance.openHoldingsAccordion(`${holdingsPermanentLocation} >`);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.verifyStatus('Checked out');
+        ItemRecordView.verifyItemStatus('Checked out');
         ItemRecordView.checkItemCirculationHistory(todayDate, servicePoint.name, user.username);
         ItemRecordView.duplicateItem();
         ItemRecordNew.waitLoading(itemData.instanceTitle);
