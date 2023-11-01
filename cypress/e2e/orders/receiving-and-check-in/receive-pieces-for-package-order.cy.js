@@ -139,14 +139,17 @@ describe('Orders: Receiving and Check-in', () => {
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.verifyStatus('In process');
       ItemRecordView.closeDetailView();
+      InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(secondPiece.enumeration);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.verifyStatus('In process');
       ItemRecordView.closeDetailView();
+      InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(thirdPiece.chronology);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.verifyStatus('In process');
       ItemRecordView.closeDetailView();
+      InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(fourthPiece.copyNumber);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.verifyStatus('In process');

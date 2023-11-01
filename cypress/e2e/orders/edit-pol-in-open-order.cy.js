@@ -73,7 +73,7 @@ describe('ui-orders: Orders', () => {
       orderNumber = orderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 18);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         defaultFund,
         '100',

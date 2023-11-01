@@ -86,7 +86,7 @@ describe('Orders', () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList();
           Orders.createPOLineViaActions();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 2);
           OrderLines.fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
             defaultFund,
             '100',

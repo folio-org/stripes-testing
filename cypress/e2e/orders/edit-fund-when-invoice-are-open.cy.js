@@ -94,7 +94,7 @@ describe('ui-orders: Orders', () => {
       orderNumber = orderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 14);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         firstFund,
         '50',
