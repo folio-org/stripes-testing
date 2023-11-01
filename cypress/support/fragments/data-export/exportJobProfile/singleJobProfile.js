@@ -7,7 +7,7 @@ import {
   TextArea,
   Select,
   Modal,
-  MultiColumnListCell
+  MultiColumnListCell,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
@@ -25,7 +25,7 @@ export default {
   verifyElements() {
     cy.expect([
       actionsButton.has({ disabled: false }),
-      Button({ ariaLabel: 'Cancel' }).has({ disabled: false })
+      Button({ ariaLabel: 'Cancel' }).has({ disabled: false }),
     ]);
   },
   verifyProfileDetailsEditable() {
@@ -65,14 +65,8 @@ export default {
   },
 
   deleteMappingProfile: (name) => {
-    cy.do([
-      actionsButton.click(),
-      deleteButton.click(),
-      Modal().find(deleteButton).click(),
-    ]);
-    InteractorsTools.checkCalloutMessage(
-      `Job profile ${name} has been successfully deleted`,
-    );
+    cy.do([actionsButton.click(), deleteButton.click(), Modal().find(deleteButton).click()]);
+    InteractorsTools.checkCalloutMessage(`Job profile ${name} has been successfully deleted`);
     cy.expect(MultiColumnListCell(name).absent());
   },
 };

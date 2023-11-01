@@ -35,7 +35,9 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
-        ItemNoteTypes.createNoteTypeViaApi(noteType).then((noteId) => { noteTypeId = noteId; });
+        ItemNoteTypes.createNoteTypeViaApi(noteType).then((noteId) => {
+          noteTypeId = noteId;
+        });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
@@ -93,7 +95,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note', noteType);
-        BulkEditSearchPane.verifyChangesUnderColumns('Action note', `${actionNote}|${newActionNote}`);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Action note',
+          `${actionNote}|${newActionNote}`,
+        );
         BulkEditSearchPane.verifyChangesUnderColumns(noteType, noteTypeText);
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
@@ -108,11 +113,11 @@ describe('bulk-edit', () => {
         ItemRecordView.waitLoading();
         const actionNotes = {
           note: `${actionNote}${newActionNote}`,
-          type: 'Action note'
+          type: 'Action note',
         };
         const newNoteType = {
           note: noteTypeText,
-          type: noteType
+          type: noteType,
         };
         ItemRecordView.checkMultipleItemNotes(actionNotes, newNoteType);
       },

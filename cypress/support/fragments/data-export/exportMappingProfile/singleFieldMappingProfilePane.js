@@ -43,7 +43,7 @@ export default {
   verifyElements() {
     cy.expect([
       actionsButton.has({ disabled: false }),
-      Button({ ariaLabel: 'Cancel' }).has({ disabled: false })
+      Button({ ariaLabel: 'Cancel' }).has({ disabled: false }),
     ]);
   },
 
