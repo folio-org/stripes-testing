@@ -94,11 +94,17 @@ export default {
   createOrderWithOrderLineViaApi(order, orderLine) {
     this.createOrderViaApi(order).then((response) => {
       cy.wrap(response).as('order');
-      cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
-        orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
+
+      if (!orderLine.acquisitionMethod) {
+        cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then(({ body }) => {
+          orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
+          orderLine.purchaseOrderId = order.id;
+          OrderLines.createOrderLineViaApi(orderLine);
+        });
+      } else {
         orderLine.purchaseOrderId = order.id;
         OrderLines.createOrderLineViaApi(orderLine);
-      });
+      }
     });
     return cy.get('@order');
   },
