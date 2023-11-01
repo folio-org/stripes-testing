@@ -78,7 +78,57 @@ function checkByUserName(userName) {
   });
 }
 
+function getAllLogsColumnsResults(nameOfColumn) {
+  const cells = [];
+  let index;
+
+  switch (nameOfColumn) {
+    case 'File name':
+      index = 2;
+      break;
+    case 'Status':
+      index = 3;
+      break;
+    case 'Records':
+      index = 4;
+      break;
+    case 'Job profile':
+      index = 5;
+      break;
+    case 'Started running':
+      index = 6;
+      break;
+    case 'Ended running':
+      index = 7;
+      break;
+    case 'Run by':
+      index = 8;
+      break;
+    case 'ID':
+      index = 9;
+      break;
+    default:
+      index = 2;
+      break;
+  }
+
+  cy.wait(2000);
+  return cy
+    .get('div[class^="mclRowContainer--"]')
+    .find('[data-row-index]')
+    .each(($row) => {
+      cy.get(`[class*="mclCell-"]:nth-child(${index})`, { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then((cellValue) => {
+          cells.push(cellValue);
+        });
+    })
+    .then(() => cells);
+}
+
 export default {
+  getAllLogsColumnsResults,
   verifyMessageOfDeleted,
   waitUIToBeFiltered,
   checkByErrorsInImport,
@@ -387,6 +437,21 @@ export default {
         .exists(),
     );
   },
+
+  verifyColumnIsSorted: (nameOfColumn, isDescending) => {
+    if (nameOfColumn === 'ID') {
+      cy.xpath('//*[@id="list-data-import"]/div[@class="mclScrollable---JvHuN"]').scrollTo('right');
+    }
+    cy.do(dataImportList.clickHeader(nameOfColumn));
+    getAllLogsColumnsResults(nameOfColumn).then((cells) => {
+      if (isDescending) {
+        cy.expect(cells).to.deep.equal(cells.sort().reverse());
+      } else {
+        cy.expect(cells).to.deep.equal(cells.sort());
+      }
+    });
+  },
+
   verifyPreviousPagination: () => {
     cy.expect([previousButton.has({ disabled: true }), nextButton.has({ disabled: false })]);
     cy.get('#pane-results')
@@ -398,6 +463,7 @@ export default {
       .invoke('text')
       .should('include', '100');
   },
+
   verifyNextPagination: () => {
     cy.expect([previousButton.has({ disabled: false }), nextButton.has({ disabled: false })]);
     cy.get('#pane-results')

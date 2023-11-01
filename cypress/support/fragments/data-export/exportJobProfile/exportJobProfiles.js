@@ -7,7 +7,7 @@ import {
   MultiColumnListRow,
   TextField,
   HTML,
-  MultiColumnListHeader
+  MultiColumnListHeader,
 } from '../../../../../interactors';
 import ExportNewJobProfile from './exportNewJobProfile';
 import SettingsDataExport from '../settingsDataExport';

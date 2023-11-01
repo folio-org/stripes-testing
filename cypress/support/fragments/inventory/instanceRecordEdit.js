@@ -11,9 +11,11 @@ import {
   RepeatableFieldItem,
   PaneHeader,
   Checkbox,
+  matching,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
+import InstanceStates from './instanceStates';
 
 const closeButton = Button({ icon: 'times' });
 const saveAndCloseButton = Button('Save & close');
@@ -191,5 +193,14 @@ export default {
     if (isChecked) {
       cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: true }));
     } else cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: false }));
+  },
+  editResourceTitle: (newTitle) => {
+    cy.do(TextArea({ name: 'title' }).fillIn(newTitle));
+    cy.expect(TextArea({ name: 'title' }).has({ value: newTitle }));
+  },
+  verifySuccessfulMessage: () => {
+    InteractorsTools.checkCalloutMessage(
+      matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
+    );
   },
 };
