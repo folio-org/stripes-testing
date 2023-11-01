@@ -843,11 +843,11 @@ export default {
     cy.expect(tagButton.find(HTML(including('0'))).exists());
   },
 
-  checkIsInstancePresented: (title, location, content = 'On order') => {
+  checkIsInstancePresented: (title, location, status = 'On order') => {
     cy.expect(Pane({ titleLabel: including(title) }).exists());
     cy.expect(instanceDetailsPane.find(HTML(including(location))).exists());
     openHoldings([location]);
-    cy.expect(instanceDetailsPane.find(MultiColumnListCell(content)).exists());
+    cy.expect(instanceDetailsPane.find(MultiColumnListCell(status)).exists());
   },
 
   createInstanceViaApi() {

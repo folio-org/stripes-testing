@@ -40,7 +40,7 @@ describe('data-import', () => {
       instanceTitle: 'Love enough / Dionne Brand.',
       instanceSubject: uniqSubject,
       holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
-      itemStatus: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+      itemStatus: ITEM_STATUS_NAMES.AVAILABLE,
     };
     const permanentLocation = LOCATION_NAMES.MAIN_LIBRARY;
     const recordType = 'MARC_BIBLIOGRAPHIC';
@@ -375,6 +375,7 @@ describe('data-import', () => {
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
           InstanceRecordView.verifyInstancePaneExists();
+          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.checkItemAdministrativeNote(note);
         });

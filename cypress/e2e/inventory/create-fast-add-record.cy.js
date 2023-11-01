@@ -68,7 +68,7 @@ describe('inventory', () => {
           InteractorsTools.checkCalloutMessage(
             FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
           );
-          InventorySearchAndFilter.searchInstanceByTitle(
+          InventoryInstance.searchByTitle(
             FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
           );
           FastAddNewRecord.openRecordDetails();
