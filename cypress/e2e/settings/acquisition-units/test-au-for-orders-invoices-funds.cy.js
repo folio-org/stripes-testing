@@ -93,7 +93,7 @@ describe('ui-acquisition units: Acquisition Units', () => {
           orderNumber = orderResponse.poNumber;
           Orders.checkCreatedOrder(defaultOrder);
           OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 24);
           OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
             'Purchase',
             location.institutionId,

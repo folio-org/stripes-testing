@@ -69,7 +69,7 @@ describe('Orders: Receiving and Check-in', () => {
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList();
           Orders.createPOLineViaActions();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 21);
           OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
             'Purchase',
             locationResponse.institutionId,

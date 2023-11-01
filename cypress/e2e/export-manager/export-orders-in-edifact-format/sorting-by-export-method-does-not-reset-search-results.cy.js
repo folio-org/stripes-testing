@@ -141,7 +141,7 @@ describe('orders: export', () => {
       Orders.createOrder(orderForFirstOrganization, true, false).then((firstOrderId) => {
         orderForFirstOrganization.id = firstOrderId;
         Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
         OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
         OrderLines.backToEditingOrder();
       });

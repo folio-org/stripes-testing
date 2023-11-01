@@ -117,7 +117,7 @@ describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
       );
       OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
       OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
         'Purchase',
         location.institutionId,
