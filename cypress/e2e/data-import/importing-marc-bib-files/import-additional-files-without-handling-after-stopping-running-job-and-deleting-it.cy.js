@@ -11,8 +11,8 @@ import { JOB_STATUS_NAMES } from '../../../support/constants';
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    const bigFileName = `C378883autotestFile.${getRandomPostfix()}.mrc`;
-    const smallFileName = `C378883autotestFile.${getRandomPostfix()}.mrc`;
+    const bigFileName = `C378883 autotestFile${getRandomPostfix()}.mrc`;
+    const smallFileName = `C378883 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const numberOfLogsToDelete = '1';
 

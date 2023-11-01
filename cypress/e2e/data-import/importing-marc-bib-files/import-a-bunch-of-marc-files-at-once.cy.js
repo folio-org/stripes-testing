@@ -46,8 +46,6 @@ describe('data-import', () => {
           LogsViewAll.viewAllIsOpened();
           LogsViewAll.selectOption('Keyword (ID, File name)');
           LogsViewAll.searchWithTerm(upload.fileName);
-          // TODO need to wait until files are filtered
-          cy.wait(2000);
           LogsViewAll.verifyQuantityOfLogs(upload.quantityOfFiles);
         });
       },

@@ -504,7 +504,8 @@ export default {
   },
 
   verifyLogDetailsPageIsOpened: (fileName) => {
-    cy.expect(Pane(fileName).exists());
+    const newFileName = String(fileName).replace('.mrc', '');
+    cy.expect(Pane(including(newFileName)).exists());
   },
 
   verifyInstanceStatusIsHiperlink: (itmStatus, rowNumber = 0) => {
@@ -551,7 +552,7 @@ export default {
 
   verifyHeader: (fileName, recordsNumber) => {
     cy.expect([
-      paneHeader.find(HTML(including(fileName))).exists(),
+      paneHeader.find(HTML(including(fileName.replace('.mrc', '')))).exists(),
       paneHeader.find(HTML(including(`${recordsNumber} records found`))).exists(),
     ]);
   },

@@ -37,6 +37,7 @@ const closeJobProfile = (profileName) => {
 
 const waitLoadingList = () => {
   cy.get('[id="job-profiles-list"]', getLongDelay()).should('be.visible');
+  cy.wait(1000);
 };
 const waitLoading = (selector) => cy.expect(selector.exists());
 const deleteJobProfile = (profileName) => {
@@ -184,6 +185,7 @@ export default {
       deleteUploadedFileModal.find(modalNoButton, { disabled: true }).exists(),
       deleteUploadedFileModal.find(modalYesButton, { disabled: false }).exists(),
     ]);
+    cy.wait(1000);
   },
   cancelDeleteUploadedFile: () => {
     cy.do(deleteUploadedFileModal.find(modalNoButton).click());

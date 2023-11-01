@@ -54,7 +54,7 @@ describe('data-import', () => {
           name: `Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -105,7 +105,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[1].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -144,7 +144,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         let instanceHRID;
-        const marcFileName = `C388506 multipleAutotestFileName.${getRandomPostfix()}`;
+        const marcFileName = `C388506 multipleAutotestFileName${getRandomPostfix()}.mrc`;
         const arrayOfHoldingsWithErrorsStatuses = [
           'Created (KU/CC/DI/M)',
           'Created (KU/CC/DI/A)',
@@ -206,7 +206,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
         let instanceHrid;
-        const marcFileName = `C389502 multipleAutotestFileName.${getRandomPostfix()}`;
+        const marcFileName = `C389502 multipleAutotestFileName${getRandomPostfix()}.mrc`;
         const arrayOfHoldingsWithErrorsStatuses = [
           'Created (KU/CC/DI/M)',
           'Created (KU/CC/DI/A)',
@@ -294,7 +294,7 @@ describe('data-import', () => {
         ];
         const quantityOfCreatedItems = 6;
         const quantityOfCreatedHoldings = 3;
-        const marcFileName = `C388505 autotestFileName.${getRandomPostfix()}`;
+        const marcFileName = `C388505 autotestFileName${getRandomPostfix()}.mrc`;
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
@@ -354,7 +354,7 @@ describe('data-import', () => {
         ];
         const quantityOfCreatedItems = 6;
         const quantityOfCreatedHoldings = 3;
-        const marcFileName = `C389587 autotestFileName.${getRandomPostfix()}`;
+        const marcFileName = `C389587 autotestFileName${getRandomPostfix()}.mrc`;
 
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);

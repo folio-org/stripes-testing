@@ -32,9 +32,9 @@ describe('data-import', () => {
     let instanceHrid;
     let holdingsHrId;
     const filePathToUpload = 'marcBibFileForC11106.mrc';
-    const editedMarcFileName = `C11106 autotestFileName_${getRandomPostfix()}`;
-    const marcFileName = `C11106 autotestFileName_${getRandomPostfix()}`;
-    const marcFileNameForUpdate = `C11106 autotestFileNameForUpdate_${getRandomPostfix()}`;
+    const editedMarcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
+    const marcFileName = `C11106 autotestFileName${getRandomPostfix()}.mrc`;
+    const marcFileNameForUpdate = `C11106 autotestFileNameForUpdate_${getRandomPostfix()}.mrc`;
 
     // profiles for creating
     const collectionOfMappingAndActionProfilesForCreate = [

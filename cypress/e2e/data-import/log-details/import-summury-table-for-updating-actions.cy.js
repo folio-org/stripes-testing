@@ -50,9 +50,9 @@ describe('data-import', () => {
     const instanceTitle =
       'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
     // file names
-    const nameMarcFileForImportCreate = `C356802autotestFile.${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C356802autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForImportUpdate = `C356802autotestFile${getRandomPostfix()}.mrc`;
+    const nameMarcFileForImportCreate = `C356802 autotestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C356802 autotestFile${getRandomPostfix()}.csv`;
+    const nameMarcFileForImportUpdate = `C356802 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileNameForExport = `C356802 job profile.${getRandomPostfix()}`;
     // profiles for creating instance, holdings, item
     const marcBibMappingProfileForCreate = {
@@ -290,7 +290,7 @@ describe('data-import', () => {
           noteUI: 'Smith Family Foundation',
           staffOnly: 'Mark for all affected records',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -510,7 +510,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(

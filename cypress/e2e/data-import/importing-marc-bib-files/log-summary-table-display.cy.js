@@ -11,7 +11,7 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'marcBibFileForC353624.mrc';
-    const fileName = `C356324 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C356324 autotestFile${getRandomPostfix()}.mrc`;
 
     before('login', () => {
       cy.loginAsAdmin({
@@ -43,8 +43,9 @@ describe('data-import', () => {
           error: '9',
         };
 
+        cy.wait(2000);
         Logs.openFileDetails(fileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.summary, [
           'Created',
           'Updated',
@@ -89,10 +90,10 @@ describe('data-import', () => {
           '0',
         ]);
         FileDetails.clickNextPaginationButton();
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyLogSummaryTableIsDisplayed();
         FileDetails.clickPreviousPaginationButton();
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyLogSummaryTableIsDisplayed();
       },
     );

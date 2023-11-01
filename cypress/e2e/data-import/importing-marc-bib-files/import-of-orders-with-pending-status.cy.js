@@ -30,7 +30,7 @@ describe('data-import', () => {
     let orderNumber;
     const quantityOfOrders = '2';
     const filePathForCreateOrder = 'marcFileForC375174.mrc';
-    const marcFileName = `C375174 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C375174 autotestFileName${getRandomPostfix()}.mrc`;
     const orderData = {
       title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.',
       publicationDate: '2023',

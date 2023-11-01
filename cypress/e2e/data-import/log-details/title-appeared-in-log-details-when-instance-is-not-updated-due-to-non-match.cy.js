@@ -27,7 +27,7 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
     const filePathForUpload = 'oneMarcBib.mrc';
-    const fileName = `C400665 autotestFileName.${getRandomPostfix()}`;
+    const fileName = `C400665 autotestFileName${getRandomPostfix()}.mrc`;
     const title =
       'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
     const matchProfile = {

@@ -7,13 +7,14 @@ import getRandomPostfix from '../../../utils/stringTools';
 const newRequestButton = Button('New request');
 
 function openActions() {
-  cy.wait(2000);
+  cy.wait(1000);
   cy.do(Button('Actions').click());
 }
 function clickMissingButton() {
   cy.do(Button('Missing').click());
 }
 function clickNewRequestButton() {
+  cy.wait(1000);
   cy.do(newRequestButton.click());
 }
 function confirmMarkAsMissing() {

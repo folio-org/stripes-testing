@@ -140,10 +140,10 @@ export default {
   },
 
   searchWithTerm(term) {
-    cy.get('#input-job-logs-search').clear().type(term);
+    cy.get('#input-job-logs-search').clear().type(term.replace('.mrc', ''));
     cy.do(Button('Search').click());
     // need to wait until search list is populated
-    cy.wait(1500);
+    cy.wait(3000);
   },
 
   checkRowsCount(rowCount) {

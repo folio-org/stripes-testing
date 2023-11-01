@@ -130,7 +130,7 @@ describe('inventory', () => {
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+        InventorySearchAndFilter.searchByParameter('Title (all)', itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
@@ -147,7 +147,8 @@ describe('inventory', () => {
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.waitLoading();
-        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+        InventorySearchAndFilter.searchByParameter('Title (all)', itemData.instanceTitle);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkItemCirculationHistory(

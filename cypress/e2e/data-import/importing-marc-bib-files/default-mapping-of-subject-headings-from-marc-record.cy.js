@@ -17,7 +17,7 @@ describe('data-import', () => {
     let instanceHrid;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'oneMarcBib.mrc';
-    const fileName = `C6692 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C6692 autotestFile${getRandomPostfix()}.mrc`;
 
     before('create user and login', () => {
       cy.createTempUser([

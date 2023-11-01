@@ -8,15 +8,16 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
-    const error =
+    const title = 'No content';
+    const errorMessage =
       '{"error":"A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
-    const nameMarcFileForCreate = `C359012 autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C359012 autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
@@ -29,12 +30,18 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.loginAsAdmin();
+      cy.visit(TopMenu.dataImportPath);
+      Logs.openFileDetails(nameMarcFileForCreate);
+      FileDetails.openInstanceInInventory('Created', 1);
+      InventoryInstance.getAssignedHRID().then((hrId) => {
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrId}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
       Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
@@ -67,7 +74,9 @@ describe('data-import', () => {
           FileDetails.status.error,
           FileDetails.columnNameInResultList.error,
         );
-        FileDetails.verifyErrorMessage(error);
+        FileDetails.openJsonScreen(title);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab(errorMessage);
       },
     );
   });

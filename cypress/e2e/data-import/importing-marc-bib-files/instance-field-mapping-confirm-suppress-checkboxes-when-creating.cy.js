@@ -28,7 +28,7 @@ describe('data-import', () => {
     const checked = true;
     const instanceTitle =
       "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.";
-    const marcFileName = `C11087 autotestFile_${getRandomPostfix()}.mrc`;
+    const marcFileName = `C11087 autotestFile${getRandomPostfix()}.mrc`;
     const filePathToUpload = 'marcBibFileForC11087.mrc';
     const mappingProfile = {
       name: `C11087 autotestMappingProfile_${getRandomPostfix()}`,
@@ -99,7 +99,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(marcFileName);
         FileDetails.openJsonScreen(instanceTitle);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.getInstanceHrid().then((hrid) => {

@@ -49,9 +49,6 @@ describe('Inventory', () => {
       Users.deleteViaApi(testData.user.userId);
     });
 
-    // Test is failing because of an Issue:
-    // https://issues.folio.org/browse/UIIN-2452
-    // TODO: remove comment once issue is fixed
     it(
       'C3500 An item is being moved from one shelf to another. Change the call number of the associated holdings record! (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
@@ -70,6 +67,7 @@ describe('Inventory', () => {
         // Change the Call number -> Click "Save & Close" button
         HoldingsRecordEdit.fillCallNumber(testData.callNumber);
         HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
+        HoldingsRecordView.close();
         InventoryInstance.checkIsHoldingsCreated([
           `${testData.location.name} >  ${testData.callNumber}`,
         ]);

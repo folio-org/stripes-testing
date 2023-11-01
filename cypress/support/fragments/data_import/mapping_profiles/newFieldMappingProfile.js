@@ -107,7 +107,7 @@ const defaultMappingProfile = {
 
 const save = () => {
   // TODO need to wait until profile to be filled
-  cy.wait(1000);
+  cy.wait(3000);
   cy.do(saveButton.click());
 };
 const selectOrganizationByName = (organizationName) => {
@@ -120,11 +120,6 @@ const selectOrganizationByName = (organizationName) => {
     MultiColumnListCell(organizationName).click({ row: 0, columnIndex: 0 }),
   ]);
   cy.expect(TextField({ value: `"${organizationName}"` }).exists());
-};
-
-const waitLoading = () => {
-  // wait will be add uuid for acceptedValues
-  cy.wait(1000);
 };
 
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
@@ -339,7 +334,6 @@ export default {
   addAccessProvider,
   addVolume,
   selectFromResultsList,
-  waitLoading,
   fillSummaryInMappingProfile,
   fillInvoiceLineDescription,
   fillFolioRecordType,
@@ -597,7 +591,6 @@ export default {
     if (profile.accessProvider) {
       cy.do(TextField('Access provider').fillIn(`"${profile.accessProvider}"`));
     }
-    waitLoading();
   },
 
   addName: (name) => cy.do(nameField.fillIn(name)),
@@ -656,7 +649,6 @@ export default {
       Button('Add statistical code').click(),
       TextField('Statistical code').fillIn(`"${name}"`),
     ]);
-    waitLoading();
   },
 
   addStatisticalCodeWithSeveralCodes(firstCode, secondCode, number, action) {
@@ -736,7 +728,6 @@ export default {
       suppressFromDiscoverySelect.focus(),
       suppressFromDiscoverySelect.choose(suppressFromDiscavery),
     ]);
-    waitLoading();
   },
 
   addStaffSuppress: (staffSuppress) => {
@@ -756,32 +747,26 @@ export default {
       Button('Add nature of content term').click(),
       TextField('Nature of content term').fillIn(`"${value}"`),
     ]);
-    waitLoading();
   },
 
   fillPermanentLocation: (location) => {
     cy.do(permanentLocationField.fillIn(location));
-    waitLoading();
   },
 
   fillCatalogedDate: (date = catalogedDate) => {
     cy.do(catalogedDateField.fillIn(date));
-    waitLoading();
   },
 
   fillInstanceStatusTerm: (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => {
     cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
-    waitLoading();
   },
 
   fillHoldingsType: (type) => {
     cy.do(TextField('Holdings type').fillIn(`"${type}"`));
-    waitLoading();
   },
 
   fillCallNumberType: (type) => {
     cy.do(TextField('Call number type').fillIn(type));
-    waitLoading();
   },
 
   fillCallNumberPrefix: (prefix) => {
@@ -794,27 +779,22 @@ export default {
 
   fillStatus: (itemStatus) => {
     cy.do(TextField('Status').fillIn(itemStatus));
-    waitLoading();
   },
 
   fillPermanentLoanType: (loanType) => {
     cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
-    waitLoading();
   },
 
   fillTemporaryLoanType: (loanType) => {
     cy.do(TextField('Temporary loan type').fillIn(loanType));
-    waitLoading();
   },
 
   fillMaterialType: (type) => {
     cy.do(materialTypeField.fillIn(type));
-    waitLoading();
   },
 
   fillIllPolicy: (policy) => {
     cy.do(TextField('ILL policy').fillIn(`"${policy}"`));
-    waitLoading();
   },
 
   addHoldingsNotes: (type, note, staffOnly) => {
@@ -831,17 +811,14 @@ export default {
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);
-    waitLoading();
   },
 
   fillBatchGroup: (group) => {
     cy.do(batchGroupField.fillIn(group));
-    waitLoading();
   },
 
   fillPaymentMethod: (method) => {
     cy.do(paymentMethodField.fillIn(method));
-    waitLoading();
   },
 
   addItemNotes: (noteType, note, staffOnly) => {
@@ -858,7 +835,6 @@ export default {
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);
-    waitLoading();
   },
 
   addCheckInCheckOutNote: (noteType, note, staffOnly) => {
@@ -875,12 +851,10 @@ export default {
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);
-    waitLoading();
   },
 
   fillCurrency: (currency) => {
     cy.do(currencyField.fillIn(currency));
-    waitLoading();
   },
 
   fillVendorName: (vendorName) => {
@@ -894,7 +868,6 @@ export default {
 
   fillInvoiceDate: (date) => {
     cy.do(TextField('Invoice date*').fillIn(date));
-    waitLoading();
   },
 
   addFieldMappingsForMarc: () => {
@@ -986,7 +959,6 @@ export default {
       Button('Add former holdings identifier').click(),
       TextField('Former holdings ID').fillIn(`"${name}"`),
     ]);
-    waitLoading();
   },
 
   addExpenceClass: (fundDistributionSource) => {
@@ -1019,7 +991,6 @@ export default {
       Button('Add former identifier').click(),
       TextField('Former Identifier').fillIn(`"${value}"`),
     ]);
-    waitLoading();
   },
 
   fillMissingPieces: (value) => {

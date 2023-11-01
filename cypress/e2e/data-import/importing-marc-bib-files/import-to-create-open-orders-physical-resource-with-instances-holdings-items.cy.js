@@ -39,7 +39,7 @@ describe('data-import', () => {
     let instanceHrid;
     const instanceTitle = 'Quiet time.';
     const filePathForCreateOrder = 'marcFileForCreateOrder.mrc';
-    const marcFileName = `C380474 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C380474 autotestFileName${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
