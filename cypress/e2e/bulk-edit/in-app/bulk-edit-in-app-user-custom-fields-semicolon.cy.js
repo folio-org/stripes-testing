@@ -82,7 +82,7 @@ describe('bulk-edit', () => {
         );
         BulkEditActions.commitChanges();
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Custom fields');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Custom fields');
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Custom fields',
           `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
