@@ -11,7 +11,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
 
 let user;
 const item = {
@@ -71,7 +71,7 @@ describe('inventory', () => {
             const itemData = res;
             itemData.effectiveLocation.id = item.secondLocationId;
             itemData.effectiveLocation.name = item.secondLocationName;
-            ItemActions.editItemViaApi(itemData);
+            InventoryItems.editItemViaApi(itemData);
           });
         })
         .then(() => {
@@ -98,14 +98,18 @@ describe('inventory', () => {
       ItemRecordView.closeDetailView();
       InventoryInstance.openMoveItemsWithinAnInstance();
 
-      InventoryInstance.moveItemToAnotherHolding(item.firstLocationName, item.secondLocationName);
+      InventoryInstance.moveItemToAnotherHolding({
+        fromHolding: item.firstLocationName,
+        toHolding: item.secondLocationName,
+      });
       InventoryInstance.confirmOrCancel('Continue');
       InteractorsTools.checkCalloutMessage(successCalloutMessage);
-      InventoryInstance.openHoldings([item.secondLocationName]);
       InventoryInstancesMovement.verifyHoldingsMoved(item.secondLocationName, '1');
 
-      InventoryInstance.openHoldings([item.firstLocationName]);
-      InventoryInstance.moveItemToAnotherHolding(item.firstLocationName, item.secondLocationName);
+      InventoryInstance.moveItemToAnotherHolding({
+        fromHolding: item.firstLocationName,
+        toHolding: item.secondLocationName,
+      });
       InventoryInstance.confirmOrCancel('Cancel');
     },
   );

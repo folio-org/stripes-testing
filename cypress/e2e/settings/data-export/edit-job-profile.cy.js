@@ -14,6 +14,7 @@ import SingleJobProfile from '../../../support/fragments/data-export/exportJobPr
 
 let user;
 let fieldMappingProfileId;
+let adminSourceRecord;
 const mappingProfileName = getTestEntityValue('fieldMappingProfile');
 const jobProfileName = getTestEntityValue('jobProfile');
 const jobProfileNewName = getTestEntityValue('jobProfileNew');
@@ -37,6 +38,9 @@ describe('Job profile - setup', () => {
           ExportNewJobProfile.createNewJobProfileViaApi(jobProfileName, response.body.id);
         },
       );
+      cy.getAdminSourceRecord().then((record) => {
+        adminSourceRecord = record;
+      });
     });
   });
 
@@ -62,7 +66,7 @@ describe('Job profile - setup', () => {
       SingleJobProfile.openActions();
       SingleJobProfile.clickEditButton();
       SingleJobProfile.verifyProfileDetailsEditable();
-      SingleJobProfile.verifySource('folio-aqa');
+      SingleJobProfile.verifySource(adminSourceRecord);
       SingleJobProfile.clickCancelButton();
 
       ExportJobProfiles.clickProfileNameFromTheList(jobProfileName);

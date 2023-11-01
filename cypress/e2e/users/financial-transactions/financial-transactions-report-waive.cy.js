@@ -78,35 +78,34 @@ describe('Financial Transactions Detail Report', () => {
             })
             .then(() => {
               UsersOwners.addServicePointsViaApi(ownerData, [servicePoint]);
-              feeFineAccount = {
-                id: uuid(),
-                ownerId: ownerData.id,
-                feeFineId: feeFineType.id,
-                amount: 100,
-                userId: userData.userId,
-                feeFineType: feeFineType.name,
-                feeFineOwner: ownerData.name,
-                createdAt: servicePoint.id,
-                dateAction: moment.utc().format(),
-                source: 'ADMINISTRATOR, DIKU',
-              };
-              NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
-                feeFineAccount.id = feeFineAccountId;
-
-                const waiveBody = {
-                  amount: actionAmount,
-                  paymentMethod: waiveReason.nameReason,
-                  notifyPatron: false,
-                  servicePointId: servicePoint.id,
-                  userName: 'ADMINISTRATOR, DIKU',
+              cy.getAdminSourceRecord().then((adminSourceRecord) => {
+                feeFineAccount = {
+                  id: uuid(),
+                  ownerId: ownerData.id,
+                  feeFineId: feeFineType.id,
+                  amount: 100,
+                  userId: userData.userId,
+                  feeFineType: feeFineType.name,
+                  feeFineOwner: ownerData.name,
+                  createdAt: servicePoint.id,
+                  dateAction: moment.utc().format(),
+                  source: adminSourceRecord,
                 };
-
-                WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody, feeFineAccountId);
-
-                cy.login(userData.username, userData.password);
-                cy.visit(TopMenu.usersPath);
-                UsersSearchResultsPane.waitLoading();
+                NewFeeFine.createViaApi(feeFineAccount).then((feeFineAccountId) => {
+                  feeFineAccount.id = feeFineAccountId;
+                  const waiveBody = {
+                    amount: actionAmount,
+                    paymentMethod: waiveReason.nameReason,
+                    notifyPatron: false,
+                    servicePointId: servicePoint.id,
+                    userName: adminSourceRecord,
+                  };
+                  WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody, feeFineAccountId);
+                });
               });
+              cy.login(userData.username, userData.password);
+              cy.visit(TopMenu.usersPath);
+              UsersSearchResultsPane.waitLoading();
             });
         });
     },

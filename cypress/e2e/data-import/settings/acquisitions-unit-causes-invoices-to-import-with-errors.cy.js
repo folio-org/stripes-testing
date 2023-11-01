@@ -78,7 +78,7 @@ describe('data-import', () => {
       Invoices.deleteInvoiceViaActions();
       Invoices.confirmInvoiceDeletion();
       cy.visit(SettingsMenu.acquisitionUnitsPath);
-      AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name, user);
       AcquisitionUnits.delete(defaultAcquisitionUnit.name);
       Users.deleteViaApi(user.userId);
     });

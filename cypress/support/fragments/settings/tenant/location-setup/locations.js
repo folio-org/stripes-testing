@@ -8,6 +8,7 @@ import LocationEditForm from '../locations/locationEditForm';
 import getRandomPostfix from '../../../../utils/stringTools';
 import {
   Button,
+  HTML,
   KeyValue,
   MultiColumnList,
   MultiColumnListCell,
@@ -15,7 +16,10 @@ import {
   Pane,
   Select,
   including,
+  NavListItem,
 } from '../../../../../../interactors';
+
+const pane = Pane('Locations');
 
 const getDefaultLocation = ({
   servicePointId,
@@ -151,12 +155,16 @@ export default {
         ]);
       });
   },
-  checkEmptyTableContent() {
-    const messages = [
-      'Please select an institution, campus and library to continue.',
-      'There are no Locations',
-    ];
-    TenantPane.checkEmptyTableContent(messages);
+  checkEmptyTableContent(isRequiredFieldsSelected) {
+    cy.expect(addButton.has({ disabled: false }));
+    if (!isRequiredFieldsSelected) {
+      cy.expect([
+        pane
+          .find(HTML(including('Please select an institution, campus and library to continue.')))
+          .exists(),
+      ]);
+    }
+    cy.expect(pane.find(MultiColumnList()).absent());
   },
   getViaApi() {
     return TenantPane.getViaApi({ path: 'locations' });
@@ -201,5 +209,11 @@ export default {
         Institutions.deleteViaApi(institutionId);
       }
     });
+  },
+  goToLocationsTab() {
+    cy.do(NavListItem('Tenant').click());
+    cy.expect(Pane('Tenant').exists());
+    cy.do(NavListItem('Locations').click());
+    cy.expect(Pane('Locations').exists());
   },
 };

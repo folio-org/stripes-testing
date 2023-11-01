@@ -108,6 +108,7 @@ describe('ui-inventory: location', () => {
       InventoryInstance.closeInstancePage();
 
       // verify results
+      InventoryInstance.openHoldings(['']);
       InventoryInstance.checkHoldingsTable(
         toBeEditedLocationName,
         0,
@@ -141,6 +142,7 @@ describe('ui-inventory: location', () => {
       InventoryInstance.closeInstancePage();
 
       // verify results
+      InventoryInstance.openHoldings(['']);
       InventoryInstance.checkHoldingsTable(
         editedLocationName,
         0,

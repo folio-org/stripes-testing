@@ -1,10 +1,27 @@
 import uuid from 'uuid';
 import Conditions from './conditions';
-import { NavListItem, TextField, Button } from '../../../../../interactors';
+import InteractorsTools from '../../../utils/interactorsTools';
+import { NavListItem, TextField, Button, Pane, including } from '../../../../../interactors';
+import { CONDITION_AND_LIMIT_TYPES } from '../../../constants';
 
 const saveButton = Button('Save');
+const limitTypes = Object.values(CONDITION_AND_LIMIT_TYPES);
 
 export default {
+  limitTypes,
+
+  waitLoading: () => {
+    cy.expect(Pane('Limits').exists());
+  },
+
+  verifyLimitTypes() {
+    cy.wrap(limitTypes).each((limitName) => {
+      this.getLimitIdViaApi(limitName).then((limitId) => {
+        cy.expect(TextField({ name: limitId }).exists());
+      });
+    });
+  },
+
   createViaApi: (patronGroupId, conditionId, value) => {
     return cy
       .okapiRequest({
@@ -37,12 +54,32 @@ export default {
     });
   },
 
+  verifySuccessfullyUpdated(groupName) {
+    InteractorsTools.checkCalloutMessage(
+      `The patron block limit for patron group ${groupName} has been successfully updated.`,
+    );
+  },
+
+  verifyUpdateValidationError(limitType) {
+    this.getLimitIdViaApi(limitType).then((limitId) => {
+      cy.expect(
+        TextField({ name: limitId }).has({
+          error: including('Must be blank or a number from 0 to 999,999'),
+        }),
+      );
+    });
+  },
+
+  verifySaveIsDisabled() {
+    cy.expect(saveButton.is({ disabled: true }));
+  },
+
   verifyLimitsCantBeChanged() {
-    cy.wrap(Conditions.conditionsValues).each((limitName) => {
+    cy.wrap(limitTypes).each((limitName) => {
       this.getLimitIdViaApi(limitName).then((limitId) => {
         cy.expect(TextField({ name: limitId }).is({ disabled: true }));
       });
     });
-    cy.expect(Button('Save').is({ disabled: true }));
+    this.verifySaveIsDisabled();
   },
 };

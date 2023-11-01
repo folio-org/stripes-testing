@@ -11,7 +11,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
 
         cy.getItems({ query: `"barcode"=="${inventoryEntity.barcode}"` }).then((inventoryItem) => {
           inventoryItem.discoverySuppress = true;
-          ItemActions.editItemViaApi(inventoryItem);
+          InventoryItems.editItemViaApi(inventoryItem);
         });
       });
     });

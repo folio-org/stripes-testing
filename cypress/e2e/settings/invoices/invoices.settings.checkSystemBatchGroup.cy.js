@@ -10,8 +10,17 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
   const systemBatchGroupName = 'Amherst (AC)';
   const systemBatchGroupDescription = 'System default';
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
+    cy.getAdminToken()
+      .then(() => {
+        cy.getAdminSourceRecord().then((adminSourceRecord) => {
+          batchGroup.source = adminSourceRecord;
+          systemBatchGroup.source = adminSourceRecord;
+        });
+      })
+      .then(() => {
+        cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+        cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
+      });
   });
 
   it(

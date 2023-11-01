@@ -10,6 +10,7 @@ import {
   Checkbox,
   Link,
 } from '../../../../../interactors';
+import FileDetails from './fileDetails';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
 const actionsButton = Button('Actions');
@@ -50,9 +51,12 @@ export default {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
   },
 
-  checkStatusOfJobProfile: (status = 'Completed') => cy.do(MultiColumnListCell({ row: 0, content: status }).exists()),
+  checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
   openFileDetails: (fileName) => {
-    cy.do(Link(fileName).click());
+    const newFileName = fileName.replace('.mrc', '');
+    cy.do(Link(including(newFileName)).click());
+    FileDetails.verifyLogDetailsPageIsOpened(fileName);
+    FileDetails.verifyResultsListIsVisible();
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },

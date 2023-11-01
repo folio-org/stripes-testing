@@ -7,7 +7,7 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 
 describe('inventory', () => {
@@ -109,16 +109,16 @@ describe('inventory', () => {
           MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
           MarkItemAsMissing.openItem(item.barcode);
           MarkItemAsMissing.checkIsMarkAsMissingExist(true);
-          ItemActions.markAsMissing();
+          InventoryItems.markAsMissing();
           MarkItemAsMissing.checkIsConfirmItemMissingModalExist(
             instanceData.instanceTitle,
             item.barcode,
             materialType,
           );
-          ItemActions.cancelMarkAsMissing();
+          InventoryItems.cancelMarkAsMissing();
           ItemRecordView.verifyItemStatusInPane(item.status.name);
-          ItemActions.markAsMissing();
-          ItemActions.confirmMarkAsMissing();
+          InventoryItems.markAsMissing();
+          InventoryItems.confirmMarkAsMissing();
           ItemRecordView.verifyItemStatusInPane('Missing');
           MarkItemAsMissing.verifyItemStatusUpdatedDate();
           ItemRecordView.closeDetailView();

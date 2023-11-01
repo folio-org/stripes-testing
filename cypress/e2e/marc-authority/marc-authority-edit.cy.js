@@ -173,11 +173,13 @@ describe('MARC Authority -> Edit Authority record', () => {
 
       tagsC375120.forEach((tag) => {
         MarcAuthority.changeTag(rowIndexTag1XX, tag);
+        cy.wait(1000);
         QuickMarcEditor.clickSaveAndKeepEditing();
         QuickMarcEditor.checkDeleteButtonNotExist(rowIndexTag1XX);
       });
 
       MarcAuthority.changeTag(rowIndexTag1XX, '110');
+      cy.wait(1000);
       QuickMarcEditor.pressSaveAndClose();
       MarcAuthority.edit();
 

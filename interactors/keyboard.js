@@ -101,6 +101,7 @@ function dispatch(element, eventType, code, options) {
         code,
         keyCode: KEY_CODES[code],
         ctrlKey: (options && options.ctrlKey) || false,
+        shiftKey: (options && options.shiftKey) || false,
         key: code,
         bubbles: true,
         cancelable: true,

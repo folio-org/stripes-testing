@@ -18,7 +18,6 @@ const userSearchModal = Modal('Select User');
 const searchTextField = TextField({ type: 'search' });
 const firstSearchResult = MultiColumnListCell({ row: 0, columnIndex: 0 });
 const saveButton = Button('Save');
-const trashButton = Button({ icon: 'trash' });
 const assignedUsersSection = Section({ id: 'memberships' });
 const actionsButton = Button('Actions');
 const auPaneDetails = Section({ id: 'pane-ac-units-details' });

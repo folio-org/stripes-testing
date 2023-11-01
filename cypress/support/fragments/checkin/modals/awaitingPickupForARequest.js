@@ -23,4 +23,7 @@ export default {
     const message = `Place ${item.title} (${item.materialType}) (Barcode: ${item.barcode}) on Hold Shelf at ${item.servicePoint} for request`;
     cy.expect(Modal({ content: including(message) }).exists());
   },
+  checkPatronComments: (comment) => {
+    cy.expect(Modal({ content: including(comment) }).exists());
+  },
 };

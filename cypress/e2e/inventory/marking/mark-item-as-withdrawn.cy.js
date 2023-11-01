@@ -148,7 +148,6 @@ describe('inventory', () => {
             });
             ItemRecordView.closeDetailView();
           });
-
         markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
         markItemAsMissing.openItem(markItemAsWithdrawn.getWithdrawnItem(createdItems).barcode);
         markItemAsWithdrawn.checkActionButtonExists({
