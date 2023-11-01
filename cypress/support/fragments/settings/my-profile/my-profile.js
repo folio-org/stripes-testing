@@ -1,4 +1,4 @@
-import { Pane, Dropdown, Button } from '../../../../../interactors';
+import { Pane, PaneContent, NavListItem } from '../../../../../interactors';
 
 export default {
   waitLoading() {
@@ -6,6 +6,10 @@ export default {
   },
 
   openChangePassword() {
-    cy.do(Dropdown('My profile').find(Button('Change Password')).click());
+    cy.do(
+      PaneContent({ id: 'app-settings-nav-pane-content' })
+        .find(NavListItem('Change password'))
+        .click(),
+    );
   },
 };
