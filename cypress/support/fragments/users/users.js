@@ -163,9 +163,7 @@ export default {
   },
 
   verifyUserTypeOnUserDetailsPane(userType) {
-    cy.expect(
-      userDetailsPane.find(KeyValue('User type')).has({ value: `${userType}` }),
-    );
+    cy.expect(userDetailsPane.find(KeyValue('User type')).has({ value: `${userType}` }));
   },
 
   verifyCustomFieldOnUserDetailsPane(name, text) {
@@ -220,6 +218,7 @@ export default {
 
   getUserAddressTypesApi: (addressTypeId) => cy
     .okapiRequest({
-      path: `addresstypes/${addressTypeId}`
-    }).then(({ body }) => body ),
+      path: `addresstypes/${addressTypeId}`,
+    })
+    .then(({ body }) => body),
 };

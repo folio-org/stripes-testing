@@ -143,7 +143,7 @@ export default {
   },
 
   openItemByBarcode() {
-    cy.do(itemInformationSection.find(Link()).click());
+    cy.do(itemInformationSection.find(Link({ href: including('/inventory/view/') })).click());
     ItemRecordView.waitLoading();
   },
 
