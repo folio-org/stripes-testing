@@ -186,7 +186,7 @@ const openHoldings = (...holdingToBeOpened) => {
 const openItemByBarcode = (itemBarcode) => {
   cy.do(
     Section({ id: 'pane-instancedetails' })
-      .find(MultiColumnListCell({ content: itemBarcode }))
+      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );

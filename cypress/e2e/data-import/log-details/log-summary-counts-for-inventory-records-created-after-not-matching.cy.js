@@ -72,7 +72,7 @@ describe('data-import', () => {
           barcode: '876$a',
           materialType: '877$m',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -154,7 +154,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillBarcode(profile.barcode);
       NewFieldMappingProfile.fillMaterialType(profile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(profile.status);
+      NewFieldMappingProfile.fillStatus(`"${profile.status}`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);
     };

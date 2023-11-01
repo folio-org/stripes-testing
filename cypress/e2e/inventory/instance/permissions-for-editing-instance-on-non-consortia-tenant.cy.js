@@ -47,7 +47,9 @@ describe('inventory', () => {
           const instanceHrid = initialInstanceHrId;
 
           InstanceRecordView.edit();
-          InstanceRecordEdit.chooseInstanceStatusTerm('Batch Loaded (folio: batch)');
+          InstanceRecordEdit.chooseInstanceStatusTerm(
+            `${INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED} (folio: batch)`,
+          );
           InstanceRecordEdit.saveAndClose();
           InstanceRecordView.verifyCalloutMessage(
             `The instance - HRID ${instanceHrid} has been successfully saved.`,

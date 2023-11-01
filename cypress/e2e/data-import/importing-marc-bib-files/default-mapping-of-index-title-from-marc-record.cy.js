@@ -8,7 +8,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -16,27 +16,7 @@ describe('data-import', () => {
     const instanceHrids = [];
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'marcBibFileForC6690.mrc';
-    const fileName = `C6690 autotestFile.${getRandomPostfix()}.mrc`;
-    const instances = [
-      {
-        title: '2000 Philippine provincial poverty statistics.',
-        resourceTitle: '2000 Philippine provincial poverty statistics.',
-        indexTitle: '2000 Philippine provincial poverty statistics.',
-      },
-      {
-        title: "Halsbury's laws of England.",
-        resourceTitle: "Halsbury's laws of England.",
-        indexTitle: "Halsbury's laws of England.",
-      },
-      {
-        title:
-          'The war of the rebellion [electronic resource]: a compilation of the official records of the Union and Confederate armies',
-        resourceTitle:
-          'The war of the rebellion [electronic resource]: a compilation of the official records of the Union and Confederate armies. Pub. under the direction of the secretary of war ...',
-        indexTitle:
-          'War of the rebellion a compilation of the official records of the Union and Confederate armies.',
-      },
-    ];
+    const fileName = `C6690 autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.createTempUser([
@@ -74,19 +54,36 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-
-        cy.visit(TopMenu.inventoryPath);
-        instances.forEach((instance) => {
-          InventorySearchAndFilter.searchInstanceByTitle(instance.title);
+        Logs.openFileDetails(fileName);
+        cy.wrap([
+          {
+            rowNumber: 0,
+            resourceTitle: '2000 Philippine provincial poverty statistics.',
+            indexTitle: '2000 Philippine provincial poverty statistics.',
+          },
+          {
+            rowNumber: 1,
+            resourceTitle: "Halsbury's laws of England.",
+            indexTitle: "Halsbury's laws of England.",
+          },
+          {
+            rowNumber: 2,
+            resourceTitle:
+              'The war of the rebellion [electronic resource]: a compilation of the official records of the Union and Confederate armies. Pub. under the direction of the secretary of war ...',
+            indexTitle:
+              'War of the rebellion a compilation of the official records of the Union and Confederate armies.',
+          },
+        ]).each((instanceData) => {
+          FileDetails.openInstanceInInventory('Created', instanceData.rowNumber);
           InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
-            const instanceHrid = initialInstanceHrId;
-
-            instanceHrids.push(instanceHrid);
+          InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+            instanceHrids.push(initialInstanceHrId);
           });
 
-          InstanceRecordView.verifyResourceTitle(instance.resourceTitle);
-          InstanceRecordView.verifyIndexTitle(instance.indexTitle);
+          InstanceRecordView.verifyResourceTitle(instanceData.resourceTitle);
+          InstanceRecordView.verifyIndexTitle(instanceData.indexTitle);
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(fileName);
         });
       },
     );

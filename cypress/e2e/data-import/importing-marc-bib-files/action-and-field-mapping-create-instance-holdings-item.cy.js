@@ -172,7 +172,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.addStatisticalCode(
           collectionOfMappingAndActionProfiles[2].mappingProfile.statisticalCode,

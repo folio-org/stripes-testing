@@ -6,14 +6,14 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'marcBibFileForC10923.mrc';
-    const fileName = `C10923 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C10923 autotestFile${getRandomPostfix()}.mrc`;
     const titles = {
       instanceTitle: 'Justus Liebigs Annalen der Chemie.',
       precedingTitles: "Justus Liebig's Annalen der Chemie und Pharmacie",
@@ -36,9 +36,8 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByTitle('Justus Liebigs Annalen der Chemie.');
+        Logs.openFileDetails(fileName);
+        FileDetails.openInstanceInInventory('Created');
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.verifyPrecedingTitle(titles.precedingTitles);
         InstanceRecordView.verifySucceedingTitle(titles.succeedingTitles);

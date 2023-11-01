@@ -552,7 +552,7 @@ export default {
 
   verifyHeader: (fileName, recordsNumber) => {
     cy.expect([
-      paneHeader.find(HTML(including(fileName))).exists(),
+      paneHeader.find(HTML(including(fileName.replace('.mrc', '')))).exists(),
       paneHeader.find(HTML(including(`${recordsNumber} records found`))).exists(),
     ]);
   },

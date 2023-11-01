@@ -5,7 +5,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -16,23 +16,7 @@ describe('data-import', () => {
     const instanceHrids = [];
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'marcBibFileForC11120.mrc';
-    const fileName = `C11120 autotestFile.${getRandomPostfix()}.mrc`;
-    const instances = [
-      {
-        title:
-          'Gender and colonialism : a psychological analysis of oppression and liberation / Geraldine Moane',
-        edition: 'Rev. ed.',
-      },
-      {
-        title:
-          'Phytoplankton pigments in oceanography : guidelines to modern methods / edited by S.W. Jeffrey, R.F.C. Mantoura, and S.W. Wright.',
-        edition: '2nd ed.',
-      },
-      {
-        title: 'Principles of ecology in plant production / Thomas R. Sinclair and Albert Weiss.',
-        edition: '2nd ed.',
-      },
-    ];
+    const fileName = `C11120 autotestFile${getRandomPostfix()}.mrc`;
 
     before('create user and login', () => {
       cy.createTempUser([
@@ -70,10 +54,22 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-
-        cy.visit(TopMenu.inventoryPath);
-        instances.forEach((instance) => {
-          InventorySearchAndFilter.searchInstanceByTitle(instance.title);
+        Logs.openFileDetails(fileName);
+        cy.wrap([
+          {
+            rowNumber: 0,
+            edition: 'Rev. ed.',
+          },
+          {
+            rowNumber: 1,
+            edition: '2nd ed.',
+          },
+          {
+            rowNumber: 2,
+            edition: '2nd ed.',
+          },
+        ]).each((instance) => {
+          FileDetails.openInstanceInInventory('Created', instance.rowNumber);
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
             const instanceHrid = initialInstanceHrId;
@@ -81,6 +77,8 @@ describe('data-import', () => {
             instanceHrids.push(instanceHrid);
           });
           InstanceRecordView.verifyEdition(instance.edition);
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(fileName);
         });
       },
     );
