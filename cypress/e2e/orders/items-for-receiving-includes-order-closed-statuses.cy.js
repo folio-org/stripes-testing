@@ -128,10 +128,10 @@ describe('orders: Receiving and Check-in', () => {
         SwitchServicePoint.checkIsServicePointSwitched(effectiveLocationServicePoint.name);
         // Need to wait,while Checkin page will be loaded in same location
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(2000);
+        cy.wait(6000);
         CheckInActions.checkInItemGui(barcodeForFirstItem);
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(2000);
+        cy.wait(10000);
         CheckInActions.checkInItemGui(barcodeForSecondItem);
       });
     });
