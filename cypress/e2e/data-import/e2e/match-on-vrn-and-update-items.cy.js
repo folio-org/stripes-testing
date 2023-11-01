@@ -60,7 +60,7 @@ describe('data-import', () => {
     const instanceMatchProfileName = `C350591 Match for Instance ${getRandomPostfix()}`;
     const holdingsMatchProfileName = `C350591 Match for Holdings ${getRandomPostfix()}`;
     const itemMatchProfileName = `C350591 Match for Item ${getRandomPostfix()}`;
-    const editedMarcFileName = `marcFileForC350591.${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `marcFileForC350591${getRandomPostfix()}.mrc`;
 
     const matchProfiles = [
       {
@@ -199,6 +199,7 @@ describe('data-import', () => {
           orderNumber = order.poNumber;
 
           Orders.checkIsOrderCreated(orderNumber);
+          cy.wait(2000);
           // open the first PO with POL
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);

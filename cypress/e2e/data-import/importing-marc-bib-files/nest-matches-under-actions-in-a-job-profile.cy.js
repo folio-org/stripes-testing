@@ -39,7 +39,7 @@ describe('data-import', () => {
     const holdingsPermanentLocation = 'Online';
     const recordType = 'MARC_BIBLIOGRAPHIC';
     const filePathToUpload = 'oneMarcBib.mrc';
-    const marcFileNameForCreate = `C347894 marcBibFile for create.${getRandomPostfix()}`;
+    const marcFileNameForCreate = `C347894 marcBibFileForCreate${getRandomPostfix()}.mrc`;
     // profiles for creating instance, holdings, item
     const instanceMappingProfileForCreate = {
       profile: {

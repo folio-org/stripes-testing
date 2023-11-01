@@ -11,7 +11,7 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const filePath = 'oneThousandMarcBib.mrc';
-    const marcFileName = `C2325 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C2325 autotestFileName${getRandomPostfix()}`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('login', () => {
@@ -42,14 +42,12 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePath, marcFileName);
-        // TODO wait until file will be uploaded
-        cy.wait(5000);
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
         // TODO wait until file will be imported
-        cy.wait(5000);
+        cy.wait(10000);
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       },

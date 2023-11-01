@@ -28,7 +28,7 @@ describe('data-import', () => {
     let instanceHrid;
     const quantityOfItems = '11';
     const instanceTitle = 'Protozoological abstracts.';
-    const nameMarcFile = `C356801autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFile = `C356801 autotestFile${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
@@ -57,7 +57,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356801 item mapping profile ${getRandomPostfix()}`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         },
         actionProfile: {
@@ -138,7 +138,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(

@@ -68,7 +68,7 @@ describe('data-import', () => {
       quantity: '1',
       price: '20',
     };
-    const editedMarcFileName = `C350590 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C350590 marcFileForMatchOnPol${getRandomPostfix()}.mrc`;
     const collectionOfProfiles = [
       {
         mappingProfile: {
@@ -263,6 +263,7 @@ describe('data-import', () => {
     });
 
     const openOrder = (number) => {
+      cy.wait(2000);
       Orders.searchByParameter('PO number', number);
       Orders.selectFromResultsList();
       Orders.openOrder();

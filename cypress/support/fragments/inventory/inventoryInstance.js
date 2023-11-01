@@ -1055,9 +1055,8 @@ export default {
     cy.get('div[class^="mclRow--"]')
       .contains('div[class^="mclCell-"]', status)
       .then((elem) => {
-        elem.parent()[0].querySelector('button[type="button"]').click();
+        elem.parent()[0].querySelector('[href]').click();
       });
-    cy.wait(2000);
   },
 
   verifyCellsContent: (...content) => {

@@ -31,7 +31,7 @@ describe('data-import', () => {
     let instanceHrid;
     const title = "101 things I wish I'd known when I started using hypnosis";
     const filePathToUpload = 'marcBibFileForC11090.mrc';
-    const marcFileName = `C11090 autotestFileName_${getRandomPostfix()}`;
+    const marcFileName = `C11090 autotestFileName${getRandomPostfix()}.mrc`;
 
     const collectionOfMappingAndActionProfiles = [
       {
@@ -71,7 +71,7 @@ describe('data-import', () => {
           secondStatisticalCodeUI: 'Book, print (books)',
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -158,7 +158,7 @@ describe('data-import', () => {
           6,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,

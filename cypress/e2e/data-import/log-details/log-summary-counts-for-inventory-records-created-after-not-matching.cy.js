@@ -31,7 +31,7 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 describe('data-import', () => {
   describe('Log details', () => {
     let user;
-    const marcFileName = `C378901autotestFile.${getRandomPostfix()}.mrc`;
+    const marcFileName = `C378901autotestFile${getRandomPostfix()}.mrc`;
     const barcodes = ['B(UMLLTTEST3)LLTAMGUT8UGUT_-UM', 'B(UMLLTTEST3)LLTAALIVIAUCO_-UM'];
     const firstInstanceTitle =
       '<In lacu> Guillelmus de Sancto Theodorico (dubium) [electronic resource]';
@@ -154,7 +154,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillBarcode(profile.barcode);
       NewFieldMappingProfile.fillMaterialType(profile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(`"${profile.status}`);
+      NewFieldMappingProfile.fillStatus(`"${profile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);
     };

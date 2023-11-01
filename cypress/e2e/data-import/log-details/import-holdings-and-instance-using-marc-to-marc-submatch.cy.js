@@ -187,10 +187,10 @@ describe('data-import', () => {
       'C397983 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 2 matches (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
-        const fileNameForCreate = `C397983 autotestFileForCreate.${getRandomPostfix()}.mrc`;
-        const fileNameForUpdate = `C397983 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
-        const editedMarcFileNameForCreate = `C397983 editedAutotestFileForCreate.${getRandomPostfix()}.mrc`;
-        const editedMarcFileNameForUpdate = `C397983 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
+        const fileNameForCreate = `C397983 autotestFileForCreate${getRandomPostfix()}.mrc`;
+        const fileNameForUpdate = `C397983 autotestFileForUpdate${getRandomPostfix()}.mrc`;
+        const editedMarcFileNameForCreate = `C397983 editedAutotestFileForCreate${getRandomPostfix()}.mrc`;
+        const editedMarcFileNameForUpdate = `C397983 editedAutotestFileForUpdate${getRandomPostfix()}.mrc`;
         const uniq001Field = Helper.getRandomBarcode();
         const newUri = 'http://jbjjhhjj:3000/Test2';
         // profiles for update

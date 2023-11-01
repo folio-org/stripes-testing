@@ -13,7 +13,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
-    const fileName = `C2359 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C2359 autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathToUpload = 'oneMarcBib.mrc';
     const title = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25';

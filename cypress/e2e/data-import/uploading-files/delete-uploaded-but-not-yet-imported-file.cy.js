@@ -9,7 +9,7 @@ describe('data-import', () => {
   describe('Uploading files', () => {
     let user;
     const quantityOfFiles = '2';
-    const fileName = `C2377 autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C2377 autotestFile${getRandomPostfix()}.mrc`;
     const filePathForUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
@@ -51,7 +51,6 @@ describe('data-import', () => {
         JobProfiles.confirmDeleteUploadedFile();
         JobProfiles.verifyFileListArea(fileName);
         JobProfiles.waitLoadingList();
-        cy.wait(1000);
         JobProfiles.deleteUploadedFile(fileName);
         JobProfiles.confirmDeleteUploadedFile();
         DataImport.checkIsLandingPageOpened();

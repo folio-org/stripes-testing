@@ -33,7 +33,7 @@ describe('data-import', () => {
     const testData = {
       protectedFieldId: null,
       filePath: 'marcFileForC400649.mrc',
-      fileName: `C400649 autotestFile_${getRandomPostfix()}`,
+      fileName: `C400649 autotestFile${getRandomPostfix()}.mrc`,
     };
     const firstField = {
       fieldNimberInFile: 0,

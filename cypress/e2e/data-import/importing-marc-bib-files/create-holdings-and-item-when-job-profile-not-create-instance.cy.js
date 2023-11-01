@@ -129,7 +129,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
       NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
+      NewFieldMappingProfile.fillStatus(`"${itemMappingProfile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };

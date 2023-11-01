@@ -22,7 +22,7 @@ describe('inventory', () => {
     let instanceHRID;
     const OCLCAuthentication = '100481406/PAOLF';
     const profileForImport = 'Inventory Single Record - Default Update Instance (Default)';
-    const fileName = `C375146autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C375146 autotestFile${getRandomPostfix()}.mrc`;
     const targetIdentifier = '1234567';
     const targetProfile = {
       name: 'OCLC WorldCat',

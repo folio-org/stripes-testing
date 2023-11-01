@@ -25,7 +25,7 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const quantityOfItems = '17';
-    const marcFileName = `C375989 autotestFileName.${getRandomPostfix()}`;
+    const marcFileName = `C375989 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C375989 Test Order mapping profile ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,

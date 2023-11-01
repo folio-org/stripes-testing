@@ -28,10 +28,10 @@ describe('data-import', () => {
     let user;
     const orderNumbers = [];
     const filePathForCreateOrder = 'marcFileForC376975.mrc';
-    const firstMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}`;
-    const secondMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}`;
-    const thirdMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}`;
-    const forthMarcFileName = `C376975 autotestFileName ${getRandomPostfix()}`;
+    const firstMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
+    const secondMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
+    const thirdMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
+    const forthMarcFileName = `C376975 autotestFileName${getRandomPostfix()}.mrc`;
     const fundAndExpenseClassData = [
       {
         fund: 'History(HIST)',
