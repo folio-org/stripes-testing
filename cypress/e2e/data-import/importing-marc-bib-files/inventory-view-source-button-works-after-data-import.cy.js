@@ -36,7 +36,7 @@ describe('data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(jobProfileToRun);
       Logs.openFileDetails(fileName);
-      FileDetails.verifyLogDetailsPageIsOpened();
+      FileDetails.verifyLogDetailsPageIsOpened(fileName);
       FileDetails.openJsonScreen(title);
       JsonScreenView.verifyJsonScreenIsOpened();
       JsonScreenView.getInstanceHrid().then((hrid) => {

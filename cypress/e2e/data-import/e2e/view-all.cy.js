@@ -43,7 +43,7 @@ describe('data-import', () => {
         LogsViewAll.options.forEach((option) => {
           LogsViewAll.selectOption(option);
           // when option is "ID", search with hrId otherwise, with file name
-          const term = option === 'ID' ? `${id}` : uniqueFileName;
+          const term = option === 'ID' ? `${id}` : uniqueFileName.replace('.mrc', '');
 
           LogsViewAll.searchWithTerm(term);
 

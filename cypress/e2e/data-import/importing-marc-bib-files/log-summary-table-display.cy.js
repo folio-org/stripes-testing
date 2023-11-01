@@ -44,7 +44,7 @@ describe('data-import', () => {
         };
 
         Logs.openFileDetails(fileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.summary, [
           'Created',
           'Updated',
@@ -89,10 +89,10 @@ describe('data-import', () => {
           '0',
         ]);
         FileDetails.clickNextPaginationButton();
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyLogSummaryTableIsDisplayed();
         FileDetails.clickPreviousPaginationButton();
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileName);
         FileDetails.verifyLogSummaryTableIsDisplayed();
       },
     );
