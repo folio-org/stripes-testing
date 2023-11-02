@@ -494,6 +494,10 @@ export default {
     cy.do([inventorySearchAndFilterInput.choose(searchOption), keywordInput.fillIn(text)]);
   },
 
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
+  },
+
   clickSearch() {
     cy.do(searchButton.click());
   },
