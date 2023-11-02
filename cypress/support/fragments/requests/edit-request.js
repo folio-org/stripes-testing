@@ -4,6 +4,7 @@ import { Button, KeyValue, Section, Select, TextField, TextArea } from '../../..
 import { FULFILMENT_PREFERENCES } from '../../constants';
 import Requests from './requests';
 import DateTools from '../../utils/dateTools';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const paneResultsSection = Section({ id: 'pane-results' });
 const requestPreviewSection = Section({ id: 'instance-details' });
@@ -144,6 +145,12 @@ export default {
     cy.expect(requestPreviewSection.exists());
   },
 
+  verifyRequestSuccessfullyEdited(username) {
+    InteractorsTools.checkCalloutMessage(
+      including(`Request has been successfully edited for ${username}`),
+    );
+  },
+
   closeRequestPreview() {
     cy.do(closeButton.click());
   },
@@ -164,6 +171,11 @@ export default {
     // after updating request via API, reloading page is necessary
     cy.reload();
     cy.expect(paneResultsSection.exists());
+  },
+
+  changeServicePoint: (servicePoint) => {
+    cy.do(pickupServicePointSelect.choose(servicePoint));
+    cy.wait(500);
   },
 
   verifyPatronCommentsFieldIsNotEditable: () => {

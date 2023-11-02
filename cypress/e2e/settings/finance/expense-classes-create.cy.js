@@ -8,8 +8,17 @@ describe('ui-invoices-settings: Batch Group creation', () => {
   const expenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
   const newExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
   before(() => {
-    cy.loginAsAdmin();
-    cy.visit(`${SettingsMenu.expenseClassesPath}`);
+    cy.getAdminToken()
+      .then(() => {
+        cy.getAdminSourceRecord().then((adminSourceRecord) => {
+          expenseClass.source = adminSourceRecord;
+          newExpenseClass.source = adminSourceRecord;
+        });
+      })
+      .then(() => {
+        cy.loginAsAdmin();
+        cy.visit(`${SettingsMenu.expenseClassesPath}`);
+      });
   });
 
   it(

@@ -53,6 +53,9 @@ describe('Circulation log', () => {
           userBarcode: userData.barcode,
         });
 
+        cy.getAdminSourceRecord().then((record) => {
+          testData.adminSourceRecord = record;
+        });
         cy.login(userData.username, userData.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchPane.waitLoading,
@@ -90,7 +93,7 @@ describe('Circulation log', () => {
         object: 'Loan',
         circAction: 'Renewed',
         servicePoint: testData.servicePoint.name,
-        source: 'ADMINISTRATOR',
+        source: testData.adminSourceRecord,
       };
       // Expand the Loans section
       UsersCard.viewCurrentLoans();

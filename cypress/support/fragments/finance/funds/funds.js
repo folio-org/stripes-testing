@@ -722,10 +722,16 @@ export default {
         ]);
       });
   },
+
   selectBudgetDetails(rowNumber = 0) {
     cy.do(currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).click());
     cy.expect(budgetPane.exists());
   },
+
+  checkBudgetStatus(status) {
+    cy.expect(Section({ id: 'information' }).find(KeyValue('Status')).has({ value: status }));
+  },
+
   closeBudgetDetails() {
     cy.do(budgetPane.find(Button({ icon: 'times' })).click());
     cy.expect(fundDetailsPane.visible());

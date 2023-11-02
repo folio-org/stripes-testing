@@ -217,6 +217,10 @@ export default {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
   },
+  notesSettingsViewGeneralSettings: {
+    internal: 'ui-notes.settings.view',
+    gui: 'Settings (Notes): View General settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -311,6 +315,10 @@ export default {
     internal: 'ui-users.delete',
     gui: 'Users: Can delete user profile if user does not have any open transactions',
   },
+  uiUsersCreateResetPassword: {
+    internal: 'ui-users.reset.password',
+    gui: 'Users: Create/reset password',
+  },
   uiUsersCheckTransactions: {
     internal: 'ui-users.opentransactions',
     gui: 'Users: Can check open transactions',
@@ -389,6 +397,10 @@ export default {
   uiUsersCreatePatronConditions: {
     internal: 'ui-users.settings.conditions',
     gui: 'Settings (Users): Can view and edit patron blocks conditions',
+  },
+  uiUsersCanViewCustomFields: {
+    internal: 'ui-users.settings.customfields.view',
+    gui: 'Settings (Users): Can view custom fields',
   },
   uiUsersCustomField: {
     internal: 'ui-users.settings.customfields.all',
@@ -693,6 +705,10 @@ export default {
     internal: 'ui-finance.settings.all',
     gui: 'Settings (Finance): View, edit, create, delete',
   },
+  uiSettingsFinanceView: {
+    internal: 'ui-finance.settings.view',
+    gui: 'Settings (Finance): View settings',
+  },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
     internal: 'ui-finance.acq.unit.assignment.assign',
     gui: 'Finance: Assign acquisition units to new record',
@@ -818,6 +834,10 @@ export default {
     gui: 'Transfer exports: Transfer admin',
   },
   // OAI-PMH
+  oaipmhViewLogs: {
+    internal: 'ui-oai-pmh.logs',
+    gui: 'Settings (OAI-PMH): Can view logs',
+  },
   oaipmhSettingsEdit: {
     internal: 'ui-oai-pmh.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',

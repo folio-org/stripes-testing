@@ -317,3 +317,12 @@ export const BROWSE_CALL_NUMBER_OPTIONS = {
   OTHER_SCHEME: 'Other scheme',
   SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
 };
+
+export const CONDITION_AND_LIMIT_TYPES = {
+  MAX_ITEMS_CHARGED_OUT: 'Maximum number of items charged out',
+  MAX_LOST_ITEMS: 'Maximum number of lost items',
+  MAX_OVERDUE_ITEMS: 'Maximum number of overdue items',
+  MAX_OVERDUE_RECALLS: 'Maximum number of overdue recalls',
+  MAX_OUTSTANDING_FEE_FINE_BALANCE: 'Maximum outstanding fee/fine balance',
+  MAX_NUMBER_OF_DAYS: 'Recall overdue by maximum number of days',
+};

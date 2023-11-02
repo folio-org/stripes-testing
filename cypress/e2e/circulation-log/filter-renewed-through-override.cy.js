@@ -84,6 +84,9 @@ describe('circulation-log', () => {
         });
       });
     });
+    cy.getAdminSourceRecord().then((record) => {
+      testData.adminSourceRecord = record;
+    });
     cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
   });
 
@@ -109,7 +112,7 @@ describe('circulation-log', () => {
         object: 'Loan',
         circAction: 'Renewed through override',
         servicePoint: testData.userServicePoint.name,
-        source: 'ADMINISTRATOR, DIKU',
+        source: testData.adminSourceRecord,
       };
       SearchPane.setFilterOptionFromAccordion('loan', 'Renewed through override');
       SearchPane.verifyResultCells();
