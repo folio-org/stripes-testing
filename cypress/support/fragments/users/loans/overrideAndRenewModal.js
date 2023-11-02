@@ -10,8 +10,4 @@ export default {
     cy.do(overrideModal.find(TextArea('Additional information*')).fillIn(additionalInformation));
     cy.do(overrideModal.find(Button('Override')).click());
   },
-
-  verifyModalIsClosed() {
-    cy.expect(overrideModal.absent());
-  },
 };
