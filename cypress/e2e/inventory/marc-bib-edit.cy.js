@@ -51,12 +51,12 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, `${marcFile.fileName}_copy`);
+        DataImport.uploadFileAndRetry(marcFile.marc, `copy${marcFile.fileName}`);
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(`${marcFile.fileName}_copy`);
+        JobProfiles.waitFileIsImported(`copy${marcFile.fileName}`);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(`${marcFile.fileName}_copy`);
+        Logs.openFileDetails(`copy${marcFile.fileName}`);
         Logs.getCreatedItemsID().then((link) => {
           createdInstanceIDs.push(link.split('/')[5]);
         });

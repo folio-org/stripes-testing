@@ -8,10 +8,15 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Parallelization from '../../support/dictionary/parallelization';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../support/fragments/data_import/logs/logs';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('MARC Authority management', () => {
   const userData = {};
   let instanceID;
+  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+  const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
 
   before('Creating user', () => {
     cy.createTempUser([
@@ -24,7 +29,18 @@ describe('MARC Authority management', () => {
       userData.password = createdUserProperties.password;
 
       cy.loginAsAdmin();
-      DataImport.uploadMarcBib();
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.verifyUploadState();
+      DataImport.uploadFileAndRetry('oneMarcBib.mrc', fileName);
+      JobProfiles.waitLoadingList();
+      JobProfiles.search(jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileName);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(fileName);
+      Logs.getCreatedItemsID(0).then((link) => {
+        instanceID = link.split('/')[5];
+      });
     });
   });
 
@@ -42,7 +58,7 @@ describe('MARC Authority management', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstances.searchBySource('MARC');
+      InventoryInstance.searchByTitle(instanceID);
       InventoryInstances.selectInstance();
       InventoryInstance.getId().then((id) => {
         instanceID = id;

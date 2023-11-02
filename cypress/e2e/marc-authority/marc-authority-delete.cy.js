@@ -78,6 +78,7 @@ describe('MARC Authority Delete', () => {
       DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.switchToBrowse();
+      cy.wait(2000);
       MarcAuthorityBrowse.searchBy(testData.searchOption, testData.record);
       MarcAuthorities.selectItem(testData.record);
       MarcAuthority.waitLoading();
