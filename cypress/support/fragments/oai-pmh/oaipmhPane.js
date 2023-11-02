@@ -1,25 +1,49 @@
-import { NavListItem, Pane } from '../../../../interactors';
+import { NavListItem, Pane, Section } from '../../../../interactors';
+import Behavior from './behavior';
 
+const navPaneSection = Section({ id: 'app-settings-nav-pane' });
 const oaipmhPane = Pane('OAI-PMH');
-const generalListItem = NavListItem('General');
-const technicalListItem = NavListItem('Technical');
-const behaviorListItem = NavListItem('Behavior');
+
+export const SECTIONS = {
+  GENERAL: 'General',
+  TECHNICAL: 'Technical',
+  BEHAVIOR: 'Behavior',
+  LOGS: 'Logs',
+};
+
+const oaiPmhSections = {
+  [SECTIONS.GENERAL]: {},
+  [SECTIONS.TECHNICAL]: {},
+  [SECTIONS.BEHAVIOR]: Behavior,
+  [SECTIONS.LOGS]: {},
+};
 
 export default {
   waitLoading() {
     cy.expect(oaipmhPane.exists());
   },
-
-  verifyPaneElements() {
-    cy.expect([
-      oaipmhPane.exists(),
-      oaipmhPane.find(generalListItem).exists(),
-      oaipmhPane.find(technicalListItem).exists(),
-      oaipmhPane.find(behaviorListItem).exists(),
-    ]);
+  checkPageTitle(title) {
+    cy.title().should('eq', title);
   },
+  checkSectionListItems({ canViewLogs = false } = {}) {
+    cy.expect(oaipmhPane.exists());
 
-  clickBehaviorItem() {
-    cy.do(behaviorListItem.click());
+    [
+      SECTIONS.GENERAL,
+      SECTIONS.TECHNICAL,
+      SECTIONS.BEHAVIOR,
+      ...(canViewLogs ? [SECTIONS.LOGS] : []),
+    ].forEach((section) => {
+      cy.expect(navPaneSection.find(NavListItem(section)).exists());
+    });
+  },
+  selectSection(section) {
+    cy.do(navPaneSection.find(NavListItem(section)).click());
+    cy.expect(Pane(section).exists());
+    // need to wait to prevent application error
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300);
+
+    return oaiPmhSections[section];
   },
 };

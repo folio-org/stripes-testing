@@ -834,6 +834,10 @@ export default {
     gui: 'Transfer exports: Transfer admin',
   },
   // OAI-PMH
+  oaipmhViewLogs: {
+    internal: 'ui-oai-pmh.logs',
+    gui: 'Settings (OAI-PMH): Can view logs',
+  },
   oaipmhSettingsEdit: {
     internal: 'ui-oai-pmh.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',
