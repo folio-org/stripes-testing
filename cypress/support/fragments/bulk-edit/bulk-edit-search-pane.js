@@ -385,6 +385,7 @@ export default {
       recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
       logsStartDateAccordion.has({ open: false }),
       logsEndDateAccordion.has({ open: false }),
+      bulkEditPane.find(HTML('Bulk edit logs')).exists(),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
     ]);
@@ -896,5 +897,14 @@ export default {
 
   verifyBuildQueryModal() {
     cy.expect(buildQueryModal.exists());
+  },
+
+  verifyRecordTypesAccordionExtendedEmpty() {
+    cy.expect([
+      recordTypesAccordion.has({ open: true }),
+      usersRadio.absent(),
+      itemsRadio.absent(),
+      holdingsRadio.absent(),
+    ]);
   },
 };
