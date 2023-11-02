@@ -49,8 +49,4 @@ export default {
 
     return oaiPmhSections[section];
   },
-  goToTenantTab() {
-    cy.do(NavListItem('Tenant').click());
-    cy.expect(Pane('Tenant').exists());
-  },
 };
