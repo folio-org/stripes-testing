@@ -2,7 +2,11 @@ import uuid from 'uuid';
 
 import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
-import { MATERIAL_TYPE_NAMES, LOAN_TYPE_NAMES } from '../../../../support/constants';
+import {
+  MATERIAL_TYPE_NAMES,
+  LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+} from '../../../../support/constants';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -10,7 +14,7 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     const testData = {
       barcode: uuid(),
@@ -76,9 +80,10 @@ describe('Inventory', () => {
           loanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         });
         ItemRecordEdit.saveAndClose({ itemSaved: true });
+        InventoryInstance.openHoldingsAccordion(`${testData.location.name} >`);
         InventoryInstance.checkHoldingsTableContent({
           name: testData.location.name,
-          records: [{ barcode: testData.barcode, status: 'Available' }],
+          records: [{ barcode: testData.barcode, status: ITEM_STATUS_NAMES.AVAILABLE }],
         });
       },
     );

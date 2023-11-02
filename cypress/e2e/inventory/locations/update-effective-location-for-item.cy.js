@@ -12,7 +12,7 @@ import Helper from '../../../support/fragments/finance/financeHelper';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
-  describe('Cataloging', () => {
+  describe('Cataloging -> Maintaining the catalog', () => {
     const itemData = {
       instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
       itemBarcode: GenerateItemBarcode(),

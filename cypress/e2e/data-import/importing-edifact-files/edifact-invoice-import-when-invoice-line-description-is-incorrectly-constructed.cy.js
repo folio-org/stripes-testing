@@ -110,6 +110,7 @@ describe('data-import', () => {
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(fileName);
+        cy.wait(2000);
         FileDetails.verifyEachInvoiceStatusInColunm('Created');
         FileDetails.verifyEachInvoiceTitleInColunm();
         FileDetails.clickNextPaginationButton();

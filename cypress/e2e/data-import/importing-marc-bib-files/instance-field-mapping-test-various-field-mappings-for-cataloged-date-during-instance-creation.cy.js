@@ -23,10 +23,10 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
-    const firstMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
-    const secondMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
-    const thirdMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
-    const forthMarcFileName = `C11089 autotestFile_${getRandomPostfix()}.mrc`;
+    const firstMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
+    const secondMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
+    const thirdMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
+    const forthMarcFileName = `C11089 autotestFile${getRandomPostfix()}.mrc`;
 
     const filePathToUpload = 'marcBibFileForC11089.mrc';
     const instanceHrids = [];

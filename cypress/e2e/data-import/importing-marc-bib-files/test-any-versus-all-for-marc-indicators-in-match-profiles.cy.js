@@ -35,9 +35,9 @@ describe('data-import', () => {
     const itemBarcode = uuid();
     const quantityOfItems = '1';
     const filePathToUpload = 'marcFileForC17036.mrc';
-    const editedMarcFileName = `C17036 autotestFile.${getRandomPostfix()}.mrc`;
-    const marcFileNameForFirstUpdate = `C17036 autotestFile.${getRandomPostfix()}.mrc`;
-    const marcFileNameForSecondUpdate = `C17036 autotestFile.${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17036 autotestFile${getRandomPostfix()}.mrc`;
+    const marcFileNameForFirstUpdate = `C17036 autotestFile${getRandomPostfix()}.mrc`;
+    const marcFileNameForSecondUpdate = `C17036 autotestFile${getRandomPostfix()}.mrc`;
     // profiles for create
     const collectionOfMappingAndActionProfilesForCreate = [
       {

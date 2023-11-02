@@ -4,6 +4,7 @@ import {
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   LOAN_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
 } from '../../../../support/constants';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
@@ -24,7 +25,7 @@ describe('inventory', () => {
       barcode: uuid(),
       materialType: MATERIAL_TYPE_NAMES.BOOK,
       permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-      itemStatus: 'Available',
+      itemStatus: ITEM_STATUS_NAMES.AVAILABLE,
     };
 
     before('create test data and login', () => {

@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
@@ -57,7 +57,7 @@ describe('data-import', () => {
 
     it(
       'C347615 Import a large EDIFACT invoice file (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -81,11 +81,9 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC347615.edi', fileName);
-        DataImport.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        cy.wait(5000);
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();

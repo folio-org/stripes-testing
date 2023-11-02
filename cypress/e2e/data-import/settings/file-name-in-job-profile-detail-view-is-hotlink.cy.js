@@ -13,7 +13,7 @@ describe('data-import', () => {
     let user;
     const filePathToUpload = 'oneMarcBib.mrc';
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const fileNameToUpload = `C380637autotestFile.${getRandomPostfix()}.mrc`;
+    const fileNameToUpload = `C380637autotestFile${getRandomPostfix()}.mrc`;
 
     before('create test data', () => {
       cy.loginAsAdmin({

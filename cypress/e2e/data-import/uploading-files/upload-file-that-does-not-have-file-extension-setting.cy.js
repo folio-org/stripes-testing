@@ -28,9 +28,9 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         const filePathWithNotExistingFileExtension = 'file.txt';
-        const fileNameWithNotExistingFileExtension = `C2356 autotestFile.${getRandomPostfix()}.txt`;
+        const fileNameWithNotExistingFileExtension = `C2356 autotestFile${getRandomPostfix()}.txt`;
         const filePathWithBlockedFileExtension = 'fileForC2356.mrk';
-        const fileNameWithBlockedFileExtension = `C2356 autotestFile.${getRandomPostfix()}.mrk`;
+        const fileNameWithBlockedFileExtension = `C2356 autotestFile${getRandomPostfix()}.mrk`;
 
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691

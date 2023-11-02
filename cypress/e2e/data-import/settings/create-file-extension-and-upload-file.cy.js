@@ -31,7 +31,7 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         const filePath = 'file.txt';
-        const fileName = `C2328 autotestFile.${getRandomPostfix()}.txt`;
+        const fileName = `C2328 autotestFile${getRandomPostfix()}.txt`;
         const testData = {
           fileExtension: '.txt',
           importStatus: 'Block import',
