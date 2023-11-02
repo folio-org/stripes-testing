@@ -2,21 +2,38 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 import NewMaterialType from '../settings/inventory/newMaterialType';
 
-const getDefaultOrderLine = (
-  quantity,
-  title,
-  spesialLocationId,
+export const RECEIVING_WORKFLOWS = {
+  SYNCHRONIZED: 'Synchronized order and receipt quantity',
+  INDEPENDENT: 'Independent order and receipt quantity',
+};
+export const CHECKIN_ITEMS_VALUE = {
+  [RECEIVING_WORKFLOWS.SYNCHRONIZED]: false,
+  [RECEIVING_WORKFLOWS.INDEPENDENT]: true,
+};
+
+const getDefaultOrderLine = ({
+  quantity = 1,
+  title = `autotest_po_line_name-${getRandomPostfix()}`,
+  instanceId,
+  checkinItems = false,
+  purchaseOrderId,
+  specialLocationId,
   specialMaterialTypeId,
   acquisitionMethod = '',
-  listUnitPrice = '1.0',
-  poLineEstimatedPrice = '1.0',
+  automaticExport = false,
+  listUnitPrice = 1,
+  poLineEstimatedPrice,
+  fundDistribution = [],
   productIds = [],
-  referenceNumbers = []
-) => {
+  referenceNumbers = [],
+  vendorAccount = '1234',
+} = {}) => {
   const defaultOrderLine = {
     id: uuid(),
-    checkinItems: false,
+    checkinItems,
+    instanceId,
     acquisitionMethod,
+    automaticExport,
     alerts: [],
     claims: [],
     contributors: [],
@@ -25,51 +42,57 @@ const getDefaultOrderLine = (
       currency: 'USD',
       discountType: 'percentage',
       quantityPhysical: quantity,
-      poLineEstimatedPrice
+      poLineEstimatedPrice,
     },
     details: {
       productIds,
-      subscriptionInterval: 0
+      subscriptionInterval: 0,
     },
-    fundDistribution: [],
+    fundDistribution,
     isPackage: false,
-    locations: [
-      {
-        locationId: spesialLocationId,
-        quantity,
-        quantityPhysical: quantity
-      }
-    ],
-    orderFormat: 'Physical Resource',
+    locations: specialLocationId
+      ? [
+        {
+          locationId: specialLocationId,
+          quantity,
+          quantityPhysical: quantity,
+        },
+      ]
+      : [],
+    orderFormat: specialLocationId ? 'Physical Resource' : 'Other',
     paymentStatus: 'Pending',
-    physical: {
-      createInventory: 'Instance, Holding, Item',
-      materialType: specialMaterialTypeId,
-      materialSupplier: null,
-      volumes: []
-    },
+    physical: specialLocationId
+      ? {
+        createInventory: 'Instance, Holding, Item',
+        materialType: specialMaterialTypeId,
+        materialSupplier: null,
+        volumes: [],
+      }
+      : {
+        createInventory: 'None',
+        materialSupplier: 'c2b9b8a0-3d87-42d4-aa26-03fd90b22ebd',
+      },
     eresource: {
       activated: false,
       createInventory: 'None',
       trial: false,
-      accessProvider: null
+      accessProvider: null,
     },
-    purchaseOrderId: '',
+    purchaseOrderId,
     receiptStatus: 'Pending',
     reportingCodes: [],
     source: 'User',
     titleOrPackage: title,
     vendorDetail: {
       instructions: '',
-      vendorAccount: '1234',
-      referenceNumbers
-    }
+      vendorAccount,
+      referenceNumbers,
+    },
   };
-  if (!defaultOrderLine.physical.materialType) {
-    NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType())
-      .then(mtypes => {
-        defaultOrderLine.physical.materialType = mtypes.body.id;
-      });
+  if (specialLocationId && !specialMaterialTypeId) {
+    NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType()).then((mtypes) => {
+      defaultOrderLine.physical.materialType = mtypes.body.id;
+    });
   }
   return defaultOrderLine;
 };
@@ -89,11 +112,11 @@ export default {
       currency: 'USD',
       discountType: 'percentage',
       quantityPhysical: 2,
-      poLineEstimatedPrice: 1.0
+      poLineEstimatedPrice: 1.0,
     },
     details: {
       productIds: [],
-      subscriptionInterval: 0
+      subscriptionInterval: 0,
     },
     fundDistribution: [],
     isPackage: false,
@@ -101,8 +124,8 @@ export default {
       {
         locationId: '',
         quantity: 2,
-        quantityPhysical: 2
-      }
+        quantityPhysical: 2,
+      },
     ],
     orderFormat: 'Physical Resource',
     paymentStatus: 'Pending',
@@ -110,13 +133,13 @@ export default {
       createInventory: 'Instance, Holding, Item',
       materialType: '',
       materialSupplier: '',
-      volumes: []
+      volumes: [],
     },
     eresource: {
       activated: false,
       createInventory: 'None',
       trial: false,
-      accessProvider: ''
+      accessProvider: '',
     },
     purchaseOrderId: '',
     receiptStatus: 'Pending',
@@ -125,7 +148,7 @@ export default {
     titleOrPackage: `autotest_title_${getRandomPostfix()}`,
     vendorDetail: {
       instructions: '',
-      vendorAccount: '1234'
-    }
+      vendorAccount: '1234',
+    },
   },
 };

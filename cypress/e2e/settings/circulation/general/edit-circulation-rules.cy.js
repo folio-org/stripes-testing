@@ -1,5 +1,4 @@
-import devTeams from '../../../../support/dictionary/devTeams';
-import TestType from '../../../../support/dictionary/testTypes';
+import { TestTypes, DevTeams, Parallelization, Permissions } from '../../../../support/dictionary';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
 import OverdueFinePolicy, {
@@ -16,48 +15,49 @@ import LoanPolicy, {
 } from '../../../../support/fragments/circulation/loan-policy';
 import NoticePolicy, {
   defaultNoticePolicy,
-} from '../../../../support/fragments/circulation/notice-policy';
+} from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
-import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
-import NewMaterialType, {
-  defaultMaterialType,
-} from '../../../../support/fragments/settings/inventory/newMaterialType';
+import NewMaterialType from '../../../../support/fragments/settings/inventory/newMaterialType';
+import {
+  LOAN_POLICY_NAMES,
+  OVERDUE_FINE_POLICY_NAMES,
+  LOST_ITEM_FEES_POLICY_NAMES,
+  NOTICE_POLICY_NAMES,
+  REQUEST_POLICY_NAMES,
+} from '../../../../support/constants';
 
 describe('ui-circulation-settings: Edit circulation rules', () => {
-  let originalCirculationRules;
+  const defaultMaterialType = NewMaterialType.getDefaultMaterialType();
+
+  let addedCirculationRule;
   let newUserId;
 
+  before(() => {
+    cy.createTempUser([Permissions.uiCirculationViewCreateEditDelete.gui]).then(
+      ({ username, password, userId }) => {
+        newUserId = userId;
+
+        cy.getAdminToken();
+
+        NewMaterialType.createViaApi(defaultMaterialType);
+        NoticePolicy.createApi();
+        LoanPolicy.createLoanableNotRenewableLoanPolicyApi(defaultLoanPolicy);
+        RequestPolicy.createViaApi(defaultRequestPolicy);
+        LostItemFeePolicy.createViaApi();
+        OverdueFinePolicy.createViaApi();
+
+        cy.login(username, password);
+      },
+    );
+  });
+
   beforeEach(() => {
-    cy.createTempUser([
-      permissions.uiCirculationViewCreateEditDelete.gui,
-    ]).then(({
-      username,
-      password,
-      userId,
-    }) => {
-      newUserId = userId;
-
-      cy.getAdminToken();
-
-      CirculationRules.getViaApi().then((circulationRules) => {
-        originalCirculationRules = circulationRules;
-      });
-      NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
-      NoticePolicy.createApi();
-      LoanPolicy.createLoanableNotRenewableLoanPolicyApi(defaultLoanPolicy);
-      RequestPolicy.createViaApi(defaultRequestPolicy);
-      LostItemFeePolicy.createViaApi();
-      OverdueFinePolicy.createViaApi();
-
-      cy.login(username, password);
-    });
-
     cy.visit(SettingsMenu.circulationRulesPath);
   });
 
-  afterEach(() => {
-    CirculationRules.updateViaApi(originalCirculationRules);
+  after(() => {
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     MaterialTypes.deleteApi(defaultMaterialType.id);
     NoticePolicy.deleteViaApi(defaultNoticePolicy.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);
@@ -67,31 +67,141 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     Users.deleteViaApi(newUserId);
   });
 
-  it('C2268: Add notice policy to circulation rules (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
-    CirculationRules.clearCirculationRules();
-    CirculationRules.fillInPriority();
+  it(
+    'C650: Test adding fallback policies (loan, request, notice, overdue, lost item) (vega) (TaaS)',
+    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    () => {
+      // Delete Circulation Rules
+      CirculationRules.clearCirculationRules();
+      // Fill in priority
+      CirculationRules.fillInPriority();
 
-    CirculationRules.fillInFallbackPolicy({
-      loanPolicyName: defaultLoanPolicy.name,
-      overdueFinePolicyName: defaultOverdueFinePolicy.name,
-      lostItemFeePolicyName: defaultLostItemFeePolicy.name,
-      requestPolicyName: defaultRequestPolicy.name,
-      noticePolicyName: defaultNoticePolicy.name,
-    });
+      // Enter fallback-policy:
+      CirculationRules.fillInCirculationRules('fallback-policy: ');
+      CirculationRules.moveCursorFocusToTheEnd();
 
-    CirculationRules.fillInPolicy({
-      priorityType: 'm ',
-      priorityTypeName: defaultMaterialType.name,
-      loanPolicyName: defaultLoanPolicy.name,
-      overdueFinePolicyName: defaultOverdueFinePolicy.name,
-      lostItemFeePolicyName: defaultLostItemFeePolicy.name,
-      requestPolicyName: defaultRequestPolicy.name,
-      noticePolicyName: defaultNoticePolicy.name,
-    });
+      // A dropdown list of policy types is displayed
+      // Choose Lost item fee policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Lost item fee policies');
+      CirculationRules.clickCirculationRulesHintItem(
+        LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
+      );
 
-    CirculationRules.saveCirculationRules();
+      // Choose Loan policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Loan policies');
+      CirculationRules.clickCirculationRulesHintItem(LOAN_POLICY_NAMES.EXAMPLE_LOAN);
 
-    CirculationRules.checkUpdateCirculationRulesCalloutAppeared();
-    CirculationRules.checkNoticePolicyAddedToCirculationRules(defaultNoticePolicy.id);
-  });
+      // Choose Overdue fine policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Overdue fine policies');
+      CirculationRules.clickCirculationRulesHintItem(OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY);
+
+      // Choose Request policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Request policies');
+      CirculationRules.clickCirculationRulesHintItem(REQUEST_POLICY_NAMES.ALLOW_ALL);
+
+      // Choose Patron notice policies and choose a value for that policy
+      CirculationRules.clickCirculationRulesHintItemForPolicyType('Patron notice policies');
+      CirculationRules.clickCirculationRulesHintItem(NOTICE_POLICY_NAMES.SEND_NO_NOTICES);
+
+      // Navigate away without saving
+      cy.visit(SettingsMenu.circulationRulesPath);
+    },
+  );
+
+  it(
+    'C2268: Add notice policy to circulation rules (vega)',
+    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
+    () => {
+      CirculationRules.clearCirculationRules();
+      CirculationRules.fillInPriority();
+
+      CirculationRules.fillInFallbackPolicy({
+        loanPolicyName: LOAN_POLICY_NAMES.EXAMPLE_LOAN,
+        overdueFinePolicyName: OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY,
+        lostItemFeePolicyName: LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
+        requestPolicyName: REQUEST_POLICY_NAMES.ALLOW_ALL,
+        noticePolicyName: NOTICE_POLICY_NAMES.SEND_NO_NOTICES,
+      });
+
+      CirculationRules.fillInPolicy({
+        priorityType: 'm ',
+        priorityTypeName: defaultMaterialType.name,
+        lostItemFeePolicyName: defaultLostItemFeePolicy.name,
+        loanPolicyName: defaultLoanPolicy.name,
+        requestPolicyName: defaultRequestPolicy.name,
+        overdueFinePolicyName: defaultOverdueFinePolicy.name,
+        noticePolicyName: defaultNoticePolicy.name,
+      });
+      addedCirculationRule =
+        'm ' +
+        defaultMaterialType.id +
+        ' : l ' +
+        defaultLoanPolicy.id +
+        ' o ' +
+        defaultOverdueFinePolicy.id +
+        ' i ' +
+        defaultLostItemFeePolicy.id +
+        ' r ' +
+        defaultRequestPolicy.id +
+        ' n ' +
+        defaultNoticePolicy.id;
+
+      CirculationRules.saveCirculationRules();
+
+      CirculationRules.checkUpdateCirculationRulesCalloutAppeared();
+      CirculationRules.checkNoticePolicyAddedToCirculationRules(defaultNoticePolicy.id);
+    },
+  );
+
+  it(
+    'C654: Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error)',
+    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
+    () => {
+      CirculationRules.clearCirculationRules();
+      CirculationRules.fillInPriority();
+
+      CirculationRules.fillInFallbackPolicy({
+        loanPolicyName: LOAN_POLICY_NAMES.EXAMPLE_LOAN,
+        overdueFinePolicyName: OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY,
+        lostItemFeePolicyName: LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
+        requestPolicyName: REQUEST_POLICY_NAMES.ALLOW_ALL,
+        noticePolicyName: NOTICE_POLICY_NAMES.SEND_NO_NOTICES,
+      });
+
+      CirculationRules.fillInPolicy({
+        priorityType: 'm ',
+        priorityTypeName: defaultMaterialType.name,
+        lostItemFeePolicyName: defaultLostItemFeePolicy.name,
+        loanPolicyName: defaultLoanPolicy.name,
+        requestPolicyName: defaultRequestPolicy.name,
+        overdueFinePolicyName: defaultOverdueFinePolicy.name,
+      });
+
+      CirculationRules.saveCirculationRules();
+      CirculationRules.verifyErrorMessageMissingNType();
+    },
+  );
+
+  it(
+    'C656: Ensure interface alerts user of syntax errors in rules',
+    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
+    () => {
+      CirculationRules.clearCirculationRules();
+      CirculationRules.fillInPriority();
+
+      CirculationRules.fillInFallbackPolicy({
+        loanPolicyName: LOAN_POLICY_NAMES.EXAMPLE_LOAN,
+        overdueFinePolicyName: OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY,
+        lostItemFeePolicyName: LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
+        requestPolicyName: REQUEST_POLICY_NAMES.ALLOW_ALL,
+        noticePolicyName: NOTICE_POLICY_NAMES.SEND_NO_NOTICES,
+      });
+
+      CirculationRules.fillInCirculationRules('wrong rules');
+      CirculationRules.moveCursorFocusToTheEnd();
+
+      CirculationRules.saveCirculationRules();
+      CirculationRules.verifyErrorMessageWrongInput();
+    },
+  );
 });

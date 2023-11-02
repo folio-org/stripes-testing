@@ -1,6 +1,7 @@
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import { MultiColumnListHeader } from '../../../interactors';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -10,50 +11,43 @@ describe('ui-requests: Sort requests', () => {
   const userIds = [];
   const requests = [];
   const instances = [];
-  let oldRulesText;
-  let requestPolicyId;
+  const requestTypes = { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' };
 
   beforeEach(() => {
-    cy.loginAsAdmin();
-    cy.getAdminToken();
-
-    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-      oldRulesText = oldRulesAsText;
-      requestPolicyId = policy.id;
-    });
-
-    Object.values(Requests.requestTypes).forEach((requestType) => {
-      const itemStatus = requestType === 'Page' ? 'Available' : 'Checked out';
-      Requests.createRequestApi(itemStatus, requestType).then(({
-        instanceRecordData,
-        createdRequest,
-        createdUser
-      }) => {
-        userIds.push(createdUser.id);
-        instances.push(instanceRecordData);
-        requests.push(createdRequest);
+    cy.getAdminToken().then(() => {
+      Object.values(requestTypes).forEach((requestType) => {
+        const itemStatus =
+          requestType === REQUEST_TYPES.PAGE
+            ? ITEM_STATUS_NAMES.AVAILABLE
+            : ITEM_STATUS_NAMES.CHECKED_OUT;
+        Requests.createRequestApi(itemStatus, requestType).then(
+          ({ instanceRecordData, createdRequest, createdUser }) => {
+            userIds.push(createdUser.id);
+            instances.push(instanceRecordData);
+            requests.push(createdRequest);
+          },
+        );
       });
     });
+    cy.loginAsAdmin();
   });
 
   afterEach(() => {
-    instances.forEach(instance => {
+    instances.forEach((instance) => {
       cy.deleteItemViaApi(instance.itemId);
       cy.deleteHoldingRecordViaApi(instance.holdingId);
       InventoryInstance.deleteInstanceViaApi(instance.instanceId);
     });
-    requests.forEach(request => {
+    requests.forEach((request) => {
       Requests.deleteRequestViaApi(request.id);
     });
-    userIds.forEach(id => {
+    userIds.forEach((id) => {
       Users.deleteViaApi(id);
     });
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   // Test is failed. This is a known issue.
-  it('C2379 Test Request app sorting (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C2379 Test Request app sorting (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');
@@ -69,14 +63,20 @@ describe('ui-requests: Sort requests', () => {
     Requests.waitLoadingRequests();
     Requests.validateRequestsDateSortingOrder('descending');
 
-    Requests.sortingColumns.forEach(column => {
+    Requests.sortingColumns.forEach((column) => {
       // Validate sort
       cy.do(MultiColumnListHeader(column.title).click());
-      Requests.validateRequestsSortingOrder({ headerId: column.id, columnIndex: column.columnIndex });
+      Requests.validateRequestsSortingOrder({
+        headerId: column.id,
+        columnIndex: column.columnIndex,
+      });
 
       // Validate reverse sorting
       cy.do(MultiColumnListHeader(column.title).click());
-      Requests.validateRequestsSortingOrder({ headerId: column.id, columnIndex: column.columnIndex });
+      Requests.validateRequestsSortingOrder({
+        headerId: column.id,
+        columnIndex: column.columnIndex,
+      });
     });
   });
 });

@@ -20,30 +20,26 @@ describe('Inventory -> Contributors Browse', () => {
       instanceZ.instanceTypeId = res[0].id;
     });
 
-    BrowseContributors.getContributorNameTypes().then((res) => {
-      instanceA.contributors[0].contributorNameTypeId = res.body.contributorNameTypes[0].id;
-      instanceA.contributors[0].contributorNameType = res.body.contributorNameTypes[0].name;
-      instanceA.contributors[0].contributorTypeText = res.body.contributorNameTypes[0].name;
-      instanceZ.contributors[0].contributorNameTypeId = res.body.contributorNameTypes[0].id;
-      instanceZ.contributors[0].contributorNameType = res.body.contributorNameTypes[0].name;
-      instanceZ.contributors[0].contributorTypeText = res.body.contributorNameTypes[0].name;
+    BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
+      instanceA.contributors[0].contributorNameTypeId = contributorNameTypes[0].id;
+      instanceA.contributors[0].contributorNameType = contributorNameTypes[0].name;
+      instanceA.contributors[0].contributorTypeText = contributorNameTypes[0].name;
+      instanceZ.contributors[0].contributorNameTypeId = contributorNameTypes[0].id;
+      instanceZ.contributors[0].contributorNameType = contributorNameTypes[0].name;
+      instanceZ.contributors[0].contributorTypeText = contributorNameTypes[0].name;
     });
 
     BrowseContributors.createInstanceWithContributorViaApi(instanceA);
     BrowseContributors.createInstanceWithContributorViaApi(instanceZ);
 
-    cy.getInstanceById(instanceA.id)
-      .then((res) => {
-        testData.instanceAProps = res;
-      });
-    cy.getInstanceById(instanceZ.id)
-      .then((res) => {
-        testData.instanceZProps = res;
-      });
+    cy.getInstanceById(instanceA.id).then((res) => {
+      testData.instanceAProps = res;
+    });
+    cy.getInstanceById(instanceZ.id).then((res) => {
+      testData.instanceZProps = res;
+    });
 
-    cy.createTempUser([
-      permissions.uiInventoryViewInstances.gui,
-    ]).then((resUserProperties) => {
+    cy.createTempUser([permissions.uiInventoryViewInstances.gui]).then((resUserProperties) => {
       testData.user = resUserProperties;
       cy.login(resUserProperties.username, resUserProperties.password);
       cy.visit(TopMenu.inventoryPath);
@@ -56,16 +52,23 @@ describe('Inventory -> Contributors Browse', () => {
     InventoryInstance.deleteInstanceViaApi(instanceZ.id);
   });
 
-  it('C353639 Browse contributors with exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
-    BrowseContributors.clickBrowseBtn();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
-    BrowseContributors.checkBrowseOptions();
-    BrowseContributors.select();
-    BrowseContributors.checkSearch();
-    BrowseContributors.browse(instanceA.contributors[0].name);
-    BrowseContributors.checkSearchResultsTable();
-    BrowseContributors.checkExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
-    BrowseContributors.openInstance(instanceA.contributors[0]);
-    BrowseContributors.checkInstance(instanceA);
-  });
+  it(
+    'C353639 Browse contributors with exact match query (spitfire)',
+    { tags: [testType.smoke, devTeams.spitfire] },
+    () => {
+      BrowseContributors.clickBrowseBtn();
+      InventorySearchAndFilter.verifyKeywordsAsDefault();
+      InventorySearchAndFilter.verifyBrowseOptions();
+      BrowseContributors.select();
+      BrowseContributors.checkSearch();
+      BrowseContributors.browse(instanceA.contributors[0].name);
+      BrowseContributors.checkSearchResultsTable();
+      BrowseContributors.checkExactSearchResult(
+        instanceA.contributors[0],
+        instanceZ.contributors[0],
+      );
+      BrowseContributors.openInstance(instanceA.contributors[0]);
+      BrowseContributors.checkInstance(instanceA);
+    },
+  );
 });

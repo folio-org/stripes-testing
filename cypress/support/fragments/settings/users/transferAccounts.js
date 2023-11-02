@@ -7,19 +7,15 @@ export default {
     // required field
     id,
   }),
-  createViaApi: (transferAccount) => (
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'transfers',
-      body: transferAccount,
-      isDefaultSearchParamsRequired: false,
-    })
-  ),
-  deleteViaApi:  (id) => (
-    cy.okapiRequest({
-      method: 'DELETE',
-      path: `transfers/${id}`,
-      isDefaultSearchParamsRequired: false,
-    })
-  ),
+  createViaApi: (transferAccount) => cy.okapiRequest({
+    method: 'POST',
+    path: 'transfers',
+    body: transferAccount,
+    isDefaultSearchParamsRequired: false,
+  }),
+  deleteViaApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `transfers/${id}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 };

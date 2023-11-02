@@ -23,14 +23,14 @@ import NewJobProfile from './job_profiles/newJobProfile';
 import InventoryViewSource from '../inventory/inventoryViewSource';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
+import { ITEM_STATUS_NAMES, ORDER_FORMAT_NAMES_IN_PROFILE } from '../../constants';
 
-const itemBarcode = 'xyzt124245271818912626262';
 const poLineData = {
   title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
   productId: `xyz${getRandomPostfix()}`,
   productIdType: 'ISSN',
   acquisitionMethod: 'Purchase at vendor system',
-  orderFormat: 'Physical resource',
+  orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
   vrn: '14567-1',
   vrnType: 'Vendor order reference number',
   physicalUnitPrice: '20',
@@ -108,12 +108,10 @@ const viewHoldingsButton = Button('View holdings');
 const holdingsTypeKeyValue = KeyValue('Holdings type');
 const callNumberTypeKeyValue = KeyValue('Call number type');
 const permanentLocationKeyValue = KeyValue('Permanent');
-const holdingsAccordionButton = Button(including('Holdings: Main Library'));
 const itemStatusKeyValue = KeyValue('Item status');
 const itemBarcodeKeyValue = KeyValue('Item barcode');
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const viewSourceButton = Button('View source');
-const itemBarcodeLink = Link(itemBarcode);
 const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
 
 function verifyCreatedOrder(order) {
@@ -153,7 +151,7 @@ function openOrder() {
   cy.do([
     orderDetailsPane.find(actionButton).click(),
     openOrderButton.click(),
-    openOrderModal.find(submitButton).click()
+    openOrderModal.find(submitButton).click(),
   ]);
 }
 
@@ -162,24 +160,22 @@ function verifyOrderStatus() {
 }
 
 function openMappingProfileForm() {
-  cy.do([
-    actionButton.click(),
-    newMappingProfileButton.click(),
-  ]);
+  cy.do([actionButton.click(), newMappingProfileButton.click()]);
 }
 
 function saveProfile() {
   cy.do(saveProfileButton.click());
 }
 
-const closeViewModeForMappingProfile = (profileName) => {
+const closeViewMode = (profileName) => {
   cy.do(Pane({ title: profileName }).find(closeButton).click());
 };
 
 function creatMappingProfilesForInstance(name) {
   cy.intercept('GET', '/instance-statuses?*').as('getInstanceStatuses');
   openMappingProfileForm();
-  return cy.do(folioRecordTypeSelect.choose('Instance'))
+  return cy
+    .do(folioRecordTypeSelect.choose('Instance'))
     .then(() => {
       cy.wait('@getInstanceStatuses');
       // needs some waiting until selection lists are populated
@@ -193,7 +189,7 @@ function creatMappingProfilesForInstance(name) {
         instanceStatusTermField.fillIn('"Batch Loaded"'),
       ]);
       saveProfile();
-      closeViewModeForMappingProfile(name);
+      closeViewMode(name);
     });
 }
 
@@ -201,7 +197,8 @@ function creatMappingProfilesForHoldings(name) {
   cy.intercept('GET', '/holdings-types?*').as('getHoldingsTypes');
   cy.intercept('GET', '/call-number-types?*').as('getCallNumberTypes');
   openMappingProfileForm();
-  return cy.do(folioRecordTypeSelect.choose('Holdings'))
+  return cy
+    .do(folioRecordTypeSelect.choose('Holdings'))
     .then(() => {
       cy.wait(['@getHoldingsTypes', '@getCallNumberTypes']);
       // needs some waiting until selection lists are populated
@@ -217,7 +214,7 @@ function creatMappingProfilesForHoldings(name) {
         callNumberTypeField.fillIn('"Library of Congress classification"'),
       ]);
       saveProfile();
-      closeViewModeForMappingProfile(name);
+      closeViewMode(name);
     });
 }
 
@@ -234,7 +231,7 @@ function creatMappingProfilesForItem(name) {
   // needs some waiting until selection lists are populated
   cy.wait(500);
   saveProfile();
-  closeViewModeForMappingProfile(name);
+  closeViewMode(name);
 }
 
 function closeDetailView() {
@@ -247,7 +244,9 @@ function createActionProfileForVRN(name, recordType, mappingProfile, action) {
     actionProfilesPaneHeader.find(actionButton).click(),
     newActionProfileButton.click(),
     nameField.fillIn(name),
-    actionSelect.choose(action || 'Update (all record types except Orders, Invoices, or MARC Holdings)'),
+    actionSelect.choose(
+      action || 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+    ),
     folioRecordTypeSelect.choose(recordType),
     linkProfileButton.click(),
     selectMappingProfilesModal.find(queryField).fillIn(mappingProfile),
@@ -266,10 +265,7 @@ function waitJSONSchemasLoad() {
     'GET',
     '/_/jsonSchemas?path=acq-models/mod-orders-storage/schemas/vendor_detail.json',
   ).as('getVendorDetailJson');
-  cy.intercept(
-    'GET',
-    '/_/jsonSchemas?path=raml-util/schemas/metadata.schema',
-  ).as('metadata');
+  cy.intercept('GET', '/_/jsonSchemas?path=raml-util/schemas/metadata.schema').as('metadata');
   cy.wait(['@getVendorDetailJson', '@metadata'], getLongDelay());
   // needs some waiting until existing record list is populated
   cy.wait(1500);
@@ -281,7 +277,7 @@ function createMatchProfileForVRN({
   field = '024',
   in1 = '8',
   in2 = '*',
-  subfield = 'a'
+  subfield = 'a',
 }) {
   cy.do([
     matchProfilesPaneHeader.find(actionButton).click(),
@@ -325,18 +321,31 @@ function createJobProfileForVRN({ name, dataType, matches }) {
 }
 
 function clickOnUpdatedHotlink(columnIndex = 3, row = 0) {
-  cy.do(searchResultsList.find(MultiColumnListCell({
-    row,
-    columnIndex,
-  })).find(Link('Updated')).click());
+  cy.do(
+    searchResultsList
+      .find(
+        MultiColumnListCell({
+          row,
+          columnIndex,
+        }),
+      )
+      .find(Link('Updated'))
+      .click(),
+  );
 }
 
 function verifyInstanceStatusNotUpdated() {
-  cy.do(searchResultsList.find(MultiColumnListCell({
-    row: 1,
-    columnIndex: 3,
-    content: not('Updated'),
-  })).exists());
+  cy.do(
+    searchResultsList
+      .find(
+        MultiColumnListCell({
+          row: 1,
+          columnIndex: 3,
+          content: not('Updated'),
+        }),
+      )
+      .exists(),
+  );
 }
 
 function verifyInstanceUpdated() {
@@ -353,23 +362,18 @@ function verifyHoldingsUpdated() {
   closeDetailView();
 }
 
-
-function verifyItemUpdated() {
-  cy.do([
-    holdingsAccordionButton.click(),
-    itemBarcodeLink.click(),
-  ]);
-  cy.expect(itemStatusKeyValue.has({ value: 'Available' }));
+function verifyItemUpdated(itemBarcode) {
+  cy.do(Link(itemBarcode).click());
+  cy.expect(itemStatusKeyValue.has({ value: ITEM_STATUS_NAMES.AVAILABLE }));
   cy.expect(itemBarcodeKeyValue.has({ value: itemBarcode }));
 
   closeDetailView();
 }
 
-function verifyMARCBibSource() {
-  cy.do([
-    instanceDetailsSection.find(actionButton).click(),
-    viewSourceButton.click(),
-  ]);
+function verifyMARCBibSource(itemBarcode) {
+  cy.do(instanceDetailsSection.find(actionButton).click());
+  cy.wait(2000);
+  cy.do(viewSourceButton.click());
   // verify table data in marc bibliographic source
   InventoryViewSource.contains('980\t');
   InventoryViewSource.contains('KU/CC/DI/M');
@@ -379,16 +383,17 @@ function verifyMARCBibSource() {
 }
 
 function deletePOLineViaAPI(title) {
-  return cy.okapiRequest({
-    method: 'GET',
-    path: 'orders/order-lines',
-    searchParams: {
-      query: `(((titleOrPackage=="*${title}*"))) sortby metadata.updatedDate/sort.descending`,
-      limit: 50,
-      offset: 0,
-    },
-    isDefaultSearchParamsRequired: false,
-  })
+  return cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'orders/order-lines',
+      searchParams: {
+        query: `(((titleOrPackage=="*${title}*"))) sortby metadata.updatedDate/sort.descending`,
+        limit: 50,
+        offset: 0,
+      },
+      isDefaultSearchParamsRequired: false,
+    })
     .then(({ body: { poLines } }) => {
       return cy.okapiRequest({
         method: 'DELETE',
@@ -398,25 +403,9 @@ function deletePOLineViaAPI(title) {
     });
 }
 
-function deleteItemViaAPI(barcode = itemBarcode) {
-  return cy.okapiRequest({
-    method: 'GET',
-    path: 'inventory/items',
-    searchParams: {
-      query: `barcode=="${barcode}"`,
-      limit: 1000,
-    },
-    isDefaultSearchParamsRequired: false,
-  })
-    .then(({ body: { items } }) => {
-      return cy.deleteItemViaApi(items[0].id);
-    });
-}
-
 export default {
   poLineData,
   deletePOLineViaAPI,
-  deleteItemViaAPI,
   verifyCreatedOrder,
   fillPOLineInfo,
   goBackToPO,

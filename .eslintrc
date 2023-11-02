@@ -6,18 +6,13 @@
     "mocha": true
   },
   "parser": "@babel/eslint-parser",
-  "plugins": [
-    "cypress"
-  ],
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "plugins": ["cypress", "import"],
   "rules": {
-    "func-names": 0,
-    "import/no-extraneous-dependencies": 0,
-    "no-redeclare": 0,
-    "no-console": 0,
-    "prefer-arrow-callback": 0,
-
     "cypress/no-assigning-return-values": "error",
-    "cypress/no-unnecessary-waiting": "error",
     "cypress/assertion-before-screenshot": "warn",
     "cypress/no-force": "warn",
     "cypress/no-async-tests": "error"

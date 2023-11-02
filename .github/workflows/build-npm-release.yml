@@ -19,7 +19,7 @@ on:
 
 jobs:
   github-actions-ci:
-    if : ${{ startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ startsWith(github.ref, 'refs/tags/v') }}
     env:
       YARN_TEST_OPTIONS: ''
       SQ_ROOT_DIR: '.'
@@ -28,7 +28,7 @@ jobs:
       FOLIO_NPM_REGISTRY: 'https://repository.folio.org/repository/npm-folio/'
       FOLIO_NPM_REGISTRY_AUTH: '//repository.folio.org/repository/npm-folio/'
       FOLIO_MD_REGISTRY: 'https://folio-registry.dev.folio.org'
-      NODEJS_VERSION: '16'
+      NODEJS_VERSION: '18'
       JEST_JUNIT_OUTPUT_DIR: 'artifacts/jest-junit'
       JEST_COVERAGE_REPORT_DIR: 'artifacts/coverage-jest/lcov-report/'
       BIGTEST_JUNIT_OUTPUT_DIR: 'artifacts/runTest'
@@ -91,7 +91,7 @@ jobs:
         run: xvfb-run --server-args="-screen 0 1024x768x24" yarn test $YARN_TEST_OPTIONS
 
       - name: Run yarn formatjs-compile
-        if : ${{ env.COMPILE_TRANSLATION_FILES == 'true' }}
+        if: ${{ env.COMPILE_TRANSLATION_FILES == 'true' }}
         run: yarn formatjs-compile
 
       - name: Generate FOLIO module descriptor
@@ -145,7 +145,7 @@ jobs:
         if: always()
         with:
           github_token: ${{ github.token }}
-          files: "${{ env.JEST_JUNIT_OUTPUT_DIR }}/*.xml"
+          files: '${{ env.JEST_JUNIT_OUTPUT_DIR }}/*.xml'
           check_name: Jest Unit Test Results
           comment_mode: update last
           comment_title: Jest Unit Test Statistics
@@ -163,7 +163,7 @@ jobs:
         if: always()
         with:
           github_token: ${{ github.token }}
-          files: "${{ env.BIGTEST_JUNIT_OUTPUT_DIR }}/*.xml"
+          files: '${{ env.BIGTEST_JUNIT_OUTPUT_DIR }}/*.xml'
           check_name: BigTest Unit Test Results
           comment_mode: update last
           comment_title: BigTest Unit Test Statistics
@@ -187,23 +187,23 @@ jobs:
       - name: Set default branch as env variable
         run: echo "DEFAULT_BRANCH=${{ github.event.repository.default_branch }}" >> $GITHUB_ENV
 
-     # - name: Fetch branches for SonarCloud
-     #   run: git fetch --no-tags ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} +refs/heads/${{ env.DEFAULT_BRANCH }}:refs/remotes/origin/${{ env.DEFAULT_BRANCH }}
+      # - name: Fetch branches for SonarCloud
+      #   run: git fetch --no-tags ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} +refs/heads/${{ env.DEFAULT_BRANCH }}:refs/remotes/origin/${{ env.DEFAULT_BRANCH }}
 
-     # - name: Run SonarCloud scan
-     #   uses: sonarsource/sonarcloud-github-action@master
-     #   with:
-     #     args: >
-     #       -Dsonar.organization=folio-org
-     #       -Dsonar.projectKey=org.folio:${{ github.event.repository.name }}
-     #       -Dsonar.projectName=${{ github.event.repository.name }}
-     #       -Dsonar.sources=${{ env.SQ_ROOT_DIR }}
-     #       -Dsonar.language=js
-     #       -Dsonar.javascript.lcov.reportPaths=${{ env.SQ_LCOV_REPORT }}
-     #       -Dsonar.exclusions=${{ env.SQ_EXCLUSIONS }}
-     #   env:
-     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-     #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # - name: Run SonarCloud scan
+      #   uses: sonarsource/sonarcloud-github-action@master
+      #   with:
+      #     args: >
+      #       -Dsonar.organization=folio-org
+      #       -Dsonar.projectKey=org.folio:${{ github.event.repository.name }}
+      #       -Dsonar.projectName=${{ github.event.repository.name }}
+      #       -Dsonar.sources=${{ env.SQ_ROOT_DIR }}
+      #       -Dsonar.language=js
+      #       -Dsonar.javascript.lcov.reportPaths=${{ env.SQ_LCOV_REPORT }}
+      #       -Dsonar.exclusions=${{ env.SQ_EXCLUSIONS }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Set up NPM environment for publishing
         uses: actions/setup-node@v3

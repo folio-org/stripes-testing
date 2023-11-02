@@ -4,13 +4,13 @@ import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
   let userId;
   let requestData;
   let instanceData;
   let cancellationReason;
-  let oldRulesText;
   let requestPolicyId;
 
   before(() => {
@@ -19,21 +19,17 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   beforeEach(() => {
-    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-      oldRulesText = oldRulesAsText;
+    Requests.setRequestPolicyApi().then(({ policy }) => {
       requestPolicyId = policy.id;
     });
-    Requests.createRequestApi().then(({
-      createdUser,
-      createdRequest,
-      instanceRecordData,
-      cancellationReasonId
-    }) => {
-      userId = createdUser.id;
-      requestData = createdRequest;
-      instanceData = instanceRecordData;
-      cancellationReason = cancellationReasonId;
-    });
+    Requests.createRequestApi().then(
+      ({ createdUser, createdRequest, instanceRecordData, cancellationReasonId }) => {
+        userId = createdUser.id;
+        requestData = createdRequest;
+        instanceData = instanceRecordData;
+        cancellationReason = cancellationReasonId;
+      },
+    );
   });
 
   afterEach(() => {
@@ -45,16 +41,18 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       cancelledDate: new Date().toISOString(),
     });
     Users.deleteViaApi(userId);
-    Requests.updateCirculationRulesApi(oldRulesText);
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C556 Request: Edit requests. Make sure that edits are being saved. (folijet) (prokopovych)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it(
+    'C556 Request: Edit requests. Make sure that edits are being saved. (vega)',
+    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
+    () => {
       cy.visit(TopMenu.requestsPath);
-      Object.values(EditRequest.requestStatuses).forEach(status => {
+      Object.values(EditRequest.requestStatuses).forEach((status) => {
         EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);
         EditRequest.resetFiltersAndReloadPage();
       });
-    });
+    },
+  );
 });

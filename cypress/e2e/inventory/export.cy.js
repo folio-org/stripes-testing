@@ -12,10 +12,12 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 let userId;
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
-let locationName = '';
+let locationName;
+let locationId;
 
 describe('ui-inventory: exports', () => {
   before('navigates to Inventory', () => {
@@ -25,45 +27,49 @@ describe('ui-inventory: exports', () => {
       permissions.inventoryAll.gui,
       permissions.dataExportAll.gui,
       permissions.dataExportEnableModule.gui,
-    ])
-      .then(userProperties => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-        cy.getAdminToken()
-          .then(() => {
-            cy.getLoanTypes({ limit: 1 });
-            cy.getMaterialTypes({ limit: 1 });
-            cy.getInstanceTypes({ limit: 1 });
-            cy.getLocations({ limit: 1 });
-            cy.getHoldingTypes({ limit: 1 });
-            source = InventoryHoldings.getHoldingSources({ limit: 1 });
-          })
-          .then(() => {
-            locationName = Cypress.env('locations')[0].name;
-            cy.createInstance({
-              instance: {
-                instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: instanceTitle,
-                languages: ['eng']
-              },
-              holdings: [{
+    ]).then((userProperties) => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password);
+      cy.getAdminToken()
+        .then(() => {
+          cy.getLoanTypes({ limit: 1 });
+          cy.getMaterialTypes({ limit: 1 });
+          cy.getInstanceTypes({ limit: 1 });
+          cy.getLocations({ limit: 1 });
+          cy.getHoldingTypes({ limit: 1 });
+          source = InventoryHoldings.getHoldingSources({ limit: 1 });
+        })
+        .then(() => {
+          locationName = Cypress.env('locations')[0].name;
+          locationId = Cypress.env('locations')[0].id;
+          cy.createInstance({
+            instance: {
+              instanceTypeId: Cypress.env('instanceTypes')[0].id,
+              title: instanceTitle,
+              languages: ['eng'],
+            },
+            holdings: [
+              {
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
                 sourceId: source.id,
-              }],
-              items: [
-                [{
+              },
+            ],
+            items: [
+              [
+                {
                   barcode: `testItem_${getRandomPostfix()}`,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
-                  status: { name: 'Available' },
+                  status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                   permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                   materialType: { id: Cypress.env('materialTypes')[0].id },
-                }],
+                },
               ],
-            });
+            ],
           });
-      });
+        });
+    });
   });
 
   beforeEach('navigate to inventory', () => {
@@ -74,38 +80,43 @@ describe('ui-inventory: exports', () => {
     cy.getInstance({
       limit: 1,
       expandAll: true,
-      query: `(keyword all "${instanceTitle}") sortby title`
-    })
-      .then(instance => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
+      query: `(keyword all "${instanceTitle}") sortby title`,
+    }).then((instance) => {
+      cy.deleteItemViaApi(instance.items[0].id);
+      cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+      InventoryInstance.deleteInstanceViaApi(instance.id);
+    });
     Users.deleteViaApi(userId);
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFileFromDownloadsByMask('QuickInstanceExport*', 'SearchInstanceUUIDs*');
   });
 
-  it('C9284 Export small number of Instance UUIDs (30 or fewer) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
-    InventorySearchAndFilter.saveUUIDs();
+  it(
+    'C9284 Export small number of Instance UUIDs (30 or fewer) (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+      InventorySearchAndFilter.saveUUIDs();
 
-    cy.intercept('/search/instances/ids**').as('getIds');
-    cy.wait('@getIds', getLongDelay())
-      .then((req) => {
+      cy.intercept('/search/instances/ids**').as('getIds');
+      cy.wait('@getIds', getLongDelay()).then((req) => {
         const expectedUUIDs = InventorySearchAndFilter.getUUIDsFromRequest(req);
 
         FileManager.verifyFile(
           InventoryActions.verifySaveUUIDsFileName,
           'SearchInstanceUUIDs*',
           InventoryActions.verifySavedUUIDs,
-          [expectedUUIDs]
+          [expectedUUIDs],
         );
       });
-  });
+    },
+  );
 
-  it('C9287 verifies export CQL query (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C9287 Export CQL query (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearchAndFilter.byLanguage();
-    InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
+    InventorySearchAndFilter.searchByParameter(
+      'Keyword (title, contributor, identifier, HRID, UUID)',
+      instanceTitle,
+    );
     InventorySearchAndFilter.byEffectiveLocation(locationName);
     InventorySearchAndFilter.saveCQLQuery();
 
@@ -113,29 +124,32 @@ describe('ui-inventory: exports', () => {
       InventoryActions.verifySaveCQLQueryFileName,
       'SearchInstanceCQLQuery*',
       InventoryActions.verifySaveCQLQuery,
-      [instanceTitle]
+      [locationId, instanceTitle, 'eng'],
     );
   });
 
-  it('C196757 Export selected records (MARC) (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
-    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
-    cy.do(InventorySearchAndFilter.getSearchResult().find(Checkbox()).click());
-    InventorySearchAndFilter.exportInstanceAsMarc();
+  it(
+    'C196757 Export selected records (MARC) (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] },
+    () => {
+      InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+      cy.do(InventorySearchAndFilter.getSearchResult().find(Checkbox()).click());
+      InventorySearchAndFilter.exportInstanceAsMarc();
 
-    cy.intercept('/data-export/quick-export').as('getIds');
-    cy.wait('@getIds', getLongDelay())
-      .then((req) => {
+      cy.intercept('/data-export/quick-export').as('getIds');
+      cy.wait('@getIds', getLongDelay()).then((req) => {
         const expectedIDs = req.request.body.uuids;
 
         FileManager.verifyFile(
           InventoryActions.verifyInstancesMARCFileName,
           'QuickInstanceExport*',
           InventoryActions.verifyInstancesMARC,
-          [expectedIDs]
+          [expectedIDs],
         );
       });
 
-    cy.visit(TopMenu.dataExportPath);
-    DataExportResults.verifyQuickExportResult();
-  });
+      cy.visit(TopMenu.dataExportPath);
+      DataExportResults.verifyQuickExportResult();
+    },
+  );
 });

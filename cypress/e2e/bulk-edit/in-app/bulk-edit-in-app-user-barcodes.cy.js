@@ -16,14 +16,16 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui
-      ])
-        .then(userProperties => {
+      cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui]).then(
+        (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-        });
+        },
+      );
     });
 
     after('delete test data', () => {
@@ -31,56 +33,64 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
     });
 
-    afterEach('open new bulk-edit form', () => {
+    beforeEach('go to bulk-edit page', () => {
       cy.visit(TopMenu.bulkEditPath);
-    });
-
-    it('C359248 Verify "Email" option in bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.verifyBulkEditForm();
     });
 
-    it('C359592 Verify updating Email in Bulk edit (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+    it(
+      'C359248 Verify "Email" option in bulk edit (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.verifyBulkEditForm();
+      },
+    );
 
-      BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Email');
-      BulkEditActions.openInAppStartBulkEditFrom();
-      const newEmailDomain = 'google.com';
-      BulkEditActions.replaceEmail('folio.org', newEmailDomain);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
+    it(
+      'C359592 Verify updating Email in Bulk edit (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.verifyChangedResults(`test@${newEmailDomain}`);
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
-      UsersSearchPane.searchByKeywords(user.username);
-      UsersSearchPane.openUser(user.username);
-      UsersCard.openContactInfo();
-      UsersCard.verifyEmail(`test@${newEmailDomain}`);
-    });
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckbox('Email');
+        BulkEditActions.openInAppStartBulkEditFrom();
+        const newEmailDomain = 'google.com';
+        BulkEditActions.replaceEmail('folio.org', newEmailDomain);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
 
-    it('C359606 Negative -- Verify bulk edit Users emails (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+        BulkEditSearchPane.verifyChangedResults(`test@${newEmailDomain}`);
+        cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+        UsersSearchPane.searchByKeywords(user.username);
+        UsersSearchPane.openUser(user.username);
+        UsersCard.openContactInfo();
+        UsersCard.verifyEmail(`test@${newEmailDomain}`);
+      },
+    );
 
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+    it(
+      'C359606 Negative -- Verify bulk edit Users emails (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      const newEmailDomain = 'google.com';
-      BulkEditActions.replaceEmail('folio123.org', newEmailDomain);
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.verifyErrorLabelAfterChanges(userBarcodesFileName, 0, 1);
-    });
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        const newEmailDomain = 'google.com';
+        BulkEditActions.replaceEmail('folio123.org', newEmailDomain);
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.verifyErrorLabelAfterChanges(userBarcodesFileName, 0, 1);
+      },
+    );
   });
 });

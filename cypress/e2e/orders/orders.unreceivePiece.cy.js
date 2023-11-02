@@ -11,7 +11,8 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
 import DevTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import Parallelization from '../../support/dictionary/parallelization';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -20,35 +21,40 @@ describe('orders: Unreceive piece from Order', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = response;
-        orderLine.physical.materialSupplier = response;
-        orderLine.eresource.accessProvider = response;
-      });
-    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
-      .then(location => { orderLine.locations[0].locationId = location.id; });
-    cy.getMaterialTypes({ query: 'name="book"' })
-      .then(materialType => { orderLine.physical.materialType = materialType.id; });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = response;
+      orderLine.physical.materialSupplier = response;
+      orderLine.eresource.accessProvider = response;
+    });
+    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
+      orderLine.locations[0].locationId = location.id;
+    });
+    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
+      orderLine.physical.materialType = materialType.id;
+    });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
   after(() => {
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C10925 Unreceive piece (thunderjet)', { tags: [TestType.smoke, DevTeams.thunderjet] }, () => {
-    const barcode = Helper.getRandomBarcode();
-    const caption = 'autotestCaption';
-    Orders.createOrderWithOrderLineViaApi(order, orderLine)
-      .then(orderNumber => {
+  it(
+    'C10925 Unreceive piece (thunderjet)',
+    { tags: [TestType.smoke, DevTeams.thunderjet, Parallelization.nonParallel] },
+    () => {
+      const barcode = Helper.getRandomBarcode();
+      const caption = 'autotestCaption';
+      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
         cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
+        Orders.searchByParameter('PO number', poNumber);
+        Orders.selectFromResultsList(poNumber);
         Orders.openOrder();
-        InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
+        InteractorsTools.checkCalloutMessage(
+          `The Purchase order - ${poNumber} has been successfully opened`,
+        );
         Orders.receiveOrderViaActions();
         // Receive piece
         Receiving.selectPOLInReceive(orderLine.titleOrPackage);
@@ -63,5 +69,6 @@ describe('orders: Unreceive piece from Order', () => {
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
         ItemRecordView.verifyItemStatus('On order');
       });
-  });
+    },
+  );
 });

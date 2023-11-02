@@ -20,6 +20,7 @@ import ClaimedReturned from '../../support/fragments/checkin/modals/checkInClaim
 import Loans from '../../support/fragments/users/userDefaultObjects/loans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UsersCard from '../../support/fragments/users/usersCard';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Check In - Actions', () => {
   const userData = {};
@@ -27,7 +28,7 @@ describe('Check In - Actions', () => {
     name: `groupCheckIn ${getRandomPostfix()}`,
   };
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest check in', uuid()),
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {
     itemsWithSeparateInstance: [
@@ -37,7 +38,7 @@ describe('Check In - Actions', () => {
   };
 
   before('Preconditions', () => {
-    itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
+    itemsData.itemsWithSeparateInstance.forEach((item, index) => {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
     });
 
@@ -78,15 +79,17 @@ describe('Check In - Actions', () => {
             items: [
               {
                 barcode: item.barcode,
-                status: { name: 'Available' },
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
               },
             ],
           }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
-            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+            itemsData.itemsWithSeparateInstance[index].holdingId =
+              specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId =
+              specialInstanceIds.holdingIds[0].itemIds;
             itemsData.itemsWithSeparateInstance[index].materialType = testData.materialType;
           });
         });
@@ -97,13 +100,7 @@ describe('Check In - Actions', () => {
       patronGroup.id = patronGroupResponse;
     });
 
-    cy.createTempUser(
-      [
-        permissions.checkinAll.gui,
-        permissions.loansView.gui,
-      ],
-      patronGroup.name
-    )
+    cy.createTempUser([permissions.checkinAll.gui, permissions.loansView.gui], patronGroup.name)
       .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
@@ -111,7 +108,11 @@ describe('Check In - Actions', () => {
         userData.barcode = userProperties.barcode;
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(testData.servicePointS.id, userData.userId, testData.servicePointS.id);
+        UserEdit.addServicePointViaApi(
+          testData.servicePointS.id,
+          userData.userId,
+          testData.servicePointS.id,
+        );
 
         cy.get('@items').each((item) => {
           Checkout.checkoutItemViaApi({
@@ -125,7 +126,10 @@ describe('Check In - Actions', () => {
 
         UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
           userLoans.loans.forEach(({ id }) => {
-            UserLoans.claimItemReturnedViaApi({ itemClaimedReturnedDateTime: moment.utc().format() }, id);
+            UserLoans.claimItemReturnedViaApi(
+              { itemClaimedReturnedDateTime: moment.utc().format() },
+              id,
+            );
           });
         });
 
@@ -147,7 +151,7 @@ describe('Check In - Actions', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
@@ -170,7 +174,7 @@ describe('Check In - Actions', () => {
           cy.getLoanHistory(foundByLibraryLoan.id).then(([loanHistoryFirstAction]) => {
             LoanDetails.checkAction('Checked in (found by library)');
             LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
-            LoanDetails.checkStatusInList(0, 'Available');
+            LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
             LoanDetails.checkSource(0, user);
           });
         });
@@ -187,11 +191,11 @@ describe('Check In - Actions', () => {
           cy.getLoanHistory(returnedByPatron.id).then(([loanHistoryFirstAction]) => {
             LoanDetails.checkAction('Checked in (returned by patron)');
             LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
-            LoanDetails.checkStatusInList(0, 'Available');
+            LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
             LoanDetails.checkSource(0, user);
           });
         });
       });
-    }
+    },
   );
 });

@@ -11,8 +11,7 @@ export const EntryManager = HTML.extend('Entry Manager')
 export const EntryForm = HTML.extend('Entry Form')
   .selector('[data-test-entry-form]')
   .actions({
-    save: ({ find }) => find(Button('Save')).click()
+    save: ({ find }) => find(Button('Save')).click(),
   });
 
-export const EntryDetails = HTML.extend('Entry Details')
-  .selector('[data-test-detail-section]');
+export const EntryDetails = HTML.extend('Entry Details').selector('[data-test-detail-section]');

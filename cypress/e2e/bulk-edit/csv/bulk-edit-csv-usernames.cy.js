@@ -10,8 +10,8 @@ import Users from '../../../support/fragments/users/users';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = '*Matched-Records*';
-const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
+const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
@@ -19,45 +19,54 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-          FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.username);
+        permissions.uiUserEdit.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+        FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.username);
+      });
     });
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
       Users.deleteViaApi(user.userId);
     });
 
+    it(
+      'C353964 Verify uploading file with Usernames (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Usernames');
 
-    it('C353964 Verify uploading file with Usernames (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Usernames');
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(user.username);
+        BulkEditSearchPane.verifyPaneRecordsCount(1);
 
-      BulkEditSearchPane.verifyMatchedResults(user.username);
-      BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditActions.downloadMatchedResults();
+        const newUserName = `testName_${getRandomPostfix()}`;
+        BulkEditActions.prepareValidBulkEditFile(
+          matchedRecordsFileName,
+          editedFileName,
+          user.username,
+          newUserName,
+        );
 
-      BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      const newUserName = `testName_${getRandomPostfix()}`;
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, newUserName);
+        BulkEditActions.openStartBulkEditForm();
+        BulkEditSearchPane.uploadFile(editedFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.clickNext();
+        BulkEditActions.commitChanges();
 
-      BulkEditActions.openStartBulkEditForm();
-      BulkEditSearchPane.uploadFile(importFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.clickNext();
-      BulkEditActions.commitChanges();
-
-      BulkEditSearchPane.verifyChangedResults(newUserName);
-    });
+        BulkEditSearchPane.verifyChangedResults(newUserName);
+      },
+    );
   });
 });

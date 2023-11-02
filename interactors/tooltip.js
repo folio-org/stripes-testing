@@ -13,14 +13,12 @@ export const Tooltip = createInteractor('tooltip')
     proximity: {
       apply: (el) => el.getAttribute('data-test-tooltip-proximity-element') === 'true',
       default: false,
-    }
+    },
   });
 
 export const TooltipProximity = createInteractor('tooltip proximity element')
   .selector('[role^=tooltip]')
-  .locator([
-    (el) => el.querySelector('[class^=text]').textContent,
-  ])
+  .locator([(el) => el.querySelector('[class^=text]').textContent])
   .filters({
     text: (el) => el.querySelector('[class^=text]').textContent,
   });

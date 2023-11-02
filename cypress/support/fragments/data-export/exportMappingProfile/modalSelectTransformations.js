@@ -1,5 +1,14 @@
-import { Checkbox, Button, Modal, TextField, MultiColumnListRow, MultiColumnListCell, Pane, MultiColumnListHeader } from '../../../../../interactors';
 import { including } from '@interactors/html';
+import {
+  Checkbox,
+  Button,
+  Modal,
+  TextField,
+  MultiColumnListRow,
+  MultiColumnListCell,
+  Pane,
+  MultiColumnListHeader,
+} from '../../../../../interactors';
 
 const ModalTransformation = Modal('Select transformations');
 const instanceRecordTypeChechbox = Checkbox({ value: 'INSTANCE', name: 'filters.recordTypes' });
@@ -10,6 +19,7 @@ const unSelectedStatusChechbox = Checkbox({ value: 'unselected' });
 const transformationsSearchTextfield = TextField({ name: 'searchValue' });
 const resetAllButton = Button('Reset all');
 const transformationsSaveAndCloseButton = ModalTransformation.find(Button('Save & close'));
+const transformationsCancelButton = ModalTransformation.find(Button('Cancel'));
 
 export default {
   searchItemTransformationsByName: (name) => {
@@ -17,29 +27,36 @@ export default {
   },
 
   selectTransformations: (marcField, subfield) => {
-    const cellInteractor = ModalTransformation
-      .find(MultiColumnListRow())
-      .find(MultiColumnListCell({ columnIndex: 2 }));
+    const cellInteractor = ModalTransformation.find(MultiColumnListRow()).find(
+      MultiColumnListCell({ columnIndex: 2 }),
+    );
 
     cy.do(Checkbox({ ariaLabel: 'Select field' }).click());
-    cy.then(() => cellInteractor.inputTextFieldNames())
-      .then(inputFieldNames => {
-        cy.do(cellInteractor.find(TextField({ name: inputFieldNames[0] })).fillIn(marcField));
-        cy.do(cellInteractor.find(TextField({ name: inputFieldNames[3] })).fillIn(subfield));
-        cy.do(ModalTransformation.find(Button('Save & close')).click());
-      });
+    cy.then(() => cellInteractor.inputTextFieldNames()).then((inputFieldNames) => {
+      cy.do(cellInteractor.find(TextField({ name: inputFieldNames[0] })).fillIn(marcField));
+      cy.do(cellInteractor.find(TextField({ name: inputFieldNames[3] })).fillIn(subfield));
+      cy.do(ModalTransformation.find(Button('Save & close')).click());
+    });
   },
 
-  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
+  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col }),
   clickNthCheckbox(checkBoxNumber = 1) {
     // TODO: redesign with interactors
     cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
   },
   verifySearchResultIncludes(allContentToCheck) {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(Pane('Transformations').find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(
+      Pane('Transformations')
+        .find(MultiColumnListCell({ content: including(contentToCheck) }))
+        .exists(),
+    ));
   },
   verifySearchResultDoesNotInclude(allContentToCheck) {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(Pane('Transformations').find(MultiColumnListCell({ content: including(contentToCheck) })).absent()));
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(
+      Pane('Transformations')
+        .find(MultiColumnListCell({ content: including(contentToCheck) }))
+        .absent(),
+    ));
   },
   verifyAllSearchAndFilterCheckboxesChecked() {
     cy.expect([
@@ -48,14 +65,14 @@ export default {
       itemRecordTypeChechbox.has({ checked: true }),
       selectedStatusChechbox.has({ checked: true }),
       unSelectedStatusChechbox.has({ checked: true }),
-    ])
+    ]);
   },
   verifyTransformationsPaneColumns() {
     cy.expect([
       Checkbox({ id: 'select-all-checkbox', checked: false }).exists(),
       MultiColumnListHeader('Field name').exists(),
       MultiColumnListHeader('Transformation').exists(),
-    ])
+    ]);
   },
   verifySearchAndFilterPane() {
     this.verifyAllSearchAndFilterCheckboxesChecked();
@@ -108,17 +125,82 @@ export default {
     cy.expect(unSelectedStatusChechbox.has({ checked: false }));
     cy.do(unSelectedStatusChechbox.click());
   },
+  verifyCheckboxDisabled(name) {
+    cy.expect(Checkbox(name).has({ disabled: true }));
+  },
   verifyTotalSelected(expectedTotalSelected) {
-    cy.expect(Modal('Select transformations').has({ content: including(`Total selected: ${expectedTotalSelected}`) }));
+    cy.expect(
+      Modal('Select transformations').has({
+        content: including(`Total selected: ${expectedTotalSelected}`),
+      }),
+    );
   },
   fillInTransformationsTextfields(textfield1, textfield2, textfield3, textfield4, rowIndex = 0) {
     // TODO: redesign with interactors
-    cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "marcField")]`).type(textfield1);
-    cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator1")]`).type(textfield2);
-    cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator2")]`).type(textfield3);
-    cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "subfield")]`).type(textfield4);
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "marcField")]`,
+    ).type(textfield1);
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator1")]`,
+    ).type(textfield2);
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator2")]`,
+    ).type(textfield3);
+    cy.xpath(
+      `//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "subfield")]`,
+    ).type(textfield4);
+  },
+  fillInTransformationsFirstRowMarcTextField(textfield1, rowIndex = 0) {
+    cy.do(
+      ModalTransformation.find(
+        TextField({ name: `transformations[${rowIndex}].rawTransformation.marcField` }),
+      ).fillIn(textfield1),
+    );
   },
   clickTransformationsSaveAndCloseButton() {
     cy.do(transformationsSaveAndCloseButton.click());
+  },
+  clickTransformationsCancelButton() {
+    cy.do(transformationsCancelButton.click());
+  },
+  clickKeepEditingBtn() {
+    cy.do(Modal('Are you sure?').find(Button('Keep Editing')).click());
+  },
+  verifyTransformationsFirstRowTextFieldsPlaceholders(
+    textfield1,
+    textfield2,
+    textfield3,
+    textfield4,
+  ) {
+    cy.expect([
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.marcField' }),
+      ).has({ placeholder: textfield1 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.indicator1' }),
+      ).has({ placeholder: textfield2 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.indicator2' }),
+      ).has({ placeholder: textfield3 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.subfield' }),
+      ).has({ placeholder: textfield4 }),
+    ]);
+  },
+  verifyTransformationsFirstRowTextFieldsValues(textfield1, textfield2, textfield3, textfield4) {
+    cy.expect([
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.marcField' }),
+      ).has({ value: textfield1 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.indicator1' }),
+      ).has({ value: textfield2 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.indicator2' }),
+      ).has({ value: textfield3 }),
+      ModalTransformation.find(
+        TextField({ name: 'transformations[0].rawTransformation.subfield' }),
+      ).has({ value: textfield4 }),
+    ]);
   },
 };

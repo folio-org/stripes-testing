@@ -1,6 +1,17 @@
 const { defineConfig } = require('cypress');
+const path = require('path');
+const globby = require('globby');
+const { rmdir, unlink } = require('fs');
+const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
+const fs = require('fs');
+const allureWriter = require('@shelex/cypress-allure-plugin/writer');
+const { cloudPlugin } = require('cypress-cloud/plugin');
 
 module.exports = defineConfig({
+  retries: {
+    runMode: 0,
+    openMode: 0,
+  },
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
@@ -18,11 +29,72 @@ module.exports = defineConfig({
     grepOmitFiltered: true,
   },
   e2e: {
-    // We've imported your old cypress plugins here.
-    // You may want to clean this up later by importing these.
-    setupNodeEvents(on, config) {
-      return require('./cypress/plugins/index.js')(on, config);
+    async setupNodeEvents(on, config) {
+      allureWriter(on, config);
+
+      on('task', {
+        async findFiles(mask) {
+          if (!mask) {
+            throw new Error('Missing a file mask to search');
+          }
+
+          const list = await globby(mask);
+
+          if (!list.length) {
+            return null;
+          }
+
+          return list;
+        },
+        downloadFile,
+
+        deleteFolder(folderName) {
+          return new Promise((resolve, reject) => {
+            // eslint-disable-next-line consistent-return
+            rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
+              if (err && err.code !== 'ENOENT') {
+                return reject(err);
+              }
+
+              resolve(null);
+            });
+          });
+        },
+
+        deleteFile(pathToFile) {
+          return new Promise((resolve, reject) => {
+            // eslint-disable-next-line consistent-return
+            unlink(pathToFile, (err) => {
+              if (err && err.code !== 'ENOENT') {
+                return reject(err);
+              }
+
+              resolve(null);
+            });
+          });
+        },
+
+        readFileFromDownloads(filename) {
+          const downloadsFolder =
+            config.downloadsFolder || path.join(__dirname, '..', '..', 'Downloads');
+          const filePath = path.join(downloadsFolder, filename);
+          return fs.readFileSync(filePath, 'utf-8');
+        },
+      });
+
+      // fix for cypress-testrail-simple plugin
+      if ('TESTRAIL_PROJECTID' in process.env && process.env.TESTRAIL_PROJECTID === '') {
+        delete process.env.TESTRAIL_PROJECTID;
+      }
+
+      const configCloud = await cloudPlugin(on, config);
+
+      // eslint-disable-next-line global-require
+      const result = await require('cypress-testrail-simple/src/plugin')(on, configCloud);
+
+      return result;
     },
     baseUrl: 'https://folio-testing-cypress-diku.ci.folio.org',
+    testIsolation: false,
   },
 });

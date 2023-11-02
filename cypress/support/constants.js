@@ -1,8 +1,3 @@
-export const ITEM_STATUSES = {
-  CHECKED_OUT: 'Checked out',
-  DECLARED_LOST: 'Declared lost',
-};
-
 export const REQUEST_METHOD = {
   DELETE: 'DELETE',
   GET: 'GET',
@@ -35,11 +30,38 @@ export const LOST_ITEM_FEES_POLICY_NAMES = {
 
 export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
+  COURSE_RESERVES: 'Course reserves',
 };
 
 export const MATERIAL_TYPE_NAMES = {
-  MICROFORM: 'microform',
   BOOK: 'book',
+  DVD: 'dvd',
+  ELECTRONIC_RESOURCE: 'electronic resource',
+  MICROFORM: 'microform',
+  SOUND_RECORDING: 'sound recording',
+  TEXT: 'text',
+  UNSPECIFIED: 'unspecified',
+  VIDEO_RECORDING: 'video recording',
+};
+
+export const ITEM_STATUS_NAMES = {
+  ON_ORDER: 'On order',
+  IN_PROCESS: 'In process',
+  AVAILABLE: 'Available',
+  MISSING: 'Missing',
+  IN_TRANSIT: 'In transit',
+  PAGED: 'Paged',
+  AWAITING_PICKUP: 'Awaiting pickup',
+  CHECKED_OUT: 'Checked out',
+  CLAIMED_RETURNED: 'Claimed returned',
+  DECLARED_LOST: 'Declared lost',
+  MARKED_AS_MISSING: 'Marked as missing',
+  AWAITING_DELIVERY: 'Awaiting delivery',
+  FOUND_BY_LIBRARY: 'Checked in (found by library)',
+  AGED_TO_LOST: 'Aged to lost',
+  LOST_AND_PAID: 'Lost and paid',
+  WITHDRAWN: 'Withdrawn',
+  ORDER_CLOSED: 'Order closed',
 };
 
 export const CY_ENV = {
@@ -73,4 +95,234 @@ export const LIBRARY_DUE_DATE_MANAGMENT = {
 export const LOAN_PROFILE = {
   FIXED: 'Fixed',
   ROLLING: 'Rolling',
+};
+
+export const FULFILMENT_PREFERENCES = {
+  HOLD_SHELF: 'Hold Shelf',
+  DELIVERY: 'Delivery',
+};
+
+export const REQUEST_LEVELS = {
+  ITEM: 'Item',
+  TITLE: 'Title',
+};
+
+export const REQUEST_TYPES = {
+  PAGE: 'Page',
+  HOLD: 'Hold',
+  RECALL: 'Recall',
+};
+
+export const FOLIO_RECORD_TYPE = {
+  INSTANCE: 'Instance',
+  HOLDINGS: 'Holdings',
+  ITEM: 'Item',
+  ORDER: 'Order',
+  INVOICE: 'Invoice',
+  MARCBIBLIOGRAPHIC: 'MARC Bibliographic',
+  MARCAUTHORITY: 'MARC Authority',
+};
+
+export const PAYMENT_METHOD = {
+  CASH: '"Cash"',
+  CREDIT_CARD: '"Credit Card"',
+};
+
+export const BATCH_GROUP = {
+  FOLIO: '"FOLIO"',
+  AMHERST: '"Amherst (AC)"',
+};
+
+export const INVOICE_STATUSES = {
+  OPEN: 'Open',
+  APPROVED: 'Approved',
+  CANCELLED: 'Cancelled',
+  PAID: 'Paid',
+};
+
+export const ORDER_STATUSES = {
+  OPEN: 'Open',
+  PENDING: 'Pending',
+  CLOSED: 'Closed',
+};
+
+export const ORDER_TYPES = {
+  ONE_TIME: 'One-Time',
+  ONGOING: 'Ongoing',
+};
+
+export const ORDER_FORMAT_NAMES = {
+  ELECTRONIC_RESOURCE: 'Electronic resource',
+  ELECTRONIC_RESOURCE_Check: 'Electronic Resource',
+  PE_MIX: 'P/E mix',
+  PE_MIX_Check: 'P/E Mix',
+  OTHER: 'Other',
+  PHYSICAL_RESOURCE: 'Physical resource',
+  PHYSICAL_RESOURCE_Check: 'Physical Resource',
+};
+
+export const ORDER_PAYMENT_STATUS = {
+  PENDING: 'Pending',
+  PAYMENT_NOT_REQUIRED: 'Payment not required',
+};
+
+export const ORDER_FORMAT_NAMES_IN_PROFILE = {
+  ELECTRONIC_RESOURCE: 'Electronic Resource',
+  PE_MIX: 'P/E Mix',
+  OTHER: 'Other',
+  PHYSICAL_RESOURCE: 'Physical Resource',
+};
+
+export const ACQUISITION_METHOD_NAMES_IN_PROFILE = {
+  APPROVAL_PLAN: 'Approval plan',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase at vendor system',
+};
+
+export const RECEIPT_STATUS_SELECTED = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt not required',
+};
+
+export const RECEIPT_STATUS_VIEW = {
+  PENDING: 'Pending',
+  RECEIPT_NOT_REQUIRED: 'Receipt Not Required',
+};
+
+export const RECEIVING_WORKFLOW_NAMES = {
+  SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY: 'Synchronized order and receipt quantity',
+  INDEPENDENT_ORDER_AND_RECEIPT_QUANTITY: 'Independent order and receipt quantity',
+};
+
+export const ACQUISITION_METHOD_NAMES = {
+  APPROVAL_PLAN: 'Approval plan',
+  DDA: 'Demand driven acquisitions (DDA)',
+  DEPOSITORY: 'Depository',
+  EBA: 'Evidence based acquisitions (EBA)',
+  EXCHANGE: 'Exchange',
+  FREE: 'Free',
+  GIFT: 'Gift',
+  INTERNAL_TRANSFER: 'Internal transfer',
+  MEMBERSHIP: 'Membership',
+  OTHER: 'Other',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
+  TECHNICAL: 'Technical',
+};
+
+export const LOCATION_NAMES = {
+  ANNEX: 'Annex (KU/CC/DI/A)',
+  ANNEX_UI: 'Annex',
+  ONLINE: 'Online (E)',
+  ONLINE_UI: 'Online',
+  MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
+  MAIN_LIBRARY_UI: 'Main Library',
+};
+
+export const INSTANCE_STATUS_TERM_NAMES = {
+  BATCH_LOADED: 'Batch Loaded',
+  CATALOGED: 'Cataloged',
+  UNCATALOGED: 'Uncataloged',
+  OTHER: 'Other',
+  NOTYETASSIGNED: 'Not yet assigned',
+  ELECTRONIC_RESOURCE: 'Electronic Resource',
+};
+
+export const CALL_NUMBER_TYPE_NAMES = {
+  OTHER_SCHEME: 'Other scheme',
+  LIBRARY_OF_CONGRESS: 'Library of Congress classification',
+  LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
+  DEWAY_DECIMAL: 'Dewey Decimal classification',
+};
+
+export const EXPORT_TRANSFORMATION_NAMES = {
+  ITEM_HRID: 'Item - HRID',
+  HOLDINGS_HRID: 'Holdings - HRID',
+};
+
+export const TARGET_PROFILE_NAMES = {
+  OCLC_WORLDCAT: '✓ OCLC WorldCat',
+};
+
+export const ACCEPTED_DATA_TYPE_NAMES = {
+  MARC: 'MARC',
+  EDIFACT: 'EDIFACT',
+};
+
+export const INSTANCE_SOURCE_NAMES = {
+  MARC: 'MARC',
+  FOLIO: 'FOLIO',
+};
+
+export const PROFILE_TYPE_NAMES = {
+  JOB_PROFILE: 'JOB_PROFILE',
+  MATCH_PROFILE: 'MATCH_PROFILE',
+  ACTION_PROFILE: 'ACTION_PROFILE',
+  MAPPING_PROFILE: 'MAPPING_PROFILE',
+};
+
+export const EXISTING_RECORDS_NAMES = {
+  INSTANCE: 'INSTANCE',
+  HOLDINGS: 'HOLDINGS',
+  ITEM: 'ITEM',
+  MARC_BIBLIOGRAPHIC: 'MARC_BIBLIOGRAPHIC',
+  MARC_AUTHORITY: 'MARC_AUTHORITY',
+};
+
+export const JOB_STATUS_NAMES = {
+  COMPLETED: 'Completed',
+  COMPLETED_WITH_ERRORS: 'Completed with errors',
+  FAILED: 'Failed',
+};
+
+export const VENDOR_NAMES = {
+  GOBI: 'GOBI Library Solutions',
+  HARRASSOWITZ: 'Otto Harrassowitz GmbH & Co. KG',
+  EBSCO: 'EBSCO SUBSCRIPTION SERVICES',
+};
+
+export const HOLDINGS_TYPE_NAMES = {
+  ELECTRONIC: 'Electronic',
+  MONOGRAPH: 'Monograph',
+};
+
+export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
+  APPROVAL_PLAN: 'Approval Plan',
+  DDA: 'Demand Driven Acquisitions (DDA)',
+  DEPOSITORY: 'Depository',
+  EBA: 'Evidence Based Acquisitions (EBA)',
+  EXCHANGE: 'Exchange',
+  FREE: 'Free',
+  GIFT: 'Gift',
+  INTERNAL_TRANSFER: 'Internal transfer',
+  MEMBERSHIP: 'Membership',
+  OTHER: 'Other',
+  PURCHASE: 'Purchase',
+  PURCHASE_AT_VENDOR_SYSTEM: 'Purchase At Vendor System',
+  TECHNICAL: 'Technical',
+};
+
+export const REMOTE_STORAGE_PROVIDER_NAMES = {
+  Dematic_EMS: 'Dematic EMS (API)',
+  DDEMATIC_STAGING_DIRECTOR: 'Dematic StagingDirector (TCP/IP)',
+  CAIA_SOFT: 'CaiaSoft',
+};
+
+export const BROWSE_CALL_NUMBER_OPTIONS = {
+  CALL_NUMBERS_ALL: 'Call numbers (all)',
+  DEWEY_DECIMAL: 'Dewey Decimal classification',
+  LIBRARY_OF_CONGRESS: 'Library of Congress classification',
+  LOCAL: 'Local',
+  LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
+  OTHER_SCHEME: 'Other scheme',
+  SUPERINTENDENT_OF_DOCUMENTS: 'Superintendent of Documents classification',
+};
+
+export const CONDITION_AND_LIMIT_TYPES = {
+  MAX_ITEMS_CHARGED_OUT: 'Maximum number of items charged out',
+  MAX_LOST_ITEMS: 'Maximum number of lost items',
+  MAX_OVERDUE_ITEMS: 'Maximum number of overdue items',
+  MAX_OVERDUE_RECALLS: 'Maximum number of overdue recalls',
+  MAX_OUTSTANDING_FEE_FINE_BALANCE: 'Maximum outstanding fee/fine balance',
+  MAX_NUMBER_OF_DAYS: 'Recall overdue by maximum number of days',
 };

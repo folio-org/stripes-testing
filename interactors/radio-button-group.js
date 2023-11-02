@@ -3,9 +3,12 @@ import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
 const getByLabel = (el, label) => {
-  const radio = [...el.querySelectorAll('[class^=labelText]')]
-    .filter((e) => e.textContent === label);
-  const input = radio ? radio.closest('[class^=radioButton]').querySelector('input[type=radio]') : undefined;
+  const radio = [...el.querySelectorAll('[class^=labelText]')].filter(
+    (e) => e.textContent === label,
+  );
+  const input = radio
+    ? radio.closest('[class^=radioButton]').querySelector('input[type=radio]')
+    : undefined;
   return input;
 };
 
@@ -20,10 +23,11 @@ export default HTML.extend('radio button group')
       return input.checked;
     },
     feedbackText: (el) => el.querySelector('[class^=radioFeedback]').textContent,
+    label: (el) => el.textContent,
   })
   .actions({
     choose: ({ find }, label) => find(RadioButton(label)).choose(),
     click: ({ find }) => find(RadioButton()).choose(),
-    focus: ({ find }, label) => find(RadioButton(label)).perform(el => el.focus()),
+    focus: ({ find }, label) => find(RadioButton(label)).perform((el) => el.focus()),
     blur: ({ find }) => find(RadioButton({ focused: true })).perform(dispatchFocusout),
   });

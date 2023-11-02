@@ -1,4 +1,13 @@
-import { Button, TextField, MultiColumnListCell, Checkbox, Modal, Pane, Section } from '../../../../../interactors';
+import uuid from 'uuid';
+import {
+  Button,
+  TextField,
+  MultiColumnListCell,
+  Checkbox,
+  Modal,
+  Pane,
+  Section,
+} from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const auListPane = Pane({ id: 'pane-ac-units-list' });
@@ -17,13 +26,27 @@ const checkboxAll = Checkbox();
 const searchButton = Button('Search');
 const nameTextField = TextField({ name: 'name' });
 
-export default {
+const getDefaultAcquisitionUnit = ({
+  name,
+  protectRead = false,
+  protectUpdate = true,
+  protectCreate = true,
+  protectDelete = true,
+} = {}) => ({
+  protectRead,
+  protectUpdate,
+  protectCreate,
+  protectDelete,
+  name: name || `autotest_acq_unit_${getRandomPostfix()}`,
+  id: uuid(),
+});
 
-  defaultAcquisitionUnit : {
+export default {
+  defaultAcquisitionUnit: {
     name: `AU_${getRandomPostfix()}`,
   },
-
-  waitLoading : () => {
+  getDefaultAcquisitionUnit,
+  waitLoading: () => {
     cy.expect(auListPane.exists());
   },
 
@@ -32,20 +55,15 @@ export default {
   },
 
   fillInInfo(name) {
-    cy.do([
-      nameTextField.fillIn(name),
-      viewCheckbox.click(),
-      saveAUButton.click(),
-    ]);
+    cy.do([nameTextField.fillIn(name), viewCheckbox.click(), saveAUButton.click()]);
     this.assignAdmin();
+    cy.wait(4000);
   },
 
   fillInAUInfo: (name) => {
-    cy.do([
-      nameTextField.fillIn(name),
-      viewCheckbox.click(),
-      saveAUButton.click(),
-    ]);
+    cy.do([nameTextField.fillIn(name), viewCheckbox.click(), saveAUButton.click()]);
+    // need to wait,while page will be loaded after save
+    cy.wait(6000);
   },
 
   assignUser: (userName) => {
@@ -53,8 +71,11 @@ export default {
       findUserButton.click(),
       userSearchModal.find(searchTextField).fillIn(userName),
       searchButton.click(),
+    ]);
+    cy.wait(4000);
+    cy.do([
       userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
-      userSearchModal.find(saveButton).click()
+      userSearchModal.find(saveButton).click(),
     ]);
   },
 
@@ -64,21 +85,27 @@ export default {
       userSearchModal.find(searchTextField).fillIn('diku'),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),
-      userSearchModal.find(saveButton).click()
+      userSearchModal.find(saveButton).click(),
     ]);
   },
 
   unAssignUser: (AUName) => {
     cy.do([
       auListPane.find(Button(AUName)).click(),
-      assignedUsersSection.find(MultiColumnListCell({ row: 1, columnIndex: 2 })).find(trashButton).click()
+      assignedUsersSection
+        .find(MultiColumnListCell({ row: 1, columnIndex: 2 }))
+        .find(trashButton)
+        .click(),
     ]);
   },
 
   unAssignAdmin: (AUName) => {
     cy.do([
       auListPane.find(Button(AUName)).click(),
-      assignedUsersSection.find(MultiColumnListCell({ row: 0, columnIndex: 2 })).find(trashButton).click()
+      assignedUsersSection
+        .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
+        .find(trashButton)
+        .click(),
     ]);
   },
 
@@ -87,7 +114,7 @@ export default {
       auListPane.find(Button(AUName)).click(),
       actionsButton.click(),
       Button('Delete').click(),
-      Button('Confirm').click()
+      Button('Confirm').click(),
     ]);
   },
 
@@ -102,12 +129,54 @@ export default {
     cy.do(Button('Edit').click());
   },
 
+  editAU: () => {
+    cy.wait(5000);
+    cy.do(actionsButton.click());
+    // //Need to wait,while wright link of Edit button will be loaded
+    cy.wait(5000);
+    cy.do(Button('Edit').click());
+  },
+
+  selectAU: (AUName) => {
+    cy.do(auListPane.find(Button(AUName)).click());
+    cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+    // //Need to wait,while data of Acquisition Unit will be loaded
+    cy.wait(5000);
+  },
+
   selectViewCheckbox: () => {
     cy.expect(assignedUsersSection.exists());
-    cy.do([
-      viewCheckbox.click(),
-      saveAUButton.click(),
-    ]);
+    cy.do([viewCheckbox.click(), saveAUButton.click()]);
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+  },
+
+  selectEditCheckbox: () => {
+    cy.expect(assignedUsersSection.exists());
+    cy.do([Checkbox('Edit').click(), saveAUButton.click()]);
+    cy.expect(auPaneDetails.find(assignedUsersSection).exists());
+  },
+  getAcquisitionUnitViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'acquisitions-units/units',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
+  createAcquisitionUnitViaApi(acqUnit) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'acquisitions-units/units',
+        body: acqUnit,
+      })
+      .then(({ body }) => body);
+  },
+  deleteAcquisitionUnitViaApi(acqUnitId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `acquisitions-units/units/${acqUnitId}`,
+    });
   },
 };

@@ -1,13 +1,10 @@
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TestTypes from '../../../support/dictionary/testTypes';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
@@ -15,172 +12,192 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import {
+  LOCATION_NAMES,
+  FOLIO_RECORD_TYPE,
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+} from '../../../support/constants';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
-describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
-  // unique file name to upload
-  const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
-  const nameForExportedMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
-  const nameForCSVFile = `C343343autotestFile${getRandomPostfix()}.csv`;
-  const mappingProfileName = `autotestMappingProf${getRandomPostfix()}`;
-  const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
-  const actionProfileName = `autotestActionProf${getRandomPostfix()}`;
-  const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
-  const mappingProfileNameForExport = `autotestMappingProf${getRandomPostfix()}`;
-  const actionProfileNameForExport = `autotestActionProf${getRandomPostfix()}`;
-  const jobProfileNameForExport = `autotestJobProf${getRandomPostfix()}`;
+describe('data-import', () => {
+  describe('End to end scenarios', () => {
+    // unique file name to upload
+    const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
+    const nameForExportedMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C343343autotestFile${getRandomPostfix()}.csv`;
 
-  beforeEach(() => {
-    cy.loginAsAdmin();
-    cy.getAdminToken();
-
-    DataImport.checkUploadState();
-  });
-
-  afterEach(() => {
-    DataImport.checkUploadState();
-  });
-
-  it('C343343 MARC file import with matching for 999 ff field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // create Field mapping profile for export
     const mappingProfileForExport = {
-      name: mappingProfileNameForExport,
-      typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
-      permanentLocation: '"Annex (KU/CC/DI/A)"',
+      name: `autotestMappingProf${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
-    cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.createMappingProfile(mappingProfileForExport);
-    FieldMappingProfiles.checkMappingProfilePresented(mappingProfileNameForExport);
-
-    // create Action profile for export and link it to Field mapping profile
     const actionProfileForExport = {
-      typeValue : NewActionProfile.folioRecordTypeValue.instance,
-      name: actionProfileNameForExport
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+      name: `autotestActionProf${getRandomPostfix()}`,
     };
-    cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(actionProfileForExport, mappingProfileForExport.name);
-    ActionProfiles.checkActionProfilePresented(actionProfileNameForExport);
-
-    // create job profile for export
     const jobProfileForExport = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileNameForExport
+      profileName: `autotestJobProf${getRandomPostfix()}`,
     };
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfileForExport, actionProfileForExport.name);
-    JobProfiles.checkJobProfilePresented(jobProfileNameForExport);
+    const mappingProfile = {
+      name: `autotestMappingProf${getRandomPostfix()}`,
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+      update: true,
+      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+    };
+    const actionProfile = {
+      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+      name: `autotestActionProf${getRandomPostfix()}`,
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+    };
+    const matchProfile = {
+      profileName: `autotestMatchProf${getRandomPostfix()}`,
+      incomingRecordFields: {
+        field: '999',
+        in1: 'f',
+        in2: 'f',
+        subfield: 's',
+      },
+      existingRecordFields: {
+        field: '999',
+        in1: 'f',
+        in2: 'f',
+        subfield: 's',
+      },
+      matchCriterion: 'Exactly matches',
+      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+    };
+    const jobProfile = {
+      ...NewJobProfile.defaultJobProfile,
+      profileName: `autotestJobProf${getRandomPostfix()}`,
+      acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
+    };
 
-    // upload a marc file for export
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
-    JobProfiles.searchJobProfileForImport(jobProfileNameForExport);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(nameForMarcFile);
-    Logs.openFileDetails(nameForMarcFile);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
+    before('login', () => {
+      cy.loginAsAdmin();
+      cy.getAdminToken();
+    });
 
-    // get Instance HRID through API
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        // download .csv file
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
-        InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExportPath);
+    after('delete test data', () => {
+      // clean up generated profiles
+      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      JobProfiles.deleteJobProfile(jobProfileForExport.profileName);
+      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      ActionProfiles.deleteActionProfile(actionProfile.name);
+      ActionProfiles.deleteActionProfile(actionProfileForExport.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfileForExport.name);
+      // delete created files in fixtures
+      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+    });
 
-        // download exported marc file
-        ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-        ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-
-        cy.log('#####End Of Export#####');
-
-        // create Match profile
-        const matchProfile = {
-          profileName: matchProfileName,
-          incomingRecordFields: {
-            field: '999',
-            in1: 'f',
-            in2: 'f',
-            subfield: 's'
-          },
-          existingRecordFields: {
-            field: '999',
-            in1: 'f',
-            in2: 'f',
-            subfield: 's'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'MARC_BIBLIOGRAPHIC'
-        };
-        cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.createMatchProfile(matchProfile);
-
-        // create Field mapping profile
-        const mappingProfile = {
-          name: mappingProfileName,
-          typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
-          update: true,
-          permanentLocation: '"Annex (KU/CC/DI/A)"'
-        };
+    it(
+      'C343343 MARC file import with matching for 999 ff field (folijet)',
+      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      () => {
+        // create Field mapping profile for export
         cy.visit(SettingsMenu.mappingProfilePath);
-        FieldMappingProfiles.createMappingProfile(mappingProfile);
-        FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+        FieldMappingProfiles.createMappingProfile(mappingProfileForExport);
+        FieldMappingProfiles.checkMappingProfilePresented(mappingProfileForExport.name);
 
-        // create Action profile and link it to Field mapping profile
-        const actionProfile = {
-          typeValue : NewActionProfile.folioRecordTypeValue.instance,
-          name: actionProfileName,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
-        };
+        // create Action profile for export and link it to Field mapping profile
         cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfileName);
+        ActionProfiles.create(actionProfileForExport, mappingProfileForExport.name);
+        ActionProfiles.checkActionProfilePresented(actionProfileForExport.name);
 
-        // create Job profile
-        const jobProfile = {
-          ...NewJobProfile.defaultJobProfile,
-          profileName: jobProfileName,
-          acceptedType: NewJobProfile.acceptedDataType.marc
-        };
+        // create job profile for export
         cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
-        JobProfiles.checkJobProfilePresented(jobProfileName);
+        JobProfiles.createJobProfileWithLinkingProfiles(
+          jobProfileForExport,
+          actionProfileForExport.name,
+        );
+        JobProfiles.checkJobProfilePresented(jobProfileForExport.profileName);
 
-        // upload the exported marc file with 999.f.f.s fields
+        // upload a marc file for export
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadExportedFile(nameForExportedMarcFile);
-        JobProfiles.searchJobProfileForImport(jobProfileName);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
+        JobProfiles.search(jobProfileForExport.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameForExportedMarcFile);
-        Logs.openFileDetails(nameForExportedMarcFile);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+        JobProfiles.waitFileIsImported(nameForMarcFile);
+        Logs.openFileDetails(nameForMarcFile);
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.instance,
+        );
 
-        // get Instance HRID through API
-        InventorySearchAndFilter.getInstanceHRID()
-          .then(id => {
-            cy.visit(TopMenu.inventoryPath);
-            InventorySearchAndFilter.searchInstanceByHRID(id[0]);
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          const instanceHRID = initialInstanceHrId;
 
-            // ensure the fields created in Field mapping profile exists in inventory
-            InventorySearchAndFilter.checkInstanceDetails();
+          // download .csv file
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          InstanceRecordView.verifyInstancePaneExists();
+          InventorySearchAndFilter.saveUUIDs();
+          ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+          cy.visit(TopMenu.dataExportPath);
 
-            // clean up generated profiles
-            JobProfiles.deleteJobProfile(jobProfileName);
-            JobProfiles.deleteJobProfile(jobProfileNameForExport);
-            MatchProfiles.deleteMatchProfile(matchProfileName);
-            ActionProfiles.deleteActionProfile(actionProfileName);
-            ActionProfiles.deleteActionProfile(actionProfileNameForExport);
-            FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-            FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileNameForExport);
+          // download exported marc file
+          ExportFile.uploadFile(nameForCSVFile);
+          ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+          ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
-            // delete created files in fixtures
-            FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-            FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-          });
-      });
+          cy.log('#####End Of Export#####');
+
+          // create Match profile
+          cy.visit(SettingsMenu.matchProfilePath);
+          MatchProfiles.createMatchProfile(matchProfile);
+
+          // create Field mapping profile
+          cy.visit(SettingsMenu.mappingProfilePath);
+          FieldMappingProfiles.createMappingProfile(mappingProfile);
+          FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+
+          // create Action profile and link it to Field mapping profile
+          cy.visit(SettingsMenu.actionProfilePath);
+          ActionProfiles.create(actionProfile, mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(actionProfile.name);
+
+          // create Job profile
+          cy.visit(SettingsMenu.jobProfilePath);
+          JobProfiles.createJobProfileWithLinkingProfiles(
+            jobProfile,
+            actionProfile.name,
+            matchProfile.profileName,
+          );
+          JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
+          // upload the exported marc file with 999.f.f.s fields
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadExportedFile(nameForExportedMarcFile);
+          JobProfiles.search(jobProfile.profileName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(nameForExportedMarcFile);
+          Logs.openFileDetails(nameForExportedMarcFile);
+          FileDetails.checkStatusInColumn(
+            FileDetails.status.updated,
+            FileDetails.columnNameInResultList.instance,
+          );
+
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          InstanceRecordView.verifyInstancePaneExists();
+          // ensure the fields created in Field mapping profile exists in inventory
+          InventorySearchAndFilter.checkInstanceDetails();
+        });
+      },
+    );
   });
 });

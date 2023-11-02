@@ -1,66 +1,87 @@
-import { TextField, Button, Select, Checkbox, Modal, Accordion } from '../../../../../interactors';
+import { TextField, Button, Select, Checkbox, Modal } from '../../../../../interactors';
 import modalSelectTransformations from './modalSelectTransformations';
+import { EXPORT_TRANSFORMATION_NAMES } from '../../../constants';
 
 const outputFormat = 'MARC';
-const holdingsMarcField = '901';
-const itemMarcField = '902';
-const subfield = '$a';
 
 const addTransformationsButton = Button('Add transformations');
-const fieldName = TextField({ name:'name' });
-const outputFormatSelect = Select({ name:'outputFormat' });
+const fieldName = TextField({ name: 'name' });
+const outputFormatSelect = Select({ name: 'outputFormat' });
 const sourceCheckbox = Checkbox('Source record storage (entire record)');
 const itemCheckbox = Checkbox('Item');
 
 export default {
-  fillMappingProfile:(profileName) => {
+  fillMappingProfile: (profile) => {
     cy.do([
-      fieldName.fillIn(profileName),
+      fieldName.fillIn(profile.name),
       outputFormatSelect.choose(outputFormat),
       sourceCheckbox.click(),
       Checkbox('Holdings').click(),
       itemCheckbox.click(),
-      addTransformationsButton.click()
+      addTransformationsButton.click(),
     ]);
-    modalSelectTransformations.searchItemTransformationsByName('Holdings - HRID');
-    modalSelectTransformations.selectTransformations(holdingsMarcField, subfield);
+    modalSelectTransformations.searchItemTransformationsByName(profile.holdingsTransformation);
+    modalSelectTransformations.selectTransformations(
+      profile.holdingsMarcField,
+      profile.subfieldForHoldings,
+    );
     cy.do(addTransformationsButton.click());
     cy.expect(Modal('Select transformations').absent());
-    modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
-    modalSelectTransformations.selectTransformations(itemMarcField, subfield);
+    modalSelectTransformations.searchItemTransformationsByName(profile.itemTransformation);
+    modalSelectTransformations.selectTransformations(
+      profile.itemMarcField,
+      profile.subfieldForItem,
+    );
   },
 
-  fillMappingProfileForItemHrid:(profileName) => {
+  fillMappingProfileForItemHrid: (profileName, itemMarcField = '902', subfield = '$a') => {
     cy.do([
       fieldName.fillIn(profileName),
       outputFormatSelect.choose(outputFormat),
       sourceCheckbox.click(),
       itemCheckbox.click(),
-      addTransformationsButton.click()
+      addTransformationsButton.click(),
     ]);
-    modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
+    modalSelectTransformations.searchItemTransformationsByName(
+      EXPORT_TRANSFORMATION_NAMES.ITEM_HRID,
+    );
     modalSelectTransformations.selectTransformations(itemMarcField, subfield);
   },
 
   createNewFieldMappingProfileViaApi: (nameProfile) => {
-    return cy.okapiRequest({
+    return cy
+      .okapiRequest({
         method: 'POST',
         path: 'data-export/mapping-profiles',
         body: {
-            transformations: [],
-            recordTypes: ['SRS'],
-            outputFormat: 'MARC',
-            name: nameProfile
+          transformations: [],
+          recordTypes: ['SRS'],
+          outputFormat: 'MARC',
+          name: nameProfile,
         },
         isDefaultSearchParamsRequired: false,
-    }).then(({ response }) => { return response; });
-},
-createNewFieldMappingProfile(name, recordType) {
-    cy.do([
-        Button('New').click(),
-        TextField('Name*').fillIn(name),
-        Checkbox(recordType).click(),
-        Accordion('Transformations').find(Button('Add transformations')).click(),
-    ])
-},
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createNewFieldMappingProfile(name, recordTypes) {
+    cy.do([Button('New').click(), TextField('Name*').fillIn(name)]);
+    recordTypes.forEach((recordType) => {
+      cy.do(Checkbox(recordType).click());
+    });
+    this.clickAddTransformationsButton();
+  },
+
+  createNewFieldMappingProfileWithoutTransformations(
+    name,
+    recordType = 'Source record storage (entire record)',
+  ) {
+    cy.do([TextField('Name*').fillIn(name), Checkbox(recordType).click()]);
+  },
+
+  clickAddTransformationsButton() {
+    cy.do(Button('Add transformations').click());
+  },
 };

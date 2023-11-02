@@ -1,15 +1,23 @@
-import { HTML, including, Button, TextField } from '../../../../interactors';
+import { Button, HTML, TextField, including, Select, Pane } from '../../../../interactors';
 
 export default {
-
-  waitLoading:() => {
-    cy.expect(HTML(including('New custom package')).exists());
+  waitLoading: () => {
+    cy.expect(Pane().exists());
   },
 
   fillInRequiredProperties: (packageName) => {
-    cy.do(TextField('Name*').fillIn(packageName));
+    cy.do(TextField({ name: 'name' }).fillIn(packageName));
   },
-  saveAndClose:() => {
-    cy.do(Button('Save & close').click());
-  }
+
+  chooseContentType: (contentTypeValue) => {
+    cy.do(Select({ name: 'contentType' }).choose(contentTypeValue));
+  },
+
+  saveAndClose: () => {
+    cy.do(Button({ type: 'submit' }).click());
+  },
+
+  checkPackageCreatedCallout(calloutMessage = 'Custom package created.') {
+    cy.expect(HTML(including(calloutMessage)).exists());
+  },
 };

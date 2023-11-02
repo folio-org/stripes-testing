@@ -1,11 +1,6 @@
-import {
-  Button,
-  Modal,
-  MultiColumnList,
-  TextField,
-} from '../../interactors';
+import { Button, Modal, MultiColumnList, TextField } from '../../interactors';
 
-Cypress.Commands.add('checkInItem', barcode => {
+Cypress.Commands.add('checkInItem', (barcode) => {
   cy.do([
     TextField('Item ID').fillIn(barcode),
     Button('Enter').click(),

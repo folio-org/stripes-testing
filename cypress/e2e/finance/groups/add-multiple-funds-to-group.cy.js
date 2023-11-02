@@ -28,56 +28,53 @@ describe('ui-finance: Groups', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear)
-      .then(response => {
-        defaultFiscalYear.id = response.id;
-        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+      defaultFiscalYear.id = response.id;
+      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-        Ledgers.createViaApi(defaultLedger)
-          .then(ledgerResponse => {
-            defaultLedger.id = ledgerResponse.id;
-            firstFund.ledgerId = defaultLedger.id;
-            secondFund.ledgerId = defaultLedger.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        firstFund.ledgerId = defaultLedger.id;
+        secondFund.ledgerId = defaultLedger.id;
 
-            Groups.createViaApi(defaultGroup)
-              .then(groupResponse => {
-                defaultGroup.id = groupResponse.id;
-              });
+        Groups.createViaApi(defaultGroup).then((groupResponse) => {
+          defaultGroup.id = groupResponse.id;
+        });
 
-            Funds.createViaApi(firstFund)
-              .then(fundResponse => {
-                firstFund.id = fundResponse.fund.id;
+        Funds.createViaApi(firstFund).then((fundResponse) => {
+          firstFund.id = fundResponse.fund.id;
 
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(firstFund.name);
-                Funds.selectFund(firstFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(firstFund.name);
+          Funds.selectFund(firstFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
 
-            Funds.createViaApi(secondFund)
-              .then(secondFundResponse => {
-                secondFund.id = secondFundResponse.fund.id;
+        Funds.createViaApi(secondFund).then((secondFundResponse) => {
+          secondFund.id = secondFundResponse.fund.id;
 
-                cy.visit(TopMenu.fundPath);
-                FinanceHelp.searchByName(secondFund.name);
-                Funds.selectFund(secondFund.name);
-                Funds.addBudget(allocatedQuantity);
-              });
-          });
+          cy.visit(TopMenu.fundPath);
+          FinanceHelp.searchByName(secondFund.name);
+          Funds.selectFund(secondFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
+    });
     cy.createTempUser([
       permissions.uiFinanceCreateViewEditGroups.gui,
       permissions.uiFinanceViewEditDeletGroups.gui,
       permissions.uiFinanceViewEditDeletFundBudget.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.groupsPath, waiter: Groups.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.groupsPath,
+        waiter: Groups.waitLoading,
       });
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(firstFund.name);
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
@@ -101,11 +98,15 @@ describe('ui-finance: Groups', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C347878 Add multiple funds to a group with plugin  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    FinanceHelp.searchByName(defaultGroup.name);
-    Groups.selectGroup(defaultGroup.name);
-    Groups.addLedgerToGroup(defaultLedger.name);
-    InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
-    Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
-  });
+  it(
+    'C347878 Add multiple funds to a group with plugin  (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      FinanceHelp.searchByName(defaultGroup.name);
+      Groups.selectGroup(defaultGroup.name);
+      Groups.addLedgerToGroup(defaultLedger.name);
+      InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
+      Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
+    },
+  );
 });

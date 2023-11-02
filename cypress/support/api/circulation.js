@@ -1,10 +1,7 @@
 import uuid from 'uuid';
 
 import getRandomPostfix from '../utils/stringTools';
-import {
-  CY_ENV,
-  REQUEST_METHOD,
-} from '../constants';
+import { CY_ENV, REQUEST_METHOD } from '../constants';
 
 Cypress.Commands.add('createFixedDueDateSchedule', (body) => {
   cy.okapiRequest({
@@ -16,12 +13,11 @@ Cypress.Commands.add('createFixedDueDateSchedule', (body) => {
       name: `Automation schedule ${getRandomPostfix()}`,
       ...body,
     },
-  })
-    .then(createdSchedule => {
-      Cypress.env(CY_ENV.FIXED_DUE_DATE_SCHEDULE, createdSchedule.body);
+  }).then((createdSchedule) => {
+    Cypress.env(CY_ENV.FIXED_DUE_DATE_SCHEDULE, createdSchedule.body);
 
-      return createdSchedule.body;
-    });
+    return createdSchedule.body;
+  });
 });
 
 Cypress.Commands.add('deleteFixedDueDateSchedule', (id) => {
@@ -35,21 +31,19 @@ Cypress.Commands.add('getCirculationRules', () => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: 'circulation/rules',
-  })
-    .then(rules => {
-      Cypress.env(CY_ENV.CIRCULATION_RULES, rules.body);
+  }).then((rules) => {
+    Cypress.env(CY_ENV.CIRCULATION_RULES, rules.body);
 
-      return rules.body;
-    });
+    return rules.body;
+  });
 });
 
-Cypress.Commands.add('updateCirculationRules', body => cy.okapiRequest({
+Cypress.Commands.add('updateCirculationRules', (body) => cy.okapiRequest({
   method: REQUEST_METHOD.PUT,
   path: 'circulation/rules',
   body,
-  isDefaultSearchParamsRequired: false
+  isDefaultSearchParamsRequired: false,
 }));
-
 
 Cypress.Commands.add('createLoanPolicy', (policy) => {
   cy.okapiRequest({
@@ -60,12 +54,11 @@ Cypress.Commands.add('createLoanPolicy', (policy) => {
       name: `automation_loan_policy_${getRandomPostfix()}`,
       ...policy,
     },
-  })
-    .then(createdPolicy => {
-      Cypress.env(CY_ENV.LOAN_POLICY, createdPolicy.body);
+  }).then((createdPolicy) => {
+    Cypress.env(CY_ENV.LOAN_POLICY, createdPolicy.body);
 
-      return createdPolicy.body;
-    });
+    return createdPolicy.body;
+  });
 });
 
 Cypress.Commands.add('deleteLoanPolicy', (id) => {
@@ -80,12 +73,11 @@ Cypress.Commands.add('getLoanPolicy', (searchParams) => {
     method: REQUEST_METHOD.GET,
     path: 'loan-policy-storage/loan-policies',
     searchParams,
-  })
-    .then(policy => {
-      Cypress.env(CY_ENV.LOAN_POLICY, policy.body.loanPolicies[0]);
+  }).then((policy) => {
+    Cypress.env(CY_ENV.LOAN_POLICY, policy.body.loanPolicies[0]);
 
-      return policy.body.requestPolicies;
-    });
+    return policy.body.requestPolicies;
+  });
 });
 
 Cypress.Commands.add('getRequestPolicy', (searchParams) => {
@@ -93,12 +85,11 @@ Cypress.Commands.add('getRequestPolicy', (searchParams) => {
     method: REQUEST_METHOD.GET,
     path: 'request-policy-storage/request-policies',
     searchParams,
-  })
-    .then(policy => {
-      Cypress.env(CY_ENV.REQUEST_POLICY, policy.body.requestPolicies);
+  }).then((policy) => {
+    Cypress.env(CY_ENV.REQUEST_POLICY, policy.body.requestPolicies);
 
-      return policy.body.requestPolicies;
-    });
+    return policy.body.requestPolicies;
+  });
 });
 
 Cypress.Commands.add('getNoticePolicy', (searchParams) => {
@@ -106,12 +97,11 @@ Cypress.Commands.add('getNoticePolicy', (searchParams) => {
     method: REQUEST_METHOD.GET,
     path: 'patron-notice-policy-storage/patron-notice-policies',
     searchParams,
-  })
-    .then(policy => {
-      Cypress.env(CY_ENV.NOTICE_POLICY, policy.body.patronNoticePolicies);
+  }).then((policy) => {
+    Cypress.env(CY_ENV.NOTICE_POLICY, policy.body.patronNoticePolicies);
 
-      return policy.body.patronNoticePolicies;
-    });
+    return policy.body.patronNoticePolicies;
+  });
 });
 
 Cypress.Commands.add('getOverdueFinePolicy', (searchParams) => {
@@ -119,12 +109,11 @@ Cypress.Commands.add('getOverdueFinePolicy', (searchParams) => {
     method: REQUEST_METHOD.GET,
     path: 'overdue-fines-policies',
     searchParams,
-  })
-    .then(policy => {
-      Cypress.env(CY_ENV.OVERDUE_FINE_POLICY, policy.body.overdueFinePolicies);
+  }).then((policy) => {
+    Cypress.env(CY_ENV.OVERDUE_FINE_POLICY, policy.body.overdueFinePolicies);
 
-      return policy.body.overdueFinePolicies;
-    });
+    return policy.body.overdueFinePolicies;
+  });
 });
 
 Cypress.Commands.add('getLostItemFeesPolicy', (searchParams) => {
@@ -132,10 +121,9 @@ Cypress.Commands.add('getLostItemFeesPolicy', (searchParams) => {
     method: REQUEST_METHOD.GET,
     path: 'lost-item-fees-policies',
     searchParams,
-  })
-    .then(policy => {
-      Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY, policy.body.lostItemFeePolicies);
+  }).then((policy) => {
+    Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY, policy.body.lostItemFeePolicies);
 
-      return policy.body.lostItemFeePolicies;
-    });
+    return policy.body.lostItemFeePolicies;
+  });
 });

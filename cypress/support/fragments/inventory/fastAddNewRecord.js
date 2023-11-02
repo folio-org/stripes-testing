@@ -6,21 +6,13 @@ import {
   SelectionList,
   TextField,
   KeyValue,
-  Section, PaneHeader,
+  Section,
+  PaneHeader,
+  Pane,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
-import TopMenu from '../topMenu';
-import InteractorsTools from '../../utils/interactorsTools';
-
-
-const calloutMessages = {
-  INVENTORY_RECORDS_CREATE_SUCCESS: 'Inventory records have been created successfully',
-  SETTING_UPDATE_SUCCESS: 'Setting was successfully updated.'
-};
 
 const fastAddNewRecordFormDetails = {
-  defaultInstanceStatusCodeOption: 'Select instance status',
-  instanceStatusCodeOption: 'Uncataloged',
   instanceStatusCodeValue: 'uncat',
   resourceTitle: 'Monograph',
   resourceType: 'text',
@@ -30,14 +22,6 @@ const fastAddNewRecordFormDetails = {
   materialType: 'text',
   permanentLoanType: 'Course reserves',
   note: 'note for monograph',
-};
-
-const updateInventoryFastAddSetting = (statusCode) => {
-  cy.visit(TopMenu.inventorySettingsFastAddPath);
-  cy.do(Select({ name: 'instanceStatusCode' }).choose(statusCode));
-  cy.do(Button('Save').click());
-
-  InteractorsTools.checkCalloutMessage(calloutMessages.SETTING_UPDATE_SUCCESS);
 };
 
 const fillFastAddNewRecordForm = ({
@@ -63,7 +47,7 @@ const fillFastAddNewRecordForm = ({
 };
 
 const saveAndClose = () => {
-  cy.do(Button('Save and close').click());
+  cy.do(Button('Save & close').click());
 
   cy.expect(Section({ id: 'pane-results' }).find(Button('Actions')).exists());
 };
@@ -73,16 +57,19 @@ const waitLoading = () => {
 };
 
 const openRecordDetails = (row = 0) => {
-  cy.do(MultiColumnListCell({ row, columnIndex: 1 }).click());
+  cy.do(
+    Pane({ id: 'pane-results' })
+      .find(MultiColumnListCell({ row, columnIndex: 1 }))
+      .click(),
+  );
 
   cy.expect(Section({ id: 'pane-instancedetails' }).exists());
 };
 
 const verifyRecordCreatedDate = ({ start, end }) => {
-  cy
-    .get('[class^="metaHeaderLabel"]')
+  cy.get('[class^="metaHeaderLabel"]')
     .invoke('text')
-    .then(dateText => {
+    .then((dateText) => {
       const createdAt = new Date(dateText);
 
       const startedDate = new Date(start.getTime());
@@ -106,18 +93,20 @@ const viewHoldings = () => {
   cy.expect(Section({ id: 'ui-inventory.holdingsRecordView' }).exists());
 };
 
-const verifyPermanentLocation = value => {
+const verifyPermanentLocation = (value) => {
   cy.expect(KeyValue('Permanent').has({ value }));
 };
 
 const closeHoldingsRecordView = () => {
-  cy.do(Section({ id: 'ui-inventory.holdingsRecordView' }).find(Button({ icon: 'times' })).click());
+  cy.do(
+    Section({ id: 'ui-inventory.holdingsRecordView' })
+      .find(Button({ icon: 'times' }))
+      .click(),
+  );
 };
 
 export default {
-  calloutMessages,
   fastAddNewRecordFormDetails,
-  updateInventoryFastAddSetting,
   fillFastAddNewRecordForm,
   saveAndClose,
   waitLoading,

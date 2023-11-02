@@ -20,11 +20,14 @@ import {
   Link,
   MultiColumnList,
   MultiSelectOption,
+  PaneHeader,
+  Select,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -32,22 +35,37 @@ const zeroResultsFoundText = '0 records found';
 const budgetTitleXpath = '//*[@id="paneHeaderpane-budget-pane-title"]/h2/span';
 const noItemsMessage = 'The list contains no items';
 const viewTransactionsLinkXpath = '//a[text()="View transactions"]';
-const budgetPaneId = 'pane-budget';
 const transactionResultPaneId = 'transaction-results-pane';
+const fundDetailsPane = Section({ id: 'pane-fund-details' });
 const saveAndCloseButton = Button({ id: 'clickable-save-title' });
 const currentBudgetSection = Section({ id: 'currentBudget' });
+const budgetPane = Section({ id: 'pane-budget' });
 const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');
 const transferButton = Button('Transfer');
+const moveAllocationButton = Button('Move allocation');
+const FundsTab = Button('Fund');
+const searchField = SearchField({ id: 'input-record-search' });
 const amountTextField = TextField({ name: 'amount' });
 const confirmButton = Button('Confirm');
 const newButton = Button('New');
+const cancelButton = Button('Cancel');
 const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const externalAccountField = TextField('External account*');
 const ledgerSelection = Selection('Ledger*');
-export default {
+const transactionDetailSection = Section({ id: 'pane-transaction-details' });
+const transactionList = MultiColumnList({ id: 'transactions-list' });
+const budgetSummaryAcordion = Accordion('Budget summary');
+const budgetInformationAcordion = Accordion('Budget information');
+const fundingInformationMCList = MultiColumnList({ ariaRowCount: '7' });
+const financialActivityAndOveragesMCList = MultiColumnList({ ariaRowCount: '5' });
+const resetButton = Button({ id: 'reset-funds-filters' });
+const addTransferModal = Modal({ id: 'add-transfer-modal' });
+const closeWithoutSavingButton = Button('Close without saving');
+const addExpenseClassButton = Button({ id: 'budget-status-expense-classes-add-button' });
 
+export default {
   defaultUiFund: {
     name: `autotest_fund_${getRandomPostfix()}`,
     code: getRandomPostfix(),
@@ -55,19 +73,47 @@ export default {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   },
-
-  defaultUiBudget: {
-    allocated: 50,
-    allowableEncumbrance: 100,
-    allowableExpenditure: 100,
-    budgetStatus: 'Active',
+  getDefaultFund() {
+    return {
+      id: uuid(),
+      name: `autotest_fund_${getRandomPostfix()}`,
+      code: getRandomPostfix(),
+      externalAccountNo: getRandomPostfix(),
+      fundStatus: 'Active',
+      description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+    };
   },
-  waitLoading : () => {
+  waitLoading: () => {
     cy.expect(Pane({ id: 'fund-results-pane' }).exists());
   },
 
-  waitForFundDetailsLoading : () => {
-    cy.do(Section({ id: 'pane-fund-details' }).visible());
+  waitLoadingTransactions: () => {
+    cy.expect(Pane({ id: 'transaction-results-pane' }).exists());
+  },
+
+  checkSearch() {
+    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
+  },
+
+  checkInvoiceInTransactionList: (indexnumber, type, amount, source) => {
+    cy.expect([
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: type }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: `${amount}` }),
+      transactionList
+        .find(MultiColumnListRow({ index: indexnumber }))
+        .find(MultiColumnListCell({ columnIndex: 5 }))
+        .has({ content: source }),
+    ]);
+  },
+
+  waitForFundDetailsLoading: () => {
+    cy.do(fundDetailsPane.visible());
   },
 
   createFund(fund) {
@@ -78,9 +124,30 @@ export default {
       externalAccountField.fillIn(fund.externalAccount),
       ledgerSelection.open(),
       SelectionList().select(fund.ledgerName),
-      saveAndCloseButton.click()
+      saveAndCloseButton.click(),
     ]);
     this.waitForFundDetailsLoading();
+  },
+
+  cancelCreatingFundWithTransfers(defaultFund, defaultLedger, firstFund, secondFund) {
+    cy.do([
+      newButton.click(),
+      nameField.fillIn(defaultFund.name),
+      codeField.fillIn(defaultFund.code),
+      ledgerSelection.open(),
+      SelectionList().select(defaultLedger),
+    ]);
+    // TO DO: change xpath to interactors when it would be possible
+    cy.get('[data-test-col-transfer-from="true"]').click();
+    cy.get('[data-test-col-transfer-from="true"] ul[role="listbox"]')
+      .contains(firstFund.name)
+      .click();
+    cy.get('[data-test-col-transfer-to="true"]').click();
+    cy.get('[data-test-col-transfer-to="true"] ul[role="listbox"]')
+      .contains(secondFund.name)
+      .click();
+    cy.do([cancelButton.click(), closeWithoutSavingButton.click()]);
+    this.waitLoading();
   },
 
   createFundForWarningMessage(fund) {
@@ -89,7 +156,7 @@ export default {
       nameField.fillIn(fund.name),
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),
-      ledgerSelection.find(Button()).click()
+      ledgerSelection.find(Button()).click(),
     ]);
   },
 
@@ -98,13 +165,26 @@ export default {
       actionsButton.click(),
       Button('Edit').click(),
       MultiSelect({ label: 'Group' }).select([group]),
-      saveAndCloseButton.click()
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  addTransferTo: (fund) => {
+    cy.do([
+      actionsButton.click(),
+      Button('Edit').click(),
+      MultiSelect({ label: 'Transfer to' }).select([fund]),
+      saveAndCloseButton.click(),
     ]);
   },
 
   checkAddGroupToFund: (group) => {
-    cy.expect(Pane({ id: 'pane-fund-details' }).exists());
-    cy.expect(Accordion({ id: 'information' }).find(KeyValue({ value: group })).exists());
+    cy.expect(fundDetailsPane.exists());
+    cy.expect(
+      Accordion({ id: 'information' })
+        .find(KeyValue({ value: group }))
+        .exists(),
+    );
   },
 
   checkWarningMessageFundCodeUsed: () => {
@@ -112,9 +192,7 @@ export default {
   },
 
   checkCreatedFund: (fundName) => {
-    cy.xpath(createdFundNameXpath)
-      .should('be.visible')
-      .and('have.text', fundName);
+    cy.xpath(createdFundNameXpath).should('be.visible').and('have.text', fundName);
   },
 
   tryToCreateFundWithoutMandatoryFields: (fundName) => {
@@ -129,9 +207,23 @@ export default {
       // try to navigate without saving
       Button('Agreements').click(),
       Button('Keep editing').click,
-      Button('Cancel').click(),
-      Button('Close without saving').click()
+      cancelButton.click(),
+      Button('Close without saving').click(),
     ]);
+  },
+  checkBudgetQuantity: (quantityValue) => {
+    // TODO: refactor using interactors (Mutli column list)
+    cy.expect(
+      budgetPane.find(HTML(including('Cash balance: $' + quantityValue.toFixed(2)))).exists(),
+    );
+    cy.expect(
+      budgetPane.find(HTML(including('Available balance: $' + quantityValue.toFixed(2)))).exists(),
+    );
+  },
+  checkBudgetQuantity1: (quantityValue1, quantityValue2) => {
+    // TODO: refactor using interactors (Mutli column list)
+    cy.expect(budgetPane.find(HTML(including('Cash balance: $' + quantityValue1))).exists());
+    cy.expect(budgetPane.find(HTML(including('Available balance: $' + quantityValue2))).exists());
   },
 
   checkZeroSearchResultsHeader: () => {
@@ -141,21 +233,43 @@ export default {
   },
 
   deleteFundViaActions: () => {
-    cy.expect(actionsButton.exists())
+    cy.expect(actionsButton.exists());
     cy.do([
       actionsButton.click(),
       deleteButton.click(),
-      Button('Delete', { id:'clickable-fund-remove-confirmation-confirm' }).click()
+      Button('Delete', {
+        id: 'clickable-fund-remove-confirmation-confirm',
+      }).click(),
     ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
   },
 
   addBudget: (allocatedQuantity) => {
     cy.do(Accordion('Current budget').find(newButton).click());
     cy.expect(Modal('Current budget').exists());
     cy.do([
-      Modal('Current budget').find(TextField({ name: 'allocated' })).fillIn(allocatedQuantity.toString()),
-      Button('Save').click()
+      Modal('Current budget')
+        .find(TextField({ name: 'allocated' }))
+        .fillIn(allocatedQuantity.toString()),
     ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.do([Button('Save').click()]);
+    cy.wait(4000);
+  },
+
+  addPlannedBudget: (allocatedQuantity, fiscalYear) => {
+    cy.do(Accordion('Planned budget').find(newButton).click());
+    cy.expect(Modal('Planned budget').exists());
+    cy.do([
+      Select({ name: 'fiscalYearId' }).choose(fiscalYear),
+      Modal('Planned budget')
+        .find(TextField({ name: 'allocated' }))
+        .fillIn(allocatedQuantity.toString()),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
+    cy.do([Button('Save').click()]);
   },
 
   viewTransactions: () => {
@@ -164,38 +278,86 @@ export default {
 
   checkTransactionList: (fundCode) => {
     cy.expect([
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: '$50.00' }),
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 4 }))
-        .has({ content: `${fundCode}` })
+        .has({ content: `${fundCode}` }),
     ]);
   },
 
-  checkOrderInTransactionList: (fundCode) => {
+  checkTransactionDetails: (indexNumber, fiscalYear, amount, source, type, fund, status) => {
+    cy.do(
+      transactionList
+        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(Link())
+        .click(),
+    );
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
+      transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
+      transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
+      transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
+      transactionDetailSection.find(KeyValue('Status')).has({ value: status }),
+    );
+  },
+
+  checkPaymentInTransactionDetails: (indexNumber, fiscalYear, source, fund, amount) => {
+    cy.do(
+      transactionList
+        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(Link())
+        .click(),
+    );
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
+      transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
+      transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: 'Payment' }),
+      transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
+    );
+  },
+
+  checkStatusInTransactionDetails: (status) => {
+    cy.expect(transactionDetailSection.find(KeyValue('Status')).has({ value: status }));
+  },
+
+  checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .has({ content: 'Encumbrance' }),
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
-        .has({ content: '($50.00)' }),
-      MultiColumnList({ id: 'transactions-list' })
+        .has({ content: `${amount}` }),
+      transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .has({ content: `${fundCode}` }),
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 5 }))
-        .has({ content: 'PO line' })
+        .has({ content: 'PO line' }),
     ]);
   },
 
+  selectTransactionInList: (transactionType) => {
+    cy.get(`div[class*=mclCell-]:contains("${transactionType}")`)
+      .siblings('div[class*=mclCell-]')
+      .eq(0)
+      .find('a')
+      .click();
+  },
+
+  checkNoTransactionOfType: (transactionType) => {
+    cy.expect(MultiColumnListCell(transactionType).absent());
+  },
 
   increaseAllocation: () => {
     cy.do([
@@ -203,36 +365,166 @@ export default {
       Button('Increase allocation').click(),
       amountTextField.fillIn('50'),
     ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
-    cy.do(Modal({ id: 'add-transfer-modal' }).find(Button('Confirm')).click());
+    cy.do(addTransferModal.find(confirmButton).click());
   },
 
-  transfer: (thisFund, fromFund) => {
+  transfer(toFund, fromFund) {
+    cy.do([actionsButton.click(), transferButton.click()]);
+    this.fillAllocationFields({ toFund, fromFund, amount: '10' });
+  },
+  moveSimpleAllocation(fromFund, toFund, amount) {
     cy.do([
       actionsButton.click(),
-      transferButton.click(),
-      Button({ name: 'toFundId' }).click(),
-      SelectionOption(`${thisFund.name} (${thisFund.code})`).click(),
-      Button({ name: 'fromFundId' }).click(),
+      moveAllocationButton.click(),
+      addTransferModal.find(Button({ name: 'toFundId' })).click(),
+      SelectionOption(`${toFund.name} (${toFund.code})`).click(),
+      addTransferModal.find(Button({ name: 'fromFundId' })).click(),
       SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
-      amountTextField.fillIn('10'),
-      Modal({ id: 'add-transfer-modal' }).find(confirmButton).click(),
+      addTransferModal.find(amountTextField).fillIn(amount),
+      addTransferModal.find(confirmButton).click(),
+    ]);
+    cy.wait(4000);
+  },
+  moveAllocation({ fromFund, toFund, amount }) {
+    cy.do([actionsButton.click(), moveAllocationButton.click()]);
+    this.fillAllocationFields({ toFund, fromFund, amount });
+  },
+  closeTransferModal() {
+    cy.do(addTransferModal.find(cancelButton).click());
+  },
+  fillAllocationFields({ toFund, fromFund, amount }) {
+    if (toFund) {
+      cy.do([
+        addTransferModal.find(Button({ name: 'toFundId' })).click(),
+        SelectionOption(`${toFund.name} (${toFund.code})`).click(),
+      ]);
+    }
+
+    if (fromFund) {
+      cy.do([
+        addTransferModal.find(Button({ name: 'fromFundId' })).click(),
+        SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
+      ]);
+    }
+    cy.do([
+      addTransferModal.find(amountTextField).fillIn(amount),
+      addTransferModal.find(confirmButton).click(),
     ]);
   },
-
-
   checkCreatedBudget: (fundCode, fiscalYear) => {
-    cy.expect(Accordion('Budget summary').exists());
-    cy.expect(Accordion('Budget information').exists());
+    cy.expect(budgetSummaryAcordion.exists());
+    cy.expect(budgetInformationAcordion.exists());
     cy.xpath(budgetTitleXpath)
       .should('be.visible')
       .and('have.text', fundCode.concat('-', fiscalYear));
   },
 
-  checkBudgetQuantity: (quantityValue) => {
-    // TODO: refactor using interactors (Mutli column list)
-    cy.expect(Section({ id: budgetPaneId }).find(HTML(including('Cash balance: $' + quantityValue.toFixed(2)))).exists());
-    cy.expect(Section({ id: budgetPaneId }).find(HTML(including('Available balance: $' + quantityValue.toFixed(2)))).exists());
+  checkFundingInformation: (
+    amountInitialAllocation,
+    amountIncreaseInAllocation,
+    amountDecreaseInAllocation,
+    amountTotalAllocated,
+    amountNetTransfers,
+    amountTotalFunding,
+  ) => {
+    cy.expect(budgetSummaryAcordion.exists());
+    cy.expect(budgetInformationAcordion.exists());
+    cy.expect([
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListCell({ content: 'Initial allocation' }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListCell({ content: amountInitialAllocation }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-1' }))
+        .find(MultiColumnListCell({ content: 'Increase in allocation' }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-1' }))
+        .find(MultiColumnListCell({ content: amountIncreaseInAllocation }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-2' }))
+        .find(MultiColumnListCell({ content: 'Decrease in allocation' }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-2' }))
+        .find(MultiColumnListCell({ content: amountDecreaseInAllocation }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListCell({ content: 'Total allocated' }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListCell({ content: amountTotalAllocated }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-4' }))
+        .find(MultiColumnListCell({ content: 'Net transfers' }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-4' }))
+        .find(MultiColumnListCell({ content: amountNetTransfers }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-5' }))
+        .find(MultiColumnListCell({ content: 'Total funding' }))
+        .exists(),
+      fundingInformationMCList
+        .find(MultiColumnListRow({ indexRow: 'row-5' }))
+        .find(MultiColumnListCell({ content: amountTotalFunding }))
+        .exists(),
+    ]);
+  },
+
+  checkFinancialActivityAndOverages: (
+    amountEncumbered,
+    amountAwaitingPayment,
+    amountExpended,
+    amountUnavailable,
+  ) => {
+    cy.expect(budgetSummaryAcordion.exists());
+    cy.expect(budgetInformationAcordion.exists());
+    cy.expect([
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListCell({ content: 'Encumbered' }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-0' }))
+        .find(MultiColumnListCell({ content: amountEncumbered }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-1' }))
+        .find(MultiColumnListCell({ content: 'Awaiting payment' }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-1' }))
+        .find(MultiColumnListCell({ content: amountAwaitingPayment }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-2' }))
+        .find(MultiColumnListCell({ content: 'Expended' }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-2' }))
+        .find(MultiColumnListCell({ content: amountExpended }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListCell({ content: 'Unavailable' }))
+        .exists(),
+      financialActivityAndOveragesMCList
+        .find(MultiColumnListRow({ indexRow: 'row-3' }))
+        .find(MultiColumnListCell({ content: amountUnavailable }))
+        .exists(),
+    ]);
   },
 
   openTransactions: () => {
@@ -242,36 +534,48 @@ export default {
   },
 
   checkTransaction: (rowNumber, transaction) => {
-    Describer.getProperties(transaction)
-      .forEach(function (val) {
-        cy.expect(Pane({ id: transactionResultPaneId })
+    Describer.getProperties(transaction).forEach((val) => {
+      cy.expect(
+        Pane({ id: transactionResultPaneId })
           .find(MultiColumnListRow({ index: rowNumber }))
-          .find(MultiColumnListCell({ content: transaction[val] })).exists());
-      });
+          .find(MultiColumnListCell({ content: transaction[val] }))
+          .exists(),
+      );
+    });
+  },
+
+  checkAbsentTransaction: (transaction) => {
+    cy.wait(4000);
+    cy.expect(
+      Pane({ id: transactionResultPaneId })
+        // .find(MultiColumnListRow({ index: rowNumber }))
+        .find(MultiColumnListCell({ content: transaction }))
+        .absent(),
+    );
   },
 
   transferAmount: (amount, fundFrom, fundTo) => {
-    cy.do([
-      actionsButton.click(),
-      transferButton.click()
-    ]);
+    cy.do([actionsButton.click(), transferButton.click()]);
     cy.expect(Modal('Transfer').exists());
     cy.do([
       TextField('Amount*').fillIn(amount.toString()),
       Selection('From').open(),
-      SelectionList().select((fundFrom.name).concat(' ', '(', fundFrom.code, ')')),
+      SelectionList().select(fundFrom.name.concat(' ', '(', fundFrom.code, ')')),
       Selection('To').open(),
-      SelectionList().select((fundTo.name).concat(' ', '(', fundTo.code, ')')),
-      confirmButton.click()
+      SelectionList().select(fundTo.name.concat(' ', '(', fundTo.code, ')')),
+      confirmButton.click(),
     ]);
   },
 
   deleteBudgetViaActions() {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
     cy.do([
       actionsButton.click(),
       deleteButton.click(),
-      Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
+      Button('Delete', {
+        id: 'clickable-budget-remove-confirmation-confirm',
+      }).click(),
     ]);
     this.waitForFundDetailsLoading();
   },
@@ -280,21 +584,24 @@ export default {
     cy.do([
       actionsButton.click(),
       deleteButton.click(),
-      Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
+      Button('Delete', {
+        id: 'clickable-budget-remove-confirmation-confirm',
+      }).click(),
     ]);
     cy.expect(Section({ id: 'summary' }).exists());
   },
 
   checkDeletedBudget: (budgetSectionId) => {
     cy.expect(
-      Section({ id: budgetSectionId }).find(HTML(including(noItemsMessage))).exists()
+      Section({ id: budgetSectionId })
+        .find(HTML(including(noItemsMessage)))
+        .exists(),
     );
   },
 
   resetFundFilters: () => {
-    cy.do([
-      Button({ id: 'reset-funds-filters' }).click(),
-    ]);
+    cy.do(resetButton.click());
+    cy.expect(resetButton.is({ disabled: true }));
   },
 
   selectStatusInSearch: (fundStatus) => {
@@ -331,7 +638,9 @@ export default {
 
       Accordion({ id: 'groupFundFY.groupId' }).clickHeader(),
       Selection({ id: 'groupFundFY.groupId-selection' }).open(),
-      SelectionList({ id: 'sl-container-groupFundFY.groupId-selection' }).select(groupName),
+      SelectionList({
+        id: 'sl-container-groupFundFY.groupId-selection',
+      }).select(groupName),
 
       Accordion({ id: 'acqUnitIds' }).clickHeader(),
       Selection({ id: 'acqUnitIds-selection' }).open(),
@@ -340,7 +649,7 @@ export default {
       Accordion({ id: 'tags' }).clickHeader(),
       MultiSelect({ id: 'acq-tags-filter' }).select(tags),
 
-      SearchField({ id: 'input-record-search' }).fillIn(fundName),
+      searchField.fillIn(fundName),
       Button('Search').click(),
     ]);
   },
@@ -356,72 +665,154 @@ export default {
       restrictEncumbrance: false,
       restrictExpenditures: false,
       acqUnitIds: '',
-      fiscalYearOneId: ''
+      fiscalYearOneId: '',
     };
     cy.getAdminToken();
-    cy.getAcqUnitsApi({ limit: 1 })
-      .then(
-        ({ body }) => {
-          ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
-          cy.getFiscalYearsApi({ limit: 1 })
-            .then((response) => {
-              ledger.fiscalYearOneId = response.body.fiscalYears[0].id;
-              cy.createLedgerApi({
-                ...ledger
-              });
-              fund.ledgerName = ledger.name;
-              cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-              cy.visit(TopMenu.fundPath);
-              this.createFund(fund);
-              this.checkCreatedFund(fund.name);
-              cy.wrap(ledger).as('createdLedger');
-              return cy.get('@createdLedger');
-            });
-        }
-      );
+    cy.getAcqUnitsApi({ limit: 1 }).then(({ body }) => {
+      ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
+      cy.getFiscalYearsApi({ limit: 1 }).then((response) => {
+        ledger.fiscalYearOneId = response.body.fiscalYears[0].id;
+        cy.createLedgerApi({
+          ...ledger,
+        });
+        fund.ledgerName = ledger.name;
+        cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+        cy.visit(TopMenu.fundPath);
+        this.createFund(fund);
+        this.checkCreatedFund(fund.name);
+        cy.wrap(ledger).as('createdLedger');
+        return cy.get('@createdLedger');
+      });
+    });
     return cy.get('@createdLedger');
   },
 
   openBudgetDetails: (fundCode, fiscalYear) => {
     cy.do([
-      Accordion({ id: 'currentBudget' }).find(MultiColumnListCell({ content: fundCode.concat('-', fiscalYear) })).click()
+      Accordion({ id: 'currentBudget' })
+        .find(MultiColumnListCell({ content: fundCode.concat('-', fiscalYear) }))
+        .click(),
     ]);
   },
+  checkBudgetDetails(records) {
+    records
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((record, index) => {
+        cy.expect([
+          currentBudgetSection
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: record.name }),
+          currentBudgetSection
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: `$${record.allocated}.00` }),
+          currentBudgetSection
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .has({ content: `$${record.transfers || 0}.00` }),
+          currentBudgetSection
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ columnIndex: 3 }))
+            .has({ content: `$${record.unavailable || 0}.00` }),
+          currentBudgetSection
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .has({ content: `$${record.available}.00` }),
+        ]);
+      });
+  },
 
-  selectBudgetDetails:(rowNumber = 0) => {
+  selectBudgetDetails(rowNumber = 0) {
+    cy.do(currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).click());
+    cy.expect(budgetPane.exists());
+  },
+
+  checkBudgetStatus(status) {
+    cy.expect(Section({ id: 'information' }).find(KeyValue('Status')).has({ value: status }));
+  },
+
+  closeBudgetDetails() {
+    cy.do(budgetPane.find(Button({ icon: 'times' })).click());
+    cy.expect(fundDetailsPane.visible());
+  },
+
+  selectPreviousBudgetDetails: (rowNumber = 0) => {
     cy.do([
-      currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).click()
+      Section({ id: 'previousBudgets' })
+        .find(MultiColumnListRow({ index: rowNumber }))
+        .click(),
     ]);
   },
 
-  checkIsBudgetDeleted:(rowNumber = 0) => {
-    cy.expect([
-      currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).absent()
-    ]);
-  },
-
-  editBudget:() => {
+  selectPreviousBudgetDetailsByFY: (fund, fiscalYear) => {
     cy.do([
-      actionsButton.click(),
-      Button('Edit').click()
+      Section({ id: 'previousBudgets' })
+        .find(MultiColumnListCell(`${fund.code}-${fiscalYear.code}`))
+        .click(),
     ]);
   },
 
-  addExpensesClass:(firstExpenseClassName) => {
+  selectPlannedBudgetDetails: (rowNumber = 0) => {
     cy.do([
-      Button({ id: 'budget-status-expense-classes-add-button' }).click(),
+      Section({ id: 'plannedBudget' })
+        .find(MultiColumnListRow({ index: rowNumber }))
+        .click(),
+    ]);
+  },
+
+  checkIsBudgetDeleted: (rowNumber = 0) => {
+    cy.expect([currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).absent()]);
+  },
+
+  editBudget: () => {
+    cy.wait(4000);
+    cy.do([actionsButton.click(), Button('Edit').click()]);
+  },
+
+  changeStatusOfBudget: (statusName, fund, fiscalYear) => {
+    cy.wait(4000);
+    cy.do([Select({ id: 'budget-status' }).choose(statusName), saveAndCloseButton.click()]);
+    InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${fiscalYear.code} has been saved`);
+  },
+
+  addExpensesClass: (firstExpenseClassName) => {
+    cy.do([
+      addExpenseClassButton.click(),
       Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
       SelectionOption(firstExpenseClassName).click(),
     ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.do(saveAndCloseButton.click());
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
   },
-  deleteExpensesClass:() => {
+
+  addTwoExpensesClass: (firstExpenseClassName, secondExpenseClassName) => {
+    cy.do([
+      addExpenseClassButton.click(),
+      Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
+      SelectionOption(firstExpenseClassName).click(),
+      addExpenseClassButton.click(),
+      Button({ name: 'statusExpenseClasses[1].expenseClassId' }).click(),
+      SelectionOption(secondExpenseClassName).click(),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+  },
+
+  deleteExpensesClass: () => {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.do([
-      Section({ id: 'expense-classes' }).find(Button({ icon: 'trash' })).click(),
-      saveAndCloseButton.click()
+      Section({ id: 'expense-classes' })
+        .find(Button({ icon: 'trash' }))
+        .click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -429,20 +820,7 @@ export default {
     return cy
       .okapiRequest({
         path: 'finance/funds',
-        body: { fund:fundProperties },
-        method: 'POST',
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((response) => {
-        return response.body;
-      });
-  },
-
-  addBudgetToFundViaApi: (budgetProperties) => {
-    return cy
-      .okapiRequest({
-        path: 'finance/budgets',
-        body: budgetProperties,
+        body: { fund: fundProperties },
         method: 'POST',
         isDefaultSearchParamsRequired: false,
       })
@@ -456,12 +834,6 @@ export default {
     path: `finance/funds/${fundId}`,
     isDefaultSearchParamsRequired: false,
   }),
-
-  deleteBudgetViaApi: (budgetId) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `finance/budgets/${budgetId}`,
-    isDefaultSearchParamsRequired: false,
-  }),
   createFundWithAU(fund, ledger, AUName) {
     cy.do([
       newButton.click(),
@@ -471,40 +843,108 @@ export default {
       ledgerSelection.open(),
       SelectionList().select(ledger.name),
     ]);
-    //Need wait, while data is loading
+    // Need wait, while data is loading
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(4000);
     cy.do([
-      MultiSelect({ id: 'fund-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelect({ id: 'fund-acq-units' })
+        .find(Button({ ariaLabel: 'open menu' }))
+        .click(),
       MultiSelectOption(AUName).click(),
       saveAndCloseButton.click(),
     ]);
     this.waitForFundDetailsLoading();
   },
 
-  selectTransaction:(inexRowNumber) => {
-    cy.do([
-      MultiColumnListRow({ indexRow: inexRowNumber}).find(Link()).click(),
-    ]);
+  selectTransaction: (indexRowNumber) => {
+    cy.do([MultiColumnListRow({ indexRow: indexRowNumber }).find(Link()).click()]);
   },
 
-  checkEncumbrance:(orderNumber) => {
+  checkEncumbrance: (orderNumber) => {
     cy.expect([
       KeyValue('Amount').exists(),
-      KeyValue({ value: '$0.00'}).exists(),
-      KeyValue({ value: `${orderNumber}-1`})
+      KeyValue({ value: '$0.00' }).exists(),
+      KeyValue({ value: `${orderNumber}-1` }),
     ]);
   },
 
-  checkPendingPayment:(invoiceNumber) => {
-    cy.expect(KeyValue({ value: invoiceNumber}).exists());
-  },
-  
-  checkCancelPendingPayment:(invoiceNumber) => {
-    cy.expect(KeyValue({ value: invoiceNumber}).exists());
-    cy.do(Section({ id: 'information' }).find(Button({ icon: 'info' })).click());
+  checkPendingPayment: (invoiceNumber) => {
+    cy.expect(KeyValue({ value: invoiceNumber }).exists());
   },
 
-  selectFund:(FundName) => {
+  checkCancelPendingPayment: (invoiceNumber) => {
+    cy.expect(KeyValue({ value: invoiceNumber }).exists());
+    cy.do(
+      Section({ id: 'information' })
+        .find(Button({ icon: 'info' }))
+        .click(),
+    );
+  },
+  clickOnFundsTab: () => {
+    cy.do([FundsTab.click()]);
+  },
+  searchByName: (name) => {
+    cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), Button('Search').click()]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
+  },
+
+  selectFund: (FundName) => {
+    cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+    cy.expect(fundDetailsPane.visible());
+  },
+
+  closeMenu: () => {
+    cy.do(Button({ icon: 'times' }).click());
+  },
+
+  closeTransactionDetails: () => {
+    cy.do(
+      Section({ id: 'pane-transaction-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  closeTransactionApp: (fund, fiscalYear) => {
+    cy.do(
+      PaneHeader(`${fund.code}-${fiscalYear.code}`)
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
+  clickInfoInTransactionDetails: () => {
+    cy.do(
+      Section({ id: 'pane-transaction-details' })
+        .find(Button({ icon: 'info' }))
+        .click(),
+    );
+  },
+
+  addAUToFund: (AUName) => {
+    cy.do([actionsButton.click(), Button('Edit').click()]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
+    cy.do([
+      MultiSelect({ id: 'fund-acq-units' })
+        .find(Button({ ariaLabel: 'open menu' }))
+        .click(),
+      MultiSelectOption(AUName).click(),
+      saveAndCloseButton.click(),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
+  },
+
+  varifyDetailsInTransaction: (fiscalYear, amount, source, type, fund) => {
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({ value: fiscalYear }),
+      transactionDetailSection.find(KeyValue('Amount')).has({ value: amount }),
+      transactionDetailSection.find(KeyValue('Source')).has({ value: source }),
+      transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
+      transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
+    );
   },
 };

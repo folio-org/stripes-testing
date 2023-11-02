@@ -15,7 +15,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 
 describe('orders: Edifact export', () => {
-    
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
@@ -44,7 +43,7 @@ describe('orders: Edifact export', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   const integrationName1 = `FirstIntegrationName${getRandomPostfix()}`;
   const integrationName2 = `SecondIntegrationName${getRandomPostfix()}`;
@@ -54,7 +53,8 @@ describe('orders: Edifact export', () => {
   const libraryEDICodeFor1Integration = getRandomPostfix();
   const vendorEDICodeFor2Integration = getRandomPostfix();
   const libraryEDICodeFor2Integration = getRandomPostfix();
-  const errorMessage = 'This Order includes 2 unique account numbers for export. You can not open an order with more than one POL set to export if the POLs have different account numbers. Please edit account number information of these POLs or move POLs with different account numbers to different orders before opening' ;
+  const errorMessage =
+    'This Order includes 2 unique account numbers for export. You can not open an order with more than one POL set to export if the POLs have different account numbers. Please edit account number information of these POLs or move POLs with different account numbers to different orders before opening';
   let orderNumber;
   let user;
   let location;
@@ -63,79 +63,99 @@ describe('orders: Edifact export', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi()
-    .then((servicePoint) => {
+    ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-        .then(res => {
-          location = res;
-        });
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
+      });
     });
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(organizationsResponse => {
-        organization.id = organizationsResponse;
-        order.vendor = organizationsResponse;
-      });
-    cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+      organization.id = organizationsResponse;
+      order.vendor = organizationsResponse;
+    });
+    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformationWithoutScheduling(integrationName1, integartionDescription1, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
+    Organizations.fillIntegrationInformationWithoutScheduling(
+      integrationName1,
+      integartionDescription1,
+      vendorEDICodeFor1Integration,
+      libraryEDICodeFor1Integration,
+      organization.accounts[0].accountNo,
+      'Purchase',
+    );
     Organizations.addIntegration();
     cy.wait(2000);
-    Organizations.fillIntegrationInformationWithoutScheduling(integrationName2, integartionDescription2, vendorEDICodeFor2Integration, libraryEDICodeFor2Integration, organization.accounts[1].accountNo, 'Purchase');
-      
+    Organizations.fillIntegrationInformationWithoutScheduling(
+      integrationName2,
+      integartionDescription2,
+      vendorEDICodeFor2Integration,
+      libraryEDICodeFor2Integration,
+      organization.accounts[1].accountNo,
+      'Purchase',
+    );
+
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
     SettingsOrders.setPurchaseOrderLinesLimit(2);
 
-    cy.createOrderApi(order)
-    .then((response) => {
+    cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
-      OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 2);
-      OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[1].name} (${organization.accounts[1].accountNo})`, 'Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocation(
+        `${organization.accounts[1].name} (${organization.accounts[1].accountNo})`,
+        'Purchase',
+        location.institutionId,
+      );
     });
-    
+
     cy.createTempUser([
       permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersCreate.gui, 
+      permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersReopenPurchaseOrders.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
     cy.loginAsAdmin();
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
     SettingsOrders.setPurchaseOrderLinesLimit(1);
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id
-      );
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id,
+    );
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
-    Orders.openOrder();
-    Orders.errorMessage('Different account numbers',errorMessage);
-  });
+  it(
+    'C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList();
+      Orders.openOrder();
+      Orders.errorMessage('Different account numbers', errorMessage);
+    },
+  );
 });

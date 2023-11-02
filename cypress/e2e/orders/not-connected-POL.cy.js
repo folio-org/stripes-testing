@@ -32,30 +32,29 @@ describe('orders: Test POL', () => {
   before(() => {
     cy.getAdminToken();
 
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = response;
-      });
-    cy.createOrderApi(order)
-      .then((response) => {
-        orderNumber = response.body.poNumber;
-        orderID = response.body.id;
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = response;
+    });
+    cy.createOrderApi(order).then((response) => {
+      orderNumber = response.body.poNumber;
+      orderID = response.body.id;
+    });
     InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-    cy.createTempUser([
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersEdit.gui
-    ])
-      .then(userProperties => {
+    cy.createTempUser([permissions.uiOrdersCreate.gui, permissions.uiOrdersEdit.gui]).then(
+      (userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-      });
+        cy.login(user.username, user.password, {
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
+        });
+      },
+    );
   });
 
   after(() => {
-    Orders.deleteOrderApi(orderID);
+    Orders.deleteOrderViaApi(orderID);
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);

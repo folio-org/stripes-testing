@@ -52,12 +52,16 @@ export default {
     cy.expect(PaneHeader(pageHeaders.createEvent).exists());
 
     cy.do([
-        TextField(fieldLabels.from).find(Button({ icon: iconsSet.calendar })).click(),
-        Calendar().clickActiveDay(currentDate),
-        TextField(fieldLabels.to).find(Button({ icon: iconsSet.calendar })).click(),
-        Calendar().clickActiveDay(currentDate),
-        TextField({ name: nameAttributeValue }).fillIn(initialEventName)
-      ]);
+      TextField(fieldLabels.from)
+        .find(Button({ icon: iconsSet.calendar }))
+        .click(),
+      Calendar().clickActiveDay(currentDate),
+      TextField(fieldLabels.to)
+        .find(Button({ icon: iconsSet.calendar }))
+        .click(),
+      Calendar().clickActiveDay(currentDate),
+      TextField({ name: nameAttributeValue }).fillIn(initialEventName),
+    ]);
 
     cy.get(selectors.calendarFirstCell).click();
     cy.do(Button(buttonLabels.saveAndClose).click());
@@ -71,9 +75,9 @@ export default {
 
   editCalendarEvent() {
     cy.do([
-        TextField({ name: nameAttributeValue }).fillIn(editedEventName),
-        Button(buttonLabels.saveAndClose).click()
-      ]);
+      TextField({ name: nameAttributeValue }).fillIn(editedEventName),
+      Button(buttonLabels.saveAndClose).click(),
+    ]);
     cy.expect(KeyValue(currentEventLabel, { value: including(editedEventName) }).exists());
   },
 

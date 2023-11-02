@@ -1,6 +1,6 @@
 {
   "name": "@folio/stripes-testing",
-  "version": "4.5.0",
+  "version": "4.7.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
   "publishConfig": {
@@ -14,14 +14,31 @@
     "test:cypress:local": "stripes serve --port 3001 & wait-on http://localhost:3001 && cypress run && kill $!",
     "test:cypress:yakbak": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && yakbak-proxy -v -i -n https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
     "regenerate": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && rm -rf tapes && yakbak-proxy -v -i https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
-    "lint": "eslint .",
-    "build-mod-descriptor": "stripes mod descriptor --full --strict | jq '.[]' > module-descriptor.json "
+    "build-mod-descriptor": "stripes mod descriptor --full --strict | jq '.[]' > module-descriptor.json ",
+    "lint": "eslint . --ext=js",
+    "lint:fix": "eslint --fix --quiet",
+    "prettier": "prettier .",
+    "prettier:fix": "prettier --write",
+    "prepare": "husky install"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run prettier:fix",
+      "npm run lint:fix"
+    ]
   },
   "dependencies": {
     "@interactors/html": "^1.0.0-rc1.4",
+    "@interactors/keyboard": "^1.0.0-rc1.5",
     "axe-core": "4.3.3",
-    "cypress": "10.9.0",
-    "cypress-testrail-simple": "3.1.0",
+    "cypress": "12.14.0",
+    "cypress-cloud": "^1.9.3",
+    "cypress-testrail-simple": "^3.1.0",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
@@ -30,24 +47,34 @@
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/eslint-parser": "^7.19.1",
+    "@cypress/grep": "^4.0.1",
     "@cypress/request": "2.88.7",
-    "@interactors/with-cypress": "^1.0.0-rc1.2",
-    "@folio/eslint-config-stripes": "^6.1.0",
-    "@shelex/cypress-allure-plugin": "^2.23.0",
+    "@folio/eslint-config-stripes": "^6.4.0",
+    "@interactors/with-cypress": "^1.0.0-rc1.3",
+    "@shelex/cypress-allure-plugin": "^2.40.0",
     "bigtest": "^0.14.0",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
-    "cypress-grep": "^3.0.3",
     "cypress-recurse": "^1.13.1",
     "cypress-xpath": "^1.6.2",
     "eslint": "^7.32.0",
     "eslint-plugin-cypress": "^2.11.2",
+    "eslint-plugin-import": "^2.28.1",
     "fs-extra": "7.0.1",
     "globby": "^11.1.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^14.0.1",
     "localforage": "^1.9.0",
+    "prettier": "^3.0.2",
     "uuid": "^3.4.0"
   },
   "resolutions": {
-    "cypress": "^9.1.0"
+    "cypress": "12.14.0",
+    "chromedriver": "116.0.0"
+  },
+  "overrides": {
+    "bigtest": {
+      "chromedriver": "116.0.0"
+    }
   }
 }

@@ -1,3 +1,4 @@
+import { including, HTML } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
@@ -5,137 +6,134 @@ import {
   Pane,
   MultiColumnListRow,
   PaneContent,
-  Form
+  Form,
+  MultiColumnList,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import FieldMappingProfileEdit from './fieldMappingProfileEdit';
 import NewFieldMappingProfile from './newFieldMappingProfile';
+import FieldMappingProfileView from './fieldMappingProfileView';
+import Callout from '../../../../../interactors/callout';
 
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
-const iconButton = Button({ icon: 'times' });
-const saveProfileButton = Button('Save as profile & Close');
-const resultsPane = Pane({ id:'pane-results' });
+const resultsPane = Pane({ id: 'pane-results' });
+const searchField = TextField({ id: 'input-search-mapping-profiles-field' });
 
 const openNewMappingProfileForm = () => {
-  cy.do([
-    actionsButton.click(),
-    Button('New field mapping profile').click()
-  ]);
+  cy.do([actionsButton.click(), Button('New field mapping profile').click()]);
 };
-
-const closeViewModeForMappingProfile = (profileName) => cy.do(Pane({ title: profileName }).find(iconButton).click());
-const saveProfile = () => cy.do(saveProfileButton.click());
-
 const mappingProfileForDuplicate = {
   gobi: 'GOBI monograph invoice',
   harrassowitz: 'Default - Harrassowitz serials invoice',
+  ebsco: 'Default - EBSCO serials invoice',
 };
 
-const deleteFieldMappingProfile = (profileName) => {
-  // get all mapping profiles
-  cy
-    .okapiRequest({
-      path: 'data-import-profiles/mappingProfiles',
-      searchParams: {
-        query: '(cql.allRecords=1) sortby name',
-        limit: 1000
-      },
-    })
-    .then(({ body: { mappingProfiles } }) => {
-      // find profile to delete
-      const profileToDelete = mappingProfiles.find(profile => profile.name === profileName);
-
-      // delete profile with its id
-      cy
-        .okapiRequest({
-          method: 'DELETE',
-          path: `data-import-profiles/mappingProfiles/${profileToDelete.id}`,
-        });
-    })
-    .then(({ status }) => {
-      if (status === 204) cy.log('###DELETED MAPPING PROFILE###');
-    });
-};
-
-const searchMappingProfile = (nameForSearch) => {
-  cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(nameForSearch));
-  cy.expect(searchButton.has({ disabled:false }));
+const search = (nameForSearch) => {
+  cy.do(searchField.fillIn(nameForSearch));
+  cy.expect(searchButton.has({ disabled: false }));
   cy.do(searchButton.click(), getLongDelay());
 };
 
-const duplicateMappingProfile = () => {
+const duplicate = () => {
   cy.do([
-    Pane({ id:'full-screen-view' }).find(actionsButton).click(),
-    Button('Duplicate').click()
+    Pane({ id: 'full-screen-view' }).find(actionsButton).click(),
+    Button('Duplicate').click(),
   ]);
 };
 
 export default {
   openNewMappingProfileForm,
-  saveProfile,
-  closeViewModeForMappingProfile,
-  searchMappingProfile,
-
-  createMappingProfile:(mappingProfile) => {
+  search,
+  mappingProfileForDuplicate,
+  clearSearchField: () => {
+    cy.do(searchField.focus());
+    cy.do(Button({ id: 'input-mapping-profiles-search-field-clear-button' }).click());
+  },
+  waitLoading: () => cy.expect(MultiColumnListRow({ index: 0 }).exists()),
+  createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfile(mappingProfile);
-    closeViewModeForMappingProfile(mappingProfile.name);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
-
-  checkMappingProfilePresented: (mappingProfileName) => {
-    cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(mappingProfileName));
-    cy.do(searchButton.click());
-    cy.expect(MultiColumnListCell(mappingProfileName).exists());
-  },
-
-  createInvoiceMappingProfile:(mappingProfileName, defaultProfile, organizationName) => {
-    cy.intercept('/tags?*').as('getTag');
-    searchMappingProfile(defaultProfile);
-    cy.wait('@getTag');
-    duplicateMappingProfile();
-    NewFieldMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
-    closeViewModeForMappingProfile(mappingProfileName);
+  createInvoiceMappingProfile: (mappingProfile, defaultProfile) => {
+    search(defaultProfile);
+    duplicate();
+    cy.wait(2000);
+    NewFieldMappingProfile.fillInvoiceMappingProfile(mappingProfile);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
-
-  deleteFieldMappingProfile,
-  mappingProfileForDuplicate,
-  waitLoading: () => cy.expect(MultiColumnListRow({ index:0 }).exists()),
-
-  createMappingProfileForMatch:(mappingProfile) => {
+  createOrderMappingProfile: (mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
+    NewFieldMappingProfile.save();
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
+  },
+  createMappingProfileForMatch: (mappingProfile) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfileForMatch(mappingProfile);
-    closeViewModeForMappingProfile(mappingProfile.name);
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
-
-  createMappingProfileForUpdatesMarc:(mappingProfile) => {
+  createMappingProfileForUpdatesMarc: (mappingProfile) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
-    cy.do(saveProfileButton.click());
+    NewFieldMappingProfile.save();
   },
-
-  createMappingProfileForUpdatesAndOverrideMarc:(mappingProfile, firstProtectedField, secondProtectedField) => {
+  createMappingProfileForUpdatesMarcAuthority: (mappingProfile) => {
+    openNewMappingProfileForm();
+    NewFieldMappingProfile.fillMappingProfileForUpdatesMarcAuthority(mappingProfile);
+    NewFieldMappingProfile.save();
+  },
+  createMappingProfileForUpdatesAndOverrideMarc: (
+    mappingProfile,
+    firstProtectedField,
+    secondProtectedField,
+  ) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
     FieldMappingProfileEdit.markFieldForProtection(firstProtectedField);
     FieldMappingProfileEdit.markFieldForProtection(secondProtectedField);
-    cy.do(saveProfileButton.click());
+    NewFieldMappingProfile.save();
   },
-
-  createMappingProfileWithNotes:(mappingProfile, note) => {
+  createMappingProfileWithNotes: (mappingProfile, note) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
     NewFieldMappingProfile.addAdministrativeNote(note, 9);
-    cy.do(saveProfileButton.click());
-    closeViewModeForMappingProfile(mappingProfile.name);
+    NewFieldMappingProfile.save();
+    FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
-  selectMappingProfileFromList:(profileName) => cy.do(MultiColumnListCell(profileName).click()),
-
-  checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists()),
-  checkNewMappingProfileFormIsOpened:() => cy.expect(Form({ id:'mapping-profiles-form' }).exists()),
-  verifyActionMenuAbsent:() => cy.expect(resultsPane.find(actionsButton).absent())
+  selectMappingProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
+  checkMappingProfilePresented: (mappingProfileName) => {
+    cy.do(searchField.fillIn(mappingProfileName));
+    cy.do(searchButton.click());
+    cy.expect(MultiColumnListCell(mappingProfileName).exists());
+  },
+  checkListOfExistingProfilesIsDisplayed: () => {
+    cy.wait(2000);
+    cy.expect(
+      PaneContent({ id: 'pane-results-content' })
+        .find(MultiColumnList({ id: 'mapping-profiles-list' }))
+        .exists(),
+    );
+  },
+  checkNewMappingProfileFormIsOpened: () => cy.expect(Form({ id: 'mapping-profiles-form' }).exists()),
+  verifyActionMenuAbsent: () => cy.expect(resultsPane.find(actionsButton).absent()),
+  verifyMappingProfileAbsent: () => cy.expect(resultsPane.find(HTML(including('The list contains no items'))).exists()),
+  verifySearchFieldIsEmpty: () => cy.expect(searchField.has({ value: '' })),
+  verifySearchResult: (profileName) => {
+    cy.expect(resultsPane.find(MultiColumnListCell({ row: 0, content: profileName })).exists());
+  },
+  checkSuccessDelitionCallout: (profileName) => {
+    cy.expect(
+      Callout({
+        textContent: including(
+          `The field mapping profile "${profileName}" was successfully deleted`,
+        ),
+      }).exists(),
+    );
+  },
 };

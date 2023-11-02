@@ -22,14 +22,17 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
-
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-          FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
+        permissions.uiInventoryViewCreateEditItems.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
+      });
     });
 
     beforeEach('select item tab', () => {
@@ -43,37 +46,43 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
     });
 
-    it('C357053 Negative: Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    it(
+      'C357053 Negative: Verify enable type ahead in location look-up (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
-      BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
 
-      BulkEditActions.fillTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
-      BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
+        BulkEditActions.typeInTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
+        BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
 
-      BulkEditActions.cancel();
-      BulkEditActions.newBulkEdit();
-    });
+        BulkEditActions.cancel();
+      },
+    );
 
-    it('C356787 Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    it(
+      'C356787 Verify enable type ahead in location look-up (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
-      BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
 
-      const location = 'Annex';
-      BulkEditActions.fillTemporaryLocationFilter(location);
-      BulkEditActions.verifyMatchingOptionsForLocationFilter(location);
+        const location = 'Annex';
+        BulkEditActions.typeInTemporaryLocationFilter(location);
+        BulkEditActions.verifyMatchingOptionsForLocationFilter(location);
 
-      BulkEditActions.cancel();
-      BulkEditActions.newBulkEdit();
-    });
+        BulkEditActions.cancel();
+      },
+    );
   });
 });

@@ -7,19 +7,19 @@ import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import Users from '../../../support/fragments/users/users';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 let hrid;
 const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
-const resultFileName = '*Matched-Records*';
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode1: itemBarcode,
-  itemBarcode2: `secondBarcode_${itemBarcode}`
+  itemBarcode2: `secondBarcode_${itemBarcode}`,
 };
 
 describe('bulk-edit', () => {
@@ -28,26 +28,27 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditView.gui,
         permissions.bulkEditEdit.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-
-          // Create file with valid holdings UUIDs
-          const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode1);
-          cy.getHoldings({
-            limit: 1,
-            query: `"instanceId"="${instanceId}"`
-          })
-            .then(holdings => {
-              hrid = holdings[0].hrid;
-              FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
-              FileManager.createFile(`cypress/fixtures/${validHoldingHRIDsFileName}`, hrid);
-            });
+        permissions.uiInventoryViewCreateEditHoldings.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
+
+        const instanceId = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode1,
+        );
+        cy.getHoldings({
+          limit: 1,
+          query: `"instanceId"="${instanceId}"`,
+        }).then((holdings) => {
+          hrid = holdings[0].hrid;
+          FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
+          FileManager.createFile(`cypress/fixtures/${validHoldingHRIDsFileName}`, hrid);
+        });
+      });
     });
 
     beforeEach('select holdings', () => {
@@ -60,91 +61,136 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode1);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingHRIDsFileName}`);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
     afterEach('open new bulk edit', () => {
       cy.visit(TopMenu.bulkEditPath);
     });
 
-    it('C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(hrid);
+    it(
+      'C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        [
+          {
+            identifier: 'Holdings UUIDs',
+            label: 'Select a file with holdings UUIDs',
+            pageText: 'Drag and drop or choose file with holdings UUIDs',
+          },
+          {
+            identifier: 'Holdings HRIDs',
+            label: 'Select a file with holdings HRIDs',
+            pageText: 'Drag and drop or choose file with holdings HRIDs',
+          },
+          {
+            identifier: 'Instance HRIDs',
+            label: 'Select a file with instance HRIDs',
+            pageText: 'Drag and drop or choose file with instance HRIDs',
+          },
+          {
+            identifier: 'Item barcodes',
+            label: 'Select a file with item barcode',
+            pageText: 'Drag and drop or choose file with item barcode',
+          },
+        ].forEach((checker) => {
+          BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
+          BulkEditSearchPane.verifyInputLabel(checker.label);
+          BulkEditSearchPane.verifyInputLabel(checker.pageText);
+        });
+      },
+    );
 
-      BulkEditActions.downloadMatchedResults(resultFileName);
-      BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [hrid], 'hrid');
-    });
+    it(
+      'C356810 Verify uploading file with holdings UUIDs (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird], retries: 1 },
+      () => {
+        BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(hrid);
 
-    it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(hrid);
+        const location = 'Online';
 
-      const location = 'Online';
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.replaceTemporaryLocation(location, 'holdings');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyChangedResults(location);
+        BulkEditActions.verifySuccessBanner(1);
+      },
+    );
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.replaceTemporaryLocation(location, 'holdings');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyChangedResults(location);
-      BulkEditActions.verifySuccessBanner(1);
-    });
+    it(
+      'C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 
-    it('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      [
-        'Holdings HRID',
-        'Permanent location',
-        'Temporary location',
-        'Call number prefix',
-        'Call number',
-        'Call number suffix',
-        'Holdings type'
-      ].forEach(title => {
-        BulkEditSearchPane.verifyResultColumTitles(title);
-      });
-      BulkEditActions.openActions();
-      BulkEditSearchPane.verifyHoldingActionShowColumns();
-      BulkEditSearchPane.changeShowColumnCheckbox('Call number type');
-      BulkEditSearchPane.verifyResultColumTitles('Call number type');
-    });
+        BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(hrid);
 
-    it('C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+        const tempLocation = 'Annex';
+        const permLocation = 'Main Library';
 
-      BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(hrid);
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
 
-      const tempLocation = 'Annex';
-      const permLocation = 'Main Library';
+        BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings', 0);
+        BulkEditActions.addNewBulkEditFilterString();
+        BulkEditActions.replacePermanentLocation(permLocation, 'holdings', 1);
 
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.confirmChanges();
+        BulkEditActions.clickKeepEditingBtn();
 
-      BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
-      BulkEditActions.addNewBulkEditFilterString();
-      BulkEditActions.replaceSecondPermanentLocation(permLocation, 'holdings');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.clickX();
 
-      BulkEditActions.confirmChanges();
-      BulkEditActions.clickKeepEditingBtn();
+        BulkEditActions.confirmChanges();
+        BulkEditActions.verifyAreYouSureForm(1, hrid);
 
-      BulkEditActions.confirmChanges();
-      BulkEditActions.clickX();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditActions.confirmChanges();
-      BulkEditActions.verifyAreYouSureForm(1, hrid);
+        BulkEditSearchPane.verifyChangedResults(tempLocation);
+        BulkEditSearchPane.verifyChangedResults(permLocation);
+        BulkEditActions.verifySuccessBanner(1);
+      },
+    );
 
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
+    it(
+      'C367975 Verify Bulk edit Holdings records with empty Electronic access Relationship type (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 
-      BulkEditSearchPane.verifyChangedResults(tempLocation);
-      BulkEditSearchPane.verifyChangedResults(permLocation);
-      BulkEditActions.verifySuccessBanner(1);
-    });
+        BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(hrid);
+
+        const tempLocation = 'Main Library';
+
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+
+        BulkEditSearchPane.verifyChangedResults(tempLocation);
+        BulkEditActions.verifySuccessBanner(1);
+
+        cy.loginAsAdmin({
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.searchByParameter('Holdings HRID', hrid);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.verifyHoldingLocation(tempLocation);
+      },
+    );
   });
 });

@@ -1,3 +1,5 @@
+import { recurse } from 'cypress-recurse';
+
 const downloadsFolder = Cypress.config('downloadsFolder');
 
 export default {
@@ -24,8 +26,20 @@ export default {
     return cy.writeFile(pathToFile, content);
   },
 
+  appendFile(pathToFile, content) {
+    return cy.writeFile(pathToFile, content, { flag: 'a+' });
+  },
+
   deleteFile(pathToFile) {
     return cy.task('deleteFile', pathToFile);
+  },
+
+  deleteFileFromDownloadsByMask(...fileNameMasks) {
+    fileNameMasks.forEach((fileNameMask) => {
+      this.findDownloadedFilesByMask(fileNameMask).then((fileName) => {
+        cy.task('deleteFile', fileName[0]);
+      });
+    });
   },
 
   verifyFile(verifyNameFunc, fileNameMask, verifyContentFunc, verifyContentFuncArgs = []) {
@@ -39,16 +53,31 @@ export default {
     // Need time for download file TODO: think about how it can be fixed
     cy.wait(Cypress.env('downloadTimeout'));
 
-    this.findDownloadedFilesByMask(fileNameMask)
-      .then((downloadedFilenames) => {
-        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-        verifyNameFunc(lastDownloadedFilename);
+    this.findDownloadedFilesByMask(fileNameMask).then((downloadedFilenames) => {
+      const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+      verifyNameFunc(lastDownloadedFilename);
 
-        this.readFile(lastDownloadedFilename)
-          .then((actualContent) => {
-            verifyContentFunc(actualContent, ...verifyContentFuncArgs);
-          });
+      this.readFile(lastDownloadedFilename).then((actualContent) => {
+        verifyContentFunc(actualContent, ...verifyContentFuncArgs);
       });
+    });
+  },
+
+  verifyFileIncludes(fileName, content) {
+    cy.wait(Cypress.env('downloadTimeout'));
+
+    recurse(
+      () => this.findDownloadedFilesByMask(fileName),
+      (x) => typeof x === 'object' && !!x,
+    ).then((foundFiles) => {
+      const lastDownloadedFilename = foundFiles.sort()[foundFiles.length - 1];
+
+      this.readFile(lastDownloadedFilename).then((actualContent) => {
+        content.forEach((element) => {
+          expect(actualContent).to.include(element);
+        });
+      });
+    });
   },
 
   getFileNameFromFilePath(path) {
@@ -64,14 +93,12 @@ export default {
     // Need time for download file TODO: think about how it can be fixed
     cy.wait(Cypress.env('downloadTimeout'));
 
-    return this.findDownloadedFilesByMask(fileNameMask)
-      .then((downloadedFilenames) => {
-        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+    return this.findDownloadedFilesByMask(fileNameMask).then((downloadedFilenames) => {
+      const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
 
-        this.readFile(lastDownloadedFilename)
-          .then((actualContent) => {
-            return this.createFile(`${downloadsFolder}/${fileName}`, actualContent).then(() => (this.deleteFile(lastDownloadedFilename)));
-          });
+      this.readFile(lastDownloadedFilename).then((actualContent) => {
+        return this.createFile(`${downloadsFolder}/${fileName}`, actualContent).then(() => this.deleteFile(lastDownloadedFilename));
       });
-  }
+    });
+  },
 };

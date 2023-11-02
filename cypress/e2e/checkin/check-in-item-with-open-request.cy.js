@@ -1,5 +1,11 @@
 import uuid from 'uuid';
 import moment from 'moment';
+import {
+  FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
+} from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
@@ -7,7 +13,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
-import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
+import SwitchServicePoint from '../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -24,6 +30,7 @@ import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
 
 describe('Check In - Actions', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   const userData = {};
   const requestUserData = {};
@@ -31,8 +38,8 @@ describe('Check In - Actions', () => {
     name: `groupCheckIn ${getRandomPostfix()}`,
   };
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid()),
-    servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation('S1', uuid()),
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const checkInResultsData = {
     statusForS: [`In transit - ${testData.servicePointS1.name}`],
@@ -43,8 +50,8 @@ describe('Check In - Actions', () => {
     title: `Instance_${getRandomPostfix()}`,
   };
   const requestPolicyBody = {
-    requestTypes: ['Hold'],
-    name: `recall ${getRandomPostfix()}`,
+    requestTypes: [REQUEST_TYPES.HOLD],
+    name: `hold${getRandomPostfix()}`,
     id: uuid(),
   };
 
@@ -86,7 +93,7 @@ describe('Check In - Actions', () => {
           items: [
             {
               barcode: itemData.barcode,
-              status: { name: 'Available' },
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
@@ -106,10 +113,31 @@ describe('Check In - Actions', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.r = requestPolicyBody.id;
-      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
+      addedCirculationRule =
+        't ' +
+        testData.loanTypeId +
+        ': i ' +
+        ruleProps.i +
+        ' l ' +
+        ruleProps.l +
+        ' r ' +
+        ruleProps.r +
+        ' o ' +
+        ruleProps.o +
+        ' n ' +
+        ruleProps.n;
+      CirculationRules.addRuleViaApi(
+        originalCirculationRules,
+        ruleProps,
+        't ',
+        testData.loanTypeId,
+      );
     });
 
-    cy.createTempUser([permissions.checkinAll.gui, permissions.uiRequestsView.gui], patronGroup.name)
+    cy.createTempUser(
+      [permissions.checkinAll.gui, permissions.uiRequestsView.gui],
+      patronGroup.name,
+    )
       .then((userProperties) => {
         userData.username = userProperties.username;
         userData.password = userProperties.password;
@@ -120,15 +148,21 @@ describe('Check In - Actions', () => {
         UserEdit.addServicePointsViaApi(
           [testData.servicePointS.id, testData.servicePointS1.id],
           userData.userId,
-          testData.servicePointS.id
+          testData.servicePointS.id,
         );
 
-        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-          requestUserData.username = userProperties.username;
-          requestUserData.userId = userProperties.userId;
-          requestUserData.barcode = userProperties.barcode;
-          UserEdit.addServicePointViaApi(testData.servicePointS1.id, requestUserData.userId, testData.servicePointS1.id);
-        });
+        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then(
+          (userProperties) => {
+            requestUserData.username = userProperties.username;
+            requestUserData.userId = userProperties.userId;
+            requestUserData.barcode = userProperties.barcode;
+            UserEdit.addServicePointViaApi(
+              testData.servicePointS1.id,
+              requestUserData.userId,
+              testData.servicePointS1.id,
+            );
+          },
+        );
 
         Checkout.checkoutItemViaApi({
           id: uuid(),
@@ -138,7 +172,7 @@ describe('Check In - Actions', () => {
           userBarcode: userData.barcode,
         }).then((checkoutResponse) => {
           Requests.createNewRequestViaApi({
-            fulfilmentPreference: 'Hold Shelf',
+            fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
             holdingsRecordId: testData.holdingTypeId,
             instanceId: itemData.instanceId,
             item: { barcode: itemData.barcode },
@@ -146,15 +180,14 @@ describe('Check In - Actions', () => {
             pickupServicePointId: testData.servicePointS1.id,
             requestDate: new Date(),
             requestExpirationDate: new Date(new Date().getTime() + 86400000),
-            requestLevel: 'Item',
-            requestType: 'Hold',
+            requestLevel: REQUEST_LEVELS.ITEM,
+            requestType: REQUEST_TYPES.HOLD,
             requesterId: requestUserData.userId,
           }).then((request) => {
             testData.requestsId = request.body.id;
             itemData.servicePoint = request.body.pickupServicePoint.name;
           });
         });
-
         cy.login(userData.username, userData.password);
       });
   });
@@ -166,8 +199,13 @@ describe('Check In - Actions', () => {
       checkInDate: new Date().toISOString(),
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePointS.id, testData.servicePointS1.id]);
-    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.servicePointS1.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
+      testData.servicePointS.id,
+      testData.servicePointS1.id,
+    ]);
+    UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [
+      testData.servicePointS1.id,
+    ]);
     ServicePoints.deleteViaApi(testData.servicePointS.id);
     ServicePoints.deleteViaApi(testData.servicePointS1.id);
     Requests.deleteRequestViaApi(testData.requestsId);
@@ -181,9 +219,9 @@ describe('Check In - Actions', () => {
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
+      testData.defaultLocation.id,
     );
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(
@@ -216,6 +254,6 @@ describe('Check In - Actions', () => {
 
       CheckInActions.checkActionsMenuOptions(['printHoldSlip', 'requestDetails']);
       CheckInActions.openRequestDetails(itemData.barcode);
-    }
+    },
   );
 });

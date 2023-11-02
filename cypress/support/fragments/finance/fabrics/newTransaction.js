@@ -1,4 +1,3 @@
-
 import PendingTransaction from './pendingTransaction';
 import CreditTransaction from './creditTransaction';
 import AllocationTransaction from './allocationTransaction';

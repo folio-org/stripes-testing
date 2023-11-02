@@ -1,47 +1,45 @@
+import { Button, TextField, Select } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField } from '../../../../interactors';
 
-export default class NewAgreement {
-    // TODO: start to use interactors instead of selectors
-    static #rootCss = 'section[id="pane-agreement-form"]'
-    static #statusCss = `${this.#rootCss} select[id="edit-agreement-status"]`;
-    static #nameField = TextField({ id: 'edit-agreement-name' });
-    static #startDateField = TextField({ id: 'period-start-date-0' });
-    static #saveButton = Button('Save & close');
+const saveButton = Button('Save & close');
+const nameField = TextField({ id: 'edit-agreement-name' });
+const startDateField = TextField({ id: 'period-start-date-0' });
 
-    static #statusValue = {
-      closed: 'Closed',
-      draft: 'Draft',
-      requested: 'Requested',
-      inNegotiation: 'In negotiation',
-      active: 'Active',
-    }
+const statusValue = {
+  closed: 'Closed',
+  draft: 'Draft',
+  requested: 'Requested',
+  inNegotiation: 'In negotiation',
+  active: 'Active',
+};
 
-    static #defaultAgreement = {
-      name: `autotest_agreement_${getRandomPostfix()}`,
-      status: this.#statusValue.draft,
-      startDate: DateTools.getCurrentDate()
-    }
+const defaultAgreement = {
+  name: `autotest_agreement_${getRandomPostfix()}`,
+  status: statusValue.draft,
+  startDate: DateTools.getCurrentDate(),
+};
 
-    static get defaultAgreement() {
-      return this.#defaultAgreement;
-    }
+const getdefaultAgreement = () => {
+  return defaultAgreement;
+};
 
+export default {
+  defaultAgreement,
+  getdefaultAgreement,
 
-    static fill(specialAgreement = this.#defaultAgreement) {
-      cy.do(this.#nameField.fillIn(specialAgreement.name));
-      cy.get(this.#statusCss)
-        .select(specialAgreement.status)
-        .should('have.value', specialAgreement.status.toLowerCase());
-      cy.do(this.#startDateField.fillIn(specialAgreement.startDate));
-    }
+  fill(specialAgreement = defaultAgreement) {
+    cy.do([
+      nameField.fillIn(specialAgreement.name),
+      Select('Status*').choose(specialAgreement.status),
+      startDateField.fillIn(specialAgreement.startDate),
+    ]);
+  },
 
-    static save() {
-      cy.do(this.#saveButton.click());
-    }
-
-    static waitLoading() {
-      cy.expect(this.#nameField.exists());
-    }
-}
+  save() {
+    cy.do(saveButton.click());
+  },
+  waitLoading() {
+    cy.expect(nameField.exists());
+  },
+};

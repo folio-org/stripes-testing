@@ -4,14 +4,14 @@ import { REQUEST_METHOD } from '../../../constants';
 
 export default class Condition {
   static blockCheckboxes = {
-    borrowing: Checkbox({ id:'blockBorrowing' }),
-    renewals: Checkbox({ id:'blockRenewals' }),
-    requests: Checkbox({ id:'blockRequests' }),
-  }
+    borrowing: Checkbox({ id: 'blockBorrowing' }),
+    renewals: Checkbox({ id: 'blockRenewals' }),
+    requests: Checkbox({ id: 'blockRequests' }),
+  };
 
   constructor(conditionName) {
     this._rootPane = Pane(conditionName);
-    this._message = this._rootPane.find(TextArea({ id:'message' }));
+    this._message = this._rootPane.find(TextArea({ id: 'message' }));
     this._saveButton = this._rootPane.find(Button('Save'));
   }
 
@@ -27,9 +27,8 @@ export default class Condition {
     cy.expect(this._saveButton.has({ disabled: isDisabled }));
   }
 
-
   checkInitialState() {
-    Object.values(Condition.blockCheckboxes).forEach(blockCheckbox => {
+    Object.values(Condition.blockCheckboxes).forEach((blockCheckbox) => {
       cy.expect(this._rootPane.find(blockCheckbox).exists());
       cy.expect(this._rootPane.find(blockCheckbox).has({ disabled: false }));
       cy.expect(this._rootPane.find(blockCheckbox).has({ checked: false }));
@@ -48,19 +47,37 @@ export default class Condition {
   }
 
   checkEmptyMessageValidation() {
-    cy.expect(this._message.has({ error: 'Message to be displayed is a required field if one or more Blocked actions selected' }));
+    cy.expect(
+      this._message.has({
+        error:
+          'Message to be displayed is a required field if one or more Blocked actions selected',
+      }),
+    );
   }
 
   checkRequiredCheckboxValidation() {
-    cy.expect(this._message.has({ error: 'One or more Blocked actions must be selected for Message to be displayed to be used' }));
+    cy.expect(
+      this._message.has({
+        error:
+          'One or more Blocked actions must be selected for Message to be displayed to be used',
+      }),
+    );
   }
 
   save(specialConditionValue) {
     cy.intercept('/patron-block-conditions').as('getCurrentConditions');
     this.trySave();
-    cy.do(Callout(`The patron block condition ${specialConditionValue} has been successfully updated.`).dismiss());
+    cy.do(
+      Callout(
+        `The patron block condition ${specialConditionValue} has been successfully updated.`,
+      ).dismiss(),
+    );
     cy.wait('@getCurrentConditions');
-    cy.expect(Callout(`The patron block condition ${specialConditionValue} has been successfully updated.`).absent());
+    cy.expect(
+      Callout(
+        `The patron block condition ${specialConditionValue} has been successfully updated.`,
+      ).absent(),
+    );
     this.checkSaveButtonState(true);
   }
 
@@ -73,8 +90,8 @@ export default class Condition {
     blockRenewals: false,
     blockRequests: false,
     valueType: 'Integer',
-    message: ''
-  }
+    message: '',
+  };
 
   static updateViaAPI(conditionId, conditionValue) {
     const specialCondition = { ...this._defaultCondition };

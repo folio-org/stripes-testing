@@ -11,12 +11,14 @@ import Users from '../../support/fragments/users/users';
 import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../support/fragments/data_import/logs/logs';
 
-describe('MARC Authority management', () => {
+describe('MARC Authority Delete', () => {
   const testData = {
     uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`,
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-    record: 'Angelou, Maya. And still I rise',
+    record: 'Angelou, Maya. And still I rise C357549',
     searchOption: 'Name-title',
   };
 
@@ -25,49 +27,64 @@ describe('MARC Authority management', () => {
       Permissions.settingsDataImportView.gui,
       Permissions.moduleDataImportEnabled.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui
-    ]).then(createdUserProperties => {
+      Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
+    ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
     });
   });
 
   beforeEach('Login to the application', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-  });
-
-  afterEach('Deleting data', () => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.dataImportPath,
+      waiter: DataImport.waitLoading,
+    });
   });
 
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)', { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] }, () => {
-    DataImport.importFile(MarcAuthority.defaultCreateJobProfile, testData.uniqueFileName);
-    MarcAuthoritiesDelete.clickDeleteButton();
-    MarcAuthoritiesDelete.checkDeleteModal();
-    MarcAuthoritiesDelete.confirmDelete();
-    MarcAuthoritiesDelete.checkDelete(MarcAuthority.defaultAuthority.headingReference);
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
-    MarcAuthoritiesDelete.checkEmptySearchResults(MarcAuthority.defaultAuthority.headingReference);
-  });
+  it(
+    'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
+    { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] },
+    () => {
+      DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+      JobProfiles.waitLoadingList();
+      JobProfiles.search('Default - Create SRS MARC Authority');
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(testData.fileName);
+      Logs.checkStatusOfJobProfile('Completed');
 
-  it('C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
-    DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthorities.switchToBrowse();
-    MarcAuthorityBrowse.searchBy(testData.searchOption, testData.record);
-    MarcAuthorities.selectItem(testData.record);
-    MarcAuthority.waitLoading();
-    MarcAuthoritiesDelete.clickDeleteButton();
-    MarcAuthoritiesDelete.checkDeleteModal();
-    MarcAuthoritiesDelete.confirmDelete();
-    MarcAuthoritiesDelete.checkAfterDeletion(testData.record);
-  });
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
+      MarcAuthorities.selectItem(testData.record);
+      MarcAuthority.waitLoading();
+
+      MarcAuthoritiesDelete.clickDeleteButton();
+      MarcAuthoritiesDelete.checkDeleteModal();
+      MarcAuthoritiesDelete.confirmDelete();
+      MarcAuthoritiesDelete.checkDelete(testData.record);
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.record);
+      MarcAuthoritiesDelete.checkEmptySearchResults(testData.record);
+    },
+  );
+
+  it(
+    'C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+      DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthorities.switchToBrowse();
+      MarcAuthorityBrowse.searchBy(testData.searchOption, testData.record);
+      MarcAuthorities.selectItem(testData.record);
+      MarcAuthority.waitLoading();
+      MarcAuthoritiesDelete.clickDeleteButton();
+      MarcAuthoritiesDelete.checkDeleteModal();
+      MarcAuthoritiesDelete.confirmDelete();
+      MarcAuthoritiesDelete.checkAfterDeletion(testData.record);
+    },
+  );
 });

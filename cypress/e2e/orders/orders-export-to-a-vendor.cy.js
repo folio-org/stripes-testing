@@ -28,7 +28,7 @@ describe('orders: export', () => {
         notes: '',
         paymentMethod: 'Cash',
       },
-    ]
+    ],
   };
   const integrationName = `FirstIntegrationName${getRandomPostfix()}`;
   const integartionDescription = 'Test Integation descripton1';
@@ -38,47 +38,59 @@ describe('orders: export', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = organization.name;
-        order.orderType = 'One-time';
-      });
-    cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = organization.name;
+      order.orderType = 'One-time';
+    });
+    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
+    Organizations.fillIntegrationInformationWithoutScheduling(
+      integrationName,
+      integartionDescription,
+      vendorEDICodeFor1Integration,
+      libraryEDICodeFor1Integration,
+      organization.accounts[0].accountNo,
+      'Purchase',
+    );
     InteractorsTools.checkCalloutMessage('Integration was saved');
     cy.createTempUser([
       permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui, 
+      permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.viewEditCreateOrganization.gui, 
-      permissions.viewOrganization.gui,
+      permissions.uiOrganizationsViewEditCreate.gui,
+      permissions.uiOrganizationsView.gui,
       permissions.uiExportOrders.gui,
       permissions.exportManagerAll.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350396: Verify that Order is not exported to a definite Vendor if Acquisition method selected in the Order line DOES NOT match Organization Integration configs (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order, true, false).then(orderId => {
-      order.id = orderId;
-      Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
-      OrderLines.backToEditingOrder();
-    });
-  });
+  it(
+    'C350396: Verify that Order is not exported to a definite Vendor if Acquisition method selected in the Order line DOES NOT match Organization Integration configs (thunderjet)',
+    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    () => {
+      Orders.createOrder(order, true, false).then((orderId) => {
+        order.id = orderId;
+        Orders.createPOLineViaActions();
+        OrderLines.fillInPOLineInfoForExport('Purchase');
+        OrderLines.backToEditingOrder();
+      });
+    },
+  );
 });

@@ -6,7 +6,6 @@ import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -25,28 +24,36 @@ describe('ui-inventory: actions', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
   });
 
-  it('C196752 verifies action menu options before any search is conducted (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    InventoryActions.open();
+  it(
+    'C196752 verifies action menu options before any search is conducted (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      InventoryActions.open();
 
-    cy.expect(InventorySearchAndFilter.getAllSearchResults().absent());
-    InventoryActions.optionsIsDisabled([
-      InventoryActions.options.saveUUIDs,
-      InventoryActions.options.saveCQLQuery,
-      InventoryActions.options.exportMARC,
-      InventoryActions.options.showSelectedRecords
-    ]);
-  });
+      cy.expect(InventorySearchAndFilter.getAllSearchResults().absent());
+      InventoryActions.optionsIsDisabled([
+        InventoryActions.options.saveUUIDs,
+        InventoryActions.options.saveCQLQuery,
+        InventoryActions.options.exportMARC,
+        InventoryActions.options.showSelectedRecords,
+      ]);
+    },
+  );
 
-  it('C196753 Verify Action menu options - search results pane populated (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearchAndFilter.byKeywords(item.instanceName);
-    InventorySearchAndFilter.selectResultCheckboxes(1);
-    InventoryActions.open();
+  it(
+    'C196753 Verify Action menu options - search results pane populated (firebird)',
+    { tags: [testTypes.smoke, devTeams.firebird] },
+    () => {
+      InventorySearchAndFilter.byKeywords(item.instanceName);
+      InventorySearchAndFilter.selectResultCheckboxes(1);
+      InventoryActions.open();
 
-    InventoryActions.optionsIsEnabled([
-      InventoryActions.options.saveUUIDs,
-      InventoryActions.options.saveCQLQuery,
-      InventoryActions.options.exportMARC,
-      InventoryActions.options.showSelectedRecords
-    ]);
-  });
+      InventoryActions.optionsIsEnabled([
+        InventoryActions.options.saveUUIDs,
+        InventoryActions.options.saveCQLQuery,
+        InventoryActions.options.exportMARC,
+        InventoryActions.options.showSelectedRecords,
+      ]);
+    },
+  );
 });

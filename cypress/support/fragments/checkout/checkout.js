@@ -7,14 +7,14 @@ import {
   MultiColumnListRow,
   MultiColumnListCell,
   including,
-  HTML
+  HTML,
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 
 const itemDetailsButton = Button('Item details');
 
 export default {
-  waitLoading:() => {
+  waitLoading: () => {
     cy.expect(Pane('Scan patron card').exists());
     cy.expect(Pane('Scan items').exists());
   },
@@ -31,25 +31,36 @@ export default {
     cy.wait(5000);
     cy.do(Button({ href: `/users/${id}/loans/open` }).click());
   },
-  checkoutItemViaApi(body) {
-    const checkoutId = uuid();
-
-    return cy.okapiRequest({
-      method: REQUEST_METHOD.POST,
-      path: 'circulation/check-out-by-barcode',
-      body: {
-        id: checkoutId,
-        loanDate: moment.utc(),
-        ...body,
-      },
-    })
-      .then(checkedOutItem => {
+  checkoutItemViaApi({
+    id = uuid(),
+    loanDate = moment.utc().format(),
+    itemBarcode,
+    servicePointId,
+    userBarcode,
+  }) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.POST,
+        path: 'circulation/check-out-by-barcode',
+        body: {
+          id,
+          loanDate,
+          itemBarcode,
+          servicePointId,
+          userBarcode,
+        },
+      })
+      .then((checkedOutItem) => {
         return checkedOutItem.body;
       });
   },
 
-  openItemRecordInInventory:(barcode) => {
-    cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(barcode))).exists());
+  openItemRecordInInventory: (barcode) => {
+    cy.expect(
+      MultiColumnListRow({ indexRow: 'row-0' })
+        .find(HTML(including(barcode)))
+        .exists(),
+    );
     cy.do(Button({ id: 'available-item-actions-button' }).click());
     cy.expect(itemDetailsButton.exists());
     // test fails without this cy.wait
@@ -58,6 +69,10 @@ export default {
   },
 
   verifyResultsInTheRow: (allContentToCheck, rowIndex = 0) => {
-    return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
+    return allContentToCheck.forEach((contentToCheck) => cy.expect(
+      MultiColumnListRow({ indexRow: `row-${rowIndex}` })
+        .find(MultiColumnListCell({ content: including(contentToCheck) }))
+        .exists(),
+    ));
   },
 };

@@ -27,14 +27,13 @@ describe('ui-organizations: Organizations', () => {
       permissions.uiOrganizationsViewEditCreate.gui,
       permissions.uiOrganizationsViewEditDelete.gui,
       permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-      });
+    ]).then((userProperties) => {
+      user = userProperties;
+    });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);
     Organizations.deleteOrganization();
@@ -47,31 +46,53 @@ describe('ui-organizations: Organizations', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350693 Test acquisition unit restrictions for Organization records (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.newAcquisitionUnit();
-    AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
-    // Need to wait,while data is load
-    cy.wait(2000);
-    AcquisitionUnits.assignUser(user.username);
+  it(
+    'C350693 Test acquisition unit restrictions for Organization records (thunderjet)',
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    () => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      AcquisitionUnits.newAcquisitionUnit();
+      AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
+      // Need to wait,while data is load
+      cy.wait(2000);
+      AcquisitionUnits.assignUser(user.username);
 
-    cy.login(user.username, user.password, { path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.createOrganizationWithAU(organization, defaultAcquisitionUnit.name);
-    Organizations.checkCreatedOrganization(organization);
+      cy.login(user.username, user.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
+      Organizations.createOrganizationWithAU(organization, defaultAcquisitionUnit.name);
+      Organizations.checkCreatedOrganization(organization);
 
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
 
-    cy.login(user.username, user.password, { path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkZeroSearchResultsHeader();
+      cy.login(user.username, user.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.checkZeroSearchResultsHeader();
 
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.edit(defaultAcquisitionUnit.name);
-    AcquisitionUnits.selectViewCheckbox();
+      cy.loginAsAdmin({
+        path: SettingsMenu.acquisitionUnitsPath,
+        waiter: AcquisitionUnits.waitLoading,
+      });
+      AcquisitionUnits.edit(defaultAcquisitionUnit.name);
+      AcquisitionUnits.selectViewCheckbox();
 
-    cy.login(user.username, user.password, { path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.selectOrganization(organization.name);
-  });
+      cy.login(user.username, user.password, {
+        path: TopMenu.organizationsPath,
+        waiter: Organizations.waitLoading,
+      });
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.selectOrganization(organization.name);
+    },
+  );
 });

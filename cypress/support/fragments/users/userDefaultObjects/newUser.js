@@ -6,7 +6,7 @@ const requestPrefStorage = { ...DefaultUser.defaultUiRequestPrefStorage };
 
 export default {
   createUserWithSameParams() {
-    cy.getUserGroups().then(patronGroupId => {
+    cy.getUserGroups().then((patronGroupId) => {
       const specialPatron = { ...DefaultUser.defaultUiPatron.body };
       specialPatron.patronGroup = patronGroupId;
       Users.createViaApi(specialPatron);
@@ -21,7 +21,9 @@ export default {
       newPassword.username = specialPatron.username;
       cy.setUserPassword(newPassword);
       Checkout.checkoutItemViaApi(DefaultUser.defaultUiChekhOutItem.body);
-      cy.wrap({ userName: newPassword.username, password: newPassword.password }).as('userProperties');
+      cy.wrap({ userName: newPassword.username, password: newPassword.password }).as(
+        'userProperties',
+      );
     });
     return cy.get('@userProperties');
   },

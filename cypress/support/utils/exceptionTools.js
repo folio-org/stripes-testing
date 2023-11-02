@@ -10,4 +10,4 @@ export default function handlePromiseException() {
     // we still want to ensure there are no other unexpected
     // errors, so we let them fail the test
   });
-};
+}

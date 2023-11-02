@@ -12,8 +12,8 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 let user;
 const externalId = getRandomPostfix();
 const userExternalIDsFileName = `userExternalIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
-const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
+const matchedRecordsFileName = `Matched-Records-${userExternalIDsFileName}`;
+const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
@@ -21,43 +21,55 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.getUsers({ limit: 1, query: `"username"="${user.username}"` })
-            .then((users) => { UserEdit.updateExternalId(users[0], externalId); });
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
-          FileManager.createFile(`cypress/fixtures/${userExternalIDsFileName}`, externalId);
+        permissions.uiUserEdit.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.getUsers({ limit: 1, query: `"username"="${user.username}"` }).then((users) => {
+          UserEdit.updateExternalIdViaApi(users[0], externalId);
         });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        FileManager.createFile(`cypress/fixtures/${userExternalIDsFileName}`, externalId);
+      });
     });
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userExternalIDsFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
       Users.deleteViaApi(user.userId);
     });
 
-    it('C353954 Verify uploading file with External IDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('External IDs');
+    it(
+      'C353954 Verify uploading file with External IDs (firebird)',
+      { tags: [testTypes.smoke, devTeams.firebird] },
+      () => {
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('External IDs');
+        BulkEditSearchPane.uploadFile(userExternalIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.uploadFile(userExternalIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(user.username);
+        BulkEditSearchPane.verifyPaneRecordsCount(1);
 
-      BulkEditSearchPane.verifyMatchedResults(user.username);
-      BulkEditSearchPane.verifyPaneRecordsCount(1);
+        BulkEditActions.downloadMatchedResults();
+        const newUserName = `testName_${getRandomPostfix()}`;
+        BulkEditActions.prepareValidBulkEditFile(
+          matchedRecordsFileName,
+          editedFileName,
+          user.username,
+          newUserName,
+        );
+        BulkEditActions.openStartBulkEditForm();
+        BulkEditSearchPane.uploadFile(editedFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditActions.clickNext();
+        BulkEditActions.commitChanges();
 
-      BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      const newUserName = `testName_${getRandomPostfix()}`;
-      BulkEditActions.prepareValidBulkEditFile('Matched-Records', importFileName, user.username, newUserName);
-      BulkEditActions.openStartBulkEditForm();
-      BulkEditSearchPane.uploadFile(importFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.clickNext();
-      BulkEditActions.commitChanges();
-
-      BulkEditSearchPane.verifyChangedResults(newUserName);
-      BulkEditActions.newBulkEdit();
-    });
+        BulkEditSearchPane.verifyChangedResults(newUserName);
+      },
+    );
   });
 });

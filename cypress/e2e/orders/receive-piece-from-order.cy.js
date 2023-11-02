@@ -14,10 +14,10 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Users from '../../support/fragments/users/users';
-import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 
 describe('orders: Receive piece from Order', () => {
-  const order = { 
+  const order = {
     ...NewOrder.defaultOneTimeOrder,
     approved: true,
   };
@@ -28,58 +28,63 @@ describe('orders: Receive piece from Order', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = response;
-      });
-    cy.createOrderApi(order)
-      .then((orderResponse) => {
-        orderNumber = orderResponse.body.poNumber;
-        cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        OrderLines.addPOLine();
-        OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
-      });
+    Organizations.createOrganizationViaApi(organization).then((response) => {
+      organization.id = response;
+      order.vendor = response;
+    });
+    cy.createOrderApi(order).then((orderResponse) => {
+      orderNumber = orderResponse.body.poNumber;
+      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.addPOLine();
+      OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
+    });
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.uiOrdersReopenPurchaseOrders.gui,
       permissions.uiInventoryViewInstances.gui,
       permissions.uiReceivingViewEditCreate.gui,
-
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
       });
+    });
   });
 
   after(() => {
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
-    
+
     Users.deleteViaApi(user.userId);
   });
 
-  it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    const barcode = Helper.getRandomBarcode();
-    const caption = 'autotestCaption';
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        Orders.openOrder();
-        InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
-        Orders.receiveOrderViaActions();
-        // Receiving part
-        Receiving.selectPOLInReceive(orderLineTitle);
-        Receiving.receivePiece(0, caption, barcode);
-        Receiving.checkReceivedPiece(0, caption, barcode);
-        // inventory part
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-        ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
-  });
+  it(
+    'C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)',
+    { tags: [testType.smoke, devTeams.thunderjet] },
+    () => {
+      const barcode = Helper.getRandomBarcode();
+      const caption = 'autotestCaption';
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.openOrder();
+      InteractorsTools.checkCalloutMessage(
+        `The Purchase order - ${orderNumber} has been successfully opened`,
+      );
+      Orders.receiveOrderViaActions();
+      // Receiving part
+      Receiving.selectPOLInReceive(orderLineTitle);
+      Receiving.receivePiece(0, caption, barcode);
+      Receiving.checkReceivedPiece(0, caption, barcode);
+      // inventory part
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', barcode);
+      ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
+    },
+  );
 });

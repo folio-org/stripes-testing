@@ -12,12 +12,9 @@ export default {
     cy.expect(HTML(textString).exists());
   },
   saveAndClose() {
-    cy.do([
-      Modal().find(Button('Save and close')).click(),
-      Modal().find(Button('Close')).click()
-    ]);
+    cy.do([Modal().find(Button('Save and close')).click(), Modal().find(Button('Close')).click()]);
   },
   verifyRequestsCount(contentValue) {
     cy.expect(MultiColumnListCell({ content: contentValue }).exists());
-  }
+  },
 };

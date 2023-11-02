@@ -1,22 +1,31 @@
-import { Button, including, HTML, Selection, Select } from '../../../../interactors';
+import { Button, including, HTML, Selection, Select, TextArea } from '../../../../interactors';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
 const sourceValues = {
-  folio:'f32d531e-df79-46b3-8932-cdd35f7a2264'
+  folio: 'f32d531e-df79-46b3-8932-cdd35f7a2264',
 };
 
 export default {
-  fillRequiredFields : (permanentLocation = 'Annex (KU/CC/DI/A) Remote') => {
+  fillRequiredFields: (permanentLocation = 'Annex (KU/CC/DI/A) Remote') => {
     cy.do(Selection('Permanent*').choose(permanentLocation));
   },
-  saveAndClose : () => {
-    cy.do(rootForm.find(Button('Save and close')).click());
+  saveAndClose: () => {
+    cy.do(rootForm.find(Button('Save & close')).click());
     cy.expect(rootForm.absent());
   },
   waitLoading: () => {
     cy.expect(rootForm.exists());
   },
-  checkSource:(expectedSource = sourceValues.folio) => {
-    cy.expect(Select('Source').has({ value:expectedSource }));
-  }
+  checkSource: (expectedSource = sourceValues.folio) => {
+    cy.expect(Select('Source').has({ value: expectedSource }));
+  },
+  fillPermanentLocation: (permanentLocation) => {
+    cy.do(Selection('Permanent*').choose(permanentLocation));
+  },
+  fillCallNumber: (callNumber) => {
+    cy.do(TextArea({ name: 'callNumber' }).fillIn(callNumber));
+  },
+  fillCallNumberSuffix: (callNumberSuffix) => {
+    cy.do(TextArea({ name: 'callNumberSuffix' }).fillIn(callNumberSuffix));
+  },
 };

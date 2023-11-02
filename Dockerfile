@@ -3,6 +3,7 @@ FROM ubuntu:xenial
 ARG folio_registry=https://repository.folio.org/repository/npm-folioci/
 
 RUN apt-get -q update && \
+    apt-get -q upgrade -y && \
     DEBIAN_FRONTEND="noninteractive" apt-get -q install -y \
     -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
     git ca-certificates wget unzip bzip2 xvfb && \
