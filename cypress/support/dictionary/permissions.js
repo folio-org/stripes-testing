@@ -332,6 +332,10 @@ export default {
     internal: 'ui-users.loans.anonymize',
     gui: 'Users: User loans anonymize',
   },
+  uiUserLostItemRequiringActualCost: {
+    internal: 'ui-users.lost-items.requiring-actual-cost',
+    gui: 'Users: Can process lost items requiring actual cost',
+  },
   uiFeeFinesActions: {
     internal: 'ui-users.feefineactions',
     gui: 'Fee/Fine Details: Can create, edit and remove fee/fine actions',
