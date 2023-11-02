@@ -799,7 +799,7 @@ export default {
   },
   settingsUsersCRUD: {
     internal: 'ui-users.settings.transfers.all',
-    gui: 'Settings (Users): Can create, edit and remove transfer accounts',
+    gui: 'Settings (Users): Can create, edit and remove transfer accounts ',
   },
   uiSettingsCanChangeLoacalPassword: {
     internal: 'ui-myprofile.settings.change-password',
@@ -831,7 +831,7 @@ export default {
   },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',
-    gui: 'Transfer exports: Transfer admin',
+    gui: 'Bursar exports: Bursar admin',
   },
   // OAI-PMH
   oaipmhViewLogs: {

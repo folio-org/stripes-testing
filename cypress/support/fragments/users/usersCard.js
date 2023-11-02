@@ -224,6 +224,13 @@ export default {
     });
   },
 
+  verifyPermissionsNotExist(permissions) {
+    cy.do(permissionAccordion.clickHeader());
+    permissions.forEach((permission) => {
+      cy.expect(permissionAccordion.find(HTML(including(permission))).absent());
+    });
+  },
+
   waitLoading: () => cy.expect(rootSection.exists()),
 
   startFeeFine: () => {
