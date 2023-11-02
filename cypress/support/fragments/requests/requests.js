@@ -3,6 +3,7 @@ import { HTML, including } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiColumnListHeader,
   MultiSelect,
   Pane,
@@ -15,6 +16,8 @@ import {
   Section,
   Heading,
   Spinner,
+  Form,
+  Link,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -38,6 +41,10 @@ const tagsPane = Pane({ title: 'Tags' });
 const resultsPane = Pane({ id: 'pane-results' });
 const actionsButtonInResultsPane = resultsPane.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
+const instanceDetailsSection = Pane({ id: 'instance-details' });
+const actionsButtonInInstanceDetailsSection = instanceDetailsSection.find(Button('Actions'));
+const editButton = Button({ id: 'clickable-edit-request' });
+const editRequestDetailsSection = Form({ id: 'form-requests' });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
@@ -590,9 +597,48 @@ export default {
     ]);
   },
 
+  selectTheFirstRequest() {
+    cy.do(resultsPane.find(MultiColumnListRow({ index: 0 })).click());
+  },
+
   exportRequestToCsv: () => {
     cy.wait(1000);
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
+  },
+
+  editRequest: () => {
+    cy.wait(1000);
+    cy.do([actionsButtonInInstanceDetailsSection.click(), editButton.click()]);
+  },
+
+  verifyItemInformation: (itemBarcode, effectiveLocation, title) => {
+    const itemInformation = Section({ id: 'new-item-info' });
+    cy.expect([
+      itemInformation.find(HTML(including('Item barcode'))).exists(),
+      itemInformation.find(Link(including(itemBarcode))).exists(),
+      itemInformation.find(HTML(including('Effective location'))).exists(),
+      itemInformation.find(HTML(including(effectiveLocation))).exists(),
+      itemInformation.find(HTML(including('Item status'))).exists(),
+      itemInformation.find(HTML(including('Paged'))).exists(),
+      itemInformation.find(HTML(including('Title'))).exists(),
+      itemInformation.find(HTML(including(title))).exists(),
+      itemInformation.find(HTML(including('Effective call number string'))).exists(),
+      itemInformation.find(HTML(including('Current due date'))).exists(),
+      itemInformation.find(HTML(including('Contributor'))).exists(),
+      itemInformation.find(HTML(including('Requests on item'))).exists(),
+      itemInformation.find(Link(including(1))).exists(),
+    ]);
+  },
+
+  verifyRequesterInformation: (userFullName, userBarcode) => {
+    const requesterInformation = Section({ id: 'new-requester-info' });
+    cy.expect([
+      requesterInformation.find(HTML(including('Requester'))).exists(),
+      requesterInformation.find(Link(including(userFullName))).exists(),
+      requesterInformation.find(Link(including(userBarcode))).exists(),
+      requesterInformation.find(HTML(including('Requester patron group'))).exists(),
+      requesterInformation.find(HTML(including('staff'))).exists(),
+    ]);
   },
 
   checkCellInCsvFileContainsValue(fileName, rowNumber = 1, columnNumber, value) {
