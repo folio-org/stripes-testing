@@ -47,3 +47,7 @@ Cypress.Commands.add('logout', () => {
 Cypress.Commands.add('loginAsAdmin', (visitPath) => {
   cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), visitPath);
 });
+
+// Cypress.Commands.add('loginAsUniversityAdmin', (visitPath) => {
+//   cy.login('university_admin', Cypress.env('diku_password'), visitPath);
+// });

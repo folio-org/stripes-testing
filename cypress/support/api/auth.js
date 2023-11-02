@@ -1,9 +1,9 @@
 Cypress.Commands.add('getToken', (username, password) => {
   cy.okapiRequest({
     method: 'POST',
-    path: 'bl-users/login',
+    path: 'login-with-expiry',
     body: { username, password },
-    isDefaultSearchParamsRequired: false,
+    // isDefaultSearchParamsRequired: false,
   }).then(({ body, headers }) => {
     const defaultServicePoint = body.servicePointsUser.servicePoints.find(
       ({ id }) => id === body.servicePointsUser.defaultServicePointId,
