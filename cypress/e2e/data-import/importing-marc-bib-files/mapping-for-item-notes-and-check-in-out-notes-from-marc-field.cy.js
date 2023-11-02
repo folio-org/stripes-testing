@@ -74,7 +74,7 @@ describe('data-import', () => {
           noteForCheckIn: '878$a',
           staffOnlyForCheckIn: 'Mark for all affected records',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,

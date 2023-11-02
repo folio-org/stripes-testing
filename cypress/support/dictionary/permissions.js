@@ -311,6 +311,10 @@ export default {
     internal: 'ui-users.delete',
     gui: 'Users: Can delete user profile if user does not have any open transactions',
   },
+  uiUsersCreateResetPassword: {
+    internal: 'ui-users.reset.password',
+    gui: 'Users: Create/reset password',
+  },
   uiUsersCheckTransactions: {
     internal: 'ui-users.opentransactions',
     gui: 'Users: Can check open transactions',
@@ -389,6 +393,10 @@ export default {
   uiUsersCreatePatronConditions: {
     internal: 'ui-users.settings.conditions',
     gui: 'Settings (Users): Can view and edit patron blocks conditions',
+  },
+  uiUsersCanViewCustomFields: {
+    internal: 'ui-users.settings.customfields.view',
+    gui: 'Settings (Users): Can view custom fields',
   },
   uiUsersCustomField: {
     internal: 'ui-users.settings.customfields.all',
@@ -692,6 +700,10 @@ export default {
   uiSettingsFinanceViewEditCreateDeleter: {
     internal: 'ui-finance.settings.all',
     gui: 'Settings (Finance): View, edit, create, delete',
+  },
+  uiSettingsFinanceView: {
+    internal: 'ui-finance.settings.view',
+    gui: 'Settings (Finance): View settings',
   },
   uiFinanceAssignAcquisitionUnitsToNewRecord: {
     internal: 'ui-finance.acq.unit.assignment.assign',
