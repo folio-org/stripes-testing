@@ -217,6 +217,10 @@ export default {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
   },
+  notesSettingsViewGeneralSettings: {
+    internal: 'ui-notes.settings.view',
+    gui: 'Settings (Notes): View General settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
