@@ -218,6 +218,10 @@ export default {
     cy.do(filtersSection.find(searchButton).click());
   },
 
+  clickNthCheckbox(checkBoxNumber = 1) {
+    cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
+  },
+
   searchByParameter(searchOption, value) {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
@@ -386,6 +390,11 @@ export default {
 
   actionsSelectCheckbox(value) {
     cy.do(Checkbox(value).click());
+  },
+
+  downloadSelectedRecordWithRowIdx(checkBoxNumber = 1) {
+    cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
+    cy.do([actionsButton.click(), Button('Export selected records (CSV/MARC)').click()]);
   },
 
   selectAllRecords() {

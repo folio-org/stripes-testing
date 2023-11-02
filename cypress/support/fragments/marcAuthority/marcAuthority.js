@@ -8,6 +8,7 @@ import {
   TextArea,
   MultiColumnListHeader,
   Callout,
+  Modal,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -86,6 +87,13 @@ export default {
     cy.do(rootSection.find(Button('Actions')).click());
     cy.do(Button('Edit').click());
     QuickMarcEditorWindow.waitLoading();
+  },
+  delete: () => {
+    cy.do([
+      rootSection.find(Button('Actions')).click(),
+      Button('Delete').click(),
+      Modal('Confirm deletion of authority record').find(Button('Delete')).click(),
+    ]);
   },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
   notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
