@@ -8,6 +8,7 @@ import {
   MultiColumnListRow,
   including,
   Link,
+  Checkbox,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import OrderLines from './orderLines';
@@ -21,6 +22,7 @@ import ExportDetails from '../exportManager/exportDetails';
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
 
+const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
@@ -36,9 +38,16 @@ const openPolDetails = (title) => {
 export default {
   openPolDetails,
   checkOrderStatus(orderStatus) {
-    cy.expect(
-      Section({ id: 'POSummary' }).find(KeyValue('Workflow status')).has({ value: orderStatus }),
-    );
+    cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
+  },
+  checkOrderDetails({ summary = [] } = {}) {
+    summary.forEach(({ key, value, checkbox }) => {
+      if (checkbox) {
+        cy.expect(poSummarySection.find(Checkbox(key)).has(value));
+      } else {
+        cy.expect(poSummarySection.find(KeyValue(key)).has({ value: including(value) }));
+      }
+    });
   },
   expandActionsDropdown() {
     cy.do(
