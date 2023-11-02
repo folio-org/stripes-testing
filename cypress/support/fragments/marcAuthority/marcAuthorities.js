@@ -218,10 +218,6 @@ export default {
     cy.do(filtersSection.find(searchButton).click());
   },
 
-  clickNthCheckbox(checkBoxNumber = 1) {
-    cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
-  },
-
   searchByParameter(searchOption, value) {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value }));
