@@ -10,7 +10,7 @@ export default {
         body: {
           id: uuid(),
           name: noteTypeName,
-          source: 'local'
+          source: 'local',
         },
       })
       .then((response) => response.body.id);
