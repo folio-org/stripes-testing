@@ -41,7 +41,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
 
   const marcFile = {
     marc: 'marcBibC367956.mrc',
-    fileName: `testMarcFile_C367956_${getRandomPostfix()}.mrc`,
+    fileName: `testMarcFile.C367956.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
   };
 

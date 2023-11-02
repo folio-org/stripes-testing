@@ -93,7 +93,7 @@ describe('Inventory -> Contributors Browse', () => {
         testData.contributor.types.adapter,
       );
       InstanceRecordEdit.saveAndClose();
-
+      cy.wait(2000);
       InventorySearchAndFilter.switchToBrowseTab();
 
       BrowseContributors.select();
@@ -149,7 +149,7 @@ describe('Inventory -> Contributors Browse', () => {
         testData.contributor.types.architect,
       );
       InstanceRecordEdit.saveAndClose();
-
+      cy.wait(2000);
       InventorySearchAndFilter.switchToBrowseTab();
 
       BrowseContributors.select();
@@ -182,6 +182,8 @@ describe('Inventory -> Contributors Browse', () => {
       InstanceRecordEdit.saveAndClose();
 
       InventorySearchAndFilter.switchToBrowseTab();
+      cy.reload();
+      InventorySearchAndFilter.clickResetAllButton();
       BrowseContributors.select();
       BrowseContributors.browse(testData.contributor.name);
       BrowseContributors.checkSearchResultRecord(testData.contributor.name);
@@ -203,6 +205,9 @@ describe('Inventory -> Contributors Browse', () => {
       InstanceRecordEdit.saveAndClose();
 
       InventorySearchAndFilter.switchToBrowseTab();
+      cy.reload();
+      cy.wait(4000);
+      InventorySearchAndFilter.clickResetAllButton();
       BrowseContributors.select();
       BrowseContributors.browse(testData.contributor.name);
       InventorySearchAndFilter.verifySearchResult(`${testData.contributor.name}would be here`);
