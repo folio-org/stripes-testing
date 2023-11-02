@@ -143,7 +143,11 @@ export default {
   },
 
   openItemByBarcode() {
-    cy.do(itemInformationSection.find(Link()).click());
+    cy.do(itemInformationSection.find(Link({ href: including('/inventory/view/') })).click());
     ItemRecordView.waitLoading();
+  },
+
+  viewRequestsInQueue() {
+    cy.do(requestInfoSection.find(KeyValue('Position in queue').find(Link())).click());
   },
 };

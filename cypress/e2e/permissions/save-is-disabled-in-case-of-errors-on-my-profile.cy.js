@@ -9,6 +9,8 @@ import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ChangePassword from '../../support/fragments/settings/my-profile/change-password';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import MyProfile from '../../support/fragments/settings/my-profile/my-profile';
 
 describe('Permissions --> My Profile', () => {
   let userData;
@@ -32,16 +34,30 @@ describe('Permissions --> My Profile', () => {
         (userProperties) => {
           userData = userProperties;
           UserEdit.addServicePointViaApi(servicePointId, userData.userId, servicePointId);
-          cy.login(userData.username, userData.password);
         },
       );
     });
+  });
+
+  beforeEach('Login', () => {
+    cy.login(userData.username, userData.password);
   });
 
   after('Deleting created entities', () => {
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });
+
+  it(
+    'C410871 Verify that my profile page title follows correct format (volaris)',
+    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    () => {
+      cy.visit(SettingsMenu.myProfilePath);
+      MyProfile.waitLoading();
+      MyProfile.openChangePassword();
+      ChangePassword.waitLoading();
+    },
+  );
 
   it(
     'C375097 Verify that "Save" button is disabled in case of validation errors on "My profile" form (volaris)',

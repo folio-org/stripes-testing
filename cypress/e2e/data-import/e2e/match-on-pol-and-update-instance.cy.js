@@ -77,7 +77,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C350944 Create Item by POL match ${getRandomPostfix()}`,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         },

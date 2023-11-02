@@ -32,6 +32,7 @@ const saveMappingProfile = () => {
 };
 
 export default {
+  openNewMappingProfileForm,
   saveMappingProfile,
   createMappingProfile: (mappingProfile) => {
     openNewMappingProfileForm();
@@ -143,6 +144,10 @@ export default {
   },
 
   verifyProfileNameOnTheList(name) {
-    cy.expect([MultiColumnListRow(including(name)).exists()]);
+    cy.expect(MultiColumnListRow(including(name)).exists());
+  },
+
+  clickProfileNameFromTheList(name) {
+    cy.do(MultiColumnListCell(including(name)).click());
   },
 };

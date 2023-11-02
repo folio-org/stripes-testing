@@ -79,7 +79,7 @@ describe('data-import', () => {
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           temporaryLoanType: `"${LOAN_TYPE_NAMES.COURSE_RESERVES}"`,
           temporaryLoanTypeUI: LOAN_TYPE_NAMES.COURSE_RESERVES,
-          status: ITEM_STATUS_NAMES.AVAILABLE,
+          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -335,7 +335,7 @@ describe('data-import', () => {
             ItemRecordView.verifyTemporaryLoanType(
               collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanTypeUI,
             );
-            ItemRecordView.verifyStatus(
+            ItemRecordView.verifyItemStatus(
               collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status,
             );
 
