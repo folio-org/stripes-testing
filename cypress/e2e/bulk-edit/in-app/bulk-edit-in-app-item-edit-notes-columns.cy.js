@@ -110,7 +110,7 @@ describe('bulk-edit', () => {
         BulkEditActions.markAsStaffOnly('Copy note', 2);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.noteReplaceWith('Electronic bookplate', notes.electronicBookplateNote, notes.newElectronicBookplateNote, 3);
-        
+
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyChangesUnderColumns('Binding', notes.bindingNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', '');
