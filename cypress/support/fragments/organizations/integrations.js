@@ -1,8 +1,17 @@
+import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
 export default {
-  getDefaultIntegration({ vendorId, acqMethodId, accountNoList, scheduleTime } = {}) {
+  getDefaultIntegration({
+    vendorId,
+    acqMethodId,
+    accountNoList = [],
+    ediFtp = {},
+    isDefaultConfig,
+    scheduleTime,
+  } = {}) {
     return {
+      id: uuid(),
       schedulePeriod: 'NONE',
       type: 'EDIFACT_ORDERS_EXPORT',
       exportTypeSpecificParameters: {
@@ -19,14 +28,14 @@ export default {
             accountNoList,
           },
           ediFtp: {
-            ftpFormat: 'FTP',
-            ftpMode: 'ASCII',
-            ftpConnMode: 'Active',
-            serverAddress: 'ftp://ftp.ci.folio.org',
-            username: 'folio',
-            password: 'Ffx29%pu',
-            ftpPort: '22',
-            orderDirectory: '/files',
+            ftpFormat: ediFtp.ftpFormat || 'FTP',
+            ftpMode: ediFtp.ftpMode || 'ASCII',
+            ftpConnMode: ediFtp.ftpConnMode || 'Active',
+            serverAddress: ediFtp.serverAddress || 'ftp://ftp.ci.folio.org',
+            username: ediFtp.username || 'folio',
+            password: ediFtp.password || 'Ffx29%pu',
+            ftpPort: ediFtp.ftpPort || '22',
+            orderDirectory: ediFtp.orderDirectory || '/files',
           },
           configName: `autotest_config_name_${getRandomPostfix()}`,
           configDescription: `autotest_config_description_${getRandomPostfix()}`,
@@ -38,6 +47,7 @@ export default {
               scheduleTime,
             },
           },
+          isDefaultConfig,
         },
       },
     };
@@ -50,5 +60,11 @@ export default {
         body: config,
       })
       .then(({ body }) => body);
+  },
+  deleteIntegrationViaApi(configId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `data-export-spring/configs/${configId}`,
+    });
   },
 };
