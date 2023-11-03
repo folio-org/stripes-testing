@@ -50,9 +50,9 @@ describe('data-export: failed using non-existent UUIDs', () => {
   });
 
   after(() => {
-    Users.deleteViaApi(user.userProperties.userId);
     FileManager.deleteFileFromDownloadsByMask('*.csv');
     FileManager.deleteFile(`cypress/fixtures/${downloadedFile}`);
+    Users.deleteViaApi(user.userProperties.userId);
   });
 
   it(
