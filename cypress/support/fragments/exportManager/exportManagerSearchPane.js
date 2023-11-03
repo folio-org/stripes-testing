@@ -13,6 +13,7 @@ import {
   KeyValue,
   MultiColumnListRow,
 } from '../../../../interactors';
+import ExportDetails from './exportDetails';
 
 const searchButton = Button({ type: 'submit' });
 const userSearchResults = Pane('User Search Results');
@@ -95,7 +96,10 @@ export default {
         .find(MultiColumnListCell(integrationName))
         .click(),
     );
-    cy.wait(4000);
+
+    ExportDetails.waitLoading();
+
+    return ExportDetails;
   },
 
   closeExportJobPane() {
