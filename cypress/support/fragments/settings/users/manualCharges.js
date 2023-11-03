@@ -6,6 +6,7 @@ import {
   Button,
   Modal,
   Section,
+  Option,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import SettingsPane from '../settingsPane';
@@ -60,6 +61,18 @@ export default {
     // wait required to prevent "+ New" button disabling
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(300);
+  },
+  selectOwnerByName(owner) {
+    cy.do(ownerSelect.choose(owner));
+    cy.wait(1000);
+  },
+  checkSelectedOwner(owner) {
+    cy.wait(1000);
+    cy.get('#select-owner option').first().should('have.text', owner);
+  },
+  checkSelectItemOwner(owner) {
+    cy.wait(1000);
+    cy.expect(ownerSelect.find(Option(owner)).exists());
   },
   fillInFields(data, index = 0) {
     cy.do([
