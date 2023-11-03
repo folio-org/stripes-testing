@@ -22,7 +22,7 @@ describe('Export Manager', () => {
   });
 
   after('Delete test data', () => {
-    // Users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
   });
 
   it(
