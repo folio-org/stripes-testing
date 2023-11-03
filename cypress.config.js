@@ -19,7 +19,7 @@ module.exports = defineConfig({
   pageLoadTimeout: 120000,
   env: {
     OKAPI_HOST: 'https://folio-testing-sprint-okapi.ci.folio.org',
-    OKAPI_TENANT: 'consortium',
+    OKAPI_TENANT: '',
     diku_login: 'consortium_admin',
     diku_password: 'admin',
     is_kiwi_release: false,

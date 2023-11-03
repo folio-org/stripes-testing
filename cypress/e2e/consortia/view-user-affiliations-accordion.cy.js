@@ -10,15 +10,50 @@ import TopMenu from '../../support/fragments/topMenu';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Helper from '../../support/fragments/finance/financeHelper';
+import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 
 describe('Consortia', () => {
   let user;
 
   before(() => {
-    // cy.setTenant('consortium');
+    // cy.setTenant('college');
+    // // cy.getAdminToken();
+
+    // cy.loginAsCollegeAdmin();
+
+    // cy.createTempUser([
+    //   permissions.uiSettingsOrdersCanViewAllSettings.gui,
+    //   permissions.uiOrdersCreate.gui,
+    //   permissions.uiOrdersEdit.gui,
+    // ], 'staff', 'staff').then((userProperties) => {
+    //   user = userProperties;
+    //   cy.login(user.username, user.password, {
+    //     path: TopMenu.ordersPath,
+    //     waiter: Orders.waitLoading,
+    //   });
+    // });
+    // cy.logout();
+    cy.setTenant('university');
     // cy.getAdminToken();
 
     cy.loginAsAdmin();
+
+    cy.createTempUser(
+      [
+        permissions.uiSettingsOrdersCanViewAllSettings.gui,
+        permissions.uiOrdersCreate.gui,
+        permissions.uiOrdersEdit.gui,
+        permissions.consortiaSettingsConsortiaAffiliationsView.gui,
+      ],
+      'staff',
+      'staff',
+    ).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    });
   });
 
   //   after(() => {
@@ -27,17 +62,8 @@ describe('Consortia', () => {
 
   it('Consortia', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
     cy.visit(TopMenu.ordersPath);
+    ConsortiumManager.switchActiveAffiliation('Consortium');
+    cy.pause();
     //   cy.logout();
-    cy.createTempUser([
-      permissions.uiSettingsOrdersCanViewAllSettings.gui,
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersEdit.gui,
-    ]).then((userProperties) => {
-      user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-    });
   });
 });

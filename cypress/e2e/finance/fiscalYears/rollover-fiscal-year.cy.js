@@ -58,7 +58,8 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   let location;
 
   before(() => {
-    cy.getAdminToken();
+    // cy.getAdminToken();
+    cy.loginAsAdmin();
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
@@ -146,13 +147,17 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Invoices.approveInvoice();
       Invoices.payInvoice();
     });
-    cy.createTempUser([
-      permissions.uiFinanceExecuteFiscalYearRollover.gui,
-      permissions.uiFinanceViewFiscalYear.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewLedger.gui,
-      permissions.uiOrdersView.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser(
+      [
+        permissions.uiFinanceExecuteFiscalYearRollover.gui,
+        permissions.uiFinanceViewFiscalYear.gui,
+        permissions.uiFinanceViewFundAndBudget.gui,
+        permissions.uiFinanceViewLedger.gui,
+        permissions.uiOrdersView.gui,
+      ],
+      'staff',
+      'staff',
+    ).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
@@ -162,6 +167,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   });
 
   after(() => {
+    cy.loginAsAdmin();
     Users.deleteViaApi(user.userId);
   });
 

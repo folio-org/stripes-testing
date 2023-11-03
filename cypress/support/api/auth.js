@@ -1,15 +1,18 @@
 Cypress.Commands.add('getToken', (username, password) => {
-  cy.okapiRequest({
+  cy.request({
     method: 'POST',
-    path: 'login-with-expiry',
+    url: 'bl-users/login-with-expiry',
     body: { username, password },
-    // isDefaultSearchParamsRequired: false,
+    isDefaultSearchParamsRequired: false,
   }).then(({ body, headers }) => {
     const defaultServicePoint = body.servicePointsUser.servicePoints.find(
       ({ id }) => id === body.servicePointsUser.defaultServicePointId,
     );
 
-    Cypress.env('token', headers['x-okapi-token']);
+    const cookieString = headers['set-cookie'][0];
+    const token = cookieString.split(';')[0]; // Извлекаем только значение куки
+
+    Cypress.env('token', token);
     Cypress.env('defaultServicePoint', defaultServicePoint);
   });
 });
