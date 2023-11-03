@@ -1,7 +1,7 @@
 import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import TransferCriteria from '../../support/fragments/settings/users/transferCriteria.js';
+import TransferCriteria from '../../support/fragments/settings/users/transferCriteria';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
 import UserEdit from '../../support/fragments/users/userEdit';
