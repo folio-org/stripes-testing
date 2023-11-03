@@ -3,6 +3,9 @@ import InteractorsTools from '../../../utils/interactorsTools';
 
 const saveButton = Button('Save');
 const TLRCheckbox = Checkbox({ name: 'titleLevelRequestsFeatureEnabled' });
+const titleLevelHoldCirculationRulesCheckbox = Checkbox({
+  name: 'tlrHoldShouldFollowCirculationRules',
+});
 const confirmationNotice = Select({ name: 'confirmationPatronNoticeTemplateId' });
 const cancellationNotice = Select({ name: 'cancellationPatronNoticeTemplateId' });
 const expirationNotice = Select({ name: 'expirationPatronNoticeTemplateId' });
@@ -70,6 +73,10 @@ export default {
           });
         }
       });
+  },
+
+  uncheckFailToCreateHoldForBlockedRequestCheckBox() {
+    cy.do(titleLevelHoldCirculationRulesCheckbox.uncheckIfSelected());
   },
 
   checkUpdateTLRCalloutAppeared() {
