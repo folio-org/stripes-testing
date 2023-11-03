@@ -15,6 +15,7 @@ describe('Users: Owners', () => {
   const ownerSharedError = 'Fee/fine type exists for Shared Fee/fine owner';
 
   before('Create test data', () => {
+    cy.getAdminToken();
     cy.loginAsAdmin({
       path: SettingsMenu.usersOwnersPath,
       waiter: UsersOwners.waitLoading,
@@ -39,6 +40,7 @@ describe('Users: Owners', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     cy.visit(SettingsMenu.manualCharges);
     owners.forEach((owner) => {
       ManualCharges.selectOwnerByName(owner);
