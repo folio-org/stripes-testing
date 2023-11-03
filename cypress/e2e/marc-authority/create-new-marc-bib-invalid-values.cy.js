@@ -60,6 +60,23 @@ describe('Create new MARC bib', () => {
     QuickMarcEditor.closeCallout();
   }
 
+  function updateLDR06LDR07Values(combinations, calloutPosition, is008SubfieldPresent) {
+    combinations.forEach((combination) => {
+      const updatedLDRValue = `${testData.validLDRValue.substring(0, 6)}${combination[0]}${
+        combination[1]
+      }${testData.validLDRValue.substring(8)}`;
+      QuickMarcEditor.updateExistingField('LDR', updatedLDRValue);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.verifyInvalidLDRValueCallout(calloutPosition);
+      if (is008SubfieldPresent) {
+        QuickMarcEditor.checkSubfieldsPresenceInTag008();
+      } else {
+        QuickMarcEditor.checkSubfieldsAbsenceInTag008();
+      }
+      QuickMarcEditor.closeCallout();
+    });
+  }
+
   before('Create test data', () => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
@@ -91,6 +108,21 @@ describe('Create new MARC bib', () => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.verifyInvalidLDRValueCallout(testData.positions);
       QuickMarcEditor.closeCallout();
+      QuickMarcEditor.closeWithoutSavingAfterChange();
+    },
+  );
+
+  it(
+    'C380712 "008" field updated when invalid LDR 06, 07 values entered upon creation of "MARC bib" record (spitfire) (TaaS)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      InventoryInstance.newMarcBibRecord();
+      QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);
+
+      updateLDR06LDR07Values(testData.LDR0607Combinations.invalidLDR06InvalidLDR07Set1, 7, true);
+      updateLDR06LDR07Values(testData.LDR0607Combinations.invalidLDR06InvalidLDR07Set2, 7, false);
+      updateLDR06LDR07Values(testData.LDR0607Combinations.invalidLDR06ValidLDR07, 6, false);
+      updateLDR06LDR07Values(testData.LDR0607Combinations.validLDR06InvalidLDR07, [6, 7], false);
       QuickMarcEditor.closeWithoutSavingAfterChange();
     },
   );
