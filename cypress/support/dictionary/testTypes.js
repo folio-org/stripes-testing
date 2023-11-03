@@ -5,4 +5,5 @@ export default {
   long: 'long',
   broken: 'broken',
   ideaLabsTests: 'ideaLabsTests',
+  consortia: 'consortia',
 };

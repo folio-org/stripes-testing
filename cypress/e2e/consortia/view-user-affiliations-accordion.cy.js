@@ -36,7 +36,7 @@ describe('Consortia', () => {
     cy.setTenant('university');
     // cy.getAdminToken();
 
-    cy.loginAsAdmin();
+    cy.loginAsUniversityAdmin();
 
     cy.createTempUser(
       [
