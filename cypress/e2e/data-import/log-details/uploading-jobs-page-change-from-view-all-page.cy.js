@@ -27,9 +27,9 @@ describe('Log details', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken().then(() => {
-      Users.deleteViaApi(user.userId);
-    });
+    // cy.getAdminToken().then(() => {
+    //   Users.deleteViaApi(user.userId);
+    // });
   });
 
   it(
