@@ -135,6 +135,13 @@ export default {
     ]);
   },
 
+  verifyDetailViewPage(name, status) {
+    cy.expect([
+      Pane(name).exists(),
+      Accordion('Holding status').has({ content: including(status) }),
+    ]);
+  },
+
   verifyExportModal: () => {
     const modalContent =
       'This export may take several minutes to complete. When finished, it will be available in the Export manager app. NOTE: Maximum number of titles in a package you can export is 10000. Filter your search within titles list to not exceed the limit or only choose to export package details only. This export does not include information available under Usage & analysis accordion (only available to Usage Consolidation subscribers). Please use the Export titles option available under that accordion.';
