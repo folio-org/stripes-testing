@@ -240,9 +240,17 @@ describe('Circulation log', () => {
           getActionBody(transferAccount.accountName, partiallAmount),
           testData.feeFineId,
         );
-        filterByAction('Transferred partially');
-        NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+        checkActionsButton('Transferred partially');
       });
+    },
+  );
+
+  it(
+    'C17063 Filter circulation log by transferred partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Transferred partially');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
     },
   );
 
