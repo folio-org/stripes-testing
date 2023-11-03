@@ -126,4 +126,23 @@ describe('Create new MARC bib', () => {
       QuickMarcEditor.closeWithoutSavingAfterChange();
     },
   );
+
+  it(
+    'C380714 "245" field presence validation when creating a new "MARC bib" record (spitfire) (TaaS)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      InventoryInstance.newMarcBibRecord();
+      QuickMarcEditor.updateExistingField('LDR', testData.validLDRValue);
+      QuickMarcEditor.updateExistingTagValue(4, '246');
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.verifyNo245TagCallout();
+      QuickMarcEditor.updateExistingTagValue(4, '245');
+      QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);
+      QuickMarcEditor.addEmptyFields(4);
+      QuickMarcEditor.addValuesToExistingField(4, '245', `$a ${testData.marcBibTitle2}`);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.verifyMultiple245TagCallout();
+      QuickMarcEditor.closeWithoutSavingAfterChange();
+    },
+  );
 });
