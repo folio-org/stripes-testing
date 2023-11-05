@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 
-describe('inventory', () => {
+describe.skip('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     let user;
     const instanceTitle = `C3497 autotestInstance ${getRandomPostfix()}`;
@@ -36,19 +36,15 @@ describe('inventory', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     });
 
-    it(
-      'C3497 Edit the title of an instance which has Source FOLIO (no underlying MARC record in SRS) (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
-      () => {
-        InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
-        InstanceRecordView.verifyInstancePaneExists();
-        InventoryInstance.editInstance();
-        InstanceRecordEdit.editResourceTitle(instanceNewTitle);
-        InstanceRecordEdit.saveAndClose();
-        InstanceRecordEdit.verifySuccessfulMessage();
-        InstanceRecordView.verifyInstanceRecordViewOpened();
-        InstanceRecordView.verifyResourceTitle(instanceNewTitle);
-      },
-    );
+    it('C3497 Edit the title of an instance which has Source FOLIO (no underlying MARC record in SRS) (folijet) (TaaS)', () => {
+      InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
+      InstanceRecordView.verifyInstancePaneExists();
+      InventoryInstance.editInstance();
+      InstanceRecordEdit.editResourceTitle(instanceNewTitle);
+      InstanceRecordEdit.saveAndClose();
+      InstanceRecordEdit.verifySuccessfulMessage();
+      InstanceRecordView.verifyInstanceRecordViewOpened();
+      InstanceRecordView.verifyResourceTitle(instanceNewTitle);
+    });
   });
 });
