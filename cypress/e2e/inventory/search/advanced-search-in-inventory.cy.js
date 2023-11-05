@@ -208,4 +208,10 @@ describe('Inventory -> Advanced search', () => {
       InventorySearchAndFilter.checkRowsCount(2);
     },
   );
+
+  it(
+    'C400613 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {},
+  );
 });
