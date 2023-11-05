@@ -723,9 +723,7 @@ export default {
 
   verifyResultsUnderColumns(columnName, value) {
     cy.expect(
-      resultsAccordion
-        .find(MultiColumnListCell({ column: columnName, content: value }))
-        .exists(),
+      resultsAccordion.find(MultiColumnListCell({ column: columnName, content: value })).exists(),
     );
   },
 

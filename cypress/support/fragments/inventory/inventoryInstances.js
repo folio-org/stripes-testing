@@ -48,7 +48,7 @@ const advSearchModifierSelect = Select({ label: 'Match option*' });
 const advSearchOptionSelect = Select({ label: 'Search options*' });
 
 const advSearchOperators = ['AND', 'OR', 'NOT'];
-const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
+const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
 const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith'];
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
@@ -439,6 +439,7 @@ export default {
     barcodes,
     status = ITEM_STATUS_NAMES.AVAILABLE,
     properties = {},
+    callNumbers = [],
   } = {}) {
     return [...Array(count).keys()].map((index) => ({
       instanceId: uuid(),
@@ -446,6 +447,7 @@ export default {
       barcodes: barcodes || [generateUniqueItemBarcodeWithShift(index)],
       status,
       properties: Array.isArray(properties) ? properties[index] : properties,
+      callNumbers,
     }));
   },
   createFolioInstancesViaApi({ folioInstances = [], location = {}, sourceId } = {}) {
@@ -482,6 +484,7 @@ export default {
               holdingsTypeId: types.holdingTypeId,
               permanentLocationId: location.id,
               sourceId,
+              callNumber: item.callNumbers[index],
             },
           ],
           items: item.barcodes.map((barcode) => ({

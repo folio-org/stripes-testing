@@ -74,11 +74,11 @@ export default {
     this.clickAddTransformationsButton();
   },
 
-  createNewFieldMappingProfileWithoutTransformations(name, recordType = 'Source record storage (entire record)') {
-    cy.do([
-      TextField('Name*').fillIn(name),
-      Checkbox(recordType).click()
-    ]);
+  createNewFieldMappingProfileWithoutTransformations(
+    name,
+    recordType = 'Source record storage (entire record)',
+  ) {
+    cy.do([TextField('Name*').fillIn(name), Checkbox(recordType).click()]);
   },
 
   clickAddTransformationsButton() {

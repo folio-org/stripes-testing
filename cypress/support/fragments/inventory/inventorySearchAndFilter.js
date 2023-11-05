@@ -17,6 +17,7 @@ import {
   Section,
   Select,
   TextField,
+  TextArea,
   TextInput,
   TextArea,
 } from '../../../../interactors';
@@ -448,7 +449,7 @@ export default {
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
       browseButton.click(),
-      TextField({ id: 'input-record-search' }).fillIn(searchString),
+      TextArea({ id: 'input-record-search' }).fillIn(searchString),
       searchButton.click(),
     ]);
     cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
@@ -642,7 +643,7 @@ export default {
   },
 
   browseSearch(searchValue) {
-    cy.do([TextField({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
+    cy.do([TextArea({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
   },
 
   clickEditInstance() {
@@ -685,7 +686,19 @@ export default {
   verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
   verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
   verifyResetAllButtonDisabled: () => cy.expect(resetAllBtn.has({ disabled: true })),
-  verifyBrowseInventorySearchResults: () => cy.expect(inventorySearchResultsPane.exists()),
+  verifyBrowseInventorySearchResults({ records = [] } = {}) {
+    cy.expect(inventorySearchResultsPane.exists());
+
+    records.forEach((record) => {
+      cy.expect(
+        inventorySearchResultsPane
+          .find(
+            MultiColumnListCell({ innerHTML: including(`<strong>${record.callNumber}</strong>`) }),
+          )
+          .exists(),
+      );
+    });
+  },
 
   verifyNoRecordsFound() {
     cy.expect([

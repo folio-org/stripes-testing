@@ -335,7 +335,7 @@ describe('data-import', () => {
             ItemRecordView.verifyTemporaryLoanType(
               collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanTypeUI,
             );
-            ItemRecordView.verifyStatus(
+            ItemRecordView.verifyItemStatus(
               collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status,
             );
 

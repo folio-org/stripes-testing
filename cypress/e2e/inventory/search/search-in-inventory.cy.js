@@ -40,6 +40,7 @@ describe('Search in Inventory', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     Users.deleteViaApi(testData.userPropertiesC358938.userId);
     createdInstanceIDs.forEach((id) => {

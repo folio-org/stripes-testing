@@ -848,6 +848,11 @@ export default {
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
   },
 
+  checkVendorCodeInInvoicePane: (vendorCode) => {
+    cy.wait(4000);
+    cy.expect(Pane({ subtitle: vendorCode }).exists());
+  },
+
   closeInvoiceDetailsPane: () => {
     cy.do(invoiceDetailsPane.find(Button({ icon: 'times' })).click());
   },
