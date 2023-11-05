@@ -128,7 +128,7 @@ export default {
       Pane('Locations')
         .find(MultiColumnListCell({ content: name }))
         .click(),
-        actionsButton.click(),
+      actionsButton.click(),
       Button('Delete').click(),
       Button({ id: 'clickable-deletelocation-confirmation-confirm' }).click(),
     ]);
