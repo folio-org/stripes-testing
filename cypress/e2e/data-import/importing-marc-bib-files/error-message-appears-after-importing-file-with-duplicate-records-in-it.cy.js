@@ -22,11 +22,15 @@ import NewMatchProfile from '../../../support/fragments/data_import/match_profil
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     let instanceHrid;
+    const errorMessage = 'DuplicateRecordException: Incoming file may contain duplicates';
+    const title = 'Introductory Solid State Physics with MATLAB Applications';
     const firstFilePathForUpload = 'marcBibFileForC410708_file1.mrc';
     const secondFilePathForUpload = 'marcBibFileForC410708_file2.mrc';
     const firstFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
@@ -73,6 +77,20 @@ describe('data-import', () => {
           waiter: DataImport.waitLoading,
         });
       });
+    });
+
+    after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+      JobProfiles.deleteJobProfile(jobProfile.name);
+      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      ActionProfiles.deleteActionProfile(actionProfile.name);
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (initialInstance) => {
+          InventoryInstance.deleteInstanceViaApi(initialInstance.id);
+        },
+      );
+      Users.deleteViaApi(user.userId);
     });
 
     it(
@@ -133,23 +151,18 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(secondFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(secondFileName);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
-          FileDetails.columnNameInResultList.srsMarc,
-        );
-        [
-          FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName, 1);
-        });
-        FileDetails.openInstanceInInventory('Updated', 1);
+        FileDetails.openInstanceInInventoryByStatus('Updated');
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.editMarcBibliographicRecord();
-        cy.pause();
-        // InventoryEditMarcRecord.deleteField(18);
-        // InventoryEditMarcRecord.saveAndClose();
-        // InventoryEditMarcRecord.confirmDeletingField();
+        InventoryEditMarcRecord.deleteField(18);
+        InventoryEditMarcRecord.saveAndClose();
+        InventoryEditMarcRecord.confirmDeletingField();
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondFileName);
+        FileDetails.openJsonScreenByStatus('No action', title);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab(errorMessage);
       },
     );
   });
