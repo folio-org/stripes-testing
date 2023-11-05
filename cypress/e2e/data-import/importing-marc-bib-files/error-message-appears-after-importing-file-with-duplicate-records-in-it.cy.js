@@ -1,10 +1,10 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
@@ -80,6 +80,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       JobProfiles.deleteJobProfile(jobProfile.name);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
