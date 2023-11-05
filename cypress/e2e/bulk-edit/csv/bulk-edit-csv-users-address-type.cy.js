@@ -21,7 +21,7 @@ const updatedRecordsFileName = `*-Changed-Records*-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
-  describe('in-app approach', () => {
+  describe('csv approach', () => {
     before('create test data', () => {
       cy.createTempUser(
         [
