@@ -1,0 +1,51 @@
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+
+describe('MARC -> MARC Bibliographic', () => {
+  const user = {};
+
+  before(() => {
+    cy.createTempUser([
+      Permissions.inventoryAll.gui,
+      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+    ]).then((createdUserProperties) => {
+      user.userProperties = createdUserProperties;
+
+      cy.login(user.userProperties.username, user.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      InventorySearchAndFilter.searchByParameter('All', 'Crossfire');
+      InventorySearchAndFilter.selectSearchResultItem();
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.clickLinkIconInTagField(12);
+      MarcAuthorities.switchToSearch();
+    });
+  });
+
+  afterEach(() => {
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(user.userProperties.userId);
+    });
+  });
+
+  it(
+    "C359180 MARC Authority plug-in | Use search query that doesn't return results (spitfire) (TaaS)",
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      MarcAuthorities.searchByParameter('Keyword', 'name');
+      MarcAuthorities.checkNoResultsMessage(
+        'No results found for "name". Please check your spelling and filters.',
+      );
+    },
+  );
+});

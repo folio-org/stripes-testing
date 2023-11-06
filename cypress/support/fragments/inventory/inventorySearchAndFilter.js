@@ -428,7 +428,7 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(searchTextField.fillIn(value));
+    cy.do(inventorySearchAndFilter.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },
