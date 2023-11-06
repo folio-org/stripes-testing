@@ -241,7 +241,7 @@ export default {
   },
 
   selectOrganizationsSearch() {
-    Button('Organizations').click();
+    cy.do(Button('Organizations').click());
   },
 
   selectExportMethod(integarationName) {
