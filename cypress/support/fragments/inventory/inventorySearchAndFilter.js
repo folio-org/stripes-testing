@@ -16,6 +16,7 @@ import {
   SearchField,
   Section,
   Select,
+  TextArea,
   TextField,
   TextArea,
   TextInput,
@@ -101,11 +102,29 @@ const searchHoldingsByHRID = (hrid) => {
   InventoryInstances.waitLoading();
 };
 
+const searchInstanceByKeyword = (keyword) => {
+  cy.do([
+    Select({ id: 'input-inventory-search-qindex' }).choose(
+      'Keyword (title, contributor, identifier, HRID, UUID)',
+    ),
+    TextArea({ id: 'input-inventory-search' }).fillIn(keyword),
+    searchButton.click(),
+  ]);
+};
+
 const searchInstanceByTitle = (title) => {
   cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
   InventoryInstance.waitLoading();
 
   return InventoryInstance;
+};
+
+const searchInstanceByOCLC = (oclc) => {
+  cy.do([
+    Select({ id: 'input-inventory-search-qindex' }).choose('OCLC number, normalized'),
+    TextArea({ id: 'input-inventory-search' }).fillIn(oclc),
+    searchButton.click(),
+  ]);
 };
 
 const getInstanceHRID = () => {
@@ -174,7 +193,9 @@ const checkInstanceDetails = () => {
 export default {
   searchInstanceByHRID,
   searchHoldingsByHRID,
+  searchInstanceByKeyword,
   searchInstanceByTitle,
+  searchInstanceByOCLC,
   getInstanceHRID,
   checkInstanceDetails,
   getAllSearchResults: () => MultiColumnList(),
