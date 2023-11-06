@@ -41,6 +41,7 @@ describe('MARC -> MARC Holdings', () => {
   };
 
   before('create test data and login', () => {
+    cy.getAdminToken();
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     DataImport.uploadFileViaApi('oneMarcBib.mrc', testData.fileNameForCreateInstance);
     JobProfiles.waitFileIsImported(testData.fileNameForCreateInstance);
@@ -88,16 +89,15 @@ describe('MARC -> MARC Holdings', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+      (instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      },
+    );
+    Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
-    cy.getAdminToken(() => {
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      Users.deleteViaApi(user.userId);
-    });
   });
 
   it(
