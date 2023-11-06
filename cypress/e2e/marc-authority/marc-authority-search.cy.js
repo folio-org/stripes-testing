@@ -105,6 +105,7 @@ describe('MARC -› MARC Authority', () => {
   });
 
   after('Deleting user, record', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     Users.deleteViaApi(testData.userPropertiesC409449.userId);
     createdRecordIDs.forEach((id) => {

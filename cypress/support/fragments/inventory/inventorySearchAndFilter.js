@@ -18,6 +18,7 @@ import {
   Select,
   TextField,
   TextInput,
+  TextArea,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
@@ -41,7 +42,7 @@ const dateCreatedAccordion = Accordion({ id: 'createdDate' });
 const dateUpdatedAccordion = Accordion({ id: 'updatedDate' });
 const instanceStatusAccordion = Accordion({ id: 'instanceStatus' });
 const tagsAccordion = Accordion({ id: 'instancesTags' });
-const keywordInput = TextField({ id: 'input-inventory-search' });
+const keywordInput = TextArea({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const searchTextField = TextField('Search ');
 const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
@@ -100,7 +101,7 @@ const searchHoldingsByHRID = (hrid) => {
 };
 
 const searchInstanceByTitle = (title) => {
-  cy.do([TextField({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
+  cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
   InventoryInstance.waitLoading();
 
   return InventoryInstance;
@@ -641,7 +642,7 @@ export default {
   },
 
   browseSearch(searchValue) {
-    cy.do([TextField({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
+    cy.do([TextArea({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
   },
 
   clickEditInstance() {
