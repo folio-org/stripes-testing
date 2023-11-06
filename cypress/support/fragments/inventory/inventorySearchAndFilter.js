@@ -17,6 +17,7 @@ import {
   Section,
   Select,
   TextField,
+  TextArea,
   TextInput,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
@@ -42,6 +43,7 @@ const dateUpdatedAccordion = Accordion({ id: 'updatedDate' });
 const instanceStatusAccordion = Accordion({ id: 'instanceStatus' });
 const tagsAccordion = Accordion({ id: 'instancesTags' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
+const keywordInputA = TextArea({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const searchTextField = TextField('Search ');
 const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
@@ -348,6 +350,10 @@ export default {
     cy.do(Button({ id: 'mode-navigation-browse' }).click());
   },
 
+  verifySpecificTabHighlighted(tab) {
+    cy.expect(Button(`${tab}`).has({ default: false }));
+  },
+
   verifyCallNumberBrowseEmptyPane() {
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(
@@ -558,6 +564,10 @@ export default {
     cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
+  verifyResultPaneEmpty() {
+    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
+  },
+
   closeInstanceDetailPane() {
     cy.do(instanceDetailsSection.find(Button({ icon: 'times' })).click());
     cy.expect(instanceDetailsSection.absent());
@@ -721,6 +731,11 @@ export default {
     cy.do(browseSearchAndFilterInput.choose(option));
   },
 
+  verifySearchOption(option, selectValue) {
+    cy.do(inventorySearchAndFilterInput.choose(option));
+    cy.expect(inventorySearchAndFilterInput.has({ value: selectValue }));
+  },
+
   checkSearchQueryText(text) {
     cy.expect(keywordInput.has({ value: text }));
   },
@@ -786,6 +801,10 @@ export default {
 
   verifySearchFieldIsEmpty() {
     cy.expect(keywordInput.has({ value: '' }));
+  },
+
+  verifySearchFieldIsEmptyA() {
+    cy.expect(keywordInputA.has({ value: '' }));
   },
 
   verifyAccordionByNameExpanded(accordionName, status = true) {
