@@ -8,7 +8,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 
 let user;
 const item = {
@@ -38,11 +37,11 @@ describe('bulk-edit', () => {
       });
     });
 
-    // after('Delete test data', () => {
-    //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    //   Users.deleteViaApi(user.userId);
-    //   FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-    // });
+    after('Delete test data', () => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+      Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+    });
 
     it(
       'C358973 Verify request to /bulk-edit/{UUID}/start (firebird) (TaaS)',
