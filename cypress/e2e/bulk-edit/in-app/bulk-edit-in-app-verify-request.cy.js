@@ -8,6 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 let user;
 const item = {
@@ -37,11 +38,11 @@ describe('bulk-edit', () => {
       });
     });
 
-    after('Delete test data', () => {
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
-    });
+    // after('Delete test data', () => {
+    //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    //   Users.deleteViaApi(user.userId);
+    //   FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+    // });
 
     it(
       'C358973 Verify request to /bulk-edit/{UUID}/start (firebird) (TaaS)',
@@ -63,9 +64,16 @@ describe('bulk-edit', () => {
         // Select "Permanent item location" from "Select option" dropdown => Select "Replace with" option from  "Select action" dropdown
         BulkEditActions.replacePermanentLocation(location);
         BulkEditActions.locationLookupExists();
-        // Click "Confirm changes" button
+
+        cy.intercept('/bulk-operations/*').as('confirmChanges');
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1, item.itemBarcode);
+        cy.wait('@confirmChanges').then((interception) => {
+          expect(interception.response.statusCode).to.equal(200);
+          // Check if the intercepted request has status 500
+          if (interception.response.statusCode === 500) {
+            throw new Error('A request with status 500 was intercepted.');
+          }
+        });
       },
     );
   });
