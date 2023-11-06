@@ -61,14 +61,11 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
           createdInstanceIDs.push(link.split('/')[5]);
         });
       });
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
     });
   });
 
   after('Deleting created users, Instances', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
     InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[1]);
@@ -78,6 +75,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
       InventoryInstances.waitContentLoading();
       InventoryInstance.searchByTitle(createdInstanceIDs[0]);
       InventoryInstances.selectInstance();
@@ -126,7 +127,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      cy.visit(TopMenu.inventoryPath, {
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
       InventoryInstances.searchBySource('MARC');

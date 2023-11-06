@@ -41,6 +41,7 @@ describe('eHoldings', () => {
     });
 
     after('Deleting created users', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.C684UserProperties.userId);
       Users.deleteViaApi(testData.C9240UserProperties.userId);
     });
