@@ -30,6 +30,7 @@ const exportManagerOrganizationsPath = 'export-manager/edi-jobs';
 const customFieldsPath = '/settings/users/custom-fields';
 const notesPath = '/settings/notes/general';
 const permissionSetPath = '/settings/users/perms?layer=add';
+const lostItemsRequiringActualCost = '/users/lost-items';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -64,6 +65,7 @@ export default {
   customFieldsPath,
   notesPath,
   permissionSetPath,
+  lostItemsRequiringActualCost,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

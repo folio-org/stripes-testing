@@ -98,6 +98,7 @@ describe('Orders', () => {
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Orders.deleteOrderViaApi(testData.order.id);
       OrderLinesLimit.setPOLLimit(1);
+      testData.integrations.forEach(({ id }) => Integrations.deleteIntegrationViaApi(id));
       Users.deleteViaApi(testData.user.userId);
     });
 

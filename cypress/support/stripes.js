@@ -24,7 +24,6 @@ Cypress.Commands.add(
       url: queryString ? `${cypressEnvPath}?${queryString}` : cypressEnvPath,
       headers: {
         'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
-        'x-okapi-token': Cypress.env('token'),
         'Content-type': contentTypeHeader,
       },
       body,

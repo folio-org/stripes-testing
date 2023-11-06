@@ -20,6 +20,7 @@ import {
 } from '../../../../../../interactors';
 
 const pane = Pane('Locations');
+const actionsButton = Button('Actions');
 
 const getDefaultLocation = ({
   servicePointId,
@@ -127,7 +128,7 @@ export default {
       Pane('Locations')
         .find(MultiColumnListCell({ content: name }))
         .click(),
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('Delete').click(),
       Button({ id: 'clickable-deletelocation-confirmation-confirm' }).click(),
     ]);
@@ -215,5 +216,11 @@ export default {
     cy.expect(Pane('Tenant').exists());
     cy.do(NavListItem('Locations').click());
     cy.expect(Pane('Locations').exists());
+  },
+  duplicate() {
+    cy.do([
+      actionsButton.click(),
+      Button('Duplicate').click(),
+    ]);
   },
 };
