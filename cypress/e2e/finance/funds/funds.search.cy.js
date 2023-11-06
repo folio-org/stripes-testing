@@ -65,6 +65,7 @@ describe('ui-finance: Funds', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     cy.deleteFundApi(fund.id);
     Users.deleteViaApi(user.userId);
   });

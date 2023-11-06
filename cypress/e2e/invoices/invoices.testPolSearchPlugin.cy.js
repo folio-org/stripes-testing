@@ -70,6 +70,7 @@ describe('ui-invoices: test POL search plugin', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });

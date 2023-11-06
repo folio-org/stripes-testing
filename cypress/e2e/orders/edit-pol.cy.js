@@ -75,6 +75,7 @@ describe('orders: create', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(

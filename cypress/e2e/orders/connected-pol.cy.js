@@ -32,6 +32,7 @@ describe('orders: create an order', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Users.deleteViaApi(user.userId);
   });

@@ -20,6 +20,7 @@ const instanceTitle = `Instance_Test_Title_${getRandomPostfix()}`;
 
 describe('ui-inventory: Keyboard shortcut (NEW)', () => {
   beforeEach('navigate to inventory', () => {
+    cy.getAdminToken();
     cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
@@ -28,6 +29,7 @@ describe('ui-inventory: Keyboard shortcut (NEW)', () => {
   });
 
   afterEach('Delete all data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userId);
   });
 
