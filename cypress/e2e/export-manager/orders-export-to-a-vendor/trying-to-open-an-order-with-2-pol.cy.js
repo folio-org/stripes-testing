@@ -3,23 +3,21 @@ import devTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
 import Orders from '../../../support/fragments/orders/orders';
 import TestTypes from '../../../support/dictionary/testTypes';
-import Users from '../../../support/fragments/users/users';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import DateTools from '../../../support/utils/dateTools';
+import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
     const order = {
       ...NewOrder.defaultOneTimeOrder,
-      orderType: 'Ongoing',
-      ongoing: { isSubscription: false, manualRenewal: false },
       approved: true,
     };
     const organization = {
@@ -35,7 +33,7 @@ describe('Export Manager', () => {
           libraryEdiCode: getRandomPostfix(),
           name: 'TestAccout1',
           notes: '',
-          paymentMethod: 'Cash',
+          paymentMethod: 'EFT',
         },
         {
           accountNo: getRandomPostfix(),
@@ -47,7 +45,7 @@ describe('Export Manager', () => {
           libraryEdiCode: getRandomPostfix(),
           name: 'TestAccout2',
           notes: '',
-          paymentMethod: 'Cash',
+          paymentMethod: 'EFT',
         },
       ],
     };
@@ -63,10 +61,14 @@ describe('Export Manager', () => {
     let location;
     let servicePointId;
     let orderNumber;
-    const UTCTime = DateTools.getUTCDateForScheduling();
 
     before(() => {
       cy.getAdminToken();
+      cy.loginAsAdmin({
+        path: SettingsMenu.ordersPurchaseOrderLinesLimit,
+        waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
+      });
+      SettingsOrders.setPurchaseOrderLinesLimit(2);
 
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
@@ -78,51 +80,51 @@ describe('Export Manager', () => {
         organization.id = organizationsResponse;
         order.vendor = organizationsResponse;
       });
-      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+      cy.visit(TopMenu.organizationsPath);
       Organizations.searchByParameters('Name', organization.name);
       Organizations.checkSearchResults(organization);
       Organizations.selectOrganization(organization.name);
       Organizations.addIntegration();
-      Organizations.fillIntegrationInformation(
+      Organizations.fillIntegrationInformationWithoutScheduling(
         integrationName1,
         integartionDescription1,
         vendorEDICodeFor1Integration,
         libraryEDICodeFor1Integration,
         organization.accounts[0].accountNo,
         'Purchase',
-        UTCTime,
       );
       Organizations.addIntegration();
       cy.wait(2000);
-      Organizations.fillIntegrationInformation(
+      Organizations.fillIntegrationInformationWithoutScheduling(
         integrationName2,
         integartionDescription2,
         vendorEDICodeFor2Integration,
         libraryEDICodeFor2Integration,
         organization.accounts[1].accountNo,
-        'Purchase At Vendor System',
-        UTCTime,
+        'Purchase',
       );
 
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;
-        // Need to wait while first job will be runing
-        cy.wait(70000);
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList();
         Orders.createPOLineViaActions();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+        OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
+          'Purchase',
+          location.institutionId,
+          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+        );
         OrderLines.backToEditingOrder();
-        Orders.openOrder();
-        cy.visit(TopMenu.exportManagerOrganizationsPath);
-        ExportManagerSearchPane.selectOrganizationsSearch();
-        ExportManagerSearchPane.selectExportMethod(integrationName1);
-        ExportManagerSearchPane.selectJobByIntegrationInList(integrationName1);
-        ExportManagerSearchPane.rerunJob();
-        cy.reload();
-        ExportManagerSearchPane.verifyResult('Successful');
+        Orders.createPOLineViaActions();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+        OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
+          'Purchase',
+          location.institutionId,
+          `${organization.accounts[1].name} (${organization.accounts[1].accountNo})`,
+        );
+        OrderLines.backToEditingOrder();
       });
 
       cy.createTempUser([
@@ -138,19 +140,19 @@ describe('Export Manager', () => {
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
-          path: TopMenu.exportManagerOrganizationsPath,
-          waiter: ExportManagerSearchPane.waitLoading,
+          path: TopMenu.ordersPath,
+          waiter: Orders.waitLoading,
         });
       });
     });
 
     after(() => {
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
-      Orders.unOpenOrder();
-      // Need to wait until the order is opened before deleting it
-      cy.wait(2000);
+      cy.loginAsAdmin({
+        path: SettingsMenu.ordersPurchaseOrderLinesLimit,
+        waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
+      });
+      SettingsOrders.setPurchaseOrderLinesLimit(1);
+
       Orders.deleteOrderViaApi(order.id);
 
       Organizations.deleteOrganizationViaApi(organization.id);
@@ -164,16 +166,13 @@ describe('Export Manager', () => {
     });
 
     it(
-      'C365123: Downloading the exact ".edi" file that was exported for a given export job with "Successful" status (thunderjet)',
+      'C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
       { tags: [TestTypes.smoke, devTeams.thunderjet] },
       () => {
-        cy.visit(TopMenu.exportManagerOrganizationsPath);
-        ExportManagerSearchPane.selectOrganizationsSearch();
-        ExportManagerSearchPane.selectExportMethod(integrationName1);
-        ExportManagerSearchPane.verifyResult('Successful');
-        ExportManagerSearchPane.selectJob('Successful');
-        ExportManagerSearchPane.downloadJob();
-        ExportManagerSearchPane.resetAll();
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList();
+        Orders.openOrder();
+        Orders.checkModalDifferentAccountNumbers();
       },
     );
   });
