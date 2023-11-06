@@ -12,6 +12,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import FileManager from '../../support/utils/fileManager';
+import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 
 describe('data-export: failed using non-existent UUIDs', () => {
   const user = {};
@@ -23,13 +24,8 @@ describe('data-export: failed using non-existent UUIDs', () => {
   };
   before(() => {
     cy.createTempUser([
-      Permissions.settingsDataImportEnabled.gui,
-      Permissions.moduleDataImportEnabled.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-      Permissions.dataExportAll.gui,
       Permissions.dataExportEnableModule.gui,
     ]).then((createdUserProperties) => {
       user.userProperties = createdUserProperties;
@@ -63,7 +59,8 @@ describe('data-export: failed using non-existent UUIDs', () => {
     () => {
       MarcAuthorities.searchBy('Keyword', 'Peplum films');
       MarcAuthorities.downloadSelectedRecordWithRowIdx();
-      MarcAuthority.delete();
+      MarcAuthoritiesDelete.clickDeleteButton();
+      MarcAuthoritiesDelete.confirmDelete();
       cy.visit(TopMenu.dataExportPath);
       ExportFileHelper.uploadRecentlyDownloadedFile(downloadedFile);
       ExportFileHelper.exportWithDefaultJobProfile(downloadedFile, 'authority', 'Authorities');

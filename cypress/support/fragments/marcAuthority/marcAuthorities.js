@@ -66,6 +66,7 @@ const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
+const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
 
 export default {
   waitLoading() {
@@ -390,7 +391,7 @@ export default {
 
   downloadSelectedRecordWithRowIdx(checkBoxNumber = 1) {
     cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
-    cy.do([actionsButton.click(), Button('Export selected records (CSV/MARC)').click()]);
+    cy.do([actionsButton.click(), exportSelectedRecords.click()]);
   },
 
   selectAllRecords() {
