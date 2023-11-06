@@ -705,7 +705,8 @@ export default {
             .has({ content: including(key) }),
         );
       }
-    } else {
+    }
+    if (searchType === 'Instance') {
       advSearchInstancesOptions.forEach((option) => {
         cy.expect(
           AdvancedSearchRow({ index: rowIndex })

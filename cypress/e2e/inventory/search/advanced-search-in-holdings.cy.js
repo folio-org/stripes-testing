@@ -11,8 +11,8 @@ import { ITEM_STATUS_NAMES } from '../../../support/constants';
 describe('Inventory -> Advanced search', () => {
   const testData = {
     instances: [
-      { title: `C387477_autotest_instance ${getRandomPostfix()}` },
-      { title: `C387477_autotest_instance ${getRandomPostfix()}` },
+      { title: `C400617_autotest_instance ${getRandomPostfix()}` },
+      { title: `C400617_autotest_instance ${getRandomPostfix()}` },
     ],
     callNumber: 'YCN1102203546825',
     defaultLocations: [],
@@ -181,16 +181,15 @@ describe('Inventory -> Advanced search', () => {
         'AND',
       );
       // #10 Click on "Search" button in modal
-      // * Modal is closed
-      // * In "Search & filter" pane:
-      //  * "Advanced search" search option selected
-      // * In second pane, search results are shown with records corresponding to values inputted at Steps 8, 9, e.g.:
-      //  * An "Instance" from Precondition 3 (title matches the noted title)
       InventoryInstances.clickSearchBtnInAdvSearchModal();
+      // * Modal is closed
       InventoryInstances.checkAdvSearchModalAbsence();
+      //  * "Advanced search" search option selected
       InventoryInstances.verifySelectedSearchOption('Advanced search');
+      //  * An "Instance" from Precondition 3 (title matches the noted title)
       InventorySearchAndFilter.verifySearchResult(testData.instances[1].title);
       InventorySearchAndFilter.checkRowsCount(1);
+
       // #11 Click on "Advanced search" button
       InventoryInstances.clickAdvSearchButton();
       // #12 Press "ESC" keyboard key
