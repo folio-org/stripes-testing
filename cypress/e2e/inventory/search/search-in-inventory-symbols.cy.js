@@ -124,6 +124,7 @@ describe('Search in Inventory', () => {
   });
 
   after('Deleting user, records', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id) => {
       InventoryInstance.deleteInstanceViaApi(id);
