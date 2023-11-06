@@ -89,13 +89,15 @@ describe('MARC -> MARC Holdings', () => {
 
   after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-      (instance) => {
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      },
-    );
-    Users.deleteViaApi(user.userId);
+    cy.getAdminToken(() => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+        (instance) => {
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        },
+      );
+      Users.deleteViaApi(user.userId);
+    });
   });
 
   it(
@@ -211,8 +213,10 @@ describe('MARC -> MARC Holdings', () => {
       QuickMarcEditor.deleteField(13);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.clickSaveAndCloseThenCheck('2');
-      QuickMarcEditor.constinueWithSaveAndCheck();
-      QuickMarcEditor.checkDeleteModalClosed();
+      QuickMarcEditor.confirmDelete();
+      QuickMarcEditor.checkAfterSaveHoldings();
+      HoldingsRecordView.checkHoldingRecordViewOpened();
+      HoldingsRecordView.checkHoldingsStatementAbsent(fieldData.field861.content);
       HoldingsRecordView.viewSource();
       InventoryViewSource.notContains(fieldData.fieldForChecking.tag);
     },
