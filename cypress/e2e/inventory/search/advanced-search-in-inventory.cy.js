@@ -46,38 +46,37 @@ describe('Inventory -> Advanced search', () => {
   before('Creating data', () => {
     cy.createTempUser([Permissions.inventoryAll.gui]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
-      marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-            Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numberOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
-              });
-            }
-          },
-        );
-      });
-      cy.visit(TopMenu.inventoryPath).then(() => {
-        InventoryInstance.searchByTitle(createdRecordIDs[3]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.pressAddHoldingsButton();
-        InventoryNewHoldings.fillRequiredFields();
-        HoldingsRecordEdit.fillCallNumber(testData.callNumberValue);
-        InventoryNewHoldings.saveAndClose();
-        InventoryInstance.waitLoading();
-        // wait to make sure holdings created - otherwise added item might not be saved
-        cy.wait(1500);
-        InventoryInstance.addItem();
-        InventoryInstance.fillItemRequiredFields();
-        InventoryInstance.fillItemBarcode(testData.itemBarcode);
-        InventoryInstance.saveItemDataAndVerifyExistence('-');
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        marcFiles.forEach((marcFile) => {
+          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitLoadingList();
+          JobProfiles.search(marcFile.jobProfileToRun);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(marcFile.fileName);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(marcFile.fileName);
+          for (let i = 0; i < marcFile.numberOfRecords; i++) {
+            Logs.getCreatedItemsID(i).then((link) => {
+              createdRecordIDs.push(link.split('/')[5]);
+            });
+          }
+          cy.visit(TopMenu.dataImportPath);
+        });
+        cy.visit(TopMenu.inventoryPath).then(() => {
+          InventoryInstance.searchByTitle(createdRecordIDs[3]);
+          InventoryInstances.selectInstance();
+          InventoryInstance.pressAddHoldingsButton();
+          InventoryNewHoldings.fillRequiredFields();
+          HoldingsRecordEdit.fillCallNumber(testData.callNumberValue);
+          InventoryNewHoldings.saveAndClose();
+          InventoryInstance.waitLoading();
+          // wait to make sure holdings created - otherwise added item might not be saved
+          cy.wait(1500);
+          InventoryInstance.addItem();
+          InventoryInstance.fillItemRequiredFields();
+          InventoryInstance.fillItemBarcode(testData.itemBarcode);
+          InventoryInstance.saveItemDataAndVerifyExistence('-');
+        });
       });
     });
   });
@@ -90,6 +89,7 @@ describe('Inventory -> Advanced search', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     createdRecordIDs.forEach((id, index) => {
