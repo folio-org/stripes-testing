@@ -442,4 +442,12 @@ describe('Circulation log', () => {
       });
     },
   );
+
+  it(
+    'C17065 Filter circulation log by cancelled as errorror (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Cancelled as error');
+    },
+  );
 });
