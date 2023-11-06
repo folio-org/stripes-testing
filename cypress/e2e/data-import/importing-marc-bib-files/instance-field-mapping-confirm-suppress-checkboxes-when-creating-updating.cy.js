@@ -77,6 +77,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
@@ -89,43 +90,43 @@ describe('data-import', () => {
       });
     });
 
-    // it(
-    //   'C11087 Instance field mapping: Confirm the "suppress" checkboxes when creating (folijet) (TaaS)',
-    //   { tags: [TestTypes.extendedPath, DevTeams.folijet] },
-    //   () => {
-    //     const marcFileName = `C11087 autotestFile_${getRandomPostfix()}.mrc`;
+    it(
+      'C11087 Instance field mapping: Confirm the "suppress" checkboxes when creating (folijet) (TaaS)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      () => {
+        const marcFileName = `C11087 autotestFile_${getRandomPostfix()}.mrc`;
 
-    //     // upload a marc file
-    //     cy.visit(TopMenu.dataImportPath);
-    //     // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-    //     DataImport.verifyUploadState();
-    //     DataImport.uploadFile(filePathToUpload, marcFileName);
-    //     JobProfiles.search(jobProfile.profileName);
-    //     JobProfiles.runImportFile();
-    //     JobProfiles.waitFileIsImported(marcFileName);
-    //     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-    //     Logs.openFileDetails(marcFileName);
-    //     FileDetails.verifyLogDetailsPageIsOpened();
-    //     FileDetails.openJsonScreen(instanceTitle);
-    //     JsonScreenView.verifyJsonScreenIsOpened();
-    //     JsonScreenView.getInstanceHrid().then((initialInstanceHrId) => {
-    //       const instanceHrid = initialInstanceHrId;
-    //       instanceHrids.push(instanceHrid);
+        // upload a marc file
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(filePathToUpload, marcFileName);
+        JobProfiles.search(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(marcFileName);
+        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.openJsonScreen(instanceTitle);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.getInstanceHrid().then((initialInstanceHrId) => {
+          const instanceHrid = initialInstanceHrId;
+          instanceHrids.push(instanceHrid);
 
-    //       cy.visit(TopMenu.inventoryPath);
-    //       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-    //       InstanceRecordView.verifyInstancePaneExists();
-    //       InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
-    //       InstanceRecordView.verifyNotMarkAsStaffSuppressed();
-    //       InstanceRecordView.verifyNotMarkAsPreviouslyHeld();
-    //       InstanceRecordView.edit();
-    //       InstanceRecordEdit.waitLoading();
-    //       InstanceRecordEdit.verifyDiscoverySuppressCheckbox(checked);
-    //       InstanceRecordEdit.verifyStaffSuppressCheckbox();
-    //       InstanceRecordEdit.verifyPreviouslyHeldCheckbox();
-    //     });
-    //   },
-    // );
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+          InstanceRecordView.verifyNotMarkAsStaffSuppressed();
+          InstanceRecordView.verifyNotMarkAsPreviouslyHeld();
+          InstanceRecordView.edit();
+          InstanceRecordEdit.waitLoading();
+          InstanceRecordEdit.verifyDiscoverySuppressCheckbox(checked);
+          InstanceRecordEdit.verifyStaffSuppressCheckbox();
+          InstanceRecordEdit.verifyPreviouslyHeldCheckbox();
+        });
+      },
+    );
 
     it(
       'C11088 Instance field mapping: Confirm the "suppress" checkboxes when updating (folijet) (TaaS)',
