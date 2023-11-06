@@ -12,7 +12,7 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes.cy';
+import ItemNoteTypes from '../../../support/fragments/settings/inventory/items/itemNoteTypes';
 
 let user;
 let noteTypeId;

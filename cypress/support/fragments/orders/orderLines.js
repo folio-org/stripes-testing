@@ -97,6 +97,9 @@ const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
 const note = 'Edited by AQA team';
+
+const orderLineList = MultiColumnList({ id: 'order-line-list' });
+
 // Edit form
 // PO Line details section
 const lineDetails = Section({ id: 'lineDetails' });
@@ -147,13 +150,24 @@ export default {
     cy.do(Button('Reset all').click());
   },
 
-  checkOrderlineSearchResults: (orderLineNumber) => {
-    cy.expect(
-      MultiColumnList({ id: 'order-line-list' })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .has({ content: orderLineNumber }),
-    );
+  checkOrderlineSearchResults: ({ poLineNumber, title } = {}) => {
+    if (poLineNumber) {
+      cy.expect(
+        orderLineList
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ columnIndex: 0 }))
+          .has({ content: poLineNumber }),
+      );
+    }
+
+    if (title) {
+      cy.expect(
+        orderLineList
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: title }),
+      );
+    }
   },
 
   checkCreatedPOLineResource: (orderLineTitleName, recourceName, fund) => {

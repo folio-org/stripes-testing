@@ -63,7 +63,7 @@ export default {
     });
   },
 
-  verifyFileIncludes(fileName, content) {
+  verifyFileIncludes(fileName, content, present = true) {
     cy.wait(Cypress.env('downloadTimeout'));
 
     recurse(
@@ -74,7 +74,11 @@ export default {
 
       this.readFile(lastDownloadedFilename).then((actualContent) => {
         content.forEach((element) => {
-          expect(actualContent).to.include(element);
+          if (present) {
+            expect(actualContent).to.include(element);
+          } else {
+            expect(actualContent).to.not.include(element);
+          }
         });
       });
     });
