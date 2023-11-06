@@ -14,7 +14,6 @@ describe('Create new MARC bib', () => {
     validLDRValue: '00000naa\\a2200000uu\\4500',
     newField: {
       tag: '035',
-      // content: '(OCoLC)ocn607TST001',
       content: '(OCoLC)' + getRandomPostfix(),
     },
   };
