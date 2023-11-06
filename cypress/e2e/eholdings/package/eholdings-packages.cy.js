@@ -233,7 +233,7 @@ describe('eHoldings', () => {
           EHoldingsPackagesSearch.byName('Gale Academic OneFile');
           EHoldingsPackages.openPackage();
           EHoldingsPackage.editProxyActions();
-          EHoldingsPackage.changeToken(token)
+          EHoldingsPackage.changeToken(token);
           EHoldingsPackage.saveAndClose();
           // wait until the token to be changed
           cy.wait(10000);
@@ -241,6 +241,6 @@ describe('eHoldings', () => {
           EHoldingsPackage.verifyToken(token);
         });
       },
-    );    
+    );
   });
 });

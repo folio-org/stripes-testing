@@ -160,7 +160,7 @@ export default {
   },
 
   closePackage: () => {
-    cy.do(PaneHeader().find(Button({ icon: 'times' })).click());
+    cy.do(PaneHeader().find(closeButton).click());
   },
 
   verifyExistingTags: (...expectedTags) => {
