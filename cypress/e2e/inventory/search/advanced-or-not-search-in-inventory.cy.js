@@ -47,6 +47,7 @@ describe('Inventory -> Advanced search', () => {
     FileDetails.openItemInInventoryByTitle(testData.searchResults[1], 3, 'Created');
     InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
       testData.instanceHrid = initialInstanceHrId;
+      testData.instanceHridForSearching = initialInstanceHrId.replace(/[^\d]/g, '');
     });
     cy.go('back');
     FileDetails.openItemInInventoryByTitle(testData.searchResults[0], 3, 'Created');
@@ -103,14 +104,14 @@ describe('Inventory -> Advanced search', () => {
       );
       InventoryInstances.fillAdvSearchRow(
         1,
-        testData.instanceHrid,
+        testData.instanceHridForSearching,
         'Contains all',
         'Instance HRID',
         'OR',
       );
       InventoryInstances.checkAdvSearchModalValues(
         1,
-        testData.instanceHrid,
+        testData.instanceHridForSearching,
         'Contains all',
         'Instance HRID',
         'OR',
@@ -130,7 +131,7 @@ describe('Inventory -> Advanced search', () => {
       );
       InventoryInstances.checkAdvSearchModalValues(
         1,
-        testData.instanceHrid,
+        testData.instanceHridForSearching,
         'Contains all',
         'Instance HRID',
         'OR',
