@@ -44,10 +44,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyRecordIdentifierDisabled();
       BulkEditSearchPane.verifyDragNDropUpdateUsersArea();
       BulkEditSearchPane.isDragAndDropAreaDisabled(true);
-      BulkEditSearchPane.clickRecordTypesAccordion();
-      BulkEditSearchPane.verifyRecordTypesAccordionCollapsed();
-      BulkEditSearchPane.clickRecordTypesAccordion();
-      BulkEditSearchPane.verifyRecordTypesAccordionExtendedEmpty();
+      BulkEditSearchPane.verifyRecordTypesEmpty();
       BulkEditSearchPane.openLogsSearch();
       BulkEditSearchPane.verifyLogsPane();
     },

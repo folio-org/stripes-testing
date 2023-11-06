@@ -898,13 +898,4 @@ export default {
   verifyBuildQueryModal() {
     cy.expect(buildQueryModal.exists());
   },
-
-  verifyRecordTypesAccordionExtendedEmpty() {
-    cy.expect([
-      recordTypesAccordion.has({ open: true }),
-      usersRadio.absent(),
-      itemsRadio.absent(),
-      holdingsRadio.absent(),
-    ]);
-  },
 };
