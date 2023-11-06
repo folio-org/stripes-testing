@@ -642,7 +642,7 @@ export default {
   },
 
   browseSearch(searchValue) {
-    cy.do([TextArea({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
+    cy.do([TextField({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
   },
 
   clickEditInstance() {
