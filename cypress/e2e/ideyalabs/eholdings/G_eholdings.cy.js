@@ -92,19 +92,6 @@ describe.skip('Create a custom package', () => {
       newRequest.saveRequestAndClose();
     },
   );
-  it(
-    'C3466 Edit/Add a token to the Gale Academic OneFile (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsSearch.switchToPackages();
-      eHoldingsProvidersSearch.byProvider('Gale Academic OneFile');
-      eHoldingsProviders.viewPackage();
-      eHolding.editActions();
-      eHolding.providerToken();
-      eHolding.checkToken();
-    },
-  );
   it('C343241 Access eholdings app menu (spitfire)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsNewCustomPackage.clickOneHoldingCarat();

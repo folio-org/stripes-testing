@@ -85,6 +85,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   });
 
   after('Deleting created user, Instances', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdInstanceIDs.forEach((instanceID) => {
       InventoryInstance.deleteInstanceViaApi(instanceID);

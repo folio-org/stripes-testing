@@ -17,6 +17,7 @@ import {
   Section,
   Select,
   TextField,
+  TextArea,
   TextInput,
   TextArea,
 } from '../../../../interactors';
@@ -448,7 +449,7 @@ export default {
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
       browseButton.click(),
-      TextField({ id: 'input-record-search' }).fillIn(searchString),
+      TextArea({ id: 'input-record-search' }).fillIn(searchString),
       searchButton.click(),
     ]);
     cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
@@ -642,7 +643,7 @@ export default {
   },
 
   browseSearch(searchValue) {
-    cy.do([TextField({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
+    cy.do([TextArea({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
   },
 
   clickEditInstance() {

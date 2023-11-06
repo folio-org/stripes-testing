@@ -48,7 +48,7 @@ const advSearchModifierSelect = Select({ label: 'Match option*' });
 const advSearchOptionSelect = Select({ label: 'Search options*' });
 
 const advSearchOperators = ['AND', 'OR', 'NOT'];
-const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
+const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
 const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith'];
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
