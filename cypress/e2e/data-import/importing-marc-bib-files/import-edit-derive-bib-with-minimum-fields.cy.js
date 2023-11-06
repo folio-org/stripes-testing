@@ -44,6 +44,7 @@ describe('data-import', () => {
     });
 
     after('Deleting created user and data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       createdRecordIDs.forEach((recordID) => {
         InventoryInstance.deleteInstanceViaApi(recordID);
