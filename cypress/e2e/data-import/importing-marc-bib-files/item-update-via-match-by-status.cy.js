@@ -328,7 +328,7 @@ describe('data-import', () => {
         FileDetails.checkItemQuantityInSummaryTable('3', 2);
         // check items what statuses were not changed have Updated status
         titlesItemStatusNotChanged.forEach((title) => {
-          FileDetails.openItemInInventoryByTitle(title);
+          FileDetails.openItemInInventoryByTitle(title, 5);
           ItemRecordView.waitLoading();
           ItemRecordView.checkItemNote(itemNote);
           cy.visit(TopMenu.dataImportPath);
