@@ -448,7 +448,7 @@ export default {
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
       browseButton.click(),
-      TextField({ id: 'input-record-search' }).fillIn(searchString),
+      TextArea({ id: 'input-record-search' }).fillIn(searchString),
       searchButton.click(),
     ]);
     cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
