@@ -56,9 +56,11 @@ describe('Create new MARC bib', () => {
   });
 
   after('Delete test data', () => {
-    Users.deleteViaApi(testData.user.userId);
-    createdInstanceIDs.forEach((instanceID) => {
-      InventoryInstance.deleteInstanceViaApi(instanceID);
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(testData.user.userId);
+      createdInstanceIDs.forEach((instanceID) => {
+        InventoryInstance.deleteInstanceViaApi(instanceID);
+      });
     });
   });
 
