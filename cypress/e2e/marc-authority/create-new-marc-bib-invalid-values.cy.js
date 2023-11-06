@@ -92,7 +92,9 @@ describe('Create new MARC bib', () => {
   });
 
   after('Delete test data', () => {
-    Users.deleteViaApi(testData.user.userId);
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(testData.user.userId);
+    });
   });
 
   it(
