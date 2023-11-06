@@ -1,38 +1,37 @@
 import uuid from 'uuid';
 
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import Checkout from '../../support/fragments/checkout/checkout';
+import TopMenu from '../../support/fragments/topMenu';
+import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
 import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
 import OverrideAndRenewModal from '../../support/fragments/users/loans/overrideAndRenewModal';
 
 describe('Lost items requiring actual cost', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
-    userServicePoint: ServicePoints.getDefaultServicePoint(),
+    servicePoint: ServicePoints.getDefaultServicePoint(),
   };
-  let itemData;
-  let addedCirculationRule;
-  let originalCirculationRules;
-  const paymentMethod = {};
-  const ownerData = UsersOwners.getDefaultNewOwner();
   const declareLostComments = getTestEntityValue('Some additional information');
-  const lostItemFeePolicy = {
+  const ownerData = UsersOwners.getDefaultNewOwner();
+  let originalCirculationRules;
+  let addedCirculationRule;
+  let itemData;
+
+  const feePolicyBody = {
     name: getTestEntityValue('1-minute-test'),
     chargeAmountItem: {
       chargeType: 'actualCost',
@@ -50,8 +49,8 @@ describe('Lost items requiring actual cost', () => {
       intervalId: 'Weeks',
     },
     feesFinesShallRefunded: {
-      duration: 1,
-      intervalId: 'Minutes',
+      duration: 6,
+      intervalId: 'Months',
     },
     patronBilledAfterAgedLost: {
       duration: 1,
@@ -65,11 +64,11 @@ describe('Lost items requiring actual cost', () => {
     id: uuid(),
   };
 
-  before('Create test data', () => {
+  before('Create test entities', () => {
     cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(testData.userServicePoint);
+      ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Locations.getDefaultLocation({
-        servicePointId: testData.userServicePoint.id,
+        servicePointId: testData.servicePoint.id,
       }).location;
       Locations.createViaApi(testData.defaultLocation).then((location) => {
         InventoryInstances.createFolioInstancesViaApi({
@@ -83,26 +82,23 @@ describe('Lost items requiring actual cost', () => {
       }).then((loanType) => {
         testData.loanTypeId = loanType.id;
       });
+
       UsersOwners.createViaApi({
         ...ownerData,
         servicePointOwner: [
           {
-            value: testData.userServicePoint.id,
-            label: testData.userServicePoint.name,
+            value: testData.servicePoint.id,
+            label: testData.servicePoint.name,
           },
         ],
       }).then((ownerResponse) => {
-        testData.ownerId = ownerResponse.id;
-        PaymentMethods.createViaApi(testData.ownerId).then(({ name, id }) => {
-          paymentMethod.name = name;
-          paymentMethod.id = id;
-        });
+        testData.owner = ownerResponse;
       });
-      LostItemFeePolicy.createViaApi(lostItemFeePolicy);
+      LostItemFeePolicy.createViaApi(feePolicyBody);
       CirculationRules.getViaApi().then((circulationRule) => {
         originalCirculationRules = circulationRule.rulesAsText;
         const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-        ruleProps.i = lostItemFeePolicy.id;
+        ruleProps.i = feePolicyBody.id;
         addedCirculationRule =
           't ' +
           testData.loanTypeId +
@@ -123,9 +119,8 @@ describe('Lost items requiring actual cost', () => {
           testData.loanTypeId,
         );
       });
-      itemData = testData.folioInstances[0];
     });
-
+    itemData = testData.folioInstances[0];
     cy.createTempUser([
       Permissions.uiUserLostItemRequiringActualCost.gui,
       Permissions.loansRenew.gui,
@@ -135,14 +130,14 @@ describe('Lost items requiring actual cost', () => {
     ]).then((user) => {
       testData.user = user;
       UserEdit.addServicePointViaApi(
-        testData.userServicePoint.id,
+        testData.servicePoint.id,
         testData.user.userId,
-        testData.userServicePoint.id,
+        testData.servicePoint.id,
       ).then(() => {
         Checkout.checkoutItemViaApi({
-          itemBarcode: itemData.barcodes[0],
+          itemBarcode: testData.folioInstances[0].barcodes[0],
           userBarcode: testData.user.barcode,
-          servicePointId: testData.userServicePoint.id,
+          servicePointId: testData.servicePoint.id,
         });
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.usersPath,
@@ -154,7 +149,7 @@ describe('Lost items requiring actual cost', () => {
       UsersSearchPane.openUser(testData.user.userId);
       UsersCard.waitLoading();
       UsersCard.viewCurrentLoans();
-      UserLoans.openLoanDetails(itemData.barcodes[0]);
+      UserLoans.openLoanDetails(testData.folioInstances[0].barcodes[0]);
 
       LoanDetails.checkAction(0, 'Checked out');
       LoanDetails.startDeclareLost();
@@ -168,19 +163,21 @@ describe('Lost items requiring actual cost', () => {
       CirculationRules.deleteRuleViaApi(addedCirculationRule);
       InventoryInstances.deleteInstanceViaApi({
         instance: testData.folioInstances[0],
-        servicePoint: testData.userServicePoint,
+        servicePoint: testData.servicePoint,
         shouldCheckIn: true,
       });
-      LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
+      LostItemFeePolicy.deleteViaApi(feePolicyBody.id);
       cy.deleteLoanType(testData.loanTypeId);
+      UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
+      ServicePoints.deleteViaApi(testData.servicePoint.id);
       Users.deleteViaApi(testData.user.userId);
-      UsersOwners.deleteViaApi(testData.ownerId);
+      UsersOwners.deleteViaApi(testData.owner.id);
       Locations.deleteViaApi(testData.defaultLocation);
     });
   });
 
   it(
-    'C375276 Check that entries are NOT deleted for renewed items (Declared lost items) when item is renewed after "No fees/fines shall be refunded if a lost item is returned more than" parameter (vega) (TaaS)',
+    'C375274 Check that entries are deleted for renewed items (Declared lost items) (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       cy.visit(TopMenu.usersPath);
@@ -204,11 +201,9 @@ describe('Lost items requiring actual cost', () => {
       cy.visit(TopMenu.lostItemsRequiringActualCost);
       // Select "Declared lost" in "Loss type" filter
       LostItemsRequiringActualCostPage.searchByLossType('Declared lost');
+      LostItemsRequiringActualCostPage.filterByStatus('Open');
       // Just returned Item still displayed on "Lost items requiring actual cost" page
-      LostItemsRequiringActualCostPage.checkResultsLossType(
-        itemData.instanceTitle,
-        'Declared lost',
-      );
+      LostItemsRequiringActualCostPage.checkResultNotDisplayed(itemData.instanceTitle);
     },
   );
 });
