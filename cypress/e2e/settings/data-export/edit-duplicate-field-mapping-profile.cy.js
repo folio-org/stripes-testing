@@ -49,6 +49,7 @@ describe('Mapping profile - setup', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     [updatedFieldMappingProfileName, profileNames[1], duplicatedFieldMappingProfileName].forEach(
       (name) => {
         ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${name}"` }).then(

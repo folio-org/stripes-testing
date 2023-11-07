@@ -174,6 +174,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.barcode);
     Users.deleteViaApi(user.userId);
