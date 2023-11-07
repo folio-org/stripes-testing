@@ -168,6 +168,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,

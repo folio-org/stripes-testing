@@ -79,6 +79,7 @@ describe('Waive Fees/Fines', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     WaiveReasons.deleteViaApi(waiveReason.id);
     ManualCharges.deleteViaApi(feeFineType.id);
     NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
