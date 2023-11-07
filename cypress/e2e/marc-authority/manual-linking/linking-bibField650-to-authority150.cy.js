@@ -99,6 +99,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
