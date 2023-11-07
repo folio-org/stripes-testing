@@ -24,8 +24,8 @@ describe('MARC -> MARC Bibliographic', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventorySearchAndFilter.searchByParameter('All', 'Crossfire');
-      InventorySearchAndFilter.selectSearchResultItem();
+      InventoryInstance.searchByTitle('Crossfire');
+      InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.clickLinkIconInTagField(12);
       MarcAuthorities.switchToSearch();
