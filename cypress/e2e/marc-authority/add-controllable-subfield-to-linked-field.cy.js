@@ -90,6 +90,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
     MarcAuthority.deleteViaAPI(createdRecordsIDs[1]);

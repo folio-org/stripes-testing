@@ -31,6 +31,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
       FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);

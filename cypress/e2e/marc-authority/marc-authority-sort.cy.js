@@ -106,6 +106,7 @@ describe('MARC Authority Sort', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     createdAuthorityIDs.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
     });

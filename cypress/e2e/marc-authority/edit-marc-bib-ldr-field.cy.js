@@ -265,6 +265,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   });
 
   after('Delete user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(instanceID[0]);
   });

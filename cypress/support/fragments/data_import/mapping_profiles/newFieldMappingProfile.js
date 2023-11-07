@@ -817,8 +817,10 @@ export default {
   fillVendorName: (vendorName) => {
     cy.do([
       organizationLookUpButton.click(),
-      SearchField({ id: 'input-record-search' }).fillIn(vendorName),
-      searchButton.click(),
+      Modal('Select Organization')
+        .find(SearchField({ id: 'input-record-search' }))
+        .fillIn(vendorName),
+      Modal('Select Organization').find(searchButton).click(),
     ]);
     selectFromResultsList();
   },

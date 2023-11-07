@@ -150,6 +150,7 @@ describe('Data Import - Update MARC Authority files', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     JobProfiles.deleteJobProfile(jobProfile.profileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);

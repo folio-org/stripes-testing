@@ -111,6 +111,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     for (let i = 0; i < 3; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);

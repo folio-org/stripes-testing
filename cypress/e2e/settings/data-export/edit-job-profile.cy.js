@@ -45,6 +45,7 @@ describe('Job profile - setup', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     ExportJobProfiles.getJobProfile({ query: `"name"=="${jobProfileNewName}"` }).then(
       (response) => {
         ExportJobProfiles.deleteJobProfileViaApi(response.id);

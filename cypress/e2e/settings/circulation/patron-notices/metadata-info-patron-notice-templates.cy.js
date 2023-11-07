@@ -45,6 +45,7 @@ describe('Patron Notices', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     NoticePolicyTemplate.deleteViaApi(testData.noticeTemplateBody.id);

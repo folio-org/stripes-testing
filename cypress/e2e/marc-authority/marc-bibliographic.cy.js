@@ -121,6 +121,7 @@ describe('MARC -> MARC Bibliographic', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     if (createdInstanceID) InventoryInstance.deleteInstanceViaApi(createdInstanceID);
     Users.deleteViaApi(testData.userProperties.userId);
     MarcFieldProtection.getListViaApi({

@@ -44,6 +44,7 @@ describe('Note creation', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
   });
 

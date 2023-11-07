@@ -97,6 +97,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
   });
 
   after('Deleting created user and records', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {

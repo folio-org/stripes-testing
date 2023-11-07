@@ -82,6 +82,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
   });
 
   after('Deleting user and data', () => {
+    cy.getAdminToken();
     InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityID[1]);
     MarcAuthority.deleteViaAPI(createdAuthorityID[2]);

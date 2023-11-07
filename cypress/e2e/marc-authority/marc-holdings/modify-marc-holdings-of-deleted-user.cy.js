@@ -76,6 +76,7 @@ describe('MARC -> MARC Authority', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
     InventorySearchAndFilter.searchInstanceByTitle(instanceID);
     InventorySearchAndFilter.selectViewHoldings();
