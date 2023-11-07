@@ -40,6 +40,7 @@ describe('inventory', () => {
     });
 
     afterEach('reset "Fast add" setting', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
         FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
       );

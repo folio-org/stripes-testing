@@ -41,6 +41,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
           cy.visit(TopMenu.dataImportPath);
           DataImport.waitLoading();
           DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();

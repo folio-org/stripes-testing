@@ -16,7 +16,6 @@ describe('inventory', () => {
 
     beforeEach('navigate to inventory', () => {
       instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
-      cy.loginAsAdmin();
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });
@@ -33,9 +32,11 @@ describe('inventory', () => {
             instanceId = specialInstanceId;
           });
         });
+      cy.loginAsAdmin();
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 

@@ -49,6 +49,7 @@ describe('Inventory -> Advanced search', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         marcFiles.forEach((marcFile) => {
           DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
