@@ -5,7 +5,6 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC -> MARC Bibliographic', () => {
   const user = {};
