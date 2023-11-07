@@ -69,6 +69,7 @@ describe('MARC Authority - Advanced Search', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     createdAuthorityID.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
     });

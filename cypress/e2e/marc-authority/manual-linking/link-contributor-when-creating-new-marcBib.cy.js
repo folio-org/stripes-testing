@@ -93,6 +93,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);

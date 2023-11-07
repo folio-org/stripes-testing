@@ -33,6 +33,7 @@ describe('Notes', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(testData.userId, [servicePoint.id]);
     ServicePoints.deleteViaApi(servicePoint.id);
     Users.deleteViaApi(testData.userId);
