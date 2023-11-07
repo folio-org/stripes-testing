@@ -10,7 +10,6 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import FileManager from '../../support/utils/fileManager';
 import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
 
