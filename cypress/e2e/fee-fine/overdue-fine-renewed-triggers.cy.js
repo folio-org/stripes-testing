@@ -260,6 +260,7 @@ describe('Overdue fine', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId: testData.userServicePoint.id,
@@ -315,6 +316,7 @@ describe('Overdue fine', () => {
       NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
+      cy.getAdminToken();
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
         testData.ruleProps.n = noticePolicyRes[0].id;
         testData.ruleProps.l = loanPolicyBody.id;

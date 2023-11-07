@@ -68,6 +68,7 @@ describe('Finance: Funds', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     testData.budgets.forEach(({ id }) => Budgets.deleteViaApi(id));
     testData.funds.forEach(({ id }) => Funds.deleteFundViaApi(id));
     Ledgers.deleteledgerViaApi(testData.ledger.id);

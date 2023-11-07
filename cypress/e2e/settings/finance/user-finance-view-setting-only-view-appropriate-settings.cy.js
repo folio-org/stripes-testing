@@ -42,6 +42,7 @@ describe('Fund type view', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     ExpenseClasses.deleteExpenseClassViaApi(newExpenseClass.id);
