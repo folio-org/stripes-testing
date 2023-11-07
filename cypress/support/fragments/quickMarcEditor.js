@@ -16,6 +16,7 @@ import {
   PaneHeader,
   Tooltip,
   Select,
+  Link,
 } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
@@ -89,7 +90,9 @@ const calloutInvalidMarcTag = Callout('Invalid MARC tag. Please try again.');
 const calloutNo245MarcTag = Callout('Record cannot be saved without field 245.');
 const calloutMultiple245MarcTags = Callout('Record cannot be saved with more than one field 245.');
 const calloutMultiple001MarcTags = Callout('Record cannot be saved. Can only have one MARC 001.');
-
+const calloutInvalidLDRValue = Callout(
+  including('Record cannot be saved. Please enter a valid Leader'),
+);
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const validNewMarBibLDR = '00000naa\\a2200000uu\\4500';
@@ -820,6 +823,15 @@ export default {
     );
   },
 
+  updateLDRvalueByPosition(position, value) {
+    const initialValue = '00000nci\\a2200000uu\\4500';
+    const updatedValue = `${initialValue.substring(0, position)}${value}${initialValue.substring(
+      position + 1,
+      initialValue.length,
+    )}`;
+    this.updateExistingField('LDR', updatedValue);
+  },
+
   waitLoading() {
     cy.expect([
       Pane({ id: 'quick-marc-editor-pane' }).exists(),
@@ -1386,6 +1398,47 @@ export default {
 
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
+  },
+
+  verifyInvalidLDRValueCallout(positions) {
+    let positionsArray = positions;
+    if (!Array.isArray(positions)) {
+      positionsArray = [positions];
+    }
+
+    const leaders = positionsArray
+      .map((pos, index) => {
+        const leaderText = `Leader ${String(pos).padStart(2, '0')}`;
+        if (positionsArray.length > 1) {
+          if (index === positionsArray.length - 1) {
+            return `and ${leaderText}`;
+          } else if (index === positionsArray.length - 2) {
+            return `${leaderText}`;
+          } else {
+            return `${leaderText},`;
+          }
+        }
+        return leaderText;
+      })
+      .join(' ');
+    const callOutText = `Record cannot be saved. Please enter a valid ${leaders}. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html`;
+    cy.expect(Callout(callOutText).exists());
+  },
+
+  closeCallout() {
+    cy.do(Callout().find(closeButton).click());
+    cy.expect(Callout().absent());
+  },
+
+  verifyInvalidLDRCalloutLink() {
+    cy.do(
+      calloutInvalidLDRValue
+        .find(Link({ href: including('https://loc.gov/marc/bibliographic/bdleader.html') }))
+        .perform((elem) => {
+          const targetValue = elem.getAttribute('target');
+          expect(targetValue).to.equal('_blank');
+        }),
+    );
   },
 
   checkUserNameInHeader(firstName, lastName) {
