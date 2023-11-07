@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
@@ -14,7 +14,7 @@ import { CALL_NUMBER_TYPE_NAMES, BROWSE_CALL_NUMBER_OPTIONS } from '../../../sup
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {
-      localCNtypeName: 'C396366 Local CN type',
+      localCNtypeName: `C396366 Local type ${randomFourDigitNumber()}`,
     };
     const instances = [
       {
@@ -35,7 +35,7 @@ describe('Inventory', () => {
         .then(() => {
           InventoryInstances.createLocalCallNumberTypeViaApi(testData.localCNtypeName).then(
             (id) => {
-              testData.callNumberTypeId = id;
+              testData.callNumberTypeLocalId = id;
             },
           );
           cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
@@ -77,9 +77,7 @@ describe('Inventory', () => {
           const callNumberTypeOtherSchemeId = testData.callNumberTypes.find(
             (el) => el.name === callNumbers[4].type,
           ).id;
-          const callNumberTypeLocalId = testData.callNumberTypes.find(
-            (el) => el.name === callNumbers[5].type,
-          ).id;
+          const callNumberTypeLocalId = testData.callNumberTypeLocalId;
           InventoryInstances.createFolioInstanceViaApi({
             instance: {
               instanceTypeId: instances[0].instanceTypeId,
@@ -167,6 +165,7 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[0].id);
+      InventoryInstances.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeLocalId);
     });
 
     it(
