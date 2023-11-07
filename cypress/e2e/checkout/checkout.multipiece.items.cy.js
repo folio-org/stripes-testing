@@ -98,6 +98,7 @@ describe('Check Out', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     cy.wrap(
       testItems.forEach((item) => {
         CheckInActions.checkinItemViaApi({
