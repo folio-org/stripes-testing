@@ -25,6 +25,7 @@ import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
 import InventoryInstance from './inventoryInstance';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -330,8 +331,10 @@ export default {
 
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
+    Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
+      cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
+    });
     cy.expect([
-      browseSearchAndFilterInput.has({ content: including('Call numbers (all)') }),
       browseSearchAndFilterInput.has({ content: including('Contributors') }),
       browseSearchAndFilterInput.has({ content: including('Subjects') }),
     ]);
