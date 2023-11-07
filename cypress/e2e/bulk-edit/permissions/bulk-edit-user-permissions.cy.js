@@ -25,6 +25,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       users.deleteViaApi(userWthViewEditPermissions.userId);
     });
 

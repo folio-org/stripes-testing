@@ -39,6 +39,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       Users.deleteViaApi(userCircAndLogsPermissions.userId);
     });
