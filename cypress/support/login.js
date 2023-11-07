@@ -55,3 +55,7 @@ Cypress.Commands.add('loginAsCollegeAdmin', (visitPath) => {
 Cypress.Commands.add('loginAsUniversityAdmin', (visitPath) => {
   cy.login('university_admin', Cypress.env('diku_password'), visitPath);
 });
+
+Cypress.Commands.add('loginAsConsortiumAdmin', (visitPath) => {
+  cy.login('consortium_admin', Cypress.env('diku_password'), visitPath);
+});

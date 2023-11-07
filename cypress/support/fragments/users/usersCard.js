@@ -25,6 +25,8 @@ const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloan
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
+const affiliationsSection = Section({ id: 'affiliationsSection' });
+const affiliationsButton = Button({ id: 'accordion-toggle-button-affiliationsSection' });
 const notesSection = Accordion('Notes');
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
@@ -45,6 +47,44 @@ export default {
         .find(Button({ id: 'accordion-toggle-button-patronBlocksSection' }))
         .has({ ariaExpanded: 'false' }),
     ]);
+  },
+
+  affiliationsAccordionCovered() {
+    cy.expect([affiliationsSection.find(affiliationsButton).has({ ariaExpanded: 'false' })]);
+  },
+
+  verifyAffiliationsDetails(primaryAffiliations, count, ...details) {
+    cy.get('#affiliationsSection')
+      .find('li')
+      .then(($liElements) => {
+        const liCount = $liElements.length;
+        expect(liCount).to.be.gte(count);
+
+        const primaryLiElement = $liElements.filter('[class^="primary-"]');
+        expect(primaryLiElement).to.have.lengthOf(1);
+
+        const text = primaryLiElement.text().trim();
+        expect(text).to.equal(primaryAffiliations);
+
+        details.forEach((detail) => {
+          const detailElement = $liElements.filter(`:contains("${detail}")`);
+          expect(detailElement).to.have.lengthOf.at.least(1);
+        });
+      });
+    cy.wait(4000);
+  },
+
+  verifyAffiliationsQuantity(quantity) {
+    cy.expect(affiliationsSection.find(Badge()).has({ value: quantity }));
+  },
+
+  varifyUserCardOpened() {
+    cy.expect(Section({ id: 'pane-userdetails' }).exists());
+    cy.wait(6000);
+  },
+
+  expandAffiliationsAccordion() {
+    cy.do(affiliationsSection.find(affiliationsButton).click());
   },
 
   expandLoansSection(openLoans, returnedLoans) {

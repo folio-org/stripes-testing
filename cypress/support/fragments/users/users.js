@@ -100,6 +100,10 @@ export default {
       });
   },
 
+  waitLoading() {
+    cy.expect(Section({ id: 'users-search-results-pane' }).exists());
+  },
+
   closeWithoutSavingButton: () => {
     cy.do([closeWithoutSavingButton.click()]);
   },
@@ -163,9 +167,7 @@ export default {
   },
 
   verifyUserTypeOnUserDetailsPane(userType) {
-    cy.expect(
-      userDetailsPane.find(KeyValue('User type')).has({ value: `${userType}` }),
-    );
+    cy.expect(userDetailsPane.find(KeyValue('User type')).has({ value: `${userType}` }));
   },
 
   verifyCustomFieldOnUserDetailsPane(name, text) {
