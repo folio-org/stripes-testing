@@ -131,6 +131,7 @@ describe('MARC -> MARC Holdings', () => {
   });
 
   after('Deleting created user, data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.createdUserProperties.userId);
     recordIDs.forEach((id, index) => {
       if (index) cy.deleteHoldingRecordViaApi(id);
