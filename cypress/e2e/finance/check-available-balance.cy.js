@@ -102,6 +102,7 @@ describe('Finance', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

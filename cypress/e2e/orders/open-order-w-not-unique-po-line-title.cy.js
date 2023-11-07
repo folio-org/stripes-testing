@@ -56,6 +56,7 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Approvals.setApprovePayValue(false);
     OpenOrder.setDuplicateCheckValue(false);
     testData.orders.forEach((order) => Orders.deleteOrderViaApi(order.id));
