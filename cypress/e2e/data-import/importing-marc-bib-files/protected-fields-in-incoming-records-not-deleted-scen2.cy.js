@@ -91,6 +91,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
         MarcFieldProtection.deleteViaApi(response[0].id);
       });

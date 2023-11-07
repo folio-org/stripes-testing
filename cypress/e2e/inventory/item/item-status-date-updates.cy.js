@@ -129,6 +129,7 @@ describe.skip('inventory', () => {
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => Orders.deleteOrderViaApi(order[0].id));
       UserEdit.changeServicePointPreferenceViaApi(userForDeliveryRequest.userId, [

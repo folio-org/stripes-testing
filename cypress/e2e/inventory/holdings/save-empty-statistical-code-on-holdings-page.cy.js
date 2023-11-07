@@ -25,23 +25,24 @@ const testData = {
 describe('Inventory', () => {
   describe('Holdings', () => {
     before('Create test data', () => {
+      cy.getAdminToken()
+        .then(() => {
+          cy.getInstanceTypes({ limit: 1 });
+          cy.getInstanceIdentifierTypes({ limit: 1 });
+        })
+        .then(() => {
+          cy.createInstance({
+            instance: {
+              instanceTypeId: Cypress.env('instanceTypes')[0].id,
+              title: testData.item.instanceName,
+            },
+          }).then((specialInstanceId) => {
+            testData.item.instanceId = specialInstanceId;
+          });
+        });
+
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         testData.user = userProperties;
-        cy.getAdminToken()
-          .then(() => {
-            cy.getInstanceTypes({ limit: 1 });
-            cy.getInstanceIdentifierTypes({ limit: 1 });
-          })
-          .then(() => {
-            cy.createInstance({
-              instance: {
-                instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: testData.item.instanceName,
-              },
-            }).then((specialInstanceId) => {
-              testData.item.instanceId = specialInstanceId;
-            });
-          });
 
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
@@ -51,6 +52,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       cy.getHoldings({
         limit: 1,
         query: `"instanceId"="${testData.item.instanceId}"`,

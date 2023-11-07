@@ -42,6 +42,7 @@ describe('MARC -> MARC Authority', () => {
         waiter: DataImport.waitLoading,
       }).then(() => {
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();

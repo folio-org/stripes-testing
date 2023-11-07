@@ -106,6 +106,7 @@ describe('MARC -> MARC Bibliographic', () => {
         waiter: DataImport.waitLoading,
       });
       DataImport.uploadFile('marcFileForC360542.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();

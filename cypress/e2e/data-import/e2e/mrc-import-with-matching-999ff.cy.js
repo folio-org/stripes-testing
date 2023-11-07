@@ -79,10 +79,10 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       JobProfiles.deleteJobProfile(jobProfileForExport.profileName);
@@ -123,6 +123,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForExport.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForMarcFile);
