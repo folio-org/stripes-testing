@@ -221,6 +221,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
@@ -261,6 +262,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
+      cy.getAdminToken();
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
         testData.ruleProps.l = loanPolicyId;
