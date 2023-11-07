@@ -76,7 +76,6 @@ describe('data-import', () => {
       cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
     });
 
-    // test is failed UIDATIMP-1549
     it(
       'C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },

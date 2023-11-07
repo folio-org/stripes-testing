@@ -60,7 +60,6 @@ describe('data-import', () => {
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
-    // test is failed UIDATIMP-1549
     it(
       'C357016 Check the filter in summary table with "create + no action + error" actions for the Holdings column (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },

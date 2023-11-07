@@ -39,7 +39,6 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    // test is failed UIDATIMP-1549
     it(
       'C357015 Check the filter in summary table with "create + no action + error" actions for the Instance column (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
