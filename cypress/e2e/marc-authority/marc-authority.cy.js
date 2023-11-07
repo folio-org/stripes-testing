@@ -66,6 +66,7 @@ describe('Importing MARC Authority files', () => {
 
       cy.visit(TopMenu.dataImportPath);
       DataImport.uploadFile('oneMarcAuthority.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -98,6 +99,7 @@ describe('Importing MARC Authority files', () => {
     () => {
       cy.visit(TopMenu.dataImportPath);
       DataImport.uploadFile('test-auth-file.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(createdJobProfile.profileName);
       JobProfiles.runImportFile();

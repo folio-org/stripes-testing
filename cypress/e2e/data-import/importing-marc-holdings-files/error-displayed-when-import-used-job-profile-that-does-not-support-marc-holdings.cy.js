@@ -32,6 +32,7 @@ describe('data-import', () => {
         waiter: DataImport.waitLoading,
       });
       DataImport.uploadFile(filePathForUpload, fileNameForCreateInstance);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForCreateInstance);
@@ -59,6 +60,7 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
@@ -71,6 +73,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForImportForMarcAuthority);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search('Default - Create SRS MARC Authority');
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForImportForMarcAuthority);
@@ -93,6 +96,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);

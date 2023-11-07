@@ -100,21 +100,20 @@ describe('data-import', () => {
     ];
 
     before('login', () => {
-      cy.getAdminToken().then(() => {
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
-          (instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
-          },
-        );
-      });
       cy.loginAsAdmin();
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
+        (instances) => {
+          if (instances) {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
+        },
+      );
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(collectionOfJobProfiles[0].jobProfile.profileName);
       JobProfiles.deleteJobProfile(collectionOfJobProfiles[1].jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -177,6 +176,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(collectionOfJobProfiles[0].jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -250,6 +250,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForUpdate);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(collectionOfJobProfiles[1].jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForUpdate);

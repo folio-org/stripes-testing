@@ -84,6 +84,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.waitLoading();
           DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
