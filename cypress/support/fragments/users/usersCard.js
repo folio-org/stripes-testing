@@ -25,6 +25,8 @@ const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloan
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
+const affiliationsSection = Section({ id: 'affiliationsSection' });
+const affiliationsButton = Button({ id: 'accordion-toggle-button-affiliationsSection' });
 const notesSection = Accordion('Notes');
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
@@ -45,6 +47,23 @@ export default {
         .find(Button({ id: 'accordion-toggle-button-patronBlocksSection' }))
         .has({ ariaExpanded: 'false' }),
     ]);
+  },
+
+  affiliationsAccordionCovered() {
+    cy.expect([affiliationsSection.find(affiliationsButton).has({ ariaExpanded: 'false' })]);
+  },
+
+  verifyAffiliationsDetails(details) {
+    cy.expect(affiliationsSection.find(ListItem(details)).exists());
+  },
+
+  varifyUserCardOpened() {
+    cy.expect(Section({ id: 'pane-userdetails' }).exists());
+    cy.wait(6000);
+  },
+
+  expandAffiliationsAccordion() {
+    cy.do(affiliationsSection.find(affiliationsButton).click());
   },
 
   expandLoansSection(openLoans, returnedLoans) {
