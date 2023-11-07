@@ -25,6 +25,7 @@ describe('setting: data-export', () => {
   });
 
   after('selete user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

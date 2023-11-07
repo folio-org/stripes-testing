@@ -3,6 +3,7 @@ import Configurations from '../../../support/fragments/settings/remote-storage/c
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes } from '../../../support/dictionary';
 import permissions from '../../../support/dictionary/permissions';
+import Users from '../../../support/fragments/users/users';
 
 let user;
 
@@ -22,6 +23,11 @@ describe('remote-storage-configuration', () => {
     });
   });
 
+  after('delete test data', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(user.userId);
+  });
+  
   it(
     'C163919 Configure remote storage (firebird)',
     { tags: [TestTypes.smoke, DevTeams.firebird] },

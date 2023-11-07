@@ -34,6 +34,7 @@ describe('orders: Settings', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(organization.id);
     AcquisitionMethods.deleteAcquisitionMethodViaAPI(acquisitionMethod.id);
     Users.deleteViaApi(user.userId);

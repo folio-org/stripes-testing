@@ -245,6 +245,7 @@ describe('Loan notice triggers', () => {
       NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
+      cy.getAdminToken();
       CirculationRules.getViaApi().then((response) => {
         testData.baseRules = response.rulesAsText;
         testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);

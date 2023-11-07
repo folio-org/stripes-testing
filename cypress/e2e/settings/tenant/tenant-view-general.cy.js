@@ -40,6 +40,7 @@ describe('Permissions -> Tenant', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Addresses.deleteAddress(addressId);
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);

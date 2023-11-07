@@ -85,6 +85,7 @@ describe('Circulation log', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.id, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.id);

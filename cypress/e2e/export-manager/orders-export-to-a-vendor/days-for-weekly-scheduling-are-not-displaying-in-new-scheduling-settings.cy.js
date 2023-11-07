@@ -82,6 +82,7 @@ describe('Export Manager', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       Organizations.deleteOrganizationViaApi(organization.id);
       NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
         location.institutionId,
