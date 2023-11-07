@@ -19,6 +19,7 @@ describe('ui-finance: Fiscal Year', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
   });
 
