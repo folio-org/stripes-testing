@@ -29,6 +29,14 @@ const selectedTitleFieldsRadioButton = RadioButton({
   name: 'titleFields',
   ariaLabel: 'Export selected fields',
 });
+const allPackageFieldsRadioButton = RadioButton({
+  name: 'packageFields',
+  ariaLabel: 'Export all fields',
+});
+const allTitleFieldsRadioButton = RadioButton({
+  name: 'titleFields',
+  ariaLabel: 'Export all fields',
+});
 const getCalloutMessageText = () => cy.then(() => Callout({ type: 'success' }).textContent());
 const addAgreementButton = Button({ id: 'find-agreement-trigger' });
 const findAgreementModal = Modal({ id: 'plugin-find-agreement-modal' });
@@ -38,6 +46,8 @@ const agreementSearchInputField = findAgreementModal.find(
 const searchAgreementButton = findAgreementModal.find(
   Button({ id: 'clickable-search-agreements' }),
 );
+const titleFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-title-fields' });
+const packageFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-package-fields' });
 
 export default {
   getCalloutMessageText,
@@ -60,7 +70,7 @@ export default {
   },
 
   selectPackageFieldsToExport: (value) => {
-    cy.do(MultiSelect({ ariaLabelledby: 'selected-package-fields' }).select(value));
+    cy.do(packageFieldsSelect.select(value));
   },
 
   clickExportSelectedTitleFields() {
@@ -142,7 +152,7 @@ export default {
     ]);
   },
 
-  verifyExportModal: () => {
+  verifyExportModal: (exportDisabled = false) => {
     const modalContent =
       'This export may take several minutes to complete. When finished, it will be available in the Export manager app. NOTE: Maximum number of titles in a package you can export is 10000. Filter your search within titles list to not exceed the limit or only choose to export package details only. This export does not include information available under Usage & analysis accordion (only available to Usage Consolidation subscribers). Please use the Export titles option available under that accordion.';
 
@@ -152,7 +162,7 @@ export default {
     cy.expect(exportModal.find(selectedPackageFieldsRadioButton).exists());
     cy.expect(exportModal.find(selectedTitleFieldsRadioButton).exists());
     cy.expect(cancelButtonInModal.has({ disabled: false }));
-    cy.expect(exportButtonInModal.has({ disabled: false }));
+    cy.expect(exportButtonInModal.has({ disabled: exportDisabled }));
   },
 
   verifyCalloutMessage: (message) => {
@@ -171,5 +181,40 @@ export default {
       const jobId = match ? match[0] : null;
       return jobId;
     });
+  },
+
+  selectTitleFieldsToExport: (value) => {
+    cy.do(titleFieldsSelect.select(value));
+  },
+
+  verifySelectedTitleFieldsToExport(titleFieldsArray) {
+    cy.expect(titleFieldsSelect.has({ selected: titleFieldsArray }));
+  },
+
+  verifySelectedPackageFieldsToExport(packageFieldsArray) {
+    cy.expect(packageFieldsSelect.has({ selected: packageFieldsArray }));
+  },
+
+  clearSelectedFieldsToExport() {
+    const selector = 'li[id*="multiselect_selected"] button[icon="times"]';
+    cy.get(selector).then((buttons) => {
+      const buttonCount = buttons.length;
+      for (let i = 0; i < buttonCount; i++) {
+        cy.get(selector).then((closeButtons) => {
+          cy.wrap(closeButtons[0]).click();
+          cy.wait(500);
+        });
+      }
+    });
+    cy.expect(packageFieldsSelect.has({ selectedCount: 0 }));
+    cy.expect(titleFieldsSelect.has({ selectedCount: 0 }));
+  },
+
+  clickExportAllPackageFields() {
+    cy.do(allPackageFieldsRadioButton.click());
+  },
+
+  clickExportAllTitleFields() {
+    cy.do(allTitleFieldsRadioButton.click());
   },
 };
