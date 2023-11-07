@@ -15,19 +15,25 @@ describe('inventory', () => {
     const tagsCount = '1';
 
     beforeEach(() => {
-      cy.createTempUser([permissions.inventoryAll.gui, permissions.uiTagsPermissionAll.gui])
-        .then(({ username, password, userId: id }) => {
-          userId = id;
-          cy.login(username, password);
-        })
+      cy.getAdminToken()
         .then(() => {
           InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
             instanceRecord = instanceData;
+          });
+        })
+        .then(() => {
+          cy.createTempUser([
+            permissions.inventoryAll.gui,
+            permissions.uiTagsPermissionAll.gui,
+          ]).then(({ username, password, userId: id }) => {
+            userId = id;
+            cy.login(username, password);
           });
         });
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
       Users.deleteViaApi(userId);
     });

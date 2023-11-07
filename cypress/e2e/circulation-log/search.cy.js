@@ -117,8 +117,8 @@ describe('circulation-log', () => {
   });
 
   it(
-    'C15484 Filter circulation log on item barcode (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    'C15484 Filter circulation log on item barcode (volaris)',
+    { tags: [TestTypes.smoke, devTeams.volaris] },
     () => {
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
       SearchPane.verifyResultCells();
@@ -151,8 +151,8 @@ describe('circulation-log', () => {
   );
 
   it(
-    'C15485 Filter circulation log on user barcode (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    'C15485 Filter circulation log on user barcode (volaris)',
+    { tags: [TestTypes.smoke, devTeams.volaris] },
     () => {
       const userBarcode = Cypress.env('users')[0].barcode;
 
