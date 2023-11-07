@@ -112,6 +112,7 @@ describe('Search in Inventory', () => {
   });
 
   after('Deleting user, records', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index > 1) MarcAuthority.deleteViaAPI(id);

@@ -192,6 +192,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
