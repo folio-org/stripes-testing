@@ -56,6 +56,7 @@ describe('Inventory -> Contributors Browse', () => {
   });
 
   after('Deleting created user and record', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(importedInstanceID[0]);
   });

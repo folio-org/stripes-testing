@@ -133,6 +133,7 @@ describe('MARC -> MARC Authority', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     for (let i = 0; i < 2; i++) {
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[i]);

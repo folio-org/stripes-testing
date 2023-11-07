@@ -51,6 +51,7 @@ describe('data-import', () => {
     });
 
     after('Deleting data', () => {
+      cy.getAdminToken();
       createdAuthorityIDs.forEach((id) => {
         MarcAuthority.deleteViaAPI(id);
       });
