@@ -17,6 +17,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       tag800: '800',
       tag240: '240',
       tag245: '245',
+      tag246: '246',
       tagLDR: 'LDR',
     },
 
@@ -135,6 +136,41 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
         /\d{14}\.\d{1}/gm,
       );
       QuickMarcEditor.verifyTagField(10, '999', 'f', 'f', '$s', '$i');
+    },
+  );
+
+  it(
+    '[380714] "245" field presence validation when creating a new "MARC bib" record',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      InventoryInstance.newMarcBibRecord();
+
+      QuickMarcEditor.updateExistingField(
+        testData.tags.tagLDR,
+        testData.fieldContents.tagLDRContent,
+      );
+
+      QuickMarcEditor.updateExistingTagName(testData.tags.tag245, testData.tags.tag246);
+
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.verifyNo245TagCallout();
+
+      QuickMarcEditor.updateExistingTagName(testData.tags.tag246, testData.tags.tag245);
+
+      QuickMarcEditor.updateExistingField(
+        testData.tags.tag245,
+        `$a ${testData.fieldContents.tag245Content}`,
+      );
+
+      MarcAuthority.addNewField(
+        4,
+        testData.tags.tag245,
+        `$a ${testData.fieldContents.tag245Content}`,
+      );
+
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.verifyMultiple245TagCallout();
+      InventoryInstance.verifyNewQuickMarcEditorPaneExists();
     },
   );
 });
