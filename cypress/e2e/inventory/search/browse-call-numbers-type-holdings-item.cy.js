@@ -9,6 +9,7 @@ import Location from '../../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
+import { CALL_NUMBER_TYPE_NAMES, BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 
 describe('Inventory', () => {
   describe('Call Number Browse', () => {
@@ -21,11 +22,11 @@ describe('Inventory', () => {
       },
     ];
     const callNumbers = [
-      { type: 'Dewey Decimal classification', value: '396.366' },
-      { type: 'Superintendent of Documents classification', value: 'J39.6:D38/366' },
-      { type: 'National Library of Medicine classification', value: 'QS 39 .GA6 Q3 1366' },
-      { type: 'Library of Congress classification', value: 'PN3 .A9' },
-      { type: 'Other scheme', value: 'X SILVERHAND' },
+      { type: CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL, value: '396.366' },
+      { type: CALL_NUMBER_TYPE_NAMES.SUDOC, value: 'J39.6:D38/366' },
+      { type: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_MEDICINE, value: 'QS 39 .GA6 Q3 1366' },
+      { type: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS, value: 'PN3 .A9' },
+      { type: CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME, value: 'X SILVERHAND' },
       { type: testData.localCNtypeName, value: 'MYLCN396366' },
     ];
 
@@ -119,48 +120,36 @@ describe('Inventory', () => {
               itemBarcode: uuid(),
               materialTypeId: instances[0].materialTypeId,
               permanentLoanTypeId: instances[0].loanTypeId,
+              itemLevelCallNumberTypeId: callNumberTypeDeweyId,
+              itemLevelCallNumber: callNumbers[0].value,
             });
             ItemRecordNew.createViaApi({
               holdingsId: instanceIds.holdingIds[1].id,
               itemBarcode: uuid(),
               materialTypeId: instances[0].materialTypeId,
               permanentLoanTypeId: instances[0].loanTypeId,
-              // itemLevelCallNumberTypeId: callNumberTypeId2,
-              itemLevelCallNumber: callNumbers[1].value,
             });
-          });
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId: instances[0].instanceTypeId,
-              title: instances[1].title,
-            },
-            holdings: [
-              {
-                holdingsTypeId: instances[0].holdingTypeId,
-                permanentLocationId: instances[0].defaultLocation.id,
-                // callNumberTypeId: callNumberTypeId1,
-                callNumber: callNumbers[0].value,
-              },
-              {
-                holdingsTypeId: instances[0].holdingTypeId,
-                permanentLocationId: instances[0].defaultLocation.id,
-              },
-            ],
-          }).then((instanceIds) => {
-            instances[1].id = instanceIds.instanceId;
             ItemRecordNew.createViaApi({
-              holdingsId: instanceIds.holdingIds[0].id,
+              holdingsId: instanceIds.holdingIds[2].id,
               itemBarcode: uuid(),
               materialTypeId: instances[0].materialTypeId,
               permanentLoanTypeId: instances[0].loanTypeId,
+              itemLevelCallNumber: callNumbers[2].value,
             });
             ItemRecordNew.createViaApi({
-              holdingsId: instanceIds.holdingIds[1].id,
+              holdingsId: instanceIds.holdingIds[3].id,
               itemBarcode: uuid(),
               materialTypeId: instances[0].materialTypeId,
               permanentLoanTypeId: instances[0].loanTypeId,
-              // itemLevelCallNumberTypeId: callNumberTypeId2,
-              itemLevelCallNumber: callNumbers[1].value,
+              itemLevelCallNumberTypeId: callNumberTypeLCId,
+            });
+            ItemRecordNew.createViaApi({
+              holdingsId: instanceIds.holdingIds[4].id,
+              itemBarcode: uuid(),
+              materialTypeId: instances[0].materialTypeId,
+              permanentLoanTypeId: instances[0].loanTypeId,
+              itemLevelCallNumberTypeId: callNumberTypeLocalId,
+              itemLevelCallNumber: callNumbers[5].value,
             });
           });
         });
@@ -178,30 +167,59 @@ describe('Inventory', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[0].id);
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[1].id);
     });
 
     it(
-      'C414972 Browsing call number types when "Number of titles" > 1 (spitfire)',
+      'C396366 Browsing call number types when call number, type specified in "Holdings" or "Item" (spitfire)',
       { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.selectBrowseOption(callNumbers[0].type);
+        InventorySearchAndFilter.verifyBrowseOptions();
+
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
         InventorySearchAndFilter.browseSearch(callNumbers[0].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
-        BrowseCallNumber.checkNumberOfTitlesForRow(callNumbers[0].value, '2');
-        BrowseCallNumber.clickOnResult(callNumbers[0].value);
-        InventorySearchAndFilter.verifyInstanceDisplayed(instances[0].title);
-        InventorySearchAndFilter.verifyInstanceDisplayed(instances[1].title);
 
-        InventorySearchAndFilter.switchToBrowseTab();
-        InventorySearchAndFilter.selectBrowseOption(callNumbers[1].type);
+        InventorySearchAndFilter.selectBrowseOption(
+          BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
+        );
         InventorySearchAndFilter.browseSearch(callNumbers[1].value);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].value);
-        BrowseCallNumber.checkNumberOfTitlesForRow(callNumbers[1].value, '2');
-        BrowseCallNumber.clickOnResult(callNumbers[1].value);
-        InventorySearchAndFilter.verifyInstanceDisplayed(instances[0].title);
-        InventorySearchAndFilter.verifyInstanceDisplayed(instances[1].title);
+
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE);
+        InventorySearchAndFilter.browseSearch(callNumbers[2].value);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].value);
+
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS);
+        InventorySearchAndFilter.browseSearch(callNumbers[3].value);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[3].value);
+
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LOCAL);
+        InventorySearchAndFilter.browseSearch(callNumbers[5].value);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].value);
+
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME);
+        InventorySearchAndFilter.browseSearch(callNumbers[4].value);
+        BrowseCallNumber.checkNonExactSearchResult(callNumbers[4].value);
+
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        InventorySearchAndFilter.browseSearch(callNumbers[0].value);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
+
+        InventorySearchAndFilter.browseSearch(callNumbers[1].value);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].value);
+
+        InventorySearchAndFilter.browseSearch(callNumbers[2].value);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].value);
+
+        InventorySearchAndFilter.browseSearch(callNumbers[3].value);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[3].value);
+
+        InventorySearchAndFilter.browseSearch(callNumbers[5].value);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].value);
+
+        InventorySearchAndFilter.browseSearch(callNumbers[4].value);
+        BrowseCallNumber.checkNonExactSearchResult(callNumbers[4].value);
       },
     );
   });
