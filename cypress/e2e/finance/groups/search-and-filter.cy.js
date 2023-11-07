@@ -38,6 +38,7 @@ describe('ui-finance: Groups', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Groups.deleteGroupViaApi(defaultGroup.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);

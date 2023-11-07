@@ -109,6 +109,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     TransferAccounts.deleteViaApi(transferAccount.id);
     ManualCharges.deleteViaApi(feeFineType.id);
     PaymentMethods.deleteViaApi(paymentMethod.id);

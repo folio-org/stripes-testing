@@ -179,7 +179,7 @@ describe('Lost items requiring actual cost', () => {
   });
 
   it(
-    'C375286 Check that entries are NOT deleted for returned items (Declared lost items) when item is renewed after "No fees/fines shall be refunded if a lost item is returned more than" parameter (vega) (TaaS)',
+    'C375286 Check that entries are NOT deleted for returned items (Declared lost items) when item is returned after "No fees/fines shall be refunded if a lost item is returned more than" parameter (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       cy.visit(TopMenu.usersPath);

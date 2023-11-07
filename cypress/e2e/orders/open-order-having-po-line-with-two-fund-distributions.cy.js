@@ -134,6 +134,7 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);
     testData.budgets.forEach((budget) => Budgets.deleteViaApi(budget.id));

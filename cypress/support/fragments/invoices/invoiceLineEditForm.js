@@ -19,10 +19,13 @@ const informationSection = invoiceLineEditFormRoot.find(
 const fundDistributionSection = Section({ id: 'invoiceLineForm-fundDistribution' });
 
 const cancelButtom = Button('Cancel');
-const saveButtom = Button('Save & close');
+const saveButton = Button('Save & close');
 
 const infoFields = {
   description: informationSection.find(TextField({ id: 'description' })),
+  subscriptionInfo: informationSection.find(TextField({ id: 'subscriptionInfo' })),
+  subscriptionStartDate: informationSection.find(TextField({ name: 'subscriptionStart' })),
+  subscriptionEndDate: informationSection.find(TextField({ name: 'subscriptionEnd' })),
   releaseEncumbrance: informationSection.find(Checkbox({ name: 'releaseEncumbrance' })),
   quantity: informationSection.find(TextField({ id: 'quantity' })),
   subTotal: informationSection.find(TextField({ id: 'subTotal' })),
@@ -37,7 +40,7 @@ const fundFields = {
 const buttons = {
   'Release encumbrance': infoFields.releaseEncumbrance,
   Cancel: cancelButtom,
-  'Save & close': saveButtom,
+  'Save & close': saveButton,
 };
 
 export default {
@@ -94,6 +97,18 @@ export default {
       cy.do(infoFields.description.fillIn(invoiceLine.description));
       cy.do(infoFields.description.has({ value: invoiceLine.description }));
     }
+    if (invoiceLine.subscriptionInfo) {
+      cy.do(infoFields.subscriptionInfo.fillIn(invoiceLine.subscriptionInfo));
+      cy.do(infoFields.subscriptionInfo.has({ value: invoiceLine.subscriptionInfo }));
+    }
+    if (invoiceLine.subscriptionStartDate) {
+      cy.do(infoFields.subscriptionStartDate.fillIn(invoiceLine.subscriptionStartDate));
+      cy.do(infoFields.subscriptionStartDate.has({ value: invoiceLine.subscriptionStartDate }));
+    }
+    if (invoiceLine.subscriptionEndDate) {
+      cy.do(infoFields.subscriptionEndDate.fillIn(invoiceLine.subscriptionEndDate));
+      cy.do(infoFields.subscriptionEndDate.has({ value: invoiceLine.subscriptionEndDate }));
+    }
     if (invoiceLine.quantity) {
       cy.do(infoFields.quantity.fillIn(invoiceLine.quantity));
       cy.do(infoFields.quantity.has({ value: invoiceLine.quantity }));
@@ -108,8 +123,8 @@ export default {
     cy.expect(invoiceLineEditFormRoot.absent());
   },
   clickSaveButton({ checkCalloutMessage = true } = {}) {
-    cy.expect(saveButtom.has({ disabled: false }));
-    cy.do(saveButtom.click());
+    cy.expect(saveButton.has({ disabled: false }));
+    cy.do(saveButton.click());
 
     if (checkCalloutMessage) {
       InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);

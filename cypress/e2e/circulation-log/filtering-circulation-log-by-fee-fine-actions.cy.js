@@ -212,6 +212,7 @@ describe('Circulation log', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
@@ -440,6 +441,14 @@ describe('Circulation log', () => {
         );
         checkActionsButton('Cancelled as error');
       });
+    },
+  );
+
+  it(
+    'C17065 Filter circulation log by cancelled as errorror (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Cancelled as error');
     },
   );
 });

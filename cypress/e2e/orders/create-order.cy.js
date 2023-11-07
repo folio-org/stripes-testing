@@ -22,6 +22,7 @@ describe('orders: create an order', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaActions();
   });
 
