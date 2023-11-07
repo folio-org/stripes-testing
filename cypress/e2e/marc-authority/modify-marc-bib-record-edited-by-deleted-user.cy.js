@@ -75,6 +75,7 @@ describe('MARC -> MARC Authority', () => {
   });
 
   after('Deleting created user, data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(users.userBProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdRecordID);
   });
