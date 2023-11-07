@@ -45,9 +45,11 @@ describe('Consortia', () => {
       UsersSearchPane.searchByUsername(firstUser.username);
       UsersSearchPane.selectUserFromList(firstUser.username);
       UsersCard.varifyUserCardOpened();
+      UsersCard.verifyAffiliationsQuantity('1');
       UsersCard.expandAffiliationsAccordion();
-      UsersCard.verifyAffiliationsDetails('Consortium');
+      UsersCard.verifyAffiliationsDetails('Consortium', 1, 'Consortium');
       UsersCard.expandAffiliationsAccordion();
+      UsersCard.verifyAffiliationsQuantity('1');
       UsersCard.affiliationsAccordionCovered();
     },
   );

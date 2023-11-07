@@ -53,8 +53,29 @@ export default {
     cy.expect([affiliationsSection.find(affiliationsButton).has({ ariaExpanded: 'false' })]);
   },
 
-  verifyAffiliationsDetails(details) {
-    cy.expect(affiliationsSection.find(ListItem(details)).exists());
+  verifyAffiliationsDetails(primaryAffiliations, count, ...details) {
+    cy.get('#affiliationsSection')
+      .find('li')
+      .then(($liElements) => {
+        const liCount = $liElements.length;
+        expect(liCount).to.be.gte(count);
+
+        const primaryLiElement = $liElements.filter('[class^="primary-"]');
+        expect(primaryLiElement).to.have.lengthOf(1);
+
+        const text = primaryLiElement.text().trim();
+        expect(text).to.equal(primaryAffiliations);
+
+        details.forEach((detail) => {
+          const detailElement = $liElements.filter(`:contains("${detail}")`);
+          expect(detailElement).to.have.lengthOf.at.least(1);
+        });
+      });
+    cy.wait(4000);
+  },
+
+  verifyAffiliationsQuantity(quantity) {
+    cy.expect(affiliationsSection.find(Badge()).has({ value: quantity }));
   },
 
   varifyUserCardOpened() {
