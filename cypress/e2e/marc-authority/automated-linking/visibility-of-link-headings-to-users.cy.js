@@ -35,6 +35,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   });
 
   after('Deleting created users, Instances', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
   });
 

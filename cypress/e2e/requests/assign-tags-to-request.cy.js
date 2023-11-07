@@ -30,6 +30,7 @@ describe('ui-requests: Assign Tags to Request', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     cy.getInstance({
       limit: 1,
       expandAll: true,

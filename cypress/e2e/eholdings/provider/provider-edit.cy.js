@@ -39,6 +39,7 @@ describe('eHoldings', () => {
       },
     );
     afterEach(() => {
+      cy.getAdminToken();
       Users.deleteViaApi(userId);
     });
   });

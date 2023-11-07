@@ -68,6 +68,7 @@ describe('MARC -> MARC Holdings', () => {
     InventorySearchAndFilter.searchInstanceByTitle(instanceID);
     InventorySearchAndFilter.selectViewHoldings();
     HoldingsRecordView.delete();
+    cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
     if (instanceID) InventoryInstance.deleteInstanceViaApi(instanceID);
   });
