@@ -44,6 +44,7 @@ const tagsAccordion = Accordion({ id: 'instancesTags' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
+const searchTextField = TextField('Search ');
 const inventorySearchAndFilterInput = Select({
   id: 'input-inventory-search-qindex',
 });
@@ -427,7 +428,7 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(inventorySearchAndFilter.fillIn(value));
+    cy.do(searchTextField.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },
