@@ -95,6 +95,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         // upload the first .mrc file
         DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
@@ -158,6 +159,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
@@ -221,6 +223,7 @@ describe('data-import', () => {
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
@@ -316,6 +319,7 @@ describe('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
         DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondFileNameAfterUpload);

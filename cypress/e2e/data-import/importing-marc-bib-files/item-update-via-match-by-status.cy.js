@@ -157,6 +157,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       // delete generated profiles
       JobProfiles.deleteJobProfile(createJobProfile.profileName);
@@ -264,6 +265,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(createJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);

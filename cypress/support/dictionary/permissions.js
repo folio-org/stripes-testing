@@ -217,6 +217,10 @@ export default {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
   },
+  notesSettingsViewGeneralSettings: {
+    internal: 'ui-notes.settings.view',
+    gui: 'Settings (Notes): View General settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -327,6 +331,10 @@ export default {
   uiUserLoansAnonymize: {
     internal: 'ui-users.loans.anonymize',
     gui: 'Users: User loans anonymize',
+  },
+  uiUserLostItemRequiringActualCost: {
+    internal: 'ui-users.lost-items.requiring-actual-cost',
+    gui: 'Users: Can process lost items requiring actual cost',
   },
   uiFeeFinesActions: {
     internal: 'ui-users.feefineactions',
@@ -830,6 +838,10 @@ export default {
     gui: 'Transfer exports: Transfer admin',
   },
   // OAI-PMH
+  oaipmhViewLogs: {
+    internal: 'ui-oai-pmh.logs',
+    gui: 'Settings (OAI-PMH): Can view logs',
+  },
   oaipmhSettingsEdit: {
     internal: 'ui-oai-pmh.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',

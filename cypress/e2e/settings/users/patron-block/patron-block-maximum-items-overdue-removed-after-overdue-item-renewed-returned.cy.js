@@ -240,6 +240,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(owner.data.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);

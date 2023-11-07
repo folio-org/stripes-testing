@@ -180,6 +180,7 @@ describe('Receiving notice: Checkout', () => {
   });
 
   afterEach('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -235,6 +236,7 @@ describe('Receiving notice: Checkout', () => {
       NewNoticePolicy.checkAfterSaving(noticePolicy);
       NewNoticePolicy.checkNoticeActions(noticePolicy);
 
+      cy.getAdminToken();
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
         addedCirculationRule =
@@ -302,6 +304,7 @@ describe('Receiving notice: Checkout', () => {
       NewNoticePolicy.checkNoticeActions(noticePolicy);
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
+        cy.getAdminToken();
         testData.ruleProps.n = res[0].id;
         addedCirculationRule =
           'g ' +

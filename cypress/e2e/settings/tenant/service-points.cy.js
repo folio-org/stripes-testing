@@ -28,6 +28,7 @@ describe('settings: service-points', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     ServicePoints.getViaApi({ query: `("name"=="${newServicePoint.newNameForEdit}")` }).then(
       (servicePoints) => {
         ServicePoints.deleteViaApi(servicePoints[0].id);

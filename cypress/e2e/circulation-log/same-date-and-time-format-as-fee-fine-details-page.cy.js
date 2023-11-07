@@ -83,6 +83,7 @@ describe('circulation-log', () => {
   });
 
   after('Delete owner, transfer account, feeFineType, paymentMethod, user', () => {
+    cy.getAdminToken();
     TransferAccounts.deleteViaApi(transferAccount.id);
     ManualCharges.deleteViaApi(feeFineType.id);
     PaymentMethods.deleteViaApi(PaymentMethods.id);

@@ -149,6 +149,7 @@ describe('Check In - Actions ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.items[0].barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData[0].userId, [servicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(userData[1].userId, [servicePoint.id]);

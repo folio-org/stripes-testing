@@ -116,6 +116,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     marcFiles.forEach((marcFile) => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -137,6 +138,7 @@ describe('MARC Authority -> Edit Authority record', () => {
   });
 
   after('', () => {
+    cy.getAdminToken();
     createdAuthorityID.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
     });

@@ -28,47 +28,28 @@ import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
 import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
 import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
+import CancelFeeFaine from '../../support/fragments/users/cancelFeeFaine';
 
 describe('Circulation log', () => {
-  const patronGroup = {
-    name: getTestEntityValue('GroupCircLog'),
-  };
   let userData;
+  const [fullAmount, partiallAmount] = ['4.00', '2.00'];
   const itemData = {
     barcode: generateItemBarcode(),
     title: getTestEntityValue('InstanceCircLog'),
   };
-  const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
-  const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
-  const transferAccount = TransferAccounts.getDefaultNewTransferAccount(uuid());
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     manualChargeName: null,
+    patronGroup: {
+      name: getTestEntityValue('GroupCircLog'),
+    },
   };
-  const waiveBody = (amount) => ({
+  const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
+  const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
+  const transferAccount = TransferAccounts.getDefaultNewTransferAccount(uuid());
+  const getActionBody = (type, amount) => ({
     amount,
-    paymentMethod: waiveReason.nameReason,
-    notifyPatron: false,
-    servicePointId: testData.userServicePoint.id,
-    userName: testData.adminSourceRecord,
-  });
-  const payBody = (amount) => ({
-    amount,
-    paymentMethod: testData.paymentMethodName,
-    notifyPatron: false,
-    servicePointId: testData.userServicePoint.id,
-    userName: testData.adminSourceRecord,
-  });
-  const transferBody = (amount) => ({
-    amount,
-    paymentMethod: transferAccount.accountName,
-    notifyPatron: false,
-    servicePointId: testData.userServicePoint.id,
-    userName: testData.adminSourceRecord,
-  });
-  const refundBody = (amount) => ({
-    amount,
-    paymentMethod: refundReason.nameReason,
+    paymentMethod: type,
     notifyPatron: false,
     servicePointId: testData.userServicePoint.id,
     userName: testData.adminSourceRecord,
@@ -104,7 +85,7 @@ describe('Circulation log', () => {
       ItemRecordView.waitLoading();
     });
   };
-  const filterByAction = (filterName) => {
+  const filterByAction = (filterName, desc = `Fee/Fine type: ${testData.manualChargeName}.`) => {
     const searchResultsData = {
       userBarcode: userData.barcode,
       itemBarcode: itemData.barcode,
@@ -113,7 +94,7 @@ describe('Circulation log', () => {
       // TODO: add check for date with format <C6/8/2022, 6:46 AM>
       servicePoint: testData.userServicePoint.name,
       source: testData.adminSourceRecord,
-      desc: `Fee/Fine type: ${testData.manualChargeName}.`,
+      desc,
     };
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.waitLoading();
@@ -210,9 +191,9 @@ describe('Circulation log', () => {
     });
     RefundReasons.createViaApi(refundReason);
 
-    PatronGroups.createViaApi(patronGroup.name).then((group) => {
-      patronGroup.id = group;
-      cy.createTempUser([permissions.circulationLogAll.gui], patronGroup.name)
+    PatronGroups.createViaApi(testData.patronGroup.name).then((group) => {
+      testData.patronGroup.id = group;
+      cy.createTempUser([permissions.circulationLogAll.gui], testData.patronGroup.name)
         .then((userProperties) => {
           userData = userProperties;
         })
@@ -231,10 +212,11 @@ describe('Circulation log', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
-    PatronGroups.deleteViaApi(patronGroup.id);
+    PatronGroups.deleteViaApi(testData.patronGroup.id);
     RefundReasons.deleteViaApi(refundReason.id);
     WaiveReasons.deleteViaApi(waiveReason.id);
     ManualCharges.deleteViaApi(testData.manualChargeId);
@@ -251,13 +233,39 @@ describe('Circulation log', () => {
   });
 
   it(
+    'C17064 Check the Actions button from filtering Circulation log by transferred partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        TransferFeeFine.transferFeeFineViaApi(
+          getActionBody(transferAccount.accountName, partiallAmount),
+          testData.feeFineId,
+        );
+        checkActionsButton('Transferred partially');
+      });
+    },
+  );
+
+  it(
+    'C17063 Filter circulation log by transferred partially (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Transferred partially');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+    },
+  );
+
+  it(
     'C17061 Filter circulation log by transferred fully (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       createFeeFine().then((feeFineId) => {
-        cy.log(userData.userName);
         testData.feeFineId = feeFineId;
-        TransferFeeFine.transferFeeFineViaApi(transferBody('4.00'), testData.feeFineId);
+        TransferFeeFine.transferFeeFineViaApi(
+          getActionBody(transferAccount.accountName, fullAmount),
+          testData.feeFineId,
+        );
         filterByAction('Transferred fully');
         NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
       });
@@ -270,7 +278,10 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        PayFeeFaine.payFeeFineViaApi(payBody('2.00'), testData.feeFineId);
+        PayFeeFaine.payFeeFineViaApi(
+          getActionBody(testData.paymentMethodName, partiallAmount),
+          testData.feeFineId,
+        );
         checkActionsButton('Paid partially');
       });
     },
@@ -291,7 +302,10 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
+        PayFeeFaine.payFeeFineViaApi(
+          getActionBody(testData.paymentMethodName, fullAmount),
+          testData.feeFineId,
+        );
         checkActionsButton('Paid fully');
       });
     },
@@ -312,8 +326,14 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
-        RefundFeeFine.refundFeeFineViaApi(refundBody('2.00'), testData.feeFineId);
+        PayFeeFaine.payFeeFineViaApi(
+          getActionBody(testData.paymentMethodName, fullAmount),
+          testData.feeFineId,
+        );
+        RefundFeeFine.refundFeeFineViaApi(
+          getActionBody(refundReason.nameReason, partiallAmount),
+          testData.feeFineId,
+        );
         checkActionsButton('Refunded partially');
       });
     },
@@ -334,8 +354,14 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        PayFeeFaine.payFeeFineViaApi(payBody('4.00'), testData.feeFineId);
-        RefundFeeFine.refundFeeFineViaApi(refundBody('4.00'), testData.feeFineId);
+        PayFeeFaine.payFeeFineViaApi(
+          getActionBody(testData.paymentMethodName, fullAmount),
+          testData.feeFineId,
+        );
+        RefundFeeFine.refundFeeFineViaApi(
+          getActionBody(refundReason.nameReason, fullAmount),
+          testData.feeFineId,
+        );
         checkActionsButton('Refunded fully');
       });
     },
@@ -356,7 +382,10 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('2.00'), testData.feeFineId);
+        WaiveFeeFineModal.waiveFeeFineViaApi(
+          getActionBody(waiveReason.nameReason, partiallAmount),
+          testData.feeFineId,
+        );
         checkActionsButton('Waived partially');
       });
     },
@@ -377,7 +406,10 @@ describe('Circulation log', () => {
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
-        WaiveFeeFineModal.waiveFeeFineViaApi(waiveBody('4.00'), testData.feeFineId);
+        WaiveFeeFineModal.waiveFeeFineViaApi(
+          getActionBody(waiveReason.nameReason, fullAmount),
+          testData.feeFineId,
+        );
         checkActionsButton('Waived fully');
       });
     },
@@ -389,6 +421,34 @@ describe('Circulation log', () => {
     () => {
       filterByAction('Waived fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+    },
+  );
+
+  it(
+    'C17066 Check the Actions button from filtering Circulation log by cancelled as error (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        CancelFeeFaine.cancelFeeFineViaApi(
+          {
+            notifyPatron: false,
+            comments: `STAFF : ${getTestEntityValue()}`,
+            servicePointId: testData.userServicePoint.id,
+            userName: testData.adminSourceRecord,
+          },
+          testData.feeFineId,
+        );
+        checkActionsButton('Cancelled as error');
+      });
+    },
+  );
+
+  it(
+    'C17065 Filter circulation log by cancelled as errorror (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Cancelled as error');
     },
   );
 });

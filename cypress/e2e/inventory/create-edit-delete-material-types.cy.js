@@ -21,6 +21,7 @@ describe('inventory', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       Users.deleteViaApi(userId);
     });
 

@@ -130,6 +130,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
         Orders.deleteOrderViaApi(res[0].id);
       });

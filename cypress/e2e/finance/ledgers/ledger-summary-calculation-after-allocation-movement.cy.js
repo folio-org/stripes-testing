@@ -69,6 +69,7 @@ describe('Finance: Ledgers', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

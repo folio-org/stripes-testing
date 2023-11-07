@@ -85,6 +85,7 @@ describe('ui-invoices: Approve invoice', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
