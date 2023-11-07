@@ -666,8 +666,22 @@ export default {
     );
   },
 
+  verifyEditableFieldIcons(rowNumber) {
+    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
+    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).exists());
+    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).exists());
+    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).exists());
+  },
+
   moveFieldUp(rowNumber) {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
+  },
+
+  verifyAfterMovingFieldUp(newRowNumber, tag, content) {
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(TextArea()).has({ value: content }));
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
+    cy.expect(Tooltip().has({ text: 'Move field up a row' }));
+    // verify arrowUp button is highlighted
   },
 
   checkFieldContentMatch(selector, regExp) {
