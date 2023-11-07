@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../utils/stringTools';
+import getRandomPostfix from '../../../utils/stringTools';
 
 export default {
   getDefaultIntegration({
@@ -7,6 +7,7 @@ export default {
     acqMethodId,
     accountNoList = [],
     ediFtp = {},
+    ediSchedule,
     isDefaultConfig,
     scheduleTime,
   } = {}) {
@@ -39,7 +40,7 @@ export default {
           },
           configName: `autotest_config_name_${getRandomPostfix()}`,
           configDescription: `autotest_config_description_${getRandomPostfix()}`,
-          ediSchedule: {
+          ediSchedule: ediSchedule || {
             enableScheduledExport: true,
             scheduleParameters: {
               schedulePeriod: 'DAY',
