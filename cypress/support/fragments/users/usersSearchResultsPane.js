@@ -28,8 +28,7 @@ export default {
   openFinancialTransactionDetailReportModal: () => {
     cy.do([
       actionsButtonInSearchResultsPane.click(),
-      // eslint-disable-next-line spaced-comment
-      //actionsButtons.financialTransactionsReport.click(),
+      actionsButtons.financialTransactionsReport.click(),
     ]);
   },
 
