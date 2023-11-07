@@ -8,7 +8,6 @@ import {
   TextArea,
   MultiColumnListHeader,
   Callout,
-  Modal,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
