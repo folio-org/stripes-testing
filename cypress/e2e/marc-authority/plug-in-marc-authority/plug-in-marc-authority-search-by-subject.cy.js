@@ -81,6 +81,7 @@ describe('plug-in MARC authority | Search', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     for (let i = 1; i < 65; i++) {

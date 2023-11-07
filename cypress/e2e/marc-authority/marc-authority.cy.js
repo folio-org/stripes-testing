@@ -86,6 +86,7 @@ describe('Importing MARC Authority files', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     JobProfiles.deleteJobProfile(createdJobProfile.profileName);
     if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
     Users.deleteViaApi(testData.userProperties.userId);

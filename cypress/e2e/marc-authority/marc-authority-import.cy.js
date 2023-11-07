@@ -48,6 +48,7 @@ describe('Data Import - Importing MARC Authority files', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdAuthorityIDs.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);

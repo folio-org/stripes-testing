@@ -65,6 +65,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       testData.items.forEach((item) => InventoryItems.deleteItemViaApi(item.id));
       testData.holdings.forEach((holding) => {
         InventoryHoldings.deleteHoldingRecordViaApi(holding.id);

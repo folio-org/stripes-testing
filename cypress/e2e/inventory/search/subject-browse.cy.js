@@ -49,6 +49,7 @@ describe('Inventory > Subject Browse', () => {
   });
 
   after('Deleting user and instance', () => {
+    cy.getAdminToken();
     createdInstanceIDs.forEach((id) => {
       InventoryInstance.deleteInstanceViaApi(id);
     });

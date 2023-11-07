@@ -33,6 +33,7 @@ describe('Settings: Location', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);

@@ -34,6 +34,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileNameWithDuplicates}`);
       FileManager.deleteFileFromDownloadsByMask(`*Errors-${userBarcodesFileNameWithDuplicates}`);
