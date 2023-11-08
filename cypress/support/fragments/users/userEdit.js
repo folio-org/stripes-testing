@@ -319,6 +319,13 @@ export default {
     cy.expect(permissionsAccordion.has({ open: false }));
   },
 
+  verifyPermissionsNotExistInPermissionsAccordion(permissions) {
+    cy.do(permissionsAccordion.clickHeader());
+    permissions.forEach((permission) => {
+      cy.expect(permissionsAccordion.find(HTML(including(permission))).absent());
+    });
+  },
+
   permissionsCount() {
     permissionsList.perform((el) => {
       el.invoke('attr', 'aria-rowcount').then((rowCount) => {
