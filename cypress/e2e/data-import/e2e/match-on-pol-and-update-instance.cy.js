@@ -138,11 +138,11 @@ describe('data-import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
-        cy.getAdminToken();
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       // delete generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -246,6 +246,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -293,6 +294,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);

@@ -108,6 +108,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
@@ -146,6 +147,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
@@ -207,6 +209,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);

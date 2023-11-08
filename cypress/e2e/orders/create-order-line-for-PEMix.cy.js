@@ -27,6 +27,7 @@ describe('orders: Test PO search', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });

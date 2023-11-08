@@ -49,6 +49,7 @@ describe.skip('Data-export', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validFile}`);

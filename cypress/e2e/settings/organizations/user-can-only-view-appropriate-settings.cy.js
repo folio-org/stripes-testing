@@ -20,6 +20,7 @@ describe('Organizations: Settings (Organizations)', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

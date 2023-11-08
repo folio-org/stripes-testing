@@ -41,6 +41,7 @@ describe('MARC Authority Delete', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
@@ -49,6 +50,7 @@ describe('MARC Authority Delete', () => {
     { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] },
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search('Default - Create SRS MARC Authority');
       JobProfiles.runImportFile();
@@ -75,6 +77,7 @@ describe('MARC Authority Delete', () => {
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+      JobProfiles.waitFileIsUploaded();
       DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.switchToBrowse();

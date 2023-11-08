@@ -33,6 +33,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       cy.getInstance({ limit: 1, expandAll: true, query: `"oclc"=="${oclc}"` }).then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });

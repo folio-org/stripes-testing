@@ -124,6 +124,7 @@ describe('Create holding records with MARC source', () => {
   });
 
   after('Deleting created user, data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     cy.deleteHoldingRecordViaApi(recordIDs[3]);
     cy.deleteHoldingRecordViaApi(recordIDs[4]);

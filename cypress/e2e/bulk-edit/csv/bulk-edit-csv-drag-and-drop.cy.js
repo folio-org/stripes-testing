@@ -32,6 +32,7 @@ describe('bulk-edit', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     });

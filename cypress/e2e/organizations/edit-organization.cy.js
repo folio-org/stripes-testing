@@ -25,6 +25,7 @@ describe('Organizations', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     Organizations.deleteOrganizationViaApi(organization.id);
   });

@@ -22,11 +22,12 @@ describe('OAI-PMH', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
-    'C367985 Verify that "Record Source" dropdown is added to Behavior page',
+    'C367985 Verify that "Record Source" dropdown is added to Behavior page (firebird)',
     { tags: [testTypes.criticalPath, devTeams.firebird] },
     () => {
       OaiPmh.checkSectionListItems();

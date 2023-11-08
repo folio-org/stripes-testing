@@ -25,7 +25,6 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
 
       // Create files dynamically with given name and content in fixtures
       FileManager.createFile(`cypress/fixtures/${fileNameForFailedImport}`);

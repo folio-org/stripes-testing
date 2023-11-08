@@ -46,6 +46,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile);
       ActionProfiles.deleteActionProfile(actionProfile);
       FieldMappingProfileView.deleteViaApi(linkedMappingProfile);

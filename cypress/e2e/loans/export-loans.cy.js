@@ -76,6 +76,7 @@ describe('Export Loans ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       servicePointId: testData.servicepointId,
       itemBarcode: itemsData.itemsWithSeparateInstance[2].barcodes[0],

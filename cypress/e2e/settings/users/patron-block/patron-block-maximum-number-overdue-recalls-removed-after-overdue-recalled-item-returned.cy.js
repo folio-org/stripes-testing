@@ -242,6 +242,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,

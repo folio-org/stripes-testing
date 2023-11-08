@@ -64,22 +64,7 @@ describe('ui-finance: Transactions', () => {
   });
 
   after(() => {
-    // cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    // FinanceHelp.searchByName(firstFund.name);
-    // FinanceHelp.selectFromResultsList();
-    // Funds.selectBudgetDetails();
-    // Funds.deleteBudgetViaActions();
-    // cy.visit(TopMenu.fundPath);
-    // FinanceHelp.searchByName(secondFund.name);
-    // FinanceHelp.selectFromResultsList();
-    // Funds.selectBudgetDetails();
-    // Funds.deleteBudgetViaActions();
-    // InteractorsTools.checkCalloutMessage('Budget has been deleted');
-    // Funds.checkIsBudgetDeleted();
-    // Funds.deleteFundViaApi(firstFund.id);
-    // Funds.deleteFundViaApi(secondFund.id);
-    // Ledgers.deleteledgerViaApi(defaultLedger.id);
-    // FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

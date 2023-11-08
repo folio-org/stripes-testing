@@ -62,6 +62,7 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
   });
 
   after('Deleting test user and an inventory instance', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(instanceIDs[0]);
   });

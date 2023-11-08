@@ -69,6 +69,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
   });
 
   after('Delete storage', () => {
+    cy.getAdminToken();
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     Organizations.deleteOrganizationViaApi(organization.id);
   });

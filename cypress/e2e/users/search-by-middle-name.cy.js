@@ -75,6 +75,7 @@ describe('Users', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.id, [testData.servicePointId]);
     Users.deleteViaApi(userData.id);
     PatronGroups.deleteViaApi(patronGroup.id);

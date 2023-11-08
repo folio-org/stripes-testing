@@ -170,6 +170,7 @@ export default {
   verifyActionMenuAbsent: () => cy.expect(fullScreenView.find(actionsButton).absent()),
   verifyMappingProfileOpened: () => cy.expect(fullScreenView.exists()),
   verifyVendorName: (vendorName) => cy.expect(KeyValue('Vendor name').has({ value: vendorName })),
+  verifyCurrency: (value) => cy.expect(KeyValue('Currency').has({ value })),
   verifyMappingProfileTitleName: (profileName) => cy.get('#full-screen-view-content h2').should('have.text', profileName),
   verifyCannotDeleteModalOpened: () => cy.expect(cannotDeleteModal.exists()),
   closeCannotDeleteModal: () => cy.do(cannotDeleteModal.find(Button('Close')).click()),
