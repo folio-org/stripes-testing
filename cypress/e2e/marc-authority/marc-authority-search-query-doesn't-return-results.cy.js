@@ -5,10 +5,11 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic', () => {
   const user = {};
-
+  const searchValue = `name${getRandomPostfix()}`;
   before(() => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
@@ -41,10 +42,12 @@ describe('MARC -> MARC Bibliographic', () => {
     "C359180 MARC Authority plug-in | Use search query that doesn't return results (spitfire) (TaaS)",
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      MarcAuthorities.searchByParameter('Keyword', 'name');
+      MarcAuthorities.searchByParameter('Keyword', searchValue);
       MarcAuthorities.checkNoResultsMessage(
-        'No results found for "name". Please check your spelling and filters.',
+        `No results found for "${searchValue}". Please check your spelling and filters.`,
       );
+      MarcAuthorities.verifySearchResultTabletIsAbsent();
+      MarcAuthorities.verifyTextOfPaneHeaderMarcAuthority('0 results found');
     },
   );
 });

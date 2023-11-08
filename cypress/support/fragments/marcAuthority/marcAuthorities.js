@@ -707,4 +707,14 @@ export default {
       );
     }
   },
+
+  verifyTextOfPaneHeaderMarcAuthority(text) {
+    cy.xpath('//*[@id="paneHeaderauthority-search-results-pane-subtitle"]/span/span')
+      .invoke('text')
+      .should('eq', text);
+  },
+
+  verifySearchResultTabletIsAbsent() {
+    cy.expect(authoritiesList.absent());
+  },
 };
