@@ -40,7 +40,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     "C359180 MARC Authority plug-in | Use search query that doesn't return results (spitfire) (TaaS)",
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       MarcAuthorities.searchByParameter('Keyword', searchValue);
       MarcAuthorities.checkNoResultsMessage(
