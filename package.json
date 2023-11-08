@@ -36,7 +36,7 @@
     "@interactors/html": "^1.0.0-rc1.4",
     "@interactors/keyboard": "^1.0.0-rc1.5",
     "axe-core": "4.3.3",
-    "cypress": "12.17.4",
+    "cypress": "12.3.0",
     "cypress-cloud": "^2.0.0-beta.1",
     "cypress-testrail-simple": "^3.1.0",
     "date-fns": "^2.16.1",
@@ -69,12 +69,12 @@
     "uuid": "^3.4.0"
   },
   "resolutions": {
-    "cypress": "12.17.4",
-    "chromedriver": "116.0.0"
+    "cypress": "12.3.0",
+    "chromedriver": "107.0.0"
   },
   "overrides": {
     "bigtest": {
-      "chromedriver": "116.0.0"
+      "chromedriver": "107.0.0"
     }
   }
 }
