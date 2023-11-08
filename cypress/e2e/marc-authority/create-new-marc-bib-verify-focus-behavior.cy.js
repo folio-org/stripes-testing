@@ -36,9 +36,10 @@ describe('Create new MARC bib', () => {
     });
   });
 
-  // after('Delete test data', () => {
-  //   Users.deleteViaApi(testData.user.userId);
-  // });
+  after('Delete test data', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(testData.user.userId);
+  });
 
   it(
     'C380717 Verify focus behavior when using field level action icons upon creation of a new "MARC bib" record (spitfire) (TaaS)',
