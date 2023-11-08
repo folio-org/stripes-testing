@@ -5,7 +5,6 @@ yarn-error.log
 .idea
 .vscode/
 .promptLib/
-package-lock.json
 
 cypress/screenshots
 
