@@ -15,10 +15,10 @@ describe('inventory', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      cy.getAdminToken();
     });
 
     after(() => {
+      cy.getAdminToken();
       InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
         (id) => {
           InventoryInstance.deleteInstanceViaApi(id);

@@ -10,6 +10,7 @@ describe('ui-finance: Funds', () => {
   let createdLedgerId;
 
   afterEach(() => {
+    cy.getAdminToken();
     cy.deleteLedgerApi(createdLedgerId);
   });
 

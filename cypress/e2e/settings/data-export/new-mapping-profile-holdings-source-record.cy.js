@@ -31,6 +31,7 @@ describe('Mapping profile - setup', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     ExportFieldMappingProfiles.getFieldMappingProfile({
       query: `"name"=="${fieldMappingProfileName}"`,
     }).then((response) => {

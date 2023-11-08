@@ -84,6 +84,7 @@ describe('Permission Sets', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     PermissionSets.deletePermissionSetViaApi(permissionSetBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);

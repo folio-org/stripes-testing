@@ -16,9 +16,7 @@ describe('data-import', () => {
     const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
     before('create test data', () => {
-      cy.getAdminToken().then(() => {
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-      });
+      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
 
       cy.createTempUser([
         Permissions.settingsDataImportView.gui,
@@ -34,6 +32,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {

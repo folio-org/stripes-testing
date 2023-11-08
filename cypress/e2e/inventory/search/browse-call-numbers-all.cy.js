@@ -108,6 +108,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
       InventoryInstances.deleteLocalCallNumberTypeViaApi(testData.callNumberTypeId);
