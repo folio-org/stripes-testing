@@ -80,24 +80,6 @@ describe('Invoices', () => {
         });
         defaultOrder.vendor = organization.name;
         cy.visit(TopMenu.ordersPath);
-        Orders.createApprovedOrderForRollover(defaultOrder, true, true).then(
-          (firstOrderResponse) => {
-            defaultOrder.id = firstOrderResponse.id;
-            orderNumber = firstOrderResponse.poNumber;
-            Orders.checkCreatedOrder(defaultOrder);
-            OrderLines.addPOLine();
-            OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-            OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-              defaultFund,
-              '10',
-              '1',
-              '10',
-              location.institutionId,
-            );
-            OrderLines.backToEditingOrder();
-            Orders.openOrder();
-          },
-        );
         cy.visit(TopMenu.invoicesPath);
         Invoices.createRolloverInvoiceWithFY(invoice, organization.name, defaultFiscalYear);
       });
