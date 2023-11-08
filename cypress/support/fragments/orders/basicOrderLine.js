@@ -25,6 +25,7 @@ const getDefaultOrderLine = ({
   poLineEstimatedPrice,
   fundDistribution = [],
   productIds = [],
+  vendorDetail,
   referenceNumbers = [],
   vendorAccount = '1234',
 } = {}) => {
@@ -83,7 +84,7 @@ const getDefaultOrderLine = ({
     reportingCodes: [],
     source: 'User',
     titleOrPackage: title,
-    vendorDetail: {
+    vendorDetail: vendorDetail || {
       instructions: '',
       vendorAccount,
       referenceNumbers,

@@ -217,6 +217,10 @@ export default {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
   },
+  notesSettingsViewGeneralSettings: {
+    internal: 'ui-notes.settings.view',
+    gui: 'Settings (Notes): View General settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -328,6 +332,10 @@ export default {
     internal: 'ui-users.loans.anonymize',
     gui: 'Users: User loans anonymize',
   },
+  uiUserLostItemRequiringActualCost: {
+    internal: 'ui-users.lost-items.requiring-actual-cost',
+    gui: 'Users: Can process lost items requiring actual cost',
+  },
   uiFeeFinesActions: {
     internal: 'ui-users.feefineactions',
     gui: 'Fee/Fine Details: Can create, edit and remove fee/fine actions',
@@ -393,6 +401,10 @@ export default {
   uiUsersCreatePatronConditions: {
     internal: 'ui-users.settings.conditions',
     gui: 'Settings (Users): Can view and edit patron blocks conditions',
+  },
+  uiUsersCanViewCustomFields: {
+    internal: 'ui-users.settings.customfields.view',
+    gui: 'Settings (Users): Can view custom fields',
   },
   uiUsersCustomField: {
     internal: 'ui-users.settings.customfields.all',
@@ -791,7 +803,7 @@ export default {
   },
   settingsUsersCRUD: {
     internal: 'ui-users.settings.transfers.all',
-    gui: 'Settings (Users): Can create, edit and remove transfer accounts',
+    gui: 'Settings (Users): Can create, edit and remove transfer accounts ',
   },
   uiSettingsCanChangeLoacalPassword: {
     internal: 'ui-myprofile.settings.change-password',
@@ -823,9 +835,13 @@ export default {
   },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',
-    gui: 'Transfer exports: Transfer admin',
+    gui: 'Bursar exports: Bursar admin',
   },
   // OAI-PMH
+  oaipmhViewLogs: {
+    internal: 'ui-oai-pmh.logs',
+    gui: 'Settings (OAI-PMH): Can view logs',
+  },
   oaipmhSettingsEdit: {
     internal: 'ui-oai-pmh.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',

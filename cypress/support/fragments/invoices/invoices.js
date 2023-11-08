@@ -100,6 +100,9 @@ const getDefaultInvoiceLine = ({
   poLineId,
   fundDistributions,
   accountingCode,
+  subscriptionInfo,
+  subscriptionStart,
+  subscriptionEnd,
   releaseEncumbrance,
 }) => ({
   invoiceId,
@@ -109,6 +112,9 @@ const getDefaultInvoiceLine = ({
   fundDistributions,
   quantity: 1,
   subTotal: 0,
+  subscriptionInfo,
+  subscriptionStart,
+  subscriptionEnd,
   accountingCode,
   releaseEncumbrance,
   id: uuid(),
@@ -846,6 +852,11 @@ export default {
   selectInvoice: (invoiceNumber) => {
     cy.wait(4000);
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());
+  },
+
+  checkVendorCodeInInvoicePane: (vendorCode) => {
+    cy.wait(4000);
+    cy.expect(Pane({ subtitle: vendorCode }).exists());
   },
 
   closeInvoiceDetailsPane: () => {

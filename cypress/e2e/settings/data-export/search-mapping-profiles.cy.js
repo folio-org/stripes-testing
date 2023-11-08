@@ -24,6 +24,7 @@ describe('Mapping profile  - setup', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

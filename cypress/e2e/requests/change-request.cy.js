@@ -142,6 +142,7 @@ describe('Title Level Request', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: instanceData.itemBarcode,
       servicePointId: testData.userServicePoint.id,

@@ -18,7 +18,7 @@ describe('Agreement Notes', () => {
     Agreements.createViaApi().then((agreement) => {
       agreementId = agreement.id;
     });
-    NoteTypes.createNoteTypeViaApi(noteType)
+    NoteTypes.createNoteTypeViaApi({ name: noteType })
       .then((note) => {
         noteTypeId = note.id;
       })

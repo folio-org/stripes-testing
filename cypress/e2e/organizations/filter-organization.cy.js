@@ -16,6 +16,7 @@ describe('ui-organizations: Filtering organization', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(organization.id);
   });
   [

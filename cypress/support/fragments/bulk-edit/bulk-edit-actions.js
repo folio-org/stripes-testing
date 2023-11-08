@@ -181,6 +181,10 @@ export default {
     cy.do(Button('Location look-up').click());
   },
 
+  locationLookupExists() {
+    cy.expect(Button('Location look-up').exists());
+  },
+
   verifyLocationLookupModal() {
     cy.expect([
       locationLookupModal.exists(),
@@ -485,6 +489,16 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.action)
         .choose('Remove mark as staff only'),
+    ]);
+  },
+
+  changeNoteType(type, newType, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Change note type'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ value: '' }))
+        .choose(newType),
     ]);
   },
 

@@ -76,6 +76,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
@@ -95,6 +96,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         // upload a marc file for export
         DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForMarcFile);

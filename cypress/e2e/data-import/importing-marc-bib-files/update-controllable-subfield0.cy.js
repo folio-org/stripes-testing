@@ -125,6 +125,7 @@ describe('data-import', () => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {
               DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+              JobProfiles.waitFileIsUploaded();
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
@@ -174,6 +175,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {
@@ -234,6 +236,7 @@ describe('data-import', () => {
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();

@@ -109,6 +109,7 @@ describe('export manager', () => {
   });
 
   after('check in item, delete instance, user and files', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       checkInDate: moment.utc().format(),
       servicePointId: testData.servicepointId,

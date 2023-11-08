@@ -57,6 +57,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     MaterialTypes.deleteApi(defaultMaterialType.id);
     NoticePolicy.deleteViaApi(defaultNoticePolicy.id);

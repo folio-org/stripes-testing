@@ -61,4 +61,8 @@ export default {
     this.searchByUsername(userName);
     this.openUser(userName);
   },
+
+  openLostItemsRequiringActualCostPane() {
+    cy.do([Button('Actions').click(), Button('Lost items requiring actual cost').click()]);
+  },
 };

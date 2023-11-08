@@ -57,6 +57,7 @@ describe('Users', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     Users.deleteViaApi(newUserId);
     PatronGroups.deleteViaApi(patronGroup.id);
