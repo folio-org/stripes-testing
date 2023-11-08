@@ -20,17 +20,15 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
-import Orders from '../../../support/fragments/orders/orders';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('data-import', () => {
   describe('Permissions', () => {
     let user;
-    let orderNumber;
     const filePath = 'marcBibFileForC377023.mrc';
     const marcFileName = `C377023 autotestFileName ${getRandomPostfix()}`;
-    const title = '';
+    const title = 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.';
 
     const mappingProfile = {
       name: `C377023 Test Order ${getRandomPostfix()}`,
@@ -130,19 +128,15 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-        Orders.deleteOrderViaApi(orderId[0].id);
-      });
     });
 
     it(
       'C377023 A user can see JSON tab for imported Orders with "Data import: Can upload files, import, and view logs" permission (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        const message = 'No record found';
+        const message = `Import Log for Record 1 (${title})`;
 
         Logs.openFileDetails(marcFileName);
-        cy.pause();
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openOrderTab();
@@ -150,9 +144,7 @@ describe('data-import', () => {
         cy.go('back');
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
-        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-          orderNumber = initialNumber.replace('-1', '');
-        });
+        OrderLines.verifyOrderTitle(title);
       },
     );
   });
