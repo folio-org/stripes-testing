@@ -44,6 +44,7 @@ describe('data-import', () => {
     });
 
     after('Deleting created user and data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       createdRecordIDs.forEach((recordID) => {
         InventoryInstance.deleteInstanceViaApi(recordID);
@@ -55,6 +56,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
         DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(testData.marcFile.jobProfileToRun);
         JobProfiles.runImportFile();

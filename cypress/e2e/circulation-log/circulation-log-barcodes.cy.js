@@ -97,6 +97,7 @@ describe('Circulation log', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: FIRST_ITEM_BARCODE,
       servicePointId: testData.servicePoint.id,

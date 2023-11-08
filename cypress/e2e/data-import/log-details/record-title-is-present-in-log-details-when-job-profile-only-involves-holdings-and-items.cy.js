@@ -278,78 +278,78 @@ describe('data-import', () => {
 
     before(() => {
       cy.loginAsAdmin();
-      cy.getAdminToken().then(() => {
-        // create the first instance
-        firstTestData.jobProfileForCreate = firstJobProfileForCreate;
+      // create the first instance
+      firstTestData.jobProfileForCreate = firstJobProfileForCreate;
 
-        cy.wrap(firstTestData).each((specialPair) => {
-          cy.createOnePairMappingAndActionProfiles(
-            specialPair.mappingProfile,
-            specialPair.actionProfile,
-          ).then((idActionProfile) => {
-            cy.addJobProfileRelation(
-              firstTestData.jobProfileForCreate.addedRelations,
-              idActionProfile,
-            );
-          });
+      cy.wrap(firstTestData).each((specialPair) => {
+        cy.createOnePairMappingAndActionProfiles(
+          specialPair.mappingProfile,
+          specialPair.actionProfile,
+        ).then((idActionProfile) => {
+          cy.addJobProfileRelation(
+            firstTestData.jobProfileForCreate.addedRelations,
+            idActionProfile,
+          );
         });
-        SettingsJobProfiles.createJobProfileApi(firstTestData.jobProfileForCreate).then(
-          (bodyWithjobProfile) => {
-            firstTestData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-          },
-        );
-
-        // upload a marc file for creating of the first new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateFirstRecord);
-        JobProfiles.search(firstTestData.jobProfileForCreate.profile.name);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileForCreateFirstRecord);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFileForCreateFirstRecord);
-        FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then((firstHrId) => {
-          firstInstanceHrid = firstHrId;
-        });
-
-        // create the second instance
-        secondTestData.jobProfileForCreate = secondJobProfileForCreate;
-
-        cy.wrap(secondTestData).each((specialPair) => {
-          cy.createOnePairMappingAndActionProfiles(
-            specialPair.mappingProfile,
-            specialPair.actionProfile,
-          ).then((idActionProfile) => {
-            cy.addJobProfileRelation(
-              secondTestData.jobProfileForCreate.addedRelations,
-              idActionProfile,
-            );
-          });
-        });
-        SettingsJobProfiles.createJobProfileApi(secondTestData.jobProfileForCreate).then(
-          (bodyWithjobProfile) => {
-            secondTestData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-          },
-        );
-
-        // upload a marc file for creating of the first new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateSecondRecord);
-        JobProfiles.search(secondTestData.jobProfileForCreate.profile.name);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileForCreateSecondRecord);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFileForCreateSecondRecord);
-        FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then((secondHrId) => {
-          secondInstanceHrid = secondHrId;
-        });
-        cy.logout();
       });
+      SettingsJobProfiles.createJobProfileApi(firstTestData.jobProfileForCreate).then(
+        (bodyWithjobProfile) => {
+          firstTestData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+        },
+      );
+
+      // upload a marc file for creating of the first new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateFirstRecord);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(firstTestData.jobProfileForCreate.profile.name);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileForCreateFirstRecord);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(marcFileForCreateFirstRecord);
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then((firstHrId) => {
+        firstInstanceHrid = firstHrId;
+      });
+
+      // create the second instance
+      secondTestData.jobProfileForCreate = secondJobProfileForCreate;
+
+      cy.wrap(secondTestData).each((specialPair) => {
+        cy.createOnePairMappingAndActionProfiles(
+          specialPair.mappingProfile,
+          specialPair.actionProfile,
+        ).then((idActionProfile) => {
+          cy.addJobProfileRelation(
+            secondTestData.jobProfileForCreate.addedRelations,
+            idActionProfile,
+          );
+        });
+      });
+      SettingsJobProfiles.createJobProfileApi(secondTestData.jobProfileForCreate).then(
+        (bodyWithjobProfile) => {
+          secondTestData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+        },
+      );
+
+      // upload a marc file for creating of the first new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreateSecondRecord);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(secondTestData.jobProfileForCreate.profile.name);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileForCreateSecondRecord);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(marcFileForCreateSecondRecord);
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then((secondHrId) => {
+        secondInstanceHrid = secondHrId;
+      });
+      cy.logout();
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
@@ -372,6 +372,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(firstRecord.jobProfileName);
       ActionProfiles.deleteActionProfile(firstRecord.instanceActionProfileName);
       ActionProfiles.deleteActionProfile(firstRecord.holdingsActionProfileName);

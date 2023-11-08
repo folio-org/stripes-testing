@@ -176,6 +176,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     [newFirstItemData, newSecondItemData].forEach((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,

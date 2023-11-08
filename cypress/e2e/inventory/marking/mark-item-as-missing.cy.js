@@ -86,6 +86,7 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       createdItems.forEach((item) => {
         cy.deleteItemViaApi(item.itemId);
       });

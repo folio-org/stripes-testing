@@ -12,6 +12,7 @@ let user;
 
 describe('ui-users: Custom Fields', () => {
   before('login', () => {
+    cy.getAdminToken();
     cy.createTempUser([Permissions.uiUsersCustomField.gui, Permissions.uiUserEdit.gui]).then(
       (userProperties) => {
         user = userProperties;
@@ -21,6 +22,7 @@ describe('ui-users: Custom Fields', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

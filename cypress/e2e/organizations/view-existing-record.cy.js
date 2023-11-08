@@ -17,6 +17,7 @@ describe('ui-organizations: View organization', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
