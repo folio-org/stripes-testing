@@ -29,10 +29,6 @@ describe('bulk-edit', () => {
         'faculty',
       ).then((userProperties) => {
         user1 = userProperties;
-        cy.login(user1.username, user1.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
       });
       cy.createTempUser(
         [permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui],
@@ -69,6 +65,10 @@ describe('bulk-edit', () => {
       'C380393 Verify that bulk edit jobs run by correct user (firebird)',
       { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
+        cy.login(user1.username, user1.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
 
