@@ -60,6 +60,7 @@ describe('Title Level Request', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Requests.getRequestApi({ query: `(instance.title=="${instanceTitle}")` }).then(
       (requestResponse) => {
         Requests.deleteRequestViaApi(requestResponse[0].id);

@@ -87,6 +87,7 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       cy.wrap(
         testInstanceId.holdingIds.forEach((holdingsId) => {
           cy.wrap(

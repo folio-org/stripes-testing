@@ -93,6 +93,7 @@ describe('Orders', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Orders.deleteOrderViaApi(testData.order.id);
       OrderLinesLimit.setPOLLimit(1);

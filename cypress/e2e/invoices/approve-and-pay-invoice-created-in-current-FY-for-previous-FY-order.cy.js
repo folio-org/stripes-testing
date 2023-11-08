@@ -208,6 +208,7 @@ describe('Invoices', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

@@ -75,6 +75,7 @@ describe('Manual Fees/Fines', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UsersOwners.deleteViaApi(testData.ownerId);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],

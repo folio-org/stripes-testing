@@ -63,6 +63,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);

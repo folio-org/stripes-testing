@@ -18,7 +18,6 @@ describe('inventory', () => {
     const issnValue = `ISSN test value ${getRandomPostfix()}`;
 
     before('navigate to Inventory', () => {
-      cy.loginAsAdmin();
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });
@@ -41,10 +40,14 @@ describe('inventory', () => {
           }));
         });
 
-      cy.visit(TopMenu.inventoryPath);
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
 
     after(() => {
+      cy.getAdminToken();
       cy.getInstanceById(instanceIds[0])
         .then((body) => {
           const requestBody = body;

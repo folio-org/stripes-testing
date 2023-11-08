@@ -70,6 +70,7 @@ describe('Orders', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

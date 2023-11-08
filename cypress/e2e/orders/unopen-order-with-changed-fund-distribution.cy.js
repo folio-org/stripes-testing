@@ -135,6 +135,7 @@ describe('orders: Unopen order', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

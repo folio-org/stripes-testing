@@ -34,6 +34,7 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 
@@ -44,7 +45,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload[1], fileNames[1]);
-        DataImport.waitFileIsUploaded();
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(fileNames[1]);
@@ -56,7 +57,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload[0], fileNames[0]);
-        DataImport.waitFileIsUploaded();
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(fileNames[0]);

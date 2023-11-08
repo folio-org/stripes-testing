@@ -27,6 +27,7 @@ describe('settings: data-export: Field mapping profiles', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

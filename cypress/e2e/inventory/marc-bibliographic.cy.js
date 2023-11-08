@@ -50,6 +50,7 @@ describe('MARC -> MARC Bibliographic', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(testData.instanceID);
   });

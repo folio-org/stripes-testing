@@ -102,6 +102,7 @@ describe('orders: Test Po line search', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });

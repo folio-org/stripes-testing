@@ -38,6 +38,7 @@ describe('setting: data-export', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     ExportFieldMappingProfiles.getFieldMappingProfile({
       query: `"name"=="${profileDetails.name}"`,
     }).then((response) => {
