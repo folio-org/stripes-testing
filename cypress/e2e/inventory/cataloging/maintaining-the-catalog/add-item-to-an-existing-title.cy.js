@@ -10,7 +10,7 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     const testData = {
       barcode: uuid(),

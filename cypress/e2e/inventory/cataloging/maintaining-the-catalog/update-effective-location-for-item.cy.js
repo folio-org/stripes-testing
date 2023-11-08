@@ -1,18 +1,18 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import TopMenu from '../../../support/fragments/topMenu';
-import GenerateItemBarcode from '../../../support/utils/generateItemBarcode';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
+import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
+import TopMenu from '../../../../support/fragments/topMenu';
+import GenerateItemBarcode from '../../../../support/utils/generateItemBarcode';
+import Users from '../../../../support/fragments/users/users';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import Helper from '../../../../support/fragments/finance/financeHelper';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 describe('inventory', () => {
-  describe('Cataloging', () => {
+  describe('Cataloging -> Maintaining the catalog', () => {
     const itemData = {
       instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
       itemBarcode: GenerateItemBarcode(),
