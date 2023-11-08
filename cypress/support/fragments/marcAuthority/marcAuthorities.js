@@ -707,13 +707,13 @@ export default {
       );
     }
   },
-
   verifyTextOfPaneHeaderMarcAuthority(text) {
-    cy.xpath('//*[@id="paneHeaderauthority-search-results-pane-subtitle"]/span/span')
-      .invoke('text')
-      .should('eq', text);
+    cy.expect(
+      PaneHeader('MARC authority')
+        .find(HTML(including(text)))
+        .exists(),
+    );
   },
-
   verifySearchResultTabletIsAbsent() {
     cy.expect(authoritiesList.absent());
   },
