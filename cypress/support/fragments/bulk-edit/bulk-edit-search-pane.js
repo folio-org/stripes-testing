@@ -14,9 +14,11 @@ import {
   including,
   MultiColumnListRow,
   TextField,
+  Image,
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
 
+const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const logsStartDateAccordion = Accordion('Started');
 const logsEndDateAccordion = Accordion('Ended');
 const applyBtn = Button('Apply');
@@ -94,6 +96,10 @@ export default {
     cy.expect([setCriteriaPane.exists(), bulkEditPane.exists()]);
   },
 
+  verifyBulkEditImage() {
+    cy.expect([bulkEditIcon.exists()]);
+  },
+
   verifyBulkEditPaneItems() {
     cy.expect([
       bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists(),
@@ -110,6 +116,23 @@ export default {
       setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
       setCriteriaPane.find(HTML('Drag and drop')).exists(),
       fileButton.has({ disabled: true }),
+    ]);
+  },
+  verifySetCriteriaPaneElements() {
+    cy.expect([
+      setCriteriaPane.find(identifierToggle).exists(),
+
+      setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
+      recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
+      recordTypesAccordion.find(Checkbox('Inventory - items')).has({ checked: false }),
+      recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
+
+      setCriteriaPane.find(recordIdentifierDropdown).exists(),
+      recordIdentifierDropdown.has({ disabled: true }),
+
+      setCriteriaPane.find(HTML('Drag and drop')).exists(),
+      fileButton.has({ disabled: true }),
+      cy.expect(HTML('Select a file with record identifiers').exists()),
     ]);
   },
 
