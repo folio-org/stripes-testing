@@ -33,7 +33,6 @@ describe('MARC -> MARC Holdings', () => {
     InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
       instanceHrid = initialInstanceHrId;
     });
-    cy.logout();
 
     cy.createTempUser([
       Permissions.inventoryAll.gui,
@@ -76,8 +75,11 @@ describe('MARC -> MARC Holdings', () => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveHoldings();
       HoldingsRecordView.checkHoldingRecordViewOpened();
+      HoldingsRecordView.close();
+      InventoryInstance.waitLoading();
+      InventoryInstance.openHoldingView();
       HoldingsRecordView.viewSource();
-      InventoryViewSource.contains(`"${LOCATION_NAMES.ONLINE}"`);
+      InventoryViewSource.contains('‡b E');
     },
   );
 });

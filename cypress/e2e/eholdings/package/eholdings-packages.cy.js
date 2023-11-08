@@ -70,7 +70,7 @@ describe('eHoldings', () => {
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
             const addedTag2 = EHoldingsPackage.addTag();
-            EHoldingsPackage.close(selectedPackage);
+            EHoldingsPackage.closePackage();
             EHoldingsPackagesSearch.byName(selectedPackage);
             EHoldingsPackages.openPackage();
             EHoldingsPackage.verifyExistingTags(addedTag1, addedTag2);
@@ -172,7 +172,7 @@ describe('eHoldings', () => {
             // existing test data clearing
             EHoldingsPackage.removeExistingTags();
             const addedTag = EHoldingsPackage.addTag();
-            EHoldingsPackage.close(selectedPackageName);
+            EHoldingsPackage.closePackage();
             EHoldingsPackagesSearch.byTag(addedTag);
             EHoldingsPackages.openPackage();
             EHoldingsPackage.verifyExistingTags(addedTag);
@@ -219,9 +219,7 @@ describe('eHoldings', () => {
       'C3466 Edit/Add a token to the Gale Academic OneFile (spitfire)',
       { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
       () => {
-        cy.createTempUser([
-          Permissions.uieHoldingsRecordsEdit.gui,
-        ]).then((userProperties) => {
+        cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
           cy.login(userProperties.username, userProperties.password, {
             path: TopMenu.eholdingsPath,
