@@ -112,8 +112,8 @@ export default {
     cy.do(exportButtonInModal.click());
   },
 
-  verifyExportButtonInModalDisabled() {
-    cy.expect(exportButtonInModal.has({ disabled: true }));
+  verifyExportButtonInModalDisabled(isDisabled = true) {
+    cy.expect(exportButtonInModal.has({ disabled: isDisabled }));
   },
 
   verifyPackageName(packageName) {
@@ -216,5 +216,12 @@ export default {
 
   clickExportAllTitleFields() {
     cy.do(allTitleFieldsRadioButton.click());
+  },
+
+  verifyNumberOfTitlesLessThan(number) {
+    cy.get('div[data-test-eholdings-details-view-results-count="true"]')
+      .invoke('text')
+      .then((text) => parseFloat(text.replace(/,/g, '')))
+      .should('be.lessThan', number);
   },
 };

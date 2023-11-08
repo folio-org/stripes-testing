@@ -19,6 +19,7 @@ describe('eHoldings', () => {
       // titlesNumber: '0',
       packageExportFields: ['Holdings status', 'Package Id'],
       titleExportFields: ['Alternate title(s)', 'Description'],
+      titleFilterParams: ['Title', 'France', 'Not selected'],
       // fileName: `C356417autoTestFile${getRandomPostfix()}.csv`,
       // fileMask: '*_package.csv',
     };
@@ -54,10 +55,7 @@ describe('eHoldings', () => {
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
-        // EHoldingsPackagesSearch.bySelectionStatus(testData.selectedStatus);
-        // EHoldingsPackages.verifyOnlySelectedPackagesInResults();
         EHoldingsPackages.openPackage();
-        // EHoldingsPackages.openPackageWithExpectedTitels(testData.titlesNumber);
         EHoldingsPackageView.verifyDetailViewPage(testData.packageName, testData.selectedStatus);
         EHoldingsPackageView.openExportModal();
         EHoldingsPackageView.verifyExportModal(true);
@@ -81,6 +79,29 @@ describe('eHoldings', () => {
         EHoldingsPackageView.clickExportAllTitleFields();
         EHoldingsPackageView.verifyExportButtonInModalDisabled();
         EHoldingsPackageView.closeExportModalViaCancel();
+        EHoldingsPackages.titlesSearchFilter(...testData.titleFilterParams);
+        // wait for titles list to update
+        cy.wait(6000);
+        EHoldingsPackageView.verifyNumberOfTitlesLessThan(10000);
+        EHoldingsPackageView.openExportModal();
+        EHoldingsPackageView.verifyExportModal();
+        EHoldingsPackageView.clickExportSelectedPackageFields();
+        testData.packageExportFields.forEach((packageField) => {
+          EHoldingsPackageView.selectPackageFieldsToExport(packageField);
+        });
+        EHoldingsPackageView.verifySelectedPackageFieldsToExport(testData.packageExportFields);
+        EHoldingsPackageView.verifyExportButtonInModalDisabled(false);
+        EHoldingsPackageView.clickExportSelectedTitleFields();
+        testData.titleExportFields.forEach((titleField) => {
+          EHoldingsPackageView.selectTitleFieldsToExport(titleField);
+        });
+        EHoldingsPackageView.verifySelectedTitleFieldsToExport(testData.titleExportFields);
+        EHoldingsPackageView.verifyExportButtonInModalDisabled(false);
+        EHoldingsPackageView.clearSelectedFieldsToExport();
+        EHoldingsPackageView.verifySelectedPackageFieldsToExport([]);
+        EHoldingsPackageView.verifySelectedTitleFieldsToExport([]);
+        EHoldingsPackageView.verifyExportButtonInModalDisabled();
+
         // EHoldingsPackageView.selectPackageFieldsToExport(testData.secondFieldForExport);
         // EHoldingsPackageView.clickExportSelectedTitleFields();
 
