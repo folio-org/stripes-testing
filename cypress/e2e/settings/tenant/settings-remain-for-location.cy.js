@@ -83,6 +83,7 @@ describe('Settings: Tenant', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     testData.locations.forEach(({ id }) => {
       Locations.deleteViaApi({ id });
     });

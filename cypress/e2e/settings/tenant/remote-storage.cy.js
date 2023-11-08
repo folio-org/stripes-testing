@@ -53,6 +53,7 @@ describe('Remote Storage', () => {
   });
 
   after('Delete authorized user', () => {
+    cy.getAdminToken();
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Configurations.deleteViaApi(testData.configuration.id);

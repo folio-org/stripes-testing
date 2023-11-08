@@ -35,6 +35,7 @@ describe('data-import', () => {
       DataImport.verifyUploadState();
       // upload a marc file for creating of the new instance, holding and item
       DataImport.uploadFile(filePathForUpload, fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileForCreatingInstance);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
@@ -62,6 +63,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
@@ -92,6 +94,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreatingHoldings);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);

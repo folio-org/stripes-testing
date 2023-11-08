@@ -82,6 +82,7 @@ describe('Tags', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     testData.newTagsIds.forEach((id) => {
       cy.deleteTagApi(id);
     });

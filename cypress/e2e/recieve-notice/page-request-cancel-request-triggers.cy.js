@@ -158,6 +158,7 @@ describe('Request notice triggers', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
@@ -222,6 +223,7 @@ describe('Request notice triggers', () => {
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
+      cy.getAdminToken();
       CirculationRules.getViaApi().then((response) => {
         testData.baseRules = response.rulesAsText;
         testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);

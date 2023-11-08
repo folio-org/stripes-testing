@@ -233,6 +233,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
   DEWAY_DECIMAL: 'Dewey Decimal classification',
+  SUDOC: 'Superintendent of Documents classification',
 };
 
 export const EXPORT_TRANSFORMATION_NAMES = {

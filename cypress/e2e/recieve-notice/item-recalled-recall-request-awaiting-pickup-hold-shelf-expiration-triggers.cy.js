@@ -264,6 +264,7 @@ describe('Request notice triggers', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     Requests.getRequestApi({ query: `(item.barcode=="${instanceData.itemBarcode}")` }).then(
       (requestResponse) => {
@@ -365,6 +366,7 @@ describe('Request notice triggers', () => {
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
+      cy.getAdminToken();
       CirculationRules.getViaApi().then((response) => {
         testData.baseRules = response.rulesAsText;
         testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);

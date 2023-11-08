@@ -260,6 +260,24 @@ export default {
     );
   },
 
+  openInstanceInInventoryByStatus: (itemStatus) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ content: itemStatus, columnIndex: 3 }))
+        .perform((element) => {
+          const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+          cy.do(
+            resultsList
+              .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+              .find(MultiColumnListCell({ columnIndex: 3 }))
+              .find(Link(itemStatus))
+              .click(),
+          );
+        }),
+    );
+  },
+
   openHoldingsInInventory: (itemStatus, rowNumber = 0) => {
     cy.do(
       resultsList
@@ -308,6 +326,23 @@ export default {
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();
+  },
+
+  openJsonScreenByStatus: (importStatus, title) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ content: importStatus, columnIndex: 2 }))
+        .perform((element) => {
+          const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+          cy.get('#search-results-list')
+            .eq(rowNumber)
+            .find('*[class^="mclCell"]')
+            .contains(title)
+            .invoke('removeAttr', 'target')
+            .click();
+        }),
+    );
   },
 
   filterRecordsWithError: (index) => {

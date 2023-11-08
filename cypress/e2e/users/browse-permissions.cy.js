@@ -31,6 +31,7 @@ describe('Users', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     [user, testUser_C350673, testUser_C350674].forEach((usr) => {
       Users.deleteViaApi(usr.userId);
     });

@@ -53,6 +53,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       cy.deleteHoldingRecordViaApi(item.holdingUUID);
       InventoryInstance.deleteInstanceViaApi(item.instanceId);
       Users.deleteViaApi(user.userId);
