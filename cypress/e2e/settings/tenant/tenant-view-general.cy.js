@@ -8,7 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import SSOSettings from '../../../support/fragments/settings/tenant/general/ssoSettings';
 import Localication from '../../../support/fragments/settings/tenant/general/localication';
 
-describe('Permissions -> Tenant', () => {
+describe('Settings: Tenant', () => {
   const testData = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
     newAddress: {

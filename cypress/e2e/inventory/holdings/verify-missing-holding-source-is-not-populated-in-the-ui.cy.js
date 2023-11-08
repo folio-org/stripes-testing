@@ -59,6 +59,7 @@ describe('Holdings', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
     Users.deleteViaApi(testData.user.userId);
   });
@@ -69,7 +70,7 @@ describe('Holdings', () => {
     () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.searchHoldingsByHRID(testData.item.holdingHRID);
-      InventoryInstance.openHoldingView();
+      InventorySearchAndFilter.selectViewHoldings();
       HoldingsRecordView.checkSource('-');
     },
   );

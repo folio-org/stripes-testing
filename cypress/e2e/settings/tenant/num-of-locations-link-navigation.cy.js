@@ -9,7 +9,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Settings', () => {
+describe('Settings: Tenant', () => {
   const testData = {
     servicePoint: {},
     user: {},

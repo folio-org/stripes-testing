@@ -5,7 +5,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 
-describe('Mapping profile  - setup', () => {
+describe('settings: data-export', () => {
   let user;
   const searchText = 'mapping profile';
   const searchWithoutResults = '00000000';

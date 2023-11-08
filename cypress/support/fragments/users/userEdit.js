@@ -72,6 +72,9 @@ export default {
     cy.do([
       userDetailsPane.find(actionsButton).click(),
       editButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       permissionsAccordion.clickHeader(),
       addPermissionsButton.click(),
     ]);
