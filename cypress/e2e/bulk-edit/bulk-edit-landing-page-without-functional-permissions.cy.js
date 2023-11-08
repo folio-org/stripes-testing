@@ -27,6 +27,7 @@ describe('bulk-edit', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
@@ -40,7 +41,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyPanesBeforeImport();
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.verifySetCriteriaPaneItems();
-      BulkEditSearchPane.verifyRecordTypesAccordionExtendedEmpty();
+      BulkEditSearchPane.verifyRecordTypesEmpty();
       BulkEditSearchPane.verifyRecordIdentifierDisabled();
       BulkEditSearchPane.verifyDragNDropUpdateUsersArea();
       BulkEditSearchPane.isDragAndDropAreaDisabled(true);
