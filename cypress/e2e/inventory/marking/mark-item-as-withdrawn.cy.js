@@ -81,10 +81,12 @@ describe('inventory', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       CirculationRules.deleteRuleViaApi(addedCirculationRule);
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       createdItems.forEach((item) => {
         cy.deleteItemViaApi(item.itemId);
       });

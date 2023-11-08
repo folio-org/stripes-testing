@@ -186,12 +186,6 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
                     });
                   },
                 );
-
-                cy.login(username, password, {
-                  path: AppPaths.getClosedLoansPath(userId),
-                  waiter: LoanDetails.waitLoading,
-                });
-
                 UsersOwners.createViaApi({
                   ...newOwnerData,
                   servicePointOwner,
@@ -202,6 +196,10 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
                     ownerId: newOwnerData.id,
                   });
                 });
+                cy.login(username, password, {
+                  path: AppPaths.getClosedLoansPath(userId),
+                  waiter: LoanDetails.waitLoading,
+                });
               });
           });
         });
@@ -209,6 +207,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.deleteFeesFinesTypeApi(Cypress.env('feesFinesType').id);
     UsersOwners.deleteViaApi(testData.userOwnerId);
     cy.wrap(testData.itemIds).each((item) => {

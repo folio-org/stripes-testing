@@ -20,6 +20,7 @@ import {
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
+import SelectUser from '../check-out-actions/selectUser';
 
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const userSearch = TextField('User search');
@@ -107,6 +108,15 @@ export default {
     });
 
     cy.do(Modal().find(saveAndCloseBtn).click());
+  },
+
+  addProxySponsor(users, type = 'sponsor') {
+    cy.do(Button({ id: 'accordion-toggle-button-proxy' }).click());
+    cy.wrap(users).each((username) => {
+      cy.do(Button({ id: `clickable-plugin-find-${type}` }).click());
+      SelectUser.searchUser(username);
+      SelectUser.selectUserFromList(username);
+    });
   },
 
   verifySaveAndColseIsDisabled: (status) => {

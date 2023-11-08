@@ -176,6 +176,7 @@ describe('Financial Transactions Detail Report', () => {
   after(
     'Delete owner, transfer account, feeFineType, paymentMethod, waiveReason, refundReason, user',
     () => {
+      cy.getAdminToken();
       TransferAccounts.deleteViaApi(transferAccount.id);
       ManualCharges.deleteViaApi(feeFineType.id);
       WaiveReasons.deleteViaApi(waiveReason.id);

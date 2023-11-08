@@ -42,4 +42,17 @@ export default {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());
   },
+  verifyLocationSetupItems() {
+    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach((item) => {
+      cy.expect(NavListItem(item).exists());
+    });
+  },
+  verifyNoGeneralItems() {
+    [TENANTS.ADDRESSES, TENANTS.LANGUAGE_AND_LOCALIZATION, TENANTS.PREFERRED_PLUGINS, TENANTS.SSO_SETTINGS, TENANTS.SERVICE_POINTS].forEach((item) => {
+      cy.expect(NavListItem(item).absent());
+    });
+  },
+  verifyPageTitle(title) {
+    cy.title().should('eq', title);
+  },
 };

@@ -45,6 +45,7 @@ describe('eHoldings', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
     EHoldingsPackages.deletePackageViaAPI(testData.dataForFirstPackage.packageName);
     EHoldingsPackages.deletePackageViaAPI(testData.dataForSecondPackage.packageName);

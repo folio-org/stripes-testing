@@ -32,7 +32,6 @@ describe('data-import', () => {
     const fileExtensionName = '.dat';
 
     before('create test data', () => {
-      cy.getAdminToken();
       NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
         (mappingProfileResponse) => {
           NewActionProfile.createActionProfileViaApi(
@@ -62,6 +61,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       // delete generated profiles
       JobProfiles.deleteJobProfile(jobProfileName);
       MatchProfiles.deleteMatchProfile(matchProfileName);

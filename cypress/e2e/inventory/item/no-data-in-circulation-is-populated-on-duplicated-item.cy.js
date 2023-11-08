@@ -93,6 +93,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       CheckInActions.checkinItemViaApi({
         itemBarcode: itemData.barcode,
         servicePointId: servicePoint.id,

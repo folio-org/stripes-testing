@@ -53,6 +53,7 @@ describe('ui-finance: Ledgers', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     cy.deleteLedgerApi(ledger.id);
     Users.deleteViaApi(user.userId);
   });

@@ -41,6 +41,7 @@ describe('settings: data-export', () => {
   });
 
   after('delete jobs and user', () => {
+    cy.getAdminToken();
     ExportJobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` }).then(
       (response) => {
         ExportJobProfiles.deleteJobProfileViaApi(response.id);

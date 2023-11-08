@@ -44,6 +44,7 @@ describe('Manual Fees/Fines', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UsersOwners.deleteViaApi(testData.ownerId);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);

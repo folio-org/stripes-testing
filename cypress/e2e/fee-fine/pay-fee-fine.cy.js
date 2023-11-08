@@ -87,6 +87,7 @@ describe('Pay Fees/Fines', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     ManualCharges.deleteViaApi(feeFineType.id);
     PaymentMethods.deleteViaApi(paymentMethod.id);
     NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);

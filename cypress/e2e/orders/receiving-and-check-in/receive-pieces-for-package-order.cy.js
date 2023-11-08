@@ -80,10 +80,9 @@ describe('Orders: Receiving and Check-in', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
-
     Organizations.deleteOrganizationViaApi(organization.id);
-
     Users.deleteViaApi(user.userId);
   });
 
