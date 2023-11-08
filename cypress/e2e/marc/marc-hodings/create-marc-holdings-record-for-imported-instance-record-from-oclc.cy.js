@@ -1,5 +1,4 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { LOCATION_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';

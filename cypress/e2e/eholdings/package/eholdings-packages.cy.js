@@ -168,7 +168,7 @@ describe('eHoldings', () => {
           });
           EHoldingSearch.switchToPackages();
           EHoldingsPackagesSearch.byName();
-          EHoldingsPackages.openPackage().then((selectedPackageName) => {
+          EHoldingsPackages.openPackage().then(() => {
             // existing test data clearing
             EHoldingsPackage.removeExistingTags();
             const addedTag = EHoldingsPackage.addTag();
