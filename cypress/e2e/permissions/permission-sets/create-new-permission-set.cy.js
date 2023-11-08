@@ -9,7 +9,7 @@ describe('Permission Sets', () => {
   const newPermissionSet = {
     name: getTestEntityValue('NewPermissionSet'),
     description: getTestEntityValue('NewPermissionSetDescription'),
-    permissions: [permissions.uiUsersView.gui],
+    permissions: [permissions.uiRequestsAll.gui],
   };
 
   before('Preconditions', () => {

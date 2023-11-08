@@ -110,6 +110,7 @@ describe('Tags', () => {
       newTags[newTags.indexOf('"tags"')] = '\\"tags\\"';
       newTags[newTags.indexOf('tag\\hmm')] = 'tag\\\\hmm';
       newTags.forEach((tag) => {
+        cy.getAdminToken();
         cy.getTagsApi({ query: `label=="${tag}"` }).then(({ body }) => {
           testData.newTagsIds.push(body.tags[0].id);
         });
