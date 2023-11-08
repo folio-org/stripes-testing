@@ -8,6 +8,7 @@ import {
   TextArea,
   MultiColumnListHeader,
   Callout,
+  TableRow,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -126,6 +127,10 @@ export default {
 
   changeField: (tag, content) => {
     cy.do([QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(content)]);
+  },
+
+  verifyHighlightedText: (tag, text) => {
+    cy.expect(rootSection.find(TableRow({ innerText: including(tag), mark: text })).exists());
   },
   checkNotDeletableTags: (tag) => {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).absent());

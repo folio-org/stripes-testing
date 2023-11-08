@@ -5,4 +5,5 @@ export default HTML.extend('TableRow')
   .filters({
     index: (el) => [...el.parentElement.children].indexOf(el),
     innerText: (el) => el.innerText.replaceAll('\t', '  ').trim(),
+    mark: (el) => el.querySelector('mark').textContent,
   });
