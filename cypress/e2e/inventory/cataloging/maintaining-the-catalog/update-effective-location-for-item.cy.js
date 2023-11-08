@@ -63,6 +63,10 @@ describe('inventory', () => {
             ],
           }).then((specialInstanceIds) => {
             testInstanceId = specialInstanceIds;
+
+            cy.getInstanceById(specialInstanceIds.instanceId).then((res) => {
+              instanceHrid = res.hrid;
+            });
           });
         });
 
@@ -74,14 +78,6 @@ describe('inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
-          InventorySearchAndFilter.searchByParameter(
-            'Keyword (title, contributor, identifier, HRID, UUID)',
-            itemData.instanceTitle,
-          );
-          InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-            instanceHrid = initialInstanceHrId;
-          });
-          InventorySearchAndFilter.resetAll();
         },
       );
     });
@@ -105,7 +101,7 @@ describe('inventory', () => {
     });
 
     it(
-      'C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet) (prokopovych)',
+      'C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
@@ -114,7 +110,6 @@ describe('inventory', () => {
         HoldingsRecordView.edit();
         HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
         HoldingsRecordEdit.saveAndClose();
-        HoldingsRecordView.waitLoading();
         HoldingsRecordView.close();
         InventoryInstance.openHoldings([anotherPermanentLocation]);
         InventorySearchAndFilter.switchToItem();
