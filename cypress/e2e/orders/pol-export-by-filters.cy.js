@@ -103,6 +103,7 @@ describe('Orders: Export', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

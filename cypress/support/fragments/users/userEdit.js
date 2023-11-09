@@ -20,6 +20,7 @@ import {
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
+import SelectUser from '../check-out-actions/selectUser';
 
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
 const userSearch = TextField('User search');
@@ -71,6 +72,9 @@ export default {
     cy.do([
       userDetailsPane.find(actionsButton).click(),
       editButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
       permissionsAccordion.clickHeader(),
       addPermissionsButton.click(),
     ]);
@@ -107,6 +111,15 @@ export default {
     });
 
     cy.do(Modal().find(saveAndCloseBtn).click());
+  },
+
+  addProxySponsor(users, type = 'sponsor') {
+    cy.do(Button({ id: 'accordion-toggle-button-proxy' }).click());
+    cy.wrap(users).each((username) => {
+      cy.do(Button({ id: `clickable-plugin-find-${type}` }).click());
+      SelectUser.searchUser(username);
+      SelectUser.selectUserFromList(username);
+    });
   },
 
   verifySaveAndColseIsDisabled: (status) => {
@@ -307,6 +320,13 @@ export default {
   verifyUserPermissionsAccordion() {
     cy.expect(permissionsAccordion.exists());
     cy.expect(permissionsAccordion.has({ open: false }));
+  },
+
+  verifyPermissionsNotExistInPermissionsAccordion(permissions) {
+    cy.do(permissionsAccordion.clickHeader());
+    permissions.forEach((permission) => {
+      cy.expect(permissionsAccordion.find(HTML(including(permission))).absent());
+    });
   },
 
   permissionsCount() {

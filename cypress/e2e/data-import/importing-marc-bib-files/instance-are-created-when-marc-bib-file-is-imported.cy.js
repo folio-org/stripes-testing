@@ -19,7 +19,6 @@ describe('data-import', () => {
     const title = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25';
 
     before('created test data', () => {
-      cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
@@ -28,12 +27,14 @@ describe('data-import', () => {
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile(filePathToUpload, fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(jobProfileToRun);
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);

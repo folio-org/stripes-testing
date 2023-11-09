@@ -28,6 +28,7 @@ describe('MARC -> MARC Authority', () => {
   });
 
   after('Deleting user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
   });
 

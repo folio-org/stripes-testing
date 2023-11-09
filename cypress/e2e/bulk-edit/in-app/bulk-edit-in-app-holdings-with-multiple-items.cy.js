@@ -35,10 +35,6 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
@@ -64,10 +60,15 @@ describe('bulk-edit', () => {
             temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
           });
         });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);

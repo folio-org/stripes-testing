@@ -59,6 +59,7 @@ describe('Loan date and time', () => {
   });
 
   after('Delete all data', () => {
+    cy.getAdminToken();
     CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.servicePoint.id,

@@ -67,6 +67,7 @@ describe('Check out - Notes', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(testData.userId, [instanceData.servicePoint.id]);
     ServicePoints.deleteViaApi(instanceData.servicePoint.id);
     InventoryInstances.deleteInstanceViaApi({

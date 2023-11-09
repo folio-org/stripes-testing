@@ -144,6 +144,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
   });
 
   after(() => {
+    cy.getAdminToken();
     limitTestItems.forEach((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,

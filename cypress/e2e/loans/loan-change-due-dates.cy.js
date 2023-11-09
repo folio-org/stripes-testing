@@ -79,6 +79,7 @@ describe('change loan due dates', () => {
   });
 
   after('Delete all data', () => {
+    cy.getAdminToken();
     CheckinActions.checkinItemViaApi({
       itemBarcode: folioInstances[0].barcodes[0],
       servicePointId,

@@ -123,6 +123,7 @@ describe('data-import', () => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {
               DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+              JobProfiles.waitFileIsUploaded();
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
@@ -235,6 +236,7 @@ describe('data-import', () => {
         // upload the updated MARC file with 999 subfields and without 100 field
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(nameForUpdatedMarcBibFile, nameForUpdatedMarcBibFile);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();

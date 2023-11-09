@@ -39,6 +39,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
     Users.deleteViaApi(user.userId);
@@ -46,7 +47,6 @@ describe('Bulk Edit - Logs', () => {
       userUUIDsFileName,
       `*${matchedRecordsFileName}`,
       previewOfProposedChangesFileName.first,
-      previewOfProposedChangesFileName.second,
       updatedRecordsFileName,
     );
   });

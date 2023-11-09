@@ -27,10 +27,6 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceMARCSourceViaApi(
           item.instanceName,
@@ -43,10 +39,15 @@ describe('bulk-edit', () => {
           uuid = holdings[0].id;
           FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
         });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);

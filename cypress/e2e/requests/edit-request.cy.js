@@ -33,6 +33,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     EditRequest.updateRequestApi({
       ...requestData,
       status: 'Closed - Cancelled',
