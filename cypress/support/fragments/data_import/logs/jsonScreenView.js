@@ -34,7 +34,7 @@ export default {
   },
 
   openOrderTab: () => {
-    cy.do(Button('Order*').click());
+    cy.get('div[class^="buttonGroup-"]').find('button[data-test-logs-filter-option="5"]').click();
   },
 
   verifyContentInTab: (value) => {
