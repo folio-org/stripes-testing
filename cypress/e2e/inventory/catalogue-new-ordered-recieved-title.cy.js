@@ -24,7 +24,7 @@ import InventoryItems from '../../support/fragments/inventory/item/inventoryItem
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('inventory', () => {
-  describe('Cataloging', () => {
+  describe('Cataloging -> Creating new records', () => {
     let effectiveLocation;
     let orderNumber;
     let materialTypeId;

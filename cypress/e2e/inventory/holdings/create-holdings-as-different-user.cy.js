@@ -50,7 +50,7 @@ describe('inventory', () => {
     });
 
     it(
-      'C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)',
+      'C1294: Create a Holdings record as another user than the one that created the Instance (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
