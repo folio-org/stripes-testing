@@ -215,7 +215,7 @@ describe('MARC Authority -> Edit Authority record', () => {
         MarcAuthority.addNewField(10, field[0], field[3], field[1], field[2]);
       });
       QuickMarcEditor.pressSaveAndClose();
-
+      cy.getAdminToken();
       protectedMARCFields.forEach((marcFieldProtectionRule) => {
         MarcFieldProtection.createViaApi({
           indicator1: marcFieldProtectionRule[1],

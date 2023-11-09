@@ -19,7 +19,7 @@ const jobProfileName = getTestEntityValue('jobProfile');
 const jobProfileNewName = getTestEntityValue('jobProfileNew');
 const secondNewJobProfileCalloutMessage = `Job profile ${jobProfileNewName} has been successfully created`;
 
-describe('Job profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -27,16 +27,16 @@ describe('Job profile - setup', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
-      });
       ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(mappingProfileName).then(
         (response) => {
           fieldMappingProfileId = response.body.id;
           ExportNewJobProfile.createNewJobProfileViaApi(jobProfileName, response.body.id);
         },
       );
+      cy.login(user.username, user.password, {
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
+      });
     });
   });
 

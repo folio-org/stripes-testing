@@ -37,10 +37,6 @@ describe('bulk-edit', () => {
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
@@ -61,6 +57,10 @@ describe('bulk-edit', () => {
             FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
           },
         );
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 

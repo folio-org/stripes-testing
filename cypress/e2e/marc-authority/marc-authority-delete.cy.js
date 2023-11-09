@@ -18,6 +18,7 @@ describe('MARC Authority Delete', () => {
   const testData = {
     uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`,
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+    fileName2: `testMarcFile2.${getRandomPostfix()}.mrc`,
     record: 'Angelou, Maya. And still I rise C357549',
     searchOption: 'Name-title',
   };
@@ -76,9 +77,9 @@ describe('MARC Authority Delete', () => {
     'C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+      DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName2);
       JobProfiles.waitFileIsUploaded();
-      DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
+      DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName2);
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.switchToBrowse();
       MarcAuthorityBrowse.searchBy(testData.searchOption, testData.record);

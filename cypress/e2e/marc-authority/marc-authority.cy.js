@@ -42,6 +42,7 @@ describe('Importing MARC Authority files', () => {
     acceptedType: 'MARC',
   };
   const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+  const updatedfileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
   let createdAuthorityID;
 
   before('Creating data', () => {
@@ -98,14 +99,14 @@ describe('Importing MARC Authority files', () => {
     { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile('test-auth-file.mrc', fileName);
+      DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
       JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(createdJobProfile.profileName);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
+      JobProfiles.waitFileIsImported(updatedfileName);
       Logs.checkStatusOfJobProfile('Completed');
-      Logs.openFileDetails(fileName);
+      Logs.openFileDetails(updatedfileName);
       Logs.goToTitleLink('Created');
       MarcAuthority.contains('MARC');
     },

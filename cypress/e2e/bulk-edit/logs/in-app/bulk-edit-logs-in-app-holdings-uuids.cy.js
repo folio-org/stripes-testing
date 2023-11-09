@@ -32,10 +32,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
 
       const instanceId = InventoryInstances.createInstanceViaApi(
         item.instanceName,
@@ -47,6 +43,10 @@ describe('Bulk Edit - Logs', () => {
       }).then((holdings) => {
         uuid = holdings[0].id;
         FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
+      });
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
     });
   });

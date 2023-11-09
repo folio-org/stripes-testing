@@ -7,7 +7,7 @@ import { ServicePoints } from '../../../support/fragments/settings/tenant';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-describe('Tenant Settings', () => {
+describe('Settings: Tenant', () => {
   const testData = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
     institutions: [],

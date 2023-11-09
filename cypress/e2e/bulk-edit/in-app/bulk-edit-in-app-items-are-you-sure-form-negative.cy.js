@@ -29,10 +29,6 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditDeleteItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.firstBarcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.firstBarcode}"` }).then(
           (res) => {
@@ -54,6 +50,10 @@ describe('bulk-edit', () => {
           `cypress/fixtures/${itemBarcodesFileName}`,
           `${item.firstBarcode}\r\n${item.secondBarcode}`,
         );
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 

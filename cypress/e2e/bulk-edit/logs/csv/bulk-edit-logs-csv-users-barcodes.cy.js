@@ -57,7 +57,6 @@ describe('Bulk Edit - Logs', () => {
       invalidAndValidUserBarcodesFileName,
       `*${matchedRecordsFileName}`,
       previewOfProposedChangesFileName.first,
-      previewOfProposedChangesFileName.second,
       updatedRecordsFileName,
       errorsFromCommittingFileName,
       errorsFromMatchingFileName,

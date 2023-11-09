@@ -16,7 +16,7 @@ const fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
 const newTransformationCalloutMessage = '2 transformations have been successfully added';
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
 
-describe('Mapping profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,

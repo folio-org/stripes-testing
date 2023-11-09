@@ -3,7 +3,6 @@ import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
@@ -59,6 +58,7 @@ describe('Holdings', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
     Users.deleteViaApi(testData.user.userId);
   });
@@ -69,7 +69,7 @@ describe('Holdings', () => {
     () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.searchHoldingsByHRID(testData.item.holdingHRID);
-      InventoryInstance.openHoldingView();
+      InventorySearchAndFilter.selectViewHoldings();
       HoldingsRecordView.checkSource('-');
     },
   );

@@ -25,6 +25,9 @@ export default {
       cy.expect(actionsButtons[option].exists());
     });
   },
+
+  verifyActionsButtonEnabled: () => cy.do(actionsButtonInSearchResultsPane.has({ disabled: false })),
+
   openFinancialTransactionDetailReportModal: () => {
     cy.do([
       actionsButtonInSearchResultsPane.click(),

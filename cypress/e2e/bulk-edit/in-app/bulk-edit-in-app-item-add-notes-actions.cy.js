@@ -38,12 +38,12 @@ describe('bulk-edit', () => {
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
       });
     });
 

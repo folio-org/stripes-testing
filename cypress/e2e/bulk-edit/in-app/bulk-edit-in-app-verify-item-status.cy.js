@@ -23,10 +23,6 @@ describe('bulk-edit', () => {
         Permissions.bulkEditView.gui,
       ]).then((userProperties) => {
         userData = userProperties;
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
         InventoryInstances.createInstanceViaApi(
           instanceData.instanceName,
           instanceData.itemBarcode,
@@ -35,6 +31,10 @@ describe('bulk-edit', () => {
           `cypress/fixtures/${itemBarcodesFileName}`,
           instanceData.itemBarcode,
         );
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 

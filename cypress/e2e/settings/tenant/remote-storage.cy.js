@@ -7,7 +7,7 @@ import TenantPane from '../../../support/fragments/settings/tenant/tenantPane';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
 
-describe('Remote Storage', () => {
+describe('Settings: Tenant', () => {
   let locationName;
   const testData = {
     servicePoint: ServicePoints.getDefaultServicePoint(),

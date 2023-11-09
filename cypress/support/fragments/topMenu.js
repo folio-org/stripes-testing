@@ -28,6 +28,8 @@ const bulkEditPath = '/bulk-edit';
 const exportManagerPath = '/export-manager';
 const exportManagerOrganizationsPath = 'export-manager/edi-jobs';
 const customFieldsPath = '/settings/users/custom-fields';
+const transferCriteriaPath = 'settings/users/transfer-criteria';
+const settingsUserPath = 'settings/users';
 const notesPath = '/settings/notes/general';
 const permissionSetPath = '/settings/users/perms?layer=add';
 const lostItemsRequiringActualCost = '/users/lost-items';
@@ -65,6 +67,8 @@ export default {
   customFieldsPath,
   notesPath,
   permissionSetPath,
+  transferCriteriaPath,
+  settingsUserPath,
   lostItemsRequiringActualCost,
 
   openCheckInApp: () => {

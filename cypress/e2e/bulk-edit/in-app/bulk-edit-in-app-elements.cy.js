@@ -26,13 +26,11 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-
         FileManager.createFile(
           `cypress/fixtures/${invalidItemBarcodesFileName}`,
           `${item.itemBarcode}\r\n${invalidBarcode}`,

@@ -121,6 +121,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     for (let i = 0; i < 2; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
@@ -188,22 +189,21 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       );
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.successMessage);
+      InventoryInstance.editMarcBibliographicRecord();
       InventoryInstance.getId().then((id) => {
         createdAuthorityIDs.push(id);
-      });
-
-      InventoryInstance.editMarcBibliographicRecord();
-      newFields.forEach((newField) => {
-        QuickMarcEditor.verifyTagFieldAfterLinking(
-          newField.rowIndex,
-          newField.tag,
-          '\\',
-          '\\',
-          `${newField.boxFourth}`,
-          `${newField.boxFifthAfterSave}`,
-          `${newField.boxSixth}`,
-          `${newField.boxSeventhAfterSave}`,
-        );
+        newFields.forEach((newField) => {
+          QuickMarcEditor.verifyTagFieldAfterLinking(
+            newField.rowIndex,
+            newField.tag,
+            '\\',
+            '\\',
+            `${newField.boxFourth}`,
+            `${newField.boxFifthAfterSave}`,
+            `${newField.boxSixth}`,
+            `${newField.boxSeventhAfterSave}`,
+          );
+        });
       });
     },
   );

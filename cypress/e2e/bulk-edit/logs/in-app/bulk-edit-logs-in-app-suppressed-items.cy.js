@@ -35,10 +35,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
       InventoryInstances.createInstanceViaApi(
         inventoryEntity.instanceName,
         inventoryEntity.itemBarcode,
@@ -54,6 +50,10 @@ describe('Bulk Edit - Logs', () => {
         `cypress/fixtures/${validItemBarcodesFileName}`,
         inventoryEntity.itemBarcode,
       );
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
     });
   });
 
@@ -89,7 +89,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
       BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', false);
       BulkEditActions.downloadChangedCSV();
 

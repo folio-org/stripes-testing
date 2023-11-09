@@ -45,7 +45,6 @@ describe('Bulk Edit - Logs', () => {
       userUUIDsFileName,
       `*${matchedRecordsFileName}`,
       previewOfProposedChangesFileName.first,
-      previewOfProposedChangesFileName.second,
       updatedRecordsFileName,
     );
   });

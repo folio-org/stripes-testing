@@ -224,13 +224,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     });
   });
 
-  beforeEach('Sign in to application', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, {
-      path: TopMenu.inventoryPath,
-      waiter: InventoryInstances.waitContentLoading,
-    });
-  });
-
   after('Deleting created user and data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
@@ -245,12 +238,18 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     'C387538 All linkable fields are linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      InventoryInstance.searchByTitle(createdRecordsIDs[0]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
+      cy.getAdminToken();
       linkableFields.forEach((tag) => {
         QuickMarcEditor.setRulesForField(tag, true);
       });
+
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      InventoryInstance.searchByTitle(createdRecordsIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.editMarcBibliographicRecord();
       fields.forEach((matchs) => {
         QuickMarcEditor.verifyTagWithNaturalIdExistance(
           matchs.rowIndex,
@@ -288,12 +287,18 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     'C388500 All linkable fields are NOT linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      InventoryInstance.searchByTitle(createdRecordsIDs[1]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
+      cy.getAdminToken();
       linkableFields.forEach((tag) => {
         QuickMarcEditor.setRulesForField(tag, true);
       });
+
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+      InventoryInstance.searchByTitle(createdRecordsIDs[1]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout(testData.errorCalloutAfterLinking);

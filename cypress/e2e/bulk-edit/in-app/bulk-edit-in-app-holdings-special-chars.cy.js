@@ -26,10 +26,6 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           inventoryEntity.instanceName,
@@ -44,6 +40,10 @@ describe('bulk-edit', () => {
             `cypress/fixtures/${validHoldingHRIDsFileName}`,
             inventoryEntity.holdingHRID,
           );
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
       });
     });

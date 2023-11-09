@@ -181,6 +181,10 @@ export default {
     cy.do(Button('Location look-up').click());
   },
 
+  locationLookupExists() {
+    cy.expect(Button('Location look-up').exists());
+  },
+
   verifyLocationLookupModal() {
     cy.expect([
       locationLookupModal.exists(),
