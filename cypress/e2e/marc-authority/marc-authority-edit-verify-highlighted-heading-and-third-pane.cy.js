@@ -86,10 +86,7 @@ describe('Edit Authority record', () => {
         MarcAuthority.edit();
         MarcAuthority.changeField(tag, `$a ${content}`);
         MarcAuthority.clicksaveAndCloseButton();
-        MarcAuthority.verifyHighlightedText(
-          testData.editedFields[0].tag,
-          testData.editedFields[0].content,
-        );
+        MarcAuthorities.checkRecordDetailPageMarkedValue(testData.editedFields[0].content);
         MarcAuthority.contains(content);
       });
     },

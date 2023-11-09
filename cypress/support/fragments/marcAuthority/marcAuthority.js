@@ -129,9 +129,6 @@ export default {
     cy.do([QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(content)]);
   },
 
-  verifyHighlightedText: (tag, text) => {
-    cy.expect(rootSection.find(TableRow({ innerText: including(tag), mark: text })).exists());
-  },
   checkNotDeletableTags: (tag) => {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).absent());
   },
