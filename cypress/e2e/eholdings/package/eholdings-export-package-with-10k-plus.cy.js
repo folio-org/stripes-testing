@@ -16,15 +16,14 @@ describe('eHoldings', () => {
     const testData = {
       packageName: 'VLeBooks',
       selectedStatus: 'selected',
-      // titlesNumber: '0',
       packageExportFields: ['Holdings status', 'Package Id'],
       titleExportFields: ['Alternate title(s)', 'Description'],
-      titleFilterParams: ['Title', 'France', 'Not selected'],
-      // fileName: `C356417autoTestFile${getRandomPostfix()}.csv`,
-      // fileMask: '*_package.csv',
+      titleFilterParams: ['Title', 'Francaise e', 'Not selected'],
+      fileName: `C367972exportCSVFile${getRandomPostfix()}.csv`,
+      fileMask: '*_package.csv',
     };
-    // const calloutMessage =
-    //   'This export may take several minutes to complete. When finished, it will be available in the Export manager app. NOTE: Maximum number of titles in a package you can export is 10000. Filter your search within titles list to not exceed the limit or only choose to export package details only. This export does not include information available under Usage & analysis accordion (only available to Usage Consolidation subscribers). Please use the Export titles option available under that accordion.';
+    const calloutMessage =
+      'is in progress and will be available on the Export manager app. The export may take several minutes to complete.';
 
     before('Creating user, logging in', () => {
       cy.createTempUser([
@@ -101,32 +100,38 @@ describe('eHoldings', () => {
         EHoldingsPackageView.verifySelectedPackageFieldsToExport([]);
         EHoldingsPackageView.verifySelectedTitleFieldsToExport([]);
         EHoldingsPackageView.verifyExportButtonInModalDisabled();
+        EHoldingsPackageView.clickExportAllPackageFields();
+        EHoldingsPackageView.clickExportAllTitleFields();
+        EHoldingsPackageView.verifyExportButtonInModalDisabled(false);
 
-        // EHoldingsPackageView.selectPackageFieldsToExport(testData.secondFieldForExport);
-        // EHoldingsPackageView.clickExportSelectedTitleFields();
-
-        // EHoldingsPackageView.export();
-        // EHoldingsPackageView.verifyPackageDetailViewIsOpened(
-        //   testData.packageName,
-        //   testData.titlesNumber,
-        //   testData.selectedStatus,
-        // );
-        // EHoldingsPackageView.verifyCalloutMessage(calloutMessage);
-        // EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {
-        //   const jobId = id;
-
-        //   cy.visit(TopMenu.exportManagerPath);
-        //   ExportManagerSearchPane.searchByEHoldings();
-        //   ExportManagerSearchPane.verifyResult(jobId);
-        //   ExportManagerSearchPane.exportJob(jobId);
-        //   ExportFile.downloadCSVFile(testData.fileName, testData.fileMask);
-        //   FileManager.verifyFile(
-        //     ExportManagerSearchPane.verifyExportedFileName,
-        //     testData.fileMask,
-        //     ExportManagerSearchPane.verifyContentOfExportFile,
-        //     ['Package Holdings Status', testData.selectedStatus],
-        //   );
-        // });
+        EHoldingsPackageView.export();
+        EHoldingsPackageView.verifyPackageName(testData.packageName);
+        EHoldingsPackageView.verifyCalloutMessage(calloutMessage);
+        EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {
+          const jobId = id;
+          cy.visit(TopMenu.exportManagerPath);
+          ExportManagerSearchPane.waitLoading();
+          // wait until export finished
+          cy.wait(10000);
+          ExportManagerSearchPane.searchByEHoldings();
+          ExportManagerSearchPane.verifyResult(jobId);
+          ExportManagerSearchPane.exportJob(jobId);
+          ExportFile.downloadCSVFile(testData.fileName, testData.fileMask);
+          FileManager.verifyFile(
+            ExportManagerSearchPane.verifyExportedFileName,
+            testData.fileMask,
+            ExportManagerSearchPane.verifyContentOfExportFile,
+            [
+              'Package Holdings Status',
+              testData.selectedStatus,
+              'Package Name',
+              testData.packageName,
+              'Title Name',
+              'Française',
+            ],
+          );
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+        });
       },
     );
   });
