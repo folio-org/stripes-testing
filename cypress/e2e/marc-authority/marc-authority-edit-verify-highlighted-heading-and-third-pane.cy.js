@@ -91,4 +91,10 @@ describe('Edit Authority record', () => {
       });
     },
   );
+
+  it(
+    'C350946 Verify that third pane still opened after editing first search result (spitfire) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    () => {},
+  );
 });
