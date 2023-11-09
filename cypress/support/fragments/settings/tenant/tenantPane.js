@@ -16,15 +16,6 @@ export const TENANTS = {
   LOCATIONS: 'Locations',
 };
 
-const tenantSections = {
-  [TENANTS.ADDRESSES]: Addresses,
-  [TENANTS.LANGUAGE_AND_LOCALIZATION]: Localization,
-  [TENANTS.INSTITUTIONS]: Institutions,
-  [TENANTS.CAMPUSES]: Campuses,
-  [TENANTS.LIBRARIES]: Libraries,
-  [TENANTS.LOCATIONS]: Locations,
-};
-
 export default {
   waitLoading(section = 'Tenant') {
     cy.expect(Pane(section).exists());

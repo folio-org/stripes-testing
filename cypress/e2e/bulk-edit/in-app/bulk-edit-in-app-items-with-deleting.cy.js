@@ -8,7 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/ServicePoints';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../../support/fragments/users/userEdit';
 
 let user;

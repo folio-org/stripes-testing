@@ -27,7 +27,7 @@ describe('remote-storage-configuration', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
-  
+
   it(
     'C163919 Configure remote storage (firebird)',
     { tags: [TestTypes.smoke, DevTeams.firebird] },
