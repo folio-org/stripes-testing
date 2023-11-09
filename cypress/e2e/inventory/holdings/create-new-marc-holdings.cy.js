@@ -221,7 +221,7 @@ describe('Create holding records with MARC source', () => {
     'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      InventoryInstance.searchByTitle(recordIDs[2]);
+      InventoryInstance.searchByTitle(recordIDs[0]);
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.waitLoading();
       QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);
