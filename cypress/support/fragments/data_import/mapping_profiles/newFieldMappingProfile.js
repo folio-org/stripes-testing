@@ -412,11 +412,7 @@ export default {
       existingRecordType.choose(profile.typeValue),
     ]);
     if (profile.description) {
-      cy.do(
-        Accordion('Summary')
-          .find(TextArea({ name: 'profile.description' }))
-          .fillIn(profile.description),
-      );
+      cy.do(Accordion({ id: 'summary' }).find(TextArea('Description')).fillIn(profile.description));
     }
     // Invoice information section
     if (profile.batchGroup) {
