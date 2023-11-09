@@ -38,10 +38,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
 
       item.instanceId = InventoryInstances.createInstanceViaApi(
         item.instanceName,
@@ -68,10 +64,15 @@ describe('Bulk Edit - Logs', () => {
           FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
         },
       );
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
@@ -103,7 +104,7 @@ describe('Bulk Edit - Logs', () => {
 
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
       BulkEditSearchPane.verifyChangesUnderColumns(
         'Suppress from discovery',
         suppressFromDiscovery,

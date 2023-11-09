@@ -32,10 +32,6 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         inventoryEntity.instanceId = InventoryInstances.createInstanceViaApi(
           inventoryEntity.instanceName,
@@ -55,10 +51,15 @@ describe('bulk-edit', () => {
           inventoryItem.discoverySuppress = true;
           InventoryItems.editItemViaApi(inventoryItem);
         });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(inventoryEntity.barcode);
       FileManager.deleteFile(`cypress/fixtures/${holdingHRIDsFileName}`);

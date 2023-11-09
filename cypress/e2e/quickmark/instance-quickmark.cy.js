@@ -42,6 +42,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(userId);
   });
 

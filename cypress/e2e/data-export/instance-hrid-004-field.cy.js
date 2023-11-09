@@ -50,6 +50,7 @@ describe('Data Export - Holdings records export', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);

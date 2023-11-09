@@ -51,6 +51,7 @@ describe('data-import', () => {
     });
 
     after('Deleting data', () => {
+      cy.getAdminToken();
       createdAuthorityIDs.forEach((id) => {
         MarcAuthority.deleteViaAPI(id);
       });
@@ -64,6 +65,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
         DataImport.uploadFile('test-auth-file.mrc', fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -83,6 +85,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
         DataImport.uploadFile('test-auth-file.mrc', fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(createdJobProfile.profileName);
         JobProfiles.runImportFile();

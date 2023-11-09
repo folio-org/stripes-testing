@@ -36,6 +36,7 @@ describe('MARC -> MARC Holdings', () => {
 
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
       DataImport.uploadFile('oneMarcBib.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -68,6 +69,7 @@ describe('MARC -> MARC Holdings', () => {
     InventorySearchAndFilter.searchInstanceByTitle(instanceID);
     InventorySearchAndFilter.selectViewHoldings();
     HoldingsRecordView.delete();
+    cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
     if (instanceID) InventoryInstance.deleteInstanceViaApi(instanceID);
   });

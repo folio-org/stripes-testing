@@ -25,6 +25,7 @@ import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
 import InventoryInstance from './inventoryInstance';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -44,7 +45,6 @@ const instanceStatusAccordion = Accordion({ id: 'instanceStatus' });
 const tagsAccordion = Accordion({ id: 'instancesTags' });
 const keywordInput = TextArea({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
-const searchTextField = TextField('Search ');
 const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
 const inventorySearchAndFilterInput = Select({
   id: 'input-inventory-search-qindex',
@@ -331,8 +331,10 @@ export default {
 
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
+    Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
+      cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
+    });
     cy.expect([
-      browseSearchAndFilterInput.has({ content: including('Call numbers (all)') }),
       browseSearchAndFilterInput.has({ content: including('Contributors') }),
       browseSearchAndFilterInput.has({ content: including('Subjects') }),
     ]);
@@ -429,7 +431,7 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(searchTextField.fillIn(value));
+    cy.do(keywordInput.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },

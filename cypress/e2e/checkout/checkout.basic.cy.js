@@ -114,6 +114,7 @@ describe('Check Out - Actions ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId: servicePoint.id,

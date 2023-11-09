@@ -53,13 +53,13 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
-    // test is failed UIDATIMP-1549
     it(
       'C357016 Check the filter in summary table with "create + no action + error" actions for the Holdings column (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
@@ -90,6 +90,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);

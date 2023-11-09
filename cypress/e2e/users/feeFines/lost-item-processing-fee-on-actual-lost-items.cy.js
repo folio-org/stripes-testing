@@ -177,6 +177,7 @@ describe('ui-users-loans: Loans', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: newFirstItemData.barcode,

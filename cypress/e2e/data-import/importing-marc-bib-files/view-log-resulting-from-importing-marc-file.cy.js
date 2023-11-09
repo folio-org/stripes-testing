@@ -21,7 +21,6 @@ describe('data-import', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {
-      cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
@@ -30,6 +29,7 @@ describe('data-import', () => {
       DataImport.verifyUploadState();
       DataImport.waitLoading();
       DataImport.uploadFile(filePathToUpload, fileNameToUpload);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameToUpload);
@@ -37,6 +37,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);

@@ -67,6 +67,7 @@ describe('Settings Users', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     ManualCharges.deleteViaApi(testData.manualCharge.id);
     UsersOwners.deleteViaApi(ownerOne.id);
     UsersOwners.deleteViaApi(ownerTwo.id);

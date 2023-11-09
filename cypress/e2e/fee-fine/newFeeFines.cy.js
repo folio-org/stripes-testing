@@ -204,6 +204,7 @@ describe('Fee/fine management', () => {
     },
   );
   after(() => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: testData.userServicePoint,

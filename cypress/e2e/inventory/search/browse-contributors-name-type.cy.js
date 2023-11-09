@@ -33,6 +33,7 @@ describe('Inventory: Contributors Browse', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(currentUser.userId);
     instances.forEach((instance) => InventoryInstance.deleteInstanceViaApi(instance.id));
   });

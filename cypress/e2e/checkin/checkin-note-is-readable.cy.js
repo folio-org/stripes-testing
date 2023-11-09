@@ -81,6 +81,7 @@ describe('Accessibility', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
       testData.servicePointS.id,
       testData.servicePointS1.id,
