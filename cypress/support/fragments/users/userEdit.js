@@ -69,12 +69,9 @@ export default {
   },
 
   addPermissions(permissions) {
-    cy.do([
-      userDetailsPane.find(actionsButton).click(),
-      editButton.click(),
-      permissionsAccordion.clickHeader(),
-      addPermissionsButton.click(),
-    ]);
+    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
+    cy.wait(2000);
+    cy.do([permissionsAccordion.clickHeader(), addPermissionsButton.click()]);
 
     permissions.forEach((permission) => {
       cy.do(userSearch.fillIn(permission));
@@ -317,6 +314,13 @@ export default {
   verifyUserPermissionsAccordion() {
     cy.expect(permissionsAccordion.exists());
     cy.expect(permissionsAccordion.has({ open: false }));
+  },
+
+  verifyPermissionsNotExistInPermissionsAccordion(permissions) {
+    cy.do(permissionsAccordion.clickHeader());
+    permissions.forEach((permission) => {
+      cy.expect(permissionsAccordion.find(HTML(including(permission))).absent());
+    });
   },
 
   permissionsCount() {
