@@ -570,6 +570,10 @@ export default {
     cy.expect(MultiColumnListCell({ column: columnName, content: including(value) }).exists());
   },
 
+  verifyExactChangesUnderColumns(columnName, value) {
+    cy.expect(MultiColumnListCell({ column: columnName, content: value }).exists());
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
