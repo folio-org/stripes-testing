@@ -973,7 +973,12 @@ export default {
   },
 
   checkIsItemCreated: (itemBarcode) => {
-    cy.expect(Link(including(itemBarcode)).exists());
+    cy.expect(
+      Section({ id: 'pane-instancedetails' })
+        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(Button(including(itemBarcode)))
+        .exists(),
+    );
   },
 
   checkMARCSourceAtNewPane() {
