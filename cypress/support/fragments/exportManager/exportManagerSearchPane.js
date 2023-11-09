@@ -32,7 +32,7 @@ const jobDetailsPane = Pane('Export job ');
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => {
-  cy.wait(1000);
+  cy.wait(2000);
 };
 const exportJob = (jobId) => {
   // TODO: redesign to interactors

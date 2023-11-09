@@ -47,10 +47,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
 
       inventoryEntity.instance.id = InventoryInstances.createInstanceViaApi(
         inventoryEntity.instance.name,
@@ -82,6 +78,10 @@ describe('Bulk Edit - Logs', () => {
             inventoryEntity.item.id2 = inventoryItem.id;
           },
         );
+      });
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
     });
   });
