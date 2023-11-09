@@ -160,6 +160,7 @@ describe('Title Level Request. Request Detail', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,

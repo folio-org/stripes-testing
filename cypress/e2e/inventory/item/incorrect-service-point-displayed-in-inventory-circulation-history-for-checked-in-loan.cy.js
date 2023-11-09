@@ -105,6 +105,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       UserEdit.changeServicePointPreferenceViaApi(user.userId, [
         firstServicePoint.id,
         secondServicePoint.id,

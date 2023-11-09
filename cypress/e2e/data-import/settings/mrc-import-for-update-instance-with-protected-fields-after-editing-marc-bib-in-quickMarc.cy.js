@@ -101,7 +101,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      cy.getAdminToken();
       MarcFieldProtection.getListViaApi({
         query: `"data"=="${firstProtectedFieldsData.data}"`,
       }).then((field) => {
@@ -209,6 +209,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpload);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForUpload);

@@ -165,6 +165,7 @@ describe('Lost items requiring actual cost', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],

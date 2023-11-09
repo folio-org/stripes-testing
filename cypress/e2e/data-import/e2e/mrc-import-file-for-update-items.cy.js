@@ -324,7 +324,6 @@ describe('data-import', () => {
 
     beforeEach('create test data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      cy.getAdminToken();
 
       const jobProfile = {
         profile: {
@@ -353,6 +352,7 @@ describe('data-import', () => {
     });
 
     afterEach('delete test data', () => {
+      cy.getAdminToken();
       // delete generated profiles
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
       collectionOfMatchProfiles.forEach((profile) => {
@@ -427,6 +427,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);

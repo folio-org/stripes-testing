@@ -84,6 +84,7 @@ describe('MARC -> MARC Bibliographic', () => {
             DataImport.waitLoading();
 
             DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitFileIsUploaded();
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -107,6 +108,7 @@ describe('MARC -> MARC Bibliographic', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[2]);
     createdAuthorityIDs.forEach((id, index) => {

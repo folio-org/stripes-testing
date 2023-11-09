@@ -127,6 +127,7 @@ describe('Requests Export CSV File', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
+    cy.getAdminToken();
     EditRequest.updateRequestApi({
       ...requestData,
       status: 'Closed - Cancelled',

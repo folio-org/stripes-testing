@@ -48,6 +48,7 @@ describe('Data Import - Importing MARC Authority files', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdAuthorityIDs.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
@@ -59,6 +60,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       DataImport.uploadFile('marcFileForC360520.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -85,6 +87,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] },
     () => {
       DataImport.uploadFile('corporate_name(prefix_in_010Sa)sc_02.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -111,6 +114,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] },
     () => {
       DataImport.uploadFile('D_genre(prefixes_in_001_010Sa)sc_03.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -137,6 +141,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       DataImport.uploadFile('marcFileForC353997.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -180,6 +185,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       DataImport.uploadFile('marcFileForC356766.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -208,6 +214,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       DataImport.uploadFile('marcFileForC356765.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -242,6 +249,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       DataImport.uploadFile('marcFileForC353995.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();

@@ -33,6 +33,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       Z3950TargetProfiles.getTargetProfileIdViaApi({
         query: `name="${newTargetProfileName}"`,
