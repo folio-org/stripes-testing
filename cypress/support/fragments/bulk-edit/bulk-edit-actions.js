@@ -143,6 +143,9 @@ export default {
     cy.expect(Button('Download errors (CSV)').exists());
   },
 
+  startBulkEditLocalButtonExists() {
+    cy.expect(startBulkEditLocalButton.exists());
+  },
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
     cy.expect([
