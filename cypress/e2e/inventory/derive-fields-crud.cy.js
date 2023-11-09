@@ -31,12 +31,12 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   };
 
   const expectedSourceText = {
-    row245: '245  1 4  ‡a The Riviera house / ‡c Natasha Lester.',
-    row100: '100  1    ‡a Lester, Natasha, ‡d 1973- ‡e author.',
-    row660: '660    7  ‡a Historical fiction. ‡2 gsafd',
-    row655primary: '655    7  ‡a Edited 4th field only',
-    row655secondary: '655    7  ‡a Edited MARC tag and 4th field',
-    row800: '800       ‡a Created row',
+    row245: '245  1 4  $a The Riviera house / $c Natasha Lester.',
+    row100: '100  1    $a Lester, Natasha, $d 1973- $e author.',
+    row660: '660    7  $a Historical fiction. $2 gsafd',
+    row655primary: '655    7  $a Edited 4th field only',
+    row655secondary: '655    7  $a Edited MARC tag and 4th field',
+    row800: '800       $a Created row',
   };
 
   const marcFile = {
