@@ -30,13 +30,9 @@ export default {
     cy.expect(Pane(section).exists());
   },
   selectTenant(section) {
+    cy.wait(2000);
     cy.do(NavListItem(section).click());
     cy.expect(Pane(section).exists());
-    // need to wait to prevent application error
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(300);
-
-    return tenantSections[section];
   },
   goToTenantTab() {
     cy.do(NavListItem('Tenant').click());

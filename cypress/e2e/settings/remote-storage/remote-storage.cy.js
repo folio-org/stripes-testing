@@ -43,8 +43,10 @@ describe('remote-storage-configuration', () => {
         configuration.create(name);
         Configurations.verifyCreatedConfiguration(name, configuration);
         Configurations.editConfiguration(name, { nameInput: 'newAutotestConfigurationName' });
-        Configurations.closeWithoutSaving();
+        Configurations.confirmCreateRemoteStorage();
         Configurations.verifyCreatedConfiguration(name, configuration);
+        Configurations.editConfiguration(name, { nameInput: 'newAutotestConfigurationName2' });
+        Configurations.cancelConfirmation();
         Configurations.deleteRemoteStorage(name);
       });
     },
