@@ -168,8 +168,9 @@ describe('orders: Receiving and Check-in', () => {
             cy.wait(2000);
             CheckInActions.checkInItemGui(barcodeForThirdItem);
             // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(2000);
+            cy.wait(6000);
             CheckInActions.checkInItemGui(barcodeForFourItem);
+            cy.wait(6000);
           });
         },
       );
@@ -197,7 +198,6 @@ describe('orders: Receiving and Check-in', () => {
       Receiving.receiveFromExpectedSection();
       Receiving.receiveAll();
       Receiving.clickOnInstance();
-      InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
       ItemRecordView.checkItemDetails(
         location.name,
