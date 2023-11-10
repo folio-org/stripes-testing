@@ -86,6 +86,7 @@ export default {
       cy.wait(1000);
       cy.do(Button('Search').click());
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
+      cy.wait(2000);
     });
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
