@@ -77,7 +77,7 @@ export default {
   resetAllBtnIsDisabled(isDisabled) {
     cy.expect(resetAllButton.has({ disabled: isDisabled }));
   },
-  
+
   resetAll() {
     cy.do(resetAllButton.click());
   },
@@ -904,7 +904,7 @@ export default {
   isSaveAndCloseButtonDisabled(isDisabled) {
     cy.expect(saveAndClose.has({ disabled: isDisabled }));
   },
-  
+
   isBuildQueryButtonDisabled(isDisabled) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);
