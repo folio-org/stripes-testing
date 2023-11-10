@@ -20,7 +20,9 @@ describe('inventory', () => {
     };
 
     before('Create test data', () => {
-      cy.getAdminToken().then(() => {
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
+        testData.user = userProperties;
+
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instance = instanceData;
 
@@ -36,15 +38,10 @@ describe('inventory', () => {
               testData.holding = holding;
             });
           });
-        });
-      });
-
-      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-        testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
         });
       });
     });

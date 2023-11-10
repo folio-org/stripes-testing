@@ -121,7 +121,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[1].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.addElectronicAccess(
           collectionOfMappingAndActionProfiles[1].mappingProfile.typeValue,

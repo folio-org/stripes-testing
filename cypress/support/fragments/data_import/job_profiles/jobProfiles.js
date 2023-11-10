@@ -115,11 +115,9 @@ export default {
 
   runImportFile: () => {
     waitLoading(waitSelector);
-    cy.do([
-      actionsButton.click(),
-      runButton.click(),
-      Modal('Are you sure you want to run this job?').find(runButton).click(),
-    ]);
+    cy.do([actionsButton.click(), runButton.click()]);
+    cy.expect(Modal('Are you sure you want to run this job?').find(runButton).exists());
+    cy.do(Modal('Are you sure you want to run this job?').find(runButton).click());
   },
 
   waitFileIsImported: (fileName) => {
