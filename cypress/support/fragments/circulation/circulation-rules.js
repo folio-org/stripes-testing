@@ -159,29 +159,36 @@ export default {
     return baseRuleProps;
   },
 
-  addRuleViaApi(defaultRules, ruleParams, priority, priorityId) {
-    const withNewRule =
-      defaultRules +
-      ' \n' +
-      priority +
-      priorityId +
-      ': i ' +
-      ruleParams.i +
-      ' l ' +
-      ruleParams.l +
-      ' r ' +
-      ruleParams.r +
-      ' o ' +
-      ruleParams.o +
-      ' n ' +
-      ruleParams.n;
-    return cy.updateCirculationRules({ rulesAsText: withNewRule });
+  testAddRule(updatedRules) {
+    return this.updateViaApi({ rulesAsText: updatedRules }).then((res) => {
+      if (res.status >= 400 && res.status < 500 && res.body.message.includes('does not exist')) {
+        let fixedRules = updatedRules.split('\n');
+        fixedRules.splice(res.body.line - 1, 1);
+        fixedRules = fixedRules.join('\n');
+        return this.testAddRule(fixedRules);
+      } else if (res.status >= 400) {
+        throw new Error(`Circulation rules cannot be created because of "${res.body.message}"`);
+      } else {
+        const addedRule = updatedRules.split('\n');
+        return `\n${addedRule[addedRule.length - 1]}`;
+      }
+    });
   },
 
-  deleteRuleViaApi(rule) {
-    this.getViaApi().then((circulationRules) => {
-      const allRules = circulationRules.rulesAsText;
-      cy.updateCirculationRules({ rulesAsText: allRules.replace(rule, '') });
+  addRuleViaApi(priorities, ruleProps) {
+    return this.getViaApi().then(({ rulesAsText }) => {
+      const newProps = { ...this.getRuleProps(rulesAsText), ...ruleProps };
+      const rulePriority = Object.entries(priorities)
+        .map((priority) => priority.join(' '))
+        .join(' + ');
+      const newRule = `\n${rulePriority}: l ${newProps.l} r ${newProps.r} n ${newProps.n} o ${newProps.o} i ${newProps.i}`;
+      return this.testAddRule(rulesAsText + newRule);
+    });
+  },
+
+  deleteRuleViaApi(addedRule) {
+    this.getViaApi().then(({ rulesAsText }) => {
+      this.testAddRule(rulesAsText.replace(addedRule, ''));
     });
   },
 };
