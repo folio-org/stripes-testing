@@ -134,15 +134,6 @@ export default {
     return cy.updateCirculationRules(data);
   },
 
-  updateCirculationRules(body) {
-    return cy.okapiRequest({
-      method: REQUEST_METHOD.PUT,
-      path: 'circulation/rules',
-      body,
-      isDefaultSearchParamsRequired: false,
-    });
-  },
-
   getRuleProps(defaultRules) {
     const oIndex = defaultRules.indexOf(' o ', 2);
     const lIndex = defaultRules.indexOf(' l ', 2);
@@ -159,15 +150,15 @@ export default {
     return baseRuleProps;
   },
 
-  testAddRule(updatedRules) {
+  updateCirculationRules(updatedRules) {
     return this.updateViaApi({ rulesAsText: updatedRules }).then((res) => {
       if (res.status >= 400 && res.status < 500 && res.body.message.includes('does not exist')) {
         let fixedRules = updatedRules.split('\n');
         fixedRules.splice(res.body.line - 1, 1);
         fixedRules = fixedRules.join('\n');
-        return this.testAddRule(fixedRules);
+        return this.updateCirculationRules(fixedRules);
       } else if (res.status >= 400) {
-        throw new Error(`Circulation rules cannot be created because of "${res.body.message}"`);
+        throw new Error(`Circulation rule cannot be created because of "${res.body.message}"`);
       } else {
         const addedRule = updatedRules.split('\n');
         return `\n${addedRule[addedRule.length - 1]}`;
@@ -182,13 +173,13 @@ export default {
         .map((priority) => priority.join(' '))
         .join(' + ');
       const newRule = `\n${rulePriority}: l ${newProps.l} r ${newProps.r} n ${newProps.n} o ${newProps.o} i ${newProps.i}`;
-      return this.testAddRule(rulesAsText + newRule);
+      return this.updateCirculationRules(rulesAsText + newRule);
     });
   },
 
   deleteRuleViaApi(addedRule) {
     this.getViaApi().then(({ rulesAsText }) => {
-      this.testAddRule(rulesAsText.replace(addedRule, ''));
+      this.updateCirculationRules(rulesAsText.replace(addedRule, ''));
     });
   },
 };

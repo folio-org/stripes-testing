@@ -21,7 +21,6 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-users-loans: Loans', () => {
-  let addedCirculationRule;
   const newOwnerData = UsersOwners.getDefaultNewOwner();
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
@@ -33,7 +32,6 @@ describe('ui-users-loans: Loans', () => {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {};
-  let originalCirculationRules;
   const lostItemFeePolicyBody = {
     name: getTestEntityValue('lost'),
     chargeAmountItem: {
@@ -100,6 +98,15 @@ describe('ui-users-loans: Loans', () => {
           itemsData.holdingId = specialInstanceIds.holdingIds[0].id;
           itemsData.itemsId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { i: lostItemFeePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
     UsersOwners.createViaApi({
@@ -113,32 +120,6 @@ describe('ui-users-loans: Loans', () => {
     }).then((ownerResponse) => {
       testData.ownerId = ownerResponse.id;
     });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser([
       permissions.uiUsersViewLoans.gui,
       permissions.uiUsersDeclareItemLost.gui,
@@ -178,7 +159,7 @@ describe('ui-users-loans: Loans', () => {
       cy.deleteItemViaApi(id);
     });
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanType(testData.loanTypeId);
     Users.deleteViaApi(testData.userId);
     UsersOwners.deleteViaApi(testData.ownerId);

@@ -275,6 +275,7 @@ export default {
       this.startAdding();
       this.checkInitialState();
       this.addToken('item.title');
+      cy.wait(4000);
       this.create(template, false);
       this.chooseCategory(template.category.name);
     }

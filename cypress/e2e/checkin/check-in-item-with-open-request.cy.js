@@ -52,7 +52,6 @@ describe('Check In - Actions', () => {
     name: `hold${getRandomPostfix()}`,
     id: uuid(),
   };
-  const ruleProps = { r: requestPolicyBody.id };
 
   before('Preconditions', () => {
     cy.getAdminToken()
@@ -105,7 +104,10 @@ describe('Check In - Actions', () => {
       })
       .then(() => {
         RequestPolicy.createViaApi(requestPolicyBody);
-        CirculationRules.addRuleViaApi({ t: testData.loanTypeId }, ruleProps).then((newRule) => {
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
           testData.addedRule = newRule;
         });
       });

@@ -29,8 +29,6 @@ import ItemRecordView from '../../support/fragments/inventory/item/itemRecordVie
 import LoansPage from '../../support/fragments/loans/loansPage';
 
 describe('Circulation log', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const patronGroup = {
     name: getTestEntityValue('GroupCircLog'),
   };
@@ -114,37 +112,20 @@ describe('Circulation log', () => {
         }).then((specialInstanceIds) => {
           itemData.instanceId = specialInstanceIds.instanceId;
         });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser([permissions.circulationLogAll.gui], patronGroup.name)
       .then((userProperties) => {
         userData = userProperties;
@@ -205,7 +186,7 @@ describe('Circulation log', () => {
   });
 
   after('Deleting created entities', () => {
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [
