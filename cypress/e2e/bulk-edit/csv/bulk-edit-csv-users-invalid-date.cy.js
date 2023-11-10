@@ -59,6 +59,7 @@ describe('bulk-edit', () => {
           patronGroup,
           invalidPatronGroup,
         );
+
         BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
         BulkEditSearchPane.uploadFile(editedFileName);
