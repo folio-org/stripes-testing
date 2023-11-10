@@ -594,6 +594,15 @@ export default {
     cy.expect([calloutAfterSaveAndClose.exists(), instanceDetailsPane.exists()]);
   },
 
+  verifyAfterDerivedMarcBibSave() {
+    cy.expect([
+      calloutOnDeriveFirst.exists(),
+      calloutOnDeriveSecond.exists(),
+      instanceDetailsPane.exists(),
+      rootSection.absent(),
+    ]);
+  },
+
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
