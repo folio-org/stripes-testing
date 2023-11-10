@@ -70,7 +70,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.applyStartDateFilters();
         BulkEditSearchPane.fillLogsEndDate(today, today);
         BulkEditSearchPane.applyEndDateFilters();
-        BulkEditSearchPane.verifyLogsTableHeaders();
+        BulkEditSearchPane.verifyLogResultsFound();
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyMatchedResults(user.username);
         BulkEditSearchPane.openLogsSearch();
@@ -97,7 +97,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.applyStartDateFilters();
         BulkEditSearchPane.fillLogsEndDate(today, today);
         BulkEditSearchPane.applyEndDateFilters();
-        BulkEditSearchPane.verifyLogsTableHeaders();
+        BulkEditSearchPane.verifyLogResultsFound();
         BulkEditSearchPane.openIdentifierSearch();
         BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 0, 1);
         BulkEditSearchPane.openLogsSearch();

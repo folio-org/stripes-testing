@@ -897,6 +897,10 @@ export default {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
   },
 
+  verifyLogResultsFound() {
+    cy.expect(logsResultPane.find(MultiColumnList()).exists());
+  },
+
   isDragAndDropAreaDisabled(isDisabled) {
     cy.expect(fileButton.has({ disabled: isDisabled }));
   },
