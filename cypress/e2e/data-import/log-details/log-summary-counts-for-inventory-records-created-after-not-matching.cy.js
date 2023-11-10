@@ -72,7 +72,7 @@ describe('data-import', () => {
           barcode: '876$a',
           materialType: '877$m',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -155,7 +155,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillBarcode(profile.barcode);
       NewFieldMappingProfile.fillMaterialType(profile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(profile.status);
+      NewFieldMappingProfile.fillStatus(`"${profile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);
     };
@@ -234,14 +234,14 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Created');
         InstanceRecordView.verifyIsInstanceOpened(firstInstanceTitle);
-        cy.wait(2000);
-        cy.go('back');
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileName);
         FileDetails.openHoldingsInInventory('Created');
         HoldingsRecordView.checkPermanentLocation(
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI,
         );
-        cy.wait(2000);
-        cy.go('back');
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileName);
         FileDetails.openItemInInventory('Created');
         ItemRecordView.verifyItemStatus(
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,
