@@ -17,12 +17,20 @@ export default {
     cy.do(Accordion({ id: 'lossTypeFilterAccordion' }).find(Checkbox(type)).click());
   },
 
+  filterByStatus(status) {
+    cy.do(Accordion({ id: 'statusFilterAccordion' }).find(Checkbox(status)).click());
+  },
+
   checkResultsLossType(instanceTitle, type) {
     cy.expect(
       ListRow(including(instanceTitle))
         .find(MultiColumnListCell({ column: 'Loss type' }))
         .has({ content: type }),
     );
+  },
+
+  checkResultNotDisplayed(instanceTitle) {
+    cy.expect(ListRow(including(instanceTitle)).absent());
   },
 
   openLoanDetails(instanceTitle) {
