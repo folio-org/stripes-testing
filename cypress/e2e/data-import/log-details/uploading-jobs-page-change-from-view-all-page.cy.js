@@ -52,8 +52,7 @@ describe('data-import', () => {
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
         JobProfiles.waitLoadingList();
         JobProfiles.verifyFileListArea(nameMarcFileForCreate);
-        // need to wait until file will be uploaded
-        cy.wait(3000);
+        JobProfiles.waitFileIsUploaded();
 
         // #3 Click the "Data import" button in breadcrumbs -> click on "Actions" button -> Select the "View all"
         // User is taken to the View all logs screen

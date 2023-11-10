@@ -11,6 +11,7 @@ import {
   Pane,
   MultiColumnListRow,
   Callout,
+  PaneContent,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
@@ -20,6 +21,8 @@ const runButton = Button('Run');
 const waitSelector = Pane({ id: 'view-job-profile-pane' });
 const closeButton = Button({ icon: 'times' });
 const paneResults = Pane({ id: 'pane-results' });
+const paneContent = PaneContent({ id: 'pane-upload-content' });
+const deleteFileButton = Button({ icon: 'trash' });
 const searchButton = Button('Search');
 const searchField = TextField({ id: 'input-search-job-profiles-field' });
 const deleteUploadedFileModal = Modal('Delete uploaded file?');
@@ -206,4 +209,5 @@ export default {
         cy.expect(numberOfTrashButtons).to.equal(quantityOfUploadedFiles);
       });
   },
+  waitFileIsUploaded: () => cy.expect(paneContent.find(deleteFileButton).exists()),
 };
