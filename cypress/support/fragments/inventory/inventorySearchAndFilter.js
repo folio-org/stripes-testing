@@ -798,4 +798,22 @@ export default {
   clickAccordionByName(accordionName) {
     cy.do(Accordion(accordionName).clickHeader());
   },
+
+  verifyFilterOptionCount(accordionName, optionName, expectedCount) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(
+          HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
+        )
+        .exists(),
+    );
+  },
+
+  selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
+    const checkbox = Accordion(accordionName).find(Checkbox(optionName));
+    cy.do(checkbox.click());
+    // wait for facet options to reload in all facets
+    cy.wait(ONE_SECOND);
+    cy.expect(checkbox.has({ checked: selected }));
+  },
 };
