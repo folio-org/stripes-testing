@@ -77,6 +77,10 @@ export default {
   resetAllBtnIsDisabled(isDisabled) {
     cy.expect(resetAllButton.has({ disabled: isDisabled }));
   },
+  
+  resetAll() {
+    cy.do(resetAllButton.click());
+  },
 
   actionsIsAbsent() {
     cy.expect(actions.absent());
@@ -342,6 +346,10 @@ export default {
     ]);
   },
 
+  openIdentifierSearch() {
+    cy.do(identifierToggle.click());
+  },
+
   openQuerySearch() {
     cy.do(queryToggle.click());
   },
@@ -390,6 +398,10 @@ export default {
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
     ]);
+  },
+
+  checkLogsStatus(status) {
+    cy.do(logsStatusesAccordion.find(Checkbox(status)).click());
   },
 
   verifyCsvViewPermission() {
@@ -588,8 +600,7 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${
-          validRecordCount + invalidRecordCount
+        `${fileName}: ${validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -600,8 +611,7 @@ export default {
       Accordion('Errors')
         .find(
           HTML(
-            `${fileName}: ${
-              validRecordCount + invalidRecordCount
+            `${fileName}: ${validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
           ),
         )
@@ -890,9 +900,11 @@ export default {
   isDragAndDropAreaDisabled(isDisabled) {
     cy.expect(fileButton.has({ disabled: isDisabled }));
   },
+
   isSaveAndCloseButtonDisabled(isDisabled) {
     cy.expect(saveAndClose.has({ disabled: isDisabled }));
   },
+  
   isBuildQueryButtonDisabled(isDisabled) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);
