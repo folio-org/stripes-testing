@@ -62,7 +62,7 @@ describe('inventory', () => {
     });
 
     it(
-      'C9215 In Accordion Title --> Test assigning a Preceding title (folijet) (prokopovych)',
+      'C9215 In Accordion Title --> Test assigning a Preceding title (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);

@@ -34,10 +34,6 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         items.forEach((item) => {
           fileContent += `${item.itemBarcode}\n`;
@@ -45,6 +41,10 @@ describe('bulk-edit', () => {
         });
 
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 

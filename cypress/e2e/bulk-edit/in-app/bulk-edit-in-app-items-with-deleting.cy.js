@@ -8,8 +8,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UserEdit from '../../../support/fragments/users/userEdit';
 
 let user;
+let servicePointId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -30,9 +33,10 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
+          servicePointId = servicePoints[0].id;
+        }).then(() => {
+          UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
         });
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
@@ -45,6 +49,10 @@ describe('bulk-edit', () => {
           `cypress/fixtures/${itemBarcodesFileName}`,
           `${item.itemBarcode}\r\n${invalidBarcode}\r\n${itemToBeDeleted.itemBarcode}`,
         );
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
@@ -70,10 +78,12 @@ describe('bulk-edit', () => {
         BulkEditActions.replaceTemporaryLocation();
         BulkEditActions.confirmChanges();
 
+        cy.getAdminToken();
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           itemToBeDeleted.itemBarcode,
         );
 
+        cy.getToken(user.username, user.password);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
 

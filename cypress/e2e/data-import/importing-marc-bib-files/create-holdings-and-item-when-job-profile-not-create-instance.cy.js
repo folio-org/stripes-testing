@@ -45,7 +45,7 @@ describe('data-import', () => {
           name: `C368009 Testing item for SRS MARC bib ${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -130,7 +130,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
       NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
+      NewFieldMappingProfile.fillStatus(`"${itemMappingProfile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };

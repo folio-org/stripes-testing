@@ -55,6 +55,7 @@ export default {
       });
   },
   clickLibrariesColumnLink(campusName, columnIndex = 3) {
+    cy.wait(2000);
     cy.do(
       MultiColumnListRow(including(campusName))
         .find(MultiColumnListCell({ columnIndex }))
