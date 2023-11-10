@@ -54,6 +54,7 @@ describe('ui-finance: Funds', () => {
   });
 
   beforeEach(() => {
+    cy.getAdminToken();
     cy.createFundApi({
       ...fund,
       acqUnitIds: [aUnit.id],

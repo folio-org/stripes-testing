@@ -15,25 +15,24 @@ let fieldMappingProfileId;
 const newJobProfileName = `jobProfile${getRandomPostfix()}`;
 const fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
 
-describe('Job profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
       permissions.dataExportEnableApp.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName).then(
+        (response) => {
+          fieldMappingProfileId = response.body.id;
+          ExportNewJobProfile.createNewJobProfileViaApi(newJobProfileName, response.body.id);
+        },
+      );
       cy.login(user.username, user.password, {
         path: TopMenu.settingsPath,
         waiter: SettingsPane.waitLoading,
       });
     });
-
-    ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName).then(
-      (response) => {
-        fieldMappingProfileId = response.body.id;
-        ExportNewJobProfile.createNewJobProfileViaApi(newJobProfileName, response.body.id);
-      },
-    );
   });
 
   after('delete test data', () => {

@@ -12,7 +12,7 @@ import { TestTypes } from '../../../support/dictionary';
 let user;
 const newTransformationCalloutMessage = '1 transformation has been successfully added';
 
-describe('settings: data-export: Field mapping profiles', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,

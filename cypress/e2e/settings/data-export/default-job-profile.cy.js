@@ -9,7 +9,7 @@ import ExportFieldMappingProfiles from '../../../support/fragments/data-export/e
 
 let user;
 
-describe('data-export', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
