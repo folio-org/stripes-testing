@@ -66,6 +66,8 @@ describe('Finance: Fiscal Year Rollover', () => {
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
+          Funds.closeBudgetDetails();
+          Funds.selectBudgetDetails();
         });
       });
     });

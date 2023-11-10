@@ -562,6 +562,18 @@ export default {
         return res.body.instances[0].id;
       });
   },
+  getInstancesViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      });
+  },
+
   deleteInstanceViaApi({ instance, servicePoint, shouldCheckIn = false }) {
     if (shouldCheckIn) {
       instance.barcodes.forEach((barcode) => {

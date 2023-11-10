@@ -205,7 +205,7 @@ describe.skip('inventory', () => {
 
     // test is looping
     it(
-      'C9200 Item status date updates (folijet) (prokopovych)',
+      'C9200 Item status date updates (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         const caption = `autotest_caption_${getRandomPostfix()}`;

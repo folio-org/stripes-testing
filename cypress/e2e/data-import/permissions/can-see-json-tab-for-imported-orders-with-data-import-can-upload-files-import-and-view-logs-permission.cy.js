@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import {
   FOLIO_RECORD_TYPE,
   ORDER_STATUSES,
@@ -11,32 +9,29 @@ import {
   JOB_STATUS_NAMES,
   VENDOR_NAMES,
 } from '../../../support/constants';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import DataImport from '../../../support/fragments/data_import/dataImport';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import TopMenu from '../../../support/fragments/topMenu';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
-import Orders from '../../../support/fragments/orders/orders';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('data-import', () => {
-  describe('Log details', () => {
+  describe('Permissions', () => {
     let user;
-    const orderNumbers = [];
-    const quantityOfOrders = '3';
-    const filePathForCreateOrder = 'marcFileForC375178.mrc';
-    const marcFileName = `C375178 autotestFileName ${getRandomPostfix()}`;
-    const ordersData = [
-      { title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.', rowNumber: 0 },
-      { title: 'CULTURAL HISTORY OF IDEAS', rowNumber: 1 },
-      { title: 'BOAT PEOPLE; TRANS. BY VANESSA PERE-ROSARIO.', rowNumber: 2 },
-    ];
+    const filePath = 'marcBibFileForC377023.mrc';
+    const marcFileName = `C377023 autotestFileName ${getRandomPostfix()}`;
+    const title = 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.';
+
     const mappingProfile = {
-      name: `C375178 Test Order ${getRandomPostfix()}`,
+      name: `C377023 Test Order ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
       orderStatus: ORDER_STATUSES.PENDING,
       approved: true,
@@ -80,17 +75,19 @@ describe('data-import', () => {
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.ORDER,
-      name: `C375178 Test Order ${getRandomPostfix()}`,
+      name: `C377023 Test Order ${getRandomPostfix()}`,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C375178 Test Order ${getRandomPostfix()}`,
+      profileName: `C377023 Test Order ${getRandomPostfix()}`,
     };
 
-    before('login', () => {
-      cy.loginAsAdmin();
+    before('create test data', () => {
+      cy.loginAsAdmin({
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
+      });
       // create mapping profile
-      cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
@@ -106,13 +103,19 @@ describe('data-import', () => {
       NewJobProfile.saveAndClose();
       JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-      cy.createTempUser([
-        Permissions.settingsDataImportEnabled.gui,
-        Permissions.moduleDataImportEnabled.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePath, marcFileName);
+      JobProfiles.search(jobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileName);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      cy.logout();
 
-        cy.login(userProperties.username, userProperties.password, {
+      cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
@@ -125,50 +128,23 @@ describe('data-import', () => {
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.wrap(orderNumbers).each((number) => {
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
-          Orders.deleteOrderViaApi(orderId[0].id);
-        });
-      });
     });
 
     it(
-      'C375178 Verify the log details for created imported order records (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      'C377023 A user can see JSON tab for imported Orders with "Data import: Can upload files, import, and view logs" permission (folijet)',
+      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathForCreateOrder, marcFileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfile.profileName);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFileName);
-        FileDetails.checkOrderQuantityInSummaryTable(quantityOfOrders);
-        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfOrders);
-        cy.wrap(ordersData).each((order) => {
-          FileDetails.verifyTitle(
-            order.title,
-            FileDetails.columnNameInResultList.title,
-            order.rowNumber,
-          );
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
-            FileDetails.columnNameInResultList.order,
-            order.rowNumber,
-          );
-          FileDetails.verifyStatusHasLinkToOrder(order.rowNumber);
-          FileDetails.openOrder('Created', order.rowNumber);
-          OrderLines.waitLoading();
-          OrderLines.verifyOrderTitle(order.title);
-          OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-            const orderNumber = initialNumber.replace('-1', '');
+        const message = `Import Log for Record 1 (${title})`;
 
-            orderNumbers.push(orderNumber);
-          });
-          cy.go('back');
-        });
+        Logs.openFileDetails(marcFileName);
+        FileDetails.openJsonScreen(title);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.openOrderTab();
+        JsonScreenView.verifyContentInTab(message);
+        cy.go('back');
+        FileDetails.openOrder('Created');
+        OrderLines.waitLoading();
+        OrderLines.verifyOrderTitle(title);
       },
     );
   });
