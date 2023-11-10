@@ -28,10 +28,6 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -39,6 +35,10 @@ describe('bulk-edit', () => {
         );
         cy.getHoldings({ query: `"instanceId"="${instanceId}"` }).then((holdings) => {
           FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
       });
     });
@@ -61,7 +61,7 @@ describe('bulk-edit', () => {
 
         const suppressFromDiscovery = true;
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
         BulkEditActions.confirmChanges();

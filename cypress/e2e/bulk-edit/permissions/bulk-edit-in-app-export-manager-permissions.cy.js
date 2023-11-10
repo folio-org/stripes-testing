@@ -33,10 +33,6 @@ describe('bulk-edit', () => {
       ])
         .then((userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
           item.instanceId = InventoryInstances.createInstanceViaApi(
             item.instanceName,
             item.itemBarcode,
@@ -44,6 +40,10 @@ describe('bulk-edit', () => {
           FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
         })
         .then(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item barcode');
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);

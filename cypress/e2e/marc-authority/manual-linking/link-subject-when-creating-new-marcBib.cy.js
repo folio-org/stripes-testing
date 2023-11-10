@@ -188,10 +188,10 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       QuickMarcEditor.closeEditorPane();
       InventoryInstance.viewSource();
       InventoryViewSource.contains(
-        `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t‡a C380728 Jackson, Peter, ‡c Inspector Banks series ; ‡d 1950-2022 ‡e test123 ‡0 3052044 ‡9`,
+        `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380728 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $e test123 $0 3052044 $9`,
       );
       InventoryViewSource.contains(
-        `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t‡a C380728 Mostly Chopin Festival. ‡e Orchestra ‡t sonet ‡0 997404 ‡9`,
+        `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380728 Mostly Chopin Festival. $e Orchestra $t sonet $0 997404 $9`,
       );
       QuickMarcEditor.closeEditorPane();
 

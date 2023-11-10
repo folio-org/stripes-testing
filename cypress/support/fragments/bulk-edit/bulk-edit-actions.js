@@ -181,6 +181,10 @@ export default {
     cy.do(Button('Location look-up').click());
   },
 
+  locationLookupExists() {
+    cy.expect(Button('Location look-up').exists());
+  },
+
   verifyLocationLookupModal() {
     cy.expect([
       locationLookupModal.exists(),
@@ -427,6 +431,24 @@ export default {
     cy.xpath(`//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`).type(newNote);
   },
 
+  noteRemove(noteType, note, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
+      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(note),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ value: '' }))
+        .choose('Remove'),
+    ]);
+  },
+
+  noteRemoveAll(noteType, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Remove all'),
+    ]);
+  },
+
   addItemNote(type, value, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
@@ -491,7 +513,9 @@ export default {
   changeNoteType(type, newType, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
-      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Change note type'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Change note type'),
       RepeatableFieldItem({ index: rowIndex })
         .find(Select({ value: '' }))
         .choose(newType),

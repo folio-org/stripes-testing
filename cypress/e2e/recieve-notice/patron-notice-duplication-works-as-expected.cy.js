@@ -9,6 +9,7 @@ import NewNoticePolicyTemplate from '../../support/fragments/settings/circulatio
 import NoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
+import { NOTICE_CATEGORIES } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 
 describe('Patron Notices', () => {
   let userData;
@@ -69,7 +70,7 @@ describe('Patron Notices', () => {
       NewNoticePolicyTemplate.checkAfterSaving({
         name: newNoticeTemplateName,
         description: testData.noticeTemplateBody.description,
-        category: testData.noticeTemplateBody.category,
+        category: NOTICE_CATEGORIES.loan,
         subject: 'Email subject: Loan',
         body: 'Email body {{item.title}}',
       });

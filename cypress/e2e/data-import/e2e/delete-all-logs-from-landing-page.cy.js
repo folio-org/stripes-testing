@@ -49,7 +49,7 @@ describe('data-import', () => {
             JobProfiles.search(jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(fileNameToUpload);
-            cy.wait(10000);
+            cy.wait(5000);
           });
         });
     });

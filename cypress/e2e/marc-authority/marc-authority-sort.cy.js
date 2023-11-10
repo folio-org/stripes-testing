@@ -37,11 +37,11 @@ describe('MARC Authority Sort', () => {
 
     prefixValues: {
       // eslint-disable-next-line no-tabs
-      prefixValA: '010	   	‡a tgm',
+      prefixValA: '010	   	$a tgm',
       // eslint-disable-next-line no-tabs
-      prefixValB: '010	   	‡a gsafd',
+      prefixValB: '010	   	$a gsafd',
       // eslint-disable-next-line no-tabs
-      prefixValC: '010	   	‡a ',
+      prefixValC: '010	   	$a ',
     },
   };
   const marcFiles = [
