@@ -4,7 +4,7 @@ import {
   Button,
   MultiColumnListCell,
   Pane,
-  TextField,
+  TextArea,
   Link,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -102,7 +102,7 @@ export default {
   },
 
   clearSearchTextfield() {
-    cy.do(TextField({ id: 'input-record-search' }).clear());
+    cy.do(TextArea({ id: 'input-record-search' }).fillIn(''));
   },
 
   verifySearchTextFieldEmpty() {
