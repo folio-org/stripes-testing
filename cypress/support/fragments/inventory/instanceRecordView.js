@@ -15,8 +15,9 @@ import {
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
+import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 
-const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
+const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
@@ -61,15 +62,13 @@ const verifyInstanceStatusTerm = (value) => {
 
 const verifyMarkAsSuppressed = () => {
   cy.expect(
-    instanceDetailsSection
-      .find(HTML(including('Warning: Instance is marked staff suppressed')))
-      .exists(),
+    rootSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).exists(),
   );
 };
 
 const verifyMarkAsSuppressedFromDiscovery = () => {
   cy.expect(
-    instanceDetailsSection
+    rootSection
       .find(HTML(including('Warning: Instance is marked suppressed from discovery')))
       .exists(),
   );
@@ -77,7 +76,7 @@ const verifyMarkAsSuppressedFromDiscovery = () => {
 
 const verifyMarkAsSuppressedFromDiscoveryAndSuppressed = () => {
   cy.expect(
-    instanceDetailsSection
+    rootSection
       .find(
         HTML(
           including('Warning: Instance is marked suppressed from discovery and staff suppressed'),
@@ -101,7 +100,7 @@ const verifyImportedFieldExists = (field) => {
 
 const viewSource = () => {
   cy.wait(1000);
-  cy.do(instanceDetailsSection.find(actionsButton).click());
+  cy.do(rootSection.find(actionsButton).click());
   cy.wait(1000);
   cy.do(viewSourceButton.click());
 };
@@ -369,15 +368,13 @@ export default {
 
   verifyNotMarkAsStaffSuppressed() {
     cy.expect(
-      instanceDetailsSection
-        .find(HTML(including('Warning: Instance is marked staff suppressed')))
-        .absent(),
+      rootSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).absent(),
     );
   },
 
   verifyNotMarkAsPreviouslyHeld() {
     cy.expect(
-      instanceDetailsSection
+      rootSection
         .find(Accordion('Administrative data'))
         .find(HTML(including('Previously held')))
         .absent(),
@@ -438,7 +435,7 @@ export default {
   },
 
   edit: () => {
-    cy.do(instanceDetailsSection.find(actionsButton).click());
+    cy.do(rootSection.find(actionsButton).click());
     cy.do(Button('Edit instance').click());
     InstanceRecordEdit.waitLoading();
   },
@@ -446,5 +443,11 @@ export default {
   addHoldings: () => {
     cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
     InventoryNewHoldings.waitLoading();
+  },
+
+  editMarcBibliographicRecord: () => {
+    cy.wait(1000);
+    cy.do([rootSection.find(actionsButton).click(), Button({ id: 'edit-instance-marc' }).click()]);
+    InventoryEditMarcRecord.checkEditableQuickMarcFormIsOpened();
   },
 };

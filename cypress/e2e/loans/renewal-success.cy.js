@@ -155,6 +155,7 @@ describe('Renewal', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     CheckinActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId,

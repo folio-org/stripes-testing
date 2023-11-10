@@ -97,6 +97,9 @@ const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
 const note = 'Edited by AQA team';
+
+const orderLineList = MultiColumnList({ id: 'order-line-list' });
+
 // Edit form
 // PO Line details section
 const lineDetails = Section({ id: 'lineDetails' });
@@ -105,11 +108,15 @@ const poLineDetails = {
 };
 
 const submitOrderLine = () => {
+  cy.wait(4000);
   const submitButton = Button('Submit');
   cy.get('body').then(($body) => {
     if ($body.find('[id=line-is-not-unique-confirmation]').length) {
       cy.wait(4000);
-      cy.do(Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).click());
+      cy.do([
+        Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).focus(),
+        Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).click(),
+      ]);
     } else {
       // do nothing if modal is not displayed
     }
@@ -147,13 +154,24 @@ export default {
     cy.do(Button('Reset all').click());
   },
 
-  checkOrderlineSearchResults: (orderLineNumber) => {
-    cy.expect(
-      MultiColumnList({ id: 'order-line-list' })
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .has({ content: orderLineNumber }),
-    );
+  checkOrderlineSearchResults: ({ poLineNumber, title } = {}) => {
+    if (poLineNumber) {
+      cy.expect(
+        orderLineList
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ columnIndex: 0 }))
+          .has({ content: poLineNumber }),
+      );
+    }
+
+    if (title) {
+      cy.expect(
+        orderLineList
+          .find(MultiColumnListRow({ index: 0 }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: title }),
+      );
+    }
   },
 
   checkCreatedPOLineResource: (orderLineTitleName, recourceName, fund) => {

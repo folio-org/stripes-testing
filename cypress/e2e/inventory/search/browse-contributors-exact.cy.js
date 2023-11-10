@@ -47,6 +47,7 @@ describe('Inventory -> Contributors Browse', () => {
   });
 
   afterEach('Deleting user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
     InventoryInstance.deleteInstanceViaApi(instanceA.id);
     InventoryInstance.deleteInstanceViaApi(instanceZ.id);

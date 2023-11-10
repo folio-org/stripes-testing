@@ -33,11 +33,13 @@ describe('ui-inventory: query search', () => {
   });
 
   after('Delete all data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(userId);
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     InventoryInstances.resetAllFilters();
   });
 

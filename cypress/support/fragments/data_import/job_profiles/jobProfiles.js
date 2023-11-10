@@ -97,6 +97,9 @@ export default {
     cy.do(searchField.focus());
     cy.do(Button({ id: 'input-job-profiles-search-field-clear-button' }).click());
   },
+  waitFileIsUploaded: () => {
+    cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+  },
 
   checkJobProfilePresented: (jobProfileTitle) => {
     search(jobProfileTitle);

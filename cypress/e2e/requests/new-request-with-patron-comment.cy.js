@@ -60,6 +60,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     InventoryInstances.deleteInstanceViaApi({

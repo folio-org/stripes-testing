@@ -48,7 +48,7 @@ const advSearchModifierSelect = Select({ label: 'Match option*' });
 const advSearchOptionSelect = Select({ label: 'Search options*' });
 
 const advSearchOperators = ['AND', 'OR', 'NOT'];
-const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
+const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
 const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith'];
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
@@ -562,6 +562,18 @@ export default {
         return res.body.instances[0].id;
       });
   },
+  getInstancesViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      });
+  },
+
   deleteInstanceViaApi({ instance, servicePoint, shouldCheckIn = false }) {
     if (shouldCheckIn) {
       instance.barcodes.forEach((barcode) => {

@@ -31,10 +31,6 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -53,6 +49,10 @@ describe('bulk-edit', () => {
             );
           })
           .then(() => {
+            cy.login(user.username, user.password, {
+              path: TopMenu.inventoryPath,
+              waiter: InventoryInstances.waitContentLoading,
+            });
             InventorySearchAndFilter.switchToHoldings();
             InventorySearchAndFilter.byKeywords(item.instanceName);
             InventoryInstance.openHoldingView();
@@ -65,6 +65,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
       Users.deleteViaApi(user.userId);

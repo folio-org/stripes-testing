@@ -55,6 +55,7 @@ describe('Finance', () => {
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
+          Funds.closeBudgetDetails();
           Funds.addGroupToFund(defaultGroup.name);
           InteractorsTools.checkCalloutMessage('Fund has been saved');
         });
@@ -102,6 +103,7 @@ describe('Finance', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

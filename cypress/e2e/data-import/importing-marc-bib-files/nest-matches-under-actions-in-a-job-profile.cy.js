@@ -169,36 +169,35 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken().then(() => {
-        testData.jobProfileForCreate = jobProfileForCreate;
+      testData.jobProfileForCreate = jobProfileForCreate;
 
-        testData.forEach((specialPair) => {
-          cy.createOnePairMappingAndActionProfiles(
-            specialPair.mappingProfile,
-            specialPair.actionProfile,
-          ).then((idActionProfile) => {
-            cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
-          });
+      testData.forEach((specialPair) => {
+        cy.createOnePairMappingAndActionProfiles(
+          specialPair.mappingProfile,
+          specialPair.actionProfile,
+        ).then((idActionProfile) => {
+          cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
         });
-        SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
-          (bodyWithjobProfile) => {
-            testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-          },
-        );
-        // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathToUpload, marcFileNameForCreate);
-        JobProfiles.search(testData.jobProfileForCreate.profile.name);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFileNameForCreate);
-        FileDetails.openHoldingsInInventory('Created');
-        HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
-          holdingsHrId = initialHrId;
-        });
+      });
+      SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+        (bodyWithjobProfile) => {
+          testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+        },
+      );
+      // upload a marc file for creating of the new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePathToUpload, marcFileNameForCreate);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(testData.jobProfileForCreate.profile.name);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileNameForCreate);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(marcFileNameForCreate);
+      FileDetails.openHoldingsInInventory('Created');
+      HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
+        holdingsHrId = initialHrId;
       });
       cy.logout();
 
@@ -219,6 +218,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);

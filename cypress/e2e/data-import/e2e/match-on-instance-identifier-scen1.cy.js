@@ -94,6 +94,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(userId);
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
@@ -112,6 +113,7 @@ describe('data-import', () => {
           'marcFileForMatchOnIdentifierForCreate.mrc',
           fileNameForCreateInstance,
         );
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
@@ -174,6 +176,7 @@ describe('data-import', () => {
           'marcFileForMatchOnIdentifierForUpdate_1.mrc',
           fileNameForUpdateInstance,
         );
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);

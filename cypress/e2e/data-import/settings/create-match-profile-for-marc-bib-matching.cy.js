@@ -21,6 +21,7 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 
@@ -29,7 +30,7 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         const matchProfile = {
-          profileName: `C368009 001 to Instance HRID ${getRandomPostfix()}`,
+          profileName: `C9321 001 to Instance HRID ${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '001',
           },

@@ -1,5 +1,12 @@
 import { including } from '@interactors/html';
-import { Accordion, Checkbox, ListRow, MultiColumnListCell, Pane } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  Checkbox,
+  ListRow,
+  MultiColumnListCell,
+  Pane,
+} from '../../../../interactors';
 
 const rootPane = Pane('Lost items requiring actual cost');
 
@@ -16,5 +23,35 @@ export default {
         .find(MultiColumnListCell({ column: 'Loss type' }))
         .has({ content: type }),
     );
+  },
+
+  openLoanDetails(instanceTitle) {
+    cy.do([
+      ListRow(including(instanceTitle))
+        .find(Button({ icon: 'ellipsis' }))
+        .click(),
+      Button('Loan details').click(),
+    ]);
+    cy.expect(Pane(including('Loan details')).exists());
+  },
+
+  openDoNotBill(instanceTitle) {
+    cy.do([
+      ListRow(including(instanceTitle))
+        .find(Button({ icon: 'ellipsis' }))
+        .click(),
+      Button('Do not bill').click(),
+    ]);
+  },
+
+  checkDropdownOptionsDisabled(instanceTitle, options) {
+    cy.do(
+      ListRow(including(instanceTitle))
+        .find(Button({ icon: 'ellipsis' }))
+        .click(),
+    );
+    options.forEach((option) => {
+      cy.expect(Button(option).has({ disabled: true }));
+    });
   },
 };
