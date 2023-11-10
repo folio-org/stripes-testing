@@ -707,4 +707,14 @@ export default {
       );
     }
   },
+  verifyTextOfPaneHeaderMarcAuthority(text) {
+    cy.expect(
+      PaneHeader('MARC authority')
+        .find(HTML(including(text)))
+        .exists(),
+    );
+  },
+  verifySearchResultTabletIsAbsent() {
+    cy.expect(authoritiesList.absent());
+  },
 };

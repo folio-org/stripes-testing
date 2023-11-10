@@ -30,10 +30,6 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditHoldings.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -56,6 +52,10 @@ describe('bulk-edit', () => {
           `cypress/fixtures/${invalidItemBarcodesFileName}`,
           invalidItemBarcodes,
         );
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 

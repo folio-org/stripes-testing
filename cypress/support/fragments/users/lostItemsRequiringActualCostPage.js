@@ -34,4 +34,24 @@ export default {
     ]);
     cy.expect(Pane(including('Loan details')).exists());
   },
+
+  openDoNotBill(instanceTitle) {
+    cy.do([
+      ListRow(including(instanceTitle))
+        .find(Button({ icon: 'ellipsis' }))
+        .click(),
+      Button('Do not bill').click(),
+    ]);
+  },
+
+  checkDropdownOptionsDisabled(instanceTitle, options) {
+    cy.do(
+      ListRow(including(instanceTitle))
+        .find(Button({ icon: 'ellipsis' }))
+        .click(),
+    );
+    options.forEach((option) => {
+      cy.expect(Button(option).has({ disabled: true }));
+    });
+  },
 };
