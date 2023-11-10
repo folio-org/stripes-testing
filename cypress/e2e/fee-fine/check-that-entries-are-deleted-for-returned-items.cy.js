@@ -15,24 +15,21 @@ import UsersSearchResultsPane from '../../support/fragments/users/usersSearchRes
 import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
-import OverrideAndRenewModal from '../../support/fragments/users/loans/overrideAndRenewModal';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 
 describe('Lost items requiring actual cost', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances(),
-    userServicePoint: ServicePoints.getDefaultServicePoint(),
+    servicePoint: ServicePoints.getDefaultServicePoint(),
   };
   let itemData;
   let addedCirculationRule;
   let originalCirculationRules;
-  const paymentMethod = {};
   const ownerData = UsersOwners.getDefaultNewOwner();
   const declareLostComments = getTestEntityValue('Some additional information');
-  const lostItemFeePolicy = {
+  const feePolicyBody = {
     name: getTestEntityValue('1-minute-test'),
     chargeAmountItem: {
       chargeType: 'actualCost',
@@ -50,8 +47,8 @@ describe('Lost items requiring actual cost', () => {
       intervalId: 'Weeks',
     },
     feesFinesShallRefunded: {
-      duration: 1,
-      intervalId: 'Minutes',
+      duration: 6,
+      intervalId: 'Months',
     },
     patronBilledAfterAgedLost: {
       duration: 1,
@@ -67,9 +64,9 @@ describe('Lost items requiring actual cost', () => {
 
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(testData.userServicePoint);
+      ServicePoints.createViaApi(testData.servicePoint);
       testData.defaultLocation = Locations.getDefaultLocation({
-        servicePointId: testData.userServicePoint.id,
+        servicePointId: testData.servicePoint.id,
       }).location;
       Locations.createViaApi(testData.defaultLocation).then((location) => {
         InventoryInstances.createFolioInstancesViaApi({
@@ -87,22 +84,18 @@ describe('Lost items requiring actual cost', () => {
         ...ownerData,
         servicePointOwner: [
           {
-            value: testData.userServicePoint.id,
-            label: testData.userServicePoint.name,
+            value: testData.servicePoint.id,
+            label: testData.servicePoint.name,
           },
         ],
       }).then((ownerResponse) => {
         testData.ownerId = ownerResponse.id;
-        PaymentMethods.createViaApi(testData.ownerId).then(({ name, id }) => {
-          paymentMethod.name = name;
-          paymentMethod.id = id;
-        });
       });
-      LostItemFeePolicy.createViaApi(lostItemFeePolicy);
+      LostItemFeePolicy.createViaApi(feePolicyBody);
       CirculationRules.getViaApi().then((circulationRule) => {
         originalCirculationRules = circulationRule.rulesAsText;
         const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-        ruleProps.i = lostItemFeePolicy.id;
+        ruleProps.i = feePolicyBody.id;
         addedCirculationRule =
           't ' +
           testData.loanTypeId +
@@ -131,27 +124,28 @@ describe('Lost items requiring actual cost', () => {
       Permissions.loansRenew.gui,
       Permissions.loansRenewOverride.gui,
       Permissions.loansAll.gui,
+      Permissions.checkinAll.gui,
       Permissions.uiUsersDeclareItemLost.gui,
     ]).then((user) => {
-      testData.user = user;
+      testData.userData = user;
       UserEdit.addServicePointViaApi(
-        testData.userServicePoint.id,
-        testData.user.userId,
-        testData.userServicePoint.id,
+        testData.servicePoint.id,
+        testData.userData.userId,
+        testData.servicePoint.id,
       ).then(() => {
         Checkout.checkoutItemViaApi({
           itemBarcode: itemData.barcodes[0],
-          userBarcode: testData.user.barcode,
-          servicePointId: testData.userServicePoint.id,
+          userBarcode: testData.userData.barcode,
+          servicePointId: testData.servicePoint.id,
         });
-        cy.login(testData.user.username, testData.user.password, {
+        cy.login(testData.userData.username, testData.userData.password, {
           path: TopMenu.usersPath,
           waiter: UsersSearchResultsPane.waitLoading,
         });
       });
 
-      UsersSearchPane.searchByKeywords(testData.user.userId);
-      UsersSearchPane.openUser(testData.user.userId);
+      UsersSearchPane.searchByKeywords(testData.userData.userId);
+      UsersSearchPane.openUser(testData.userData.userId);
       UsersCard.waitLoading();
       UsersCard.viewCurrentLoans();
       UserLoans.openLoanDetails(itemData.barcodes[0]);
@@ -168,19 +162,19 @@ describe('Lost items requiring actual cost', () => {
       CirculationRules.deleteRuleViaApi(addedCirculationRule);
       InventoryInstances.deleteInstanceViaApi({
         instance: testData.folioInstances[0],
-        servicePoint: testData.userServicePoint,
+        servicePoint: testData.servicePoint,
         shouldCheckIn: true,
       });
-      LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
+      LostItemFeePolicy.deleteViaApi(feePolicyBody.id);
       cy.deleteLoanType(testData.loanTypeId);
-      Users.deleteViaApi(testData.user.userId);
+      Users.deleteViaApi(testData.userData.userId);
       UsersOwners.deleteViaApi(testData.ownerId);
       Locations.deleteViaApi(testData.defaultLocation);
     });
   });
 
   it(
-    'C375276 Check that entries are NOT deleted for renewed items (Declared lost items) when item is renewed after "No fees/fines shall be refunded if a lost item is returned more than" parameter (vega) (TaaS)',
+    'C375279 Check that entries are deleted for returned items (Declared lost items) (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       cy.visit(TopMenu.usersPath);
@@ -188,27 +182,21 @@ describe('Lost items requiring actual cost', () => {
       UsersSearchPane.openLostItemsRequiringActualCostPane();
       // Select "Declared lost" in "Loss type" filter
       LostItemsRequiringActualCostPage.searchByLossType('Declared lost');
-      // Click on "..." button in "Actions" column => click on "Loan details" action
-      LostItemsRequiringActualCostPage.openLoanDetails(itemData.instanceTitle);
-      // Click on "Renew" button
-      UserLoans.renewItem(itemData.barcodes[0], true);
-      // Click on "Override" button
-      RenewConfirmationModal.confirmRenewOverrideItem();
-      // Select an Item to be Renewed and fill in "Additional information" field with any value and click on "Override" button
-      OverrideAndRenewModal.confirmOverrideItem();
-      // "Override & renew" modal closed
-      OverrideAndRenewModal.verifyModalIsClosed();
-      // "Renewed through override" action appears on "Loan details" page
-      LoanDetails.checkAction(0, 'Renewed through override');
-      // Go back to "Lost items requiring actual cost" page
-      cy.visit(TopMenu.lostItemsRequiringActualCost);
-      // Select "Declared lost" in "Loss type" filter
-      LostItemsRequiringActualCostPage.searchByLossType('Declared lost');
-      // Just returned Item still displayed on "Lost items requiring actual cost" page
+      // Records with <instance_title_name> displayed at the result list with "Declared lost" status
       LostItemsRequiringActualCostPage.checkResultsLossType(
         itemData.instanceTitle,
         'Declared lost',
       );
+      // Go to "Check in" app and check in Item from preconditions
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.checkInItemByBarcode(itemData.barcodes[0]);
+      // Go back to "Lost items requiring actual cost" page
+      cy.visit(TopMenu.lostItemsRequiringActualCost);
+      // Select "Declared lost" in "Loss type" filter
+      LostItemsRequiringActualCostPage.searchByLossType('Declared lost');
+      LostItemsRequiringActualCostPage.filterByStatus('Open');
+      // Just returned Item disappeared and don`t displayed on "Lost items requiring actual cost" page with status "open"
+      LostItemsRequiringActualCostPage.checkResultNotDisplayed(itemData.instanceTitle);
     },
   );
 });
