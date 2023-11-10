@@ -69,9 +69,15 @@ export default {
   },
 
   addPermissions(permissions) {
-    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
-    cy.wait(2000);
-    cy.do([permissionsAccordion.clickHeader(), addPermissionsButton.click()]);
+    cy.do([
+      userDetailsPane.find(actionsButton).click(),
+      editButton.click(),
+    ]);
+    cy.wait(5000);
+    cy.do([
+      permissionsAccordion.clickHeader(),
+      addPermissionsButton.click(),
+    ]);
 
     permissions.forEach((permission) => {
       cy.do(userSearch.fillIn(permission));
