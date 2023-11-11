@@ -707,4 +707,26 @@ export default {
       );
     }
   },
+  verifyTextOfPaneHeaderMarcAuthority(text) {
+    cy.expect(
+      PaneHeader('MARC authority')
+        .find(HTML(including(text)))
+        .exists(),
+    );
+  },
+  verifySearchResultTabletIsAbsent() {
+    cy.expect(authoritiesList.absent());
+  },
+
+  getMarcAuthoritiesViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'search/authorities',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.authorities;
+      });
+  },
 };

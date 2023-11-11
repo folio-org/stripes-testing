@@ -16,14 +16,14 @@ describe('data-import', () => {
     const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
     before('create test data', () => {
-      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-
       cy.createTempUser([
         Permissions.settingsDataImportView.gui,
         Permissions.uiInventoryViewInstances.gui,
         Permissions.remoteStorageView.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         cy.login(user.username, user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
