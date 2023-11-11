@@ -25,6 +25,7 @@ import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import generateUniqueItemBarcodeWithShift from '../../utils/generateUniqueItemBarcodeWithShift';
 import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
+import { REQUEST_METHOD } from '../../constants';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -133,6 +134,28 @@ const getCallNumberTypes = (searchParams) => cy
     return response.body.callNumberTypes;
   });
 
+const createHoldingsNoteTypeViaApi = (noteTypeName) => {
+  return cy
+    .okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: 'holdings-note-types',
+      body: {
+        id: uuid(),
+        name: noteTypeName,
+        source: 'folio',
+      },
+    })
+    .then((response) => response.body.id);
+};
+
+const deleteHoldingsNoteTypeViaApi = (noteTypeId) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.DELETE,
+    path: `holdings-note-types/${noteTypeId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+};
+
 const getHoldingsNotesTypes = (searchParams) => cy
   .okapiRequest({
     path: 'holdings-note-types',
@@ -144,6 +167,8 @@ const getHoldingsNotesTypes = (searchParams) => cy
   });
 
 export default {
+  createHoldingsNoteTypeViaApi,
+  deleteHoldingsNoteTypeViaApi,
   getHoldingsNotesTypes,
   getCallNumberTypes,
   waitContentLoading,
