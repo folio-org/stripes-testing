@@ -42,12 +42,13 @@ describe('remote-storage-configuration', () => {
 
         configuration.create(name);
         Configurations.verifyCreatedConfiguration(name, configuration);
-        Configurations.editConfiguration(name, { nameInput: 'newAutotestConfigurationName' });
+        const newName = 'newAutotestConfigurationName';
+        Configurations.editConfiguration(name, { nameInput: newName });
         Configurations.confirmCreateRemoteStorage();
         Configurations.verifyCreatedConfiguration(name, configuration);
         Configurations.editConfiguration(name, { nameInput: 'newAutotestConfigurationName2' });
         Configurations.cancelConfirmation();
-        Configurations.deleteRemoteStorage(name);
+        Configurations.deleteRemoteStorage(newName);
       });
     },
   );
