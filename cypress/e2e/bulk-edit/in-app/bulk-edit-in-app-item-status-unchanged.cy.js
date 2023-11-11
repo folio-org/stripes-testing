@@ -11,6 +11,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Checkout from '../../../support/fragments/checkout/checkout';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 
 let user;
 let servicePointId;
@@ -61,6 +62,11 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
+      CheckInActions.checkinItemViaApi({
+        itemBarcode: item.barcode,
+        servicePointId: servicePointId,
+        checkInDate: new Date().toISOString(),
+      });
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
