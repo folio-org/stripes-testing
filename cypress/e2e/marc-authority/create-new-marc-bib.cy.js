@@ -141,7 +141,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   );
 
   it(
-    '[380714] "245" field presence validation when creating a new "MARC bib" record',
+    'C380714 "245" field presence validation when creating a new "MARC bib" record (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.newMarcBibRecord();
