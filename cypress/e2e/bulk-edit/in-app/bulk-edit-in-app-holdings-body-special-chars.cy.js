@@ -11,7 +11,6 @@ import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../../support/fragments/users/userEdit';
