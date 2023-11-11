@@ -42,6 +42,7 @@ const setCriteriaPane = Pane('Set criteria');
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
+const saveAndClose = Button('Save and close');
 const textFildTo = TextField('To');
 const textFildFrom = TextField('From');
 const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
@@ -570,6 +571,10 @@ export default {
     cy.expect(MultiColumnListCell({ column: columnName, content: including(value) }).exists());
   },
 
+  verifyExactChangesUnderColumns(columnName, value) {
+    cy.expect(MultiColumnListCell({ column: columnName, content: value }).exists());
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -885,7 +890,9 @@ export default {
   isDragAndDropAreaDisabled(isDisabled) {
     cy.expect(fileButton.has({ disabled: isDisabled }));
   },
-
+  isSaveAndCloseButtonDisabled(isDisabled) {
+    cy.expect(saveAndClose.has({ disabled: isDisabled }));
+  },
   isBuildQueryButtonDisabled(isDisabled) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);

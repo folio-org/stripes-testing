@@ -14,7 +14,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
-describe('MARC › MARC Holdings', () => {
+describe('MARC -> MARC Holdings', () => {
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const testData = {
     tag851: '851',
