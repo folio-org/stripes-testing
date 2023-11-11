@@ -19,17 +19,6 @@ describe('Inventory -> Advanced search', () => {
   };
 
   before('Create test data', () => {
-    /*
-      1) System should have at least one "Instance" record (source - FOLIO or MARC)
-      2) Add "Holdings" to any existing "Instance" record
-      * Specify "Call number" value in added "Holdings" (e.g., YCN1102203546825)
-      * Add an "Item" to added "Holdings"
-      3) Add "Holdings" to another existing "Instance" record
-      * Specify the same "Call number" value in added "Holdings" (e.g., YCN1102203546825)
-      * Add an "Item" to added "Holdings"
-      * Note "HRID" of added "Holdings"
-      * Note title of "Instance" record
-    */
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
@@ -38,33 +27,27 @@ describe('Inventory -> Advanced search', () => {
         cy.getHoldingTypes({ limit: 2 }).then((res) => {
           testData.holdingTypeId = res[0].id;
         });
-        cy.getLocations({ limit: 1 }).then((res) => {
-          testData.locationId = res.id;
-        });
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           testData.loanTypeId = res[0].id;
-          testData.loanTypeName = res[0].name;
         });
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           testData.materialTypeId = res.id;
         });
-        InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {
-          testData.callNumberTypes = res;
+        [...Array(2)].forEach((_, index) => {
+          const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+          testData.defaultLocations[index] = Location.getDefaultLocation(servicePoint.id);
+          Location.createViaApi(testData.defaultLocations[index]);
         });
-        const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();
-        const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
-        testData.defaultLocations[0] = Location.getDefaultLocation(servicePoint1.id);
-        testData.defaultLocations[1] = Location.getDefaultLocation(servicePoint2.id);
-        Location.createViaApi(testData.defaultLocations[0]);
-        Location.createViaApi(testData.defaultLocations[1]);
       })
       .then(() => {
+        // 1) System should have "Instance" records
         testData.instances.forEach((instance, index) => {
           InventoryInstances.createFolioInstanceViaApi({
             instance: {
               instanceTypeId: testData.instanceTypeId,
               title: instance.title,
             },
+            // 2 - 3) Add "Holdings" to "Instance" record, specify "Call number",
             holdings: [
               {
                 holdingsTypeId: testData.holdingTypeId,
@@ -72,6 +55,7 @@ describe('Inventory -> Advanced search', () => {
                 callNumber: testData.callNumber,
               },
             ],
+            // * Add an "Item" to added "Holdings"
             items: [
               {
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
@@ -81,6 +65,7 @@ describe('Inventory -> Advanced search', () => {
             ],
           }).then((instanceIds) => {
             testData.instances[index].id = instanceIds.instanceId;
+            // * Note "HRID" of added "Holdings"
             cy.getHoldings({
               limit: 1,
               query: `"instanceId"="${instanceIds.instanceId}"`,
@@ -115,38 +100,18 @@ describe('Inventory -> Advanced search', () => {
     () => {
       // #1 Select "Holdings" toggle on "Search & filter" pane
       InventorySearchAndFilter.switchToHoldings();
-      // "Advanced search" button is shown to the right of the "Reset all" button and is enabled
-
       // #2 Click on "Advanced search" button
       InventoryInstances.clickAdvSearchButton();
-      // #3 Click on operator select dropdown (first row) in any line in modal
-      // Dropdown expanded and contains following options:* AND, * OR, * NOT
-      // #4 Click on search modifier select dropdown (third row) in any line in modal
-      // Dropdown expanded and contains following options:* Exact phrase, * Contains all, * Starts with, * Contains any
-      // #5 Click on search option select dropdown (fourth row) in any line in modal
-      // Dropdown expanded and contains following options:
-      // * Keyword (title, contributor, identifier, HRID, UUID)
-      // * ISBN
-      // * ISSN
-      // * Call number, eye readable
-      // * Call number, normalized
-      // * Holdings notes (all)
-      // * Holdings administrative notes
-      // * Holdings HRID
-      // * Holdings UUID
-      // * All
+      // #3 - #5 Check advanced search dropdowns, including operator, search modifier and search option
       InventoryInstances.checkAdvSearchInstancesModalFields(0, 'Holdings');
       // #6 Click on "X" icon in the upper left corner of the modal
-      // "Advanced search" modal window is closed
       InventoryInstances.clickCloseBtnInAdvSearchModal();
+      // "Advanced search" modal window is closed
       InventoryInstances.checkAdvSearchModalAbsence();
       // #7 Click on "Advanced search" button
-      // "Advanced search" modal window appears
       InventoryInstances.clickAdvSearchButton();
-      // #8 In first line in modal:
-      // * Fill search input field with "Call number" value specified in Preconditions (e.g., "YCN1102203546825")
-      // * Select an option in search modifier dropdown (e.g., "Exact phrase")
-      // * Select an option in search option dropdown (e.g., "Call number, normalized")
+      // #8 Fill in the first line in modal: search input: "Call number" value; search modifier: "Exact phrase";
+      // search option: "Call number, normalized"
       InventoryInstances.fillAdvSearchRow(
         0,
         testData.callNumber,
@@ -160,11 +125,8 @@ describe('Inventory -> Advanced search', () => {
         'Exact phrase',
         'Call number, normalized',
       );
-      // #9 In second line in modal:
-      // * Select " *AND* " option in operator select dropdown
-      // * Fill search input field with "HRID" value noted in Preconditions, and delete the first character from it
-      // * Select an option in search modifier dropdown (e.g., "Contains any")
-      // * Select an option in search option dropdown (e.g., "Holdings HRID")
+      // #9 Fill in the second line in modal: operator: "AND"; search input: "HRID" with deleted the first character;
+      // search modifier: "Contains any"; search option: "Holdings HRID"
       InventoryInstances.fillAdvSearchRow(
         1,
         testData.instances[1].holdingHRID.slice(1),
@@ -194,6 +156,7 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.clickAdvSearchButton();
       // #12 Press "ESC" keyboard key
       InventoryInstances.closeAdvSearchModalUsingESC();
+      // "Advanced search" modal window is closed
       InventoryInstances.checkAdvSearchModalAbsence();
     },
   );
