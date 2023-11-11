@@ -1,6 +1,7 @@
 import permissions from '../../support/dictionary/permissions';
 import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
+import getRandomPostfix from '../../support/utils/stringTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -19,17 +20,25 @@ describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
+  const secondFund = {
+    name: `autotest_fund2_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  };
+  const thirdFund = {
+    name: `autotest_fund3_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  };
   const defaultOrder = {
     ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
-    reEncumber: true,
-  };
-  const secondOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    approved: true,
-    orderType: 'One-time',
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -48,6 +57,8 @@ describe('Orders', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
+        secondFund.ledgerId = defaultLedger.id;
+        thirdFund.ledgerId = defaultLedger.id;
 
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
@@ -56,6 +67,21 @@ describe('Orders', () => {
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
+          Funds.closeBudgetDetails();
+        });
+        Funds.createViaApi(secondFund).then((secondFundResponse) => {
+          secondFund.id = secondFundResponse.fund.id;
+          FinanceHelp.searchByName(secondFund.name);
+          Funds.selectFund(secondFund.name);
+          Funds.addBudget(allocatedQuantity);
+          Funds.closeBudgetDetails();
+        });
+        Funds.createViaApi(thirdFund).then((thirdFundResponse) => {
+          thirdFund.id = thirdFundResponse.fund.id;
+          FinanceHelp.searchByName(thirdFund.name);
+          Funds.selectFund(thirdFund.name);
+          Funds.addBudget(allocatedQuantity);
+          Funds.closeBudgetDetails();
         });
       });
     });
@@ -73,21 +99,11 @@ describe('Orders', () => {
 
     cy.visit(TopMenu.ordersPath);
     Orders.createOrderForRollover(defaultOrder).then((orderResponse) => {
-      secondOrder.id = orderResponse.id;
+      defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.fillInPOLineInfoforPEMIXWithFund(
-        defaultFund,
-        '10',
-        '1',
-        '20',
-        location.institutionId,
-      );
-      OrderLines.backToEditingOrder();
     });
 
-    cy.createTempUser([permissions.uiOrdersEdit.gui, permissions.uiOrdersView.gui]).then(
+    cy.createTempUser([permissions.uiOrdersEdit.gui, permissions.uiOrdersCreate.gui]).then(
       (userProperties) => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, {
@@ -99,7 +115,23 @@ describe('Orders', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+    Orders.deleteOrderViaApi(defaultOrder.id);
+    FinanceHelp.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
+    Funds.selectBudgetDetails();
+    Funds.deleteBudgetViaActions();
+    Funds.deleteFundViaActions();
+    FinanceHelp.searchByName(secondFund.name);
+    Funds.selectFund(secondFund.name);
+    Funds.selectBudgetDetails();
+    Funds.deleteBudgetViaActions();
+    Funds.deleteFundViaActions();
+    FinanceHelp.searchByName(thirdFund.name);
+    Funds.selectFund(thirdFund.name);
+    Funds.selectBudgetDetails();
+    Funds.deleteBudgetViaActions();
+    Funds.deleteFundViaActions();
     Users.deleteViaApi(user.userId);
   });
 
@@ -109,22 +141,16 @@ describe('Orders', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
-      OrderLines.selectPOLInOrder(0);
-      OrderLines.editPOLInOrder();
-      OrderLines.deleteFundsInPOL();
-      OrderLines.deleteLocationsInPOL();
-      OrderLines.fillInPOLineInfoforOtherWithFund(
+      OrderLines.addPOLine();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+      OrderLines.fillInPOLineInfoForElectronicWithThreeFunds(
         defaultFund,
-        '10',
+        '90',
         '1',
-        '10',
+        '90',
         location.institutionId,
       );
       OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      OrderLines.selectPOLInOrder(0);
-      OrderLines.editPOLInOrder();
-      OrderLines.addReveivingNoteToItemDetailsAndSave(orderNumber);
     },
   );
 });
