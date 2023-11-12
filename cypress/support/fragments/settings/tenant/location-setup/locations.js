@@ -85,8 +85,8 @@ export default {
     LocationDetails.waitLoading();
     LocationDetails.checkActionButtonAbsent();
   },
-  selectInstitution() {
-    cy.do(Select('Institution').choose(including('KU')));
+  selectInstitution(content = 'KU') {
+    cy.do(Select('Institution').choose(including(content)));
   },
   selectCampus() {
     cy.do(Select('Campus').choose(including('E)')));
@@ -218,9 +218,6 @@ export default {
     cy.expect(Pane('Locations').exists());
   },
   duplicate() {
-    cy.do([
-      actionsButton.click(),
-      Button('Duplicate').click(),
-    ]);
+    cy.do([actionsButton.click(), Button('Duplicate').click()]);
   },
 };

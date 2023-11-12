@@ -72,6 +72,9 @@ export default {
     cy.do([
       userDetailsPane.find(actionsButton).click(),
       editButton.click(),
+    ]);
+    cy.wait(5000);
+    cy.do([
       permissionsAccordion.clickHeader(),
       addPermissionsButton.click(),
     ]);
@@ -83,6 +86,7 @@ export default {
       cy.wait(1000);
       cy.do(Button('Search').click());
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
+      cy.wait(2000);
     });
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },

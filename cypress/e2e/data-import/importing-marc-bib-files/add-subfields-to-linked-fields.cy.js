@@ -270,8 +270,8 @@ describe('data-import', () => {
         cy.wait(4000);
         InventoryInstance.viewSource();
         InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
-        MarcAuthorities.checkFieldAndContentExistence('100', '‡9');
-        MarcAuthorities.checkFieldAndContentExistence('700', '‡9');
+        MarcAuthorities.checkFieldAndContentExistence('100', '$9');
+        MarcAuthorities.checkFieldAndContentExistence('700', '$9');
       },
     );
   });

@@ -218,10 +218,10 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       QuickMarcEditor.closeEditorPane();
       InventoryInstance.viewSource();
       InventoryViewSource.contains(
-        `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t‡a C380729 Jackson, Peter, ‡d 1950-2022 ‡c Inspector Banks series ; ‡0 3052044 ‡9`,
+        `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380729 Jackson, Peter, $d 1950-2022 $c Inspector Banks series ; $0 3052044 $9`,
       );
       InventoryViewSource.contains(
-        `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t‡a C380729 John Bartholomew and Son. ‡l English ‡t Bartholomew world travel series ‡d 1995 ‡0 id.loc.gov/authorities/names/n84704570 ‡9`,
+        `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380729 John Bartholomew and Son. $l English $t Bartholomew world travel series $d 1995 $0 id.loc.gov/authorities/names/n84704570 $9`,
       );
 
       cy.visit(TopMenu.marcAuthorities);

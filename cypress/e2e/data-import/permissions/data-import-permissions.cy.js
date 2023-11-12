@@ -14,14 +14,14 @@ describe('data-import', () => {
     const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
     before('create test data', () => {
-      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
         cy.login(user.username, user.password);
+        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
       });
     });
 
