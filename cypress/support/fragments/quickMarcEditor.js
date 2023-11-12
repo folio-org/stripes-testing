@@ -106,6 +106,9 @@ const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const linkHeadingsButton = Button('Link headings');
 const arrowDownButton = Button({ icon: 'arrow-down' });
 const buttonLink = Button({ icon: 'unlink' });
+const deleteFieldsModal = Modal('Delete fields');
+const restoreButtonInDeleteFieldsModal = Button('Restore deleted field(s)');
+const confirmButtonInDeleteFieldsModal = Button('Continue with save');
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -387,6 +390,22 @@ export default {
   pressSaveAndKeepEditing(calloutMsg) {
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect(Callout(calloutMsg).exists());
+  },
+
+  checkDeletingFieldsModal: () => {
+    cy.expect([
+      deleteFieldsModal.exists(),
+      deleteFieldsModal.find(restoreButtonInDeleteFieldsModal).exists(),
+      deleteFieldsModal.find(confirmButtonInDeleteFieldsModal).exists(),
+    ]);
+  },
+
+  restoreDeletedFields: () => {
+    cy.do(deleteFieldsModal.find(restoreButtonInDeleteFieldsModal).click());
+  },
+
+  confirmDeletingFields: () => {
+    cy.do(deleteFieldsModal.find(confirmButtonInDeleteFieldsModal).click());
   },
 
   pressCancel() {
