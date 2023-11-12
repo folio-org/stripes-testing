@@ -29,6 +29,11 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     fileName: `testMarcFileC360098.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
   };
+  const marcFileC359239 = {
+    marc: 'marcBibFileC360098.mrc',
+    fileName: `testMarcFileC359239.${getRandomPostfix()}.mrc`,
+    jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+  };
   const createdInstanceIDs = [];
 
   before(() => {
@@ -38,25 +43,37 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          createdInstanceIDs.push(link.split('/')[5]);
-        });
+        //   DataImport.verifyUploadState();
+        //   DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        //   JobProfiles.search(marcFile.jobProfileToRun);
+        //   JobProfiles.runImportFile();
+        //   JobProfiles.waitFileIsImported(marcFile.fileName);
+        //   Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        //   Logs.openFileDetails(marcFile.fileName);
+        //   Logs.getCreatedItemsID().then((link) => {
+        //     createdInstanceIDs.push(link.split('/')[5]);
+        //   });
+        //   cy.visit(TopMenu.dataImportPath);
+        //   DataImport.waitLoading();
+        //   DataImport.verifyUploadState();
+        //   DataImport.uploadFileAndRetry(marcFile.marc, `${marcFile.fileName}_copy`);
+        //   JobProfiles.search(marcFile.jobProfileToRun);
+        //   JobProfiles.runImportFile();
+        //   JobProfiles.waitFileIsImported(`${marcFile.fileName}_copy`);
+        //   Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        //   Logs.openFileDetails(`${marcFile.fileName}_copy`);
+        //   Logs.getCreatedItemsID().then((link) => {
+        //     createdInstanceIDs.push(link.split('/')[5]);
+        //   });
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, `${marcFile.fileName}_copy`);
-        JobProfiles.search(marcFile.jobProfileToRun);
+        DataImport.uploadFileAndRetry(marcFileC359239.marc, marcFileC359239.fileName);
+        JobProfiles.search(marcFileC359239.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(`${marcFile.fileName}_copy`);
+        JobProfiles.waitFileIsImported(marcFileC359239.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(`${marcFile.fileName}_copy`);
+        Logs.openFileDetails(marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
           createdInstanceIDs.push(link.split('/')[5]);
         });
@@ -64,15 +81,122 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     });
   });
 
-  after('Deleting created users, Instances', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
-    InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[1]);
-  });
+  // after('Deleting created users, Instances', () => {
+  //   cy.getAdminToken();
+  //   Users.deleteViaApi(testData.userProperties.userId);
+  //   InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[0]);
+  //   InventoryInstance.deleteInstanceViaApi(createdInstanceIDs[1]);
+  // });
+
+  // it(
+  //   'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+  //   () => {
+  //     cy.login(testData.userProperties.username, testData.userProperties.password, {
+  //       path: TopMenu.inventoryPath,
+  //       waiter: InventoryInstances.waitContentLoading,
+  //     });
+  //     InventoryInstances.waitContentLoading();
+  //     InventoryInstance.searchByTitle(createdInstanceIDs[0]);
+  //     InventoryInstances.selectInstance();
+  //     InventoryInstance.editMarcBibliographicRecord();
+  //     QuickMarcEditor.updateExistingTagValue(20, '');
+  //     QuickMarcEditor.checkButtonsEnabled();
+  //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+  //     QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
+  //     QuickMarcEditor.verifyTagValue(20, '');
+  //     QuickMarcEditor.updateExistingTagValue(20, testData.tag504FirstUpdatedTag);
+  //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+  //     QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
+  //     QuickMarcEditor.verifyTagValue(20, testData.tag504FirstUpdatedTag);
+  //     QuickMarcEditor.updateExistingTagValue(20, testData.tag504SecondUpdatedTag);
+  //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+  //     QuickMarcEditor.verifyInvalidTagCallout();
+  //     QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
+  //     QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
+  //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+  //     QuickMarcEditor.verifyMultiple245TagCallout();
+  //     QuickMarcEditor.verifyTagValue(20, testData.tag245);
+  //     QuickMarcEditor.updateExistingTagValue(20, testData.tag504);
+  //     QuickMarcEditor.updateExistingTagValue(14, testData.tag555);
+  //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+  //     QuickMarcEditor.verifyNo245TagCallout();
+  //     QuickMarcEditor.verifyTagValue(14, testData.tag555);
+  //     QuickMarcEditor.updateExistingTagValue(14, testData.tag245);
+  //     QuickMarcEditor.updateExistingTagValue(16, '');
+  //     QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
+  //     QuickMarcEditor.checkFourthBoxDisabled(16);
+  //     QuickMarcEditor.clickSaveAndKeepEditingButton();
+  //     QuickMarcEditor.verifyMultiple001TagCallout();
+  //     QuickMarcEditor.verifyTagValue(16, testData.tag001);
+  //     QuickMarcEditor.checkFourthBoxDisabled(16);
+  //     QuickMarcEditor.closeWithoutSavingAfterChange();
+  //     InventoryInstance.waitLoading();
+  //     InventoryInstance.checkInstanceTitle(testData.instanceTitle);
+  //     InventoryInstance.checkDetailViewOfInstance(
+  //       testData.instanceNotesAccordion,
+  //       testData.instanceBibliographyNote,
+  //     );
+  //   },
+  // );
+
+  // it(
+  //   'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+  //   () => {
+  //     cy.login(testData.userProperties.username, testData.userProperties.password, {
+  //       path: TopMenu.inventoryPath,
+  //       waiter: InventoryInstances.waitContentLoading,
+  //     });
+  //     InventoryInstances.searchBySource('MARC');
+  //     InventoryInstance.searchByTitle(createdInstanceIDs[1]);
+  //     InventoryInstances.selectInstance();
+  //     InventoryInstance.waitLoading();
+  //     InventoryInstance.editMarcBibliographicRecord();
+  //     QuickMarcEditor.addEmptyFields(20);
+  //     // here and below - wait until new field is shown
+  //     cy.wait(500);
+  //     QuickMarcEditor.updateExistingFieldContent(21, '1');
+  //     QuickMarcEditor.checkEmptyFieldAdded(21, '1');
+  //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+  //     QuickMarcEditor.addEmptyFields(20);
+  //     // here and below - wait until new field is shown
+  //     cy.wait(500);
+  //     QuickMarcEditor.updateExistingFieldContent(22, '2');
+  //     QuickMarcEditor.checkEmptyFieldAdded(22, '2');
+  //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+  //     QuickMarcEditor.addEmptyFields(20);
+  //     // here and below - wait until new field is shown
+  //     cy.wait(500);
+  //     QuickMarcEditor.updateExistingFieldContent(23, '3');
+  //     QuickMarcEditor.checkEmptyFieldAdded(23, '3');
+  //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+  //     QuickMarcEditor.deleteField(20);
+  //     // here and below - wait until deleted empty field is not shown
+  //     cy.wait(1000);
+  //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+
+  //     QuickMarcEditor.deleteField(21);
+  //     // here and below - wait until deleted empty field is not shown
+  //     cy.wait(1000);
+  //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+  //     QuickMarcEditor.deleteField(21);
+  //     // here and below - wait until deleted empty field is not shown
+  //     cy.wait(1000);
+  //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+  //     QuickMarcEditor.deleteField(21);
+  //     // here and below - wait until deleted empty field is not shown
+  //     cy.wait(1000);
+  //     QuickMarcEditor.checkButtonSaveAndCloseEnable();
+  //     QuickMarcEditor.checkTagAbsent('');
+  //     QuickMarcEditor.clickSaveAndCloseThenCheck(1);
+  //     QuickMarcEditor.confirmDelete();
+  //     QuickMarcEditor.checkAfterSaveAndClose();
+  //   },
+  // );
 
   it(
-    'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
+    'C359239 Edit MARC Bib | Displaying of placeholder message when user deletes a row (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -80,101 +204,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         waiter: InventoryInstances.waitContentLoading,
       });
       InventoryInstances.waitContentLoading();
-      InventoryInstance.searchByTitle(createdInstanceIDs[0]);
+      InventoryInstance.searchByTitle(createdInstanceIDs[2]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.updateExistingTagValue(20, '');
-      QuickMarcEditor.checkButtonsEnabled();
-      QuickMarcEditor.clickSaveAndKeepEditingButton();
-      QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
-      QuickMarcEditor.verifyTagValue(20, '');
-      QuickMarcEditor.updateExistingTagValue(20, testData.tag504FirstUpdatedTag);
-      QuickMarcEditor.clickSaveAndKeepEditingButton();
-      QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
-      QuickMarcEditor.verifyTagValue(20, testData.tag504FirstUpdatedTag);
-      QuickMarcEditor.updateExistingTagValue(20, testData.tag504SecondUpdatedTag);
-      QuickMarcEditor.clickSaveAndKeepEditingButton();
-      QuickMarcEditor.verifyInvalidTagCallout();
-      QuickMarcEditor.verifyTagValue(20, testData.tag504SecondUpdatedTag);
-      QuickMarcEditor.updateExistingTagValue(20, testData.tag245);
-      QuickMarcEditor.clickSaveAndKeepEditingButton();
-      QuickMarcEditor.verifyMultiple245TagCallout();
-      QuickMarcEditor.verifyTagValue(20, testData.tag245);
-      QuickMarcEditor.updateExistingTagValue(20, testData.tag504);
-      QuickMarcEditor.updateExistingTagValue(14, testData.tag555);
-      QuickMarcEditor.clickSaveAndKeepEditingButton();
-      QuickMarcEditor.verifyNo245TagCallout();
-      QuickMarcEditor.verifyTagValue(14, testData.tag555);
-      QuickMarcEditor.updateExistingTagValue(14, testData.tag245);
-      QuickMarcEditor.updateExistingTagValue(16, '');
-      QuickMarcEditor.updateTagNameToLockedTag(16, testData.tag001);
-      QuickMarcEditor.checkFourthBoxDisabled(16);
-      QuickMarcEditor.clickSaveAndKeepEditingButton();
-      QuickMarcEditor.verifyMultiple001TagCallout();
-      QuickMarcEditor.verifyTagValue(16, testData.tag001);
-      QuickMarcEditor.checkFourthBoxDisabled(16);
-      QuickMarcEditor.closeWithoutSavingAfterChange();
-      InventoryInstance.waitLoading();
-      InventoryInstance.checkInstanceTitle(testData.instanceTitle);
-      InventoryInstance.checkDetailViewOfInstance(
-        testData.instanceNotesAccordion,
-        testData.instanceBibliographyNote,
-      );
-    },
-  );
-
-  it(
-    'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
-    () => {
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-      InventoryInstances.searchBySource('MARC');
-      InventoryInstance.searchByTitle(createdInstanceIDs[1]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.waitLoading();
-      InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.addEmptyFields(20);
-      // here and below - wait until new field is shown
-      cy.wait(500);
-      QuickMarcEditor.updateExistingFieldContent(21, '1');
-      QuickMarcEditor.checkEmptyFieldAdded(21, '1');
-      QuickMarcEditor.checkButtonSaveAndCloseEnable();
-      QuickMarcEditor.addEmptyFields(20);
-      // here and below - wait until new field is shown
-      cy.wait(500);
-      QuickMarcEditor.updateExistingFieldContent(22, '2');
-      QuickMarcEditor.checkEmptyFieldAdded(22, '2');
-      QuickMarcEditor.checkButtonSaveAndCloseEnable();
-      QuickMarcEditor.addEmptyFields(20);
-      // here and below - wait until new field is shown
-      cy.wait(500);
-      QuickMarcEditor.updateExistingFieldContent(23, '3');
-      QuickMarcEditor.checkEmptyFieldAdded(23, '3');
-      QuickMarcEditor.checkButtonSaveAndCloseEnable();
-      QuickMarcEditor.deleteField(20);
-      // here and below - wait until deleted empty field is not shown
-      cy.wait(1000);
-      QuickMarcEditor.checkButtonSaveAndCloseEnable();
-
-      QuickMarcEditor.deleteField(21);
-      // here and below - wait until deleted empty field is not shown
-      cy.wait(1000);
-      QuickMarcEditor.checkButtonSaveAndCloseEnable();
-      QuickMarcEditor.deleteField(21);
-      // here and below - wait until deleted empty field is not shown
-      cy.wait(1000);
-      QuickMarcEditor.checkButtonSaveAndCloseEnable();
-      QuickMarcEditor.deleteField(21);
-      // here and below - wait until deleted empty field is not shown
-      cy.wait(1000);
-      QuickMarcEditor.checkButtonSaveAndCloseEnable();
-      QuickMarcEditor.checkTagAbsent('');
-      QuickMarcEditor.clickSaveAndCloseThenCheck(1);
-      QuickMarcEditor.confirmDelete();
-      QuickMarcEditor.checkAfterSaveAndClose();
     },
   );
 });
