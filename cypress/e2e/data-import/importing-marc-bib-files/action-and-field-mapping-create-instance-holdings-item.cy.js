@@ -38,7 +38,6 @@ describe('data-import', () => {
           suppressFromDiscavery: 'Mark for all affected records',
           staffSuppress: 'Mark for all affected records',
           previouslyHeld: 'Mark for all affected records',
-          instanceStatus: INSTANCE_STATUS_TERM_NAMES.OTHER,
           instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
           statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
           statisticalCodeUI: 'Book, print (books)',
@@ -129,9 +128,6 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[0].mappingProfile.previouslyHeld,
         );
         NewFieldMappingProfile.fillInstanceStatusTerm(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatus,
-        );
-        NewFieldMappingProfile.fillInstanceStatusTerm(
           collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatusTerm,
         );
         NewFieldMappingProfile.addStatisticalCode(
@@ -172,7 +168,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.addStatisticalCode(
           collectionOfMappingAndActionProfiles[2].mappingProfile.statisticalCode,
@@ -241,7 +237,7 @@ describe('data-import', () => {
           ItemRecordView.verifyPermanentLoanType(
             collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
           );
-          ItemRecordView.verifyStatus(
+          ItemRecordView.verifyItemStatus(
             collectionOfMappingAndActionProfiles[2].mappingProfile.status,
           );
           ItemRecordView.verifyFormerIdentifiers(

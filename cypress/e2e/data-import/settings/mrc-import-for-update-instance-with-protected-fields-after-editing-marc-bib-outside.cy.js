@@ -217,7 +217,7 @@ describe('data-import', () => {
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource(
           '650\t',
-          'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb',
+          'Drawing, Dutch $y 21st century $v Exhibitions. $5 amb',
         );
         InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
       },

@@ -249,7 +249,7 @@ const tag008DefaultValues = [
 const defaultFieldValues = {
   content: 'qwe',
   subfieldPrefixInEditor: '$',
-  subfieldPrefixInSource: '‡',
+  subfieldPrefixInSource: '$',
   // just enumerate a few free to use tags  which can be applyied in test one by one with small reserve
   freeTags: ['996', '997', '998'],
   existingLocation: '$b E',
@@ -560,6 +560,15 @@ export default {
 
   deleteField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
+  },
+
+  deleteFieldByTagAndCheck: (tag) => {
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).click());
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
+  },
+
+  verifySaveAndCloseButtonEnabled() {
+    cy.expect(saveAndCloseButton.is({ disabled: false }));
   },
 
   afterDeleteNotification(tag) {
