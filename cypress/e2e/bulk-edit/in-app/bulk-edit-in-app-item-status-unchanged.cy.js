@@ -102,6 +102,8 @@ describe('bulk-edit', () => {
         BulkEditActions.fillTemporaryLoanType('Can circulate', 3);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.editSuppressFromDiscovery('true', 4);
+        BulkEditActions.addNewBulkEditFilterString();
+        BulkEditActions.replaceItemStatus('Available', 5);
 
         BulkEditActions.confirmChanges();
         BulkEditActions.verifyChangesInAreYouSureForm('Item temporary location', ['Online']);
@@ -109,7 +111,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyChangesInAreYouSureForm('Permanent loan type', ['Can circulate']);
         BulkEditActions.verifyChangesInAreYouSureForm('Temporary loan type', ['Can circulate']);
         BulkEditActions.verifyChangesInAreYouSureForm('Suppress from discovery', ['true']);
-        BulkEditActions.verifyChangesInAreYouSureForm('Status', ['Checked out']);
+        BulkEditActions.verifyChangesInAreYouSureForm('Status', ['Available']);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
@@ -119,6 +121,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangesUnderColumns('Temporary loan type', 'Can circulate');
         BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', 'true');
         BulkEditSearchPane.verifyChangesUnderColumns('Status', 'Checked out');
+        BulkEditSearchPane.verifyReasonForError('New status value "Available" is not allowed');
       },
     );
   });
