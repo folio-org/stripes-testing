@@ -77,8 +77,11 @@ const createJobProfile = (jobProfile) => {
 const search = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
-  cy.do(paneResults.find(searchField).fillIn(jobProfileTitle));
-  cy.do(searchButton.click());
+  cy.do([
+    paneResults.find(searchField).focus(),
+    paneResults.find(searchField).fillIn(jobProfileTitle),
+    searchButton.click(),
+  ]);
 };
 
 export default {
@@ -115,11 +118,9 @@ export default {
 
   runImportFile: () => {
     waitLoading(waitSelector);
-    cy.do([
-      actionsButton.click(),
-      runButton.click(),
-      Modal('Are you sure you want to run this job?').find(runButton).click(),
-    ]);
+    cy.do([actionsButton.click(), runButton.click()]);
+    cy.expect(Modal('Are you sure you want to run this job?').find(runButton).exists());
+    cy.do(Modal('Are you sure you want to run this job?').find(runButton).click());
   },
 
   waitFileIsImported: (fileName) => {
@@ -212,5 +213,4 @@ export default {
         cy.expect(numberOfTrashButtons).to.equal(quantityOfUploadedFiles);
       });
   },
-  waitFileIsUploaded: () => cy.expect(paneContent.find(deleteFileButton).exists()),
 };

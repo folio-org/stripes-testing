@@ -26,7 +26,7 @@ export default {
   },
 
   openHoldingsTab: () => {
-    cy.do(Button(including('Holdings')).click());
+    cy.get('div[class^="buttonGroup-"]').find('[data-test-logs-filter-option="2"]').click();
   },
 
   openItemTab: () => {

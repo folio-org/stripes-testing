@@ -31,6 +31,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -153,8 +154,6 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.firstBarcode);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.secondBarcode);
       Users.deleteViaApi(user.userId);
     });
 
@@ -373,6 +372,7 @@ describe('data-import', () => {
           '*C375109 firstmarcFile*',
           '*SearchInstanceUUIDs*',
         );
+        cy.getAdminToken();
         JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
         cy.wrap(collectionOfMatchProfiles).each((profile) => {
           MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
@@ -380,6 +380,15 @@ describe('data-import', () => {
         cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
           ActionProfiles.deleteActionProfile(profile.actionProfile.name);
           FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"hrid"=="${testData.firstHrid}"`,
+        }).then((instance) => {
+          cy.deleteItemViaApi(instance.items[0].id);
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
         });
       },
     );
@@ -582,6 +591,7 @@ describe('data-import', () => {
           '*C375109 firstmarcFile*',
           '*SearchInstanceUUIDs*',
         );
+        cy.getAdminToken();
         JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
         cy.wrap(collectionOfMatchProfiles).each((profile) => {
           MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
@@ -589,6 +599,15 @@ describe('data-import', () => {
         cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
           ActionProfiles.deleteActionProfile(profile.actionProfile.name);
           FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"hrid"=="${testData.secondHrid}"`,
+        }).then((instance) => {
+          cy.deleteItemViaApi(instance.items[0].id);
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
         });
       },
     );

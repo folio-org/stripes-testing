@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
@@ -11,18 +12,25 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import DevTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import { REQUEST_TYPES } from '../../support/constants';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 
 describe('ui-inventory: Create page type request', () => {
   let user;
+  let addedRule;
   let instanceData = {};
   let createdItem;
-  let oldRulesText;
-  let requestPolicyId;
   const patronGroup = {
     name: `testGroup${getRandomPostfix()}`,
     id: '',
   };
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  const requestPolicyBody = {
+    requestTypes: Object.values(REQUEST_TYPES),
+    name: `request${getRandomPostfix()}`,
+    id: uuid(),
+  };
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -39,7 +47,7 @@ describe('ui-inventory: Create page type request', () => {
             permissions.uiInventoryViewInstances.gui,
             permissions.uiUsersView.gui,
             permissions.uiUserEdit.gui,
-            permissions.uiUserCreate.gui,
+            permissions.uiUsersCreate.gui,
             permissions.uiUsersEdituserservicepoints.gui,
             permissions.uiUserAccounts.gui,
             permissions.usersViewRequests.gui,
@@ -51,9 +59,6 @@ describe('ui-inventory: Create page type request', () => {
       .then((userProperties) => {
         user = userProperties;
         UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
-      })
-      .then(() => {
-        cy.login(user.username, user.password);
       })
       .then(() => {
         MarkItemAsMissing.createItemsForGivenStatusesApi
@@ -68,16 +73,21 @@ describe('ui-inventory: Create page type request', () => {
             cy.intercept('GET', '/holdings-types?*').as('getHoldinsgTypes');
             cy.intercept('GET', '/instance-relationship-types?*').as('getInstanceRelTypes');
           });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi({ g: patronGroup.id }, { r: requestPolicyBody.id }).then(
+          (newRule) => {
+            addedRule = newRule;
+          },
+        );
+        cy.login(user.username, user.password);
       });
-
-    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-      oldRulesText = oldRulesAsText;
-      requestPolicyId = policy.id;
-    });
   });
 
   afterEach(() => {
     cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(addedRule);
     cy.getItemRequestsApi({
       query: `"requesterId"="${user.userId}"`,
     }).then(({ body }) => {
@@ -91,8 +101,7 @@ describe('ui-inventory: Create page type request', () => {
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]);
     Users.deleteViaApi(user.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
+    Requests.deleteRequestPolicyApi(requestPolicyBody.id);
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 

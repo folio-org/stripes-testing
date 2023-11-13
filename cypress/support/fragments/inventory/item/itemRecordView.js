@@ -209,7 +209,7 @@ export default {
     );
   },
 
-  checkNumberOfPieces: (number) => {
+  verifyNumberOfPieces: (number) => {
     cy.expect(itemDataAccordion.find(KeyValue('Number of pieces')).has({ value: number }));
   },
 
