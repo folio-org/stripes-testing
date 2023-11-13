@@ -143,6 +143,7 @@ describe('circulation-log loan period', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     testData.folioInstances.forEach((instance) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: instance.barcodes[0],

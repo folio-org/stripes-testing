@@ -76,6 +76,7 @@ describe('Orders: Inventory interaction', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     InventoryHoldings.deleteHoldingRecordViaApi(testData.instance.holdingId);
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);

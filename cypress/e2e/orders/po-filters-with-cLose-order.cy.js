@@ -20,7 +20,7 @@ describe('orders: Test PO filters', () => {
   let orderNumber;
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
       order.vendor = response;
@@ -58,6 +58,7 @@ describe('orders: Test PO filters', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });

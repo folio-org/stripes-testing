@@ -101,6 +101,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
     });
   });
   after(() => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });

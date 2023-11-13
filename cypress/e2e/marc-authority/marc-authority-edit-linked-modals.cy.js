@@ -106,6 +106,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
   });
 
   after('Deleting user, data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);

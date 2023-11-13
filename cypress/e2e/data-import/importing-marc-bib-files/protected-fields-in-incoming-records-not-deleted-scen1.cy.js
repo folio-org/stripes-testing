@@ -32,7 +32,7 @@ describe('data-import', () => {
     const OCLCAuthentication = '100481406/PAOLF';
     const oclcForChanging = '466478385';
     const imported856Field =
-      'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
+      'Notice et cote du catalogue de la Bibliothèque nationale de France $u http://catalogue.bnf.fr/ark:/12148/cb371881758';
 
     before('create test data', () => {
       cy.createTempUser([
@@ -60,6 +60,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
@@ -83,6 +84,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       MarcFieldProtection.getListViaApi({
         query: `"field"=="${protectedFieldData.protectedField}"`,
       }).then((list) => {

@@ -111,6 +111,7 @@ describe('Title Level Request', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
       testData.userServicePoint.id,

@@ -85,6 +85,7 @@ describe('Title Level Request. Request queue. TLR', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
       testData.servicePoint.id,

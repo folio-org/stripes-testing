@@ -27,12 +27,12 @@ describe.skip('Data-export', () => {
       permissions.dataExportEnableModule.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password);
-      cy.visit(TopMenu.dataExportPath);
       const instanceID = InventoryInstances.createInstanceViaApi(
         item.instanceName,
         item.itemBarcode,
       );
+      cy.login(user.username, user.password);
+      cy.visit(TopMenu.dataExportPath);
       FileManager.createFile(`cypress/fixtures/${validFile}`, instanceID);
       FileManager.createFile(`cypress/fixtures/${invalidFile}`, 'not a valid id');
       FileManager.createFile(
@@ -49,6 +49,7 @@ describe.skip('Data-export', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validFile}`);

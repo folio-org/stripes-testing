@@ -45,7 +45,7 @@ export default {
     cy.do(viewAllLogsButton.click());
     cy.do([
       anyProfileAccordion.clickHeader(),
-      anyProfileAccordion.find(Selection({ singleValue: 'Choose job profile' })).open(),
+      anyProfileAccordion.find(Selection({ singleValue: including('Choose job profile') })).open(),
     ]);
     cy.do(SelectionList().select(jobProfileName));
     cy.expect(MultiColumnListCell(jobProfileName).exists());
