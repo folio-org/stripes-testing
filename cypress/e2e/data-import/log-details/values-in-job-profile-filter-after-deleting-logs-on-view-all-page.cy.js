@@ -1,30 +1,24 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import Users from '../../../support/fragments/users/users';
-import {
-  LOCATION_NAMES,
-  LOAN_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  FOLIO_RECORD_TYPE,
-  MATERIAL_TYPE_NAMES,
-  JOB_STATUS_NAMES,
-} from '../../../support/constants';
+import { FOLIO_RECORD_TYPE, JOB_STATUS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
   describe('Log details', () => {
     let user;
+    const numberOfLogsToDelete = '1';
     const filePath = 'oneMarcBib.mrc';
     const fileName = `C358534 autotestFile.${getRandomPostfix()}.mrc`;
     const mappingProfile = {
@@ -82,6 +76,15 @@ describe('data-import', () => {
       });
     });
 
+    after('delete user', () => {
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
+      });
+    });
+
     it(
       'C358534 Check the values in the Job profile filter after deleting the logs on the View all page (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
@@ -93,6 +96,11 @@ describe('data-import', () => {
         DataImport.openActionsMenu();
         DataImport.openDeleteImportLogsModal();
         DataImport.confirmDeleteImportLogs();
+        InteractorsTools.checkCalloutMessage(
+          `${numberOfLogsToDelete} data import logs have been successfully deleted.`,
+        );
+        LogsViewAll.filterJobsByJobProfile(jobProfile.profileName);
+        LogsViewAll.checkJobProfileNameAbsent(jobProfile.profileName);
       },
     );
   });
