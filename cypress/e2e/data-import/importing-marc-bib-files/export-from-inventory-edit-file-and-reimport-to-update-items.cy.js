@@ -40,7 +40,7 @@ describe('data-import', () => {
       instanceTitle: 'Love enough / Dionne Brand.',
       instanceSubject: uniqSubject,
       holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
-      itemStatus: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+      itemStatus: ITEM_STATUS_NAMES.AVAILABLE,
     };
     const permanentLocation = LOCATION_NAMES.MAIN_LIBRARY;
     const recordType = 'MARC_BIBLIOGRAPHIC';

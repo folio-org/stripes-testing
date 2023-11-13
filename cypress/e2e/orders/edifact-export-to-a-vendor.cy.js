@@ -106,7 +106,8 @@ describe('orders: export', () => {
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
     });
-
+    // Need to wait while first job will be runing
+    cy.wait(70000);
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
@@ -149,8 +150,6 @@ describe('orders: export', () => {
     'C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)',
     { tags: [TestTypes.smoke, devTeams.thunderjet] },
     () => {
-      // Need to wait while first job will be runing
-      cy.wait(70000);
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();

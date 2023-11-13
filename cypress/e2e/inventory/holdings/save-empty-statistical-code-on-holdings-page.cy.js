@@ -22,7 +22,7 @@ const testData = {
   calloutMessage: 'has been successfully saved.',
 };
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Holdings', () => {
     before('Create test data', () => {
       cy.getAdminToken()
@@ -118,8 +118,8 @@ describe('Inventory', () => {
         HoldingsRecordEdit.checkErrorMessageForStatisticalCode(false);
 
         HoldingsRecordEdit.saveAndClose();
-        HoldingsRecordView.waitLoading();
         InventoryInstance.checkCalloutMessage(including(testData.calloutMessage));
+        InventoryInstance.openHoldingView();
         HoldingsRecordView.checkStatisticalCode(testData.secondStatisticalCode);
       },
     );

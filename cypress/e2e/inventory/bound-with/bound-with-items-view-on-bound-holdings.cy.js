@@ -9,7 +9,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Bound-with. One item related to multiple holdings', () => {
     let user;
     const testData = {

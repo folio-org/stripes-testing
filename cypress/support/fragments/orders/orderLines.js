@@ -108,11 +108,15 @@ const poLineDetails = {
 };
 
 const submitOrderLine = () => {
+  cy.wait(4000);
   const submitButton = Button('Submit');
   cy.get('body').then(($body) => {
     if ($body.find('[id=line-is-not-unique-confirmation]').length) {
       cy.wait(4000);
-      cy.do(Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).click());
+      cy.do([
+        Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).focus(),
+        Modal({ id: 'line-is-not-unique-confirmation' }).find(submitButton).click(),
+      ]);
     } else {
       // do nothing if modal is not displayed
     }

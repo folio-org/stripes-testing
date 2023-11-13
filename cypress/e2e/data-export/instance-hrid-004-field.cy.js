@@ -29,24 +29,24 @@ describe('Data Export - Holdings records export', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+      cy.getHoldings({
+        limit: 1,
+        query: `"instanceId"="${instanceId}"`,
+      }).then((holdings) => {
+        holdingsUUID = holdings[0].id;
+        FileManager.createFile(`cypress/fixtures/${fileName}`, holdingsUUID);
+      });
+      cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
+        (instance) => {
+          instanceHRID = instance.hrid;
+        },
+      );
       cy.login(user.username, user.password, {
         path: TopMenu.dataExportPath,
         waiter: DataExportLogs.waitLoading,
       });
     });
-    const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-    cy.getHoldings({
-      limit: 1,
-      query: `"instanceId"="${instanceId}"`,
-    }).then((holdings) => {
-      holdingsUUID = holdings[0].id;
-      FileManager.createFile(`cypress/fixtures/${fileName}`, holdingsUUID);
-    });
-    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
-      (instance) => {
-        instanceHRID = instance.hrid;
-      },
-    );
   });
 
   after('delete test data', () => {

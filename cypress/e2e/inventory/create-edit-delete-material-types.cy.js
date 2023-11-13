@@ -26,7 +26,7 @@ describe('inventory', () => {
     });
 
     it(
-      'C505 Settings (Inventory): Create, edit, delete material types (folijet) (prokopovych)',
+      'C505 Settings (Inventory): Create, edit, delete material types (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         cy.visit(SettingsMenu.materialTypePath);

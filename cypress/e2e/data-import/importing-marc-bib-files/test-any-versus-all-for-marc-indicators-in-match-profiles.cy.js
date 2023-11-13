@@ -69,7 +69,7 @@ describe('data-import', () => {
           barcode: '945$a',
           materialType: MATERIAL_TYPE_NAMES.BOOK,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -142,24 +142,26 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForUpdateWithFail.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForUpdateWithSucceed.profileName);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-      });
-      collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForUpdateWithFail.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForUpdateWithSucceed.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      });
     });
 
     it(
@@ -210,7 +212,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(

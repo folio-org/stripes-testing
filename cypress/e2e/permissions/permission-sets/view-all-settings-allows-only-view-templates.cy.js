@@ -47,6 +47,7 @@ describe('Permission Sets', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     PatronBlockTemplates.deleteViaApi(testData.patronBlockTemplateId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);

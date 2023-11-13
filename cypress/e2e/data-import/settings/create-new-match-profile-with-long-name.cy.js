@@ -41,10 +41,10 @@ describe('data-import', () => {
       () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
+        MatchProfiles.checkCalloutMessage(calloutMessage);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
-        MatchProfiles.checkCalloutMessage(calloutMessage);
       },
     );
   });

@@ -21,8 +21,8 @@ describe('Fee/fine management', () => {
   });
 
   it(
-    'C5558 Verify that you can create/edit/delete lost item fee policies (prokopovych)',
-    { tags: [TestTypes.smoke, DevTeams.prokopovych] },
+    'C5558 Verify that you can create/edit/delete lost item fee policies (vega)',
+    { tags: [TestTypes.smoke, DevTeams.vega] },
     () => {
       // creating
       LostItemFeePolicy.startAdding();

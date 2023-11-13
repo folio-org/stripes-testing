@@ -13,6 +13,7 @@ describe('ui-organizations: Filtering organization', () => {
     Organizations.createOrganizationViaApi(organization).then((response) => {
       organization.id = response;
     });
+    cy.visit(TopMenu.organizationsPath);
   });
 
   after(() => {
@@ -30,7 +31,7 @@ describe('ui-organizations: Filtering organization', () => {
       'C6713: Test the Organizations app filters (except Tags) (thunderjet)',
       { tags: [TestType.smoke, devTeams.thunderjet] },
       () => {
-        cy.visit(TopMenu.organizationsPath);
+        // cy.visit(TopMenu.organizationsPath);
         filter.filterActions();
         Organizations.checkOrganizationFilter();
         Organizations.selectOrganization(organization.name);

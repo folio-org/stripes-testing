@@ -4,7 +4,7 @@ import {
   Button,
   MultiColumnListCell,
   Pane,
-  TextField,
+  TextArea,
   Link,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -28,10 +28,6 @@ const recordSearch = TextInput({ id: 'input-record-search' });
 const browseOptionSelect = Select('Search field index');
 
 export default {
-  verifySearchButtonDisabled() {
-    cy.expect(searchButton.has({ disabled: true }));
-  },
-
   verifyNonExistentSearchResult(searchString) {
     cy.expect(
       MultiColumnListCell({
@@ -102,7 +98,7 @@ export default {
   },
 
   clearSearchTextfield() {
-    cy.do(TextField({ id: 'input-record-search' }).clear());
+    cy.do(TextArea({ id: 'input-record-search' }).fillIn(''));
   },
 
   verifySearchTextFieldEmpty() {
@@ -115,7 +111,6 @@ export default {
   searchBrowseSubjects(searchString) {
     InventorySearchAndFilter.selectBrowseSubjects();
     this.verifySearchTextFieldEmpty();
-    this.verifySearchButtonDisabled();
     InventorySearchAndFilter.browseSearch(searchString);
   },
 

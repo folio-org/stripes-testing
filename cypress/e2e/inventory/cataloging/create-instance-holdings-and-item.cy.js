@@ -8,8 +8,8 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
-  describe('Cataloging', () => {
+describe('inventory', () => {
+  describe('Cataloging -> Creating new records', () => {
     const barcode = uuid();
     const testData = {
       barcode,
@@ -30,9 +30,10 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
-      Users.deleteViaApi(testData.user.userId);
+      cy.getAdminToken().then(() => {
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
+        Users.deleteViaApi(testData.user.userId);
+      });
     });
 
     it(

@@ -192,58 +192,54 @@ describe('ui-users-loans: Loans', () => {
     );
   });
 
-  it(
-    'C9191 Loans: Declare lost (prokopovych)',
-    { tags: [TestType.smoke, TestType.broken, DevTeams.prokopovych] },
-    () => {
-      UsersCard.getApi(testData.userId).then((user) => {
-        Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
-        Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
-        Loans.cancelDeclareLost();
-        Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
+  it('C9191 Loans: Declare lost (vega)', { tags: [TestType.smoke, DevTeams.vega] }, () => {
+    UsersCard.getApi(testData.userId).then((user) => {
+      Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
+      Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
+      Loans.cancelDeclareLost();
+      Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
 
-        Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
-        Loans.finishDeclareLost(DECLARE_LOST_ADDITIONAL_INFORMATION);
-        Loans.checkStatusDeclaredLost(SECOND_LOAN_ROW_INDEX);
+      Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
+      Loans.finishDeclareLost(DECLARE_LOST_ADDITIONAL_INFORMATION);
+      Loans.checkStatusDeclaredLost(SECOND_LOAN_ROW_INDEX);
 
-        const testLoanDetails = (shouldDeclareLost, loanId, loanHistoryFirstAction) => {
-          cy.visit(AppPaths.getLoanDetailsPath(testData.userId, loanId));
+      const testLoanDetails = (shouldDeclareLost, loanId, loanHistoryFirstAction) => {
+        cy.visit(AppPaths.getLoanDetailsPath(testData.userId, loanId));
 
-          if (shouldDeclareLost) {
-            LoanDetails.checkDeclareLostButtonActive();
-            LoanDetails.startDeclareLost();
-            LoanDetails.finishDeclareLost(DECLARE_LOST_ADDITIONAL_INFORMATION);
-          }
+        if (shouldDeclareLost) {
+          LoanDetails.checkDeclareLostButtonActive();
+          LoanDetails.startDeclareLost();
+          LoanDetails.finishDeclareLost(DECLARE_LOST_ADDITIONAL_INFORMATION);
+        }
 
-          LoanDetails.checkDeclareLostButtonDisabled();
-          LoanDetails.checkStatusDeclaredLost();
-          LoanDetails.checkLostDate(loanHistoryFirstAction.loan.metadata.updatedDate);
-          LoanDetails.checkActionDate(
-            FIRST_ACTION_ROW_INDEX,
-            loanHistoryFirstAction.loan.metadata.updatedDate,
-          );
+        LoanDetails.checkDeclareLostButtonDisabled();
+        LoanDetails.checkStatusDeclaredLost();
+        LoanDetails.checkLostDate(loanHistoryFirstAction.loan.metadata.updatedDate);
+        LoanDetails.checkActionDate(
+          FIRST_ACTION_ROW_INDEX,
+          loanHistoryFirstAction.loan.metadata.updatedDate,
+        );
 
-          LoanDetails.checkActionDeclaredLost(FIRST_ACTION_ROW_INDEX);
-          LoanDetails.checkLoansActionsHaveSameDueDate(
-            FIRST_ACTION_ROW_INDEX,
-            SECOND_ACTION_ROW_INDEX,
-            loanHistoryFirstAction.loan.dueDate,
-          );
-          LoanDetails.checkStatusDeclaredLostInList(FIRST_ACTION_ROW_INDEX);
-          LoanDetails.checkSource(FIRST_ACTION_ROW_INDEX, user);
-          LoanDetails.checkComments(FIRST_ACTION_ROW_INDEX, DECLARE_LOST_ADDITIONAL_INFORMATION);
-        };
+        LoanDetails.checkActionDeclaredLost(FIRST_ACTION_ROW_INDEX);
+        LoanDetails.checkLoansActionsHaveSameDueDate(
+          FIRST_ACTION_ROW_INDEX,
+          SECOND_ACTION_ROW_INDEX,
+          loanHistoryFirstAction.loan.dueDate,
+        );
+        LoanDetails.checkStatusDeclaredLostInList(FIRST_ACTION_ROW_INDEX);
+        LoanDetails.checkSource(FIRST_ACTION_ROW_INDEX, user);
+        LoanDetails.checkComments(FIRST_ACTION_ROW_INDEX, DECLARE_LOST_ADDITIONAL_INFORMATION);
+      };
 
-        Loans.getApi(testData.userId).then(([firstLoan, secondLoan]) => {
-          cy.getLoanHistory(secondLoan.id).then(([loanHistoryFirstAction]) => {
-            testLoanDetails(false, secondLoan.id, loanHistoryFirstAction);
-          });
+      Loans.getApi(testData.userId).then(([firstLoan, secondLoan]) => {
+        cy.getLoanHistory(secondLoan.id).then(([loanHistoryFirstAction]) => {
+          testLoanDetails(false, secondLoan.id, loanHistoryFirstAction);
+        });
 
-          cy.getLoanHistory(firstLoan.id).then(([loanHistoryFirstAction]) => {
-            testLoanDetails(true, firstLoan.id, loanHistoryFirstAction);
-          });
+        cy.getLoanHistory(firstLoan.id).then(([loanHistoryFirstAction]) => {
+          testLoanDetails(true, firstLoan.id, loanHistoryFirstAction);
         });
       });
-    },
-  );
+    });
+  });
 });

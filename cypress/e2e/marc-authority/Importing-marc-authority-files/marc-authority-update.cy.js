@@ -220,7 +220,7 @@ describe('Data Import - Update MARC Authority files', () => {
 
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.searchBy('Keyword', 'Queen of G. Britain');
-      MarcAuthority.contains('‡a Elizabeth ‡b II, ‡c 1926-2022, ‡q Queen of G. Britain');
+      MarcAuthority.contains('$a Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain');
 
       cy.visit(TopMenu.inventoryPath);
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);

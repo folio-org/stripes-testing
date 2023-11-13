@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
@@ -119,7 +119,7 @@ describe('data-import', () => {
 
     it(
       'C345353 Check EDIFACT mapping syntax for multiple fields mapping into 1 invoice field (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.waitLoading();
@@ -166,6 +166,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(collectionOfProfiles[0].jobProfile.profileName);
         JobProfiles.selectJobProfile();
+        cy.wait(1000);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForFirstImport);
         Logs.checkImportFile(collectionOfProfiles[0].jobProfile.profileName);
@@ -202,6 +203,7 @@ describe('data-import', () => {
         InvoiceView.verifyInvoiceLineSubscription(invoiceData[1].subscriptionInfo);
         InvoiceView.verifyInvoiceLineComment(invoiceData[1].comment);
 
+        cy.getAdminToken();
         cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
       },
     );

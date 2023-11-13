@@ -75,6 +75,7 @@ describe('ui-inventory: location', () => {
   });
 
   after('Delete all data', () => {
+    cy.getAdminToken();
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` }).then(
       (instance) => {
         cy.deleteItemViaApi(instance.items[0].id);
@@ -95,6 +96,7 @@ describe('ui-inventory: location', () => {
 
       // select instance
       InventorySearchAndFilter.switchToItem();
+      cy.wait(2000);
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();
@@ -129,6 +131,7 @@ describe('ui-inventory: location', () => {
 
       // select instance
       InventorySearchAndFilter.switchToItem();
+      cy.wait(2000);
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
       ItemRecordView.waitLoading();
       ItemRecordView.closeDetailView();

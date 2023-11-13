@@ -91,6 +91,7 @@ describe('Acquisition Units', () => {
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);
       FiscalYears.clickActionsButtonInFY();
       FiscalYears.checkDeleteButtonIsDisabled();
+      FiscalYears.clickActionsButtonInFY();
       FiscalYears.editFiscalYearDetails();
       FiscalYears.editDescription();
       FiscalYears.clickNewFY();

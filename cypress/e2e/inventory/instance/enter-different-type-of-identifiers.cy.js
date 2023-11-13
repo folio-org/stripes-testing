@@ -48,7 +48,7 @@ describe('inventory', () => {
 
     ['ASIN', 'BNB'].forEach((identifier) => {
       it(
-        'C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
+        'C609 In Accordion Identifiers --> enter different type of identifiers (folijet)',
         { tags: [TestTypes.smoke, DevTeams.folijet] },
         () => {
           resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;

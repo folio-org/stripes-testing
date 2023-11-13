@@ -7,7 +7,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -80,23 +80,24 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      JobProfiles.deleteJobProfile(jobProfile.name);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (initialInstance) => {
-          InventoryInstance.deleteInstanceViaApi(initialInstance.id);
-        },
-      );
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (initialInstance) => {
+            InventoryInstance.deleteInstanceViaApi(initialInstance.id);
+          },
+        );
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
       'C410708 Verify that clear error message appears after importing a file with duplicate records in it (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         DataImport.uploadFile(firstFilePathForUpload, firstFileName);
         JobProfiles.search(jobProfileToRun);

@@ -84,7 +84,7 @@ describe('data-import', () => {
           name: `C388570 Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.ON_ORDER}"`,
+          status: ITEM_STATUS_NAMES.ON_ORDER,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -171,7 +171,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -219,6 +219,11 @@ describe('data-import', () => {
           arrayOfHoldingsStatuses,
           quantityOfCreatedHoldings,
         );
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1');
+        FileDetails.checkHoldingsQuantityInSummaryTable('3');
+        FileDetails.checkItemQuantityInSummaryTable('6');
+        FileDetails.checkOrderQuantityInSummaryTable('1');
         FileDetails.verifyMultipleItemsStatus(Number(quantityOfCreatedItems));
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
@@ -228,7 +233,9 @@ describe('data-import', () => {
         });
         OrderLines.checkQuantityPhysical(quantityOfCreatedItems);
         OrderLines.checkPhysicalQuantityInLocation(quantityOfCreatedHoldings);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileName);
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;

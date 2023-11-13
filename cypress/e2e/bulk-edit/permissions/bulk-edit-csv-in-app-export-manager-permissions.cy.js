@@ -73,7 +73,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C353972 Verify that user can view data in Export Manager(CSV and In-app approach) (firebird)',
+      'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
       { tags: [testTypes.criticalPath, devTeams.firebird] },
       () => {
         ExportManagerSearchPane.waitLoading();

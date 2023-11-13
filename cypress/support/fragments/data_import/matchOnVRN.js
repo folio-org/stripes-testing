@@ -363,7 +363,12 @@ function verifyHoldingsUpdated() {
 }
 
 function verifyItemUpdated(itemBarcode) {
-  cy.do(Link(itemBarcode).click());
+  cy.do(
+    Section({ id: 'pane-instancedetails' })
+      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+      .find(Button(including(itemBarcode)))
+      .click(),
+  );
   cy.expect(itemStatusKeyValue.has({ value: ITEM_STATUS_NAMES.AVAILABLE }));
   cy.expect(itemBarcodeKeyValue.has({ value: itemBarcode }));
 

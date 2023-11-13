@@ -19,6 +19,11 @@ describe('data-import', () => {
     const editedMarcFileName = `C359209 editedMarcFile.${getRandomPostfix()}.mrc`;
     const errorMessage =
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
+    const quantityOfItems = {
+      created: '1',
+      noAction: '3',
+      error: '3',
+    };
 
     before('create test data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
@@ -107,12 +112,12 @@ describe('data-import', () => {
           3,
         );
         // check created counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-        FileDetails.checkHoldingsQuantityInSummaryTable('1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.created);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems.created);
         // check No action counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable('3', 2);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.noAction, 2);
         // check Error counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable('3', 3);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.error, 3);
         FileDetails.verifyErrorMessage(errorMessage);
       },
     );

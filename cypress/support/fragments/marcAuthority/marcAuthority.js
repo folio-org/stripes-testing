@@ -8,6 +8,7 @@ import {
   TextArea,
   MultiColumnListHeader,
   Callout,
+  Modal,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -19,7 +20,13 @@ const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const infoButton = Button({ ariaLabel: 'info' });
 const saveAndCloseButton = Button({ id: 'quick-marc-record-save' });
+const continueWithSaveButton = Modal().find(
+  Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }),
+);
 const buttonLink = Button({ icon: 'unlink' });
+const calloutUpdatedRecordSuccess = Callout(
+  'This record has successfully saved and is in process. Changes may not appear immediately.',
+);
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = {
@@ -139,6 +146,11 @@ export default {
   },
   clicksaveAndCloseButton: () => {
     cy.do(saveAndCloseButton.click());
+  },
+  continueWithSaveAndCheck() {
+    cy.do(continueWithSaveButton.click());
+    this.waitLoading();
+    cy.expect([calloutUpdatedRecordSuccess.exists(), rootSection.exists()]);
   },
   checkPresentedColumns: (presentedColumns) => presentedColumns.forEach((columnName) => cy.expect(MultiColumnListHeader(columnName).exists())),
   checkLDRValue: (ldrValue) => {

@@ -218,28 +218,29 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      MatchProfiles.deleteMatchProfile(instanceMatchProfile.profileName);
-      MatchProfiles.deleteMatchProfile(holdingsMatchProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        MatchProfiles.deleteMatchProfile(instanceMatchProfile.profileName);
+        MatchProfiles.deleteMatchProfile(holdingsMatchProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
@@ -343,7 +344,8 @@ describe('data-import', () => {
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrid = initialInstanceHrId;
           });
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(exportedFileName);
           FileDetails.openHoldingsInInventory('Updated');
           HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
         });

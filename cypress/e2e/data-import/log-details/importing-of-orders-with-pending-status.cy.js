@@ -133,7 +133,7 @@ describe('data-import', () => {
     });
 
     it(
-      'C375178 Verify the importing of orders with pending status (folijet)',
+      'C375178 Verify the log details for created imported order records (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691

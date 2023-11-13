@@ -15,10 +15,6 @@ describe('inventory', () => {
     const itemBarcode = Helper.getRandomBarcode();
 
     before('create test data and login', () => {
-      cy.getAdminToken().then(() => {
-        InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
-      });
-
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           user = userProperties;
@@ -27,14 +23,16 @@ describe('inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
+          InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
         },
       );
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      });
     });
 
     it(

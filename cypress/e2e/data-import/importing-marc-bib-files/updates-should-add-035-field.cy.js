@@ -69,7 +69,7 @@ describe('data-import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    beforeEach('create test data', () => {
+    beforeEach('create user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -186,12 +186,13 @@ describe('data-import', () => {
           InventoryViewSource.contains('035\t');
           InventoryViewSource.contains('(LTSCA)303845');
 
+          cy.getAdminToken();
+          Users.deleteViaApi(user.userId);
           JobProfiles.deleteJobProfile(jobProfile.profileName);
           MatchProfiles.deleteMatchProfile(matchProfile.profileName);
           ActionProfiles.deleteActionProfile(actionProfile.name);
           FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-          Users.deleteViaApi(user.userId);
-          // delete downloads folder and created files in fixtures
+          // delete created files in fixtures
           FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
           FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrId}"` }).then(
@@ -230,7 +231,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondMarcFileNameForCreate);
         cy.wrap(fieldsContent).each((row) => {
-          cy.wait(8000);
+          cy.wait(1000);
           FileDetails.checkStatusInColumn(
             FileDetails.status.created,
             FileDetails.columnNameInResultList.srsMarc,
@@ -326,7 +327,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondFileNameAfterUpload);
         cy.wrap(fieldsContent).each((row) => {
-          cy.wait(8000);
+          cy.wait(1000);
           FileDetails.checkStatusInColumn(
             FileDetails.status.updated,
             FileDetails.columnNameInResultList.srsMarc,
@@ -361,15 +362,15 @@ describe('data-import', () => {
             InventoryViewSource.contains('035\t');
             InventoryViewSource.contains(element.content);
           });
-          cy.wait(8000);
         });
 
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
         JobProfiles.deleteJobProfile(jobProfile.profileName);
         MatchProfiles.deleteMatchProfile(matchProfile.profileName);
         ActionProfiles.deleteActionProfile(actionProfile.name);
         FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-        Users.deleteViaApi(user.userId);
-        // delete downloads folder and created files in fixtures
+        // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
       },

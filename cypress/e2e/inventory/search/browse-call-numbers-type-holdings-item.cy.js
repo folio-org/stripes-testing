@@ -11,7 +11,7 @@ import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordN
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import { CALL_NUMBER_TYPE_NAMES, BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {
       localCNtypeName: `C396366 Local type ${randomFourDigitNumber()}`,

@@ -105,15 +105,16 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      UserEdit.changeServicePointPreferenceViaApi(user.userId, [
-        firstServicePoint.id,
-        secondServicePoint.id,
-      ]);
-      ServicePoints.deleteViaApi(firstServicePoint.id);
-      ServicePoints.deleteViaApi(secondServicePoint.id);
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+      cy.getAdminToken().then(() => {
+        UserEdit.changeServicePointPreferenceViaApi(user.userId, [
+          firstServicePoint.id,
+          secondServicePoint.id,
+        ]);
+        ServicePoints.deleteViaApi(firstServicePoint.id);
+        ServicePoints.deleteViaApi(secondServicePoint.id);
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+      });
     });
 
     it(
@@ -131,7 +132,7 @@ describe('inventory', () => {
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+        InventorySearchAndFilter.byKeywords(itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
@@ -148,7 +149,7 @@ describe('inventory', () => {
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.waitLoading();
-        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+        InventorySearchAndFilter.byKeywords(itemData.instanceTitle);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkItemCirculationHistory(

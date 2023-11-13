@@ -106,7 +106,8 @@ describe('orders: export', () => {
     cy.createOrderApi(order).then((response) => {
       orderNumber = response.body.poNumber;
     });
-
+    // Need to wait while first job will be runing
+    cy.wait(60000);
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
@@ -149,10 +150,8 @@ describe('orders: export', () => {
     'C347885: Check view for jobs on Export Manager page (thunderjet)',
     { tags: [TestTypes.smoke, devTeams.thunderjet] },
     () => {
-      // Need to wait while first job will be runing
-      cy.wait(60000);
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);

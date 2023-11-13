@@ -54,7 +54,7 @@ describe('data-import', () => {
           name: `autotestMappingItem${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -101,7 +101,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
       NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
+      NewFieldMappingProfile.fillStatus(`"${itemMappingProfile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };

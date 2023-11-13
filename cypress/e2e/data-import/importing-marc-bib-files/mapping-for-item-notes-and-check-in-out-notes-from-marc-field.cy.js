@@ -74,7 +74,7 @@ describe('data-import', () => {
           noteForCheckIn: '878$a',
           staffOnlyForCheckIn: 'Mark for all affected records',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -146,7 +146,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfProfiles[2].mappingProfile.permanentLoanType,
         );
-        NewFieldMappingProfile.fillStatus(collectionOfProfiles[2].mappingProfile.status);
+        NewFieldMappingProfile.fillStatus(`"${collectionOfProfiles[2].mappingProfile.status}"`);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(collectionOfProfiles[2].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(

@@ -100,7 +100,7 @@ describe.skip('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356791 autotest item mapping profile.${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         },
         actionProfile: {
@@ -165,7 +165,7 @@ describe.skip('data-import', () => {
           noteUI: 'Smith Family Foundation',
           staffOnly: 'Mark for all affected records',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -317,7 +317,9 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfProfilesForCreate[3].mappingProfile.permanentLoanType,
         );
-        NewFieldMappingProfile.fillStatus(collectionOfProfilesForCreate[3].mappingProfile.status);
+        NewFieldMappingProfile.fillStatus(
+          `"${collectionOfProfilesForCreate[3].mappingProfile.status}"`,
+        );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(collectionOfProfilesForCreate[3].mappingProfile.name);
 
@@ -431,7 +433,9 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType,
         );
-        NewFieldMappingProfile.fillStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
+        NewFieldMappingProfile.fillStatus(
+          `"${collectionOfProfilesForUpdate[2].mappingProfile.status}"`,
+        );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(collectionOfProfilesForUpdate[2].mappingProfile.name);
 

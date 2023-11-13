@@ -27,7 +27,7 @@ describe('remote-storage-configuration', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
-  
+
   it(
     'C163919 Configure remote storage (firebird)',
     { tags: [TestTypes.smoke, DevTeams.firebird] },
@@ -42,10 +42,13 @@ describe('remote-storage-configuration', () => {
 
         configuration.create(name);
         Configurations.verifyCreatedConfiguration(name, configuration);
-        Configurations.editConfiguration(name, { nameInput: 'newAutotestConfigurationName' });
-        Configurations.closeWithoutSaving();
+        const newName = 'newAutotestConfigurationName';
+        Configurations.editConfiguration(name, { nameInput: newName });
+        Configurations.confirmCreateRemoteStorage();
         Configurations.verifyCreatedConfiguration(name, configuration);
-        Configurations.deleteRemoteStorage(name);
+        Configurations.editConfiguration(name, { nameInput: 'newAutotestConfigurationName2' });
+        Configurations.cancelConfirmation();
+        Configurations.deleteRemoteStorage(newName);
       });
     },
   );

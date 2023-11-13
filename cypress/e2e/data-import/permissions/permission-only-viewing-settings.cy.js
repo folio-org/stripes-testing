@@ -32,27 +32,27 @@ describe('data-import', () => {
     const fileExtensionName = '.dat';
 
     before('create test data', () => {
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
-        (mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(
-            actionProfileName,
-            mappingProfileResponse.body.id,
-          ).then((actionProfileResponse) => {
-            NewMatchProfile.createMatchProfileViaApi(matchProfileName).then(
-              (matchProfileResponse) => {
-                NewJobProfile.createJobProfileViaApi(
-                  jobProfileName,
-                  matchProfileResponse.body.id,
-                  actionProfileResponse.body.id,
-                );
-              },
-            );
-          });
-        },
-      );
-
       cy.createTempUser([Permissions.settingsDataImportCanViewOnly.gui]).then((userProperties) => {
         user = userProperties;
+
+        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
+          (mappingProfileResponse) => {
+            NewActionProfile.createActionProfileViaApi(
+              actionProfileName,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              NewMatchProfile.createMatchProfileViaApi(matchProfileName).then(
+                (matchProfileResponse) => {
+                  NewJobProfile.createJobProfileViaApi(
+                    jobProfileName,
+                    matchProfileResponse.body.id,
+                    actionProfileResponse.body.id,
+                  );
+                },
+              );
+            });
+          },
+        );
         cy.login(user.username, user.password, {
           path: TopMenu.settingsPath,
           waiter: SettingsPane.waitLoading,
