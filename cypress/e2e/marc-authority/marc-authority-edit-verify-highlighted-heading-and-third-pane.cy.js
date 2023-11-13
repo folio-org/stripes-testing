@@ -15,10 +15,22 @@ describe('Edit Authority record', () => {
       searchInput: 'Twain, Mark',
       searchOption: 'Name-title',
     },
+    authority2: {
+      searchInput: 'Gulf Stream',
+      searchOption: 'Geographic name',
+    },
     editedFields: [
-      { tag: '100', content: 'edited 100' },
+      {
+        tag: '100',
+        content: 'Twain, Mark, 1835-1910. Adventures of Huckleberry Finn - edited',
+        secondContent: 'Twain, Mark, 1835-1910. Adventures of Huckleberry Finn - edited twice',
+      },
       { tag: '370', content: 'edited 370' },
     ],
+    editedGeographicNameField: {
+      tag: '151',
+      content: 'edited 151',
+    },
   };
   const authorityPostfix = '?authRefType=Authorized&heading';
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
@@ -26,9 +38,15 @@ describe('Edit Authority record', () => {
     {
       marc: 'marcAuthFileC350911.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      numOfRecords: 1,
+    },
+    {
+      marc: 'marcFileForC350946.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      numOfRecords: 2,
     },
   ];
-  let createdAuthorityID;
+  const createdAuthorityIDs = [];
 
   before('Create test data', () => {
     cy.createTempUser([
@@ -47,16 +65,21 @@ describe('Edit Authority record', () => {
       path: TopMenu.dataImportPath,
       waiter: DataImport.waitLoading,
     }).then(() => {
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(marcFiles[0].marc, marcFiles[0].fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(marcFiles[0].fileName);
-      Logs.checkStatusOfJobProfile('Completed');
-      Logs.openFileDetails(marcFiles[0].fileName);
-      Logs.getCreatedItemsID().then((link) => {
-        createdAuthorityID = link.split('/')[5];
+      marcFiles.forEach((marcFile) => {
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.waitLoadingList();
+        JobProfiles.search(jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(marcFile.fileName);
+        for (let i = 0; i < marcFile.numOfRecords; i++) {
+          Logs.getCreatedItemsID(i).then((link) => {
+            createdAuthorityIDs.push(link.split('/')[5]);
+          });
+        }
       });
     });
   });
@@ -68,7 +91,9 @@ describe('Edit Authority record', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    MarcAuthority.deleteViaAPI(createdAuthorityID);
+    createdAuthorityIDs.forEach((id) => {
+      MarcAuthority.deleteViaAPI(id);
+    });
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
@@ -81,7 +106,7 @@ describe('Edit Authority record', () => {
         testData.authority.searchOption,
         testData.authority.searchInput,
       );
-      MarcAuthorities.select(`${createdAuthorityID}${authorityPostfix}`);
+      MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);
       testData.editedFields.forEach(({ tag, content }) => {
         MarcAuthority.edit();
         MarcAuthority.changeField(tag, `$a ${content}`);
@@ -89,6 +114,35 @@ describe('Edit Authority record', () => {
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.editedFields[0].content);
         MarcAuthority.contains(content);
       });
+    },
+  );
+
+  it(
+    'C350946 Verify that third pane still opened after editing first search result (spitfire) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    () => {
+      MarcAuthorities.searchBeats('Twain');
+      MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);
+      MarcAuthority.edit();
+      MarcAuthority.changeField(
+        testData.editedFields[0].tag,
+        `$a ${testData.editedFields[0].secondContent}`,
+      );
+      MarcAuthority.clicksaveAndCloseButton();
+      MarcAuthority.contains(testData.editedFields[0].secondContent);
+      MarcAuthorities.switchToBrowse();
+      MarcAuthorities.searchByParameter(
+        testData.authority2.searchOption,
+        testData.authority2.searchInput,
+      );
+      MarcAuthorities.select(`${createdAuthorityIDs[2]}${authorityPostfix}`);
+      MarcAuthority.edit();
+      MarcAuthority.changeField(
+        testData.editedGeographicNameField.tag,
+        `$a ${testData.editedGeographicNameField.content}`,
+      );
+      MarcAuthority.clicksaveAndCloseButton();
+      MarcAuthority.contains(testData.editedGeographicNameField.content);
     },
   );
 });
