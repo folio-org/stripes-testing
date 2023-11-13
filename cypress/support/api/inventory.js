@@ -84,16 +84,6 @@ Cypress.Commands.add('getHoldingTypes', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('getHoldingsNoteTypes', (searchParams) => {
-  cy.okapiRequest({
-    path: 'holdings-note-types',
-    searchParams,
-  }).then(({ body }) => {
-    Cypress.env('holdingsNoteTypes', body.holdingsNoteTypes);
-    return body.holdingsNoteTypes;
-  });
-});
-
 Cypress.Commands.add('getInstanceTypes', (searchParams) => {
   cy.okapiRequest({
     path: 'instance-types',

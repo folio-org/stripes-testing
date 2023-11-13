@@ -13,18 +13,31 @@ import { LOCATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 describe('Inventory -> Advanced search', () => {
   let user;
   const instanceIds = [];
+  const callNumber = `IYCN${getRandomPostfix()}`;
   const testData = {
     advSearchOption: 'Advanced search',
-    instanceTitle1: `C400621 Instance title${getRandomPostfix()}`,
-    instanceTitle2: `C400621 Instance title${getRandomPostfix()}`,
-    instanceTitle3: `C400621 Instance title${getRandomPostfix()}`,
-    instanceTitle4: `C400621 Instance title${getRandomPostfix()}`,
-    barcode3: uuid(),
-    barcode4: uuid(),
-    administrativeNote2: 'Adv search adm note 006',
-    administrativeNote4: 'Adm note NOT 6 006',
-    holdingsNote: 'Adv search note 006',
-    callNumber: `IYCN${getRandomPostfix()}`,
+    instances: [
+      {
+        instanceTitle: `Instance title${getRandomPostfix()}`,
+        note: 'Adv search note 006',
+      },
+      {
+        instanceTitle: `Instance title${getRandomPostfix()}`,
+        note: 'Adv search note 006',
+        adminNote: 'Adv search adm note 006',
+      },
+      {
+        instanceTitle: `Instance title${getRandomPostfix()}`,
+        callNumber,
+        barcode: uuid(),
+      },
+      {
+        instanceTitle: `Instance title${getRandomPostfix()}`,
+        adminNote: 'Adm note NOT 6 006',
+        callNumber,
+        barcode: uuid(),
+      },
+    ],
   };
 
   before('Creating data', () => {
@@ -36,8 +49,8 @@ describe('Inventory -> Advanced search', () => {
         cy.getHoldingTypes({ limit: 1 }).then((holdingsType) => {
           testData.holdingTypeId = holdingsType[0].id;
         });
-        cy.getHoldingsNoteTypes({ limit: 1 }).then((holdingsNoteType) => {
-          testData.holdingNoteTypeId = holdingsNoteType[0].id;
+        InventoryInstances.getHoldingsNotesTypes({ limit: 1 }).then((res) => {
+          testData.holdingNoteTypeId = res[0].id;
         });
         cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((locations) => {
           testData.locationsId = locations.id;
@@ -54,13 +67,18 @@ describe('Inventory -> Advanced search', () => {
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: testData.instanceTypeId,
-            title: testData.instanceTitle1,
+            title: testData.instances[0].instanceTitle,
           },
           holdings: [
             {
+              holdingsTypeId: testData.holdingTypeId,
               permanentLocationId: testData.locationsId,
-              noteType: testData.holdingNoteTypeId,
-              note: testData.holdingsNote,
+              notes: [
+                {
+                  holdingsNoteTypeId: testData.holdingNoteTypeId,
+                  note: testData.instances[0].note,
+                },
+              ],
             },
           ],
           items: [],
@@ -71,14 +89,19 @@ describe('Inventory -> Advanced search', () => {
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: testData.instanceTypeId,
-            title: testData.instanceTitle2,
+            title: testData.instances[1].instanceTitle,
           },
           holdings: [
             {
+              holdingsTypeId: testData.holdingTypeId,
               permanentLocationId: testData.locationsId,
-              noteType: testData.holdingNoteTypeId,
-              note: testData.holdingsNote,
-              administrativeNote: testData.administrativeNote2,
+              notes: [
+                {
+                  holdingsNoteTypeId: testData.holdingNoteTypeId,
+                  note: testData.instances[1].note,
+                },
+              ],
+              administrativeNotes: [testData.instances[1].adminNote],
             },
           ],
           items: [],
@@ -89,17 +112,18 @@ describe('Inventory -> Advanced search', () => {
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: testData.instanceTypeId,
-            title: testData.instanceTitle3,
+            title: testData.instances[2].instanceTitle,
           },
           holdings: [
             {
+              holdingsTypeId: testData.holdingTypeId,
               permanentLocationId: testData.locationsId,
-              callNumber: testData.callNumber,
+              callNumber: testData.instances[2].callNumber,
             },
           ],
           items: [
             {
-              barcode: testData.barcode3,
+              barcode: testData.instances[2].barcode,
               status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
@@ -110,18 +134,19 @@ describe('Inventory -> Advanced search', () => {
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: testData.instanceTypeId,
-            title: testData.instanceTitle4,
+            title: testData.instances[3].instanceTitle,
           },
           holdings: [
             {
+              holdingsTypeId: testData.holdingTypeId,
               permanentLocationId: testData.locationsId,
-              callNumber: testData.callNumber,
-              administrativeNote: 'Adm note NOT 6 006',
+              callNumber: testData.instances[3].callNumber,
+              administrativeNotes: [testData.instances[3].adminNote],
             },
           ],
           items: [
             {
-              barcode: testData.barcode4,
+              barcode: testData.instances[3].barcode,
               status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
@@ -142,7 +167,7 @@ describe('Inventory -> Advanced search', () => {
 
   after('Deleting data', () => {
     cy.getAdminToken().then(() => {
-      Users.deleteViaApi(testData.userProperties.userId);
+      Users.deleteViaApi(user.userId);
       cy.wrap(
         instanceIds.holdingIds.forEach((holdingsId) => {
           cy.deleteHoldingRecordViaApi(holdingsId.id);
@@ -165,54 +190,48 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(
         0,
-        testData.holdingsNote,
+        testData.instances[0].note,
         'Exact phrase',
         'Holdings notes (all)',
       );
       InventoryInstances.checkAdvSearchModalValues(
         0,
-        testData.holdingsNote,
+        testData.instances[0].note,
         'Exact phrase',
         'Holdings notes (all)',
       );
       InventoryInstances.fillAdvSearchRow(
         1,
-        testData.administrativeNote2,
+        'search adm note 006',
         'Contains all',
         'Holdings administrative notes',
         'AND',
       );
       InventoryInstances.checkAdvSearchModalValues(
         1,
-        testData.administrativeNote2,
+        'search adm note 006',
         'Contains all',
         'Holdings administrative notes',
         'AND',
       );
       InventoryInstances.fillAdvSearchRow(
         2,
-        testData.callNumber,
+        testData.instances[2].callNumber,
         'Exact phrase',
         'Call number, normalized',
         'OR',
       );
       InventoryInstances.checkAdvSearchModalValues(
         2,
-        testData.callNumber,
+        testData.instances[2].callNumber,
         'Exact phrase',
         'Call number, normalized',
         'OR',
       );
-      InventoryInstances.fillAdvSearchRow(
-        3,
-        testData.administrativeNote4,
-        'Starts with',
-        'All',
-        'NOT',
-      );
+      InventoryInstances.fillAdvSearchRow(3, 'Adm note NOT 6', 'Starts with', 'All', 'NOT');
       InventoryInstances.checkAdvSearchModalValues(
         3,
-        testData.administrativeNote4,
+        'Adm note NOT 6',
         'Starts with',
         'All',
         'NOT',
@@ -221,8 +240,8 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.checkAdvSearchModalAbsence();
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
       InventorySearchAndFilter.verifySearchResult([
-        testData.instanceTitle2,
-        testData.instanceTitle3,
+        testData.instances[1].instanceTitle,
+        testData.instances[2].instanceTitle,
       ]);
       InventorySearchAndFilter.checkRowsCount(2);
     },
