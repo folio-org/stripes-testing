@@ -8,37 +8,31 @@ import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Create a new list', () => {
   const userData = {};
-  const newListName = getTestEntityValue('test_list');
-
   const listData = {
     name: getTestEntityValue('test_list'),
     recordType: 'Loans',
     status: 'Active',
     visibility: 'Private',
   };
-  /*
-  before(
-    'Create a user',
-    () => {
-      cy.getAdminToken();
-      cy.createTempUser([
-        Permissions.listsAll.gui,
-      ])
-        .then((userProperties) => {
-          userData.username = userProperties.username;
-          userData.password = userProperties.password;
-          userData.userId = userProperties.userId;
-        }).then(() => {
-          cy.login(userData.username, userData.password);
-          cy.visit(TopMenu.listsPath);
-          Lists.waitLoading();
-        });
-    }
-  );
-*/
+
+  before('Create a user', () => {
+    cy.getAdminToken();
+    cy.createTempUser([Permissions.listsAll.gui])
+      .then((userProperties) => {
+        userData.username = userProperties.username;
+        userData.password = userProperties.password;
+        userData.userId = userProperties.userId;
+      })
+      .then(() => {
+        cy.login(userData.username, userData.password);
+        cy.visit(TopMenu.listsPath);
+        Lists.waitLoading();
+      });
+  });
+
   after('Delete a user', () => {
     cy.getAdminToken();
-    // Users.deleteViaApi(userData.userId);
+    Users.deleteViaApi(userData.userId);
     Lists.getViaApi().then((response) => {
       const filteredItem = response.body.content.find((item) => item.name === listData.name);
       Lists.deleteViaApi(filteredItem.id);
