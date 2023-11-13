@@ -106,6 +106,11 @@ const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const linkHeadingsButton = Button('Link headings');
 const arrowDownButton = Button({ icon: 'arrow-down' });
 const buttonLink = Button({ icon: 'unlink' });
+const deleteFieldsModal = Modal({ id: 'quick-marc-confirm-modal' });
+const cancelButtonInDeleteFieldsModal = Button({ id: 'clickable-quick-marc-confirm-modal-cancel' });
+const confirmButtonInDeleteFieldsModal = Button({
+  id: 'clickable-quick-marc-confirm-modal-confirm',
+});
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -249,7 +254,7 @@ const tag008DefaultValues = [
 const defaultFieldValues = {
   content: 'qwe',
   subfieldPrefixInEditor: '$',
-  subfieldPrefixInSource: '‡',
+  subfieldPrefixInSource: '$',
   // just enumerate a few free to use tags  which can be applyied in test one by one with small reserve
   freeTags: ['996', '997', '998'],
   existingLocation: '$b E',
@@ -378,6 +383,19 @@ export default {
       cy.wrap(shouldBeDeletedRowTag).as('specialTag');
     });
     return cy.get('@specialTag');
+  },
+
+  cancelDeletingField: () => {
+    cy.do(deleteFieldsModal.find(cancelButtonInDeleteFieldsModal).click());
+    cy.expect(deleteFieldsModal.absent());
+  },
+
+  checkDeletingFieldsModal: () => {
+    cy.expect([
+      deleteFieldsModal.exists(),
+      deleteFieldsModal.find(cancelButtonInDeleteFieldsModal).exists(),
+      deleteFieldsModal.find(confirmButtonInDeleteFieldsModal).exists(),
+    ]);
   },
 
   pressSaveAndClose() {
@@ -562,11 +580,19 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
   },
 
+  deleteFieldByTagAndCheck: (tag) => {
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).click());
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
+  },
+
+  verifySaveAndCloseButtonEnabled() {
+    cy.expect(saveAndCloseButton.is({ disabled: false }));
+  },
+
   afterDeleteNotification(tag) {
-    cy.get('[class^=deletedRowPlaceholder-]').should(
-      'include.text',
-      `Field ${tag} has been deleted from this MARC record.`,
-    );
+    cy.get('[class^=deletedRowPlaceholder-]')
+      .contains('span', `Field ${tag}`)
+      .should('include.text', `Field ${tag} has been deleted from this MARC record.`);
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo');
   },
 
@@ -592,6 +618,15 @@ export default {
 
   checkAfterSaveAndClose() {
     cy.expect([calloutAfterSaveAndClose.exists(), instanceDetailsPane.exists()]);
+  },
+
+  verifyAfterDerivedMarcBibSave() {
+    cy.expect([
+      calloutOnDeriveFirst.exists(),
+      calloutOnDeriveSecond.exists(),
+      instanceDetailsPane.exists(),
+      rootSection.absent(),
+    ]);
   },
 
   verifyConfirmModal() {

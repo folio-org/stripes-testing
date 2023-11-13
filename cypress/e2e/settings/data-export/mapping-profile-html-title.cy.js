@@ -19,7 +19,7 @@ const mappingProfile = {
 };
 const callout = `The field mapping profile ${mappingProfile.name} has been successfully created`;
 
-describe('Job profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,

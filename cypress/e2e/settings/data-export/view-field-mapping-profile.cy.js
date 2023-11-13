@@ -18,7 +18,7 @@ const profileDetails = {
   description: 'No value set-',
 };
 
-describe('setting: data-export', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -26,14 +26,14 @@ describe('setting: data-export', () => {
       permissions.uiUsersView.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      cy.getAdminSourceRecord().then((adminSourceRecord) => {
+        profileDetails.source = adminSourceRecord;
+        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(profileDetails.name);
+      });
       cy.login(user.username, user.password, {
         path: TopMenu.settingsPath,
         waiter: SettingsPane.waitLoading,
       });
-    });
-    cy.getAdminSourceRecord().then((adminSourceRecord) => {
-      profileDetails.source = adminSourceRecord;
-      ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(profileDetails.name);
     });
   });
 

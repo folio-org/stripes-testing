@@ -45,10 +45,6 @@ describe('bulk-edit', () => {
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
@@ -77,6 +73,10 @@ describe('bulk-edit', () => {
             FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, item.hrid);
           },
         );
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
@@ -99,7 +99,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Action note', 'Circulation Notes', 'Administrative notes');
+        BulkEditSearchPane.changeShowColumnCheckbox(
+          'Action note',
+          'Circulation Notes',
+          'Administrative notes',
+        );
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.verifyItemOptions();
@@ -139,7 +143,11 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkCheckInNote(`${notes.checkInOne}${newNotes.checkInNote}`);
-        ItemRecordView.checkItemNote(`${newNotes.actionNote}${notes.actionTwo}`, 'YesYes', 'Action note');
+        ItemRecordView.checkItemNote(
+          `${newNotes.actionNote}${notes.actionTwo}`,
+          'YesYes',
+          'Action note',
+        );
         ItemRecordView.checkItemAdministrativeNote(notes.adminOne);
         ItemRecordView.checkItemAdministrativeNote(newNotes.adminNote);
       },

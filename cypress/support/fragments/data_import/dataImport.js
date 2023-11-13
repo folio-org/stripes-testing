@@ -66,6 +66,7 @@ const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
     });
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
+  cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
 };
 
 const waitLoading = () => {
@@ -503,6 +504,10 @@ export default {
 
   verifyDataImportProfiles(profiles) {
     cy.expect(dataImportNavSection.find(NavListItem(profiles)).exists());
+  },
+
+  selectDataImportProfile(profile) {
+    cy.do(dataImportNavSection.find(NavListItem(profile)).click());
   },
 
   verifyImportBlockedModal() {

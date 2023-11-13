@@ -98,11 +98,11 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileName);
 
         // check created counter in the Summary table
-        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems.created, 0);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems.created, 0);
         // check No action counter in the Summary table
-        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems.noAction, 2);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems.noAction, 2);
         // check Error counter in the Summary table
-        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems.error, 3);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems.error, 3);
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.HOLDINGS);
         FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.error);
         FileDetails.verifyLogSummaryTableIsHidden();

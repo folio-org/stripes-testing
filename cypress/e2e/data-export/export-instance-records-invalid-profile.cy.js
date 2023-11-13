@@ -28,12 +28,12 @@ describe('data-export', () => {
       permissions.dataExportEnableApp.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password);
-      cy.visit(TopMenu.dataExportPath);
       const instanceID = InventoryInstances.createInstanceViaApi(
         item.instanceName,
         item.itemBarcode,
       );
+      cy.login(user.username, user.password);
+      cy.visit(TopMenu.dataExportPath);
       FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
     });
   });

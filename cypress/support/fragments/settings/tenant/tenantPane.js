@@ -16,39 +16,34 @@ export const TENANTS = {
   LOCATIONS: 'Locations',
 };
 
-const tenantSections = {
-  [TENANTS.ADDRESSES]: Addresses,
-  [TENANTS.LANGUAGE_AND_LOCALIZATION]: Localization,
-  [TENANTS.INSTITUTIONS]: Institutions,
-  [TENANTS.CAMPUSES]: Campuses,
-  [TENANTS.LIBRARIES]: Libraries,
-  [TENANTS.LOCATIONS]: Locations,
-};
-
 export default {
   waitLoading(section = 'Tenant') {
     cy.expect(Pane(section).exists());
   },
   selectTenant(section) {
+    cy.wait(2000);
     cy.do(NavListItem(section).click());
     cy.expect(Pane(section).exists());
-    // need to wait to prevent application error
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(300);
-
-    return tenantSections[section];
   },
   goToTenantTab() {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());
   },
   verifyLocationSetupItems() {
-    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach((item) => {
-      cy.expect(NavListItem(item).exists());
-    });
+    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach(
+      (item) => {
+        cy.expect(NavListItem(item).exists());
+      },
+    );
   },
   verifyNoGeneralItems() {
-    [TENANTS.ADDRESSES, TENANTS.LANGUAGE_AND_LOCALIZATION, TENANTS.PREFERRED_PLUGINS, TENANTS.SSO_SETTINGS, TENANTS.SERVICE_POINTS].forEach((item) => {
+    [
+      TENANTS.ADDRESSES,
+      TENANTS.LANGUAGE_AND_LOCALIZATION,
+      TENANTS.PREFERRED_PLUGINS,
+      TENANTS.SSO_SETTINGS,
+      TENANTS.SERVICE_POINTS,
+    ].forEach((item) => {
       cy.expect(NavListItem(item).absent());
     });
   },

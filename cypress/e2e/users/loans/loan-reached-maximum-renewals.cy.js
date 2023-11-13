@@ -29,8 +29,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   let loanPolicy;
   let materialType;
   let holdingsSourceId;
-  let addedCirculationRule;
-  let originalCirculationRules;
+  let addedRule;
   let firstUser = {};
   let secondUser = {};
   let firstInstanceIds;
@@ -38,52 +37,51 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   let defaultLocation;
 
   beforeEach(() => {
-    cy.getAdminToken();
-    cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-      materialType = materialTypes;
-    });
-    InventoryHoldings.getHoldingSources({ limit: 1 }).then((source) => {
-      holdingsSourceId = source.id;
-    });
-    cy.getInstanceTypes({ limit: 1 });
-    cy.getHoldingTypes({ limit: 1 });
-    cy.createLoanType({ name: `autotest_loan_type${getRandomPostfix()}` }).then((type) => {
-      loanType = type;
-    });
-    ServicePoints.createViaApi(servicePoint).then(() => {
-      defaultLocation = Location.getDefaultLocation(servicePoint.id);
-      Location.createViaApi(defaultLocation);
-    });
-    LoanPolicyActions.createViaApi({
-      loanable: true,
-      loansPolicy: {
-        closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
-        period: {
-          duration: 5,
-          intervalId: 'Minutes',
-        },
-        profileId: 'Rolling',
-      },
-      name: getTestEntityValue(),
-      renewable: true,
-      renewalsPolicy: {
-        numberAllowed: 0,
-        renewFromId: 'SYSTEM_DATE',
-      },
-    }).then((policy) => {
-      loanPolicy = policy;
+    cy.getAdminToken()
+      .then(() => {
+        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+          materialType = materialTypes;
+        });
+        InventoryHoldings.getHoldingSources({ limit: 1 }).then((source) => {
+          holdingsSourceId = source.id;
+        });
+        cy.getInstanceTypes({ limit: 1 });
+        cy.getHoldingTypes({ limit: 1 });
+        cy.createLoanType({ name: `autotest_loan_type${getRandomPostfix()}` }).then((type) => {
+          loanType = type;
+        });
+        ServicePoints.createViaApi(servicePoint).then(() => {
+          defaultLocation = Location.getDefaultLocation(servicePoint.id);
+          Location.createViaApi(defaultLocation);
+        });
+      })
+      .then(() => {
+        LoanPolicyActions.createViaApi({
+          loanable: true,
+          loansPolicy: {
+            closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
+            period: {
+              duration: 5,
+              intervalId: 'Minutes',
+            },
+            profileId: 'Rolling',
+          },
+          name: getTestEntityValue(),
+          renewable: true,
+          renewalsPolicy: {
+            numberAllowed: 0,
+            renewFromId: 'SYSTEM_DATE',
+          },
+        }).then((policy) => {
+          loanPolicy = policy;
 
-      CirculationRules.getViaApi().then((circulationRule) => {
-        originalCirculationRules = circulationRule.rulesAsText;
-        const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-        const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
-
-        addedCirculationRule = `\nm ${materialType.id}: l ${loanPolicy.id} ${defaultProps}`;
-        cy.updateCirculationRules({
-          rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
+          CirculationRules.addRuleViaApi({ m: materialType.id }, { l: loanPolicy.id }).then(
+            (newRule) => {
+              addedRule = newRule;
+            },
+          );
         });
       });
-    });
 
     cy.createTempUser([permissions.loansView.gui, permissions.loansRenew.gui]).then(
       ({ username, password, userId, barcode: userBarcode }) => {
@@ -213,7 +211,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     });
     cy.deleteLoanType(loanType.id);
     cy.deleteLoanPolicy(loanPolicy.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(addedRule);
     UserEdit.changeServicePointPreferenceViaApi(firstUser.userId, [servicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(secondUser.userId, [servicePoint.id]);
     Users.deleteViaApi(firstUser.userId);

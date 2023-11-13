@@ -32,10 +32,6 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         inventoryEntity.instanceId = InventoryInstances.createInstanceViaApi(
           inventoryEntity.instanceName,
@@ -54,6 +50,10 @@ describe('bulk-edit', () => {
         cy.getItems({ query: `"barcode"=="${inventoryEntity.barcode}"` }).then((inventoryItem) => {
           inventoryItem.discoverySuppress = true;
           InventoryItems.editItemViaApi(inventoryItem);
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
       });
     });
@@ -76,7 +76,7 @@ describe('bulk-edit', () => {
 
         const suppressFromDiscovery = false;
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
         BulkEditActions.confirmChanges();
