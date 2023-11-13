@@ -105,6 +105,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
   });
 
   after('Delete all data', () => {
+    cy.getAdminToken();
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` }).then(
       (instance) => {
         cy.deleteItemViaApi(instance.items[0].id);

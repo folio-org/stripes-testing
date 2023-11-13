@@ -7,7 +7,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Contributors Browse', () => {
     const testData = {
       instance: {},
@@ -42,6 +42,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
       Users.deleteViaApi(testData.user.userId);
     });

@@ -15,7 +15,6 @@ import UsersSearchResultsPane from '../../support/fragments/users/usersSearchRes
 import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -28,7 +27,6 @@ describe('Lost items requiring actual cost', () => {
   let itemData;
   const declareLostComments = getTestEntityValue('Some additional information');
   let addedCirculationRule;
-  const paymentMethod = {};
   const ownerData = UsersOwners.getDefaultNewOwner();
   let originalCirculationRules;
 
@@ -94,10 +92,6 @@ describe('Lost items requiring actual cost', () => {
       ],
     }).then((ownerResponse) => {
       testData.ownerId = ownerResponse.id;
-      PaymentMethods.createViaApi(testData.ownerId).then(({ name, id }) => {
-        paymentMethod.name = name;
-        paymentMethod.id = id;
-      });
     });
     LostItemFeePolicy.createViaApi(lostItemFeePolicy);
     CirculationRules.getViaApi().then((circulationRule) => {
@@ -165,6 +159,7 @@ describe('Lost items requiring actual cost', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
@@ -179,7 +174,7 @@ describe('Lost items requiring actual cost', () => {
   });
 
   it(
-    'C375286 Check that entries are NOT deleted for returned items (Declared lost items) when item is renewed after "No fees/fines shall be refunded if a lost item is returned more than" parameter (vega) (TaaS)',
+    'C375286 Check that entries are NOT deleted for returned items (Declared lost items) when item is returned after "No fees/fines shall be refunded if a lost item is returned more than" parameter (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       cy.visit(TopMenu.usersPath);

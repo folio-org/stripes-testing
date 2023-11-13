@@ -93,6 +93,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       CheckInActions.checkinItemViaApi({
         itemBarcode: itemData.barcode,
         servicePointId: servicePoint.id,
@@ -138,7 +139,6 @@ describe('inventory', () => {
         ItemRecordView.verifyCalloutMessage();
         ItemRecordView.closeDetailView();
         InstanceRecordView.verifyInstanceRecordViewOpened();
-        InventoryInstance.openHoldingsAccordion(`${holdingsPermanentLocation} >`);
         InventoryInstance.openItemByBarcode(newItemBarcode);
         ItemRecordView.checkItemCirculationHistory('-', '-', '-');
       },

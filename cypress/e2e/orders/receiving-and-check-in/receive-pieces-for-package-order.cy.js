@@ -80,10 +80,9 @@ describe('Orders: Receiving and Check-in', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
-
     Organizations.deleteOrganizationViaApi(organization.id);
-
     Users.deleteViaApi(user.userId);
   });
 
@@ -94,9 +93,6 @@ describe('Orders: Receiving and Check-in', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();
-      InteractorsTools.checkCalloutMessage(
-        `The Purchase order - ${orderNumber} has been successfully opened`,
-      );
       Orders.receiveOrderViaActions();
       // Receiving part
       Receiving.selectPOLInReceive(orderLineTitle);

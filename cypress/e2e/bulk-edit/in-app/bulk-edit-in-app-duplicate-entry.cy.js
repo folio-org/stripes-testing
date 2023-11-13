@@ -40,11 +40,11 @@ describe('bulk-edit', () => {
         permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         FileManager.createFile(
           `cypress/fixtures/${itemBarcodesFileName}`,
           `${item.itemBarcode}\n${item.itemBarcode}`,
@@ -61,6 +61,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);

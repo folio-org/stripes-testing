@@ -5,7 +5,13 @@ import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import { Institutions, Campuses, Libraries, Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
+import {
+  Institutions,
+  Campuses,
+  Libraries,
+  Locations,
+  ServicePoints,
+} from '../../../support/fragments/settings/tenant';
 import LocationEditForm from '../../../support/fragments/settings/tenant/locations/locationEditForm';
 import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -39,6 +45,7 @@ describe('Settings: Tenant', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     cy.getAdminToken().then(() => {
       Locations.deleteViaApi(testData.location);
       ServicePoints.deleteViaApi(testData.servicePoint.id);
@@ -103,7 +110,9 @@ describe('Settings: Tenant', () => {
       TenantPane.verifyPageTitle(`Tenant settings - ${newLocationName} - FOLIO`);
       Locations.openLocationDetails(newLocationName);
       Locations.deleteLocation(newLocationName);
-      InteractorsTools.checkCalloutMessage(`The Location ${newLocationName} was successfully deleted.`);
+      InteractorsTools.checkCalloutMessage(
+        `The Location ${newLocationName} was successfully deleted.`,
+      );
       TenantPane.verifyPageTitle('Tenant settings - Locations - FOLIO');
     },
   );

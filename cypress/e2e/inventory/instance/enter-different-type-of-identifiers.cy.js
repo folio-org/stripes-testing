@@ -16,7 +16,6 @@ describe('inventory', () => {
 
     beforeEach('navigate to inventory', () => {
       instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
-      cy.loginAsAdmin();
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });
@@ -33,9 +32,11 @@ describe('inventory', () => {
             instanceId = specialInstanceId;
           });
         });
+      cy.loginAsAdmin();
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 
@@ -47,7 +48,7 @@ describe('inventory', () => {
 
     ['ASIN', 'BNB'].forEach((identifier) => {
       it(
-        'C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
+        'C609 In Accordion Identifiers --> enter different type of identifiers (folijet)',
         { tags: [TestTypes.smoke, DevTeams.folijet] },
         () => {
           resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;

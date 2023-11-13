@@ -53,6 +53,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
       Users.deleteViaApi(user.userId);
       Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();

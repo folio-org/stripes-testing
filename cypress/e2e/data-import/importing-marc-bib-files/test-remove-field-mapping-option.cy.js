@@ -79,7 +79,7 @@ describe('data-import', () => {
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           temporaryLoanType: `"${LOAN_TYPE_NAMES.COURSE_RESERVES}"`,
           temporaryLoanTypeUI: LOAN_TYPE_NAMES.COURSE_RESERVES,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -153,7 +153,6 @@ describe('data-import', () => {
     };
 
     before('login', () => {
-      cy.getAdminToken();
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -161,6 +160,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
       JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
@@ -239,7 +239,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.temporaryLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -281,6 +281,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(marcFileNameForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileNameForCreate);
@@ -416,6 +417,7 @@ describe('data-import', () => {
             // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
             DataImport.verifyUploadState();
             DataImport.uploadFile(editedMarcFileName);
+            JobProfiles.waitFileIsUploaded();
             JobProfiles.search(jobProfileForUpdate.profileName);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(editedMarcFileName);

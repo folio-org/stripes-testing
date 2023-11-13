@@ -54,6 +54,7 @@ describe('MARC -> MARC Authority', () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitFileIsUploaded();
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -93,6 +94,7 @@ describe('MARC -> MARC Authority', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {

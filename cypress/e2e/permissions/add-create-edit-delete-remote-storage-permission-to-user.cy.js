@@ -40,6 +40,7 @@ describe('Permissions', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });

@@ -54,6 +54,7 @@ describe('Inventory: Subject Browse', () => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitFileIsUploaded();
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -78,7 +79,7 @@ describe('Inventory: Subject Browse', () => {
         InventoryInstance.searchResults(testData.subjectName);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `‡a ${marcFiles[1].naturalId}`,
+          `$a ${marcFiles[1].naturalId}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag610);
@@ -94,6 +95,7 @@ describe('Inventory: Subject Browse', () => {
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
