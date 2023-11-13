@@ -24,11 +24,11 @@ import DateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
 import SearchHelper from '../finance/financeHelper';
+import OrganizationDetails from './organizationDetails';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
 const summaryAccordionId = 'summarySection';
-const organizationDetails = Pane({ id: 'pane-organization-details' });
 const contactPeopleDetails = MultiColumnList({ id: 'contact-list' });
 const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
@@ -127,7 +127,7 @@ export default {
   },
 
   checkCreatedOrganization: (organization) => {
-    cy.expect(organizationDetails.exists());
+    OrganizationDetails.waitLoading();
     cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
     cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
   },
@@ -324,7 +324,7 @@ export default {
   },
 
   checkOpenOrganizationInfo: (organization) => {
-    cy.expect(organizationDetails.exists());
+    OrganizationDetails.waitLoading();
     cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
     cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
   },
@@ -669,6 +669,10 @@ export default {
   selectOrganization: (organizationName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).click());
+
+    OrganizationDetails.waitLoading();
+
+    return OrganizationDetails;
   },
 
   checkTextofElement: () => {

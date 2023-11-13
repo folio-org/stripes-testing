@@ -23,6 +23,7 @@ export default {
     });
   },
   selectOption(label, option) {
+    cy.wait(2000);
     cy.do(Select(label).choose(including(option.name)));
     this.checkOptionSelected(label, option);
   },

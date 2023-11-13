@@ -81,6 +81,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       expenseClassIds.forEach((id) => {
         SettingsFinance.deleteViaApi(id);
       });

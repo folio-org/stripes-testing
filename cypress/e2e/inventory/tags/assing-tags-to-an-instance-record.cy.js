@@ -42,6 +42,7 @@ describe('inventory', () => {
     });
 
     after(() => {
+      cy.getAdminToken();
       cy.deleteTagApi(tag.id);
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });

@@ -182,6 +182,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       cy.getInstance({
         limit: 1,
         expandAll: true,

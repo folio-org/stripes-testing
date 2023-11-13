@@ -37,11 +37,11 @@ describe('MARC Authority Sort', () => {
 
     prefixValues: {
       // eslint-disable-next-line no-tabs
-      prefixValA: '010	   	‡a tgm',
+      prefixValA: '010	   	$a tgm',
       // eslint-disable-next-line no-tabs
-      prefixValB: '010	   	‡a gsafd',
+      prefixValB: '010	   	$a gsafd',
       // eslint-disable-next-line no-tabs
-      prefixValC: '010	   	‡a ',
+      prefixValC: '010	   	$a ',
     },
   };
   const marcFiles = [
@@ -82,6 +82,7 @@ describe('MARC Authority Sort', () => {
     marcFiles.forEach((marcFile) => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
@@ -105,6 +106,7 @@ describe('MARC Authority Sort', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     createdAuthorityIDs.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
     });

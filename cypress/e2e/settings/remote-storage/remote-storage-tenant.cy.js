@@ -4,6 +4,7 @@ import settingsMenu from '../../../support/fragments/settingsMenu';
 import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import permissions from '../../../support/dictionary/permissions';
+import Users from '../../../support/fragments/users/users';
 
 let user;
 
@@ -14,6 +15,11 @@ describe('remote-storage-configuration', () => {
       cy.login(user.username, user.password);
       cy.visit(settingsMenu.tenantLocationsPath);
     });
+  });
+
+  after('delete test data', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(user.userId);
   });
 
   it(

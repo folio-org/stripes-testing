@@ -178,6 +178,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       collectionOfMatchProfiles.forEach((profile) => {
         MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);

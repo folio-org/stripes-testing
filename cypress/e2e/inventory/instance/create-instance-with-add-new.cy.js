@@ -15,10 +15,10 @@ describe('inventory', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      cy.getAdminToken();
     });
 
     after(() => {
+      cy.getAdminToken();
       InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
         (id) => {
           InventoryInstance.deleteInstanceViaApi(id);
@@ -27,7 +27,7 @@ describe('inventory', () => {
     });
 
     it(
-      'C598 Create new instance with add "New" (folijet) (prokopovych)',
+      'C598 Create new instance with add "New" (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();

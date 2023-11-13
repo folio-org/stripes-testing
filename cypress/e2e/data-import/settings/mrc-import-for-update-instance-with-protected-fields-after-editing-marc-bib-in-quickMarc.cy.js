@@ -101,7 +101,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      cy.getAdminToken();
       MarcFieldProtection.getListViaApi({
         query: `"data"=="${firstProtectedFieldsData.data}"`,
       }).then((field) => {
@@ -182,9 +182,9 @@ describe('data-import', () => {
 
           InventoryInstance.viewSource();
           InventoryViewSource.contains('651\t');
-          InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
+          InventoryViewSource.contains('$a Louisiana $2 fast $5 amb');
           InventoryViewSource.contains('920\t');
-          InventoryViewSource.contains('‡a This should be a protected field');
+          InventoryViewSource.contains('This should be a protected field');
           // The prepared file without fields 651 and 920 is used because it is very difficult
           // to remove fields from the exported file along with the special characters of the .mrc file
           InventoryViewSource.extructDataFrom999Field().then((uuid) => {
@@ -209,6 +209,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpload);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForUpload);
@@ -228,9 +229,9 @@ describe('data-import', () => {
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.viewSource();
         InventoryViewSource.contains('651\t');
-        InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
+        InventoryViewSource.contains('$a Louisiana $2 fast $5 amb');
         InventoryViewSource.contains('920\t');
-        InventoryViewSource.contains('‡a This should be a protected field');
+        InventoryViewSource.contains('This should be a protected field');
       },
     );
   });

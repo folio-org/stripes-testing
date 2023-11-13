@@ -28,19 +28,18 @@ describe('data-export', () => {
     cy.createTempUser([permissions.inventoryAll.gui, permissions.dataExportEnableApp.gui]).then(
       (userProperties) => {
         user = userProperties;
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         cy.login(user.username, user.password, {
           path: TopMenu.dataExportPath,
           waiter: DataExportLogs.waitLoading,
         });
-
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-
         FileManager.createFile(`cypress/fixtures/${emptyFile}`, ' ');
       },
     );
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${emptyFile}`);
