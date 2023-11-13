@@ -321,11 +321,13 @@ export default {
   },
 
   openJsonScreen: (title) => {
+    cy.get('#search-results-list').find('*[class^="mclCell"]').contains(title).focus();
     cy.get('#search-results-list')
       .find('*[class^="mclCell"]')
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();
+    cy.wait(2000);
   },
 
   openJsonScreenByStatus: (importStatus, title) => {

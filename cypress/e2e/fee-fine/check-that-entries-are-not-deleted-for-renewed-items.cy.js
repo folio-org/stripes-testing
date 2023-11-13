@@ -48,8 +48,8 @@ describe('Lost items requiring actual cost', () => {
       intervalId: 'Weeks',
     },
     feesFinesShallRefunded: {
-      duration: 6,
-      intervalId: 'Months',
+      duration: 1,
+      intervalId: 'Minutes',
     },
     patronBilledAfterAgedLost: {
       duration: 1,

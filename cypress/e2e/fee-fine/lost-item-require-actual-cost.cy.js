@@ -15,7 +15,6 @@ import UsersSearchResultsPane from '../../support/fragments/users/usersSearchRes
 import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -28,7 +27,6 @@ describe('Lost items requiring actual cost', () => {
   };
   let itemData;
   const declareLostComments = getTestEntityValue('Some additional information');
-  const paymentMethod = {};
   const ownerData = UsersOwners.getDefaultNewOwner();
 
   const lostItemFeePolicy = {
@@ -107,10 +105,6 @@ describe('Lost items requiring actual cost', () => {
       ],
     }).then((ownerResponse) => {
       testData.ownerId = ownerResponse.id;
-      PaymentMethods.createViaApi(testData.ownerId).then(({ name, id }) => {
-        paymentMethod.name = name;
-        paymentMethod.id = id;
-      });
     });
 
     cy.createTempUser([
