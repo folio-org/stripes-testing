@@ -6,12 +6,13 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Uploading files', () => {
     let user = {};
     const filesNames = 'C2378_File1.mrc';
-    const fileNameForUpload = 'autoTestC358540.mrc';
+    const fileNameForUpload = `autoTest${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('create test data', () => {
