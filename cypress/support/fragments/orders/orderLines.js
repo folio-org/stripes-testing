@@ -146,8 +146,10 @@ export default {
     ]);
   },
 
-  selectFund: (FundName) => {
-    cy.do(funddetailsSection.find(Link(FundName)).click());
+  selectFund: (fundName) => {
+    cy.wait(4000);
+    cy.get('#FundDistribution').find('a').contains(fundName).invoke('removeAttr', 'target')
+      .click();
   },
 
   resetFilters: () => {
@@ -736,6 +738,16 @@ export default {
     ]);
     cy.wait(4000);
     submitOrderLine();
+  },
+
+  addFundToPolInPercentsWithoutSave(fund, fundValue) {
+    cy.do([
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
+      fundDistributionField.fillIn(fundValue),
+    ]);
   },
 
   fillInPOLineInfoforPhysicalMaterialWithFundAndEC(
@@ -1392,6 +1404,13 @@ export default {
     cy.wait(4000);
   },
 
+  deleteFundInPOLwithoutSave() {
+    cy.do([
+      Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
   deleteFundsInPOL() {
     cy.get('#fundDistributionAccordion').find('button[icon="trash"]').first().click();
   },
@@ -1505,6 +1524,10 @@ export default {
       quantityPhysicalLocationField.fillIn(quantityPhysical),
       saveAndCloseButton.click(),
     ]);
+  },
+
+  changePhysicalUnitPrice: (unitPrice) => {
+    cy.do([physicalUnitPriceTextField.fillIn(unitPrice)]);
   },
 
   selectRandomInstanceInTitleLookUP: (instanceName, rowNumber = 0) => {
