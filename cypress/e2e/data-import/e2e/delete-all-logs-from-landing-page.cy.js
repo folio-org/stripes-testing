@@ -45,15 +45,17 @@ describe('data-import', () => {
             DataImport.verifyUploadState();
             DataImport.waitLoading();
             DataImport.uploadFile(filePath, fileNameToUpload);
+            JobProfiles.waitFileIsUploaded();
             JobProfiles.search(jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(fileNameToUpload);
-            cy.wait(10000);
+            cy.wait(5000);
           });
         });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Logs.selectAllLogs();
       Logs.actionsButtonClick();
       Logs.deleteLogsButtonClick();

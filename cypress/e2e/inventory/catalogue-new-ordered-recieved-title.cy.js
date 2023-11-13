@@ -24,7 +24,7 @@ import InventoryItems from '../../support/fragments/inventory/item/inventoryItem
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('inventory', () => {
-  describe('Cataloging', () => {
+  describe('Cataloging -> Creating new records', () => {
     let effectiveLocation;
     let orderNumber;
     let materialTypeId;
@@ -130,6 +130,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
         Orders.deleteOrderViaApi(res[0].id);
       });

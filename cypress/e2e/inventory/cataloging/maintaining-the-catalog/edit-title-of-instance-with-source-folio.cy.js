@@ -1,13 +1,13 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import Users from '../../../support/fragments/users/users';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
+import TopMenu from '../../../../support/fragments/topMenu';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import Users from '../../../../support/fragments/users/users';
+import Helper from '../../../../support/fragments/finance/financeHelper';
+import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
 
 describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
@@ -32,6 +32,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     });

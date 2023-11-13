@@ -40,10 +40,6 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
 
         items.forEach((item) => {
           item.instanceId = InventoryInstances.createInstanceViaApi(
@@ -60,6 +56,10 @@ describe('bulk-edit', () => {
             },
           );
         });
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         [items[0].instanceName, items[1].instanceName].forEach((instance) => {
           InventorySearchAndFilter.searchInstanceByTitle(instance);
           InventoryInstances.selectInstance();
@@ -68,14 +68,13 @@ describe('bulk-edit', () => {
           HoldingsRecordView.edit();
           HoldingsRecordEdit.addHoldingsNotes(holdingsNote);
           HoldingsRecordEdit.saveAndClose();
-          HoldingsRecordView.waitLoading();
-          HoldingsRecordView.close();
         });
         cy.visit(TopMenu.bulkEditPath);
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       items.forEach((item) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       });

@@ -20,7 +20,7 @@ const jobProfileName = getTestEntityValue('jobProfile');
 const jobProfileNewName = getTestEntityValue('jobProfileNew');
 const secondNewJobProfileCalloutMessage = `Job profile ${jobProfileNewName} has been successfully edited`;
 
-describe('Job profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -28,10 +28,7 @@ describe('Job profile - setup', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
-      });
+
       ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(mappingProfileName).then(
         (response) => {
           fieldMappingProfileId = response.body.id;
@@ -41,10 +38,15 @@ describe('Job profile - setup', () => {
       cy.getAdminSourceRecord().then((record) => {
         adminSourceRecord = record;
       });
+      cy.login(user.username, user.password, {
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
+      });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     ExportJobProfiles.getJobProfile({ query: `"name"=="${jobProfileNewName}"` }).then(
       (response) => {
         ExportJobProfiles.deleteJobProfileViaApi(response.id);

@@ -28,6 +28,7 @@ describe('Permissions --> My Profile', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
   });
 

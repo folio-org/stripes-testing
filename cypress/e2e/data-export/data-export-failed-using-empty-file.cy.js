@@ -24,6 +24,7 @@ describe('data-export: failed using empty file', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${emptyFile}`);
   });

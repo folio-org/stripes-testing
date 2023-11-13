@@ -208,6 +208,7 @@ describe('Permissions --> Users', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     NewFeeFine.getUserFeesFines(userData.userId).then((userFeesFines) => {
       cy.wrap(userFeesFines.accounts).each(({ id }) => {
         NewFeeFine.deleteFeeFineAccountViaApi(id);

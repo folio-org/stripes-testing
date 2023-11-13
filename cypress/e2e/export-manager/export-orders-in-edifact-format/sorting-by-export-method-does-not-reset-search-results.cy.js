@@ -157,6 +157,7 @@ describe('orders: export', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(orderForFirstOrganization.id);
     Orders.deleteOrderViaApi(orderForSecondOrganization.id);
     Organizations.deleteOrganizationViaApi(firstOrganization.id);

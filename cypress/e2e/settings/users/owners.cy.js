@@ -129,8 +129,8 @@ describe('ui-users-settings: Owners', () => {
     ]);
 
     it(
-      'C441 Verify that you can create/edit/delete associations between fee/fine owners and service points (volaris)',
-      { tags: [TestType.criticalPath, DevTeams.volaris] },
+      'C441 Verify that you can create/edit/delete associations between fee/fine owners and service points (vega)',
+      { tags: [TestType.criticalPath, DevTeams.vega] },
       () => {
         createRegularUser().then((firstUserProperties) => {
           testUsers.push(firstUserProperties);

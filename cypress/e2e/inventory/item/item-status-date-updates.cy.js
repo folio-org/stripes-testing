@@ -129,6 +129,7 @@ describe.skip('inventory', () => {
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => Orders.deleteOrderViaApi(order[0].id));
       UserEdit.changeServicePointPreferenceViaApi(userForDeliveryRequest.userId, [
@@ -204,7 +205,7 @@ describe.skip('inventory', () => {
 
     // test is looping
     it(
-      'C9200 Item status date updates (folijet) (prokopovych)',
+      'C9200 Item status date updates (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         const caption = `autotest_caption_${getRandomPostfix()}`;

@@ -33,6 +33,7 @@ describe('data-export', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
   });

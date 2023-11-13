@@ -50,6 +50,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryItems.markItemAsMissingByUserIdViaApi(user.userId).then(() => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.ITEM_BARCODE);
       Users.deleteViaApi(user.userId);

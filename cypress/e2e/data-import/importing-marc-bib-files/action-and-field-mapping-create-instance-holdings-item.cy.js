@@ -38,7 +38,6 @@ describe('data-import', () => {
           suppressFromDiscavery: 'Mark for all affected records',
           staffSuppress: 'Mark for all affected records',
           previouslyHeld: 'Mark for all affected records',
-          instanceStatus: INSTANCE_STATUS_TERM_NAMES.OTHER,
           instanceStatusTerm: INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED,
           statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
           statisticalCodeUI: 'Book, print (books)',
@@ -92,10 +91,10 @@ describe('data-import', () => {
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
-      cy.getAdminToken();
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
@@ -127,9 +126,6 @@ describe('data-import', () => {
         );
         NewFieldMappingProfile.addPreviouslyHeld(
           collectionOfMappingAndActionProfiles[0].mappingProfile.previouslyHeld,
-        );
-        NewFieldMappingProfile.fillInstanceStatusTerm(
-          collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatus,
         );
         NewFieldMappingProfile.fillInstanceStatusTerm(
           collectionOfMappingAndActionProfiles[0].mappingProfile.instanceStatusTerm,
@@ -172,7 +168,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.addStatisticalCode(
           collectionOfMappingAndActionProfiles[2].mappingProfile.statisticalCode,
@@ -212,6 +208,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -240,7 +237,7 @@ describe('data-import', () => {
           ItemRecordView.verifyPermanentLoanType(
             collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
           );
-          ItemRecordView.verifyStatus(
+          ItemRecordView.verifyItemStatus(
             collectionOfMappingAndActionProfiles[2].mappingProfile.status,
           );
           ItemRecordView.verifyFormerIdentifiers(
