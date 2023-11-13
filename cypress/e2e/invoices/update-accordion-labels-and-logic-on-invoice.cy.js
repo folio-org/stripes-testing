@@ -1,25 +1,19 @@
 import permissions from '../../support/dictionary/permissions';
 import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
+import getRandomPostfix from '../../support/utils/stringTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../support/fragments/users/users';
 import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import OrderLines from '../../support/fragments/orders/orderLines';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import NewExpenceClass from '../../support/fragments/settings/finance/newExpenseClass';
-import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import { InvoiceView } from '../../support/fragments/invoices';
+import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
+import InvoiceLineDetails from '../../support/fragments/invoices/invoiceLineDetails';
 
 describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -29,25 +23,16 @@ describe('Invoices', () => {
     restrictExpenditures: true,
   };
   const defaultFund = { ...Funds.defaultUiFund };
-  const defaultOrder = {
-    ...NewOrder.defaultOneTimeOrder,
-    orderType: 'One-time',
-  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
+  const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const allocatedQuantity = '100';
   defaultFiscalYear.code = defaultFiscalYear.code.slice(0, -1) + '1';
+  const adjustmentDescription = `test_description${getRandomPostfix()}`;
   let user;
-  let orderNumber;
-  let servicePointId;
-  let location;
 
   before(() => {
-    cy.getAdminToken();
     cy.loginAsAdmin();
-    cy.visit(SettingsMenu.expenseClassesPath);
-    SettingsFinance.createNewExpenseClass(firstExpenseClass);
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
@@ -64,13 +49,6 @@ describe('Invoices', () => {
           Funds.addBudget(allocatedQuantity);
         });
 
-        ServicePoints.getViaApi().then((servicePoint) => {
-          servicePointId = servicePoint[0].id;
-          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-            location = res;
-          });
-        });
-
         Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
           organization.id = responseOrganizations;
           invoice.accountingCode = organization.erpCode;
@@ -78,40 +56,13 @@ describe('Invoices', () => {
             invoice.batchGroup = batchGroup.name;
           });
         });
-        defaultOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
-        Orders.createApprovedOrderForRollover(defaultOrder, true, true).then(
-          (firstOrderResponse) => {
-            defaultOrder.id = firstOrderResponse.id;
-            orderNumber = firstOrderResponse.poNumber;
-            Orders.checkCreatedOrder(defaultOrder);
-            OrderLines.addPOLine();
-            OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-            OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-              defaultFund,
-              '10',
-              '1',
-              '10',
-              location.institutionId,
-            );
-            OrderLines.backToEditingOrder();
-            Orders.openOrder();
-          },
-        );
         cy.visit(TopMenu.invoicesPath);
         Invoices.createRolloverInvoiceWithFY(invoice, organization.name, defaultFiscalYear);
+        Invoices.createInvoiceLine(invoiceLine);
       });
     });
 
-    cy.createTempUser([
-      permissions.uiInvoicesApproveInvoices.gui,
-      permissions.viewEditCreateInvoiceInvoiceLine.gui,
-      permissions.viewEditDeleteInvoiceInvoiceLine.gui,
-      permissions.uiInvoicesPayInvoices.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersUnopenpurchaseorders.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.viewEditCreateInvoiceInvoiceLine.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
@@ -121,7 +72,11 @@ describe('Invoices', () => {
   });
 
   after(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.deleteInvoiceViaActions();
+    Invoices.confirmInvoiceDeletion();
     Users.deleteViaApi(user.userId);
   });
 
@@ -131,15 +86,21 @@ describe('Invoices', () => {
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.createInvoiceLineFromPol(orderNumber);
-      Invoices.approveInvoice();
       Invoices.selectInvoiceLine();
-      Invoices.openPOLFromInvoiceLineInCurrentPage(`${orderNumber}-1`);
-      OrderLines.viewPO();
-      Orders.unOpenOrderAndDeleteItems();
-      Orders.selectInvoiceInRelatedInvoicesList(invoice.invoiceNumber);
-      InvoiceView.checkInvoiceCanNotBeApprovedWarning();
-      Invoices.checkPayButtonIsDissabled();
+      InvoiceLineDetails.checkFundListIsEmpty();
+      InvoiceLineDetails.checkAdjustmentsListIsEmpty();
+      InvoiceLineDetails.closeInvoiceLineDetailsPane();
+      Invoices.editInvoice();
+      Invoices.addAdjustmentToInvoice(
+        adjustmentDescription,
+        '10',
+        '$',
+        'By line',
+        'In addition to',
+      );
+      Invoices.selectInvoiceLine();
+      Invoices.editInvoiceLine();
+      Invoices.addFundToLine(defaultFund);
     },
   );
 });
