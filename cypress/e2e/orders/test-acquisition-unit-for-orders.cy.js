@@ -47,6 +47,7 @@ describe('ui-finance: Orders', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
     cy.loginAsAdmin({

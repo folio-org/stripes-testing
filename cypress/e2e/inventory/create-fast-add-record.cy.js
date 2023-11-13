@@ -40,6 +40,7 @@ describe('inventory', () => {
     });
 
     afterEach('reset "Fast add" setting', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
         FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
       );
@@ -49,7 +50,7 @@ describe('inventory', () => {
     });
 
     it(
-      'C15850 Create a fast add record from Inventory. Monograph. (folijet) (prokopovych)',
+      'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         cy.visit(TopMenu.inventoryPath);

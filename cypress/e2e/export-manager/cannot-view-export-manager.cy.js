@@ -16,6 +16,7 @@ describe('export manager', () => {
   });
 
   after('delete user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

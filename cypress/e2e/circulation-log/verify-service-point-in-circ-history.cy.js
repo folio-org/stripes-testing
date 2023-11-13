@@ -59,6 +59,7 @@ describe('Circulation log', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
       testData.servicePoint.id,
       testData.secondServicePoint.id,
@@ -100,7 +101,7 @@ describe('Circulation log', () => {
       InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
       ItemRecordView.waitLoading();
       // The Item has status "In transit"
-      ItemRecordView.verifyStatus(`In transit to ${testData.secondServicePoint.name}`);
+      ItemRecordView.verifyItemStatus(`In transit to ${testData.secondServicePoint.name}`);
       // Click on the "Circulation history" accordion to expand it => Check the "Most recent check in"
       ItemRecordView.checkItemCirculationHistory(
         todayDate,

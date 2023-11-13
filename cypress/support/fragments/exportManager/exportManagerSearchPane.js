@@ -12,7 +12,9 @@ import {
   PaneHeader,
   KeyValue,
   MultiColumnListRow,
+  Section,
 } from '../../../../interactors';
+import ExportDetails from './exportDetails';
 
 const searchButton = Button({ type: 'submit' });
 const userSearchResults = Pane('User Search Results');
@@ -31,7 +33,7 @@ const jobDetailsPane = Pane('Export job ');
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => {
-  cy.wait(1000);
+  cy.wait(2000);
 };
 const exportJob = (jobId) => {
   // TODO: redesign to interactors
@@ -95,7 +97,10 @@ export default {
         .find(MultiColumnListCell(integrationName))
         .click(),
     );
-    cy.wait(4000);
+
+    ExportDetails.waitLoading();
+
+    return ExportDetails;
   },
 
   closeExportJobPane() {
@@ -237,7 +242,7 @@ export default {
   },
 
   selectOrganizationsSearch() {
-    Button('Organizations').click();
+    cy.do(Pane('Search & filter').find(Button('Organizations')).click());
   },
 
   selectExportMethod(integarationName) {

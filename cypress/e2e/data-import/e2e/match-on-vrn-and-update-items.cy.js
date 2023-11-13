@@ -148,6 +148,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
         Orders.deleteOrderViaApi(order[0].id);
       });
@@ -265,6 +266,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfilesData.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);

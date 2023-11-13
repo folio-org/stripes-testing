@@ -100,7 +100,7 @@ describe.skip('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356791 autotest item mapping profile.${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         },
         actionProfile: {
@@ -165,7 +165,7 @@ describe.skip('data-import', () => {
           noteUI: 'Smith Family Foundation',
           staffOnly: 'Mark for all affected records',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -238,6 +238,7 @@ describe.skip('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
@@ -316,7 +317,9 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfProfilesForCreate[3].mappingProfile.permanentLoanType,
         );
-        NewFieldMappingProfile.fillStatus(collectionOfProfilesForCreate[3].mappingProfile.status);
+        NewFieldMappingProfile.fillStatus(
+          `"${collectionOfProfilesForCreate[3].mappingProfile.status}"`,
+        );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(collectionOfProfilesForCreate[3].mappingProfile.name);
 
@@ -340,6 +343,7 @@ describe.skip('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
@@ -429,7 +433,9 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType,
         );
-        NewFieldMappingProfile.fillStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
+        NewFieldMappingProfile.fillStatus(
+          `"${collectionOfProfilesForUpdate[2].mappingProfile.status}"`,
+        );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(collectionOfProfilesForUpdate[2].mappingProfile.name);
 
@@ -481,6 +487,7 @@ describe.skip('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.uploadFile(fileNameWithUpdatedContent, fileNameForUpdateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);

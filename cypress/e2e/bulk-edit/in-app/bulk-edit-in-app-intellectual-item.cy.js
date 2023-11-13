@@ -29,16 +29,17 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
@@ -72,7 +73,7 @@ describe('bulk-edit', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
-        ItemRecordView.verifyStatus('Intellectual item');
+        ItemRecordView.verifyItemStatus('Intellectual item');
       },
     );
   });

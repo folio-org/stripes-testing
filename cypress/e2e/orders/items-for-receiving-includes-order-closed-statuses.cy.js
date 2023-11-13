@@ -94,7 +94,6 @@ describe('orders: Receiving and Check-in', () => {
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(5000);
           InventoryItems.closeItem();
-          InventoryInstance.openHoldingsAccordion(location.name);
           InventoryInstance.openItemByBarcodeAndIndex('No barcode');
           InventoryItems.edit();
           ItemRecordEdit.addBarcode(barcodeForSecondItem);
@@ -103,7 +102,6 @@ describe('orders: Receiving and Check-in', () => {
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(5000);
           InventoryItems.closeItem();
-          InventoryInstance.openHoldingsAccordion(location.name);
           InventoryInstance.openItemByBarcodeAndIndex('No barcode');
           InventoryItems.edit();
           ItemRecordEdit.addBarcode(barcodeForThirdItem);
@@ -112,7 +110,6 @@ describe('orders: Receiving and Check-in', () => {
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(5000);
           InventoryItems.closeItem();
-          InventoryInstance.openHoldingsAccordion(location.name);
           InventoryInstance.openItemByBarcodeAndIndex('No barcode');
           InventoryItems.edit();
           ItemRecordEdit.addBarcode(barcodeForFourItem);
@@ -131,8 +128,9 @@ describe('orders: Receiving and Check-in', () => {
         cy.wait(6000);
         CheckInActions.checkInItemGui(barcodeForFirstItem);
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(10000);
+        cy.wait(6000);
         CheckInActions.checkInItemGui(barcodeForSecondItem);
+        cy.wait(6000);
       });
     });
 
@@ -158,7 +156,6 @@ describe('orders: Receiving and Check-in', () => {
       Receiving.receiveFromExpectedSectionWithClosePOL();
       Receiving.receiveAll();
       Receiving.clickOnInstance();
-      InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForFirstItem);
       ItemRecordView.checkItemDetails(
         location.name,
@@ -166,7 +163,6 @@ describe('orders: Receiving and Check-in', () => {
         ITEM_STATUS_NAMES.AVAILABLE,
       );
       InventoryItems.closeItem();
-      InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForSecondItem);
       ItemRecordView.checkItemDetails(
         location.name,
@@ -174,7 +170,6 @@ describe('orders: Receiving and Check-in', () => {
         ITEM_STATUS_NAMES.AVAILABLE,
       );
       InventoryItems.closeItem();
-      InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForFourItem);
       ItemRecordView.checkItemDetails(
         location.name,
@@ -182,7 +177,6 @@ describe('orders: Receiving and Check-in', () => {
         ITEM_STATUS_NAMES.IN_PROCESS,
       );
       InventoryItems.closeItem();
-      InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex(barcodeForThirdItem);
       ItemRecordView.checkItemDetails(
         location.name,

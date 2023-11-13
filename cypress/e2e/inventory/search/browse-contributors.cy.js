@@ -56,10 +56,12 @@ describe('Inventory -> Contributors Browse', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
   });
 

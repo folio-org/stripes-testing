@@ -3,8 +3,8 @@ import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import permissions from '../../support/dictionary/permissions';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import OaipmhPane from '../../support/fragments/oai-pmh/oaipmhPane';
-import BehaviorPane from '../../support/fragments/oai-pmh/behaviorPane';
+import { OaiPmh, Behavior } from '../../support/fragments/oai-pmh';
+import { SECTIONS } from '../../support/fragments/oai-pmh/oaipmhPane';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 let user;
@@ -16,47 +16,48 @@ describe('OAI-PMH', () => {
       user = userProperties;
       cy.login(user.username, user.password, {
         path: SettingsMenu.oaiPmhPath,
-        waiter: OaipmhPane.waitLoading,
+        waiter: OaiPmh.waitLoading,
       });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
-    'C367985 Verify that "Record Source" dropdown is added to Behavior page',
+    'C367985 Verify that "Record Source" dropdown is added to Behavior page (firebird)',
     { tags: [testTypes.criticalPath, devTeams.firebird] },
     () => {
-      OaipmhPane.verifyPaneElements();
-      OaipmhPane.clickBehaviorItem();
-      BehaviorPane.verifyBehaviorPane();
-      BehaviorPane.verifyRecordSourceDropdownDefaultValue('Source record storage');
-      BehaviorPane.pickFromRecordSourceDropdown('Inventory');
-      BehaviorPane.clickSave();
+      OaiPmh.checkSectionListItems();
+      OaiPmh.selectSection(SECTIONS.BEHAVIOR);
+      Behavior.verifyBehaviorPane();
+      Behavior.verifyRecordSourceDropdownDefaultValue('Source record storage');
+      Behavior.pickFromRecordSourceDropdown('Inventory');
+      Behavior.clickSave();
       InteractorsTools.checkCalloutMessage(calloutMessageText);
 
       // Re-login and verify the settings are saved
       cy.login(user.username, user.password, {
         path: SettingsMenu.oaiPmhPath,
-        waiter: OaipmhPane.waitLoading,
+        waiter: OaiPmh.waitLoading,
       });
-      OaipmhPane.clickBehaviorItem();
-      BehaviorPane.verifyRecordSourceDropdownDefaultValue('Inventory');
-      BehaviorPane.pickFromRecordSourceDropdown('Source records storage and Inventory');
-      BehaviorPane.clickSave();
+      OaiPmh.selectSection(SECTIONS.BEHAVIOR);
+      Behavior.verifyRecordSourceDropdownDefaultValue('Inventory');
+      Behavior.pickFromRecordSourceDropdown('Source records storage and Inventory');
+      Behavior.clickSave();
       InteractorsTools.checkCalloutMessage(calloutMessageText);
 
       // Re-login and verify the settings are saved
       cy.login(user.username, user.password, {
         path: SettingsMenu.oaiPmhPath,
-        waiter: OaipmhPane.waitLoading,
+        waiter: OaiPmh.waitLoading,
       });
-      OaipmhPane.clickBehaviorItem();
-      BehaviorPane.verifyRecordSourceDropdownDefaultValue('Source record storage and Inventory');
-      BehaviorPane.pickFromRecordSourceDropdown('Source records storage');
-      BehaviorPane.clickSave();
+      OaiPmh.selectSection(SECTIONS.BEHAVIOR);
+      Behavior.verifyRecordSourceDropdownDefaultValue('Source record storage and Inventory');
+      Behavior.pickFromRecordSourceDropdown('Source records storage');
+      Behavior.clickSave();
       InteractorsTools.checkCalloutMessage(calloutMessageText);
     },
   );

@@ -63,6 +63,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMatchProfiles.forEach((profile) => {
         MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);

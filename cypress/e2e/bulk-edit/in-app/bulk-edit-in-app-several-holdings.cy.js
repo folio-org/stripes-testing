@@ -14,6 +14,7 @@ const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
+  locationName: 'Popular Reading Collection',
 };
 
 const item2 = {
@@ -30,10 +31,6 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditHoldings.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -47,7 +44,7 @@ describe('bulk-edit', () => {
           item.holdingId = holdings[0].id;
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
-            // Popular Reading Collection location
+            // Popular Reading Collection
             temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
           });
         });
@@ -72,10 +69,15 @@ describe('bulk-edit', () => {
             `${item.holdingId}\r\n${item2.holdingId}`,
           );
         });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);

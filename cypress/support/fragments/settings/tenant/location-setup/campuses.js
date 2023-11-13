@@ -1,5 +1,12 @@
 import uuid from 'uuid';
 import TenantPane, { getDefaultTenant } from '../baseTenantPane';
+import {
+  EditableListRow,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Link,
+  including,
+} from '../../../../../../interactors';
 
 export default {
   ...TenantPane,
@@ -34,5 +41,26 @@ export default {
   },
   deleteViaApi(campusId) {
     return TenantPane.deleteViaApi({ path: `location-units/campuses/${campusId}` });
+  },
+  checkLibrariesColumnInResultsTable(records = [], columnIndex = 3) {
+    records
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((record, index) => {
+        cy.expect([
+          EditableListRow({ index })
+            .find(MultiColumnListCell({ columnIndex, content: String(record.numOfLibraries) }))
+            .find(Link())
+            .exists(),
+        ]);
+      });
+  },
+  clickLibrariesColumnLink(campusName, columnIndex = 3) {
+    cy.wait(2000);
+    cy.do(
+      MultiColumnListRow(including(campusName))
+        .find(MultiColumnListCell({ columnIndex }))
+        .find(Link())
+        .click(),
+    );
   },
 };

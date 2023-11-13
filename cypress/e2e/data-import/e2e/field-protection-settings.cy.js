@@ -109,6 +109,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
@@ -171,7 +172,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
-        JobProfiles.waitLoadingList();
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -233,6 +234,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileUpdate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdate);
