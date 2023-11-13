@@ -28,6 +28,7 @@ describe('Inventory > Subject Browse', () => {
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile('marcFileForC350387.mrc', fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -49,6 +50,7 @@ describe('Inventory > Subject Browse', () => {
   });
 
   after('Deleting user and instance', () => {
+    cy.getAdminToken();
     createdInstanceIDs.forEach((id) => {
       InventoryInstance.deleteInstanceViaApi(id);
     });

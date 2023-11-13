@@ -72,6 +72,7 @@ describe('orders: Receive piece from Order', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(orderID);
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);

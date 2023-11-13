@@ -17,7 +17,6 @@ describe('data-import', () => {
     const fileName = `C11121 autotestFile.${getRandomPostfix()}.mrc`;
 
     before('login', () => {
-      cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
@@ -25,6 +24,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       cy.wrap(instanceHrids).each((hrid) => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
           (instance) => {
@@ -41,6 +41,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);

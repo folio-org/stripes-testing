@@ -60,6 +60,7 @@ describe('Invoices', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Invoices.getInvoiceViaApi({
       query: `vendorInvoiceNo="${testData.invoice.vendorInvoiceNo}"`,

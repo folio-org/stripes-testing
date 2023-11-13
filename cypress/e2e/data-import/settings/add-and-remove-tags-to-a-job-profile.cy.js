@@ -21,7 +21,6 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
 
       // create Job profile
       cy.visit(SettingsMenu.jobProfilePath);
@@ -31,6 +30,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
     });
 

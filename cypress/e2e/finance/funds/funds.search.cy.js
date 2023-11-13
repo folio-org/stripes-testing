@@ -54,6 +54,7 @@ describe('ui-finance: Funds', () => {
   });
 
   beforeEach(() => {
+    cy.getAdminToken();
     cy.createFundApi({
       ...fund,
       acqUnitIds: [aUnit.id],
@@ -65,6 +66,7 @@ describe('ui-finance: Funds', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     cy.deleteFundApi(fund.id);
     Users.deleteViaApi(user.userId);
   });

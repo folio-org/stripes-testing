@@ -16,7 +16,7 @@ const fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
 const newTransformationCalloutMessage = '2 transformations have been successfully added';
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
 
-describe('Mapping profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -31,6 +31,7 @@ describe('Mapping profile - setup', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     ExportFieldMappingProfiles.getFieldMappingProfile({
       query: `"name"=="${fieldMappingProfileName}"`,
     }).then((response) => {

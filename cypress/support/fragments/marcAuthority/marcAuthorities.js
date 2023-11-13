@@ -66,6 +66,7 @@ const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
+const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
 
 export default {
   waitLoading() {
@@ -388,6 +389,11 @@ export default {
     cy.do(Checkbox(value).click());
   },
 
+  downloadSelectedRecordWithRowIdx(checkBoxNumber = 1) {
+    cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
+    cy.do([actionsButton.click(), exportSelectedRecords.click()]);
+  },
+
   selectAllRecords() {
     // need to wait until page loading
     // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -700,5 +706,27 @@ export default {
           .exists(),
       );
     }
+  },
+  verifyTextOfPaneHeaderMarcAuthority(text) {
+    cy.expect(
+      PaneHeader('MARC authority')
+        .find(HTML(including(text)))
+        .exists(),
+    );
+  },
+  verifySearchResultTabletIsAbsent() {
+    cy.expect(authoritiesList.absent());
+  },
+
+  getMarcAuthoritiesViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'search/authorities',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.authorities;
+      });
   },
 };

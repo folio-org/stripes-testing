@@ -26,6 +26,7 @@ describe('Notes', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     NoteTypes.deleteNoteTypeViaApi(testData.noteType.id);
     Users.deleteViaApi(testData.user.userId);
   });

@@ -77,6 +77,7 @@ describe('ui-inventory: Create page type request', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     cy.getItemRequestsApi({
       query: `"requesterId"="${user.userId}"`,
     }).then(({ body }) => {

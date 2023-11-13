@@ -17,7 +17,7 @@ describe('data-import', () => {
     const oclcNumber = '42980246';
     const OCLCAuthentication = '100481406/PAOLF';
     const field005 = '20230427101124.9';
-    const field035 = '‡a (OCoLC)ocm42980246';
+    const field035 = '$a (OCoLC)ocm42980246';
     const notDuplicatedFieldsContent = {
       first006field: 'jccnn           n ',
       second006field: 'm     q  h        ',
@@ -43,6 +43,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {

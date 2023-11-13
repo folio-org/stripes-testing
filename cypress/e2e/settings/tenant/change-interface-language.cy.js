@@ -27,6 +27,7 @@ describe('Settings: Tenant', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
   });
 

@@ -6,7 +6,6 @@ import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import UserEdit from '../../support/fragments/users/userEdit';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
@@ -79,6 +78,7 @@ describe('Waive Fees/Fines', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     WaiveReasons.deleteViaApi(waiveReason.id);
     ManualCharges.deleteViaApi(feeFineType.id);
     NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);

@@ -74,7 +74,7 @@ describe('data-import', () => {
           noteForCheckIn: '878$a',
           staffOnlyForCheckIn: 'Mark for all affected records',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -104,6 +104,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       // delete generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
@@ -145,7 +146,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfProfiles[2].mappingProfile.permanentLoanType,
         );
-        NewFieldMappingProfile.fillStatus(collectionOfProfiles[2].mappingProfile.status);
+        NewFieldMappingProfile.fillStatus(`"${collectionOfProfiles[2].mappingProfile.status}"`);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(collectionOfProfiles[2].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -195,6 +196,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC368005.mrc', marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);

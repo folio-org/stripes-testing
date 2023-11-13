@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  HTML,
   KeyValue,
   Link,
   MultiColumnListCell,
@@ -9,6 +10,7 @@ import {
   PaneHeader,
   Section,
   including,
+  matching,
 } from '../../../../interactors';
 import InvoiceLineEditForm from './invoiceLineEditForm';
 import FundDetails from '../finance/funds/fundDetails';
@@ -28,6 +30,10 @@ const fundDistributionsSection = invoiceLineDetailsPane.find(
   Section({ id: 'invoiceLineFundDistribution' }),
 );
 
+const relatedInvoiceLinesSection = invoiceLineDetailsPane.find(
+  Section({ id: 'otherRelatedInvoiceLines' }),
+);
+
 export default {
   openInvoiceLineEditForm() {
     cy.do([invoiceLineDetailsPaneHeader.find(actionsButton).click(), editButton.click()]);
@@ -41,6 +47,34 @@ export default {
     });
     checkboxes.forEach(({ locator, conditions }) => {
       cy.expect(informationSection.find(Checkbox(locator)).has(conditions));
+    });
+  },
+  checkRelatedInvoiceLinesTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.invoiceNumber) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.invoiceNumber) }),
+        );
+      }
+      if (record.invoiceLineNumber) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ innerHTML: matching(new RegExp(record.invoiceLineNumber)) }),
+        );
+      }
+      if (record.vendorCode) {
+        cy.expect(
+          relatedInvoiceLinesSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .has({ content: including(record.vendorCode) }),
+        );
+      }
     });
   },
   checkFundDistibutionTableContent(records = []) {
@@ -114,6 +148,27 @@ export default {
       ({ invoiceLines }) => {
         invoiceLines.forEach(({ id }) => this.deleteInvoiceLineViaApi(id));
       },
+    );
+  },
+  checkFundListIsEmpty: () => {
+    cy.expect(
+      Section({ id: 'invoiceLineFundDistribution' })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+  checkAdjustmentsListIsEmpty: () => {
+    cy.expect(
+      Section({ id: 'invoiceLineAdjustments' })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+  closeInvoiceLineDetailsPane: () => {
+    cy.do(
+      Pane({ id: 'pane-invoiceLineDetails' })
+        .find(Button({ icon: 'times' }))
+        .click(),
     );
   },
 };
