@@ -68,6 +68,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 

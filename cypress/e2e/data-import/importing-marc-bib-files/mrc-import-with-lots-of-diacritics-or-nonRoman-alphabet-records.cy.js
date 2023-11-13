@@ -59,9 +59,8 @@ describe('data-import', () => {
     };
     const nameMarcFileForCreate = `C6709 autotestFile.${getRandomPostfix()}.mrc`;
 
-    beforeEach(() => {
+    before('login', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
     });
 
     it(
@@ -71,6 +70,7 @@ describe('data-import', () => {
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('marcFileForC6709.mrc', nameMarcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);

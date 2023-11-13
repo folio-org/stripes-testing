@@ -108,6 +108,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.log(`REQUEST ID:    ${requestId}`);
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);

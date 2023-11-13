@@ -58,6 +58,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       testUsers.forEach((testUser) => Users.deleteViaApi(testUser.userId));
       Users.deleteViaApi(user.userId);

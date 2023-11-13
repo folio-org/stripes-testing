@@ -23,7 +23,7 @@ export default {
   },
 
   checkNonExactSearchResult(searchQuery) {
-    cy.expect([MultiColumnListCell().has({ content: including(`${searchQuery} would be here`) })]);
+    cy.expect(MultiColumnListCell(including(`${searchQuery}would be here`)).exists());
   },
 
   checkItemSearchResult(callNumber, suffix) {

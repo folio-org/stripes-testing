@@ -506,6 +506,10 @@ export default {
     cy.expect(dataImportNavSection.find(NavListItem(profiles)).exists());
   },
 
+  selectDataImportProfile(profile) {
+    cy.do(dataImportNavSection.find(NavListItem(profile)).click());
+  },
+
   verifyImportBlockedModal() {
     cy.expect([
       importBlockedModal.exists(),

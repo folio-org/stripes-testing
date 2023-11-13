@@ -25,6 +25,7 @@ describe('data-import', () => {
       DataImport.verifyUploadState();
       DataImport.waitLoading();
       DataImport.uploadFile(filePathToUpload, fileNameToUpload);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameToUpload);
@@ -40,6 +41,7 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 

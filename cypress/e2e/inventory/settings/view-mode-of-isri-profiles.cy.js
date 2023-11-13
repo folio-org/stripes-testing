@@ -115,6 +115,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
         JobProfiles.deleteJobProfile(profile.createJobProfile);
         JobProfiles.deleteJobProfile(profile.updateJobProfile);

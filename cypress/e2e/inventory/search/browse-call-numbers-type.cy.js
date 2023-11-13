@@ -10,7 +10,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {};
     const instances = [
@@ -139,6 +139,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[0].id);
       InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[1].id);
