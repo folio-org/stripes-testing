@@ -328,7 +328,7 @@ describe('Overdue fine', () => {
       Checkout.verifyResultsInTheRow([itemData.barcode]);
       CheckOutActions.endCheckOutSession();
 
-      cy.getToken(userData.username, userData.password);
+      cy.getAdminToken();
       UserLoans.changeDueDateForAllOpenPatronLoans(userData.userId, -1);
 
       cy.getToken(userData.username, userData.password);
