@@ -16,6 +16,8 @@ describe('Create new MARC bib', () => {
       tag: '035',
       content: '(OCoLC)' + getRandomPostfix(),
     },
+    searchOptionKeyword: 'Keyword (title, contributor, identifier, HRID, UUID)',
+    searchOptionOCLC: 'OCLC number, normalized',
   };
 
   before('Create test data', () => {
@@ -54,11 +56,21 @@ describe('Create new MARC bib', () => {
       InventoryInstance.getId().then((id) => {
         createdInstanceIDs.push(id);
       });
-      InventorySearchAndFilter.searchInstanceByKeyword(testData.newField.content);
+      InventoryInstances.searchInstancesWithOption(
+        testData.searchOptionKeyword,
+        testData.newField.content,
+      );
       InventorySearchAndFilter.verifySearchResult(testData.marcBibTitle);
-      InventorySearchAndFilter.searchInstanceByOCLC(testData.newField.content);
+      cy.wait(100);
+      InventoryInstances.searchInstancesWithOption(
+        testData.searchOptionOCLC,
+        testData.newField.content,
+      );
       InventorySearchAndFilter.verifySearchResult(testData.marcBibTitle);
-      InventorySearchAndFilter.searchInstanceByKeyword(testData.marcBibTitle);
+      InventoryInstances.searchInstancesWithOption(
+        testData.searchOptionKeyword,
+        testData.marcBibTitle,
+      );
       InventorySearchAndFilter.verifySearchResult(testData.marcBibTitle);
       InventorySearchAndFilter.selectFoundInstance(testData.marcBibTitle);
       InventorySearchAndFilter.verifyInstanceDetailsView();
