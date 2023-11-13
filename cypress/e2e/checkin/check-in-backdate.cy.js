@@ -50,7 +50,7 @@ describe('Check in backdate', () => {
       },
     );
   });
-
+  /*
   after('Delete test data', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
@@ -68,7 +68,7 @@ describe('Check in backdate', () => {
     Locations.deleteViaApi(testData.defaultLocation);
     Users.deleteViaApi(userData.userId);
   });
-
+*/
   it(
     'C587 Check in: backdate check ins (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },

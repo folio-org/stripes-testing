@@ -39,7 +39,7 @@ describe('ui-inventory: Create page type request', () => {
             permissions.uiInventoryViewInstances.gui,
             permissions.uiUsersView.gui,
             permissions.uiUserEdit.gui,
-            permissions.uiUserCreate.gui,
+            permissions.uiUsersCreate.gui,
             permissions.uiUsersEdituserservicepoints.gui,
             permissions.uiUserAccounts.gui,
             permissions.usersViewRequests.gui,
@@ -53,9 +53,6 @@ describe('ui-inventory: Create page type request', () => {
         UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
       })
       .then(() => {
-        cy.login(user.username, user.password);
-      })
-      .then(() => {
         MarkItemAsMissing.createItemsForGivenStatusesApi
           .call(createPageTypeRequest)
           .then(({ items, instanceRecordData }) => {
@@ -67,13 +64,16 @@ describe('ui-inventory: Create page type request', () => {
             cy.intercept('GET', '/inventory/items?').as('getItems');
             cy.intercept('GET', '/holdings-types?*').as('getHoldinsgTypes');
             cy.intercept('GET', '/instance-relationship-types?*').as('getInstanceRelTypes');
+          })
+          .then(() => {
+            Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+              oldRulesText = oldRulesAsText;
+              requestPolicyId = policy.id;
+            });
+
+            cy.login(user.username, user.password);
           });
       });
-
-    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-      oldRulesText = oldRulesAsText;
-      requestPolicyId = policy.id;
-    });
   });
 
   afterEach(() => {

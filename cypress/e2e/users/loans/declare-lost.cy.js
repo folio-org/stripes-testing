@@ -167,6 +167,7 @@ describe('ui-users-loans: Loans', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     [newFirstItemData, newSecondItemData].forEach((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,

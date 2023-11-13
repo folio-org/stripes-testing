@@ -83,9 +83,9 @@ describe('Renewal', () => {
             renewUserData.lastName = userProperties.username;
             renewUserData.id = userProperties.userId;
             renewUserData.barcode = userProperties.barcode;
+            renewUserData.username = userProperties.username;
+            renewUserData.password = userProperties.password;
             userName = userProperties.username;
-
-            cy.login(userProperties.username, userProperties.password);
           },
         );
       })
@@ -151,6 +151,9 @@ describe('Renewal', () => {
           itemBarcode: secondItemBarcode,
           userBarcode: renewUserData.barcode,
         });
+      })
+      .then(() => {
+        cy.login(renewUserData.username, renewUserData.password);
       });
   });
 

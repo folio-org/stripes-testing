@@ -80,8 +80,8 @@ describe('Renewal', () => {
             renewUserData.lastName = userProperties.username;
             renewUserData.id = userProperties.userId;
             renewUserData.barcode = userProperties.barcode;
-
-            cy.login(userProperties.username, userProperties.password);
+            renewUserData.username = userProperties.username;
+            renewUserData.password = userProperties.password;
           },
         );
         // create second user
@@ -92,6 +92,8 @@ describe('Renewal', () => {
         ]).then((userProperties) => {
           renewOverrideUserData.lastName = userProperties.username;
           renewOverrideUserData.id = userProperties.userId;
+          renewOverrideUserData.password = userProperties.password;
+          renewOverrideUserData.username = userProperties.username;
           renewOverrideUserData.password = userProperties.password;
         });
       })
@@ -179,6 +181,7 @@ describe('Renewal', () => {
     'C568 Renewal: failure because loan is not renewable (vega)',
     { tags: [TestType.smoke, DevTeams.vega, Parallelization.nonParallel] },
     () => {
+      cy.login(renewUserData.username, renewUserData.password);
       RenewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
       cy.login(renewOverrideUserData.lastName, renewOverrideUserData.password);
       RenewalActions.renewWithOverrideAccess(loanId, renewUserData.id, itemData);
