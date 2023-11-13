@@ -30,6 +30,15 @@ export default {
 
     return true;
   },
+
+  checkIsSorted({ array = [], direction = 'ascending' } = {}) {
+    const result = [];
+    for (let i = 1; i < array.length; i++) {
+      result.push(array[i - 1].localeCompare(array[i]));
+    }
+
+    return direction === 'ascending' ? result.every((n) => n <= 0) : result.every((n) => n >= 0);
+  },
 };
 
 export const randomizeArray = (array) => {

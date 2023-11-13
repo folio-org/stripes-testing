@@ -16,6 +16,7 @@ import './eholdings';
 import './inventory';
 import './users';
 import 'cypress-file-upload';
+import 'cypress-recurse/commands';
 import './data-import';
 import './commands';
 

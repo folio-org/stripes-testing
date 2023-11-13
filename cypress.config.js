@@ -1,8 +1,9 @@
 const { defineConfig } = require('cypress');
 const path = require('path');
 const globby = require('globby');
-const { rmdir, unlink } = require('fs');
+const csvToJson = require('convert-csv-to-json');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
+const { rmdir, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
@@ -48,6 +49,11 @@ module.exports = defineConfig({
 
           return list;
         },
+
+        convertCsvToJson(fileName) {
+          return csvToJson.fieldDelimiter(',').getJsonFromCsv(fileName);
+        },
+
         downloadFile,
 
         deleteFolder(folderName) {
