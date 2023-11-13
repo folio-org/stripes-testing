@@ -52,6 +52,7 @@ describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((recordID) => {
       InventoryInstance.deleteInstanceViaApi(recordID);
@@ -71,6 +72,7 @@ describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
       QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(createdRecordIDs).then(() => {
+        cy.getAdminToken();
         InventorySteps.verifyHiddenFieldValueIn008(
           createdRecordIDs[1],
           'Entered',

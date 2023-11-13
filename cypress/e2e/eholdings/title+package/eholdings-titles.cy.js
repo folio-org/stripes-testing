@@ -221,6 +221,7 @@ describe('eHoldings', () => {
     );
 
     afterEach(() => {
+      cy.getAdminToken();
       users.deleteViaApi(userId);
     });
   });

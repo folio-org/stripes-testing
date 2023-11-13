@@ -13,7 +13,6 @@ describe('bulk-edit', () => {
     before('create test data', () => {
       cy.createTempUser([permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password);
       });
 
       cy.createTempUser([
@@ -29,6 +28,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       Users.deleteViaApi(userWithQueryView.userId);
     });
@@ -37,6 +37,7 @@ describe('bulk-edit', () => {
       'C347868 Verify that user without Bulk Edit: View permissions cannot access Bulk Edit app (firebird)',
       { tags: [testTypes.extendedPath, devTeams.firebird] },
       () => {
+        cy.login(user.username, user.password);
         cy.visit(TopMenu.bulkEditPath);
         BulkEditSearchPane.verifyNoPermissionWarning();
       },

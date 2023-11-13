@@ -73,6 +73,7 @@ describe('Orders', () => {
   };
 
   afterEach('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);
     InventoryHoldings.deleteHoldingRecordByInstanceIdViaApi(testData.instance.instanceId);

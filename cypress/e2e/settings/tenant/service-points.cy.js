@@ -14,7 +14,7 @@ const newServicePoint = {
   newNameForEdit: `test_${getRandomPostfix()}`,
 };
 
-describe('settings: service-points', () => {
+describe('Settings: Tenant', () => {
   before('create test data', () => {
     cy.createTempUser([permissions.uiTenantSettingsServicePointsCRUD.gui]).then(
       (userProperties) => {
@@ -28,6 +28,7 @@ describe('settings: service-points', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     ServicePoints.getViaApi({ query: `("name"=="${newServicePoint.newNameForEdit}")` }).then(
       (servicePoints) => {
         ServicePoints.deleteViaApi(servicePoints[0].id);

@@ -51,6 +51,7 @@ const uploadBunchOfDifferentFiles = (fileNames) => {
     arrayOfFiles.push(fileNames[i]);
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
+  cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
 };
 
 const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
@@ -217,6 +218,7 @@ export default {
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
+    cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
   },
 
   uploadMarcBib: () => {
@@ -501,6 +503,10 @@ export default {
 
   verifyDataImportProfiles(profiles) {
     cy.expect(dataImportNavSection.find(NavListItem(profiles)).exists());
+  },
+
+  selectDataImportProfile(profile) {
+    cy.do(dataImportNavSection.find(NavListItem(profile)).click());
   },
 
   verifyImportBlockedModal() {

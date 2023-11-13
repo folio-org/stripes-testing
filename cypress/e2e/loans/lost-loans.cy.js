@@ -169,6 +169,7 @@ describe('Lost loan', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     testData.folioInstances.forEach((instance) => {
       CheckInActions.checkinItemViaApi({

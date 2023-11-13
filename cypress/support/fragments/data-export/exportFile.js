@@ -85,13 +85,15 @@ const waitLandingPageOpened = () => {
   cy.expect(PaneHeader({ id: 'paneHeader8' }).find(Button('View all')).exists());
 };
 
+const uploadFile = (fileName) => {
+  cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
+};
+
 export default {
   downloadCSVFile,
   downloadExportedMarcFile,
   waitLandingPageOpened,
-  uploadFile: (fileName) => {
-    cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
-  },
+  uploadFile,
 
   exportWithDefaultJobProfile: (
     fileName,
@@ -168,5 +170,15 @@ export default {
 
   clickCancelButton() {
     cy.do(Button('Cancel').click());
+  },
+
+  uploadRecentlyDownloadedFile(downloadedFile) {
+    FileManager.findDownloadedFilesByMask('*.*').then((downloadedFilenames) => {
+      const firstDownloadedFilename = downloadedFilenames[0];
+      FileManager.readFile(firstDownloadedFilename).then((actualContent) => {
+        FileManager.createFile(`cypress/fixtures/${downloadedFile}`, actualContent);
+      });
+    });
+    uploadFile(downloadedFile);
   },
 };

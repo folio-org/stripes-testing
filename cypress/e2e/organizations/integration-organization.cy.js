@@ -44,6 +44,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(userId);
     Organizations.deleteOrganizationViaApi(organization.id);
   });

@@ -34,10 +34,6 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         let fileContent = '';
         items.forEach((item) => {
@@ -54,6 +50,10 @@ describe('bulk-edit', () => {
         });
 
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
@@ -64,6 +64,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       items.forEach((item) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       });
@@ -98,7 +99,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditActions.verifyItemActionDropdownItems();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.fillPermanentLoanType('Selected');

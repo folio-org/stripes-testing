@@ -115,6 +115,7 @@ describe('Staff slips', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(testData.requestsId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
