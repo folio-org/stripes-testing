@@ -126,9 +126,9 @@ export default {
   },
 
   editFiscalYearDetails: () => {
-    cy.wait(6000);
-    cy.do(actionsButton.click());
-    cy.wait(6000);
+    cy.wait(7000);
+    cy.do([actionsButton.focus(), actionsButton.click()]);
+    cy.wait(7000);
     cy.do(editButton.click());
   },
 
@@ -269,7 +269,8 @@ export default {
   },
 
   clickActionsButtonInFY() {
-    cy.do(actionsButton.click());
+    cy.wait(4000);
+    cy.do([actionsButton.focus(), actionsButton.click()]);
   },
 
   clickNewFY() {

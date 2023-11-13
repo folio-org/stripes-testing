@@ -27,8 +27,6 @@ describe('Lost items requiring actual cost', () => {
     userServicePoint: ServicePoints.getDefaultServicePoint(),
   };
   let itemData;
-  let addedCirculationRule;
-  let originalCirculationRules;
   const paymentMethod = {};
   const ownerData = UsersOwners.getDefaultNewOwner();
   const declareLostComments = getTestEntityValue('Some additional information');
@@ -50,8 +48,8 @@ describe('Lost items requiring actual cost', () => {
       intervalId: 'Weeks',
     },
     feesFinesShallRefunded: {
-      duration: 6,
-      intervalId: 'Months',
+      duration: 1,
+      intervalId: 'Minutes',
     },
     patronBilledAfterAgedLost: {
       duration: 1,
@@ -66,65 +64,50 @@ describe('Lost items requiring actual cost', () => {
   };
 
   before('Create test data', () => {
-    cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(testData.userServicePoint);
-      testData.defaultLocation = Locations.getDefaultLocation({
-        servicePointId: testData.userServicePoint.id,
-      }).location;
-      Locations.createViaApi(testData.defaultLocation).then((location) => {
-        InventoryInstances.createFolioInstancesViaApi({
-          folioInstances: testData.folioInstances,
-          location,
+    cy.getAdminToken()
+      .then(() => {
+        ServicePoints.createViaApi(testData.userServicePoint);
+        testData.defaultLocation = Locations.getDefaultLocation({
+          servicePointId: testData.userServicePoint.id,
+        }).location;
+        Locations.createViaApi(testData.defaultLocation).then((location) => {
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: testData.folioInstances,
+            location,
+          });
         });
-      });
 
-      cy.createLoanType({
-        name: getTestEntityValue('feeFine'),
-      }).then((loanType) => {
-        testData.loanTypeId = loanType.id;
-      });
-      UsersOwners.createViaApi({
-        ...ownerData,
-        servicePointOwner: [
-          {
-            value: testData.userServicePoint.id,
-            label: testData.userServicePoint.name,
-          },
-        ],
-      }).then((ownerResponse) => {
-        testData.ownerId = ownerResponse.id;
-        PaymentMethods.createViaApi(testData.ownerId).then(({ name, id }) => {
-          paymentMethod.name = name;
-          paymentMethod.id = id;
+        cy.createLoanType({
+          name: getTestEntityValue('feeFine'),
+        }).then((loanType) => {
+          testData.loanTypeId = loanType.id;
+        });
+        UsersOwners.createViaApi({
+          ...ownerData,
+          servicePointOwner: [
+            {
+              value: testData.userServicePoint.id,
+              label: testData.userServicePoint.name,
+            },
+          ],
+        }).then((ownerResponse) => {
+          testData.ownerId = ownerResponse.id;
+          PaymentMethods.createViaApi(testData.ownerId).then(({ name, id }) => {
+            paymentMethod.name = name;
+            paymentMethod.id = id;
+          });
+        });
+        itemData = testData.folioInstances[0];
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicy);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { i: lostItemFeePolicy.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
         });
       });
-      LostItemFeePolicy.createViaApi(lostItemFeePolicy);
-      CirculationRules.getViaApi().then((circulationRule) => {
-        originalCirculationRules = circulationRule.rulesAsText;
-        const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-        ruleProps.i = lostItemFeePolicy.id;
-        addedCirculationRule =
-          't ' +
-          testData.loanTypeId +
-          ': i ' +
-          ruleProps.i +
-          ' l ' +
-          ruleProps.l +
-          ' r ' +
-          ruleProps.r +
-          ' o ' +
-          ruleProps.o +
-          ' n ' +
-          ruleProps.n;
-        CirculationRules.addRuleViaApi(
-          originalCirculationRules,
-          ruleProps,
-          't ',
-          testData.loanTypeId,
-        );
-      });
-      itemData = testData.folioInstances[0];
-    });
 
     cy.createTempUser([
       Permissions.uiUserLostItemRequiringActualCost.gui,
@@ -165,7 +148,7 @@ describe('Lost items requiring actual cost', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
-      CirculationRules.deleteRuleViaApi(addedCirculationRule);
+      CirculationRules.deleteRuleViaApi(testData.addedRule);
       InventoryInstances.deleteInstanceViaApi({
         instance: testData.folioInstances[0],
         servicePoint: testData.userServicePoint,

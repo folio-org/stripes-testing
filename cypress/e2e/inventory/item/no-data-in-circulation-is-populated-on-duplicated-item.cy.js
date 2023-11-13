@@ -139,7 +139,6 @@ describe('inventory', () => {
         ItemRecordView.verifyCalloutMessage();
         ItemRecordView.closeDetailView();
         InstanceRecordView.verifyInstanceRecordViewOpened();
-        InventoryInstance.openHoldingsAccordion(`${holdingsPermanentLocation} >`);
         InventoryInstance.openItemByBarcode(newItemBarcode);
         ItemRecordView.checkItemCirculationHistory('-', '-', '-');
       },

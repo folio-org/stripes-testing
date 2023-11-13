@@ -12,6 +12,7 @@ import {
   PaneHeader,
   KeyValue,
   MultiColumnListRow,
+  Section,
 } from '../../../../interactors';
 import ExportDetails from './exportDetails';
 
@@ -241,7 +242,7 @@ export default {
   },
 
   selectOrganizationsSearch() {
-    cy.do(Button('Organizations').click());
+    cy.do(Pane('Search & filter').find(Button('Organizations')).click());
   },
 
   selectExportMethod(integarationName) {
