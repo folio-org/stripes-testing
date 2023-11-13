@@ -668,7 +668,10 @@ export default {
       buttonCancelInAdvSearchModal.exists(),
     ]);
   },
-
+  closeAdvancedSearchModal() {
+    cy.do(advSearchModal.find(Button({ id: 'advanced-search-modal-close-button' })).click());
+    this.checkAdvSearchModalAbsence();
+  },
   checkAdvSearchInstancesModalFields(rowIndex) {
     if (rowIndex) {
       cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());

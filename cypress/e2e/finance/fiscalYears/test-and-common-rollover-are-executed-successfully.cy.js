@@ -149,8 +149,8 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Ledgers.selectFundInLedger(defaultFund.name);
       Funds.selectPlannedBudgetDetails();
       Funds.checkBudgetQuantity1(
-        allocatedQuantityForPlannedBudget,
-        allocatedQuantityForPlannedBudget,
+        `$${allocatedQuantityForPlannedBudget}`,
+        `$${allocatedQuantityForPlannedBudget}`,
       );
       cy.visit(TopMenu.ledgerPath);
       FinanceHelp.searchByName(defaultLedger.name);
