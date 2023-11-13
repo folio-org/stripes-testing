@@ -15,7 +15,6 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      cy.getAdminToken();
 
       // create dynamically file with given name in fixtures
       FileManager.createFile(`cypress/fixtures/${uniqueFileName}`);

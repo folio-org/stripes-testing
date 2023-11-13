@@ -58,6 +58,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
             DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitFileIsUploaded();
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -81,6 +82,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
@@ -164,11 +166,11 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       QuickMarcEditor.closeEditorPane();
       InventoryInstance.viewSource();
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t100\t   \t‡a C380726 Jackson, Peter, ‡c Inspector Banks series ; ‡d 1950-2022 ‡0 3052044 ‡9',
+        'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9',
       );
-      InventoryViewSource.contains('\t035\t   \t‡a 123123 ‡9 test ');
-      InventoryViewSource.contains('\t300\t   \t‡9 123123 ');
-      InventoryViewSource.contains('\t588\t   \t‡9 test ‡9 TEST ');
+      InventoryViewSource.contains('\t035\t   \t$a 123123 $9 test ');
+      InventoryViewSource.contains('\t300\t   \t$9 123123 ');
+      InventoryViewSource.contains('\t588\t   \t$9 test $9 TEST ');
     },
   );
 });

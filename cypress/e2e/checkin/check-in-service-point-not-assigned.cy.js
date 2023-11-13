@@ -64,6 +64,7 @@ describe('Check In - Actions', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.servicePointS.id,

@@ -69,6 +69,7 @@ describe('Finance: Transactions', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Budgets.deleteViaApi(toBudget.id);
     Funds.deleteFundViaApi(toFund.id);
     Funds.deleteFundViaApi(fromFund.id);

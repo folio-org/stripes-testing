@@ -38,6 +38,7 @@ describe('eHoldings', () => {
     });
 
     after('Deleting user, data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin();
       cy.visit(SettingsMenu.eHoldingsPath).then(() => {
         EHoldingsPackage.updateCustomLabelInSettings(testData.label1OriginalValue, 1);

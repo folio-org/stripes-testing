@@ -42,6 +42,9 @@ const buttonSearchInAdvSearchModal = advSearchModal.find(
 const buttonCancelInAdvSearchModal = advSearchModal.find(
   Button({ ariaLabel: 'Cancel', disabled: false }),
 );
+const buttonCloseInAdvSearchModal = advSearchModal.find(
+  Button({ id: 'advanced-search-modal-close-button' }),
+);
 const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
 const advSearchOperatorSelect = Select({ label: 'Operator*' });
 const advSearchModifierSelect = Select({ label: 'Match option*' });
@@ -49,7 +52,7 @@ const advSearchOptionSelect = Select({ label: 'Search options*' });
 
 const advSearchOperators = ['AND', 'OR', 'NOT'];
 const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
-const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith'];
+const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith', 'containsAny'];
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Contributor',
@@ -93,6 +96,19 @@ const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
 
+const advSearchHoldingsOptions = {
+  'Keyword (title, contributor, identifier, HRID, UUID)': 'keyword',
+  ISBN: 'isbn',
+  ISSN: 'issn',
+  'Call number, eye readable': 'holdingsFullCallNumbers',
+  'Call number, normalized': 'holdingsNormalizedCallNumbers',
+  'Holdings notes (all)': 'holdingsNotes',
+  'Holdings administrative notes': 'holdingsAdministrativeNotes',
+  'Holdings HRID': 'holdingsHrid',
+  'Holdings UUID': 'hid',
+  All: 'allFields',
+};
+
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   method: 'POST',
   path: 'inventory/instances',
@@ -117,7 +133,18 @@ const getCallNumberTypes = (searchParams) => cy
     return response.body.callNumberTypes;
   });
 
+const getHoldingsNotesTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'holdings-note-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.holdingsNoteTypes;
+  });
+
 export default {
+  getHoldingsNotesTypes,
   getCallNumberTypes,
   waitContentLoading,
   waitLoading: () => {
@@ -562,6 +589,18 @@ export default {
         return res.body.instances[0].id;
       });
   },
+  getInstancesViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      });
+  },
+
   deleteInstanceViaApi({ instance, servicePoint, shouldCheckIn = false }) {
     if (shouldCheckIn) {
       instance.barcodes.forEach((barcode) => {
@@ -691,7 +730,11 @@ export default {
         .has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
       AdvancedSearchRow({ index: rowIndex })
         .find(advSearchOptionSelect)
-        .has({ value: advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] }),
+        .has({
+          value:
+            advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] ||
+            advSearchHoldingsOptions[option],
+        }),
     ]);
     if (operator) {
       cy.expect(
@@ -704,6 +747,10 @@ export default {
 
   clickSearchBtnInAdvSearchModal() {
     cy.do(buttonSearchInAdvSearchModal.click());
+  },
+
+  clickCloseBtnInAdvSearchModal() {
+    cy.do(buttonCloseInAdvSearchModal.click());
   },
 
   verifySelectedSearchOption(option) {

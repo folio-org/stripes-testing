@@ -69,7 +69,7 @@ describe('data-import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    beforeEach('create test data', () => {
+    beforeEach('create user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -95,6 +95,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         // upload the first .mrc file
         DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
@@ -158,6 +159,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
@@ -184,12 +186,13 @@ describe('data-import', () => {
           InventoryViewSource.contains('035\t');
           InventoryViewSource.contains('(LTSCA)303845');
 
+          cy.getAdminToken();
+          Users.deleteViaApi(user.userId);
           JobProfiles.deleteJobProfile(jobProfile.profileName);
           MatchProfiles.deleteMatchProfile(matchProfile.profileName);
           ActionProfiles.deleteActionProfile(actionProfile.name);
           FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-          Users.deleteViaApi(user.userId);
-          // delete downloads folder and created files in fixtures
+          // delete created files in fixtures
           FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
           FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrId}"` }).then(
@@ -221,13 +224,14 @@ describe('data-import', () => {
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondMarcFileNameForCreate);
         cy.wrap(fieldsContent).each((row) => {
-          cy.wait(8000);
+          cy.wait(1000);
           FileDetails.checkStatusInColumn(
             FileDetails.status.created,
             FileDetails.columnNameInResultList.srsMarc,
@@ -316,13 +320,14 @@ describe('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
         DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondFileNameAfterUpload);
         cy.wrap(fieldsContent).each((row) => {
-          cy.wait(8000);
+          cy.wait(1000);
           FileDetails.checkStatusInColumn(
             FileDetails.status.updated,
             FileDetails.columnNameInResultList.srsMarc,
@@ -357,15 +362,15 @@ describe('data-import', () => {
             InventoryViewSource.contains('035\t');
             InventoryViewSource.contains(element.content);
           });
-          cy.wait(8000);
         });
 
+        cy.getAdminToken();
+        Users.deleteViaApi(user.userId);
         JobProfiles.deleteJobProfile(jobProfile.profileName);
         MatchProfiles.deleteMatchProfile(matchProfile.profileName);
         ActionProfiles.deleteActionProfile(actionProfile.name);
         FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-        Users.deleteViaApi(user.userId);
-        // delete downloads folder and created files in fixtures
+        // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
       },

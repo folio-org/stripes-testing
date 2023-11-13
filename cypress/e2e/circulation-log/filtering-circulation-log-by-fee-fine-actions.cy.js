@@ -212,6 +212,7 @@ describe('Circulation log', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
@@ -256,7 +257,7 @@ describe('Circulation log', () => {
   );
 
   it(
-    'C17061 Filter circulation log by transferred fully (volaris)',
+    'C17062 Check the Actions button from filtering Circulation log by transferred fully (volaris)',
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       createFeeFine().then((feeFineId) => {
@@ -265,9 +266,17 @@ describe('Circulation log', () => {
           getActionBody(transferAccount.accountName, fullAmount),
           testData.feeFineId,
         );
-        filterByAction('Transferred fully');
-        NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+        checkActionsButton('Transferred partially');
       });
+    },
+  );
+
+  it(
+    'C17061 Filter circulation log by transferred fully (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Transferred fully');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
     },
   );
 
@@ -440,6 +449,14 @@ describe('Circulation log', () => {
         );
         checkActionsButton('Cancelled as error');
       });
+    },
+  );
+
+  it(
+    'C17065 Filter circulation log by cancelled as errorror (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Cancelled as error', `Amount: ${fullAmount}. Cancellation reason`);
     },
   );
 });

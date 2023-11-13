@@ -20,7 +20,7 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
     instanceTitle1: 'Instance • Edited [Sound Recording] / Cypress Automation',
     tag245value2: '$a Edited Twice $h [Sound Recording] / $c Cypress Automation',
     instanceTitle2: 'Instance • Edited Twice [Sound Recording] / Cypress Automation',
-    expectedInSourceRow: '245\t1 0\t‡a Edited ‡h [Sound Recording] / ‡c Cypress Automation',
+    expectedInSourceRow: '245\t1 0\t$a Edited $h [Sound Recording] / $c Cypress Automation',
     successMsg:
       'This record has successfully saved and is in process. Changes may not appear immediately.',
   };
@@ -62,6 +62,7 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
   });
 
   after('Deleting test user and an inventory instance', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(instanceIDs[0]);
   });

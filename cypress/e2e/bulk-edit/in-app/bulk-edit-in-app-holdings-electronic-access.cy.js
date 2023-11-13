@@ -35,10 +35,6 @@ describe('bulk-edit', () => {
         permissions.uiCreateEditDeleteURL.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: SettingsMenu.urlRelationshipPath,
-          waiter: UrlRelationship.waitloading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -48,10 +44,15 @@ describe('bulk-edit', () => {
           holdingsHRID = holdings[0].hrid;
           FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdingsHRID);
         });
+        cy.login(user.username, user.password, {
+          path: SettingsMenu.urlRelationshipPath,
+          waiter: UrlRelationship.waitloading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${holdingsHRIDFileName}`);
       Users.deleteViaApi(user.userId);

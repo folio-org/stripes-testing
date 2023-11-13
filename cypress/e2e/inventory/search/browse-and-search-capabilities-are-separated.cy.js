@@ -15,7 +15,7 @@ const Dropdowns = {
   EFFECTIVE_LOCATION: 'Effective location (item)',
   NAME_TYPE: 'Name type',
 };
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
@@ -33,6 +33,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
     });
 
