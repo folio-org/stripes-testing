@@ -25,8 +25,6 @@ const feeFineType = {};
 let materialTypes;
 let testData;
 let userData;
-let originalCirculationRules;
-let addedCirculationRule;
 let totalAmount;
 const lostItemFeePolicies = [
   {
@@ -112,24 +110,14 @@ describe('Lost loan', () => {
             UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
           })
           .then(() => {
+            testData.addedRules = [];
             lostItemFeePolicies.forEach((policy) => LostItemFeePolicy.createViaApi(policy));
-            CirculationRules.getViaApi().then((circulationRule) => {
-              originalCirculationRules = circulationRule.rulesAsText;
-              const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-              const defaultProps = [];
-
-              for (let i = 0; i < lostItemFeePolicies.length; i++) {
-                defaultProps[
-                  i
-                ] = ` i ${lostItemFeePolicies[i].id} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
-              }
-              addedCirculationRule = materialTypes
-                .map((materialType, index) => {
-                  return `\nm ${materialType.id}: ${defaultProps[index]}`;
-                })
-                .join('');
-              CirculationRules.updateCirculationRules({
-                rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
+            materialTypes.forEach((materialType, index) => {
+              CirculationRules.addRuleViaApi(
+                { m: materialType.id },
+                { i: lostItemFeePolicies[index].id },
+              ).then((newRule) => {
+                testData.addedRules.push(newRule);
               });
             });
 
@@ -170,7 +158,9 @@ describe('Lost loan', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    cy.wrap(testData.addedRules).each((rule) => {
+      CirculationRules.deleteRuleViaApi(rule);
+    });
     testData.folioInstances.forEach((instance) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: instance.barcodes[0],

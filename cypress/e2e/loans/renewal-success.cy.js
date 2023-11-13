@@ -22,11 +22,11 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import TopMenu from '../../support/fragments/topMenu';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 
 describe('Renewal', () => {
   let materialTypeId;
   let servicePointId;
-  let initialCircRules;
   let sourceId;
   const secondItemBarcode = `${generateItemBarcode()}2`;
   const firstName = 'testPermFirst';
@@ -49,6 +49,8 @@ describe('Renewal', () => {
     loanPolicy: loanPolicyData.name,
   };
   let userName;
+  let password;
+  let addedRule;
 
   before(() => {
     cy.getAdminToken()
@@ -69,9 +71,6 @@ describe('Renewal', () => {
         cy.getNoticePolicy();
         cy.getOverdueFinePolicy();
         cy.getLostItemFeesPolicy();
-        cy.getCirculationRules().then((rules) => {
-          initialCircRules = rules.rulesAsText;
-        });
         ServicePoints.getViaApi({ pickupLocation: true }).then((servicePoints) => {
           servicePointId = servicePoints[0].id;
         });
@@ -84,8 +83,7 @@ describe('Renewal', () => {
             renewUserData.id = userProperties.userId;
             renewUserData.barcode = userProperties.barcode;
             userName = userProperties.username;
-
-            cy.login(userProperties.username, userProperties.password);
+            password = userProperties.password;
           },
         );
       })
@@ -131,12 +129,17 @@ describe('Renewal', () => {
         const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
         const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
         const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-        const policy = `l ${loanPolicyData.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
-        const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
-        const newRule = `${priority}\nfallback-policy: ${policy}\nm ${materialTypeId}: ${policy}`;
-
-        cy.updateCirculationRules({
-          rulesAsText: newRule,
+        CirculationRules.addRuleViaApi(
+          { m: materialTypeId },
+          {
+            r: requestPolicyId,
+            n: noticePolicyId,
+            o: overdueFinePolicyId,
+            i: lostItemFeesPolicyId,
+            l: loanPolicyData.id,
+          },
+        ).then((newRule) => {
+          addedRule = newRule;
         });
       })
       // checkout item
@@ -151,11 +154,13 @@ describe('Renewal', () => {
           itemBarcode: secondItemBarcode,
           userBarcode: renewUserData.barcode,
         });
+        cy.login(userName, password);
       });
   });
 
   after(() => {
     cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(addedRule);
     CheckinActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId,
@@ -174,9 +179,6 @@ describe('Renewal', () => {
         cy.deleteItemViaApi(instance.items[1].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-      cy.updateCirculationRules({
-        rulesAsText: initialCircRules,
       });
       cy.deleteLoanPolicy(loanPolicyId);
     });
