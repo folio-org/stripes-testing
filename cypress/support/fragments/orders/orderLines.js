@@ -1408,9 +1408,14 @@ export default {
     ]);
   },
 
-  saveOrderLine: () => {
+  changePaymentStatus: (paymantStatus) => {
+    cy.do(Select({ name: 'paymentStatus' }).choose(paymantStatus));
+  },
+
+  saveOrderLine() {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
+    this.submitOrderLine();
   },
 
   openInstance: () => {
@@ -1657,6 +1662,10 @@ export default {
     cy.expect(
       Accordion('Other resource details').find(KeyValue('Create inventory')).has({ value }),
     );
+  },
+
+  checkPaymentStatusInPOL: (paymentStatus) => {
+    cy.expect(KeyValue('Payment status').has({ value: paymentStatus }));
   },
 
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
