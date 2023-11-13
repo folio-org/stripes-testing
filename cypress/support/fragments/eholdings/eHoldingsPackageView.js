@@ -198,25 +198,25 @@ export default {
   },
 
   closePackageFieldOption(option) {
-    cy.do(packageFieldsSelect.find(Button({ icon: 'times', ariaLabelledby: including(option) })).click());
+    cy.do(
+      packageFieldsSelect
+        .find(Button({ icon: 'times', ariaLabelledby: including(option) }))
+        .click(),
+    );
   },
 
   closeTitleFieldOption(option) {
-    cy.do(titleFieldsSelect.find(Button({ icon: 'times', ariaLabelledby: including(option) })).click());
+    cy.do(
+      titleFieldsSelect.find(Button({ icon: 'times', ariaLabelledby: including(option) })).click(),
+    );
   },
 
   fillInPackageFieldsToExport: (value) => {
-    cy.do([
-      packageFieldsSelect.fillIn(value),
-      MultiSelectOption(including(value)).click(),
-    ]);
+    cy.do([packageFieldsSelect.fillIn(value), MultiSelectOption(including(value)).click()]);
   },
 
   fillInTitleFieldsToExport: (value) => {
-    cy.do([
-      titleFieldsSelect.fillIn(value),
-      MultiSelectOption(including(value)).click(),
-    ]);
+    cy.do([titleFieldsSelect.fillIn(value), MultiSelectOption(including(value)).click()]);
   },
 
   verifySelectedPackageFieldsOptions() {
