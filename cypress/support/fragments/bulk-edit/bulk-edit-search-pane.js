@@ -121,19 +121,19 @@ export default {
   verifySetCriteriaPaneElements() {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
-
       setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
-      recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
-      recordTypesAccordion.find(Checkbox('Inventory - items')).has({ checked: false }),
-      recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
-
+      recordTypesAccordion.find(usersRadio).exists(),
+      this.isUsersRadioChecked(false),
+      recordTypesAccordion.find(itemsRadio).exists(),
+      this.isItemsRadioChecked(false),
+      recordTypesAccordion.find(holdingsRadio).exists(),
+      this.isHoldingsRadioChecked(false),
       setCriteriaPane.find(recordIdentifierDropdown).exists(),
       recordIdentifierDropdown.has({ disabled: true }),
-
       setCriteriaPane.find(HTML('Drag and drop')).exists(),
       fileButton.has({ disabled: true }),
-      cy.expect(HTML('Select a file with record identifiers').exists()),
     ]);
+    cy.expect(HTML('Select a file with record identifiers').exists());
   },
 
   verifySetCriteriaPaneSpecificTabs(...tabs) {
