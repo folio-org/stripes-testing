@@ -9,11 +9,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 
 let user;
-const items = [];
 const invalidIdentifiersFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-for (let i = 0; i < 12; i++) {
-  items.push(i.toString + '\r\n');
-}
 const values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'];
 const csvContent = values.join('\n');
 
