@@ -44,7 +44,7 @@ describe('Search in Inventory', () => {
     () => {
       InventorySearchAndFilter.switchToInstance();
       InventorySearchAndFilter.verifySpecificTabHighlighted('Instance');
-      InventorySearchAndFilter.verifySearchFieldIsEmptyA();
+      InventorySearchAndFilter.verifySearchFieldIsEmpty();
       InventorySearchAndFilter.verifyResultPaneEmpty();
       InventorySearchAndFilter.verifySearchOption(
         testData.instanceQuerySearchOption,
@@ -57,7 +57,7 @@ describe('Search in Inventory', () => {
 
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.verifySpecificTabHighlighted('Holdings');
-      InventorySearchAndFilter.verifySearchFieldIsEmptyA();
+      InventorySearchAndFilter.verifySearchFieldIsEmpty();
       InventorySearchAndFilter.verifyResultPaneEmpty();
       InventorySearchAndFilter.searchTypeDropdownDefaultValue(testData.defaultValue);
       InventorySearchAndFilter.verifySearchOption(
@@ -71,7 +71,7 @@ describe('Search in Inventory', () => {
 
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.verifySpecificTabHighlighted('Item');
-      InventorySearchAndFilter.verifySearchFieldIsEmptyA();
+      InventorySearchAndFilter.verifySearchFieldIsEmpty();
       InventorySearchAndFilter.verifyResultPaneEmpty();
       InventorySearchAndFilter.searchTypeDropdownDefaultValue(testData.defaultValue);
       InventorySearchAndFilter.verifySearchOption(testData.itemHRIDOption, testData.itemHRIDValue);
