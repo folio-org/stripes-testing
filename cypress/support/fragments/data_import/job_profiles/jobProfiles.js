@@ -11,6 +11,7 @@ import {
   Pane,
   MultiColumnListRow,
   Callout,
+  PaneContent,
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
@@ -20,6 +21,8 @@ const runButton = Button('Run');
 const waitSelector = Pane({ id: 'view-job-profile-pane' });
 const closeButton = Button({ icon: 'times' });
 const paneResults = Pane({ id: 'pane-results' });
+const paneContent = PaneContent({ id: 'pane-upload-content' });
+const deleteFileButton = Button({ icon: 'trash' });
 const searchButton = Button('Search');
 const searchField = TextField({ id: 'input-search-job-profiles-field' });
 const deleteUploadedFileModal = Modal('Delete uploaded file?');
@@ -75,8 +78,11 @@ const createJobProfile = (jobProfile) => {
 const search = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
-  cy.do(paneResults.find(searchField).fillIn(jobProfileTitle));
-  cy.do(searchButton.click());
+  cy.do([
+    paneResults.find(searchField).focus(),
+    paneResults.find(searchField).fillIn(jobProfileTitle),
+    searchButton.click(),
+  ]);
 };
 
 export default {
@@ -95,6 +101,9 @@ export default {
     cy.do(searchField.focus());
     cy.do(Button({ id: 'input-job-profiles-search-field-clear-button' }).click());
   },
+  waitFileIsUploaded: () => {
+    cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+  },
 
   checkJobProfilePresented: (jobProfileTitle) => {
     search(jobProfileTitle);
@@ -110,11 +119,9 @@ export default {
 
   runImportFile: () => {
     waitLoading(waitSelector);
-    cy.do([
-      actionsButton.click(),
-      runButton.click(),
-      Modal('Are you sure you want to run this job?').find(runButton).click(),
-    ]);
+    cy.do([actionsButton.click(), runButton.click()]);
+    cy.expect(Modal('Are you sure you want to run this job?').find(runButton).exists());
+    cy.do(Modal('Are you sure you want to run this job?').find(runButton).click());
   },
 
   waitFileIsImported: (fileName) => {

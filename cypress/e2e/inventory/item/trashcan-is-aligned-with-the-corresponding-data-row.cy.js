@@ -18,7 +18,7 @@ const testData = {
   calloutMessage: 'has been successfully saved.',
 };
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Item', () => {
     before('Create test data', () => {
       cy.getAdminToken();
@@ -36,6 +36,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
       Users.deleteViaApi(testData.user.userId);
     });

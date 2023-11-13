@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -68,18 +68,20 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      invoiceNumbers.forEach((number) => {
-        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${number}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        invoiceNumbers.forEach((number) => {
+          cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${number}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+        });
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
     });
 
     it(
       'C347926 Check EDIFACT invoice import when Invoice line description is incorrectly constructed (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();
@@ -103,6 +105,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
@@ -111,9 +114,11 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(fileName);
         FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        cy.wait(2000);
         FileDetails.verifyEachInvoiceTitleInColunm();
         FileDetails.clickNextPaginationButton();
         FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        cy.wait(2000);
         FileDetails.verifyEachInvoiceTitleInColunm();
         Logs.checkQuantityRecordsInFile(quantityOfInvoices);
         InvoiceView.checkQuantityInvoiceLinesInRecord(quantityOfInvoiceLines);

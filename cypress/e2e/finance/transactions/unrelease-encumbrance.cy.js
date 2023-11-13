@@ -106,6 +106,7 @@ describe('ui-finance: Transactions', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

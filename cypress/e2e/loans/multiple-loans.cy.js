@@ -87,6 +87,7 @@ describe('Multiple loans', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(testData.requestsId);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);

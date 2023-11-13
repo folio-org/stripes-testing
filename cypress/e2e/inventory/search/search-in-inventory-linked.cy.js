@@ -100,7 +100,7 @@ describe('Search in Inventory', () => {
         InventoryInstance.searchResults(marcFiles[1].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `‡a ${marcFiles[1].authority010FieldValue}`,
+          `$a ${marcFiles[1].authority010FieldValue}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag130);
@@ -116,7 +116,7 @@ describe('Search in Inventory', () => {
         InventoryInstance.searchResults(marcFiles[2].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `‡a ${marcFiles[2].authority010FieldValue}`,
+          `$a ${marcFiles[2].authority010FieldValue}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
@@ -131,6 +131,7 @@ describe('Search in Inventory', () => {
   });
 
   after('Deleting user, records', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index > 3) MarcAuthority.deleteViaAPI(id);

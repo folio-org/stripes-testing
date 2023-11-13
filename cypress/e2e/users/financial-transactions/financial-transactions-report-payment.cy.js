@@ -117,12 +117,14 @@ describe('Financial Transactions Detail Report', () => {
   });
 
   afterEach('Delete report', () => {
+    cy.getAdminToken();
     FinancialTransactionDetailReportModal.deleteDownloadedFile(reportName);
   });
 
   after(
     'Delete owner, transfer account, feeFineType, paymentMethod, waiveReason, refundReason, user',
     () => {
+      cy.getAdminToken();
       TransferAccounts.deleteViaApi(transferAccount.id);
       ManualCharges.deleteViaApi(feeFineType.id);
       WaiveReasons.deleteViaApi(waiveReason.id);

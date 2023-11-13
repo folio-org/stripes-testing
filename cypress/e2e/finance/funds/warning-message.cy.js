@@ -29,6 +29,7 @@ describe('ui-finance: Funds', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Funds.deleteFundViaApi(defaultFund.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);

@@ -99,6 +99,7 @@ export default {
 
   closeItem() {
     cy.do(Button({ icon: 'times' }).click());
+    cy.wait(4000);
   },
   getItemViaApi(searchParams) {
     return cy

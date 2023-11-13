@@ -30,8 +30,6 @@ import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
 
 describe('Check In - Actions', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const userData = {};
   const requestUserData = {};
   const patronGroup = {
@@ -103,37 +101,20 @@ describe('Check In - Actions', () => {
           itemData.holdingId = specialInstanceIds.holdingIds[0].id;
           itemData.itemId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser(
       [permissions.checkinAll.gui, permissions.uiRequestsView.gui],
       patronGroup.name,
@@ -193,6 +174,8 @@ describe('Check In - Actions', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId: testData.servicePointS.id,
@@ -221,7 +204,6 @@ describe('Check In - Actions', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(

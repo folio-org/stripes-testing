@@ -130,6 +130,7 @@ describe('Inventory -> Call Number Browse', () => {
   });
 
   after('Deleting user and instance', () => {
+    cy.getAdminToken();
     barcodes.forEach((barcode) => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
     });

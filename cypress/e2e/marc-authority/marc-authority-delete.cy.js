@@ -18,6 +18,7 @@ describe('MARC Authority Delete', () => {
   const testData = {
     uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`,
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+    fileName2: `testMarcFile2.${getRandomPostfix()}.mrc`,
     record: 'Angelou, Maya. And still I rise C357549',
     searchOption: 'Name-title',
   };
@@ -41,6 +42,7 @@ describe('MARC Authority Delete', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
@@ -49,6 +51,7 @@ describe('MARC Authority Delete', () => {
     { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] },
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search('Default - Create SRS MARC Authority');
       JobProfiles.runImportFile();
@@ -74,8 +77,9 @@ describe('MARC Authority Delete', () => {
     'C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
-      DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
+      DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName2);
+      JobProfiles.waitFileIsUploaded();
+      DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName2);
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.switchToBrowse();
       cy.wait(2000);

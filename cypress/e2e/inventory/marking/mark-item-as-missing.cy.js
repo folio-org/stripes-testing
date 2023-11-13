@@ -20,72 +20,62 @@ describe('inventory', () => {
     let createdItems = [];
     let materialType = '';
     let addedCirculationRule;
-    let originalCirculationRules;
 
     before(() => {
       let materialBookId;
       cy.getAdminToken();
-      cy.getMaterialTypes({ query: 'name="video recording"' }).then((type) => {
-        materialBookId = type.id;
-      });
-      CirculationRules.getViaApi().then((circulationRule) => {
-        originalCirculationRules = circulationRule.rulesAsText;
-        const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-        const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
-        addedCirculationRule = ` \nm ${materialBookId}: ${defaultProps}`;
-        cy.updateCirculationRules({
-          rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
+      cy.getMaterialTypes({ query: 'name="video recording"' })
+        .then((type) => {
+          materialBookId = type.id;
+        })
+        .then(() => {
+          CirculationRules.addRuleViaApi({ m: materialBookId }, {}).then((newRule) => {
+            addedCirculationRule = newRule;
+          });
         });
-      });
     });
 
     beforeEach(() => {
-      cy.getAdminToken()
-        .then(() => {
-          ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
-            defaultServicePointId = res[0].id;
-          });
-        })
-        .then(() => {
-          cy.createTempUser([
-            Permissions.uiInventoryMarkAsMissing.gui,
-            Permissions.uiRequestsView.gui,
-          ]);
-        })
-        .then((userProperties) => {
-          user = userProperties;
+      cy.createTempUser([
+        Permissions.uiInventoryMarkAsMissing.gui,
+        Permissions.uiRequestsView.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
+          defaultServicePointId = res[0].id;
+
           UserEdit.addServicePointViaApi(defaultServicePointId, user.userId);
-        })
-        .then(() => {
-          cy.login(user.username, user.password);
-        })
-        .then(() => {
-          MarkItemAsMissing.createItemsForGivenStatusesApi().then(
-            ({ items, instanceRecordData, materialTypeValue }) => {
-              createdItems = items;
-              instanceData = instanceRecordData;
-              materialType = materialTypeValue;
-              MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
-                const requestStatus = MarkItemAsMissing.itemToRequestMap[item.status.name];
-                MarkItemAsMissing.createRequestForGivenItemApi(
-                  item,
-                  instanceRecordData,
-                  requestStatus,
-                ).then(({ createdUserId, createdRequestId }) => {
-                  createdRequestsIds.push(createdRequestId);
-                  requesterIds.push(createdUserId);
-                });
-              });
-            },
-          );
         });
+        MarkItemAsMissing.createItemsForGivenStatusesApi().then(
+          ({ items, instanceRecordData, materialTypeValue }) => {
+            createdItems = items;
+            instanceData = instanceRecordData;
+            materialType = materialTypeValue;
+            MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
+              const requestStatus = MarkItemAsMissing.itemToRequestMap[item.status.name];
+              MarkItemAsMissing.createRequestForGivenItemApi(
+                item,
+                instanceRecordData,
+                requestStatus,
+              ).then(({ createdUserId, createdRequestId }) => {
+                createdRequestsIds.push(createdRequestId);
+                requesterIds.push(createdUserId);
+              });
+            });
+          },
+        );
+        cy.login(user.username, user.password);
+      });
     });
 
     after(() => {
+      cy.getAdminToken();
       CirculationRules.deleteRuleViaApi(addedCirculationRule);
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       createdItems.forEach((item) => {
         cy.deleteItemViaApi(item.itemId);
       });
@@ -99,7 +89,7 @@ describe('inventory', () => {
     });
 
     it(
-      'C714 Mark an item as Missing (folijet) (prokopovych)',
+      'C714 Mark an item as Missing (folijet)',
 
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {

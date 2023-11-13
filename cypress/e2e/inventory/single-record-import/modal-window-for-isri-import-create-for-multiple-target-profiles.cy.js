@@ -23,7 +23,7 @@ describe('inventory', () => {
     let createJobProfileId;
     let instanceHRID;
     const profile = {
-      createJobProfile: `Inventory Single Record - Default Create Instance${getRandomPostfix()}`,
+      createJobProfile: `Inventory Single Record - Default Create Instance.${getRandomPostfix()}`,
       createActionProfile: `autotest actionProfileForCreate${getRandomPostfix()}`,
       createMappingProfile: `autotest mappingProfileForCreate${getRandomPostfix()}`,
     };
@@ -72,6 +72,7 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(profile.createJobProfile);
       ActionProfiles.deleteActionProfile(profile.createActionProfile);
       FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);

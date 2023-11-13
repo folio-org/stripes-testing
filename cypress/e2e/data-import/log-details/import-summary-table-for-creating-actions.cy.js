@@ -58,7 +58,7 @@ describe('data-import', () => {
           name: `C356801 item mapping profile ${getRandomPostfix()}`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.AVAILABLE,
-          materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
+          materialType: MATERIAL_TYPE_NAMES.BOOK,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -86,6 +86,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
@@ -132,7 +133,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile,
         );
         NewFieldMappingProfile.fillMaterialType(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.materialType}"`,
         );
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
@@ -166,12 +167,13 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcBibFileForC356801.mrc', nameMarcFile);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFile);
-
+        Logs.openFileDetails('C356801autotestFile.872.6729919974913588.mrc');
         // check created instance
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -182,8 +184,8 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.pernanentLocationUI,
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,
         );
-        cy.go('back');
-
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFile);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
@@ -193,13 +195,22 @@ describe('data-import', () => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
         });
         // check Created counter in the Summary table
-        FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
+        FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems);
+        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems);
         // check Updated counter in the Summary table
-        FileDetails.checkItemsQuantityInSummaryTable(1, '0');
+        FileDetails.checkInstanceQuantityInSummaryTable('0', 1);
+        FileDetails.checkHoldingsQuantityInSummaryTable('0', 1);
+        FileDetails.checkItemQuantityInSummaryTable('0', 1);
         // check No action counter in the Summary table
-        FileDetails.checkItemsQuantityInSummaryTable(2, '0');
+        FileDetails.checkInstanceQuantityInSummaryTable('0', 2);
+        FileDetails.checkHoldingsQuantityInSummaryTable('0', 2);
+        FileDetails.checkItemQuantityInSummaryTable('0', 2);
         // check Error counter in the Summary table
-        FileDetails.checkItemsQuantityInSummaryTable(3, '0');
+        FileDetails.checkInstanceQuantityInSummaryTable('0', 3);
+        FileDetails.checkHoldingsQuantityInSummaryTable('0', 3);
+        FileDetails.checkItemQuantityInSummaryTable('0', 3);
       },
     );
   });

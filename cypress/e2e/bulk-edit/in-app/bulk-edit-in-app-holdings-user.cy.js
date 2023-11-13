@@ -28,10 +28,6 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -44,10 +40,14 @@ describe('bulk-edit', () => {
           holdingHRID = holdings[0].hrid;
           cy.updateHoldingRecord(holdings[0].id, {
             ...holdings[0],
-            // Annex
-            permanentLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+            // Popular Reading Collection
+            permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
           });
           FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
       });
 
@@ -56,6 +56,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
@@ -113,7 +114,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
         BulkEditSearchPane.verifyChangedResults(permLocation);
         BulkEditActions.verifySuccessBanner(1);
 

@@ -15,13 +15,13 @@ let userId;
 const item = {
   instanceName: `Inventory-first-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
-  firstHoldingName: 'Popular Reading Collection'
+  firstHoldingName: 'Popular Reading Collection',
 };
 
 const secondItem = {
   instanceName: `Inventory-second-${getRandomPostfix()}`,
   barcode: `456${getRandomPostfix()}`,
-  firstHoldingName: 'Annex'
+  firstHoldingName: 'Annex',
 };
 const successCalloutMessage = '1 holding has been successfully moved.';
 
@@ -38,7 +38,10 @@ describe('inventory', () => {
         waiter: InventorySearchAndFilter.waitLoading,
       });
       item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-      secondItem.instanceId = InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
+      secondItem.instanceId = InventoryInstances.createInstanceViaApi(
+        secondItem.instanceName,
+        secondItem.barcode,
+      );
 
       cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
         cy.updateHoldingRecord(holdings[0].id, {
@@ -47,17 +50,20 @@ describe('inventory', () => {
           permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
         });
       });
-      cy.getHoldings({ limit: 1, query: `"instanceId"="${secondItem.instanceId}"` }).then((holdings) => {
-        cy.updateHoldingRecord(holdings[0].id, {
-          ...holdings[0],
-          // Annex
-          permanentLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
-        });
-      });
+      cy.getHoldings({ limit: 1, query: `"instanceId"="${secondItem.instanceId}"` }).then(
+        (holdings) => {
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            // Annex
+            permanentLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+          });
+        },
+      );
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
     InventoryInstance.deleteInstanceViaApi(item.instanceId);
     Users.deleteViaApi(userId);

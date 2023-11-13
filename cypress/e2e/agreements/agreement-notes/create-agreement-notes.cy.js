@@ -17,7 +17,7 @@ describe('Agreement Notes', () => {
     Agreements.createViaApi().then((agreement) => {
       agreementId = agreement.id;
     });
-    NoteTypes.createNoteTypeViaApi(noteType).then((note) => {
+    NoteTypes.createNoteTypeViaApi({ name: noteType }).then((note) => {
       noteTypeId = note.id;
     });
     cy.loginAsAdmin({

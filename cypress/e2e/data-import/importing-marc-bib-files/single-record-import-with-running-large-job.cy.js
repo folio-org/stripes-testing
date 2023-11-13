@@ -36,7 +36,6 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
-      cy.getAdminToken();
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.uiInventorySingleRecordImport.gui,
@@ -52,6 +51,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
       Users.deleteViaApi(user.userId);
       // TODO delete all instances
@@ -75,8 +75,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
-        // wait until file will be uploaded
-        cy.wait(10000);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(fileName);

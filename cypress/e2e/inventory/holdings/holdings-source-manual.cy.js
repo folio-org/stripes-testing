@@ -39,6 +39,7 @@ describe('Holdings', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
     Users.deleteViaApi(testData.user.userId);
   });
