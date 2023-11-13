@@ -47,7 +47,7 @@ describe('data-import', () => {
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
-        cy.wait(2000);
+        cy.wait(2000); // need wait because will select all logs without waiting filtered logs
         LogsViewAll.selectAllLogs();
         LogsViewAll.deleteLog();
         DeleteDataImportLogsModal.confirmDelete(1);
