@@ -1,12 +1,22 @@
+import uuid from 'uuid';
 import { Permissions, TestTypes, DevTeams } from '../../../support/dictionary';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import FileManager from '../../../support/utils/fileManager';
 
 let user;
-const invalidIdentifiersFileName = 'ediFileForC353651.csv';
+const items = [];
+const invalidIdentifiersFileName = `userUUIDs_${getRandomPostfix()}.csv`;
+for (let i = 0; i < 12; i++) {
+  items.push(i.toString + '\r\n');
+}
+const values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'];
+const csvContent = values.join('\n');
+
 describe('bulk-edit', () => {
   describe('Identify user records for bulk edit', () => {
     before('create test data', () => {
@@ -23,12 +33,14 @@ describe('bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
+        FileManager.createFile(`cypress/fixtures/${invalidIdentifiersFileName}`, csvContent);
       });
     });
     after('delete test data', () => {
       cy.getAdminToken(() => {
         Users.deleteViaApi(user.userId);
       });
+      FileManager.deleteFile(`cypress/fixtures/${invalidIdentifiersFileName}`);
     });
     it(
       'C353651 - "New bulk edit" button with invalid data (firebird) (TaaS)',
@@ -52,6 +64,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyBulkEditImage();
         BulkEditSearchPane.verifyPanesBeforeImport();
         BulkEditSearchPane.verifyBulkEditPaneItems();
+
         BulkEditSearchPane.verifySetCriteriaPaneElements();
       },
     );
