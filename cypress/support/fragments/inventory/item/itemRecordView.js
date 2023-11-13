@@ -54,7 +54,7 @@ const findRowAndClickLink = (enumerationValue) => {
   cy.get('div[class^="mclRow-"]')
     .contains('div[class^="mclCell-"]', enumerationValue)
     .then((elem) => {
-      elem.parent()[0].querySelector('a').click();
+      elem.parent()[0].querySelector('button').click();
     });
 };
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
@@ -200,7 +200,7 @@ export default {
   checkItemDetails(location, barcode, status) {
     this.verifyEffectiveLocation(location);
     this.checkBarcode(barcode);
-    this.checkStatus(status);
+    this.verifyItemStatus(status);
   },
 
   checkAccessionNumber: (number) => {
@@ -209,7 +209,7 @@ export default {
     );
   },
 
-  checkNumberOfPieces: (number) => {
+  verifyNumberOfPieces: (number) => {
     cy.expect(itemDataAccordion.find(KeyValue('Number of pieces')).has({ value: number }));
   },
 
