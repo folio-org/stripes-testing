@@ -248,7 +248,11 @@ export default {
   },
 
   addPOLine: () => {
-    cy.do([polListingAccordion.find(actionsButton).click(), Button('Add PO line').click()]);
+    cy.do([
+      polListingAccordion.find(actionsButton).focus(),
+      polListingAccordion.find(actionsButton).click(),
+      Button('Add PO line').click(),
+    ]);
   },
 
   backToEditingOrder: () => {
@@ -559,6 +563,38 @@ export default {
   },
 
   fillInPOLineInfoForElectronicWithFund(fund, unitPrice, quantity, value, institutionId) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      electronicUnitPriceTextField.fillIn(unitPrice),
+      quantityElectronicTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      Select({ name: 'eresource.materialType' }).choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityElectronicField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
+  fillInPOLineInfoForElectronicWithThreeFunds(fund, unitPrice, quantity, value, institutionId) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.ELECTRONIC_RESOURCE),
       acquisitionMethodButton.click(),
@@ -1391,9 +1427,14 @@ export default {
     ]);
   },
 
-  saveOrderLine: () => {
+  changePaymentStatus: (paymantStatus) => {
+    cy.do(Select({ name: 'paymentStatus' }).choose(paymantStatus));
+  },
+
+  saveOrderLine() {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
+    this.submitOrderLine();
   },
 
   openInstance: () => {
@@ -1644,6 +1685,10 @@ export default {
     cy.expect(
       Accordion('Other resource details').find(KeyValue('Create inventory')).has({ value }),
     );
+  },
+
+  checkPaymentStatusInPOL: (paymentStatus) => {
+    cy.expect(KeyValue('Payment status').has({ value: paymentStatus }));
   },
 
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
