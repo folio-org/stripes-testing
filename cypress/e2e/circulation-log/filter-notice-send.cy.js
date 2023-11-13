@@ -46,7 +46,6 @@ const testData = {
     uuid(),
   ),
 };
-const ruleProps = {};
 
 describe('circulation-log', () => {
   before('create test data', () => {

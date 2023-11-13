@@ -6,15 +6,11 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import {
-  REQUEST_POLICY_NAMES,
-  NOTICE_POLICY_NAMES,
-  OVERDUE_FINE_POLICY_NAMES,
   CY_ENV,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   LIBRARY_DUE_DATE_MANAGMENT,
   LOAN_PROFILE,
-  LOST_ITEM_FEES_POLICY_NAMES,
   ITEM_STATUS_NAMES,
 } from '../../../../support/constants';
 import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
@@ -30,7 +26,6 @@ import CirculationRules from '../../../../support/fragments/circulation/circulat
 import loanPolicy from '../../../../support/fragments/circulation/loan-policy';
 
 let userData = {};
-let createdLoanPolicy;
 let materialTypeId;
 let mySchedule;
 let addedRule;

@@ -1,16 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes } from '../../../support/dictionary';
-import {
-  REQUEST_POLICY_NAMES,
-  NOTICE_POLICY_NAMES,
-  OVERDUE_FINE_POLICY_NAMES,
-  CY_ENV,
-  LOST_ITEM_FEES_POLICY_NAMES,
-  LOAN_POLICY_NAMES,
-  FULFILMENT_PREFERENCES,
-  REQUEST_TYPES,
-} from '../../../support/constants';
+import { FULFILMENT_PREFERENCES, REQUEST_TYPES } from '../../../support/constants';
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import TopMenu from '../../../support/fragments/topMenu';
