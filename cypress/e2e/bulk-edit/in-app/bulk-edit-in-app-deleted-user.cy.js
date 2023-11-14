@@ -91,5 +91,13 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangesUnderColumns('Status', status);
       },
     );
+
+    it(
+      'C380394 Verify that bulk edit jobs run by correct user in case deleting one of them (firebird) (TaaS)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+        
+      },
+    );
   });
 });
