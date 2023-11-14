@@ -166,6 +166,14 @@ export const ORDER_PAYMENT_STATUS = {
   PAYMENT_NOT_REQUIRED: 'Payment not required',
 };
 
+export const ORDER_LINE_PAYMENT_STATUS = {
+  AWAITING_PAYMENT: 'Awaiting payment',
+  CANCELLED: 'Cancelled',
+  FULLY_PAID: 'Fully paid',
+  PARTIALLY_PAID: 'Partially paid',
+  PAYMENT_NOT_REQUIRED: 'Payment not required',
+};
+
 export const ORDER_FORMAT_NAMES_IN_PROFILE = {
   ELECTRONIC_RESOURCE: 'Electronic Resource',
   PE_MIX: 'P/E Mix',

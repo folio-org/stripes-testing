@@ -33,6 +33,7 @@ const instanceDetailsPane = Pane({ id: 'pane-instancedetails' });
 const classificationAccordion = Accordion('Classification');
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
+const adminDataAcoordion = Accordion('Administrative data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 
 const verifyResourceTitle = (value) => {
@@ -372,10 +373,37 @@ export default {
     );
   },
 
+  verifyMarkedAsStaffSuppressed() {
+    cy.expect(
+      rootSection
+        .find(adminDataAcoordion)
+        .find(HTML(including('Staff suppressed')))
+        .exists(),
+    );
+  },
+
+  verifyNotMarkAssuppressFromDiscavery() {
+    cy.expect(
+      rootSection
+        .find(adminDataAcoordion)
+        .find(HTML(including('Suppressed from discovery')))
+        .absent(),
+    );
+  },
+
+  verifyMarkedAsPreviouslyHeld() {
+    cy.expect(
+      rootSection
+        .find(adminDataAcoordion)
+        .find(HTML(including('Previously held')))
+        .exists(),
+    );
+  },
+
   verifyNotMarkAsPreviouslyHeld() {
     cy.expect(
       rootSection
-        .find(Accordion('Administrative data'))
+        .find(adminDataAcoordion)
         .find(HTML(including('Previously held')))
         .absent(),
     );
