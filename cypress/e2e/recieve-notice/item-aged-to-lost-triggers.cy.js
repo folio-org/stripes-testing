@@ -27,7 +27,6 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 
 describe('Loan notice triggers', () => {
-  let addedCirculationRule;
   const patronGroup = {
     name: getTestEntityValue('groupToTestNotices'),
   };
@@ -205,14 +204,14 @@ describe('Loan notice triggers', () => {
     cy.getToken(testData.user.username, testData.user.password);
     UserLoans.updateTimerForAgedToLost('reset');
     cy.getAdminToken();
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
       testData.userServicePoint.id,
     ]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     Users.deleteViaApi(testData.user.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
@@ -246,35 +245,17 @@ describe('Loan notice triggers', () => {
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
       cy.getAdminToken();
-      CirculationRules.getViaApi().then((response) => {
-        testData.baseRules = response.rulesAsText;
-        testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-          testData.ruleProps.n = noticePolicyRes[0].id;
-          testData.ruleProps.l = loanPolicyBody.id;
-          testData.ruleProps.i = lostItemFeePolicyBody.id;
-          addedCirculationRule =
-            't ' +
-            testData.loanTypeId +
-            ': i ' +
-            testData.ruleProps.i +
-            ' l ' +
-            testData.ruleProps.l +
-            ' r ' +
-            testData.ruleProps.r +
-            ' o ' +
-            testData.ruleProps.o +
-            ' n ' +
-            testData.ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            testData.baseRules,
-            testData.ruleProps,
-            't ',
-            testData.loanTypeId,
-          );
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        testData.noticePolicyId = noticePolicyRes[0].id;
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId, l: loanPolicyBody.id, i: lostItemFeePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
         });
       });
 
+      cy.getToken(testData.user.username, testData.user.password);
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutUserByBarcode({ ...testData.user, patronGroup });
       CheckOutActions.checkOutItem(instanceData.itemBarcode);

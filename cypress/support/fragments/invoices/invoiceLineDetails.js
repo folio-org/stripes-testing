@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  HTML,
   KeyValue,
   Link,
   MultiColumnListCell,
@@ -147,6 +148,27 @@ export default {
       ({ invoiceLines }) => {
         invoiceLines.forEach(({ id }) => this.deleteInvoiceLineViaApi(id));
       },
+    );
+  },
+  checkFundListIsEmpty: () => {
+    cy.expect(
+      Section({ id: 'invoiceLineFundDistribution' })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+  checkAdjustmentsListIsEmpty: () => {
+    cy.expect(
+      Section({ id: 'invoiceLineAdjustments' })
+        .find(HTML(including('The list contains no items')))
+        .exists(),
+    );
+  },
+  closeInvoiceLineDetailsPane: () => {
+    cy.do(
+      Pane({ id: 'pane-invoiceLineDetails' })
+        .find(Button({ icon: 'times' }))
+        .click(),
     );
   },
 };
