@@ -13,6 +13,10 @@ describe('data-import', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 
@@ -28,10 +32,6 @@ describe('data-import', () => {
       () => {
         // #1 Click on the "Actions" -> select "View all"
         // User is on the View all Log page. At the top of the page, there should be an indication of how many import jobs there are.
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
         Logs.actionsButtonClick();
         Logs.viewAllLogsButtonClick();
         LogsViewAll.viewAllIsOpened();
