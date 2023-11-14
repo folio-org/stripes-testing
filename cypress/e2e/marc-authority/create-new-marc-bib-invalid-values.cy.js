@@ -53,6 +53,7 @@ describe('Create new MARC bib', () => {
       tags: {
         tag245: '245',
         tag246: '246',
+        tagLDR: 'LDR',
       },
     },
   };
