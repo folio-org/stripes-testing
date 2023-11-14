@@ -27,6 +27,7 @@ module.exports = defineConfig({
     allure: 'true',
     grepFilterSpecs: true,
     grepOmitFiltered: true,
+    rtrAuth: false,
   },
   e2e: {
     async setupNodeEvents(on, config) {

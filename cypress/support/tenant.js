@@ -1,5 +1,5 @@
 export default class Tenant {
-  static #tenant = Cypress.env('token');
+  static #tenant = Cypress.env('OKAPI_TENANT');
 
   static get() {
     return this.#tenant;
@@ -10,6 +10,14 @@ export default class Tenant {
   }
 
   static resetToDefault() {
-    this.#tenant = Cypress.env('token');
+    this.#tenant = Cypress.env('OKAPI_TENANT');
   }
 }
+
+Cypress.Commands.add('setTenant', (tenant) => {
+  Tenant.set(tenant);
+});
+
+Cypress.Commands.add('resetTenant', () => {
+  Tenant.resetToDefault();
+});

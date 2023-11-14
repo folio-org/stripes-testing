@@ -133,6 +133,19 @@ Cypress.Commands.add(
   },
 );
 
+Cypress.Commands.add('assignPermissionsToExistingUser', (userId, permissions = []) => {
+  const queryField = 'displayName';
+  cy.getPermissionsApi({
+    query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"`,
+  }).then((permissionsResponse) => {
+    cy.getUserPermissions(userId).then((permissionId) => {
+      cy.addPermissionsToExistingUserApi(permissionId, userId, [
+        ...permissionsResponse.body.permissions.map((permission) => permission.permissionName),
+      ]);
+    });
+  });
+});
+
 Cypress.Commands.add('getAddressTypesApi', (searchParams) => {
   cy.okapiRequest({
     path: 'addresstypes',

@@ -1,18 +1,25 @@
+import Tenant from '../tenant';
+
 Cypress.Commands.add('getToken', (username, password) => {
-  cy.request({
+  let pathToSet = 'bl-users/login-with-expiry';
+  if (!Cypress.env('rtrAuth')) {
+    pathToSet = 'bl-users/login';
+  }
+  cy.okapiRequest({
     method: 'POST',
-    url: 'bl-users/login-with-expiry',
+    path: pathToSet,
     body: { username, password },
     isDefaultSearchParamsRequired: false,
+    headers: {
+      'x-okapi-tenant': Tenant.get(),
+    },
   }).then(({ body, headers }) => {
     const defaultServicePoint = body.servicePointsUser.servicePoints.find(
       ({ id }) => id === body.servicePointsUser.defaultServicePointId,
     );
-
-    const cookieString = headers['set-cookie'][0];
-    const token = cookieString.split(';')[0]; // Извлекаем только значение куки
-
-    Cypress.env('token', token);
+    if (!Cypress.env('rtrAuth')) {
+      Cypress.env('token', headers['x-okapi-token']);
+    }
     Cypress.env('defaultServicePoint', defaultServicePoint);
   });
 });

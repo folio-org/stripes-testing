@@ -11,10 +11,9 @@ describe('Consortia', () => {
   let secondUser;
 
   before(() => {
-    cy.setTenant('cs00000int2');
-    cy.getAdminToken();
+    cy.setTenant('consortium');
     cy.loginAsConsortiumAdmin();
-    /*
+
     cy.createTempUser([]).then((userProperties) => {
       firstUser = userProperties;
     });
@@ -31,28 +30,27 @@ describe('Consortia', () => {
         waiter: Users.waitLoading,
       });
     });
-    */
   });
-  /*
+
   after(() => {
     cy.loginAsAdmin();
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
   });
-*/
+
   it(
     'C380505: View a users affiliations accordion in the third details pane (thunderjet)',
     { tags: [TestType.smoke, devTeams.thunderjet] },
     () => {
-      // UsersSearchPane.searchByUsername(firstUser.username);
-      // UsersSearchPane.selectUserFromList(firstUser.username);
-      // UsersCard.varifyUserCardOpened();
-      // UsersCard.verifyAffiliationsQuantity('1');
-      // UsersCard.expandAffiliationsAccordion();
-      // UsersCard.verifyAffiliationsDetails('Consortium', 1, 'Consortium');
-      // UsersCard.expandAffiliationsAccordion();
-      // UsersCard.verifyAffiliationsQuantity('1');
-      // UsersCard.affiliationsAccordionCovered();
+      UsersSearchPane.searchByUsername(firstUser.username);
+      UsersSearchPane.selectUserFromList(firstUser.username);
+      UsersCard.varifyUserCardOpened();
+      UsersCard.verifyAffiliationsQuantity('1');
+      UsersCard.expandAffiliationsAccordion();
+      UsersCard.verifyAffiliationsDetails('Consortium', 1, 'Consortium');
+      UsersCard.expandAffiliationsAccordion();
+      UsersCard.verifyAffiliationsQuantity('1');
+      UsersCard.affiliationsAccordionCovered();
     },
   );
 });
