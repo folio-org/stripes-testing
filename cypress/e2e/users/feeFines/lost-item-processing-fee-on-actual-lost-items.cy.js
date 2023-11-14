@@ -25,7 +25,6 @@ import UserLoans from '../../../support/fragments/users/loans/userLoans';
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 
 describe('ui-users-loans: Loans', () => {
-  let addedCirculationRule;
   const paymentMethod = {};
   const newOwnerData = UsersOwners.getDefaultNewOwner();
   const newFirstItemData = getNewItem();
@@ -34,7 +33,6 @@ describe('ui-users-loans: Loans', () => {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {};
-  let originalCirculationRules;
 
   const lostItemFeePolicyBody = {
     name: getTestEntityValue('1-minute-test'),
@@ -108,6 +106,15 @@ describe('ui-users-loans: Loans', () => {
           itemsData.holdingId = specialInstanceIds.holdingIds[0].id;
           itemsData.itemsId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { i: lostItemFeePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
     UsersOwners.createViaApi({
@@ -125,32 +132,6 @@ describe('ui-users-loans: Loans', () => {
         paymentMethod.id = id;
       });
     });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser([
       permissions.checkoutAll.gui,
       permissions.uiUsersfeefinesView.gui,
@@ -178,7 +159,7 @@ describe('ui-users-loans: Loans', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: newFirstItemData.barcode,
       servicePointId: testData.userServicePoint.id,

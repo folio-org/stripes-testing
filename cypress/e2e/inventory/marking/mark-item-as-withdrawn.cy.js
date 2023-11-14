@@ -20,23 +20,19 @@ describe('inventory', () => {
     let createdItems = [];
     let materialType = '';
     let addedCirculationRule;
-    let originalCirculationRules;
 
     before(() => {
       let materialBookId;
       cy.getAdminToken();
-      cy.getMaterialTypes({ query: 'name="video recording"' }).then((type) => {
-        materialBookId = type.id;
-      });
-      CirculationRules.getViaApi().then((circulationRule) => {
-        originalCirculationRules = circulationRule.rulesAsText;
-        const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-        const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
-        addedCirculationRule = ` \nm ${materialBookId}: ${defaultProps}`;
-        cy.updateCirculationRules({
-          rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
+      cy.getMaterialTypes({ query: 'name="video recording"' })
+        .then((type) => {
+          materialBookId = type.id;
+        })
+        .then(() => {
+          CirculationRules.addRuleViaApi({ m: materialBookId }, {}).then((newRule) => {
+            addedCirculationRule = newRule;
+          });
         });
-      });
     });
 
     beforeEach(() => {
