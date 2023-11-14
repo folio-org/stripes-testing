@@ -20,8 +20,6 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import Requests from '../../support/fragments/requests/requests';
 
 describe('Create Item or Title level request', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   let userData = {};
   const patronGroup = {
     name: 'groupToRenew' + getRandomPostfix(),
@@ -84,36 +82,20 @@ describe('Create Item or Title level request', () => {
             },
           ],
         });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
+
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser(
       [
         permissions.uiUsersfeefinesCRUD.gui,
@@ -146,7 +128,7 @@ describe('Create Item or Title level request', () => {
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanType(testData.loanTypeId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);

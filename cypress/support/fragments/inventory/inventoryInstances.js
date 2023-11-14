@@ -693,8 +693,11 @@ export default {
       buttonCancelInAdvSearchModal.exists(),
     ]);
   },
-
-  checkAdvSearchInstancesModalFields(rowIndex) {
+  closeAdvancedSearchModal() {
+    cy.do(advSearchModal.find(Button({ id: 'advanced-search-modal-close-button' })).click());
+    this.checkAdvSearchModalAbsence();
+  },
+  checkAdvSearchInstancesModalFields(rowIndex, searchType = 'Instance') {
     if (rowIndex) {
       cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
       advSearchOperators.forEach((operator) => {
@@ -719,13 +722,24 @@ export default {
           .has({ content: including(modifier) }),
       );
     });
-    advSearchInstancesOptions.forEach((option) => {
-      cy.expect(
-        AdvancedSearchRow({ index: rowIndex })
-          .find(advSearchOptionSelect)
-          .has({ content: including(option) }),
-      );
-    });
+    if (searchType === 'Holdings') {
+      for (const [key] of Object.entries(advSearchHoldingsOptions)) {
+        cy.expect(
+          AdvancedSearchRow({ index: rowIndex })
+            .find(advSearchOptionSelect)
+            .has({ content: including(key) }),
+        );
+      }
+    }
+    if (searchType === 'Instance') {
+      advSearchInstancesOptions.forEach((option) => {
+        cy.expect(
+          AdvancedSearchRow({ index: rowIndex })
+            .find(advSearchOptionSelect)
+            .has({ content: including(option) }),
+        );
+      });
+    }
   },
 
   fillAdvSearchRow(rowIndex, query, modifier, option, operator) {
@@ -769,6 +783,10 @@ export default {
 
   clickSearchBtnInAdvSearchModal() {
     cy.do(buttonSearchInAdvSearchModal.click());
+  },
+
+  closeAdvSearchModalUsingESC() {
+    cy.get('#advanced-search-modal').type('{esc}');
   },
 
   clickCloseBtnInAdvSearchModal() {

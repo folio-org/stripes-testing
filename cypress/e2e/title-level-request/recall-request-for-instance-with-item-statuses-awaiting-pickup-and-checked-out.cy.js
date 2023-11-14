@@ -25,8 +25,6 @@ import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirm
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 
 describe('Title level Request', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const users = [];
   const instanceData = {
     title: getTestEntityValue('Instance'),
@@ -119,32 +117,17 @@ describe('Title level Request', () => {
         }).then((specialInstanceIds) => {
           instanceData.instanceId = specialInstanceIds.instanceId;
         });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
+
     PatronGroups.createViaApi(testData.patronGroup.name)
       .then((patronGroupResponse) => {
         testData.patronGroup.id = patronGroupResponse;
@@ -218,7 +201,7 @@ describe('Title level Request', () => {
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.item1Barcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     users.forEach((user) => {
       UserEdit.changeServicePointPreferenceViaApi(user.userId, [testData.userServicePoint.id]);
       Users.deleteViaApi(user.userId);

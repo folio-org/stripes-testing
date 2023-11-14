@@ -106,6 +106,11 @@ const paneHeader = PaneHeader({ id: 'paneHeaderquick-marc-editor-pane' });
 const linkHeadingsButton = Button('Link headings');
 const arrowDownButton = Button({ icon: 'arrow-down' });
 const buttonLink = Button({ icon: 'unlink' });
+const deleteFieldsModal = Modal({ id: 'quick-marc-confirm-modal' });
+const cancelButtonInDeleteFieldsModal = Button({ id: 'clickable-quick-marc-confirm-modal-cancel' });
+const confirmButtonInDeleteFieldsModal = Button({
+  id: 'clickable-quick-marc-confirm-modal-confirm',
+});
 
 const tag008HoldingsBytesProperties = {
   acqStatus: {
@@ -380,6 +385,19 @@ export default {
     return cy.get('@specialTag');
   },
 
+  cancelDeletingField: () => {
+    cy.do(deleteFieldsModal.find(cancelButtonInDeleteFieldsModal).click());
+    cy.expect(deleteFieldsModal.absent());
+  },
+
+  checkDeletingFieldsModal: () => {
+    cy.expect([
+      deleteFieldsModal.exists(),
+      deleteFieldsModal.find(cancelButtonInDeleteFieldsModal).exists(),
+      deleteFieldsModal.find(confirmButtonInDeleteFieldsModal).exists(),
+    ]);
+  },
+
   pressSaveAndClose() {
     cy.do(saveAndCloseButton.click());
   },
@@ -572,10 +590,9 @@ export default {
   },
 
   afterDeleteNotification(tag) {
-    cy.get('[class^=deletedRowPlaceholder-]').should(
-      'include.text',
-      `Field ${tag} has been deleted from this MARC record.`,
-    );
+    cy.get('[class^=deletedRowPlaceholder-]')
+      .contains('span', `Field ${tag}`)
+      .should('include.text', `Field ${tag} has been deleted from this MARC record.`);
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo');
   },
 
@@ -601,6 +618,15 @@ export default {
 
   checkAfterSaveAndClose() {
     cy.expect([calloutAfterSaveAndClose.exists(), instanceDetailsPane.exists()]);
+  },
+
+  verifyAfterDerivedMarcBibSave() {
+    cy.expect([
+      calloutOnDeriveFirst.exists(),
+      calloutOnDeriveSecond.exists(),
+      instanceDetailsPane.exists(),
+      rootSection.absent(),
+    ]);
   },
 
   verifyConfirmModal() {

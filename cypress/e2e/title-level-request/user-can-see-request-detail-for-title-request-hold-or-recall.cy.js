@@ -106,29 +106,11 @@ describe('Request Detail. TLR', () => {
       })
       .then(() => {
         RequestPolicy.createViaApi(requestPolicyBody);
-        CirculationRules.getViaApi().then((circulationRule) => {
-          testData.originalCirculationRules = circulationRule.rulesAsText;
-          const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-          ruleProps.r = requestPolicyBody.id;
-          testData.addedCirculationRule =
-            't ' +
-            testData.loanTypeId +
-            ': i ' +
-            ruleProps.i +
-            ' l ' +
-            ruleProps.l +
-            ' r ' +
-            ruleProps.r +
-            ' o ' +
-            ruleProps.o +
-            ' n ' +
-            ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            testData.originalCirculationRules,
-            ruleProps,
-            't ',
-            testData.loanTypeId,
-          );
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
         });
       })
       .then(() => {
@@ -223,7 +205,7 @@ describe('Request Detail. TLR', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(testData.addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanType(testData.loanTypeId);
     UserEdit.changeServicePointPreferenceViaApi(users.mainUser.userId, [
       testData.userServicePoint.id,
