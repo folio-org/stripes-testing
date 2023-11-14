@@ -9,6 +9,8 @@ export default {
 
   selectCountry(countryName) {
     cy.do(Button(countryName).click());
+    // await since without it language is sometimes switches back
+    cy.wait(2000);
   },
 
   verifyTitleOfPaneHeader(titleValue) {
