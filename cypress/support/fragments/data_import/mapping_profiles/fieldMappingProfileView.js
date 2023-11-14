@@ -198,9 +198,9 @@ export default {
         limit: 1000,
       },
     }).then((responce) => {
-      console.log(responce.body);
-      // expect(profile.id).to.be.true;
-      // expect(profile.id).to.eq(true);
+      const batchGroupEnabled = responce.body.mappingDetails.mappingFields[9].enabled;
+
+      expect(Boolean(batchGroupEnabled)).to.eq(true);
     });
   },
 };
