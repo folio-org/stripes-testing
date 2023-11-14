@@ -35,6 +35,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
@@ -50,6 +51,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
@@ -63,7 +65,7 @@ describe('data-import', () => {
           InstanceRecordView.viewSource();
           InventoryViewSource.verifyFieldInMARCBibSource(
             '650',
-            '‡a English literature ‡y 18th century.',
+            '$a English literature $y 18th century.',
           );
         });
       },

@@ -749,53 +749,22 @@ export default {
     ]);
   },
 
-  fillPermanentLocation: (location) => {
-    cy.do(permanentLocationField.fillIn(location));
-  },
-
-  fillCatalogedDate: (date = catalogedDate) => {
-    cy.do(catalogedDateField.fillIn(date));
-  },
-
-  fillInstanceStatusTerm: (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => {
-    cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
-  },
-
-  fillHoldingsType: (type) => {
-    cy.do(TextField('Holdings type').fillIn(`"${type}"`));
-  },
-
-  fillCallNumberType: (type) => {
-    cy.do(TextField('Call number type').fillIn(type));
-  },
-
-  fillCallNumberPrefix: (prefix) => {
-    cy.do(TextField('Call number prefix').fillIn(prefix));
-  },
-
-  fillcallNumberSuffix: (prefix) => {
-    cy.do(TextField('Call number suffix').fillIn(prefix));
-  },
-
-  fillStatus: (itemStatus) => {
-    cy.do(TextField('Status').fillIn(itemStatus));
-  },
-
-  fillPermanentLoanType: (loanType) => {
-    cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`));
-  },
-
-  fillTemporaryLoanType: (loanType) => {
-    cy.do(TextField('Temporary loan type').fillIn(loanType));
-  },
-
-  fillMaterialType: (type) => {
-    cy.do(materialTypeField.fillIn(type));
-  },
-
-  fillIllPolicy: (policy) => {
-    cy.do(TextField('ILL policy').fillIn(`"${policy}"`));
-  },
+  fillPermanentLocation: (location) => cy.do(permanentLocationField.fillIn(location)),
+  fillCatalogedDate: (date = catalogedDate) => cy.do(catalogedDateField.fillIn(date)),
+  fillInstanceStatusTerm: (statusTerm = INSTANCE_STATUS_TERM_NAMES.BATCH_LOADED) => cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`)),
+  fillHoldingsType: (type) => cy.do(TextField('Holdings type').fillIn(`"${type}"`)),
+  fillCallNumberType: (type) => cy.do(TextField('Call number type').fillIn(type)),
+  fillCallNumberPrefix: (prefix) => cy.do(TextField('Call number prefix').fillIn(prefix)),
+  fillcallNumberSuffix: (sufix) => cy.do(TextField('Call number suffix').fillIn(sufix)),
+  fillStatus: (itemStatus) => cy.do(TextField('Status').fillIn(itemStatus)),
+  fillPermanentLoanType: (loanType) => cy.do(TextField('Permanent loan type').fillIn(`"${loanType}"`)),
+  fillTemporaryLoanType: (loanType) => cy.do(TextField('Temporary loan type').fillIn(loanType)),
+  fillMaterialType: (type) => cy.do(materialTypeField.fillIn(type)),
+  fillIllPolicy: (policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
+  fillBatchGroup: (group) => cy.do(batchGroupField.fillIn(group)),
+  fillPaymentMethod: (method) => cy.do(paymentMethodField.fillIn(method)),
+  fillCurrency: (currency) => cy.do(currencyField.fillIn(currency)),
+  fillInvoiceDate: (date) => cy.do(TextField('Invoice date*').fillIn(date)),
 
   addHoldingsNotes: (type, note, staffOnly) => {
     const holdingsNotesFieldName = 'profile.mappingDetails.mappingFields[22].repeatableFieldAction';
@@ -811,14 +780,6 @@ export default {
       Select({ name: selectName }).focus(),
       Select({ name: selectName }).choose(staffOnly),
     ]);
-  },
-
-  fillBatchGroup: (group) => {
-    cy.do(batchGroupField.fillIn(group));
-  },
-
-  fillPaymentMethod: (method) => {
-    cy.do(paymentMethodField.fillIn(method));
   },
 
   addItemNotes: (noteType, note, staffOnly) => {
@@ -853,21 +814,15 @@ export default {
     ]);
   },
 
-  fillCurrency: (currency) => {
-    cy.do(currencyField.fillIn(currency));
-  },
-
   fillVendorName: (vendorName) => {
     cy.do([
       organizationLookUpButton.click(),
-      SearchField({ id: 'input-record-search' }).fillIn(vendorName),
-      searchButton.click(),
+      Modal('Select Organization')
+        .find(SearchField({ id: 'input-record-search' }))
+        .fillIn(vendorName),
+      Modal('Select Organization').find(searchButton).click(),
     ]);
     selectFromResultsList();
-  },
-
-  fillInvoiceDate: (date) => {
-    cy.do(TextField('Invoice date*').fillIn(date));
   },
 
   addFieldMappingsForMarc: () => {
@@ -993,9 +948,7 @@ export default {
     ]);
   },
 
-  fillMissingPieces: (value) => {
-    cy.do(TextField('Missing pieces').fillIn(value));
-  },
+  fillMissingPieces: (value) => cy.do(TextField('Missing pieces').fillIn(value)),
 
   verifyExpenseClassesIsPresentedInDropdown: (value) => {
     cy.expect(DropdownMenu({ visible: true }).find(HTML(value)).exists());

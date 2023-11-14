@@ -38,18 +38,19 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      Users.deleteViaApi(firstUser.userId);
-      Users.deleteViaApi(secondUser.userId);
+      cy.getAdminToken();
       cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
         (instance) => {
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
           InventoryInstance.deleteInstanceViaApi(instance.id);
         },
       );
+      Users.deleteViaApi(firstUser.userId);
+      Users.deleteViaApi(secondUser.userId);
     });
 
     it(
-      'C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)',
+      'C1294: Create a Holdings record as another user than the one that created the Instance (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();

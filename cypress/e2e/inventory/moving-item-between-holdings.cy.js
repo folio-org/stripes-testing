@@ -9,7 +9,7 @@ import InventoryItems from '../../support/fragments/inventory/item/inventoryItem
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Move holdings and item', () => {
     const holdingsCount = 2;
     const testData = {
@@ -65,6 +65,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       testData.items.forEach((item) => InventoryItems.deleteItemViaApi(item.id));
       testData.holdings.forEach((holding) => {
         InventoryHoldings.deleteHoldingRecordViaApi(holding.id);

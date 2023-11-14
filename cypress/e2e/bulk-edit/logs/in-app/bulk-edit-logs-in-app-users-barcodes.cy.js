@@ -41,6 +41,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     FileManager.deleteFile(`cypress/fixtures/${validUserBarcodesFileName}`);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFileFromDownloadsByMask(

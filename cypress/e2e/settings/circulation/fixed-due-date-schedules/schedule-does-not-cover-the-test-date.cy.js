@@ -6,15 +6,11 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import {
-  REQUEST_POLICY_NAMES,
-  NOTICE_POLICY_NAMES,
-  OVERDUE_FINE_POLICY_NAMES,
   CY_ENV,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
   LIBRARY_DUE_DATE_MANAGMENT,
   LOAN_PROFILE,
-  LOST_ITEM_FEES_POLICY_NAMES,
   ITEM_STATUS_NAMES,
 } from '../../../../support/constants';
 import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
@@ -27,15 +23,14 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
+import loanPolicy from '../../../../support/fragments/circulation/loan-policy';
 
 let userData = {};
-let createdLoanPolicy;
 let materialTypeId;
 let mySchedule;
-let rulesDefaultString;
+let addedRule;
 let patronGroupId;
 let servicePointId;
-let newRule;
 const USER_BARCODE = uuid();
 const ITEM_BARCODE = generateItemBarcode();
 const fromDate = moment.utc().subtract(2, 'days');
@@ -44,12 +39,29 @@ const dueDate = moment.utc().add(2, 'days');
 const newToDate = moment.utc().subtract(1, 'days');
 const dateFallsMessage = 'renewal date falls outside of date ranges in fixed loan policy';
 let sourceId;
+const loanPolicyBody = {
+  id: uuid(),
+  name: `renewable_${getRandomPostfix()}`,
+  loanable: true,
+  loansPolicy: {
+    closedLibraryDueDateManagementId: LIBRARY_DUE_DATE_MANAGMENT.CURRENT_DUE_DATE,
+    fixedDueDateScheduleId: '',
+    profileId: LOAN_PROFILE.FIXED,
+  },
+  renewable: true,
+  renewalsPolicy: {
+    unlimited: true,
+  },
+};
 
 describe('ui-circulation-settings: Fixed due date schedules', () => {
   before(() => {
     cy.login(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD));
     cy.getToken(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD))
       .then(() => {
+        ServicePoints.getViaApi({ pickupLocation: true }).then((servicePoints) => {
+          servicePointId = servicePoints[0].id;
+        });
         cy.getInstanceTypes({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
@@ -111,63 +123,30 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                 due: dueDate.format(),
               },
             ],
-          }).then((schedule) => {
-            mySchedule = schedule;
-
-            cy.createLoanPolicy({
-              loanable: true,
-              loansPolicy: {
-                closedLibraryDueDateManagementId: LIBRARY_DUE_DATE_MANAGMENT.CURRENT_DUE_DATE,
-                fixedDueDateScheduleId: mySchedule.id,
-                profileId: LOAN_PROFILE.FIXED,
-              },
-              renewable: true,
-              renewalsPolicy: {
-                unlimited: true,
-              },
+          })
+            .then((schedule) => {
+              mySchedule = schedule;
+              loanPolicyBody.loansPolicy.fixedDueDateScheduleId = mySchedule.id;
             })
-              .then((loanPolicy) => {
-                createdLoanPolicy = loanPolicy;
-
-                ServicePoints.getViaApi({ pickupLocation: true }).then((servicePoints) => {
-                  servicePointId = servicePoints[0].id;
-                });
-                cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
-                cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
-                cy.getOverdueFinePolicy({
-                  query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"`,
-                });
-                cy.getLostItemFeesPolicy({
-                  query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"`,
-                });
-                cy.getCirculationRules().then((rules) => {
-                  rulesDefaultString = rules.rulesAsText;
-                });
-              })
-              .then(() => {
-                const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
-                const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
-                const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
-                const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-                newRule = `\ng ${patronGroupId} + m ${materialTypeId}: l ${createdLoanPolicy.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
-
-                cy.updateCirculationRules({
-                  rulesAsText: rulesDefaultString + newRule,
-                });
-              })
-              .then(() => {
-                Checkout.checkoutItemViaApi({
-                  servicePointId,
-                  itemBarcode: ITEM_BARCODE,
-                  userBarcode: USER_BARCODE,
-                });
+            .then(() => {
+              loanPolicy.createViaApi(loanPolicyBody);
+              CirculationRules.addRuleViaApi({ g: patronGroupId }, { l: loanPolicyBody.id }).then(
+                (newRule) => {
+                  addedRule = newRule;
+                },
+              );
+              Checkout.checkoutItemViaApi({
+                servicePointId,
+                itemBarcode: ITEM_BARCODE,
+                userBarcode: USER_BARCODE,
               });
-          });
+            });
         });
       });
   });
 
   after(() => {
+    cy.getAdminToken();
     CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,
@@ -183,8 +162,8 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-      CirculationRules.deleteRuleViaApi(newRule);
-      cy.deleteLoanPolicy(createdLoanPolicy.id).then(() => {
+      CirculationRules.deleteRuleViaApi(addedRule);
+      cy.deleteLoanPolicy(loanPolicyBody.id).then(() => {
         cy.deleteFixedDueDateSchedule(mySchedule.id);
       });
     });
@@ -207,7 +186,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
       });
       cy.visit(TopMenu.checkOutPath);
       Checkout.checkUserOpenLoans({ barcode: userData.barcode, id: userData.id });
-      Loans.checkLoanPolicy(createdLoanPolicy.name);
+      Loans.checkLoanPolicy(loanPolicyBody.name);
       Loans.renewalMessageCheck(dateFallsMessage);
     },
   );

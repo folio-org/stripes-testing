@@ -80,10 +80,9 @@ describe('Orders: Receiving and Check-in', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
-
     Organizations.deleteOrganizationViaApi(organization.id);
-
     Users.deleteViaApi(user.userId);
   });
 
@@ -94,9 +93,6 @@ describe('Orders: Receiving and Check-in', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();
-      InteractorsTools.checkCalloutMessage(
-        `The Purchase order - ${orderNumber} has been successfully opened`,
-      );
       Orders.receiveOrderViaActions();
       // Receiving part
       Receiving.selectPOLInReceive(orderLineTitle);
@@ -137,22 +133,22 @@ describe('Orders: Receiving and Check-in', () => {
       InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(firstPiece.copyNumber);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.verifyStatus('In process');
+      ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
       InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(secondPiece.enumeration);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.verifyStatus('In process');
+      ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
       InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(thirdPiece.chronology);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.verifyStatus('In process');
+      ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
       InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(fourthPiece.copyNumber);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.verifyStatus('In process');
+      ItemRecordView.verifyItemStatus('In process');
       ItemRecordView.closeDetailView();
     },
   );

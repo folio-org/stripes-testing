@@ -126,7 +126,7 @@ const buttonLink = Button('Link');
 const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
-const inputSearchField = TextField({ id: 'input-inventory-search' });
+const inputSearchField = TextArea({ id: 'input-inventory-search' });
 const holdingsPane = Pane(including('Holdings'));
 const instancesButton = Button({ id: 'segment-navigation-instances' });
 const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
@@ -228,6 +228,25 @@ const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
   );
 };
 
+const verifySeriesStatement = (indexRow, value) => {
+  cy.expect(
+    titleDataAccordion
+      .find(MultiColumnList({ id: 'list-series-statement' }))
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell())
+      .has({ content: value }),
+  );
+};
+
+const verifySubjectHeading = (value) => {
+  cy.expect(
+    Accordion('Subject')
+      .find(MultiColumnList({ id: 'list-subject' }))
+      .find(MultiColumnListCell({ content: value }))
+      .exists(),
+  );
+};
+
 const verifyContributor = (indexRow, indexColumn, value) => {
   cy.expect(
     contributorAccordion
@@ -293,6 +312,8 @@ export default {
   waitInstanceRecordViewOpened,
   openItemByBarcode,
   verifyAlternativeTitle,
+  verifySeriesStatement,
+  verifySubjectHeading,
   verifyContributor,
   verifyContributorWithMarcAppLink,
 
@@ -850,11 +871,17 @@ export default {
     cy.expect(instanceDetailsPane.find(MultiColumnListCell(status)).exists());
   },
 
-  createInstanceViaApi() {
+  createInstanceViaApi({
+    instanceTitle = `Instance ${getRandomPostfix()}`,
+    instanceId = uuid(),
+    instanceTypeId,
+    contributors,
+  } = {}) {
     const instanceData = {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-      instanceId: uuid(),
-      instanceTypeId: null,
+      instanceTitle,
+      instanceId,
+      instanceTypeId,
+      contributors,
     };
 
     return cy
@@ -967,7 +994,12 @@ export default {
   },
 
   checkIsItemCreated: (itemBarcode) => {
-    cy.expect(Link(including(itemBarcode)).exists());
+    cy.expect(
+      Section({ id: 'pane-instancedetails' })
+        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(Button(including(itemBarcode)))
+        .exists(),
+    );
   },
 
   checkMARCSourceAtNewPane() {
@@ -1037,7 +1069,7 @@ export default {
   verifyLoan: (content) => cy.expect(MultiColumnListCell({ content }).exists()),
 
   verifyLoanInItemPage(barcode, value) {
-    cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
+    cy.do(MultiColumnListCell({ content: barcode }).find(Button(barcode)).click());
     cy.expect(KeyValue('Temporary loan type').has({ value }));
     cy.do(Button({ icon: 'times' }).click());
   },

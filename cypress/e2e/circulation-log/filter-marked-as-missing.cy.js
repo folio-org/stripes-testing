@@ -54,6 +54,7 @@ describe('circulation-log', () => {
   });
 
   after('cleaning up test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     Users.deleteViaApi(user.userId);
   });

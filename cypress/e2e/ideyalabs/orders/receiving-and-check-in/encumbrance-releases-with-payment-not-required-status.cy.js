@@ -6,12 +6,10 @@ import testTypes from '../../../../support/dictionary/testTypes';
 
 const orderDetails = {
   searchByParameter: 'PO line number',
-  enterPoLineNumber: '20692-1',
-  checkOrderLineSearchResults: '20692-1',
+  poLineNumber: '20692-1',
   titleName: 'Approve rolled',
   caption: 'Done',
   enumeration: 'Electronic',
-  poLineNumber: '20692-1',
 };
 
 describe.skip('Orders: Receiving and Check-in ', () => {
@@ -25,9 +23,9 @@ describe.skip('Orders: Receiving and Check-in ', () => {
     () => {
       cy.visit(topMenu.ordersPath);
       orderLines.clickOnOrderLines();
-      orderLines.searchByParameter(orderDetails.searchByParameter, orderDetails.enterPoLineNumber);
-      orderLines.checkOrderlineSearchResults(orderDetails.checkOrderLineSearchResults);
-      orderLines.selectOrderline(orderDetails.checkOrderLineSearchResults);
+      orderLines.searchByParameter(orderDetails.searchByParameter, orderDetails.poLineNumber);
+      orderLines.checkOrderlineSearchResults({ poLineNumber: orderDetails.poLineNumber });
+      orderLines.selectOrderline(orderDetails.poLineNumber);
       orderLines.receiveOrderLineViaActions();
       orderLines.selectreceivedTitleName(orderDetails.titleName);
       receiving.addPieceProcess(orderDetails.caption, orderDetails.enumeration);

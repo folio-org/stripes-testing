@@ -43,6 +43,7 @@ describe('permissions: inventory', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(userWithOnlyViewPermissions.userId);
     Users.deleteViaApi(userWithAllPermissions.userId);

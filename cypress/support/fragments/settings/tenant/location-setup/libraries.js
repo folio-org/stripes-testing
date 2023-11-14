@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import TenantPane, { getDefaultTenant } from '../baseTenantPane';
+import { EditableListRow, MultiColumnListCell, Link } from '../../../../../../interactors';
 
 export default {
   ...TenantPane,
@@ -42,5 +43,23 @@ export default {
     return TenantPane.deleteViaApi({
       path: `location-units/libraries/${libraryId}`,
     });
+  },
+  checkLocationsColumnInResultsTable(numOfLocationsRecords = [], columnIndex = 3) {
+    numOfLocationsRecords.forEach((numOfLocations, index) => {
+      cy.expect([
+        EditableListRow({ index })
+          .find(MultiColumnListCell({ columnIndex, content: numOfLocations }))
+          .find(Link())
+          .exists(),
+      ]);
+    });
+  },
+  clickLocationsColumnLink(rowIndex = 0, columnIndex = 3) {
+    cy.do([
+      EditableListRow({ index: rowIndex })
+        .find(MultiColumnListCell({ columnIndex }))
+        .find(Link())
+        .click(),
+    ]);
   },
 };

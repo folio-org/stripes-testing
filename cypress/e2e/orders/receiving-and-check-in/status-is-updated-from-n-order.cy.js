@@ -61,10 +61,9 @@ describe('Orders: Receiving and Check-in', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
-
     Organizations.deleteOrganizationViaApi(organization.id);
-
     Users.deleteViaApi(user.userId);
   });
 
@@ -89,7 +88,7 @@ describe('Orders: Receiving and Check-in', () => {
       InventoryInstance.openHoldingsAccordion(OrdersHelper.onlineLibraryLocation);
       ItemRecordView.findRowAndClickLink(copyNumber);
       ItemRecordView.verifyEffectiveLocation(OrdersHelper.onlineLibraryLocation);
-      ItemRecordView.verifyStatus(ITEM_STATUS_NAMES.IN_PROCESS);
+      ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
     },
   );
 });

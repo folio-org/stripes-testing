@@ -21,8 +21,12 @@ export default {
       });
   },
 
+  openInstanceTab: () => {
+    cy.do(Button(including('Instance')).click());
+  },
+
   openHoldingsTab: () => {
-    cy.do(Button(including('Holdings')).click());
+    cy.get('div[class^="buttonGroup-"]').find('[data-test-logs-filter-option="2"]').click();
   },
 
   openItemTab: () => {
@@ -30,7 +34,7 @@ export default {
   },
 
   openOrderTab: () => {
-    cy.do(Button('Order*').click());
+    cy.get('div[class^="buttonGroup-"]').find('button[data-test-logs-filter-option="5"]').click();
   },
 
   verifyContentInTab: (value) => {

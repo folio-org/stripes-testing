@@ -114,6 +114,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -208,6 +209,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC378901.mrc', marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -232,14 +234,14 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Created');
         InstanceRecordView.verifyIsInstanceOpened(firstInstanceTitle);
-        cy.wait(2000);
-        cy.go('back');
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileName);
         FileDetails.openHoldingsInInventory('Created');
         HoldingsRecordView.checkPermanentLocation(
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI,
         );
-        cy.wait(2000);
-        cy.go('back');
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileName);
         FileDetails.openItemInInventory('Created');
         ItemRecordView.verifyItemStatus(
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,

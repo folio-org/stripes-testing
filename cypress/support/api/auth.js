@@ -15,6 +15,7 @@ Cypress.Commands.add('getToken', (username, password) => {
     if (!Cypress.env('rtrAuth')) {
       Cypress.env('token', headers['x-okapi-token']);
     }
+
     Cypress.env('defaultServicePoint', defaultServicePoint);
   });
 });

@@ -30,7 +30,6 @@ import OtherSettings from '../../support/fragments/settings/circulation/otherSet
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Triggers: Check Out, Loan due date change, Check in', () => {
-  let addedCirculationRule;
   const noticeTemplates = [
     {
       ...createNoticeTemplate({
@@ -39,8 +38,6 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
           action: 'Check out',
         },
       }),
-      body: '{{#loans}}Test_email_body {{item.title}} {{loan.initialBorrowDateTime}}{{/loans}}',
-      previewText: 'Test_email_body',
     },
     {
       ...createNoticeTemplate({
@@ -49,8 +46,6 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
           action: 'Loan due date change',
         },
       }),
-      body: 'Test_email_body {{item.title}} {{loan.dueDateTime}}',
-      previewText: 'Test_email_body',
     },
     {
       ...createNoticeTemplate({
@@ -59,8 +54,6 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
           action: 'Check in',
         },
       }),
-      body: '{{#loans}}Test_email_body {{item.title}} {{loan.checkedInDateTime}}{{/loans}}',
-      previewText: 'Test_email_body',
     },
   ];
   const noticePolicy = {
@@ -207,11 +200,6 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
             testData.userServicePoint.id,
           );
 
-          cy.getCirculationRules().then((response) => {
-            testData.baseRules = response.rulesAsText;
-            testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-          });
-
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
@@ -221,11 +209,12 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyId);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each((item, index) => {
@@ -261,30 +250,18 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-        testData.ruleProps.n = res[0].id;
-        testData.ruleProps.l = loanPolicyId;
-        addedCirculationRule =
-          't ' +
-          testData.loanTypeId +
-          ': i ' +
-          testData.ruleProps.i +
-          ' l ' +
-          testData.ruleProps.l +
-          ' r ' +
-          testData.ruleProps.r +
-          ' o ' +
-          testData.ruleProps.o +
-          ' n ' +
-          testData.ruleProps.n;
+      cy.getAdminToken();
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        testData.noticePolicyId = noticePolicyRes[0].id;
         CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          't ',
-          testData.loanTypeId,
-        );
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId, l: loanPolicyId },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);

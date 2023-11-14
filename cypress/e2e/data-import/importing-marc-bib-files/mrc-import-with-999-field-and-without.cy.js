@@ -15,6 +15,7 @@ describe('data-import', () => {
     let user;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const title = 'No content';
+    const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
     const errorMessage =
       '{"error":"A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
     const nameMarcFileForCreate = `C359012 autotestFile${getRandomPostfix()}.mrc`;
@@ -30,18 +31,13 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.loginAsAdmin();
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(nameMarcFileForCreate);
-      FileDetails.openInstanceInInventory('Created', 1);
-      InventoryInstance.getAssignedHRID().then((hrId) => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrId}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
-      });
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
+      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+        (instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        },
+      );
     });
 
     it(
@@ -51,6 +47,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC359012.mrc', nameMarcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);

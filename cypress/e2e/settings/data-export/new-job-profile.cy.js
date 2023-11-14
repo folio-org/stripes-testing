@@ -27,20 +27,20 @@ describe('settings: data-export', () => {
       permissions.dataExportEnableApp.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName).then(
+        (response) => {
+          fieldMappingProfileId = response.body.id;
+        },
+      );
       cy.login(user.username, user.password, {
         path: TopMenu.settingsPath,
         waiter: SettingsPane.waitLoading,
       });
     });
-
-    ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName).then(
-      (response) => {
-        fieldMappingProfileId = response.body.id;
-      },
-    );
   });
 
   after('delete jobs and user', () => {
+    cy.getAdminToken();
     ExportJobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` }).then(
       (response) => {
         ExportJobProfiles.deleteJobProfileViaApi(response.id);

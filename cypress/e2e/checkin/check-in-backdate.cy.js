@@ -52,6 +52,7 @@ describe('Check in backdate', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: testData.servicePoint.id,

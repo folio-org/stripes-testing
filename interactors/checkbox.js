@@ -43,6 +43,10 @@ export const Checkbox = HTML.extend('checkbox')
       const input = el.querySelector('input');
       if (!input.checked) input.click();
     }),
+    uncheckIfSelected: ({ perform }) => perform((el) => {
+      const input = el.querySelector('input');
+      if (input.checked) input.click();
+    }),
   });
 
 export const CheckboxInTable = HTML.extend('checkboxInTable')

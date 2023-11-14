@@ -43,6 +43,7 @@ describe('Inventory -> Call Number Browse', () => {
   });
 
   afterEach('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userId);
     InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
   });

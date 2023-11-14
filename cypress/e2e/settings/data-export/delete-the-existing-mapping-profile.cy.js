@@ -10,7 +10,7 @@ import { EXPORT_TRANSFORMATION_NAMES } from '../../../support/constants';
 
 let user;
 
-describe('setting: data-export', () => {
+describe('settings: data-export', () => {
   before('create user and go to page', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -24,7 +24,8 @@ describe('setting: data-export', () => {
     });
   });
 
-  after('selete user', () => {
+  after('delete user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
