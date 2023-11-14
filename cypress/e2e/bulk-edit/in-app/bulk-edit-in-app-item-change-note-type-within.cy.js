@@ -37,6 +37,11 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
         permissions.inventoryCRUDItemNoteTypes.gui,
       ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
@@ -63,11 +68,6 @@ describe('bulk-edit', () => {
               { noteType: 'Check in', note: notes.checkInTwo, staffOnly: false },
             ];
             cy.updateItemViaApi(itemData);
-            user = userProperties;
-            cy.login(user.username, user.password, {
-              path: TopMenu.bulkEditPath,
-              waiter: BulkEditSearchPane.waitLoading,
-            });
           },
         );
       });
@@ -113,13 +113,13 @@ describe('bulk-edit', () => {
           `Check out;${notes.checkInOne};true`,
           `Check out;${notes.checkInTwo};false`
         ]);
-        
+
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkCheckOutNote(`${notes.checkInOne}${notes.checkInTwo}`, 'YesNo');
-        ItemRecordView.checkItemNote(`${notes.actionOne}${notes.actionTwo}`, 'YesYes', 'Action note');
+        ItemRecordView.checkCheckOutNote(`${notes.checkInOne}${notes.checkInTwo}`, 'Yes\nNo');
+        ItemRecordView.checkItemNote(`${notes.actionOne}${notes.actionTwo}`, 'YesNo', 'Provenance');
       },
     );
   });
