@@ -46,36 +46,31 @@ describe('Search in Inventory', () => {
       InventorySearchAndFilter.verifySpecificTabHighlighted('Instance');
       InventorySearchAndFilter.verifySearchFieldIsEmpty();
       InventorySearchAndFilter.verifyResultPaneEmpty();
-      InventorySearchAndFilter.verifySearchOption(
-        testData.instanceQuerySearchOption,
-        testData.instanceQuerySearchValue,
-      );
-      InventorySearchAndFilter.verifySearchOption(
-        testData.instanceSubjectsOption,
-        testData.instanceSubjectsValue,
-      );
+      InventorySearchAndFilter.selectSearchOptions(testData.instanceQuerySearchOption, '');
+      InventorySearchAndFilter.verifySelectedSearchOption(testData.instanceQuerySearchValue);
+      InventorySearchAndFilter.selectSearchOptions(testData.instanceSubjectsOption, '');
+      InventorySearchAndFilter.verifySelectedSearchOption(testData.instanceSubjectsValue);
 
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.verifySpecificTabHighlighted('Holdings');
       InventorySearchAndFilter.verifySearchFieldIsEmpty();
       InventorySearchAndFilter.verifyResultPaneEmpty();
       InventorySearchAndFilter.searchTypeDropdownDefaultValue(testData.defaultValue);
-      InventorySearchAndFilter.verifySearchOption(
-        testData.holdingsHRIDOption,
-        testData.holdingsHRIDValue,
-      );
-      InventorySearchAndFilter.verifySearchOption(
-        testData.holdingsUUIDOption,
-        testData.holdingsUUIDValue,
-      );
+      InventorySearchAndFilter.selectSearchOptions(testData.holdingsHRIDOption, '');
+      InventorySearchAndFilter.verifySelectedSearchOption(testData.holdingsHRIDValue);
+      InventorySearchAndFilter.selectSearchOptions(testData.holdingsUUIDOption, '');
+      InventorySearchAndFilter.verifySelectedSearchOption(testData.holdingsUUIDValue);
 
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.verifySpecificTabHighlighted('Item');
       InventorySearchAndFilter.verifySearchFieldIsEmpty();
       InventorySearchAndFilter.verifyResultPaneEmpty();
       InventorySearchAndFilter.searchTypeDropdownDefaultValue(testData.defaultValue);
-      InventorySearchAndFilter.verifySearchOption(testData.itemHRIDOption, testData.itemHRIDValue);
-      InventorySearchAndFilter.verifySearchOption(testData.itemUUIDOption, testData.itemUUIDValue);
+
+      InventorySearchAndFilter.selectSearchOptions(testData.itemHRIDOption, '');
+      InventorySearchAndFilter.verifySelectedSearchOption(testData.itemHRIDValue);
+      InventorySearchAndFilter.selectSearchOptions(testData.itemUUIDOption, '');
+      InventorySearchAndFilter.verifySelectedSearchOption(testData.itemUUIDValue);
     },
   );
 });

@@ -499,6 +499,10 @@ export default {
     cy.do([inventorySearchAndFilterInput.choose(searchOption), keywordInput.fillIn(text)]);
   },
 
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
+  },
+
   clickSearch() {
     cy.do(searchButton.click());
   },
@@ -731,10 +735,10 @@ export default {
     cy.do(browseSearchAndFilterInput.choose(option));
   },
 
-  verifySearchOption(option, selectValue) {
-    cy.do(inventorySearchAndFilterInput.choose(option));
-    cy.expect(inventorySearchAndFilterInput.has({ value: selectValue }));
-  },
+  // verifySearchOption(option, selectValue) {
+  //   cy.do(inventorySearchAndFilterInput.choose(option));
+  //   cy.expect(inventorySearchAndFilterInput.has({ value: selectValue }));
+  // },
 
   checkSearchQueryText(text) {
     cy.expect(keywordInput.has({ value: text }));
