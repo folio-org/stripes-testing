@@ -35,7 +35,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   };
 
   let userData = {};
-  let createdInstanceRecordId = [];
+  const createdInstanceRecordId = [];
 
   before(() => {
     cy.createTempUser([
@@ -54,7 +54,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   after('Deleting created user and data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
-    InventoryInstance.deleteInstanceViaApi(createdInstanceRecordId[0])
+    InventoryInstance.deleteInstanceViaApi(createdInstanceRecordId[0]);
   });
 
   it(
