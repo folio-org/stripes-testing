@@ -305,14 +305,14 @@ export default {
     );
   },
 
-  openItemInInventoryByTitle: (title, itemStatus = 'Updated') => {
+  openItemInInventoryByTitle: (title, columnIndex, itemStatus = 'Updated') => {
     cy.do(
       MultiColumnListCell({ content: title }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
         cy.do(
           resultsList
-            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex: 5 }))
+            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex }))
             .find(Link(itemStatus))
             .click(),
         );

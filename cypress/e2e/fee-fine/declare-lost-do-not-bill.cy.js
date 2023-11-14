@@ -29,8 +29,6 @@ describe('Lost items requiring actual cost', () => {
   const declareLostComments = getTestEntityValue('Some additional information');
   const paymentMethod = {};
   const ownerData = UsersOwners.getDefaultNewOwner();
-  let originalCirculationRules;
-  let addedCirculationRule;
 
   const lostItemFeePolicy = {
     name: getTestEntityValue('1-minute-test'),
@@ -71,59 +69,46 @@ describe('Lost items requiring actual cost', () => {
       testData.defaultLocation = Locations.getDefaultLocation({
         servicePointId: testData.userServicePoint.id,
       }).location;
-      Locations.createViaApi(testData.defaultLocation).then((location) => {
-        InventoryInstances.createFolioInstancesViaApi({
-          folioInstances: testData.folioInstances,
-          location,
+      Locations.createViaApi(testData.defaultLocation)
+        .then((location) => {
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: testData.folioInstances,
+            location,
+          });
+        })
+        .then(() => {
+          cy.createLoanType({
+            name: getTestEntityValue('feeFine'),
+          }).then((loanType) => {
+            testData.loanTypeId = loanType.id;
+          });
+        })
+        .then(() => {
+          UsersOwners.createViaApi({
+            ...ownerData,
+            servicePointOwner: [
+              {
+                value: testData.userServicePoint.id,
+                label: testData.userServicePoint.name,
+              },
+            ],
+          }).then((ownerResponse) => {
+            testData.owner = ownerResponse;
+            PaymentMethods.createViaApi(testData.owner.id).then(({ name, id }) => {
+              paymentMethod.name = name;
+              paymentMethod.id = id;
+            });
+          });
+        })
+        .then(() => {
+          LostItemFeePolicy.createViaApi(lostItemFeePolicy);
+          CirculationRules.addRuleViaApi(
+            { t: testData.loanTypeId },
+            { i: lostItemFeePolicy.id },
+          ).then((newRule) => {
+            testData.addedRule = newRule;
+          });
         });
-      });
-
-      cy.createLoanType({
-        name: getTestEntityValue('feeFine'),
-      }).then((loanType) => {
-        testData.loanTypeId = loanType.id;
-      });
-
-      UsersOwners.createViaApi({
-        ...ownerData,
-        servicePointOwner: [
-          {
-            value: testData.userServicePoint.id,
-            label: testData.userServicePoint.name,
-          },
-        ],
-      }).then((ownerResponse) => {
-        testData.owner = ownerResponse;
-        PaymentMethods.createViaApi(testData.owner.id).then(({ name, id }) => {
-          paymentMethod.name = name;
-          paymentMethod.id = id;
-        });
-      });
-      LostItemFeePolicy.createViaApi(lostItemFeePolicy);
-      CirculationRules.getViaApi().then((circulationRule) => {
-        originalCirculationRules = circulationRule.rulesAsText;
-        const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-        ruleProps.i = lostItemFeePolicy.id;
-        addedCirculationRule =
-          't ' +
-          testData.loanTypeId +
-          ': i ' +
-          ruleProps.i +
-          ' l ' +
-          ruleProps.l +
-          ' r ' +
-          ruleProps.r +
-          ' o ' +
-          ruleProps.o +
-          ' n ' +
-          ruleProps.n;
-        CirculationRules.addRuleViaApi(
-          originalCirculationRules,
-          ruleProps,
-          't ',
-          testData.loanTypeId,
-        );
-      });
     });
     instanceTitle = testData.folioInstances[0].instanceTitle;
     cy.createTempUser([
@@ -166,7 +151,7 @@ describe('Lost items requiring actual cost', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
-      CirculationRules.deleteRuleViaApi(addedCirculationRule);
+      CirculationRules.deleteRuleViaApi(testData.addedRule);
       InventoryInstances.deleteInstanceViaApi({
         instance: testData.folioInstances[0],
         servicePoint: testData.userServicePoint,

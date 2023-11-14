@@ -30,12 +30,20 @@ export default {
     cy.expect(Pane('Tenant').exists());
   },
   verifyLocationSetupItems() {
-    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach((item) => {
-      cy.expect(NavListItem(item).exists());
-    });
+    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach(
+      (item) => {
+        cy.expect(NavListItem(item).exists());
+      },
+    );
   },
   verifyNoGeneralItems() {
-    [TENANTS.ADDRESSES, TENANTS.LANGUAGE_AND_LOCALIZATION, TENANTS.PREFERRED_PLUGINS, TENANTS.SSO_SETTINGS, TENANTS.SERVICE_POINTS].forEach((item) => {
+    [
+      TENANTS.ADDRESSES,
+      TENANTS.LANGUAGE_AND_LOCALIZATION,
+      TENANTS.PREFERRED_PLUGINS,
+      TENANTS.SSO_SETTINGS,
+      TENANTS.SERVICE_POINTS,
+    ].forEach((item) => {
       cy.expect(NavListItem(item).absent());
     });
   },

@@ -33,6 +33,7 @@ const settingsUserPath = 'settings/users';
 const notesPath = '/settings/notes/general';
 const permissionSetPath = '/settings/users/perms?layer=add';
 const lostItemsRequiringActualCost = '/users/lost-items';
+const listsPath = '/lists';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -70,6 +71,7 @@ export default {
   transferCriteriaPath,
   settingsUserPath,
   lostItemsRequiringActualCost,
+  listsPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());
