@@ -30,16 +30,15 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
           servicePointId = servicePoints[0].id;
         }).then(() => {
           UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-          Checkout.checkoutItemViaApi({
-            itemBarcode: item.barcode,
-            servicePointId: servicePointId,
-            userBarcode: user.barcode,
-          });
           cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
             (res) => {
               const itemData = res;
@@ -47,16 +46,19 @@ describe('bulk-edit', () => {
               itemData.permanentLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
               itemData.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
               // Selected loan type
-              itemData.permanentLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' },
-                itemData.temporaryLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' },
-                cy.updateItemViaApi(itemData);
-            });
+              itemData.permanentLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
+              itemData.temporaryLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
+              cy.updateItemViaApi(itemData);
+            }
+          );
+        }).then(() => {
+          Checkout.checkoutItemViaApi({
+            itemBarcode: item.barcode,
+            servicePointId,
+            userBarcode: user.barcode,
+          });
           FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
-        });
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+        })
       });
     });
 
@@ -64,7 +66,7 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
-        servicePointId: servicePointId,
+        servicePointId,
         checkInDate: new Date().toISOString(),
       });
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
