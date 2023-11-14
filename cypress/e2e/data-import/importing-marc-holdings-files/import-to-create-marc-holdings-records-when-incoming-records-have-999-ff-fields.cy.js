@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -56,19 +56,20 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(
       'C359218 Checking import to Create MARC Holdings records when incoming records have 999 ff fields (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // edit marc file adding instance hrid
         DataImport.editMarcFile(

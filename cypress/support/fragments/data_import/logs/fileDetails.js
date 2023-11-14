@@ -305,14 +305,14 @@ export default {
     );
   },
 
-  openItemInInventoryByTitle: (title, itemStatus = 'Updated') => {
+  openItemInInventoryByTitle: (title, columnIndex, itemStatus = 'Updated') => {
     cy.do(
       MultiColumnListCell({ content: title }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
         cy.do(
           resultsList
-            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex: 5 }))
+            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex }))
             .find(Link(itemStatus))
             .click(),
         );
@@ -321,11 +321,13 @@ export default {
   },
 
   openJsonScreen: (title) => {
+    cy.get('#search-results-list').find('*[class^="mclCell"]').contains(title).focus();
     cy.get('#search-results-list')
       .find('*[class^="mclCell"]')
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();
+    cy.wait(2000);
   },
 
   openJsonScreenByStatus: (importStatus, title) => {
