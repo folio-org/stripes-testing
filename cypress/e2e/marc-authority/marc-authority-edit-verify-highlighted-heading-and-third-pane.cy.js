@@ -49,24 +49,13 @@ describe('Edit Authority record', () => {
   const createdAuthorityIDs = [];
 
   before('Create test data', () => {
-    cy.createTempUser([
-      Permissions.settingsDataImportEnabled.gui,
-      Permissions.moduleDataImportEnabled.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-    ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
-    });
-  });
-
-  before('Upload files', () => {
-    cy.login(testData.userProperties.username, testData.userProperties.password, {
+    cy.loginAsAdmin({
       path: TopMenu.dataImportPath,
       waiter: DataImport.waitLoading,
     }).then(() => {
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
+        DataImport.verifyUploadState();
         DataImport.uploadFile(marcFile.marc, marcFile.fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
@@ -82,11 +71,19 @@ describe('Edit Authority record', () => {
         }
       });
     });
-  });
 
-  beforeEach('Visit MARC Authorities', () => {
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthorities.waitLoading();
+    cy.createTempUser([
+      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+    ]).then((createdUserProperties) => {
+      testData.userProperties = createdUserProperties;
+
+      cy.login(testData.userProperties.username, testData.userProperties.password, {
+        path: TopMenu.marcAuthorities,
+        waiter: MarcAuthorities.waitLoading,
+      });
+    });
   });
 
   after('Delete test data', () => {
@@ -121,6 +118,7 @@ describe('Edit Authority record', () => {
     'C350946 Verify that third pane still opened after editing first search result (spitfire) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
+      MarcAuthorities.switchToSearch();
       MarcAuthorities.searchBeats('Twain');
       MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);
       MarcAuthority.edit();
