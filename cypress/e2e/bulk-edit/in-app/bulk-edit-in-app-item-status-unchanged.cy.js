@@ -58,7 +58,7 @@ describe('bulk-edit', () => {
             userBarcode: user.barcode,
           });
           FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
-        })
+        });
       });
     });
 
