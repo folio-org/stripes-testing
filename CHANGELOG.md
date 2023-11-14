@@ -1,5 +1,9 @@
 # Change history for stripes-testing
 
+## 3.1.1 (IN PROGRESS)
+
+* Publish via GitHub Actions instead of Jenkins. Refs UITEST-117.
+
 ## [3.1.0](https://github.com/folio-org/stripes-testing/tree/v3.1.0) (2021-10-24)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v3.0.0...v3.1.0)
 
