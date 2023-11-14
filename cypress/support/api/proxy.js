@@ -14,3 +14,13 @@ Cypress.Commands.add('deleteProxyApi', (proxyId) => {
     path: `proxiesfor/${proxyId}`,
   });
 });
+
+Cypress.Commands.add('getProxyApi', (searchParams) => {
+  cy.okapiRequest({
+    path: 'proxiesfor',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => {
+    return body.proxiesFor;
+  });
+});

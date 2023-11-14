@@ -20,10 +20,6 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewInstances.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
       });
 
       cy.createTempUser([
@@ -39,6 +35,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       Users.deleteViaApi(userCircAndLogsPermissions.userId);
     });
@@ -47,6 +44,10 @@ describe('bulk-edit', () => {
       'C360090 Verify switching between Inventory record types radio buttons (firebird)',
       { tags: [testTypes.smoke, devTeams.firebird] },
       () => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
         BulkEditSearchPane.verifyInputLabel('Drag and drop or choose file with holdings UUIDs');

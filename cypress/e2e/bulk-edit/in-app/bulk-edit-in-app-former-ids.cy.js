@@ -28,23 +28,22 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-
         cy.getItems({ query: `"barcode"=="${item.itemBarcode}"` }).then((inventoryItem) => {
           inventoryItem.formerIds = [formerId];
           InventoryItems.editItemViaApi(inventoryItem);
         });
-
         FileManager.createFile(`cypress/fixtures/${validItemFormerIdsFileName}`, formerId);
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${validItemFormerIdsFileName}`);

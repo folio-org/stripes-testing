@@ -20,7 +20,6 @@ describe('ui-requests: Make sure that request type filters are working properly'
   const doesNotExistRequest = `notExist-${uuid()}`;
   const getNoResultMessage = (term) => `No results found for "${term}". Please check your spelling and filters.`;
   let addedCirculationRule;
-  let originalCirculationRules;
   let loanTypeId;
   const requestPolicyBody = {
     requestTypes: [REQUEST_TYPES.HOLD, REQUEST_TYPES.PAGE, REQUEST_TYPES.RECALL],
@@ -35,28 +34,13 @@ describe('ui-requests: Make sure that request type filters are working properly'
       name: `type_${getRandomPostfix()}`,
     }).then((loanType) => {
       loanTypeId = loanType.id;
-
       RequestPolicy.createViaApi(requestPolicyBody);
 
-      CirculationRules.getViaApi().then((circulationRule) => {
-        originalCirculationRules = circulationRule.rulesAsText;
-        const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-        ruleProps.r = requestPolicyBody.id;
-        addedCirculationRule =
-          't ' +
-          loanTypeId +
-          ': i ' +
-          ruleProps.i +
-          ' l ' +
-          ruleProps.l +
-          ' r ' +
-          ruleProps.r +
-          ' o ' +
-          ruleProps.o +
-          ' n ' +
-          ruleProps.n;
-        CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', loanTypeId);
-      });
+      CirculationRules.addRuleViaApi({ t: loanTypeId }, { r: requestPolicyBody.id }).then(
+        (newRule) => {
+          addedCirculationRule = newRule;
+        },
+      );
     });
 
     Object.values(requestTypes).forEach((requestType) => {
@@ -75,6 +59,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
   });
 
   afterEach(() => {
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     instances.forEach((instance) => {
       cy.deleteItemViaApi(instance.itemId);
       cy.deleteHoldingRecordViaApi(instance.holdingId);
@@ -87,7 +72,6 @@ describe('ui-requests: Make sure that request type filters are working properly'
       Users.deleteViaApi(id);
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(loanTypeId);
   });
 

@@ -241,70 +241,70 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken().then(() => {
-        testData.jobProfileForCreate = jobProfileForCreate;
+      testData.jobProfileForCreate = jobProfileForCreate;
 
-        testData.forEach((specialPair) => {
-          cy.createOnePairMappingAndActionProfiles(
-            specialPair.mappingProfile,
-            specialPair.actionProfile,
-          ).then((idActionProfile) => {
-            cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
-          });
+      testData.forEach((specialPair) => {
+        cy.createOnePairMappingAndActionProfiles(
+          specialPair.mappingProfile,
+          specialPair.actionProfile,
+        ).then((idActionProfile) => {
+          cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
         });
-        SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
-          (bodyWithjobProfile) => {
-            testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-          },
+      });
+      SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+        (bodyWithjobProfile) => {
+          testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+        },
+      );
+
+      // upload a marc file for creating of the new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile('marcFileForC17027.mrc', marcFileForCreate);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(testData.jobProfileForCreate.profile.name);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileForCreate);
+      Logs.openFileDetails(marcFileForCreate);
+      rowNumbers.forEach((rowNumber) => {
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.srsMarc,
+          rowNumber,
         );
-
-        // upload a marc file for creating of the new instance, holding and item
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.instance,
+          rowNumber,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.holdings,
+          rowNumber,
+        );
+        FileDetails.checkStatusInColumn(
+          FileDetails.status.created,
+          FileDetails.columnNameInResultList.item,
+          rowNumber,
+        );
+      });
+      FileDetails.checkItemsQuantityInSummaryTable(0, '3');
+      // collect instance hrids
+      rowNumbers.forEach((rowNumber) => {
+        // need to wait until page will be opened in loop
+        cy.wait(3000);
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile('marcFileForC17027.mrc', marcFileForCreate);
-        JobProfiles.search(testData.jobProfileForCreate.profile.name);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileForCreate);
         Logs.openFileDetails(marcFileForCreate);
-        rowNumbers.forEach((rowNumber) => {
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
-            FileDetails.columnNameInResultList.srsMarc,
-            rowNumber,
-          );
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
-            FileDetails.columnNameInResultList.instance,
-            rowNumber,
-          );
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
-            FileDetails.columnNameInResultList.holdings,
-            rowNumber,
-          );
-          FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
-            FileDetails.columnNameInResultList.item,
-            rowNumber,
-          );
-        });
-        FileDetails.checkItemsQuantityInSummaryTable(0, '3');
-        // collect instance hrids
-        rowNumbers.forEach((rowNumber) => {
-          // need to wait until page will be opened in loop
-          cy.wait(3000);
-          cy.visit(TopMenu.dataImportPath);
-          Logs.openFileDetails(marcFileForCreate);
-          FileDetails.openInstanceInInventory('Created', rowNumber);
-          InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-            instanceHrids.push(initialInstanceHrId);
-          });
+        FileDetails.openInstanceInInventory('Created', rowNumber);
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          instanceHrids.push(initialInstanceHrId);
         });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       // delete profiles
       JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
@@ -397,6 +397,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameAfterUpdate);

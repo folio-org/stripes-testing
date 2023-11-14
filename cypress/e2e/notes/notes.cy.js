@@ -44,6 +44,7 @@ describe('Note creation', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
@@ -83,6 +84,7 @@ describe('Note creation', () => {
       });
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteTitle(note.title);
+      cy.getAdminToken();
       Users.deleteViaApi(testData.deletedUserProperties.userId);
 
       cy.login(testData.userProperties.username, testData.userProperties.password, {

@@ -19,6 +19,7 @@ describe('OAI-PMH', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
   });
 

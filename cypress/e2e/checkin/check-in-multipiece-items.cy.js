@@ -55,6 +55,7 @@ describe('Check In', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     testItems.forEach((instance) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: instance.barcodes[0],
