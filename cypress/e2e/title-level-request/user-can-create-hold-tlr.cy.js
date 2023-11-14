@@ -23,8 +23,6 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 
 describe('Create Item or Title level request', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   let userData = {};
   let userForHold = {};
   const patronGroup = {
@@ -90,36 +88,20 @@ describe('Create Item or Title level request', () => {
         }).then((specialInstanceIds) => {
           instanceData.instanceId = specialInstanceIds.instanceId;
         });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
+
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
       userForHold = userProperties;
       UserEdit.addServicePointViaApi(
@@ -170,6 +152,7 @@ describe('Create Item or Title level request', () => {
       path: SettingsMenu.circulationTitleLevelRequestsPath,
       waiter: TitleLevelRequests.waitLoading,
     });
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: testData.itemBarcode,
       servicePointId: testData.userServicePoint.id,
@@ -180,7 +163,6 @@ describe('Create Item or Title level request', () => {
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
     UserEdit.changeServicePointPreferenceViaApi(userForHold.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);

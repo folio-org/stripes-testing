@@ -14,9 +14,11 @@ import {
   including,
   MultiColumnListRow,
   TextField,
+  Image,
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
 
+const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const logsStartDateAccordion = Accordion('Started');
 const logsEndDateAccordion = Accordion('Ended');
 const applyBtn = Button('Apply');
@@ -78,6 +80,10 @@ export default {
     cy.expect(resetAllButton.has({ disabled: isDisabled }));
   },
 
+  resetAll() {
+    cy.do(resetAllButton.click());
+  },
+
   actionsIsAbsent() {
     cy.expect(actions.absent());
   },
@@ -92,6 +98,10 @@ export default {
 
   verifyPanesBeforeImport() {
     cy.expect([setCriteriaPane.exists(), bulkEditPane.exists()]);
+  },
+
+  verifyBulkEditImage() {
+    cy.expect([bulkEditIcon.exists()]);
   },
 
   verifyBulkEditPaneItems() {
@@ -111,6 +121,23 @@ export default {
       setCriteriaPane.find(HTML('Drag and drop')).exists(),
       fileButton.has({ disabled: true }),
     ]);
+  },
+  verifySetCriteriaPaneElements() {
+    cy.expect([
+      setCriteriaPane.find(identifierToggle).exists(),
+      setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
+      recordTypesAccordion.find(usersRadio).exists(),
+      this.isUsersRadioChecked(false),
+      recordTypesAccordion.find(itemsRadio).exists(),
+      this.isItemsRadioChecked(false),
+      recordTypesAccordion.find(holdingsRadio).exists(),
+      this.isHoldingsRadioChecked(false),
+      setCriteriaPane.find(recordIdentifierDropdown).exists(),
+      recordIdentifierDropdown.has({ disabled: true }),
+      setCriteriaPane.find(HTML('Drag and drop')).exists(),
+      fileButton.has({ disabled: true }),
+    ]);
+    cy.expect(HTML('Select a file with record identifiers').exists());
   },
 
   verifySetCriteriaPaneSpecificTabs(...tabs) {
@@ -342,6 +369,10 @@ export default {
     ]);
   },
 
+  openIdentifierSearch() {
+    cy.do(identifierToggle.click());
+  },
+
   openQuerySearch() {
     cy.do(queryToggle.click());
   },
@@ -390,6 +421,10 @@ export default {
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
     ]);
+  },
+
+  checkLogsStatus(status) {
+    cy.do(logsStatusesAccordion.find(Checkbox(status)).click());
   },
 
   verifyCsvViewPermission() {
@@ -588,8 +623,7 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${
-          validRecordCount + invalidRecordCount
+        `${fileName}: ${validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -600,8 +634,7 @@ export default {
       Accordion('Errors')
         .find(
           HTML(
-            `${fileName}: ${
-              validRecordCount + invalidRecordCount
+            `${fileName}: ${validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
           ),
         )
@@ -887,12 +920,18 @@ export default {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
   },
 
+  verifyLogResultsFound() {
+    cy.expect(logsResultPane.find(MultiColumnList()).exists());
+  },
+
   isDragAndDropAreaDisabled(isDisabled) {
     cy.expect(fileButton.has({ disabled: isDisabled }));
   },
+
   isSaveAndCloseButtonDisabled(isDisabled) {
     cy.expect(saveAndClose.has({ disabled: isDisabled }));
   },
+
   isBuildQueryButtonDisabled(isDisabled) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);

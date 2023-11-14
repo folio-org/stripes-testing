@@ -33,8 +33,6 @@ import RequestPolicy from '../../../../support/fragments/circulation/request-pol
 import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 
 describe('Patron Block: Maximum number of overdue recalls', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const checkedOutBlockMessage = `You have reached maximum number of overdue recalls as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
@@ -139,39 +137,21 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
           });
         });
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
+      })
+      .then(() => {
+        LoanPolicy.createViaApi(loanPolicyBody);
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { l: loanPolicyBody.id, r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
-    LoanPolicy.createViaApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.l = loanPolicyBody.id;
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser(
       [
         permissions.uiUsersSettingsOwners.gui,
@@ -243,6 +223,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -278,7 +259,6 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(
