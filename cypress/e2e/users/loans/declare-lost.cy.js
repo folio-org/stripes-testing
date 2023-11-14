@@ -21,7 +21,6 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-users-loans: Loans', () => {
-  let addedCirculationRule;
   const newOwnerData = UsersOwners.getDefaultNewOwner();
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
@@ -33,7 +32,6 @@ describe('ui-users-loans: Loans', () => {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {};
-  let originalCirculationRules;
   const lostItemFeePolicyBody = {
     name: getTestEntityValue('lost'),
     chargeAmountItem: {
@@ -100,6 +98,15 @@ describe('ui-users-loans: Loans', () => {
           itemsData.holdingId = specialInstanceIds.holdingIds[0].id;
           itemsData.itemsId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { i: lostItemFeePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
     UsersOwners.createViaApi({
@@ -113,32 +120,6 @@ describe('ui-users-loans: Loans', () => {
     }).then((ownerResponse) => {
       testData.ownerId = ownerResponse.id;
     });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser([
       permissions.uiUsersViewLoans.gui,
       permissions.uiUsersDeclareItemLost.gui,
@@ -167,6 +148,7 @@ describe('ui-users-loans: Loans', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     [newFirstItemData, newSecondItemData].forEach((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -178,7 +160,7 @@ describe('ui-users-loans: Loans', () => {
       cy.deleteItemViaApi(id);
     });
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanType(testData.loanTypeId);
     Users.deleteViaApi(testData.userId);
     UsersOwners.deleteViaApi(testData.ownerId);
@@ -192,58 +174,54 @@ describe('ui-users-loans: Loans', () => {
     );
   });
 
-  it(
-    'C9191 Loans: Declare lost (prokopovych)',
-    { tags: [TestType.smoke, TestType.broken, DevTeams.prokopovych] },
-    () => {
-      UsersCard.getApi(testData.userId).then((user) => {
-        Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
-        Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
-        Loans.cancelDeclareLost();
-        Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
+  it('C9191 Loans: Declare lost (vega)', { tags: [TestType.smoke, DevTeams.vega] }, () => {
+    UsersCard.getApi(testData.userId).then((user) => {
+      Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
+      Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
+      Loans.cancelDeclareLost();
+      Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
 
-        Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
-        Loans.finishDeclareLost(DECLARE_LOST_ADDITIONAL_INFORMATION);
-        Loans.checkStatusDeclaredLost(SECOND_LOAN_ROW_INDEX);
+      Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);
+      Loans.finishDeclareLost(DECLARE_LOST_ADDITIONAL_INFORMATION);
+      Loans.checkStatusDeclaredLost(SECOND_LOAN_ROW_INDEX);
 
-        const testLoanDetails = (shouldDeclareLost, loanId, loanHistoryFirstAction) => {
-          cy.visit(AppPaths.getLoanDetailsPath(testData.userId, loanId));
+      const testLoanDetails = (shouldDeclareLost, loanId, loanHistoryFirstAction) => {
+        cy.visit(AppPaths.getLoanDetailsPath(testData.userId, loanId));
 
-          if (shouldDeclareLost) {
-            LoanDetails.checkDeclareLostButtonActive();
-            LoanDetails.startDeclareLost();
-            LoanDetails.finishDeclareLost(DECLARE_LOST_ADDITIONAL_INFORMATION);
-          }
+        if (shouldDeclareLost) {
+          LoanDetails.checkDeclareLostButtonActive();
+          LoanDetails.startDeclareLost();
+          LoanDetails.finishDeclareLost(DECLARE_LOST_ADDITIONAL_INFORMATION);
+        }
 
-          LoanDetails.checkDeclareLostButtonDisabled();
-          LoanDetails.checkStatusDeclaredLost();
-          LoanDetails.checkLostDate(loanHistoryFirstAction.loan.metadata.updatedDate);
-          LoanDetails.checkActionDate(
-            FIRST_ACTION_ROW_INDEX,
-            loanHistoryFirstAction.loan.metadata.updatedDate,
-          );
+        LoanDetails.checkDeclareLostButtonDisabled();
+        LoanDetails.checkStatusDeclaredLost();
+        LoanDetails.checkLostDate(loanHistoryFirstAction.loan.metadata.updatedDate);
+        LoanDetails.checkActionDate(
+          FIRST_ACTION_ROW_INDEX,
+          loanHistoryFirstAction.loan.metadata.updatedDate,
+        );
 
-          LoanDetails.checkActionDeclaredLost(FIRST_ACTION_ROW_INDEX);
-          LoanDetails.checkLoansActionsHaveSameDueDate(
-            FIRST_ACTION_ROW_INDEX,
-            SECOND_ACTION_ROW_INDEX,
-            loanHistoryFirstAction.loan.dueDate,
-          );
-          LoanDetails.checkStatusDeclaredLostInList(FIRST_ACTION_ROW_INDEX);
-          LoanDetails.checkSource(FIRST_ACTION_ROW_INDEX, user);
-          LoanDetails.checkComments(FIRST_ACTION_ROW_INDEX, DECLARE_LOST_ADDITIONAL_INFORMATION);
-        };
+        LoanDetails.checkActionDeclaredLost(FIRST_ACTION_ROW_INDEX);
+        LoanDetails.checkLoansActionsHaveSameDueDate(
+          FIRST_ACTION_ROW_INDEX,
+          SECOND_ACTION_ROW_INDEX,
+          loanHistoryFirstAction.loan.dueDate,
+        );
+        LoanDetails.checkStatusDeclaredLostInList(FIRST_ACTION_ROW_INDEX);
+        LoanDetails.checkSource(FIRST_ACTION_ROW_INDEX, user);
+        LoanDetails.checkComments(FIRST_ACTION_ROW_INDEX, DECLARE_LOST_ADDITIONAL_INFORMATION);
+      };
 
-        Loans.getApi(testData.userId).then(([firstLoan, secondLoan]) => {
-          cy.getLoanHistory(secondLoan.id).then(([loanHistoryFirstAction]) => {
-            testLoanDetails(false, secondLoan.id, loanHistoryFirstAction);
-          });
+      Loans.getApi(testData.userId).then(([firstLoan, secondLoan]) => {
+        cy.getLoanHistory(secondLoan.id).then(([loanHistoryFirstAction]) => {
+          testLoanDetails(false, secondLoan.id, loanHistoryFirstAction);
+        });
 
-          cy.getLoanHistory(firstLoan.id).then(([loanHistoryFirstAction]) => {
-            testLoanDetails(true, firstLoan.id, loanHistoryFirstAction);
-          });
+        cy.getLoanHistory(firstLoan.id).then(([loanHistoryFirstAction]) => {
+          testLoanDetails(true, firstLoan.id, loanHistoryFirstAction);
         });
       });
-    },
-  );
+    });
+  });
 });

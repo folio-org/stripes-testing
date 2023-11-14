@@ -228,6 +228,25 @@ const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
   );
 };
 
+const verifySeriesStatement = (indexRow, value) => {
+  cy.expect(
+    titleDataAccordion
+      .find(MultiColumnList({ id: 'list-series-statement' }))
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell())
+      .has({ content: value }),
+  );
+};
+
+const verifySubjectHeading = (value) => {
+  cy.expect(
+    Accordion('Subject')
+      .find(MultiColumnList({ id: 'list-subject' }))
+      .find(MultiColumnListCell({ content: value }))
+      .exists(),
+  );
+};
+
 const verifyContributor = (indexRow, indexColumn, value) => {
   cy.expect(
     contributorAccordion
@@ -293,6 +312,8 @@ export default {
   waitInstanceRecordViewOpened,
   openItemByBarcode,
   verifyAlternativeTitle,
+  verifySeriesStatement,
+  verifySubjectHeading,
   verifyContributor,
   verifyContributorWithMarcAppLink,
 
@@ -973,7 +994,12 @@ export default {
   },
 
   checkIsItemCreated: (itemBarcode) => {
-    cy.expect(Link(including(itemBarcode)).exists());
+    cy.expect(
+      Section({ id: 'pane-instancedetails' })
+        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(Button(including(itemBarcode)))
+        .exists(),
+    );
   },
 
   checkMARCSourceAtNewPane() {

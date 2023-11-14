@@ -11,7 +11,7 @@ import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {};
     const instance = {

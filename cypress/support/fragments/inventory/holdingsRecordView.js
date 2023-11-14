@@ -50,10 +50,16 @@ export default {
     cy.expect(holdingsRecordViewSection.absent());
   },
   editInQuickMarc: () => {
-    cy.do([actionsButton.click(), editInQuickMarcButton.click()]);
+    cy.wait(1000);
+    cy.do(actionsButton.click());
+    cy.wait(2000);
+    cy.do(editInQuickMarcButton.click());
   },
   viewSource: () => {
-    cy.do([actionsButton.click(), viewSourceButton.click()]);
+    cy.wait(1000);
+    cy.do(actionsButton.click());
+    cy.wait(2000);
+    cy.do(viewSourceButton.click());
     InventoryViewSource.waitHoldingLoading();
   },
   tryToDelete: () => {

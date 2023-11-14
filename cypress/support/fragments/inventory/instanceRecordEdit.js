@@ -189,6 +189,9 @@ export default {
       cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: true }));
     } else cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: false }));
   },
+  markAsStaffSuppress() {
+    cy.do(rootSection.find(Checkbox({ name: 'staffSuppress' })).click());
+  },
   verifyPreviouslyHeldCheckbox(isChecked = false) {
     if (isChecked) {
       cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: true }));
