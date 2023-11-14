@@ -26,7 +26,6 @@ import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee
 
 // Test is skipped because implementation is not completed
 describe.skip('Loan notice triggers', () => {
-  let addedCirculationRule;
   const patronGroup = {
     name: getTestEntityValue('groupToTestNotices'),
   };
@@ -146,33 +145,15 @@ describe.skip('Loan notice triggers', () => {
   };
 
   const createCirculationRule = () => {
-    CirculationRules.getViaApi().then((response) => {
-      testData.baseRules = response.rulesAsText;
-      testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-        testData.ruleProps.n = noticePolicyRes[0].id;
-        testData.ruleProps.l = loanPolicyBody.id;
-        testData.ruleProps.i = lostItemFeePolicyBody.id;
-        addedCirculationRule =
-          't ' +
-          testData.loanTypeId +
-          ': i ' +
-          testData.ruleProps.i +
-          ' l ' +
-          testData.ruleProps.l +
-          ' r ' +
-          testData.ruleProps.r +
-          ' o ' +
-          testData.ruleProps.o +
-          ' n ' +
-          testData.ruleProps.n;
-        CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          't ',
-          testData.loanTypeId,
-        );
-      });
+    cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+      testData.ruleProps.n = noticePolicyRes[0].id;
+      testData.ruleProps.l = loanPolicyBody.id;
+      testData.ruleProps.i = lostItemFeePolicyBody.id;
+      CirculationRules.addRuleViaApi({ t: testData.loanTypeId }, testData.ruleProps).then(
+        (newRule) => {
+          testData.addedRule = newRule;
+        },
+      );
     });
   };
 
@@ -233,7 +214,7 @@ describe.skip('Loan notice triggers', () => {
     cy.getToken(testData.user.username, testData.user.password);
     UserLoans.updateTimerForAgedToLost('reset');
     cy.getAdminToken();
-    CirculationRules.deleteRuleViaApi(addedCirculationRule); // TODO: remove
+    CirculationRules.deleteRuleViaApi(testData.addedRule); // TODO: remove
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
       testData.userServicePoint.id,
     ]);

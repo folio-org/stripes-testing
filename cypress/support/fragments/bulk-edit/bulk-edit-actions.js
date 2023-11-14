@@ -53,6 +53,9 @@ export default {
     cy.do(startBulkEditButton.click());
     cy.wait(1000);
   },
+  verifyOptionsLength(optionsLength, count) {
+    cy.expect(optionsLength).to.eq(count);
+  },
   startBulkEditAbsent() {
     cy.expect(startBulkEditButton.absent());
   },
@@ -61,6 +64,11 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
         .choose(optionName),
+    );
+  },
+  selectAction(actionName, rowIndex) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose(actionName),
     );
   },
   verifyBulkEditForm(rowIndex = 0) {
@@ -73,6 +81,12 @@ export default {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
 
+  isDisabledRowIcons(isDisabled) {
+    cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
+  },
+  afterAllSelectedActions() {
+    cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
+  },
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
@@ -143,6 +157,9 @@ export default {
     cy.expect(Button('Download errors (CSV)').exists());
   },
 
+  startBulkEditLocalButtonExists() {
+    cy.expect(startBulkEditLocalButton.exists());
+  },
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
     cy.expect([
@@ -418,6 +435,39 @@ export default {
     this.verifyPossibleActions(options);
   },
 
+  verifyTheOptionsAfterSelectedOption(content, rowIndex) {
+    const options = [
+      'Check in note',
+      'Check out note',
+      'Action note',
+      'Binding',
+      'Copy note',
+      'Electronic bookplate',
+      'Note',
+      'Provenance',
+      'Reproduction',
+      'Item status',
+      'Permanent loan type',
+      'Temporary loan type',
+      'Permanent item location',
+      'Temporary item location',
+      'Suppress from discovery',
+    ];
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(content),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click(),
+    ]);
+    this.verifyPossibleActions(options);
+  },
+
+  verifyTheOptionsAfterSelectedAllOptions(content, rowIndex) {
+    const options = ['Suppress from discovery'];
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(content),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click(),
+    ]);
+    this.verifyPossibleActions(options);
+  },
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),

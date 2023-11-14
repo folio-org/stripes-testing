@@ -31,10 +31,9 @@ import Requests from '../../support/fragments/requests/requests';
 
 describe('TLR: Item renew', () => {
   let instanceHRID;
-  let addedCirculationRule;
-  let originalCirculationRules;
   let userForRenew = {};
   let userForCheckOut = {};
+  const addedRules = [];
   const patronGroup = {
     name: 'groupToRenew' + getRandomPostfix(),
   };
@@ -144,21 +143,30 @@ describe('TLR: Item renew', () => {
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
+          patronGroup.id = patronGroupResponse;
+        });
+      })
+      .then(() => {
+        LoanPolicy.createViaApi(loanPolicyBody.renewable);
+        CirculationRules.addRuleViaApi(
+          { m: testData.materialBookId, g: patronGroup.id },
+          { l: loanPolicyBody.renewable.id },
+        ).then((newRule) => {
+          addedRules.push(newRule);
+        });
+      })
+      .then(() => {
+        LoanPolicy.createViaApi(loanPolicyBody.nonRenewable);
+        CirculationRules.addRuleViaApi(
+          { m: testData.materialDvdId, g: patronGroup.id },
+          { l: loanPolicyBody.nonRenewable.id },
+        ).then((newRule) => {
+          addedRules.push(newRule);
+        });
       });
-    LoanPolicy.createViaApi(loanPolicyBody.renewable);
-    LoanPolicy.createViaApi(loanPolicyBody.nonRenewable);
-    PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
-      patronGroup.id = patronGroupResponse;
-    });
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
-      addedCirculationRule = ` \nm ${testData.materialBookId} + g ${patronGroup.id}: l ${loanPolicyBody.renewable.id} ${defaultProps} \nm ${testData.materialDvdId} + g ${patronGroup.id}: l ${loanPolicyBody.nonRenewable.id} ${defaultProps}`;
-      cy.updateCirculationRules({
-        rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
-      });
-    });
 
     cy.createTempUser(
       [
@@ -193,6 +201,7 @@ describe('TLR: Item renew', () => {
   });
 
   beforeEach('Checkout items', () => {
+    cy.getAdminToken();
     cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
       (instance) => {
         instanceHRID = instance.hrid;
@@ -218,7 +227,9 @@ describe('TLR: Item renew', () => {
     cy.wrap(instanceData.itemIds).each((item) => {
       cy.deleteItemViaApi(item);
     });
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    cy.wrap(addedRules).each((rule) => {
+      CirculationRules.deleteRuleViaApi(rule);
+    });
     cy.deleteHoldingRecordViaApi(instanceData.holdingId);
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     cy.deleteLoanPolicy(loanPolicyBody.renewable.id);
@@ -243,6 +254,7 @@ describe('TLR: Item renew', () => {
   });
 
   afterEach('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -268,6 +280,7 @@ describe('TLR: Item renew', () => {
     'C360533: TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
+      cy.getToken(userForRenew.username, userForRenew.password);
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();
       NewRequest.createNewRequest({
@@ -300,6 +313,7 @@ describe('TLR: Item renew', () => {
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
     () => {
+      cy.getToken(userForRenew.username, userForRenew.password);
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
