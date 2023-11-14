@@ -35,6 +35,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   };
 
   let userData = {};
+  let createdInstanceRecordId = [];
 
   before(() => {
     cy.createTempUser([
@@ -53,6 +54,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   after('Deleting created user and data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
+    InventoryInstance.deleteInstanceViaApi(createdInstanceRecordId[0])
   });
 
   it(
@@ -113,6 +115,9 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       QuickMarcEditor.updateExistingTagValue(5, testData.tags.tag100);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.getId().then((id) => {
+        createdInstanceRecordId.push(id);
+      });
     },
   );
 });
