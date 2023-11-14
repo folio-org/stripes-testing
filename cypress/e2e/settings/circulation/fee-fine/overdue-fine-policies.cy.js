@@ -33,8 +33,6 @@ Cypress.on('uncaught:exception', () => {
 
 describe('ui-circulation-settings: overdue fine policies management', () => {
   let userData;
-  let originalCirculationRules;
-  let addedCirculationRule;
   const minutes = 5;
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -148,29 +146,23 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+        LoanPolicy.createViaApi(loanPolicyBody);
+        OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { l: loanPolicyBody.id, i: lostItemFeePolicyBody.id, o: overdueFinePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
     OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    LoanPolicy.createViaApi(loanPolicyBody);
-    OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
     UsersOwners.createViaApi(userOwnerBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.l = loanPolicyBody.id;
-      ruleProps.i = lostItemFeePolicyBody.id;
-      ruleProps.o = overdueFinePolicyBody.id;
-      addedCirculationRule = `t ${testData.loanTypeId}: i ${ruleProps.i} l ${ruleProps.l} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
     cy.createTempUser(
       [
         permissions.checkoutAll.gui,
@@ -192,7 +184,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   after('delete test data', () => {
     cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     LoanPolicy.deleteApi(loanPolicyBody.id);
     OverdueFinePolicy.deleteViaApi(overdueFinePolicyBody.id);
