@@ -50,15 +50,15 @@ describe('Create new MARC bib', () => {
         ['h', 't'],
         ['v', '$'],
       ],
-      tags: {
-        tag245: '245',
-        tag246: '246',
-        tagLDR: 'LDR',
-      },
-      fieldContents: {
-        tag245Content: 'New title',
-        tagLDRContent: '00000naa\\a2200000uu\\4500',
-      },
+    },
+    tags: {
+      tag245: '245',
+      tag246: '246',
+      tagLDR: 'LDR',
+    },
+    fieldContents: {
+      tag245Content: 'New title',
+      tagLDRContent: '00000naa\\a2200000uu\\4500',
     },
   };
 
