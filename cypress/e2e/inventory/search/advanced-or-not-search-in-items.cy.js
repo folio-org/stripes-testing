@@ -61,7 +61,7 @@ describe('Inventory -> Advanced search', () => {
             holdings: [
               {
                 holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: instance.defaultLocation.id,
+                permanentLocationId: testData.locationsId,
                 callNumber: instance.callNumber,
               },
             ],
@@ -73,14 +73,7 @@ describe('Inventory -> Advanced search', () => {
               },
             ],
           }).then((instanceIds) => {
-            testData.instances[index].id = instanceIds.instanceId;
-            testData.instances[index].itemId = instanceIds.itemIds[0].id;
-            cy.getHoldings({
-              limit: 1,
-              query: `"instanceId"="${instanceIds.instanceId}"`,
-            }).then((items) => {
-              testData.instances[index].uuid = items[0].uuid;
-            });
+            testData.instances[index].ids = instanceIds;
           });
         });
       });
@@ -114,17 +107,13 @@ describe('Inventory -> Advanced search', () => {
     'C400623 Search Items using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
+      const firstItemUUid = testData.instances[0].ids.holdingIds[0].itemIds[0];
       InventorySearchAndFilter.switchToItem();
       InventoryInstances.clickAdvSearchButton();
-      InventoryInstances.fillAdvSearchRow(
+      InventoryInstances.fillAdvSearchRow(0, firstItemUUid, 'Exact phrase', 'Item UUID');
+      InventoryInstances.checkAdvSearchModalItemValues(
         0,
-        testData.instances[0].uuid,
-        'Exact phrase',
-        'Item UUID',
-      );
-      InventoryInstances.checkAdvSearchModalValues(
-        0,
-        testData.instances[0].uuid,
+        firstItemUUid,
         'Exact phrase',
         'Item UUID',
       );
@@ -135,9 +124,9 @@ describe('Inventory -> Advanced search', () => {
         'Barcode',
         'OR',
       );
-      InventoryInstances.checkAdvSearchModalValues(
+      InventoryInstances.checkAdvSearchModalItemValues(
         1,
-        testData.instances[0].itemNote,
+        testData.instances[1].itemBarcode,
         'Contains all',
         'Barcode',
         'OR',
@@ -151,15 +140,15 @@ describe('Inventory -> Advanced search', () => {
       ]);
 
       InventoryInstances.clickAdvSearchButton();
-      InventoryInstances.checkAdvSearchModalValues(
+      InventoryInstances.checkAdvSearchModalItemValues(
         0,
-        testData.instances[0].uuid,
+        firstItemUUid,
         'Exact phrase',
         'Item UUID',
       );
-      InventoryInstances.checkAdvSearchModalValues(
+      InventoryInstances.checkAdvSearchModalItemValues(
         1,
-        testData.instances[0].itemNote,
+        firstItemUUid,
         'Contains all',
         'Barcode',
         'OR',
@@ -176,7 +165,7 @@ describe('Inventory -> Advanced search', () => {
         'Exact phrase',
         'Effective call number (item), normalized',
       );
-      InventoryInstances.checkAdvSearchModalValues(
+      InventoryInstances.checkAdvSearchModalItemValues(
         0,
         testData.instances[1].itemCallNumber,
         'Exact phrase',
@@ -189,7 +178,7 @@ describe('Inventory -> Advanced search', () => {
         'Keyword (title, contributor, identifier, HRID, UUID)',
         'NOT',
       );
-      InventoryInstances.checkAdvSearchModalValues(
+      InventoryInstances.checkAdvSearchModalItemValues(
         1,
         testData.instances[1].itemBarcode,
         'Starts with',
