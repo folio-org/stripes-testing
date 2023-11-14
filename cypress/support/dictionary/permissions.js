@@ -858,4 +858,10 @@ export default {
     internal: 'settings.loan-policies.all',
     gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
   },
+
+  // Lists
+  listsAll: {
+    internal: 'module.lists.all',
+    gui: 'Lists (Admin): All permissions',
+  },
 };
