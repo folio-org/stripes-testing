@@ -45,26 +45,26 @@ describe('bulk-edit', () => {
                 // "Copy note" Item note type
                 itemNoteTypeId: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
                 note: notes.copyNote,
-                staffOnly: false
+                staffOnly: false,
               },
               {
                 // "Copy note" Item note type staffOnly
                 itemNoteTypeId: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
                 note: notes.copyNoteStaffOnly,
-                staffOnly: true
+                staffOnly: true,
               },
               {
                 // "Electronic bookplate" Item note type
                 itemNoteTypeId: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
                 note: notes.electronicBookplateNote,
-                staffOnly: false
+                staffOnly: false,
               },
               {
                 // "Electronic bookplate" Item note type staffOnly
                 itemNoteTypeId: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
                 note: notes.electronicBookplateNoteStaffOnly,
-                staffOnly: true
-              }
+                staffOnly: true,
+              },
             ];
             cy.updateItemViaApi(itemData);
             FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
@@ -96,8 +96,14 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Copy note', 'Electronic bookplate');
-        BulkEditSearchPane.verifyResultsUnderColumns('Copy note', `${notes.copyNote}|${notes.copyNoteStaffOnly}(staff only)`);
-        BulkEditSearchPane.verifyResultsUnderColumns('Electronic bookplate', `${notes.electronicBookplateNote}|${notes.electronicBookplateNoteStaffOnly}(staff only)`);
+        BulkEditSearchPane.verifyResultsUnderColumns(
+          'Copy note',
+          `${notes.copyNote}|${notes.copyNoteStaffOnly}(staff only)`,
+        );
+        BulkEditSearchPane.verifyResultsUnderColumns(
+          'Electronic bookplate',
+          `${notes.electronicBookplateNote}|${notes.electronicBookplateNoteStaffOnly}(staff only)`,
+        );
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.noteRemove('Copy note', notes.copyNote);

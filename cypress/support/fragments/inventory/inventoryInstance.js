@@ -238,6 +238,15 @@ const verifySeriesStatement = (indexRow, value) => {
   );
 };
 
+const verifySubjectHeading = (value) => {
+  cy.expect(
+    Accordion('Subject')
+      .find(MultiColumnList({ id: 'list-subject' }))
+      .find(MultiColumnListCell({ content: value }))
+      .exists(),
+  );
+};
+
 const verifyContributor = (indexRow, indexColumn, value) => {
   cy.expect(
     contributorAccordion
@@ -304,6 +313,7 @@ export default {
   openItemByBarcode,
   verifyAlternativeTitle,
   verifySeriesStatement,
+  verifySubjectHeading,
   verifyContributor,
   verifyContributorWithMarcAppLink,
 
