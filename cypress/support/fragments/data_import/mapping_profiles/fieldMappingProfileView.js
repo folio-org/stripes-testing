@@ -146,22 +146,10 @@ export default {
     );
   },
 
-  checkCalloutMessage: (profileName) => {
+  checkCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(
-          `The field mapping profile "${profileName}" was successfully updated`,
-        ),
-      }).exists(),
-    );
-  },
-
-  checkCreateProfileCalloutMessage: (profileName) => {
-    cy.expect(
-      Callout({
-        textContent: including(
-          `The field mapping profile "${profileName}" was successfully created`,
-        ),
+        textContent: including(message),
       }).exists(),
     );
   },

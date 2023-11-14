@@ -312,6 +312,15 @@ const getDefaultItemMappingProfile = (name) => {
 const fillInvoiceLineDescription = (description) => {
   cy.do(Accordion('Invoice line information').find(TextField('Description*')).fillIn(description));
 };
+const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseToExisting) => {
+  // number needs for using this method in filling fields for holdings and item profiles
+  const adminNoteFieldName = `profile.mappingDetails.mappingFields[${numberOfmappingField}].repeatableFieldAction`;
+
+  cy.do([
+    Select({ name: adminNoteFieldName }).focus(),
+    Select({ name: adminNoteFieldName }).choose(action),
+  ]);
+};
 
 export default {
   getDefaultInstanceMappingProfile,
@@ -338,6 +347,7 @@ export default {
   fillInvoiceLineDescription,
   fillFolioRecordType,
   selectOrganizationByName,
+  selectAdminNotesAction,
   save,
 
   fillMappingProfile: (specialMappingProfile = defaultMappingProfile) => {
@@ -665,16 +675,39 @@ export default {
     ]);
   },
 
-  addAdministrativeNote: (note, number, action = actions.addTheseToExisting) => {
-    // number needs for using this method in filling fields for holdings and item profiles
-    const adminNoteFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
-
+  addAdministrativeNote: (note, numberOfmappingField, action) => {
+    selectAdminNotesAction(numberOfmappingField, action);
     cy.do([
-      Select({ name: adminNoteFieldName }).focus(),
-      Select({ name: adminNoteFieldName }).choose(action),
       Button('Add administrative note').click(),
       TextField('Administrative note').fillIn(`"${note}"`),
     ]);
+  },
+
+  changedExistingAdminNote(notes, numberOfmappingField) {
+    for (let i = 0; i < notes.length; i++) {
+      const subfieldIndex = i;
+      const adminNoteNextFieldName = `profile.mappingDetails.mappingFields[${numberOfmappingField}].subfields.${subfieldIndex}.fields.0.value`;
+
+      cy.do(TextField({ name: `${adminNoteNextFieldName}` }).fillIn(notes[i]));
+    }
+  },
+
+  addAdminNoteAndValidateCorrectValue(notes, numberOfmappingField) {
+    selectAdminNotesAction(numberOfmappingField);
+    for (let i = 0; i < notes.length; i++) {
+      const subfieldIndex = i;
+      const adminNoteNextFieldName = `profile.mappingDetails.mappingFields[${numberOfmappingField}].subfields.${subfieldIndex}.fields.0.value`;
+
+      cy.do([
+        Button('Add administrative note').click(),
+        TextField({ name: `${adminNoteNextFieldName}` }).fillIn(notes[i]),
+      ]);
+      cy.expect(
+        TextField({ name: `${adminNoteNextFieldName}` }).has({
+          error: 'Non-MARC value must use quotation marks',
+        }),
+      );
+    }
   },
 
   addElectronicAccess: (
