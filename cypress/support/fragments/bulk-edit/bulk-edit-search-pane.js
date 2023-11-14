@@ -47,6 +47,7 @@ const logsStatusesAccordion = Accordion('Statuses');
 const saveAndClose = Button('Save and close');
 const textFildTo = TextField('To');
 const textFildFrom = TextField('From');
+const confirmChanges = Button('Confirm changes');
 const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
 const errorsEncounteredBtn = DropdownMenu().find(
   Button('File with errors encountered during the record matching'),
@@ -935,6 +936,9 @@ export default {
   isBuildQueryButtonDisabled(isDisabled) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);
+  },
+  isConfirmButtonDisabled(isDisabled) {
+    cy.expect(confirmChanges.has({ disabled: isDisabled }));
   },
 
   clickBuildQueryButton() {
