@@ -150,7 +150,7 @@ const getIdentifierTypes = (searchParams) => cy
     isDefaultSearchParamsRequired: false,
   })
   .then((response) => {
-    return response.body.holdingsNoteTypes;
+    return response.body.identifierTypes[0];
   });
 
 export default {

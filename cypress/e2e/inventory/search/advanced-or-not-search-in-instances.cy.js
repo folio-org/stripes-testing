@@ -40,7 +40,7 @@ describe('Inventory -> Advanced search', () => {
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           testData.materialTypeId = res.id;
         });
-        cy.getIdentifierTypes({ query: 'name="OCLC"' }).then((identifier) => {
+        InventoryInstances.getIdentifierTypes({ query: 'name="OCLC"' }).then((identifier) => {
           testData.identifierTypeId = identifier.id;
         });
       })
@@ -74,13 +74,14 @@ describe('Inventory -> Advanced search', () => {
           ],
         }).then((specialInstanceIds) => {
           testData.testInstanceIds = specialInstanceIds;
+
           cy.getInstance({
             limit: 1,
             expandAll: true,
-            query: `"id"=="${specialInstanceIds}"`,
+            query: `"id"=="${specialInstanceIds.instanceId}"`,
           }).then((instance) => {
             testData.instanceHRID = instance.hrid;
-            testData.instanceHridForSearching = instance.hrid.replace(/[^\d]/g, '');
+            testData.instanceHridForSearching = testData.instanceHRID.replace(/[^\d]/g, '');
           });
         });
       });
@@ -197,7 +198,8 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.clickSearchBtnInAdvSearchModal();
       InventoryInstances.checkAdvSearchModalAbsence();
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-      InventorySearchAndFilter.verifySearchResult([testData.instanceTitle]);
+      InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);
+      InventorySearchAndFilter.checkRowsCount(1);
     },
   );
 });
