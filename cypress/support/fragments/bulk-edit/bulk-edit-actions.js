@@ -53,6 +53,9 @@ export default {
     cy.do(startBulkEditButton.click());
     cy.wait(1000);
   },
+  verifyOptionsLength(optionsLength, count) {
+    cy.expect(optionsLength).to.eq(count);
+  },
   startBulkEditAbsent() {
     cy.expect(startBulkEditButton.absent());
   },

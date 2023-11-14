@@ -1,6 +1,6 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import testTypes from '../../../support/dictionary/testTypes';
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import devTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -22,9 +22,9 @@ describe('bulk-edit', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.createTempUser([
-        permissions.bulkEditEdit.gui,
-        permissions.bulkEditView.gui,
-        permissions.inventoryAll.gui,
+        Permissions.bulkEditEdit.gui,
+        Permissions.bulkEditView.gui,
+        Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -47,35 +47,6 @@ describe('bulk-edit', () => {
       'C356778 Verify narrow down options dropdown choices on Items in-app bulk edit form (firebird) (TaaS)',
       { tags: [testTypes.extendedPath, devTeams.firebird] },
       () => {
-        // Select "Inventory-items" record type => Select "Items barcode" from "Record identifier" dropdown
-        BulkEditSearchPane.checkItemsRadio();
-        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-        // Upload a .csv file with items barcodes (see Preconditions) by dragging it on the file drag and drop area
-        BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-        BulkEditSearchPane.waitFileUploading();
-        // Click "Actions" menu => Select "Start Bulk edit" option
-        BulkEditActions.openActions();
-        BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.isDisabledRowIcons(true);
-        //  Click "Select option" dropdown in "Options" column under "Bulk edits" accordion
-        BulkEditActions.verifyItemOptions();
-        BulkEditActions.verifyItemAdminstrativeNoteActions(0);
-        BulkEditActions.selectAction('Remove all', 0);
-        BulkEditSearchPane.isConfirmButtonDisabled(false);
-
-        function performBulkEditOptionActions(options) {
-          for (let i = 1; i <= 9 && options.length > 0; i++) {
-            // Click on the "Plus" icon
-            BulkEditActions.addNewBulkEditFilterString();
-            BulkEditActions.isDisabledRowIcons(false);
-
-            // Click "Select option" dropdown on the added row
-            BulkEditActions.verifyTheOptionsAfterSelectedOption(options[i], i);
-            BulkEditActions.selectAction('Mark as staff only', i);
-            BulkEditSearchPane.isConfirmButtonDisabled(false);
-          }
-        }
-
         const options = [
           'Administrative note',
           'Check in note',
@@ -95,30 +66,74 @@ describe('bulk-edit', () => {
           'Suppress from discovery',
         ];
 
+        function removeItem(option) {
+          for (let j = 0; j <= option.length > 0; j++) {
+            const selectedOption = option[j];
+            const indexToRemove = options.indexOf(selectedOption);
+            if (indexToRemove !== -1) {
+              options.splice(indexToRemove, 1);
+            }
+          }
+        }
+        // Select "Inventory-items" record type => Select "Items barcode" from "Record identifier" dropdown
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+        // Upload a .csv file with items barcodes (see Preconditions) by dragging it on the file drag and drop area
+        BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+        // Click "Actions" menu => Select "Start Bulk edit" option
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.isDisabledRowIcons(true);
+        //  Click "Select option" dropdown in "Options" column under "Bulk edits" accordion
+        BulkEditActions.verifyItemOptions();
+
+        BulkEditActions.verifyItemAdminstrativeNoteActions(0);
+        BulkEditActions.selectAction('Remove all', 0);
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
+        cy.wait(1000);
+        function performBulkEditOptionActions(option) {
+          for (let i = 1; i <= 9 && option.length > 0; i++) {
+            // Click on the "Plus" icon
+            BulkEditActions.addNewBulkEditFilterString();
+            BulkEditActions.isDisabledRowIcons(false);
+            // Click "Select option" dropdown on the added row
+            BulkEditActions.verifyTheOptionsAfterSelectedOption(option[i], i);
+            BulkEditActions.selectAction('Mark as staff only', i);
+            BulkEditSearchPane.isConfirmButtonDisabled(false);
+          }
+          removeItem(options);
+        }
         performBulkEditOptionActions(options);
 
         // Select "Item status" option => Select any option in "Select item status" dropdown => Click on the "Plus" icon => Click "Select option" dropdown on the added row
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.replaceItemStatus(status, 10);
-
+        removeItem(options);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.fillPermanentLoanType('Selected', 11);
+        removeItem(options);
         // Select "Temporary loan type" option => Select "Clear field" in "Select action" dropdown => Click on the "Plus" icon => Click "Select option" dropdown on the added row
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.clearTemporaryLoanType(12);
-        // Select "Permanent item location" option => Select "Clear field" in "Select action" dropdown => Click on the "Plus" icon => Click "Select option" dropdown on the added row
+        removeItem(options);
+        // // Select "Permanent item location" option => Select "Clear field" in "Select action" dropdown => Click on the "Plus" icon => Click "Select option" dropdown on the added row
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.clearPermanentLocation('item', 13);
+        removeItem(options);
         // Select "Temporary item location" option => Select "Clear field" in "Select action" dropdown => Click on the "Plus" icon
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.clearTemporaryLocation('item', 14);
+        removeItem(options);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.afterAllSelectedActions();
+        removeItem(options);
         BulkEditActions.verifyTheOptionsAfterSelectedAllOptions('Suppress from discovery', 15);
         // Click "Select option" dropdown on the added row
         BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.editSuppressFromDiscovery(true, 15);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
+        BulkEditActions.verifyOptionsLength(options.length, 0);
       },
     );
   });
