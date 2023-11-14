@@ -55,6 +55,10 @@ describe('Create new MARC bib', () => {
         tag246: '246',
         tagLDR: 'LDR',
       },
+      fieldContents: {
+        tag245Content: 'New title',
+        tagLDRContent: '00000naa\\a2200000uu\\4500',
+      },
     },
   };
 
