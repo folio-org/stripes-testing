@@ -64,7 +64,7 @@ describe('plug-in MARC authority | Search', () => {
       marc: 'marcFileForC359015.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      numOfRecords: 1,
+      numOfRecords: 2,
     },
     {
       marc: 'marcFileForC359206.mrc',
@@ -171,6 +171,7 @@ describe('plug-in MARC authority | Search', () => {
       InventoryInstance.checkSearchResultsTable();
       InventoryInstance.selectRecord();
       InventoryInstance.checkRecordDetailPage('Starr, Lisa');
+      MarcAuthorities.checkFieldAndContentExistence('100', '$a Starr, Lisa');
       InventoryInstance.closeDetailsView();
       InventoryInstance.closeFindAuthorityModal();
     },
