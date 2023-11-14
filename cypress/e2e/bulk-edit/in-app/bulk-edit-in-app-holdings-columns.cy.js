@@ -8,8 +8,6 @@ import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -72,24 +70,22 @@ describe('bulk-edit', () => {
         ].forEach((title) => {
           BulkEditSearchPane.verifyResultColumTitles(title);
         });
-        BulkEditActions.openActions();
-        BulkEditSearchPane.verifyHoldingActionShowColumns();
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
-        cy.wait(1000);
+        BulkEditSearchPane.verifyHoldingActionShowColumns();
 
-        BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
-        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Permanent location');
-        BulkEditSearchPane.changeShowColumnCheckbox('Instance (Title, Publisher, Publication date)');
-        BulkEditSearchPane.verifyResultsUnderColumns('Instance (Title, Publisher, Publication date)', item.instanceName);
+        BulkEditSearchPane.changeShowColumnCheckbox('Tags');
+        BulkEditSearchPane.changeShowColumnCheckbox('Tags');
+        BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Tags');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance (Title, Publisher, Publication date)');
+        BulkEditSearchPane.verifyChangesUnderColumns('Instance (Title, Publisher, Publication date)', item.instanceName);
 
-        BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.replaceTemporaryLocation('Online');
+        BulkEditActions.clearTemporaryLocation('holdings');
         BulkEditActions.confirmChanges();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangedResults(item.itemBarcode);
         BulkEditActions.verifySuccessBanner(1);
+        BulkEditActions.openActions();
       },
     );
   });
