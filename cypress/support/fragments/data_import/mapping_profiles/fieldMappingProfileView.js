@@ -198,9 +198,23 @@ export default {
         limit: 1000,
       },
     }).then((responce) => {
-      const batchGroupEnabled = responce.body.mappingDetails.mappingFields[9].enabled;
+      const expectedValues = {
+        enabled: 'true',
+        name: 'batchGroupId',
+        path: 'invoice.batchGroupId',
+        subfields: [],
+        value: '"FOLIO"',
+      };
 
-      expect(Boolean(batchGroupEnabled)).to.eq(true);
+      const existingValues = {
+        enabled: responce.body.mappingDetails.mappingFields[9].enabled,
+        name: responce.body.mappingDetails.mappingFields[9].name,
+        path: responce.body.mappingDetails.mappingFields[9].path,
+        subfields: responce.body.mappingDetails.mappingFields[9].subfields,
+        value: responce.body.mappingDetails.mappingFields[9].value,
+      };
+
+      expect(existingValues).to.eql(expectedValues);
     });
   },
 };
