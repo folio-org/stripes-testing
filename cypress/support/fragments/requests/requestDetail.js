@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, Select, TextField } from '@interactors/html';
 import ItemRecordView from '../inventory/item/itemRecordView';
 import InteractorsTools from '../../utils/interactorsTools';
 import {
@@ -10,6 +10,7 @@ import {
   Accordion,
   MultiColumnListCell,
   Link,
+  Modal,
 } from '../../../../interactors';
 
 const requestDetailsSection = Pane({ id: 'instance-details' });
@@ -23,6 +24,12 @@ const moveRequestButton = Button('Move request');
 const fulfillmentInProgressAccordion = Accordion({
   id: 'fulfillment-in-progress',
 });
+const cancelRequestButton = Button({ id: 'clickable-cancel-request' });
+const confirmButton = Button('Confirm');
+const confirmRequestCancellationModal = Modal('Confirm request cancellation');
+const reasonDropdown = Select('Reason for cancellation');
+const additionalInfoOptionalInput = TextField('Additional information for patron');
+const additionalInfoRequiredInput = TextField('Additional information for patron *');
 
 export default {
   waitLoading: () => {
@@ -51,6 +58,10 @@ export default {
 
   checkItemStatus: (status) => {
     cy.expect(itemInformationSection.find(KeyValue('Item status', { value: status })).exists());
+  },
+
+  checkRequestStatus: (status) => {
+    cy.expect(requestInfoSection.find(KeyValue('Request status', { value: status })).exists());
   },
 
   checkRequestsOnItem: (requests) => {
@@ -119,6 +130,46 @@ export default {
 
   openActions() {
     cy.do(actionsButton.click());
+  },
+
+  verifyCancelRequestOptionDisplayed() {
+    cy.expect(cancelRequestButton.exists());
+  },
+
+  openCancelRequest() {
+    cy.do(cancelRequestButton.click());
+  },
+
+  verifyCancelRequestModalDisplayed() {
+    cy.expect(confirmRequestCancellationModal.exists());
+  },
+
+  clickOnBackButton() {
+    cy.do(Button('Back').click());
+    cy.expect(confirmRequestCancellationModal.absent());
+  },
+
+  checkRequestCancellationModalInfo() {
+    cy.do(reasonDropdown.choose('INN-Reach'));
+    cy.expect(additionalInfoOptionalInput.exists());
+    cy.do(reasonDropdown.choose('Item Not Available'));
+    cy.expect(additionalInfoOptionalInput.exists());
+    cy.do(reasonDropdown.choose('Needed For Course Reserves'));
+    cy.expect(additionalInfoOptionalInput.exists());
+    cy.do(reasonDropdown.choose('Patron Cancelled'));
+    cy.expect(additionalInfoOptionalInput.exists());
+    cy.do(reasonDropdown.choose('Other'));
+    cy.expect([additionalInfoRequiredInput.exists(), confirmButton.has({ disabled: true })]);
+  },
+
+  confirmRequestCancellation() {
+    cy.do([reasonDropdown.choose('INN-Reach'), confirmButton.click()]);
+  },
+
+  verifyEditButtonAbsent() {
+    cy.expect(Button('Edit').absent());
+    this.openActions();
+    cy.expect(Button('Edit').absent());
   },
 
   openMoveRequest() {

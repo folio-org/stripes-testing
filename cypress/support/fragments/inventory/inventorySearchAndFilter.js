@@ -16,9 +16,8 @@ import {
   SearchField,
   Section,
   Select,
-  TextField,
   TextArea,
-  TextInput,
+  TextField,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
@@ -45,7 +44,7 @@ const instanceStatusAccordion = Accordion({ id: 'instanceStatus' });
 const tagsAccordion = Accordion({ id: 'instancesTags' });
 const keywordInput = TextArea({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
-const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
+const inventorySearchAndFilter = TextArea({ id: 'input-inventory-search' });
 const inventorySearchAndFilterInput = Select({
   id: 'input-inventory-search-qindex',
 });
@@ -797,5 +796,23 @@ export default {
 
   clickAccordionByName(accordionName) {
     cy.do(Accordion(accordionName).clickHeader());
+  },
+
+  verifyFilterOptionCount(accordionName, optionName, expectedCount) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(
+          HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
+        )
+        .exists(),
+    );
+  },
+
+  selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
+    const checkbox = Accordion(accordionName).find(Checkbox(optionName));
+    cy.do(checkbox.click());
+    // wait for facet options to reload in all facets
+    cy.wait(ONE_SECOND);
+    cy.expect(checkbox.has({ checked: selected }));
   },
 };

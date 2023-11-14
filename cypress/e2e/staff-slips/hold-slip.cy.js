@@ -26,8 +26,6 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Check In - Actions', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const userData = {};
   const requestUserData = {};
   const patronGroup = {
@@ -94,38 +92,21 @@ describe('Check In - Actions', () => {
           itemData.holdingId = specialInstanceIds.holdingIds[0].id;
           itemData.itemId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
     OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser(
       [permissions.checkinAll.gui, permissions.checkoutAll.gui, permissions.requestsAll.gui],
       patronGroup.name,
@@ -176,7 +157,7 @@ describe('Check In - Actions', () => {
       checkInDate: new Date().toISOString(),
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [
       testData.userServicePoint.id,
