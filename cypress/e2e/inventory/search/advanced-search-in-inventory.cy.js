@@ -51,7 +51,7 @@ describe('Inventory -> Advanced search', () => {
       marc: 'marcBibFileC414977.mrc',
       fileName: `testMarcFileC414977.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      numberOfRecords: 14,
+      numberOfRecords: 9,
     },
   ];
 
@@ -60,7 +60,6 @@ describe('Inventory -> Advanced search', () => {
       testData.userProperties = createdUserProperties;
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         marcFiles.forEach((marcFile) => {
-          cy.visit(TopMenu.dataImportPath, { waiter: DataImport.waitLoading });
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.waitFileIsUploaded();
@@ -112,117 +111,117 @@ describe('Inventory -> Advanced search', () => {
     });
   });
 
-  // it(
-  //   'C400610 Search Instances using advanced search with "AND" operator (spitfire)',
-  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-  //   () => {
-  //     InventoryInstances.clickAdvSearchButton();
-  //     InventoryInstances.checkAdvSearchInstancesModalFields(0);
-  //     InventoryInstances.checkAdvSearchInstancesModalFields(1);
-  //     InventoryInstances.checkAdvSearchInstancesModalFields(2);
-  //     InventoryInstances.checkAdvSearchInstancesModalFields(3);
-  //     InventoryInstances.checkAdvSearchInstancesModalFields(4);
-  //     InventoryInstances.checkAdvSearchInstancesModalFields(5);
-  //     InventoryInstances.fillAdvSearchRow(
-  //       0,
-  //       'The Beatles Adv search keyword',
-  //       'Starts with',
-  //       'Keyword (title, contributor, identifier, HRID, UUID)',
-  //     );
-  //     InventoryInstances.checkAdvSearchModalValues(
-  //       0,
-  //       'The Beatles Adv search keyword',
-  //       'Starts with',
-  //       'Keyword (title, contributor, identifier, HRID, UUID)',
-  //     );
-  //     InventoryInstances.fillAdvSearchRow(
-  //       1,
-  //       'Rock music Adv search subj 001',
-  //       'Exact phrase',
-  //       'Subject',
-  //       'AND',
-  //     );
-  //     InventoryInstances.checkAdvSearchModalValues(
-  //       1,
-  //       'Rock music Adv search subj 001',
-  //       'Exact phrase',
-  //       'Subject',
-  //       'AND',
-  //     );
-  //     InventoryInstances.clickSearchBtnInAdvSearchModal();
-  //     InventoryInstances.checkAdvSearchModalAbsence();
-  //     InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-  //     InventorySearchAndFilter.verifySearchResult(testData.expectedSearchResult);
-  //     InventorySearchAndFilter.checkRowsCount(1);
-  //   },
-  // );
+  it(
+    'C400610 Search Instances using advanced search with "AND" operator (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventoryInstances.clickAdvSearchButton();
+      InventoryInstances.checkAdvSearchInstancesModalFields(0);
+      InventoryInstances.checkAdvSearchInstancesModalFields(1);
+      InventoryInstances.checkAdvSearchInstancesModalFields(2);
+      InventoryInstances.checkAdvSearchInstancesModalFields(3);
+      InventoryInstances.checkAdvSearchInstancesModalFields(4);
+      InventoryInstances.checkAdvSearchInstancesModalFields(5);
+      InventoryInstances.fillAdvSearchRow(
+        0,
+        'The Beatles Adv search keyword',
+        'Starts with',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        0,
+        'The Beatles Adv search keyword',
+        'Starts with',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.fillAdvSearchRow(
+        1,
+        'Rock music Adv search subj 001',
+        'Exact phrase',
+        'Subject',
+        'AND',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        1,
+        'Rock music Adv search subj 001',
+        'Exact phrase',
+        'Subject',
+        'AND',
+      );
+      InventoryInstances.clickSearchBtnInAdvSearchModal();
+      InventoryInstances.checkAdvSearchModalAbsence();
+      InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+      InventorySearchAndFilter.verifySearchResult(testData.expectedSearchResult);
+      InventorySearchAndFilter.checkRowsCount(1);
+    },
+  );
 
-  // it(
-  //   'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
-  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-  //   () => {
-  //     InventoryInstances.clickAdvSearchButton();
-  //     InventoryInstances.fillAdvSearchRow(
-  //       0,
-  //       '(OCoLC)on1100023840001116',
-  //       'Exact phrase',
-  //       'OCLC number, normalized',
-  //     );
-  //     InventoryInstances.checkAdvSearchModalValues(
-  //       0,
-  //       '(OCoLC)on1100023840001116',
-  //       'Exact phrase',
-  //       'OCLC number, normalized',
-  //     );
-  //     InventoryInstances.fillAdvSearchRow(
-  //       1,
-  //       'YCN00200300487',
-  //       'Contains all',
-  //       'Effective call number (item), shelving order',
-  //       'NOT',
-  //     );
-  //     InventoryInstances.checkAdvSearchModalValues(
-  //       1,
-  //       'YCN00200300487',
-  //       'Contains all',
-  //       'Effective call number (item), shelving order',
-  //       'NOT',
-  //     );
-  //     InventoryInstances.fillAdvSearchRow(
-  //       2,
-  //       createdRecordIDs[4],
-  //       'Exact phrase',
-  //       'Instance UUID',
-  //       'AND',
-  //     );
-  //     InventoryInstances.checkAdvSearchModalValues(
-  //       2,
-  //       createdRecordIDs[4],
-  //       'Exact phrase',
-  //       'Instance UUID',
-  //       'AND',
-  //     );
-  //     InventoryInstances.fillAdvSearchRow(
-  //       3,
-  //       'Adv search subj 003 Roa Romero, Laura',
-  //       'Starts with',
-  //       'Contributor',
-  //       'OR',
-  //     );
-  //     InventoryInstances.checkAdvSearchModalValues(
-  //       3,
-  //       'Adv search subj 003 Roa Romero, Laura',
-  //       'Starts with',
-  //       'Contributor',
-  //       'OR',
-  //     );
-  //     InventoryInstances.clickSearchBtnInAdvSearchModal();
-  //     InventoryInstances.checkAdvSearchModalAbsence();
-  //     InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-  //     testData.expectedSearchResultsC400616.forEach((expectedResult) => InventorySearchAndFilter.verifySearchResult(expectedResult));
-  //     InventorySearchAndFilter.checkRowsCount(2);
-  //   },
-  // );
+  it(
+    'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    () => {
+      InventoryInstances.clickAdvSearchButton();
+      InventoryInstances.fillAdvSearchRow(
+        0,
+        '(OCoLC)on1100023840001116',
+        'Exact phrase',
+        'OCLC number, normalized',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        0,
+        '(OCoLC)on1100023840001116',
+        'Exact phrase',
+        'OCLC number, normalized',
+      );
+      InventoryInstances.fillAdvSearchRow(
+        1,
+        'YCN00200300487',
+        'Contains all',
+        'Effective call number (item), shelving order',
+        'NOT',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        1,
+        'YCN00200300487',
+        'Contains all',
+        'Effective call number (item), shelving order',
+        'NOT',
+      );
+      InventoryInstances.fillAdvSearchRow(
+        2,
+        createdRecordIDs[4],
+        'Exact phrase',
+        'Instance UUID',
+        'AND',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        2,
+        createdRecordIDs[4],
+        'Exact phrase',
+        'Instance UUID',
+        'AND',
+      );
+      InventoryInstances.fillAdvSearchRow(
+        3,
+        'Adv search subj 003 Roa Romero, Laura',
+        'Starts with',
+        'Contributor',
+        'OR',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        3,
+        'Adv search subj 003 Roa Romero, Laura',
+        'Starts with',
+        'Contributor',
+        'OR',
+      );
+      InventoryInstances.clickSearchBtnInAdvSearchModal();
+      InventoryInstances.checkAdvSearchModalAbsence();
+      InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+      testData.expectedSearchResultsC400616.forEach((expectedResult) => InventorySearchAndFilter.verifySearchResult(expectedResult));
+      InventorySearchAndFilter.checkRowsCount(2);
+    },
+  );
 
   it(
     'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
@@ -267,6 +266,50 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
       InventorySearchAndFilter.verifySearchResult(testData.expectedSecondSearchResultC414977);
       InventorySearchAndFilter.checkRowsCount(1);
+
+      InventorySearchAndFilter.switchToHoldings();
+      InventoryInstances.clickAdvSearchButton();
+      InventoryInstances.fillAdvSearchRow(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.clickSearchBtnInAdvSearchModal();
+      InventoryInstances.checkAdvSearchModalAbsence();
+      InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+      testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
+        InventorySearchAndFilter.verifySearchResult(expectedResult);
+      });
+      InventorySearchAndFilter.checkRowsCount(3);
+
+      InventorySearchAndFilter.switchToItem();
+      InventoryInstances.clickAdvSearchButton();
+      InventoryInstances.fillAdvSearchRow(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.clickSearchBtnInAdvSearchModal();
+      InventoryInstances.checkAdvSearchModalAbsence();
+      InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+      testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
+        InventorySearchAndFilter.verifySearchResult(expectedResult);
+      });
+      InventorySearchAndFilter.checkRowsCount(3);
     },
   );
 });
