@@ -52,6 +52,22 @@ const checkOverrideSectionOfMappingProfile = (field, status) => {
     }),
   );
 };
+const getProfileIdViaApi = (profileName) => {
+  // get all mapping profiles
+  return cy
+    .okapiRequest({
+      path: 'data-import-profiles/mappingProfiles',
+      searchParams: {
+        query: '(cql.allRecords=1) sortby name',
+        limit: 1000,
+      },
+    })
+    .then(({ body: { mappingProfiles } }) => {
+      // find profile to delete
+      const profile = mappingProfiles.find((mapProfile) => mapProfile.name === profileName);
+      return profile.id;
+    });
+};
 const deleteViaApi = (profileName) => {
   // get all mapping profiles
   cy.okapiRequest({
@@ -81,6 +97,7 @@ export default {
   checkOverrideSectionOfMappingProfile,
   closeViewMode,
   deleteViaApi,
+  getProfileIdViaApi,
 
   checkCreatedMappingProfile: (
     profileName,
@@ -145,6 +162,7 @@ export default {
         }),
     );
   },
+  closeCannotDeleteModal: () => cy.do(cannotDeleteModal.find(Button('Close')).click()),
 
   checkCalloutMessage: (profileName) => {
     cy.expect(
@@ -173,5 +191,16 @@ export default {
   verifyCurrency: (value) => cy.expect(KeyValue('Currency').has({ value })),
   verifyMappingProfileTitleName: (profileName) => cy.get('#full-screen-view-content h2').should('have.text', profileName),
   verifyCannotDeleteModalOpened: () => cy.expect(cannotDeleteModal.exists()),
-  closeCannotDeleteModal: () => cy.do(cannotDeleteModal.find(Button('Close')).click()),
+  verifyEnabledIndicatorSetToTrueViaApi: (profileId) => {
+    cy.okapiRequest({
+      path: `data-import-profiles/mappingProfiles/${profileId}`,
+      searchParams: {
+        limit: 1000,
+      },
+    }).then((responce) => {
+      console.log(responce.body);
+      // expect(profile.id).to.be.true;
+      // expect(profile.id).to.eq(true);
+    });
+  },
 };

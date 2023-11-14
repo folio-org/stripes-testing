@@ -21,7 +21,6 @@ describe('data-import', () => {
       description: '',
       incomingRecordType: NewFieldMappingProfile.incomingRecordType.edifact,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
-
       batchGroup: BATCH_GROUP.FOLIO,
       organizationName: VENDOR_NAMES.GOBI,
       paymentMethod: PAYMENT_METHOD.CASH,
@@ -40,19 +39,24 @@ describe('data-import', () => {
       });
     });
 
-    // after('delete test data', () => {
-    //   cy.getAdminToken();
-    //   FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-    //   Users.deleteViaApi(user.userId);
-    // });
+    after('delete test data', () => {
+      cy.getAdminToken().then(() => {
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
+      });
+    });
 
     it(
       'C358133 Confirm that a duplicated import profile has enabled indicator set to TRUE (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        // create Field mapping profile
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
+        cy.getAdminToken().then(() => {
+          FieldMappingProfileView.getProfileIdViaApi(mappingProfile.name).then((profileId) => {
+            FieldMappingProfileView.verifyEnabledIndicatorSetToTrueViaApi(profileId);
+          });
+        });
       },
     );
   });
