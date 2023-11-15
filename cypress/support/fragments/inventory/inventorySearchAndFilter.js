@@ -735,11 +735,6 @@ export default {
     cy.do(browseSearchAndFilterInput.choose(option));
   },
 
-  // verifySearchOption(option, selectValue) {
-  //   cy.do(inventorySearchAndFilterInput.choose(option));
-  //   cy.expect(inventorySearchAndFilterInput.has({ value: selectValue }));
-  // },
-
   checkSearchQueryText(text) {
     cy.expect(keywordInput.has({ value: text }));
   },
