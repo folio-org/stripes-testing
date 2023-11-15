@@ -293,20 +293,6 @@ export default {
     });
   },
 
-  checkJobProfileNameAbsent(jobProfileName) {
-    waitUIToBeFiltered();
-    return cy.get('#list-data-import').then((element) => {
-      // only 100 records shows on every page
-      const resultCount =
-        element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
-
-      // verify every string in result table
-      for (let i = 0; i < resultCount; i++) {
-        cy.expect(MultiColumnListCell({ content: jobProfileName, row: i }).absent());
-      }
-    });
-  },
-
   checkByInventorySingleRecord(filter) {
     // need to wait until selected data will be displayed
     cy.wait(2000);
@@ -490,6 +476,15 @@ export default {
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
       .should('include', '200');
+  },
+
+  verifyJobProfileIsAbsntInFilter(jobProfile) {
+    cy.do(
+      Accordion({ id: 'profileIdAny' })
+        .find(Selection({ singleValue: 'Choose job profile' }))
+        .open(),
+    );
+    cy.get(jobProfile).should('not.exist');
   },
 
   noLogResultsFound: () => {

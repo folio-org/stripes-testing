@@ -93,14 +93,12 @@ describe('data-import', () => {
         LogsViewAll.filterJobsByJobProfile(jobProfile.profileName);
         LogsViewAll.checkByJobProfileName(jobProfile.profileName);
         DataImport.selectAllLogs();
-        DataImport.openActionsMenu();
         DataImport.openDeleteImportLogsModal();
         DataImport.confirmDeleteImportLogs();
         InteractorsTools.checkCalloutMessage(
           `${numberOfLogsToDelete} data import logs have been successfully deleted.`,
         );
-        LogsViewAll.filterJobsByJobProfile(jobProfile.profileName);
-        LogsViewAll.checkJobProfileNameAbsent(jobProfile.profileName);
+        LogsViewAll.verifyJobProfileIsAbsntInFilter(jobProfile.profileName);
       },
     );
   });
