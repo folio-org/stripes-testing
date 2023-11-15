@@ -24,6 +24,7 @@ const actionsButton = Button('Actions');
 
 const itemDetailsSection = orderLineDetailsSection.find(Section({ id: 'ItemDetails' }));
 const purchaseOrderLineSection = orderLineDetailsSection.find(Section({ id: 'poLine' }));
+const ongoingOrderSection = orderLineDetailsSection.find(Section({ id: 'ongoingOrder' }));
 const fundDistributionsSection = orderLineDetailsSection.find(Section({ id: 'FundDistribution' }));
 const vendorDetailsSection = orderLineDetailsSection.find(Section({ id: 'Vendor' }));
 const costDetailsSection = orderLineDetailsSection.find(Section({ id: 'CostDetails' }));
@@ -165,14 +166,18 @@ export default {
       }
     });
   },
+  checkOngoingOrderInformationSection({ ongoingOrderInformation = [] } = {}) {
+    this.checkSectionData({ details: ongoingOrderInformation, section: ongoingOrderSection });
+  },
   checkVendorDetailsSection({ vendorDetails = [] } = {}) {
-    vendorDetails.forEach(({ key, value }) => {
-      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
-    });
+    this.checkSectionData({ details: vendorDetails, section: vendorDetailsSection });
   },
   checkCostDetailsSection({ costDetails = [] } = {}) {
-    costDetails.forEach(({ key, value }) => {
-      cy.expect(costDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+    this.checkSectionData({ details: costDetails, section: costDetailsSection });
+  },
+  checkSectionData({ details, section }) {
+    details.forEach(({ key, value }) => {
+      cy.expect(section.find(KeyValue(key)).has({ value: including(value) }));
     });
   },
   checkLocationsSection({ locations = [] } = {}) {
