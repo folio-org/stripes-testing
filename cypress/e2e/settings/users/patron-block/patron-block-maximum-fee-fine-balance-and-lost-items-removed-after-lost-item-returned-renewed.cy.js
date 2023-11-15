@@ -216,27 +216,24 @@ describe('Patron Block: Lost items', () => {
         permissions.okapiTimersPatch.gui,
       ],
       patronGroup.name,
-    )
-      .then((userProperties) => {
-        userData.username = userProperties.username;
-        userData.password = userProperties.password;
-        userData.userId = userProperties.userId;
-        userData.barcode = userProperties.barcode;
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userData.userId,
-          testData.userServicePoint.id,
-        );
-        cy.getToken(userData.username, userData.password);
-        UserLoans.updateTimerForAgedToLost('minute');
-        cy.getAdminToken();
-      })
-      .then(() => {
-        cy.login(userData.username, userData.password);
-      });
+    ).then((userProperties) => {
+      userData.username = userProperties.username;
+      userData.password = userProperties.password;
+      userData.userId = userProperties.userId;
+      userData.barcode = userProperties.barcode;
+      UserEdit.addServicePointViaApi(
+        testData.userServicePoint.id,
+        userData.userId,
+        testData.userServicePoint.id,
+      );
+      cy.getToken(userData.username, userData.password);
+      UserLoans.updateTimerForAgedToLost('minute');
+      cy.getAdminToken();
+    });
   });
 
   beforeEach('Assign lost status to items', () => {
+    cy.getAdminToken();
     cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
     cy.get('@items').each((item) => {
       Checkout.checkoutItemViaApi({
@@ -273,6 +270,7 @@ describe('Patron Block: Lost items', () => {
         }
       });
     });
+    cy.login(userData.username, userData.password);
     // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(100000);

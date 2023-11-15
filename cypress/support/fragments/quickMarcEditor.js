@@ -407,6 +407,14 @@ export default {
     cy.expect(Callout(calloutMsg).exists());
   },
 
+  restoreDeletedFields: () => {
+    cy.do(deleteFieldsModal.find(cancelButtonInDeleteFieldsModal).click());
+  },
+
+  confirmDeletingFields: () => {
+    cy.do(deleteFieldsModal.find(confirmButtonInDeleteFieldsModal).click());
+  },
+
   pressCancel() {
     cy.do(cancelButton.click());
   },
