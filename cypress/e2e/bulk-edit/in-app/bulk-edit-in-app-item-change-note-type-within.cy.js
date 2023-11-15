@@ -92,26 +92,44 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note', 'Circulation Notes', 'Provenance');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Action note',
+          'Circulation Notes',
+          'Provenance',
+        );
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.changeNoteType('Action note', 'Provenance', 0);
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.changeNoteType('Check in note', 'Check out note', 1);
 
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyChangesInAreYouSureForm('Provenance', [`${notes.actionOne}(staff only)|${notes.actionTwo}`]);
-        BulkEditActions.verifyChangesInAreYouSureForm('Circulation Notes', [`Check out;${notes.checkInOne};true`, `Check out;${notes.checkInTwo};false`]);
+        BulkEditActions.verifyChangesInAreYouSureForm('Provenance', [
+          `${notes.actionOne}(staff only)|${notes.actionTwo}`,
+        ]);
+        BulkEditActions.verifyChangesInAreYouSureForm('Circulation Notes', [
+          `Check out;${notes.checkInOne};true`,
+          `Check out;${notes.checkInTwo};false`,
+        ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns('Provenance', `${notes.actionOne}(staff only)|${notes.actionTwo}`);
-        BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', `Check out;${notes.checkInOne};true`);
-        BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', `Check out;${notes.checkInTwo};false`);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Provenance',
+          `${notes.actionOne}(staff only)|${notes.actionTwo}`,
+        );
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Circulation Notes',
+          `Check out;${notes.checkInOne};true`,
+        );
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Circulation Notes',
+          `Check out;${notes.checkInTwo};false`,
+        );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           `Provenance;${notes.actionOne};true|Provenance;${notes.actionTwo};false`,
           `Check out;${notes.checkInOne};true`,
-          `Check out;${notes.checkInTwo};false`
+          `Check out;${notes.checkInTwo};false`,
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
