@@ -312,6 +312,9 @@ const getDefaultItemMappingProfile = (name) => {
 const fillInvoiceLineDescription = (description) => {
   cy.do(Accordion('Invoice line information').find(TextField('Description*')).fillIn(description));
 };
+const fillSummaryDescription = (text) => {
+  cy.do(Accordion('Summary').find(TextArea('Description')).fillIn(text));
+};
 const selectAdminNotesAction = (numberOfmappingField, action = actions.addTheseToExisting) => {
   // number needs for using this method in filling fields for holdings and item profiles
   const adminNoteFieldName = `profile.mappingDetails.mappingFields[${numberOfmappingField}].repeatableFieldAction`;
@@ -344,6 +347,7 @@ export default {
   addVolume,
   selectFromResultsList,
   fillSummaryInMappingProfile,
+  fillSummaryDescription,
   fillInvoiceLineDescription,
   fillFolioRecordType,
   selectOrganizationByName,
@@ -421,12 +425,11 @@ export default {
       incomingRecordTypeField.choose(profile.incomingRecordType),
       existingRecordType.choose(profile.typeValue),
     ]);
+    cy.wait(1000);
+    cy.get('#mapping-profiles-form').find('textarea[name="profile.description"]').clear();
+    cy.wait(1000);
     if (profile.description) {
-      cy.do(
-        Accordion('Summary')
-          .find(TextArea({ name: 'profile.description' }))
-          .fillIn(profile.description),
-      );
+      fillSummaryDescription(profile.description);
     }
     // Invoice information section
     if (profile.batchGroup) {
@@ -615,13 +618,6 @@ export default {
   fillAccessionNumber: (number) => cy.do(TextField('Accession number').fillIn(number)),
   fillCopyNumber: (number) => cy.do(TextField('Copy number').fillIn(number)),
   fillVendorInvoiceNumber: (number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
-  fillDescription: (text) => {
-    cy.do(
-      Accordion('Summary')
-        .find(TextArea({ name: 'profile.description' }))
-        .fillIn(text),
-    );
-  },
   fillQuantity: (quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal: (number) => cy.do(TextField('Sub-total*').fillIn(number)),
 
