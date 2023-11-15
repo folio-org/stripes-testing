@@ -81,5 +81,13 @@ describe('bulk-edit', () => {
         BulkEditActions.verifySuccessBanner(1);
       },
     );
+
+    it(
+      'C368481 Verify that there no errors during bulk editing Holdings with special characters (firebird) (TaaS)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+
+      },
+    );
   });
 });
