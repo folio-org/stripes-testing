@@ -17,33 +17,28 @@ describe('Create a new list', () => {
 
   before('Create a user', () => {
     cy.getAdminToken();
-    cy.createTempUser([Permissions.listsAll.gui])
-      .then((userProperties) => {
-        userData.username = userProperties.username;
-        userData.password = userProperties.password;
-        userData.userId = userProperties.userId;
-      })
-      .then(() => {
-        cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.listsPath);
-        Lists.waitLoading();
-      });
+    cy.createTempUser([Permissions.listsAll.gui]).then((userProperties) => {
+      userData.username = userProperties.username;
+      userData.password = userProperties.password;
+      userData.userId = userProperties.userId;
+    });
   });
 
   after('Delete a user', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(userData.userId);
+    cy.getUserToken(userData.username, userData.password);
     Lists.getViaApi().then((response) => {
       const filteredItem = response.body.content.find((item) => item.name === listData.name);
       Lists.deleteViaApi(filteredItem.id);
     });
+    cy.getAdminToken();
+    Users.deleteViaApi(userData.userId);
   });
 
   it(
     'C411704 Create new lists: Private list (corsair)',
     { tags: [TestTypes.criticalPath, DevTeams.corsair] },
     () => {
-      cy.loginAsAdmin();
+      cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.openNewListPane();
@@ -60,7 +55,6 @@ describe('Create a new list', () => {
       );
       cy.reload();
       Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
-        cy.log(rowIndex);
         Lists.checkResultSearch(listData, rowIndex);
       });
     },
