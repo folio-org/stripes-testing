@@ -13,18 +13,19 @@ describe('Inventory -> Advanced search', () => {
   let user;
   const randomCallNumber = `112CN${getRandomPostfix()}`;
   const testData = {
+    advSearchOption: 'Advanced search',
     instances: [
       {
-        title: `C422023_autotest_instance ${getRandomPostfix()}`,
+        title: `C422023_first_autotest_instance ${getRandomPostfix()}`,
         itemBarcode: uuid(),
       },
       {
-        title: `C422023_autotest_instance ${getRandomPostfix()}`,
+        title: `C422023_second_autotest_instance ${getRandomPostfix()}`,
         itemCallNumber: randomCallNumber,
         itemBarcode: uuid(),
       },
       {
-        title: `C422023_autotest_instance ${getRandomPostfix()}`,
+        title: `C422023_third_autotest_instance ${getRandomPostfix()}`,
         itemCallNumber: randomCallNumber,
         itemBarcode: uuid(),
       },
@@ -52,29 +53,77 @@ describe('Inventory -> Advanced search', () => {
         });
       })
       .then(() => {
-        testData.instances.forEach((instance, index) => {
-          InventoryInstances.createFolioInstanceViaApi({
-            instance: {
-              instanceTypeId: testData.instanceTypeId,
-              title: instance.title,
+        // create the first instance and holdings and item
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: testData.instances[0].title,
+          },
+          holdings: [
+            {
+              holdingsTypeId: testData.holdingTypeId,
+              permanentLocationId: testData.locationsId,
             },
-            holdings: [
-              {
-                holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: testData.locationsId,
-                callNumber: instance.callNumber,
-              },
-            ],
-            items: [
-              {
-                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                permanentLoanType: { id: testData.loanTypeId },
-                materialType: { id: testData.materialTypeId },
-              },
-            ],
-          }).then((instanceIds) => {
-            testData.instances[index].ids = instanceIds;
-          });
+          ],
+          items: [
+            {
+              barcode: testData.instances[0].itemBarcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+          ],
+        }).then((instanceIds) => {
+          testData.instances[0].ids = instanceIds;
+          testData.instances[0].ItemUuid = testData.instances[0].ids.holdingIds[0].itemIds[0];
+        });
+        // create the second instance and holdings and item
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: testData.instances[1].title,
+          },
+          holdings: [
+            {
+              holdingsTypeId: testData.holdingTypeId,
+              permanentLocationId: testData.locationsId,
+              callNumber: testData.instances[1].itemCallNumber,
+            },
+          ],
+          items: [
+            {
+              barcode: testData.instances[1].itemBarcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+          ],
+        }).then((instanceIds) => {
+          testData.instances[1].ids = instanceIds;
+        });
+        // create the third instance and holdings and item
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: testData.instances[2].title,
+          },
+          holdings: [
+            {
+              holdingsTypeId: testData.holdingTypeId,
+              permanentLocationId: testData.locationsId,
+              callNumber: testData.instances[2].itemCallNumber,
+            },
+          ],
+          items: [
+            {
+              barcode: testData.instances[2].itemBarcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: testData.loanTypeId },
+              materialType: { id: testData.materialTypeId },
+            },
+          ],
+        }).then((instanceIds) => {
+          testData.instances[2].ids = instanceIds;
         });
       });
 
@@ -99,7 +148,7 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
         testData.instances[2].itemBarcode,
       );
-      Users.deleteViaApi(testData.user.userId);
+      Users.deleteViaApi(user.userId);
     });
   });
 
@@ -107,13 +156,17 @@ describe('Inventory -> Advanced search', () => {
     'C400623 Search Items using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      const firstItemUUid = testData.instances[0].ids.holdingIds[0].itemIds[0];
       InventorySearchAndFilter.switchToItem();
       InventoryInstances.clickAdvSearchButton();
-      InventoryInstances.fillAdvSearchRow(0, firstItemUUid, 'Exact phrase', 'Item UUID');
+      InventoryInstances.fillAdvSearchRow(
+        0,
+        testData.instances[0].ItemUuid,
+        'Exact phrase',
+        'Item UUID',
+      );
       InventoryInstances.checkAdvSearchModalItemValues(
         0,
-        firstItemUUid,
+        testData.instances[0].ItemUuid,
         'Exact phrase',
         'Item UUID',
       );
@@ -134,21 +187,19 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.clickSearchBtnInAdvSearchModal();
       InventoryInstances.checkAdvSearchModalAbsence();
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-      InventorySearchAndFilter.verifySearchResult([
-        testData.instances[0].title,
-        testData.instances[1].title,
-      ]);
+      InventorySearchAndFilter.verifySearchResult(testData.instances[0].title);
+      InventorySearchAndFilter.verifySearchResult(testData.instances[1].title);
 
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.checkAdvSearchModalItemValues(
         0,
-        firstItemUUid,
+        testData.instances[0].ItemUuid,
         'Exact phrase',
         'Item UUID',
       );
       InventoryInstances.checkAdvSearchModalItemValues(
         1,
-        firstItemUUid,
+        testData.instances[1].itemBarcode,
         'Contains all',
         'Barcode',
         'OR',
@@ -173,14 +224,14 @@ describe('Inventory -> Advanced search', () => {
       );
       InventoryInstances.fillAdvSearchRow(
         1,
-        testData.instances[1].itemBarcode,
+        testData.instances[2].title,
         'Starts with',
         'Keyword (title, contributor, identifier, HRID, UUID)',
         'NOT',
       );
       InventoryInstances.checkAdvSearchModalItemValues(
         1,
-        testData.instances[1].itemBarcode,
+        testData.instances[2].title,
         'Starts with',
         'Keyword (title, contributor, identifier, HRID, UUID)',
         'NOT',
@@ -188,7 +239,7 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.clickSearchBtnInAdvSearchModal();
       InventoryInstances.checkAdvSearchModalAbsence();
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-      InventorySearchAndFilter.verifySearchResult([testData.instances[1].title]);
+      InventorySearchAndFilter.verifySearchResult(testData.instances[1].title);
     },
   );
 });
