@@ -64,10 +64,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
 
       cy.getAdminToken()
         .then(() => {
@@ -166,10 +162,15 @@ describe('Bulk Edit - Logs', () => {
                 });
             });
         });
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.barcode);
     Users.deleteViaApi(user.userId);

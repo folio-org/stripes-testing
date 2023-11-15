@@ -12,6 +12,7 @@ Cypress.Commands.add(
     body,
     isDefaultSearchParamsRequired = true,
     contentTypeHeader = 'application/json',
+    failOnStatusCode = true,
   }) => {
     const initialParams = new URLSearchParams({ ...searchParams });
     const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;
@@ -19,15 +20,19 @@ Cypress.Commands.add(
       Object.entries(DEFAULT_SEARCH_PARAMS).forEach(([key, value]) => initialParams.append(key, value));
     }
     const queryString = initialParams.toString();
+    const headersToSet = {
+      'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
+      'Content-type': contentTypeHeader,
+    };
+    if (!Cypress.env('rtrAuth')) {
+      headersToSet['x-okapi-token'] = Cypress.env('token');
+    }
     cy.request({
       method,
       url: queryString ? `${cypressEnvPath}?${queryString}` : cypressEnvPath,
-      headers: {
-        'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
-        'x-okapi-token': Cypress.env('token'),
-        'Content-type': contentTypeHeader,
-      },
+      headers: headersToSet,
       body,
+      failOnStatusCode,
     });
   },
 );

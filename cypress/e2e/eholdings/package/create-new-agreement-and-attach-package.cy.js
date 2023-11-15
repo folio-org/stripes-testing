@@ -36,6 +36,7 @@ describe('eHoldings', () => {
     });
 
     after('Deleting user, data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
       EHoldingsPackages.deletePackageViaAPI(testData.defaultPackage.data.attributes.name);
     });

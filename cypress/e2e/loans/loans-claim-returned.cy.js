@@ -116,6 +116,7 @@ describe('Loans ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
+    cy.getAdminToken();
     UsersOwners.deleteViaApi(ownerData.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     ServicePoints.deleteViaApi(servicePoint.id);

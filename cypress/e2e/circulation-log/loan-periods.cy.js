@@ -17,8 +17,6 @@ import { Parallelization, TestTypes, DevTeams, Permissions } from '../../support
 import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 let materialTypes;
-let addedCirculationRule;
-let originalCirculationRules;
 let testData;
 let userData;
 
@@ -90,59 +88,50 @@ describe('circulation-log loan period', () => {
       Permissions.checkinAll.gui,
     ]).then((userProperties) => {
       userData = userProperties;
-      cy.getAdminToken().then(() => {
-        InventoryInstances.getMaterialTypes({ limit: 3 })
-          .then((materialTypesRes) => {
-            materialTypes = materialTypesRes;
-
-            testData = {
-              folioInstances: InventoryInstances.generateFolioInstances({
-                count: 3,
-                properties: materialTypes.map(({ id }) => ({ materialType: { id } })),
-              }),
-              servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-              requestsId: '',
-            };
-            ServicePoints.createViaApi(testData.servicePoint);
-            testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-            Locations.createViaApi(testData.defaultLocation).then((location) => {
-              InventoryInstances.createFolioInstancesViaApi({
-                folioInstances: testData.folioInstances,
-                location,
-              });
+      InventoryInstances.getMaterialTypes({ limit: 3 })
+        .then((materialTypesRes) => {
+          materialTypes = materialTypesRes;
+          testData = {
+            folioInstances: InventoryInstances.generateFolioInstances({
+              count: 3,
+              properties: materialTypes.map(({ id }) => ({ materialType: { id } })),
+            }),
+            servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+            requestsId: '',
+          };
+          ServicePoints.createViaApi(testData.servicePoint);
+          testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
+          Locations.createViaApi(testData.defaultLocation).then((location) => {
+            InventoryInstances.createFolioInstancesViaApi({
+              folioInstances: testData.folioInstances,
+              location,
             });
-          })
-          .then(() => {
-            UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
-          })
-          .then(() => {
-            loanPolicies.forEach((policy) => LoanPolicy.createViaApi(policy));
-            CirculationRules.getViaApi().then((circulationRule) => {
-              originalCirculationRules = circulationRule.rulesAsText;
-              const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-              const defaultProps = [];
-
-              loanPolicies.forEach((policy) => {
-                defaultProps.push(
-                  ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${policy.id}`,
-                );
-              });
-              addedCirculationRule = materialTypes
-                .map((materialType, index) => {
-                  return `\nm ${materialType.id}: ${defaultProps[index]}`;
-                })
-                .join('');
-              CirculationRules.updateCirculationRules({
-                rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
-              });
-            });
-            cy.login(userData.username, userData.password);
           });
-      });
+        })
+        .then(() => {
+          UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
+        })
+        .then(() => {
+          testData.addedRules = [];
+          loanPolicies.forEach((policy) => LoanPolicy.createViaApi(policy));
+          materialTypes.forEach((materialType, index) => {
+            CirculationRules.addRuleViaApi(
+              { m: materialType.id },
+              { l: loanPolicies[index].id },
+            ).then((newRule) => {
+              testData.addedRules.push(newRule);
+            });
+          });
+          cy.login(userData.username, userData.password);
+        });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
+    cy.wrap(testData.addedRules).each((rule) => {
+      CirculationRules.deleteRuleViaApi(rule);
+    });
     testData.folioInstances.forEach((instance) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: instance.barcodes[0],
@@ -150,7 +139,6 @@ describe('circulation-log loan period', () => {
         checkInDate: new Date().toISOString(),
       });
     });
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     loanPolicies.forEach((policy) => {

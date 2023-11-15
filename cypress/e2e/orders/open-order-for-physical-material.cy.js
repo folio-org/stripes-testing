@@ -25,6 +25,7 @@ describe('orders: create an order', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);

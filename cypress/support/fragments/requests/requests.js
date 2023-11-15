@@ -226,42 +226,6 @@ function getRequestApi(searchParams) {
     });
 }
 
-function updateCirculationRulesApi(ruleText) {
-  return cy.okapiRequest({
-    method: 'PUT',
-    path: 'circulation/rules',
-    body: { rulesAsText: ruleText },
-    isDefaultSearchParamsRequired: false,
-  });
-}
-
-function setRequestPolicyApi(requestTypes = Object.values(REQUEST_TYPES)) {
-  /**
-   * rule comes in bespoke text format, and we need to update 'r <someId>' part.
-   * rulesAsText: "priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line\n
-                  fallback-policy: ... r 334e5a9e-94f9-4673-8d1d-ab552863886b ..."
-   */
-  const regexp = /(?<=\s)r\s+[a-zA-Z0-9-]+(?=\s)/;
-  let oldRulesAsText;
-
-  return cy
-    .okapiRequest({
-      path: 'circulation/rules',
-      isDefaultSearchParamsRequired: false,
-    })
-    .then(({ body: rule }) => {
-      oldRulesAsText = rule.rulesAsText;
-      cy.okapiRequest({
-        method: 'POST',
-        path: 'request-policy-storage/request-policies',
-        body: { id: uuid(), name: `test_all_${uuid().substring(0, 6)}`, requestTypes },
-      }).then(({ body: policy }) => {
-        rule.rulesAsText = rule.rulesAsText.replace(regexp, `r ${policy.id}`);
-        updateCirculationRulesApi(rule.rulesAsText).then(() => ({ oldRulesAsText, policy }));
-      });
-    });
-}
-
 function deleteRequestPolicyApi(policyId) {
   return cy.okapiRequest({
     method: 'DELETE',
@@ -287,9 +251,7 @@ function selectSpecifiedRequestLevel(parameter) {
 export default {
   createRequestApi,
   deleteRequestViaApi,
-  setRequestPolicyApi,
   deleteRequestPolicyApi,
-  updateCirculationRulesApi,
   getRequestApi,
   waitContentLoading,
   waitLoadingTags,

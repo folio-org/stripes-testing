@@ -69,7 +69,7 @@ describe('data-import', () => {
           barcode: '945$a',
           materialType: MATERIAL_TYPE_NAMES.BOOK,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -139,27 +139,29 @@ describe('data-import', () => {
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
-      cy.getAdminToken();
     });
 
     after('delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForUpdateWithFail.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForUpdateWithSucceed.profileName);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-      });
-      collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForUpdateWithFail.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForUpdateWithSucceed.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      });
     });
 
     it(
@@ -210,7 +212,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfilesForCreate[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -244,6 +246,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
@@ -320,6 +323,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileNameForFirstUpdate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdateWithFail.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileNameForFirstUpdate);
@@ -340,6 +344,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileNameForSecondUpdate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdateWithSucceed.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileNameForSecondUpdate);

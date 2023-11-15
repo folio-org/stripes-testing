@@ -40,6 +40,7 @@ describe('Search in Inventory', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     Users.deleteViaApi(testData.userPropertiesC358938.userId);
     createdInstanceIDs.forEach((id) => {
@@ -58,6 +59,7 @@ describe('Search in Inventory', () => {
       ];
 
       DataImport.uploadFile('Sauguet_Henri_5_Bib_records.mrc', fileNameForC360548);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -97,6 +99,7 @@ describe('Search in Inventory', () => {
       const searchQueries = ['978-92-8000-565-9', '978-92-8011-565-9'];
 
       DataImport.uploadFile('two_bib_records_with_isbn_search_by_keyword.mrc', fileNameForC360555);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();

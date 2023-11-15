@@ -76,27 +76,27 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      cy.getAdminToken().then(() => {
-        const fileName = `C17039autotestFile.${getRandomPostfix()}.mrc`;
+      const fileName = `C17039autotestFile.${getRandomPostfix()}.mrc`;
 
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile('oneMarcBib.mrc', fileName);
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
-        Logs.openFileDetails(fileName);
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile('oneMarcBib.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileName);
+      Logs.openFileDetails(fileName);
 
-        // open Instance for getting hrid
-        FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHridForReimport = initialInstanceHrId;
-        });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+        instanceHridForReimport = initialInstanceHrId;
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
@@ -127,6 +127,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -209,6 +210,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameAfterUpload);

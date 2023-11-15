@@ -8,6 +8,7 @@ import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPack
 import Users from '../../../support/fragments/users/users';
 import UHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -15,10 +16,12 @@ describe('eHoldings', () => {
     const defaultPackage = { ...EHoldingsPackages.getdefaultPackage() };
 
     afterEach(() => {
+      cy.getAdminToken();
       Users.deleteViaApi(userId);
     });
 
     after(() => {
+      cy.getAdminToken();
       EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
     });
 
@@ -67,7 +70,7 @@ describe('eHoldings', () => {
           EHoldingsPackages.openPackage().then((selectedPackage) => {
             const addedTag1 = EHoldingsPackage.addTag();
             const addedTag2 = EHoldingsPackage.addTag();
-            EHoldingsPackage.close(selectedPackage);
+            EHoldingsPackage.closePackage();
             EHoldingsPackagesSearch.byName(selectedPackage);
             EHoldingsPackages.openPackage();
             EHoldingsPackage.verifyExistingTags(addedTag1, addedTag2);
@@ -165,11 +168,11 @@ describe('eHoldings', () => {
           });
           EHoldingSearch.switchToPackages();
           EHoldingsPackagesSearch.byName();
-          EHoldingsPackages.openPackage().then((selectedPackageName) => {
+          EHoldingsPackages.openPackage().then(() => {
             // existing test data clearing
             EHoldingsPackage.removeExistingTags();
             const addedTag = EHoldingsPackage.addTag();
-            EHoldingsPackage.close(selectedPackageName);
+            EHoldingsPackage.closePackage();
             EHoldingsPackagesSearch.byTag(addedTag);
             EHoldingsPackages.openPackage();
             EHoldingsPackage.verifyExistingTags(addedTag);
@@ -208,6 +211,32 @@ describe('eHoldings', () => {
             EHoldingsPackage.saveAndClose();
             EHoldingsPackages.verifyCustomCoverageDates(yesterday, today);
           });
+        });
+      },
+    );
+
+    it(
+      'C3466 Edit/Add a token to the Gale Academic OneFile (spitfire)',
+      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      () => {
+        cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
+          userId = userProperties.userId;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsPackages.waitLoading,
+          });
+
+          const token = `Test${getRandomPostfix()}`;
+          EHoldingSearch.switchToPackages();
+          EHoldingsPackagesSearch.byName('Gale Academic OneFile');
+          EHoldingsPackages.openPackage();
+          EHoldingsPackage.editProxyActions();
+          EHoldingsPackage.changeToken(token);
+          EHoldingsPackage.saveAndClose();
+          // wait until the token to be changed
+          cy.wait(10000);
+          cy.reload();
+          EHoldingsPackage.verifyToken(token);
         });
       },
     );

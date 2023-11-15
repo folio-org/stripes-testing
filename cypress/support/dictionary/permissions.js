@@ -217,6 +217,10 @@ export default {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
   },
+  notesSettingsViewGeneralSettings: {
+    internal: 'ui-notes.settings.view',
+    gui: 'Settings (Notes): View General settings',
+  },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui: 'Tags: All permissions' },
   uiViewTagsSettings: {
@@ -327,6 +331,10 @@ export default {
   uiUserLoansAnonymize: {
     internal: 'ui-users.loans.anonymize',
     gui: 'Users: User loans anonymize',
+  },
+  uiUserLostItemRequiringActualCost: {
+    internal: 'ui-users.lost-items.requiring-actual-cost',
+    gui: 'Users: Can process lost items requiring actual cost',
   },
   uiFeeFinesActions: {
     internal: 'ui-users.feefineactions',
@@ -795,11 +803,23 @@ export default {
   },
   settingsUsersCRUD: {
     internal: 'ui-users.settings.transfers.all',
-    gui: 'Settings (Users): Can create, edit and remove transfer accounts',
+    gui: 'Settings (Users): Can create, edit and remove transfer accounts ',
   },
   uiSettingsCanChangeLoacalPassword: {
     internal: 'ui-myprofile.settings.change-password',
     gui: 'Settings (My profile): Can change your local password',
+  },
+  uiSettingsTenantPlugins: {
+    internal: 'ui-tenant-settings.settings.plugins',
+    gui: 'Settings (tenant): Can maintain preferred plugins',
+  },
+  uiSettingsTenantSSO: {
+    internal: 'ui-tenant-settings.settings.sso',
+    gui: 'Settings (tenant): Can maintain SSO settings',
+  },
+  uiSettingsTenantAddresses: {
+    internal: 'ui-tenant-settings.settings.addresses',
+    gui: 'Settings (tenant): Can manage tenant addresses',
   },
   // Added the below permissions for custom label creation
 
@@ -827,9 +847,13 @@ export default {
   },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',
-    gui: 'Transfer exports: Transfer admin',
+    gui: 'Bursar exports: Bursar admin',
   },
   // OAI-PMH
+  oaipmhViewLogs: {
+    internal: 'ui-oai-pmh.logs',
+    gui: 'Settings (OAI-PMH): Can view logs',
+  },
   oaipmhSettingsEdit: {
     internal: 'ui-oai-pmh.edit',
     gui: 'Settings (OAI-PMH): Can view and edit settings',
@@ -845,5 +869,11 @@ export default {
   settingsLoanPoliciesAll: {
     internal: 'settings.loan-policies.all',
     gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
+  },
+
+  // Lists
+  listsAll: {
+    internal: 'module.lists.all',
+    gui: 'Lists (Admin): All permissions',
   },
 };

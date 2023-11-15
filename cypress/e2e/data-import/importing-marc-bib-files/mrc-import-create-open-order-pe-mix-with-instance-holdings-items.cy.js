@@ -82,7 +82,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.COURSE_RESERVES,
-          status: `"${ITEM_STATUS_NAMES.ON_ORDER}"`,
+          status: ITEM_STATUS_NAMES.ON_ORDER,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -112,6 +112,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
@@ -165,7 +166,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -193,6 +194,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);

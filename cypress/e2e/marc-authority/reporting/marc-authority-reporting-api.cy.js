@@ -104,7 +104,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
         InventoryInstance.searchResults(marcFiles[1].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `‡a ${marcFiles[1].authority010FieldValue}`,
+          `$a ${marcFiles[1].authority010FieldValue}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
@@ -120,6 +120,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
   });
 
   after('Deleting user and data', () => {
+    cy.getAdminToken();
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
       else InventoryInstance.deleteInstanceViaApi(id);

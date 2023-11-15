@@ -57,6 +57,7 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 
