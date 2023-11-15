@@ -773,7 +773,11 @@ export default {
         .has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
       AdvancedSearchRow({ index: rowIndex })
         .find(advSearchOptionSelect)
-        .has({ value: advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] }),
+        .has({
+          value:
+            advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] ||
+            advSearchHoldingsOptions[option],
+        }),
     ]);
     if (operator) {
       cy.expect(
