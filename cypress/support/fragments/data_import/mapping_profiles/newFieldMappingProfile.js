@@ -340,6 +340,7 @@ export default {
   fillSummaryInMappingProfile,
   fillSummaryDescription,
   fillInvoiceLineDescription,
+  fillSummaryDescription,
   fillFolioRecordType,
   selectOrganizationByName,
   save,
