@@ -1,6 +1,8 @@
 import {
   Button,
   including,
+  MultiColumnList,
+  MultiColumnListRow,
   MultiColumnListCell,
   MultiColumnListHeader,
   Section,
@@ -8,6 +10,7 @@ import {
 
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const instanceDetailsPane = Section({ id: 'pane-instancedetails' });
+const resultList = MultiColumnList({ id: 'browse-results-list-callNumbers' });
 
 export default {
   clickOnResult(searchQuery) {
@@ -88,6 +91,14 @@ export default {
         const rowNumber = +element.parentElement.getAttribute('data-row-inner');
         cy.expect(MultiColumnListCell(numberOfTitles, { row: rowNumber }).exists());
       }),
+    );
+  },
+
+  checkValueInRowAndColumnName(indexRow, columnName, value) {
+    cy.expect(
+      resultList
+        .find(MultiColumnListCell({ row: indexRow, column: columnName }))
+        .has({ content: value }),
     );
   },
 };
