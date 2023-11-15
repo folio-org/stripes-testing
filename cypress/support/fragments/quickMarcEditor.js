@@ -303,6 +303,7 @@ const tag008DefaultValuesHoldings = [
 const tagBox = TextField({ name: including('.tag') });
 const firstIndicatorBox = TextField({ name: including('.indicators[0]') });
 const secondIndicatorBox = TextField({ name: including('.indicators[0]') });
+const fourthBox = TextArea({ name: including('.content') });
 const fourthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.controlled') });
 const fifthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.uncontrolledAlpha') });
 const sixthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.zeroSubfield') });
@@ -461,6 +462,39 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(arrowDownButton).click());
   },
 
+  moveFieldDownWithEnter(rowNumber) {
+    cy.get(`button[aria-labelledby="moving-row-move-down-${rowNumber}-text"]`)
+      .blur()
+      .type('{enter}');
+  },
+
+  verifyAfterMovingFieldDown(newRowNumber, tag, content) {
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(TextArea()).has({ value: content }));
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
+    cy.expect(Tooltip().has({ text: 'Move field down a row' }));
+  },
+
+  verifyAfterMovingFieldDownLastEditableRow(newRowNumber, tag, content) {
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(TextArea()).has({ value: content }));
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
+    cy.expect(Tooltip().has({ text: 'Move field up a row' }));
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(arrowDownButton).absent());
+  },
+
+  moveCursorToTagBox(rowNumber) {
+    cy.do(QuickMarcEditorRow({ index: rowNumber }).find(tagBox).focus());
+    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(tagBox).has({ focused: true }));
+  },
+
+  verifyTagBoxIsFocused(rowNumber) {
+    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(tagBox).has({ focused: true }));
+  },
+
+  movetoFourthBoxUsingTab(rowNumber) {
+    cy.get(`[name="records[${rowNumber}].tag"]`).tab().tab().tab();
+    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(fourthBox).has({ focused: true }));
+  },
+
   setRulesForField(tag, isEnabled) {
     cy.getAllRulesViaApi()
       .then((body) => {
@@ -597,6 +631,22 @@ export default {
     cy.expect(saveAndCloseButton.is({ disabled: false }));
   },
 
+  deleteFieldWithEnter(rowNumber) {
+    cy.get(`button[aria-labelledby="actions-delete-field-${rowNumber}-text"]`)
+      .blur()
+      .type('{enter}');
+  },
+
+  checkAfterDeleteField(tag) {
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
+    cy.expect(Tooltip().has({ text: 'Delete this field' }));
+  },
+
+  checkAfterDeleteLastEditableField(tag) {
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
+    cy.expect(Tooltip().has({ text: 'Move field up a row' }));
+  },
+
   afterDeleteNotification(tag) {
     cy.get('[class^=deletedRowPlaceholder-]')
       .contains('span', `Field ${tag}`)
@@ -677,11 +727,21 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).click());
   },
 
+  moveFieldUpWithEnter(rowNumber) {
+    cy.get(`button[aria-labelledby="moving-row-move-up-${rowNumber}-text"]`).blur().type('{enter}');
+  },
+
   verifyAfterMovingFieldUp(newRowNumber, tag, content) {
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(TextArea()).has({ value: content }));
     cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
     cy.expect(Tooltip().has({ text: 'Move field up a row' }));
-    // verify arrowUp button is highlighted
+  },
+
+  verifyAfterMovingFieldUpFirstEditableRow(newRowNumber, tag, content) {
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(TextArea()).has({ value: content }));
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(tagBox).has({ value: tag }));
+    cy.expect(Tooltip().has({ text: 'Move field down a row' }));
+    cy.expect(QuickMarcEditorRow({ index: newRowNumber }).find(arrowUpButton).absent());
   },
 
   checkFieldContentMatch(selector, regExp) {

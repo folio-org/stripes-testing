@@ -1,11 +1,23 @@
-import { Keyboard } from '@interactors/keyboard';
 import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import { Button } from '../../../interactors';
+import inventoryKeyboardShortcuts from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
+import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
+
+const hotKeys = InventoryHotkeys.hotKeys;
+function moveCursorBetweenSubfieldsAndCheck(rowNumber) {
+  inventoryKeyboardShortcuts.pressHotKey(hotKeys.moveToPreviousSubfield);
+  cy.get(`[name="records[${rowNumber}].content"]`).type('{insert} the first subfield is: ');
+  inventoryKeyboardShortcuts.pressHotKey(hotKeys.moveToNextSubfield);
+  cy.get(`[name="records[${rowNumber}].content"]`).type('{insert} the second subfield is: ');
+  QuickMarcEditor.checkContent(
+    '$a  the first subfield is: test5 $a  the second subfield is: test6',
+    6,
+  );
+}
 
 describe('Create new MARC bib', () => {
   const testData = {
@@ -20,6 +32,9 @@ describe('Create new MARC bib', () => {
       { tag: '300', content: '$a test5 $a test6' },
     ],
   };
+  const firstEditableRow = 4;
+  const lastEditableRow = 7;
+  const lastRow = 8;
 
   before('Create test data', () => {
     cy.getAdminToken();
@@ -45,24 +60,71 @@ describe('Create new MARC bib', () => {
     'C380717 Verify focus behavior when using field level action icons upon creation of a new "MARC bib" record (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
+      // Open New Marc Bibliographic record editor
       InventoryInstance.newMarcBibRecord();
+
+      // Add new fields
       testData.fieldValues.forEach(({ tag, content }, index) => {
-        const rowIndex = index + 4;
+        const rowIndex = firstEditableRow + index;
         QuickMarcEditor.addNewField(tag, content, rowIndex);
         QuickMarcEditor.verifyEditableFieldIcons(rowIndex + 1);
       });
       QuickMarcEditor.waitLoading();
-      QuickMarcEditor.moveFieldUp(7);
-      QuickMarcEditor.verifyAfterMovingFieldUp(6, '300', '$a test2 $a test3 $a test4');
-      // press Enter - and check again
-      cy.wait(2000);
-      cy.get('[aria-labelledby="moving-row-move-up-6-text"]').type('{enter}');
-      // cy.doButton({ ariaLabel: 'arrow-up' }).focus();
-      // cy.do(Keyboard.press({ code: 'Enter' }));
-      // QuickMarcEditor.verifyAfterMovingFieldUp(5, '300', '$a test2 $a test3 $a test4');
-      // keep moving field up until row is = 4
-      // The "Move field up a row" icon doesn't display next to the row
-      // The focus moves to the "Move field down a row" icon
+
+      // Move field up
+      QuickMarcEditor.moveFieldUp(lastEditableRow);
+      for (let i = lastEditableRow - 1; i > firstEditableRow; i--) {
+        QuickMarcEditor.verifyAfterMovingFieldUp(
+          i,
+          testData.fieldValues[2].tag,
+          testData.fieldValues[2].content,
+        );
+        QuickMarcEditor.moveFieldUpWithEnter(i);
+      }
+      QuickMarcEditor.verifyAfterMovingFieldUpFirstEditableRow(
+        4,
+        testData.fieldValues[2].tag,
+        testData.fieldValues[2].content,
+      );
+
+      // Move field down
+      QuickMarcEditor.clickArrowDownButton(firstEditableRow);
+      for (let i = firstEditableRow + 1; i < lastRow; i++) {
+        QuickMarcEditor.verifyAfterMovingFieldDown(
+          i,
+          testData.fieldValues[2].tag,
+          testData.fieldValues[2].content,
+        );
+        QuickMarcEditor.moveFieldDownWithEnter(i);
+      }
+      QuickMarcEditor.verifyAfterMovingFieldDownLastEditableRow(
+        lastRow,
+        testData.fieldValues[2].tag,
+        testData.fieldValues[2].content,
+      );
+
+      // Check text field focus by pressing Tab
+      QuickMarcEditor.addEmptyFields(4);
+      QuickMarcEditor.verifyTagBoxIsFocused(5);
+      QuickMarcEditor.movetoFourthBoxUsingTab(5);
+
+      // Delete fields
+      QuickMarcEditor.deleteField(5);
+      cy.wait(100);
+      QuickMarcEditor.deleteFieldWithEnter(5);
+      QuickMarcEditor.checkAfterDeleteField('035');
+      QuickMarcEditor.deleteField(5);
+      QuickMarcEditor.checkAfterDeleteLastEditableField('240');
+
+      // Add empty field and check that tag box is focused
+      QuickMarcEditor.addEmptyFields(5);
+      QuickMarcEditor.verifyTagBoxIsFocused(6);
+      QuickMarcEditor.deleteField(6);
+
+      // move cursor between subfields of the same field
+      QuickMarcEditor.moveCursorToTagBox(6);
+      QuickMarcEditor.movetoFourthBoxUsingTab(6);
+      moveCursorBetweenSubfieldsAndCheck(6);
     },
   );
 });
