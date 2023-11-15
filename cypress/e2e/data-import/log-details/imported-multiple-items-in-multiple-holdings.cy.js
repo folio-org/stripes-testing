@@ -54,7 +54,7 @@ describe('data-import', () => {
           name: `Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -105,7 +105,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[1].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -130,7 +130,15 @@ describe('data-import', () => {
       });
     });
 
+    beforeEach('login', () => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.dataImportPath,
+        waiter: DataImport.waitLoading,
+      });
+    });
+
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       collectionOfMappingAndActionProfiles.forEach((profile) => {
         ActionProfiles.deleteActionProfile(profile.actionProfile.name);
@@ -161,6 +169,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -190,6 +199,7 @@ describe('data-import', () => {
             holdingsData[0].itemsQuqntity,
           );
 
+          cy.getAdminToken();
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
             (instance) => {
               instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
@@ -236,6 +246,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -271,6 +282,7 @@ describe('data-import', () => {
             jsonItemTestData.forEach((value) => JsonScreenView.verifyContentInTab(value));
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 
+            cy.getAdminToken();
             cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
               (instance) => {
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
@@ -301,6 +313,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -331,6 +344,7 @@ describe('data-import', () => {
             );
           });
 
+          cy.getAdminToken();
           cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
             (instance) => {
               instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
@@ -361,6 +375,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -392,6 +407,7 @@ describe('data-import', () => {
             JsonScreenView.openItemTab();
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 
+            cy.getAdminToken();
             cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
               (instance) => {
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));

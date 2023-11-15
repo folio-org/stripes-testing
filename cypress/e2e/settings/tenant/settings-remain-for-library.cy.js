@@ -85,6 +85,7 @@ describe('Settings: Tenant', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     testData.locations.forEach(({ id, libraryId, campusId }) => {
       Locations.deleteViaApi({ id, libraryId, campusId });
     });

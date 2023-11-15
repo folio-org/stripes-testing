@@ -169,36 +169,35 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken().then(() => {
-        testData.jobProfileForCreate = jobProfileForCreate;
+      testData.jobProfileForCreate = jobProfileForCreate;
 
-        testData.forEach((specialPair) => {
-          cy.createOnePairMappingAndActionProfiles(
-            specialPair.mappingProfile,
-            specialPair.actionProfile,
-          ).then((idActionProfile) => {
-            cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
-          });
+      testData.forEach((specialPair) => {
+        cy.createOnePairMappingAndActionProfiles(
+          specialPair.mappingProfile,
+          specialPair.actionProfile,
+        ).then((idActionProfile) => {
+          cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
         });
-        SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
-          (bodyWithjobProfile) => {
-            testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-          },
-        );
-        // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathToUpload, marcFileNameForCreate);
-        JobProfiles.search(testData.jobProfileForCreate.profile.name);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileNameForCreate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFileNameForCreate);
-        FileDetails.openHoldingsInInventory('Created');
-        HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
-          holdingsHrId = initialHrId;
-        });
+      });
+      SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+        (bodyWithjobProfile) => {
+          testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+        },
+      );
+      // upload a marc file for creating of the new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePathToUpload, marcFileNameForCreate);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(testData.jobProfileForCreate.profile.name);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileNameForCreate);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(marcFileNameForCreate);
+      FileDetails.openHoldingsInInventory('Created');
+      HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
+        holdingsHrId = initialHrId;
       });
       cy.logout();
 
@@ -221,25 +220,27 @@ describe('data-import', () => {
     after('delete test data', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      MatchProfiles.deleteMatchProfile(instanceMatchProfile.profileName);
-      MatchProfiles.deleteMatchProfile(holdingsMatchProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        MatchProfiles.deleteMatchProfile(instanceMatchProfile.profileName);
+        MatchProfiles.deleteMatchProfile(holdingsMatchProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
@@ -343,7 +344,8 @@ describe('data-import', () => {
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrid = initialInstanceHrId;
           });
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(exportedFileName);
           FileDetails.openHoldingsInInventory('Updated');
           HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
         });

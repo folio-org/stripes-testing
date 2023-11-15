@@ -186,7 +186,7 @@ const openHoldings = (...holdingToBeOpened) => {
 const openItemByBarcode = (itemBarcode) => {
   cy.do(
     Section({ id: 'pane-instancedetails' })
-      .find(MultiColumnListCell({ content: itemBarcode }))
+      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );
@@ -225,6 +225,25 @@ const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
       .find(MultiColumnListRow({ index: indexRow }))
       .find(MultiColumnListCell({ columnIndex: indexColumn }))
       .has({ content: value }),
+  );
+};
+
+const verifySeriesStatement = (indexRow, value) => {
+  cy.expect(
+    titleDataAccordion
+      .find(MultiColumnList({ id: 'list-series-statement' }))
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell())
+      .has({ content: value }),
+  );
+};
+
+const verifySubjectHeading = (value) => {
+  cy.expect(
+    Accordion('Subject')
+      .find(MultiColumnList({ id: 'list-subject' }))
+      .find(MultiColumnListCell({ content: value }))
+      .exists(),
   );
 };
 
@@ -293,6 +312,8 @@ export default {
   waitInstanceRecordViewOpened,
   openItemByBarcode,
   verifyAlternativeTitle,
+  verifySeriesStatement,
+  verifySubjectHeading,
   verifyContributor,
   verifyContributorWithMarcAppLink,
 
@@ -843,11 +864,11 @@ export default {
     cy.expect(tagButton.find(HTML(including('0'))).exists());
   },
 
-  checkIsInstancePresented: (title, location, content = 'On order') => {
+  checkIsInstancePresented: (title, location, status = 'On order') => {
     cy.expect(Pane({ titleLabel: including(title) }).exists());
     cy.expect(instanceDetailsPane.find(HTML(including(location))).exists());
     openHoldings([location]);
-    cy.expect(instanceDetailsPane.find(MultiColumnListCell(content)).exists());
+    cy.expect(instanceDetailsPane.find(MultiColumnListCell(status)).exists());
   },
 
   createInstanceViaApi({
@@ -973,7 +994,12 @@ export default {
   },
 
   checkIsItemCreated: (itemBarcode) => {
-    cy.expect(Link(including(itemBarcode)).exists());
+    cy.expect(
+      Section({ id: 'pane-instancedetails' })
+        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(Button(including(itemBarcode)))
+        .exists(),
+    );
   },
 
   checkMARCSourceAtNewPane() {
@@ -1043,7 +1069,7 @@ export default {
   verifyLoan: (content) => cy.expect(MultiColumnListCell({ content }).exists()),
 
   verifyLoanInItemPage(barcode, value) {
-    cy.do(MultiColumnListCell({ content: barcode }).find(Button()).click());
+    cy.do(MultiColumnListCell({ content: barcode }).find(Button(barcode)).click());
     cy.expect(KeyValue('Temporary loan type').has({ value }));
     cy.do(Button({ icon: 'times' }).click());
   },

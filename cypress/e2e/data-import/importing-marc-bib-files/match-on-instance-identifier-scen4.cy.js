@@ -108,21 +108,23 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(user.userId);
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-        (instances) => {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        },
-      );
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForUpdate}`);
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
+          (instances) => {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          },
+        );
+      });
     });
 
     it(
@@ -146,6 +148,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
@@ -163,7 +166,8 @@ describe('data-import', () => {
           resourceIdentifiers[1].value,
           4,
         );
-        cy.go('back');
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(fileNameForCreateInstance);
         Logs.clickOnHotLink(1, 3, 'Created');
         InventoryInstance.verifyInstanceTitle(secondInstaneTitle);
         InventoryInstance.verifyResourceIdentifier(
@@ -207,6 +211,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);

@@ -106,6 +106,7 @@ describe('MARC -> MARC Bibliographic', () => {
         waiter: DataImport.waitLoading,
       });
       DataImport.uploadFile('marcFileForC360542.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -120,6 +121,7 @@ describe('MARC -> MARC Bibliographic', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     if (createdInstanceID) InventoryInstance.deleteInstanceViaApi(createdInstanceID);
     Users.deleteViaApi(testData.userProperties.userId);
     MarcFieldProtection.getListViaApi({

@@ -12,7 +12,7 @@ const maxLogsQuantityOnPage = 100;
 
 describe('data-import', () => {
   describe('Log details', () => {
-    before(() => {
+    before('create user and login', () => {
       cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
         user = userProperties;
 
@@ -29,7 +29,8 @@ describe('data-import', () => {
       });
     });
 
-    after(() => {
+    after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 

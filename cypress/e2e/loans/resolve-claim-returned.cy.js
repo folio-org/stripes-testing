@@ -74,6 +74,7 @@ describe('Loans: Claim returned', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UsersOwners.deleteViaApi(testData.owner.id);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);

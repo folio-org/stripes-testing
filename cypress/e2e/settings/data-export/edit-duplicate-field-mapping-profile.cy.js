@@ -27,19 +27,19 @@ const updatedFieldMappingProfileCalloutMessage = `The field mapping profile ${up
 const duplicatedFieldMappingProfileName = `Copy of ${profileNames[1]}`;
 const duplicatedFieldMappingProfileCalloutMessage = `The field mapping profile ${duplicatedFieldMappingProfileName} has been successfully created`;
 
-describe('Mapping profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
       permissions.dataExportEnableApp.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      profileNames.forEach((name) => {
+        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(name);
+      });
       cy.login(user.username, user.password, {
         path: TopMenu.settingsPath,
         waiter: SettingsPane.waitLoading,
-      });
-      profileNames.forEach((name) => {
-        ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(name);
       });
     });
   });
@@ -49,6 +49,7 @@ describe('Mapping profile - setup', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     [updatedFieldMappingProfileName, profileNames[1], duplicatedFieldMappingProfileName].forEach(
       (name) => {
         ExportFieldMappingProfiles.getFieldMappingProfile({ query: `"name"=="${name}"` }).then(

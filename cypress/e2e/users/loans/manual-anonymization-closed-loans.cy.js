@@ -23,6 +23,7 @@ import CirculationRules from '../../../support/fragments/circulation/circulation
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import Users from '../../../support/fragments/users/users';
+import LoanPolicy from '../../../support/fragments/circulation/loan-policy';
 
 describe('ui-users-loans: Manual anonymization in closed loans', () => {
   const newOwnerData = UsersOwners.getDefaultNewOwner();
@@ -33,9 +34,24 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
   let servicePoints = [];
   const testData = {};
   const policyIds = {};
-  let originalCirculationRules;
-  let addedCirculationRule;
   const userData = {};
+  const loanPolicyBody = {
+    id: uuid(),
+    loanable: true,
+    loansPolicy: {
+      closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
+      period: {
+        duration: 5,
+        intervalId: 'Minutes',
+      },
+      profileId: 'Rolling',
+    },
+    renewable: true,
+    renewalsPolicy: {
+      numberAllowed: 0,
+      renewFromId: 'CURRENT_DUE_DATE',
+    },
+  };
 
   before(() => {
     let source;
@@ -69,55 +85,27 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
         LostItemFeePolicy.createViaApi();
         OverdueFinePolicy.createViaApi();
         NoticePolicy.createApi();
-        cy.createLoanPolicy({
-          loanable: true,
-          loansPolicy: {
-            closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
-            period: {
-              duration: 5,
-              intervalId: 'Minutes',
-            },
-            profileId: 'Rolling',
+        LoanPolicy.createViaApi(loanPolicyBody);
+      })
+      .then(() => {
+        policyIds.loan = Cypress.env(CY_ENV.LOAN_POLICY).id;
+        policyIds.request = Cypress.env(CY_ENV.REQUEST_POLICY).id;
+        policyIds.notice = Cypress.env(CY_ENV.NOTICE_POLICY).id;
+        policyIds.overdueFine = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY).id;
+        policyIds.lostItemFee = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY).id;
+      })
+      .then(() => {
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          {
+            i: policyIds.lostItemFee,
+            l: policyIds.loan,
+            r: policyIds.request,
+            o: policyIds.overdueFine,
+            n: policyIds.notice,
           },
-          renewable: true,
-          renewalsPolicy: {
-            numberAllowed: 0,
-            renewFromId: 'CURRENT_DUE_DATE',
-          },
-        }).then(() => {
-          policyIds.loan = Cypress.env(CY_ENV.LOAN_POLICY).id;
-          policyIds.request = Cypress.env(CY_ENV.REQUEST_POLICY).id;
-          policyIds.notice = Cypress.env(CY_ENV.NOTICE_POLICY).id;
-          policyIds.overdueFine = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY).id;
-          policyIds.lostItemFee = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY).id;
-          CirculationRules.getViaApi().then((circulationRule) => {
-            originalCirculationRules = circulationRule.rulesAsText;
-            const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-            ruleProps.i = policyIds.lostItemFee;
-            ruleProps.l = policyIds.loan;
-            ruleProps.r = policyIds.request;
-            ruleProps.o = policyIds.overdueFine;
-            ruleProps.n = policyIds.notice;
-            addedCirculationRule =
-              't ' +
-              testData.loanTypeId +
-              ': i ' +
-              ruleProps.i +
-              ' l ' +
-              ruleProps.l +
-              ' r ' +
-              ruleProps.r +
-              ' o ' +
-              ruleProps.o +
-              ' n ' +
-              ruleProps.n;
-            CirculationRules.addRuleViaApi(
-              originalCirculationRules,
-              ruleProps,
-              't ',
-              testData.loanTypeId,
-            );
-          });
+        ).then((newRule) => {
+          testData.addedRule = newRule;
         });
         source = InventoryHoldings.getHoldingSources({ limit: 1 });
       })
@@ -186,12 +174,6 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
                     });
                   },
                 );
-
-                cy.login(username, password, {
-                  path: AppPaths.getClosedLoansPath(userId),
-                  waiter: LoanDetails.waitLoading,
-                });
-
                 UsersOwners.createViaApi({
                   ...newOwnerData,
                   servicePointOwner,
@@ -202,6 +184,10 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
                     ownerId: newOwnerData.id,
                   });
                 });
+                cy.login(username, password, {
+                  path: AppPaths.getClosedLoansPath(userId),
+                  waiter: LoanDetails.waitLoading,
+                });
               });
           });
         });
@@ -209,12 +195,13 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.deleteFeesFinesTypeApi(Cypress.env('feesFinesType').id);
     UsersOwners.deleteViaApi(testData.userOwnerId);
     cy.wrap(testData.itemIds).each((item) => {
       cy.deleteItemViaApi(item);
     });
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteHoldingRecordViaApi(testData.holdingId);
     InventoryInstance.deleteInstanceViaApi(testData.instanceId);
     RequestPolicy.deleteViaApi(policyIds.request);

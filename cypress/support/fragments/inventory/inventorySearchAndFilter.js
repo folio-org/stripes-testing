@@ -16,15 +16,15 @@ import {
   SearchField,
   Section,
   Select,
-  TextField,
   TextArea,
-  TextInput,
+  TextField,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
 import InventoryInstance from './inventoryInstance';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -44,8 +44,7 @@ const instanceStatusAccordion = Accordion({ id: 'instanceStatus' });
 const tagsAccordion = Accordion({ id: 'instancesTags' });
 const keywordInput = TextArea({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
-const searchTextField = TextField('Search ');
-const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
+const inventorySearchAndFilter = TextArea({ id: 'input-inventory-search' });
 const inventorySearchAndFilterInput = Select({
   id: 'input-inventory-search-qindex',
 });
@@ -331,8 +330,10 @@ export default {
 
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
+    Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
+      cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
+    });
     cy.expect([
-      browseSearchAndFilterInput.has({ content: including('Call numbers (all)') }),
       browseSearchAndFilterInput.has({ content: including('Contributors') }),
       browseSearchAndFilterInput.has({ content: including('Subjects') }),
     ]);
@@ -429,7 +430,7 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(searchTextField.fillIn(value));
+    cy.do(keywordInput.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },
@@ -795,5 +796,23 @@ export default {
 
   clickAccordionByName(accordionName) {
     cy.do(Accordion(accordionName).clickHeader());
+  },
+
+  verifyFilterOptionCount(accordionName, optionName, expectedCount) {
+    cy.expect(
+      Accordion(accordionName)
+        .find(
+          HTML({ className: including('checkbox---'), text: `${optionName}\n${expectedCount}` }),
+        )
+        .exists(),
+    );
+  },
+
+  selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
+    const checkbox = Accordion(accordionName).find(Checkbox(optionName));
+    cy.do(checkbox.click());
+    // wait for facet options to reload in all facets
+    cy.wait(ONE_SECOND);
+    cy.expect(checkbox.has({ checked: selected }));
   },
 };

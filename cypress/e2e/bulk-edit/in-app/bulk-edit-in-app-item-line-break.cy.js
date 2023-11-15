@@ -40,10 +40,6 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
 
         items.forEach((item) => {
           item.secondBarcode = 'secondBarcode_' + item.itemBarcode;
@@ -53,6 +49,10 @@ describe('bulk-edit', () => {
             `${item.itemBarcode}\n${item.secondBarcode}\n`,
           );
           InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
         InventorySearchAndFilter.byKeywords(items[0].instanceName);
         InventoryInstance.openHoldings(['']);
@@ -66,6 +66,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       items.forEach((item) => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       });

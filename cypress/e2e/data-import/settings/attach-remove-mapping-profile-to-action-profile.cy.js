@@ -24,10 +24,10 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });

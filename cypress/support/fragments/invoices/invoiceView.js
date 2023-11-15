@@ -49,10 +49,10 @@ export default {
         .click(),
     );
   },
-  selectInvoiceLine() {
+  selectInvoiceLine(index = 0) {
     cy.do(
       invoiceLinesSection
-        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListRow({ index }))
         .find(MultiColumnListCell({ columnIndex: 0 }))
         .click(),
     );

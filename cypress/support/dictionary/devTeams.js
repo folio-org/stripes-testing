@@ -7,4 +7,6 @@ export default {
   volaris: 'volaris',
   ideaLabsTests: 'ideaLabsTests',
   erm: 'erm',
+  bama: 'bama',
+  corsair: 'corsair',
 };

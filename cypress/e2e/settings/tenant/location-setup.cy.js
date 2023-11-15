@@ -4,7 +4,7 @@ import Users from '../../../support/fragments/users/users';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-describe('Settings: Location', () => {
+describe('Settings: Tenant', () => {
   const testData = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
     user: {},
@@ -33,6 +33,7 @@ describe('Settings: Location', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);

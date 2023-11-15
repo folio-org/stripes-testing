@@ -10,17 +10,11 @@ describe('ui-requests: Assign Tags to Request', () => {
   let userId;
   let requestData;
   let instanceData;
-  let oldRulesText;
-  let requestPolicyId;
   const tag = 'important';
 
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken().then(() => {
-      Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-        oldRulesText = oldRulesAsText;
-        requestPolicyId = policy.id;
-      });
       Requests.createRequestApi().then(({ createdUser, createdRequest, instanceRecordData }) => {
         userId = createdUser.id;
         requestData = createdRequest;
@@ -30,6 +24,7 @@ describe('ui-requests: Assign Tags to Request', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     cy.getInstance({
       limit: 1,
       expandAll: true,
@@ -42,8 +37,6 @@ describe('ui-requests: Assign Tags to Request', () => {
     Requests.deleteRequestViaApi(requestData.id).then(() => {
       Users.deleteViaApi(userId);
     });
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   it(
