@@ -1,6 +1,7 @@
 /* eslint-disable no-dupe-keys */
 import { including } from 'bigtest';
 import {
+  matching,
   Button,
   MultiColumnListCell,
   Pane,
@@ -14,6 +15,7 @@ import {
   Accordion,
 } from '../../../../../interactors';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
+import { escapeRegex } from '../../../utils/stringTools';
 
 const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');
@@ -179,7 +181,40 @@ export default {
     );
   },
 
+  verifyNumberOfTitlesForRowWithValueAndAuthorityIcon(value, itemCount) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(`Linked to MARC authority${value}`),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles', content: itemCount.toString() }))
+        .exists(),
+    );
+  },
+
+  verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(value, itemCount) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: matching(new RegExp('^' + escapeRegex(value))),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles', content: itemCount.toString() }))
+        .exists(),
+    );
+  },
+
   verifyNoAccordionsOnPane() {
     cy.expect(Accordion().absent());
+  },
+
+  selectRecordByTitle(title) {
+    cy.do(
+      MultiColumnListRow({
+        isContainer: true,
+        content: title,
+      })
+        .find(Link())
+        .click(),
+    );
   },
 };
