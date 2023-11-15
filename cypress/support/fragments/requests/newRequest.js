@@ -225,7 +225,6 @@ export default {
       TextField({ id: 'requestExpirationDate' }).fillIn(dateTools.getCurrentDate()),
       TextArea({ id: 'patronComments' }).fillIn(patron),
     ]);
-    this.enableTitleLevelRequest();
     cy.expect(Spinner().absent());
   },
 

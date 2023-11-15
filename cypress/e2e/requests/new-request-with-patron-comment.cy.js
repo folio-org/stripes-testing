@@ -1,6 +1,7 @@
 import TopMenu from '../../support/fragments/topMenu';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { REQUEST_TYPES } from '../../support/constants';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -9,10 +10,10 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import Requests from '../../support/fragments/requests/requests';
 
 describe('ui-requests: Request: Create a New Request with Patron Comment.', () => {
-  const folioInstances = InventoryInstances.generateFolioInstances();
-  const user = {};
   const testData = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
   };
@@ -20,30 +21,15 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
     name: `groupCheckIn ${getRandomPostfix()}`,
   };
   let requestUserData;
+  let requestId;
 
   before(() => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' }).then((users) => {
-          user.barcode = users[0].barcode;
-        });
-      })
-      .then(() => {
-        cy.getLocations({ limit: 1 }).then((res) => {
-          testData.locationId = res.id;
-        });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstancesViaApi({
-          folioInstances,
-          location: { id: testData.locationId },
-        });
-      })
-      .then(() => {
-        ServicePoints.createViaApi(testData.servicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.servicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
-      });
+    cy.getAdminToken();
+    ServicePoints.createViaApi(testData.servicePoint);
+
+    InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
+      testData.instance = instanceData;
+    });
 
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
@@ -63,17 +49,8 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
     cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
-    InventoryInstances.deleteInstanceViaApi({
-      instance: folioInstances[0],
-      servicePoint: testData.servicePoint,
-      shouldCheckIn: true,
-    });
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
+    InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+    Requests.deleteRequestViaApi(requestId);
     Users.deleteViaApi(requestUserData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });
@@ -85,13 +62,21 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
       cy.visit(TopMenu.requestsPath);
       NewRequest.openNewRequestPane();
       NewRequest.verifyRequestInformation();
-      NewRequest.enterItemInfo(folioInstances[0].barcodes[0]);
+      NewRequest.enterHridInfo(testData.instance.instanceId);
       NewRequest.enterRequestAndPatron('Test patron comment');
-      NewRequest.enterRequesterInfoWithRequestType({
-        requesterBarcode: user.barcode,
-        pickupServicePoint: 'Circ Desk 1',
-      });
+      NewRequest.enterRequesterInfoWithRequestType(
+        {
+          requesterBarcode: requestUserData.barcode,
+          pickupServicePoint: 'Circ Desk 1',
+        },
+        REQUEST_TYPES.HOLD,
+      );
       NewRequest.saveRequestAndClose();
+      cy.intercept('POST', 'circulation/requests').as('createRequest');
+      cy.wait('@createRequest').then((intercept) => {
+        requestId = intercept.response.body.id;
+        cy.location('pathname').should('eq', `/requests/view/${requestId}`);
+      });
       EditRequest.openRequestEditForm();
       EditRequest.verifyPatronCommentsFieldIsNotEditable();
       EditRequest.closeRequestPreview();
