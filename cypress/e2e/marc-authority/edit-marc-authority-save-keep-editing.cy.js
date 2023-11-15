@@ -37,7 +37,7 @@ describe('Edit Authority record', () => {
   const authorityPostfix = '?authRefType=Authorized&heading';
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const headerContent = {
-    initialContent: {
+    initialHeaderContent: {
       source: { firstName: 'ADMINISTRATOR', name: 'Diku_admin' },
       marcData: {
         headingTypeFrom1XX: 'Jackson, Peter,',
@@ -45,7 +45,7 @@ describe('Edit Authority record', () => {
         status: 'Current',
       },
     },
-    editedContent: {
+    editedHeaderContent: {
       source: { name: 'testPermFirst' },
       marcData: {
         headingTypeFrom1XX: 'Jackson, Peter - edited',
@@ -88,7 +88,7 @@ describe('Edit Authority record', () => {
         Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
-        headerContent.editedContent.source.firstName = testData.userProperties.username;
+        headerContent.editedHeaderContent.source.firstName = testData.userProperties.username;
 
         cy.login(testData.userProperties.username, testData.userProperties.password);
       });
@@ -117,8 +117,8 @@ describe('Edit Authority record', () => {
     () => {
       // Verify initial state of edit view
       QuickMarcEditor.checkHeaderFirstLine(
-        headerContent.initialContent.marcData,
-        headerContent.initialContent.source,
+        headerContent.initialHeaderContent.marcData,
+        headerContent.initialHeaderContent.source,
       );
       QuickMarcEditor.checkButtonsDisabled();
 
@@ -133,8 +133,8 @@ describe('Edit Authority record', () => {
       QuickMarcEditor.clickSaveAndKeepEditing();
       QuickMarcEditor.checkButtonsDisabled();
       QuickMarcEditor.checkHeaderFirstLine(
-        headerContent.editedContent.marcData,
-        headerContent.editedContent.source,
+        headerContent.editedHeaderContent.marcData,
+        headerContent.editedHeaderContent.source,
       );
 
       // Add field and verify button states updated
@@ -145,8 +145,8 @@ describe('Edit Authority record', () => {
       QuickMarcEditor.clickSaveAndKeepEditing();
       QuickMarcEditor.checkButtonsDisabled();
       QuickMarcEditor.checkHeaderFirstLine(
-        headerContent.editedContent.marcData,
-        headerContent.editedContent.source,
+        headerContent.editedHeaderContent.marcData,
+        headerContent.editedHeaderContent.source,
       );
 
       // Delete added field and verify states
@@ -163,8 +163,8 @@ describe('Edit Authority record', () => {
       QuickMarcEditor.checkFieldAbsense();
       QuickMarcEditor.checkButtonsDisabled();
       QuickMarcEditor.checkHeaderFirstLine(
-        headerContent.editedContent.marcData,
-        headerContent.editedContent.source,
+        headerContent.editedHeaderContent.marcData,
+        headerContent.editedHeaderContent.source,
       );
 
       // Restore deleted field and verify states
@@ -181,8 +181,8 @@ describe('Edit Authority record', () => {
       QuickMarcEditor.clickSaveAndKeepEditing();
       QuickMarcEditor.checkButtonsDisabled();
       QuickMarcEditor.checkHeaderFirstLine(
-        headerContent.editedContent.marcData,
-        headerContent.editedContent.source,
+        headerContent.editedHeaderContent.marcData,
+        headerContent.editedHeaderContent.source,
       );
 
       // Edit 010 field and verify states updated
@@ -196,7 +196,9 @@ describe('Edit Authority record', () => {
       // Save and close edit view
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseAuthority();
-      // MarcAuthority.verifyDisplay();
+      MarcAuthority.contains(testData.editedFields[0].content);
+      MarcAuthority.contains(testData.editedFields[1].content);
+      MarcAuthority.checkTagInRow(4, '016');
     },
   );
 
