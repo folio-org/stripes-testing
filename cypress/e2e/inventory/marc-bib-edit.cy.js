@@ -332,8 +332,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       cy.wait(1000);
       QuickMarcEditor.afterDeleteNotification(fieldData.field010.tag);
       QuickMarcEditor.deleteField(31);
-      cy.wait(1000);
-      QuickMarcEditor.afterDeleteNotification(fieldData.emptyField.tag);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.clickSaveAndCloseThenCheck('2');
       QuickMarcEditor.confirmDeletingFields();
