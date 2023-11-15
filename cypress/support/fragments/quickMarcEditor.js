@@ -1639,4 +1639,8 @@ export default {
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
   },
+
+  verifyNoDuplicatedFieldsWithTag: (tag) => {
+    cy.get(`input[name*=".tag"][value="${tag}"]`).then((elements) => elements.length === 1);
+  },
 };
