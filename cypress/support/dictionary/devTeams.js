@@ -8,4 +8,5 @@ export default {
   ideaLabsTests: 'ideaLabsTests',
   erm: 'erm',
   bama: 'bama',
+  corsair: 'corsair',
 };

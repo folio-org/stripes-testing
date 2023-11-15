@@ -29,14 +29,30 @@ export default {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());
   },
-  verifyLocationSetupItems() {
-    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach((item) => {
-      cy.expect(NavListItem(item).exists());
-    });
+  verifyLocationSetupItems(exist = true) {
+    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach(
+      (item) => {
+        if (exist) {
+          cy.expect(NavListItem(item).exists());
+        } else {
+          cy.expect(NavListItem(item).absent());
+        }
+      },
+    );
   },
-  verifyNoGeneralItems() {
-    [TENANTS.ADDRESSES, TENANTS.LANGUAGE_AND_LOCALIZATION, TENANTS.PREFERRED_PLUGINS, TENANTS.SSO_SETTINGS, TENANTS.SERVICE_POINTS].forEach((item) => {
-      cy.expect(NavListItem(item).absent());
+  verifyGeneralItems(exist = true) {
+    [
+      TENANTS.ADDRESSES,
+      TENANTS.LANGUAGE_AND_LOCALIZATION,
+      TENANTS.PREFERRED_PLUGINS,
+      TENANTS.SSO_SETTINGS,
+      TENANTS.SERVICE_POINTS,
+    ].forEach((item) => {
+      if (exist) {
+        cy.expect(NavListItem(item).exists());
+      } else {
+        cy.expect(NavListItem(item).absent());
+      }
     });
   },
   verifyPageTitle(title) {

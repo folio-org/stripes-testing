@@ -338,6 +338,7 @@ export default {
   addVolume,
   selectFromResultsList,
   fillSummaryInMappingProfile,
+  fillSummaryDescription,
   fillInvoiceLineDescription,
   fillSummaryDescription,
   fillFolioRecordType,

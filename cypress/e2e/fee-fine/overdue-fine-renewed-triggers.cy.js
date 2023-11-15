@@ -39,7 +39,6 @@ import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Overdue fine', () => {
-  let addedCirculationRule;
   const patronGroup = {
     name: 'groupToTestNotices' + getRandomPostfix(),
   };
@@ -54,7 +53,6 @@ describe('Overdue fine', () => {
   };
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    ruleProps: {},
   };
   const noticeTemplates = [
     createNoticeTemplate({
@@ -246,11 +244,6 @@ describe('Overdue fine', () => {
             testData.userServicePoint.id,
           );
 
-          cy.getCirculationRules().then((response) => {
-            testData.baseRules = response.rulesAsText;
-            testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-          });
-
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
@@ -273,10 +266,10 @@ describe('Overdue fine', () => {
       });
     });
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     OverdueFinePolicy.deleteViaApi(overdueFinePolicyBody.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
@@ -318,30 +311,16 @@ describe('Overdue fine', () => {
 
       cy.getAdminToken();
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-        testData.ruleProps.n = noticePolicyRes[0].id;
-        testData.ruleProps.l = loanPolicyBody.id;
-        testData.ruleProps.o = overdueFinePolicyBody.id;
-        addedCirculationRule =
-          't ' +
-          testData.loanTypeId +
-          ': i ' +
-          testData.ruleProps.i +
-          ' l ' +
-          testData.ruleProps.l +
-          ' r ' +
-          testData.ruleProps.r +
-          ' o ' +
-          testData.ruleProps.o +
-          ' n ' +
-          testData.ruleProps.n;
+        testData.noticePolicyId = noticePolicyRes[0].id;
         CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          't ',
-          testData.loanTypeId,
-        );
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId, l: loanPolicyBody.id, o: overdueFinePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);
@@ -349,8 +328,10 @@ describe('Overdue fine', () => {
       Checkout.verifyResultsInTheRow([itemData.barcode]);
       CheckOutActions.endCheckOutSession();
 
+      cy.getAdminToken();
       UserLoans.changeDueDateForAllOpenPatronLoans(userData.userId, -1);
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
