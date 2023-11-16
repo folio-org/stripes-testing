@@ -26,6 +26,8 @@ const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const nextButton = Button({ id: 'list-data-import-next-paging-button' });
 const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
 const logsResultPane = PaneContent({ id: 'pane-results-content' });
+const collapseButton = Button({ icon: 'caret-left' });
+const expandButton = Button({ icon: 'caret-right' });
 
 function getCheckboxByRow(row) {
   return MultiColumnList()
@@ -481,4 +483,10 @@ export default {
   noLogResultsFound: () => {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
   },
+
+  collapseButtonClick: () => cy.do(collapseButton.click()),
+
+  expandButtonClick: () => cy.do(expandButton.click()),
+
+  checkSearchPaneCollapsed: () => cy.expect(Pane('Search & filter').absent()),
 };
