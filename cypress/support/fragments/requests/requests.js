@@ -16,8 +16,8 @@ import {
   Section,
   Heading,
   Spinner,
-  Form,
   Link,
+  Select,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -44,7 +44,7 @@ const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' }
 const instanceDetailsSection = Pane({ id: 'instance-details' });
 const actionsButtonInInstanceDetailsSection = instanceDetailsSection.find(Button('Actions'));
 const editButton = Button({ id: 'clickable-edit-request' });
-const editRequestDetailsSection = Form({ id: 'form-requests' });
+const requestExpirationDateInput = TextField({ id: 'requestExpirationDate' });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
@@ -573,6 +573,10 @@ export default {
     cy.do([actionsButtonInInstanceDetailsSection.click(), editButton.click()]);
   },
 
+  setExpirationDate(value) {
+    cy.do(requestExpirationDateInput.fillIn(value));
+  },
+
   verifyItemInformation: (itemBarcode, effectiveLocation, title) => {
     const itemInformation = Section({ id: 'new-item-info' });
     cy.expect([
@@ -599,8 +603,39 @@ export default {
       requesterInformation.find(Link(including(userFullName))).exists(),
       requesterInformation.find(Link(including(userBarcode))).exists(),
       requesterInformation.find(HTML(including('Requester patron group'))).exists(),
-      requesterInformation.find(HTML(including('staff'))).exists(),
     ]);
+  },
+
+  verifyRequestInformation(requestType, requestStatus, patronComments) {
+    const requestInformation = Section({ id: 'new-request-info' });
+    cy.expect([
+      requestInformation.find(HTML(including('Request type'))).exists(),
+      requestInformation.find(HTML(including(requestType))).exists(),
+      requestInformation.find(HTML(including('Request status'))).exists(),
+      requestInformation.find(HTML(including(requestStatus))).exists(),
+      requestInformation.find(HTML(including('Request expiration date'))).exists(),
+      requestInformation.find(HTML(including('Patron comments'))).exists(),
+      requestInformation.find(HTML(including(patronComments))).exists(),
+      requestInformation.find(HTML(including('Hold shelf expiration date'))).exists(),
+      requestInformation.find(HTML(including('Fulfillment preference'))).exists(),
+      requestInformation.find(HTML(including('Pickup service point'))).exists(),
+    ]);
+  },
+
+  verifyFulfillmentPreferenceDropdown(value) {
+    cy.get("select[name='fulfillmentPreference'] option:selected").should('have.value', value);
+  },
+
+  verifyServicePointDropdown(value) {
+    cy.get("select[name='pickupServicePointId'] option:selected").should('have.value', value);
+  },
+
+  pickupServicePoint(value) {
+    cy.do(Select({ name: 'pickupServicePointId' }).choose(value));
+  },
+
+  saveAndClose() {
+    cy.do(Button('Save & close').click());
   },
 
   checkCellInCsvFileContainsValue(fileName, rowNumber = 1, columnNumber, value) {
