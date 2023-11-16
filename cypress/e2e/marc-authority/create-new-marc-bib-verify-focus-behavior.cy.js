@@ -4,20 +4,7 @@ import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import inventoryKeyboardShortcuts from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
-import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
-
-const hotKeys = InventoryHotkeys.hotKeys;
-function moveCursorBetweenSubfieldsAndCheck(rowNumber) {
-  inventoryKeyboardShortcuts.pressHotKey(hotKeys.moveToPreviousSubfield);
-  cy.get(`[name="records[${rowNumber}].content"]`).type('{insert} the first subfield is: ');
-  inventoryKeyboardShortcuts.pressHotKey(hotKeys.moveToNextSubfield);
-  cy.get(`[name="records[${rowNumber}].content"]`).type('{insert} the second subfield is: ');
-  QuickMarcEditor.checkContent(
-    '$a  the first subfield is: test5 $a  the second subfield is: test6',
-    6,
-  );
-}
+import InventoryKeyboardShortcuts from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
 
 describe('Create new MARC bib', () => {
   const testData = {
@@ -124,7 +111,7 @@ describe('Create new MARC bib', () => {
       // move cursor between subfields of the same field
       QuickMarcEditor.moveCursorToTagBox(6);
       QuickMarcEditor.movetoFourthBoxUsingTab(6);
-      moveCursorBetweenSubfieldsAndCheck(6);
+      InventoryKeyboardShortcuts.moveCursorBetweenSubfieldsAndCheck(6);
     },
   );
 });
