@@ -179,4 +179,50 @@ describe('Invoices', () => {
       });
     },
   );
+
+  it(
+    'C400618 Initial encumbrance amount remains the same as it was before payment after cancelling related paid credit invoice (another related paid invoice exists) (thunderjet) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    () => {
+      Invoices.changeInvoiceStatusViaApi({
+        invoice: testData.invoices[1],
+        status: INVOICE_STATUSES.PAID,
+      });
+
+      // Search invoice in the table
+      Invoices.searchByNumber(testData.invoices[1].vendorInvoiceNo);
+      Invoices.selectInvoice(testData.invoices[1].vendorInvoiceNo);
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.PAID }],
+      });
+
+      // Click "Actions" button, Select "Cancel" option, Click "Submit" button
+      InvoiceView.cancelInvoice();
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.CANCELLED }],
+      });
+
+      // Click invoice line record on invoice
+      const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
+      InvoiceLineDetails.checkFundDistibutionTableContent([
+        { name: testData.fund.name, encumbrance: '100.00' },
+      ]);
+
+      // Click "Current encumbrance" link in "Fund distribution" accordion
+      const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+          { key: 'Amount', value: '100.00' },
+          { key: 'Source', value: testData.orderLine.poLineNumber },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Initial encumbrance', value: '110.00' },
+          { key: 'Awaiting payment', value: '0.00' },
+          { key: 'Expended', value: '10.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
+    },
+  );
 });
