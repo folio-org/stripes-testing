@@ -11,7 +11,6 @@ describe('eHoldings', () => {
 
     beforeEach(() => {
       cy.createTempUser([
-        Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.moduleeHoldingsEnabled.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
@@ -47,6 +46,33 @@ describe('eHoldings', () => {
         EHoldingsProvidersSearch.byProvider(providerTitle);
         EHoldingsProviders.viewProvider();
         EHoldingsProviders.verifyProviderHeaderTitle(providerTitle);
+      },
+    );
+
+    it(
+      'C367967 Verify that "Packages" accordion will return records after collapsing/expanding in "Provider" detail record. (spitfire)',
+      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      () => {
+        const providerTitle = 'Wiley';
+        EHoldingsProvidersSearch.byProvider(providerTitle);
+        EHoldingsProviders.viewProvider();
+        EHoldingsProviders.verifyProviderHeaderTitle(providerTitle);
+        EHoldingsProviders.verifyPackagesAccordionExpanded('true');
+        EHoldingsProviders.verifyPackagesAvailable();
+        EHoldingsProviders.packageAccordionClick();
+        EHoldingsProviders.verifyPackagesAccordionExpanded('false');
+        EHoldingsProviders.packageAccordionClick();
+        EHoldingsProviders.verifyPackagesAccordionExpanded('true');
+        EHoldingsProviders.verifyPackagesAvailable();
+        EHoldingsProviders.verifyPackageButtonClick('Collapse all', 'false');
+        EHoldingsProviders.packageAccordionClick();
+        EHoldingsProviders.verifyPackagesAccordionExpanded('true');
+        EHoldingsProviders.verifyPackagesAvailable();
+        EHoldingsProviders.packageAccordionClick();
+        EHoldingsProviders.verifyPackagesAccordionExpanded('false');
+        EHoldingsProviders.verifyPackageButtonClick('Expand all', 'true');
+        EHoldingsProviders.verifyPackagesAccordionExpanded('true');
+        EHoldingsProviders.verifyPackagesAvailable();
       },
     );
   });

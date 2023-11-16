@@ -22,6 +22,17 @@ const filterStatuses = {
   selected: 'Selected',
   notSelected: 'Not selected',
 };
+const accordionClick = Button({
+  id: 'accordion-toggle-button-providerShowProviderList',
+});
+const tagsClick = Button({ id: 'accordion-toggle-button-providerShowTags' });
+const providerClick = Button({
+  id: 'accordion-toggle-button-providerShowProviderSettings',
+});
+const notesClick = Button({ id: 'accordion-toggle-button-providerShowNotes' });
+const packagesClick = Button({
+  id: 'accordion-toggle-button-providerShowProviderInformation',
+});
 
 export default {
   waitLoading: () => {
@@ -80,5 +91,36 @@ export default {
 
   verifyProviderHeaderTitle: (title) => {
     cy.expect(PaneHeader(title).exists());
+  },
+
+  verifyPackagesAccordionExpanded(open) {
+    cy.expect(accordionClick.has({ ariaExpanded: open }));
+  },
+
+  verifyPackagesAvailable(rowNumber = 0) {
+    cy.expect(
+      packagesSection
+        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
+        .find(Button())
+        .exists()
+    );
+  },
+
+  packageAccordionClick() {
+    cy.expect(accordionClick.exists());
+    cy.do([accordionClick.click()]);
+    cy.expect(Spinner().absent());
+  },
+
+  verifyPackageButtonClick(name, open) {
+    cy.expect(Button(name).exists());
+    cy.do(Button(name).click());
+    cy.expect([
+      accordionClick.has({ ariaExpanded: open }),
+      tagsClick.has({ ariaExpanded: open }),
+      providerClick.has({ ariaExpanded: open }),
+      notesClick.has({ ariaExpanded: open }),
+      packagesClick.has({ ariaExpanded: open }),
+    ]);
   },
 };
