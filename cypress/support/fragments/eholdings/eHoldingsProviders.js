@@ -22,15 +22,15 @@ const filterStatuses = {
   selected: 'Selected',
   notSelected: 'Not selected',
 };
-const accordionClick = Button({
+const packagesAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderList',
 });
-const tagsClick = Button({ id: 'accordion-toggle-button-providerShowTags' });
-const providerClick = Button({
+const tagsAccordion = Button({ id: 'accordion-toggle-button-providerShowTags' });
+const providerAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderSettings',
 });
-const notesClick = Button({ id: 'accordion-toggle-button-providerShowNotes' });
-const packagesClick = Button({
+const notesAccordion = Button({ id: 'accordion-toggle-button-providerShowNotes' });
+const providerInfAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderInformation',
 });
 
@@ -94,7 +94,7 @@ export default {
   },
 
   verifyPackagesAccordionExpanded(open) {
-    cy.expect(accordionClick.has({ ariaExpanded: open }));
+    cy.expect(packagesAccordion.has({ ariaExpanded: open }));
   },
 
   verifyPackagesAvailable(rowNumber = 0) {
@@ -107,8 +107,8 @@ export default {
   },
 
   packageAccordionClick() {
-    cy.expect(accordionClick.exists());
-    cy.do([accordionClick.click()]);
+    cy.expect(packagesAccordion.exists());
+    cy.do([packagesAccordion.click()]);
     cy.expect(Spinner().absent());
   },
 
@@ -116,11 +116,11 @@ export default {
     cy.expect(Button(name).exists());
     cy.do(Button(name).click());
     cy.expect([
-      accordionClick.has({ ariaExpanded: open }),
-      tagsClick.has({ ariaExpanded: open }),
-      providerClick.has({ ariaExpanded: open }),
-      notesClick.has({ ariaExpanded: open }),
-      packagesClick.has({ ariaExpanded: open }),
+      packagesAccordion.has({ ariaExpanded: open }),
+      tagsAccordion.has({ ariaExpanded: open }),
+      providerAccordion.has({ ariaExpanded: open }),
+      notesAccordion.has({ ariaExpanded: open }),
+      providerInfAccordion.has({ ariaExpanded: open }),
     ]);
   },
 };
