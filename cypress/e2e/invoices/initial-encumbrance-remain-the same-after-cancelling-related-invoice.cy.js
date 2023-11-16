@@ -99,6 +99,52 @@ describe('Invoices', () => {
   });
 
   it(
+    'C400612 Initial encumbrance amount remains the same as it was before payment after cancelling one of related paid invoice (thunderjet) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    () => {
+      Invoices.changeInvoiceStatusViaApi({
+        invoice: testData.invoices[1],
+        status: INVOICE_STATUSES.PAID,
+      });
+
+      // Search invoice in the table
+      Invoices.searchByNumber(testData.invoices[0].vendorInvoiceNo);
+      Invoices.selectInvoice(testData.invoices[0].vendorInvoiceNo);
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.PAID }],
+      });
+
+      // Click "Actions" button, Select "Cancel" option, Click "Submit" button
+      InvoiceView.cancelInvoice();
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.CANCELLED }],
+      });
+
+      // Click invoice line record on invoice
+      const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
+      InvoiceLineDetails.checkFundDistibutionTableContent([
+        { name: testData.fund.name, encumbrance: '80.00' },
+      ]);
+
+      // Click "Current encumbrance" link in "Fund distribution" accordion
+      const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+          { key: 'Amount', value: '80.00' },
+          { key: 'Source', value: testData.orderLine.poLineNumber },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Initial encumbrance', value: '110.00' },
+          { key: 'Awaiting payment', value: '0.00' },
+          { key: 'Expended', value: '30.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
+    },
+  );
+
+  it(
     'C400614 Initial encumbrance amount remains the same as it was before payment after cancelling related paid invoice (another related approved invoice exists) (thunderjet) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
     () => {
