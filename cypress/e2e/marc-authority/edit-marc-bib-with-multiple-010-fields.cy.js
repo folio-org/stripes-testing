@@ -72,7 +72,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       // #5 Click on the "Actions" button placed on the third pane >> Select "Edit MARC bibliographic record" option.
       InventoryInstance.editMarcBibliographicRecord();
       // * Two fields "010" are shown.
-      InventoryInstance.verifyNumOfFieldsWithTag(testData.tag010, 2);
+      QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 2);
 
       // #6 Edit any field of "MARC Bibliographic" record (except "010").
       QuickMarcEditor.updateExistingField('245', `$a ${getRandomPostfix()}`);
