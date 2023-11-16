@@ -69,7 +69,7 @@ export default {
       OpenConfirmationModal.confirm();
     }
   },
-  unOpenOrder({ orderNumber, checkinItems = false, confirm = true } = {}) {
+  unOpenOrder({ orderNumber, checkinItems = false, confirm = true, submit = false } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('Unopen').click());
 
@@ -78,8 +78,10 @@ export default {
     }
 
     if (confirm) {
-      UnopenConfirmationModal.confirm();
+      UnopenConfirmationModal.confirm({ submit });
     }
+
+    // The Purchase order - <order number> has been successfully unopened
   },
   reOpenOrder({ orderNumber, checkMessage = true } = {}) {
     this.expandActionsDropdown();
@@ -148,6 +150,30 @@ export default {
         );
       }
     });
+  },
+  checkOrderLinesTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.poLineNumber) {
+        cy.expect(
+          polListingAccordion
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.poLineNumber) }),
+        );
+      }
+      if (record.poLineTitle) {
+        cy.expect(
+          polListingAccordion
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.poLineTitle) }),
+        );
+      }
+    });
+
+    if (!records.length) {
+      cy.expect(polListingAccordion.has({ text: including('The list contains no items') }));
+    }
   },
   checkIsItemsInInventoryCreated(title, location) {
     openPolDetails(title);

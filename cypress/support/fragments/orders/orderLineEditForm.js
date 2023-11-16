@@ -22,6 +22,7 @@ const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
 
 const cancelButtom = Button('Cancel');
 const saveButtom = Button('Save & close');
+const saveAndOpenOrderButtom = Button('Save & open order');
 
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
@@ -46,6 +47,7 @@ const costDetailsFields = {
 const buttons = {
   Cancel: cancelButtom,
   'Save & close': saveButtom,
+  'Save & open order': saveAndOpenOrderButtom,
 };
 
 export default {
@@ -156,6 +158,25 @@ export default {
         matching(new RegExp(OrderStates.orderLineUpdatedSuccessfully)),
       );
     }
+    // wait for changes to be applied
+    cy.wait(2000);
+  },
+  clickSaveAndOpenOrderButton({ orderOpened = true, orderLineCreated = true } = {}) {
+    cy.expect(saveAndOpenOrderButtom.has({ disabled: false }));
+    cy.do(saveAndOpenOrderButtom.click());
+
+    if (orderOpened) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(OrderStates.orderOpenedSuccessfully)),
+      );
+    }
+
+    if (orderLineCreated) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(OrderStates.orderLineCreatedSuccessfully)),
+      );
+    }
+
     // wait for changes to be applied
     cy.wait(2000);
   },
