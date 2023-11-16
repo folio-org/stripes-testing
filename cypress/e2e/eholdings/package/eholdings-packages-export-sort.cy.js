@@ -93,13 +93,13 @@ describe('eHoldings', () => {
           const titleNames = data.map(({ TitleName }) => TitleName);
 
           // Check number of rows
-          cy.expect(data.length === testData.titlesCount);
+          cy.expect(data.length).to.equal(testData.titlesCount);
 
           // Check information is sorted by "Title name" column in alphabetical order
-          cy.expect(ArrayUtils.checkIsSorted({ array: titleNames }));
+          cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: titleNames })).to.equal(true);
 
-          // Check the "Title name" coulmn doesn't have empty cells.
-          cy.expect(titleNames.every((titleName) => !!titleName));
+          // Check the "Title name" coulmn doesn't have empty cells
+          cy.expect(titleNames.every((titleName) => !!titleName)).to.equal(true);
         });
       },
     );

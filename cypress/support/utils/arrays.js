@@ -31,10 +31,17 @@ export default {
     return true;
   },
 
-  checkIsSorted({ array = [], direction = 'ascending' } = {}) {
+  checkIsSortedAlphabetically({ array = [], direction = 'ascending' } = {}) {
+    const nonWordCharRegExp = new RegExp(/\W/);
     const result = [];
+
     for (let i = 1; i < array.length; i++) {
-      result.push(array[i - 1].localeCompare(array[i]));
+      const prev = array[i - 1].replace(/\s+/gi, '').toLowerCase();
+      const current = array[i].replace(/\s+/gi, '').toLowerCase();
+
+      if (!nonWordCharRegExp.test(current)) {
+        result.push(prev.localeCompare(current));
+      }
     }
 
     return direction === 'ascending' ? result.every((n) => n <= 0) : result.every((n) => n >= 0);
