@@ -54,24 +54,29 @@ describe('eHoldings', () => {
       { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
       () => {
         const providerTitle = 'Wiley';
+        const expanded = 'true';
+        const collapsed = 'false';
+        const collapseAll = 'Collapse all';
+        const expandAll = 'Expand all';
+        
         EHoldingsProvidersSearch.byProvider(providerTitle);
         EHoldingsProviders.viewProvider();
         EHoldingsProviders.verifyProviderHeaderTitle(providerTitle);
-        EHoldingsProviders.verifyPackagesAccordionExpanded('true');
+        EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
         EHoldingsProviders.verifyPackagesAvailable();
         EHoldingsProviders.packageAccordionClick();
-        EHoldingsProviders.verifyPackagesAccordionExpanded('false');
+        EHoldingsProviders.verifyPackagesAccordionExpanded(collapsed);
         EHoldingsProviders.packageAccordionClick();
-        EHoldingsProviders.verifyPackagesAccordionExpanded('true');
+        EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
         EHoldingsProviders.verifyPackagesAvailable();
-        EHoldingsProviders.verifyPackageButtonClick('Collapse all', 'false');
+        EHoldingsProviders.verifyPackageButtonClick(collapseAll, collapsed);
         EHoldingsProviders.packageAccordionClick();
-        EHoldingsProviders.verifyPackagesAccordionExpanded('true');
+        EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
         EHoldingsProviders.verifyPackagesAvailable();
         EHoldingsProviders.packageAccordionClick();
-        EHoldingsProviders.verifyPackagesAccordionExpanded('false');
-        EHoldingsProviders.verifyPackageButtonClick('Expand all', 'true');
-        EHoldingsProviders.verifyPackagesAccordionExpanded('true');
+        EHoldingsProviders.verifyPackagesAccordionExpanded(collapsed);
+        EHoldingsProviders.verifyPackageButtonClick(expandAll, expanded);
+        EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
         EHoldingsProviders.verifyPackagesAvailable();
       },
     );
