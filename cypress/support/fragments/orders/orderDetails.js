@@ -13,6 +13,7 @@ import {
 import InteractorsTools from '../../utils/interactorsTools';
 import OrderLines from './orderLines';
 import OrderLineDetails from './orderLineDetails';
+import OrderLineEditForm from './orderLineEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
 import CreateInvoiceModal from './modals/createInvoiceModal';
 import OpenConfirmationModal from './modals/openConfirmationModal';
@@ -152,5 +153,16 @@ export default {
     openPolDetails(title);
     OrderLines.openInstance();
     InventoryInstance.checkIsInstancePresented(title, location);
+  },
+  selectAddPOLine() {
+    cy.do([
+      polListingAccordion.find(actionsButton).focus(),
+      polListingAccordion.find(actionsButton).click(),
+      Button('Add PO line').click(),
+    ]);
+
+    OrderLineEditForm.waitLoading();
+
+    return OrderLineEditForm;
   },
 };

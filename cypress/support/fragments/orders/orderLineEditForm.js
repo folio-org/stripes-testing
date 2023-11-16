@@ -4,6 +4,7 @@ import {
   Select,
   Selection,
   SelectionList,
+  SelectionOption,
   TextArea,
   TextField,
   including,
@@ -15,6 +16,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
 const itemDetailsSection = orderLineEditFormRoot.find(Section({ id: 'itemDetails' }));
 const orderLineDetailsSection = orderLineEditFormRoot.find(Section({ id: 'lineDetails' }));
+const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: 'vendor' }));
 const costDetailsSection = orderLineEditFormRoot.find(Section({ id: 'costDetails' }));
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
 
@@ -22,6 +24,7 @@ const cancelButtom = Button('Cancel');
 const saveButtom = Button('Save & close');
 
 const itemDetailsFields = {
+  title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
   receivingNote: itemDetailsSection.find(TextArea({ name: 'details.receivingNote' })),
 };
 
@@ -29,6 +32,10 @@ const orderLineFields = {
   orderFormat: orderLineDetailsSection.find(Select({ name: 'orderFormat' })),
   receiptStatus: orderLineDetailsSection.find(Select({ name: 'receiptStatus' })),
   paymentStatus: orderLineDetailsSection.find(Select({ name: 'paymentStatus' })),
+};
+
+const vendorDetailsFields = {
+  accountNumber: vendorDetailsSection.find(Select({ name: 'vendorDetail.vendorAccount' })),
 };
 
 const costDetailsFields = {
@@ -57,6 +64,9 @@ export default {
     if (orderLine.poLineDetails) {
       this.fillPoLineDetails(orderLine.poLineDetails);
     }
+    if (orderLine.vendorDetails) {
+      this.fillVendorDetails(orderLine.vendorDetails);
+    }
     if (orderLine.costDetails) {
       this.fillCostDetails(orderLine.costDetails);
     }
@@ -76,8 +86,17 @@ export default {
     });
   },
   fillPoLineDetails(poLineDetails) {
+    if (poLineDetails.acquisitionMethod) {
+      cy.do(Button({ name: 'acquisitionMethod' }).click());
+      cy.do(SelectionOption(poLineDetails.acquisitionMethod).click());
+    }
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
+    }
+  },
+  fillVendorDetails(vendorDetails) {
+    if (vendorDetails.accountNumber) {
+      cy.do(vendorDetailsFields.accountNumber.choose(including(vendorDetails.accountNumber)));
     }
   },
   fillCostDetails(costDetails) {
@@ -123,10 +142,15 @@ export default {
     cy.do(cancelButtom.click());
     cy.expect(orderLineEditFormRoot.absent());
   },
-  clickSaveButton({ orderLineUpdated = true } = {}) {
+  clickSaveButton({ orderLineCreated = false, orderLineUpdated = true } = {}) {
     cy.expect(saveButtom.has({ disabled: false }));
     cy.do(saveButtom.click());
 
+    if (orderLineCreated) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(OrderStates.orderLineCreatedSuccessfully)),
+      );
+    }
     if (orderLineUpdated) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(OrderStates.orderLineUpdatedSuccessfully)),
