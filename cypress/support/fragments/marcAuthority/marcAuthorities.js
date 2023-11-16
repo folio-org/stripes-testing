@@ -864,9 +864,4 @@ export default {
     cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
     cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
   },
-
-  checkTotalRecordsForOption(option, totalRecords) {
-    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
-    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
-  },
 };
