@@ -69,6 +69,11 @@ export default {
     cy.expect(bulkEditPane.exists());
   },
 
+  checkForUploading(fileName) {
+    cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
+    cy.expect(HTML(including('Retrieving...')));
+  },
+
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -89,6 +94,9 @@ export default {
     cy.expect(actions.absent());
   },
 
+  verifyPopulatedPreviewPage() {
+    cy.expect([errorsAccordion.exists(), resultsAccordion.exists(), actions.exists()]);
+  },
   logActionsIsAbsent() {
     cy.expect(logsActionButton.absent());
   },
@@ -624,7 +632,8 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${validRecordCount + invalidRecordCount
+        `${fileName}: ${
+          validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -635,7 +644,8 @@ export default {
       Accordion('Errors')
         .find(
           HTML(
-            `${fileName}: ${validRecordCount + invalidRecordCount
+            `${fileName}: ${
+              validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
           ),
         )

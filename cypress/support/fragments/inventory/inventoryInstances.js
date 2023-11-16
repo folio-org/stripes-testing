@@ -91,6 +91,34 @@ const searchInstancesOptionsValues = [
   'querySearch',
   'advancedSearch',
 ];
+const searchItemsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'Barcode',
+  'ISBN',
+  'ISSN',
+  'Effective call number (item), eye readable',
+  'Effective call number (item), normalized',
+  'Item notes (all)',
+  'Item administrative notes',
+  'Circulation notes',
+  'Item HRID',
+  'Item UUID',
+  'All',
+];
+const searchItemsOptionsValues = [
+  'keyword',
+  'barcode',
+  'isbn',
+  'issn',
+  'itemFullCallNumbers',
+  'itemNormalizedCallNumbers',
+  'itemNotes',
+  'itemAdministrativeNotes',
+  'itemCirculationNotes',
+  'itemHrid',
+  'iid',
+  'allFields',
+];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
@@ -108,6 +136,10 @@ const advSearchHoldingsOptions = {
   'Holdings UUID': 'hid',
   All: 'allFields',
 };
+
+const advSearchItemsOptionsValues = searchItemsOptionsValues
+  .map((option, index) => (index ? option : 'keyword'))
+  .filter((option, index) => index <= 14);
 
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   method: 'POST',
@@ -746,6 +778,28 @@ export default {
             advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] ||
             advSearchHoldingsOptions[option],
         }),
+    ]);
+    if (operator) {
+      cy.expect(
+        AdvancedSearchRow({ index: rowIndex })
+          .find(advSearchOperatorSelect)
+          .has({ value: operator.toLowerCase() }),
+      );
+    }
+  },
+
+  checkAdvSearchModalItemValues: (rowIndex, query, modifier, option, operator) => {
+    cy.expect([
+      advSearchModal.exists(),
+      AdvancedSearchRow({ index: rowIndex })
+        .find(TextArea())
+        .has({ value: including(query) }),
+      AdvancedSearchRow({ index: rowIndex })
+        .find(advSearchModifierSelect)
+        .has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
+      AdvancedSearchRow({ index: rowIndex })
+        .find(advSearchOptionSelect)
+        .has({ value: advSearchItemsOptionsValues[searchItemsOptions.indexOf(option)] }),
     ]);
     if (operator) {
       cy.expect(
