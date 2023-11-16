@@ -9,14 +9,13 @@ import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
   const testData = {
-    organization: NewOrganization.getDefaultOrganization(),
+    organization: {},
     order: {},
     orderLine: {},
-    invoices: [],
     user: {},
   };
 
-  before('Create test data', () => {
+  beforeEach('Create test data', () => {
     cy.getAdminToken().then(() => {
       const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
         ledger: { restrictEncumbrance: true, restrictExpenditures: true },
@@ -26,6 +25,8 @@ describe('Invoices', () => {
       testData.fiscalYear = fiscalYear;
       testData.fund = fund;
       testData.budget = budget;
+
+      testData.organization = NewOrganization.getDefaultOrganization();
 
       Organizations.createOrganizationViaApi(testData.organization).then(() => {
         testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
@@ -42,6 +43,8 @@ describe('Invoices', () => {
           OrderLines.getOrderLineViaApi({ query: `poLineNumber=="*${order.poNumber}*"` }).then(
             (orderLines) => {
               testData.orderLine = orderLines[0];
+              testData.invoices = [];
+
               const invoiceData = {
                 vendorId: testData.organization.id,
                 fiscalYearId: testData.fiscalYear.id,
@@ -88,7 +91,7 @@ describe('Invoices', () => {
     });
   });
 
-  after('Delete test data', () => {
+  afterEach('Delete test data', () => {
     cy.getAdminToken().then(() => {
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);
@@ -130,6 +133,47 @@ describe('Invoices', () => {
           { key: 'Initial encumbrance', value: '110.00' },
           { key: 'Awaiting payment', value: '30.00' },
           { key: 'Expended', value: '0.00' },
+          { key: 'Status', value: 'Unreleased' },
+        ],
+      });
+    },
+  );
+
+  it(
+    'C400615 Initial encumbrance amount remains the same as it was before payment after cancelling related approved invoice (another related paid invoice exists) (thunderjet) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    () => {
+      // Search invoice in the table
+      Invoices.searchByNumber(testData.invoices[1].vendorInvoiceNo);
+      Invoices.selectInvoice(testData.invoices[1].vendorInvoiceNo);
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.APPROVED }],
+      });
+
+      // Click "Actions" button, Select "Cancel" option, Click "Submit" button
+      InvoiceView.cancelInvoice();
+      InvoiceView.checkInvoiceDetails({
+        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.CANCELLED }],
+      });
+
+      // Click invoice line record on invoice
+      const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
+      InvoiceLineDetails.checkFundDistibutionTableContent([
+        { name: testData.fund.name, encumbrance: '100.00' },
+      ]);
+
+      // Click "Current encumbrance" link in "Fund distribution" accordion
+      const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+          { key: 'Amount', value: '100.00' },
+          { key: 'Source', value: testData.orderLine.poLineNumber },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Initial encumbrance', value: '110.00' },
+          { key: 'Awaiting payment', value: '0.00' },
+          { key: 'Expended', value: '10.00' },
           { key: 'Status', value: 'Unreleased' },
         ],
       });
