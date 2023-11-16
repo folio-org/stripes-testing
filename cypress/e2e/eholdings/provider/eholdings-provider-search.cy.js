@@ -11,6 +11,7 @@ describe('eHoldings', () => {
 
     beforeEach(() => {
       cy.createTempUser([
+        Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.moduleeHoldingsEnabled.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
@@ -58,7 +59,7 @@ describe('eHoldings', () => {
         const collapsed = 'false';
         const collapseAll = 'Collapse all';
         const expandAll = 'Expand all';
-        
+
         EHoldingsProvidersSearch.byProvider(providerTitle);
         EHoldingsProviders.viewProvider();
         EHoldingsProviders.verifyProviderHeaderTitle(providerTitle);
