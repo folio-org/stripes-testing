@@ -203,6 +203,12 @@ export default {
     );
   },
 
+  verifyNumberOfTitlesForRow(rowIndex, itemCount) {
+    cy.expect(
+      MultiColumnListCell({ row: rowIndex, columnIndex: 1 }).has({ content: itemCount.toString() }),
+    );
+  },
+
   verifyNoAccordionsOnPane() {
     cy.expect(Accordion().absent());
   },

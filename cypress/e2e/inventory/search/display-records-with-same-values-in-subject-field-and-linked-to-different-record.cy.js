@@ -13,54 +13,52 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 
 const testData = {
   user: {},
   instanceIDs: [],
   authorityIDs: [],
-  tags: ['130', '240'],
+  tags: ['650'],
   instanceRecords: [
-    'Prayer Bible (Test record with 130 linked field).',
-    'Prayer Bible (Test record with 240 linked field).',
+    "Black Panther / writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
+    'Black Panther : the Intergalactic Empire of Wakanda',
   ],
-  searchQueries: ['Bible. Polish. Biblia Płocka 1992', 'Abraham, Angela, 1958- Hosanna Bible'],
-  alternativeTitles: ['Biblia Płocka', 'Hosanna Bible'],
-  searchResults: [
-    'Prayer Bible (Test record with 130 linked field).',
-    'Prayer Bible (Test record with 240 linked field).',
-    'Prayer Bible (Test record without linked field: 246).',
-    'Prayer Bible (Test record without linked field: 270).',
-  ],
+  searchAuthorityQueries: ['Good and evil'],
+  browseQueries: ['Good and Evil'],
+  subjectHeading: ['Good and evil'],
+
   marcFiles: [
     {
-      marc: 'marcBibC375255.mrc',
-      fileName: `testMarcFileC375255.${randomFourDigitNumber()}.mrc`,
+      marc: 'marcBibC375224.mrc',
+      fileName: `testMarcFileC375224.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      numberOfRecords: 4,
+      numberOfRecords: 2,
     },
     {
-      marc: 'marcAuth130C375255.mrc',
-      fileName: `testMarcFileAuth130C375255.${randomFourDigitNumber()}.mrc`,
+      marc: 'marcAuth_1C375224.mrc',
+      fileName: `testMarcFileAuth_1C375224.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 1,
     },
     {
-      marc: 'marcAuth240C375255.mrc',
-      fileName: `testMarcFileAuth240C375255.${randomFourDigitNumber()}.mrc`,
+      marc: 'marcAuth_2C375224.mrc',
+      fileName: `testMarcFileAuth_2C375224.${randomFourDigitNumber()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numberOfRecords: 1,
     },
   ],
 };
 
-describe('inventory', () => {
-  describe('Search in Inventory', () => {
+describe('Inventory', () => {
+  describe('Subject Browse', () => {
     before('Create test data', () => {
       cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         InventoryInstances.getInstancesViaApi({
           limit: 100,
-          query: 'title="Prayer Bible"',
+          query: 'title="Black Panther"',
         }).then((instances) => {
           if (instances) {
             instances.forEach(({ id }) => {
@@ -68,7 +66,7 @@ describe('inventory', () => {
             });
           }
         });
-        testData.searchQueries.forEach((query) => {
+        testData.searchAuthorityQueries.forEach((query) => {
           MarcAuthorities.getMarcAuthoritiesViaApi({
             limit: 100,
             query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
@@ -105,14 +103,17 @@ describe('inventory', () => {
         InventoryInstance.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon(testData.tags[i]);
+        InventoryInstance.verifyAndClickLinkIcon(testData.tags[0]);
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.searchResults(testData.searchQueries[i]);
+        InventoryInstance.searchResults(testData.searchAuthorityQueries[0]);
+        MarcAuthoritiesSearch.selectExcludeReferencesFilter();
+        MarcAuthoritiesSearch.selectAuthorityByIndex(i);
         InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[i]);
+        QuickMarcEditor.verifyAfterLinkingAuthority(testData.tags[0]);
         QuickMarcEditor.pressSaveAndClose();
-        InventoryInstance.verifyAlternativeTitle(0, 1, including(testData.alternativeTitles[i]));
+
+        InventoryInstance.verifySubjectHeading(including(testData.subjectHeading[0]));
         InventoryInstances.resetAllFilters();
       }
       cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
@@ -133,18 +134,26 @@ describe('inventory', () => {
     });
 
     it(
-      'C375255 Title (all) | Search by "Alternative title" field of linked "MARC Bib" record (spitfire) (TaaS)',
+      'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (spitfire) (TaaS)',
       { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventoryInstance.searchByTitle('Bible');
-        InventorySearchAndFilter.checkRowsCount(4);
-        testData.searchResults.forEach((result) => {
-          InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
-        });
+
+        InventorySearchAndFilter.selectBrowseSubjects();
+        InventorySearchAndFilter.browseSearch(testData.browseQueries[0]);
+        BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(
+          5,
+          testData.searchAuthorityQueries[0],
+        );
+        BrowseSubjects.checkAuthorityIconAndValueDisplayedForRow(
+          6,
+          testData.searchAuthorityQueries[0],
+        );
+        BrowseSubjects.verifyNumberOfTitlesForRow(5, 1);
+        BrowseSubjects.verifyNumberOfTitlesForRow(6, 1);
       },
     );
   });
