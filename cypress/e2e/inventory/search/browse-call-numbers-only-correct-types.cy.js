@@ -10,7 +10,6 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import { CALL_NUMBER_TYPE_NAMES, BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('inventory', () => {
   describe('Call Number Browse', () => {
@@ -106,6 +105,15 @@ describe('inventory', () => {
       },
     ];
 
+    function filterCNsExcluding(typeToExclude, titleIndex) {
+      return Object.keys(callNumbers[titleIndex])
+        .filter((key) => key !== typeToExclude)
+        .reduce((obj, key) => {
+          obj[key] = callNumbers[titleIndex][key];
+          return Object.values(obj);
+        }, {});
+    }
+
     before('Create test data', () => {
       cy.getAdminToken()
         .then(() => {
@@ -132,7 +140,6 @@ describe('inventory', () => {
           });
           InventoryInstances.getCallNumberTypes({ limit: 100 }).then((res) => {
             testData.callNumberTypes = res;
-            cy.log(JSON.stringify(res));
           });
           const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
           instances[0].defaultLocation = Location.getDefaultLocation(servicePoint.id);
@@ -245,55 +252,38 @@ describe('inventory', () => {
       'C405530 Verify that call numbers of other types are not displayed in browse result list for certain call number type when user uses pagination buttons (spitfire)',
       { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
       () => {
-        InventoryInstance.searchByTitle('C405530_autotest_instance_');
-        cy.wait(20000);
-        // InventorySearchAndFilter.switchToBrowseTab();
-        // InventorySearchAndFilter.verifyBrowseOptions();
+        InventorySearchAndFilter.switchToBrowseTab();
+        InventorySearchAndFilter.verifyBrowseOptions();
 
-        // InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
-        // InventorySearchAndFilter.browseSearch(callNumbers[0].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.DEWEY_DECIMAL);
+        InventorySearchAndFilter.browseSearch(callNumbers[5].dewey);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].dewey);
+        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('dewey', 5));
 
-        // InventorySearchAndFilter.selectBrowseOption(
-        //   BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
-        // );
-        // InventorySearchAndFilter.browseSearch(callNumbers[1].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].value);
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS);
+        InventorySearchAndFilter.browseSearch(callNumbers[6].lc);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].lc);
+        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('lc', 6));
 
-        // InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE);
-        // InventorySearchAndFilter.browseSearch(callNumbers[2].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].value);
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LOCAL);
+        InventorySearchAndFilter.browseSearch(callNumbers[6].local);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].local);
+        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('local', 6));
 
-        // InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS);
-        // InventorySearchAndFilter.browseSearch(callNumbers[3].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[3].value);
+        InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE);
+        InventorySearchAndFilter.browseSearch(callNumbers[2].nlm);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].nlm);
+        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('nlm', 2));
 
-        // InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LOCAL);
-        // InventorySearchAndFilter.browseSearch(callNumbers[5].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].value);
+        InventorySearchAndFilter.selectBrowseOption(
+          BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
+        );
+        InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);
+        BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[4].sudoc);
+        BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('sudoc', 4));
 
-        // InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.OTHER_SCHEME);
-        // InventorySearchAndFilter.browseSearch(callNumbers[4].value);
-        // BrowseCallNumber.checkNonExactSearchResult(callNumbers[4].value);
-
-        // InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
-        // InventorySearchAndFilter.browseSearch(callNumbers[0].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[0].value);
-
-        // InventorySearchAndFilter.browseSearch(callNumbers[1].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[1].value);
-
-        // InventorySearchAndFilter.browseSearch(callNumbers[2].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].value);
-
-        // InventorySearchAndFilter.browseSearch(callNumbers[3].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[3].value);
-
-        // InventorySearchAndFilter.browseSearch(callNumbers[5].value);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].value);
-
-        // InventorySearchAndFilter.browseSearch(callNumbers[4].value);
-        // BrowseCallNumber.checkNonExactSearchResult(callNumbers[4].value);
+        // BrowseSubjects.clickPreviousPaginationButton();
+        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNs('dewey', 0));
       },
     );
   });
