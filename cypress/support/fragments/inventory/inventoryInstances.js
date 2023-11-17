@@ -72,6 +72,18 @@ const searchInstancesOptions = [
   'Query search',
   'Advanced search',
 ];
+const searchHoldingsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'ISBN',
+  'ISSN',
+  'Call number, eye readable',
+  'Call number, normalized',
+  'Holdings notes (all)',
+  'Holdings administrative notes',
+  'Holdings HRID',
+  'Holdings UUID',
+  'All',
+];
 const searchInstancesOptionsValues = [
   'all',
   'contributor',
@@ -91,24 +103,26 @@ const searchInstancesOptionsValues = [
   'querySearch',
   'advancedSearch',
 ];
+const searchHoldingsOptionsValues = [
+  'keyword',
+  'isbn',
+  'issn',
+  'holdingsFullCallNumbers',
+  'holdingsNormalizedCallNumbers',
+  'holdingsNotes',
+  'holdingsAdministrativeNotes',
+  'holdingsHrid',
+  'hid',
+  'allFields',
+];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
+const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
-
-const advSearchHoldingsOptions = {
-  'Keyword (title, contributor, identifier, HRID, UUID)': 'keyword',
-  ISBN: 'isbn',
-  ISSN: 'issn',
-  'Call number, eye readable': 'holdingsFullCallNumbers',
-  'Call number, normalized': 'holdingsNormalizedCallNumbers',
-  'Holdings notes (all)': 'holdingsNotes',
-  'Holdings administrative notes': 'holdingsAdministrativeNotes',
-  'Holdings HRID': 'holdingsHrid',
-  'Holdings UUID': 'hid',
-  All: 'allFields',
-};
-
+const advSearchHoldingsOptionsValues = searchHoldingsOptionsValues
+  .map((option, index) => (index ? option : 'keyword'))
+  .filter((option, index) => index <= 14);
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   method: 'POST',
   path: 'inventory/instances',
@@ -764,7 +778,7 @@ export default {
         .has({
           value:
             advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] ||
-            advSearchHoldingsOptions[option],
+            advSearchHoldingsOptionsValues[advSearchHoldingsOptions.indexOf(option)],
         }),
     ]);
     if (operator) {

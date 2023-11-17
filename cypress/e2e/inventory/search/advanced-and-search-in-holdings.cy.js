@@ -59,12 +59,13 @@ describe('Inventory -> Advanced search', () => {
             holdings: [
               {
                 holdingsTypeId: testData.holdingTypeId,
-                permanentLocationId: instance.defaultLocation.id,
-                callNumber: instance.callNumber,
+                permanentLocationId: testData.locationsId,
+                callNumber: instance.holdingsCallNumber,
               },
             ],
             items: [
               {
+                barcode: instance.itemBarcode,
                 status: { name: ITEM_STATUS_NAMES.AVAILABLE },
                 permanentLoanType: { id: testData.loanTypeId },
                 materialType: { id: testData.materialTypeId },
@@ -142,7 +143,7 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.clickSearchBtnInAdvSearchModal();
       InventoryInstances.checkAdvSearchModalAbsence();
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-      InventorySearchAndFilter.verifySearchResult([testData.instances[1].title]);
+      InventorySearchAndFilter.verifySearchResult(testData.instances[1].title);
 
       InventoryInstances.clickAdvSearchButton();
       InventoryKeyboardShortcuts.openInventoryMenu();
