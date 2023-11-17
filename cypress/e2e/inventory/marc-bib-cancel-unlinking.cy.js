@@ -125,7 +125,16 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
     () => {
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkingTagAndValues.rowIndex);
       QuickMarcEditor.checkButtonsDisabled();
-      // step 2
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        testData.tag100[0],
+        testData.tag100[1],
+        testData.tag100[2],
+        testData.tag100[3],
+        testData.tag100[4],
+        testData.tag100[5],
+        testData.tag100[6],
+        testData.tag100[7],
+      );
       QuickMarcEditor.checkUnlinkTooltipText('100', 'Unlink from MARC Authority record');
       QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues.rowIndex);
       QuickMarcEditor.checkUnlinkModal(
@@ -133,14 +142,12 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
       );
       QuickMarcEditor.cancelUnlinkingField();
       QuickMarcEditor.checkDeleteModalClosed();
-      // step 5
       QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues.rowIndex);
       QuickMarcEditor.checkUnlinkModal(
         'By selecting Unlink, then field 100 will be unlinked from the MARC authority record. Are you sure you want to continue?',
       );
       InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
       QuickMarcEditor.checkDeleteModalClosed();
-      // step 7
       QuickMarcEditor.pressCancel();
       InstanceRecordView.verifyInstancePaneExists();
       InstanceRecordView.verifyContributorWithMarcAppLink(0, 1, contributor);
