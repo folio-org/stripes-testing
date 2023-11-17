@@ -35,9 +35,8 @@ describe('eHoldings', () => {
       Permissions.settingsTenantEditLanguageLocationAndCurrency.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-      EHoldingsPackages.createPackageViaAPI();
-      EHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
-        testData.packageName = packageName;
+      EHoldingsPackages.createPackageViaAPI().then((response) => {
+        testData.packageName = response.data.attributes.name;
       });
       cy.login(testData.user.username, testData.user.password, {
         path: SettingsMenu.tenantPath,
