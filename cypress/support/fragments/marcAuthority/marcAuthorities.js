@@ -737,4 +737,20 @@ export default {
       MultiColumnListCell({ columnIndex, content: value }).exists(),
     ]);
   },
+
+  checkHeadingReferenceColumnValueIsBold(rowNumber) {
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex: 2 }).has({
+        innerHTML: including('class="root---FBI0e anchorLink---RU2dH"'),
+      }),
+    );
+  },
+
+  checkCellValueIsExists(rowNumber, columnIndex, value) {
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex }).has({
+        content: including(value),
+      }),
+    );
+  },
 };
