@@ -102,7 +102,7 @@ export default {
       packagesSection
         .find(ListItem({ className: including('list-item-'), index: rowNumber }))
         .find(Button())
-        .exists()
+        .exists(),
     );
   },
 
