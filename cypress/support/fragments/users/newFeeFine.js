@@ -121,8 +121,12 @@ export default {
     cy.get('div[id=new-modal] select[name=ownerId]').select(ownerName);
   },
 
-  checkNotExistFeeFineOwner: (ownerName) => {
-    cy.expect(ownerTypeSelect.find(Option(ownerName)).absent());
+  chekcFeeFineOwnerExist: (ownerName, isExist = true) => {
+    if (isExist) {
+      cy.expect(ownerTypeSelect.find(Option(ownerName)).exists());
+    } else {
+      cy.expect(ownerTypeSelect.find(Option(ownerName)).absent());
+    }
   },
 
   checkFilteredFeeFineType: (feefineTypeName) => {

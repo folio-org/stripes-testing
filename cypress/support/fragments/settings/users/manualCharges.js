@@ -67,11 +67,11 @@ export default {
     cy.wait(1000);
   },
   checkSelectedOwner(owner) {
-    cy.wait(1000);
+    cy.wait(300);
     cy.get('#select-owner option').first().should('have.text', owner);
   },
-  checkSelectItemOwner(owner) {
-    cy.wait(1000);
+  checkSelectContainsOwnert(owner) {
+    cy.wait(300);
     cy.expect(ownerSelect.find(Option(owner)).exists());
   },
   fillInFields(data, index = 0) {
