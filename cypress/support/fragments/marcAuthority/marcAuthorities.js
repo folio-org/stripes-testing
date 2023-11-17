@@ -737,12 +737,4 @@ export default {
       MultiColumnListCell({ columnIndex, content: value }).exists(),
     ]);
   },
-
-  checkHeadingReferenceColumnValueIsBold(rowNumber) {
-    cy.expect(
-      MultiColumnListCell({ row: rowNumber, columnIndex: 2 }).has({
-        innerHTML: including('class="root---FBI0e anchorLink---RU2dH"'),
-      }),
-    );
-  },
 };
