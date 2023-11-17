@@ -66,7 +66,8 @@ describe('Importing MARC Authority files', () => {
       NewJobProfile.saveAndClose();
 
       cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile('oneMarcAuthority.mrc', fileName);
+      DataImport.verifyUploadState();
+      DataImport.uploadFileAndRetry('oneMarcAuthority.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
@@ -144,6 +145,8 @@ describe('Importing MARC Authority files', () => {
         'Authorized/Reference',
         'Heading/Reference',
         'Type of heading',
+        'Authority source',
+        'Number of titles',
       ];
 
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
