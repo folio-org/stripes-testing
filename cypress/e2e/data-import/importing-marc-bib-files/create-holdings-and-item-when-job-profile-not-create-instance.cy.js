@@ -37,7 +37,9 @@ describe('data-import', () => {
     let instanceHrid;
     let exportedFileName;
     const quantityOfItems = '1';
-    const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
+    const fileName = `C368009 fileName${getRandomPostfix()}.mrc`;
+    const filePathToUpload = 'oneMarcBib.mrc';
+    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
@@ -92,10 +94,13 @@ describe('data-import', () => {
           waiter: DataImport.waitLoading,
         });
         // create Instance with source = MARC
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-        // get hrid of created instance
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        DataImport.uploadFile(filePathToUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfileToRun);
+        JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -105,24 +110,25 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        Users.deleteViaApi(user.userId);
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      Users.deleteViaApi(user.userId);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     const createItemMappingProfile = (itemMappingProfile) => {

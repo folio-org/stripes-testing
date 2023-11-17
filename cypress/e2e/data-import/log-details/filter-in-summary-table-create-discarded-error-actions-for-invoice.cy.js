@@ -31,7 +31,7 @@ describe('data-import', () => {
     };
     const invoiceNumber = '1024200';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
-    const marcFileName = `C357018 autotest file ${getRandomPostfix()}`;
+    const marcFileName = `C357018 autotest file${getRandomPostfix()}`;
     const filePathForUpload = 'ediFileForC357018.edi';
     const mappingProfile = {
       name: `C357018 Test invoice log table Create EBSCO invoice ${getRandomPostfix()}`,
@@ -68,12 +68,13 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+      });
     });
 
     it(

@@ -100,16 +100,17 @@ describe('data-import', () => {
     ];
 
     before('login', () => {
-      cy.loginAsAdmin();
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
-        (instances) => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        },
-      );
+      cy.getAdminToken(() => {
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
+          (instances) => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
+          },
+        );
+      });
     });
 
     after('delete test data', () => {

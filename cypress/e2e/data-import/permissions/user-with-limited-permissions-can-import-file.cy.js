@@ -78,14 +78,15 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(firstUser.userId);
-      Users.deleteViaApi(secondUser.userId);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(firstUser.userId);
+        Users.deleteViaApi(secondUser.userId);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
       });
     });
 

@@ -24,6 +24,7 @@ describe('data-import', () => {
     let userFilterValue;
 
     before('create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin();
 
       // Create files dynamically with given name and content in fixtures
@@ -56,11 +57,13 @@ describe('data-import', () => {
     });
 
     beforeEach(() => {
-      LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy }) => {
-        const { firstName, lastName } = runBy;
-        jobProfileName = jobProfileInfo.name;
-        userFilterValue = `${firstName} ${lastName}`;
-        userName = firstName ? `${firstName} ${lastName}` : `${lastName}`;
+      cy.getAdminToken(() => {
+        LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy }) => {
+          const { firstName, lastName } = runBy;
+          jobProfileName = jobProfileInfo.name;
+          userFilterValue = `${firstName} ${lastName}`;
+          userName = firstName ? `${firstName} ${lastName}` : `${lastName}`;
+        });
       });
     });
 

@@ -1085,9 +1085,10 @@ export default {
 
   openItemByStatus: (status) => {
     cy.get('div[class^="mclRow--"]')
-      .contains('div[class^="mclCell-"]', status)
+      .find('div[class^="mclCell-"]')
+      .contains(status)
       .then((elem) => {
-        elem.parent()[0].querySelector('[href]').click();
+        elem.parent()[0].querySelector('button[type="button"]').click();
       });
   },
 

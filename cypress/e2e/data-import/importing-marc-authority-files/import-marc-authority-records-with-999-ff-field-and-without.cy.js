@@ -5,15 +5,16 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
   describe('Importing MARC Authority files', () => {
     let user;
     const jobProfileToRun = 'Default - Create SRS MARC Authority';
-    const fileName = `C359207autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C359207autotestFile${getRandomPostfix()}.mrc`;
     // eslint-disable-next-line
-    const error =
+    const errorMessage =
       '{"error":"A new MARC-Authority was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
 
     before('login', () => {
@@ -69,7 +70,9 @@ describe('data-import', () => {
         FileDetails.checkAuthorityQuantityInSummaryTable('2');
         // check No action counter in the Summary table
         FileDetails.checkSrsRecordQuantityInSummaryTable('6', 2);
-        FileDetails.verifyErrorMessage(error, 1);
+        FileDetails.openJsonScreen('No content');
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab(errorMessage);
       },
     );
   });

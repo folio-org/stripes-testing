@@ -43,9 +43,9 @@ describe('data-import', () => {
       callNumberSuffix: 'TestSuf',
     };
     const filePathForCreate = 'marcFileForC401727.mrc';
-    const marcFileNameForCreate = `C401727 autotestFileName ${getRandomPostfix()}`;
-    const marcFileNameForUpdate = `C401727 autotestFileName ${getRandomPostfix()}`;
-    const editedMarcFileName = `C401727 editedAutotestFileName ${getRandomPostfix()}`;
+    const marcFileNameForCreate = `C401727 autotestFileName${getRandomPostfix()}.mrc`;
+    const marcFileNameForUpdate = `C401727 autotestFileName${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C401727 editedAutotestFileName${getRandomPostfix()}.mrc`;
     const holdingsMappingProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
       name: `C401727 Create simple Holdings ${getRandomPostfix()}}`,

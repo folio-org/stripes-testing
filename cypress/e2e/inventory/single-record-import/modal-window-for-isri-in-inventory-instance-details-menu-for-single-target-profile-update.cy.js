@@ -15,6 +15,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 import ReImportModal from '../../../support/fragments/inventory/reImportModal';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
   describe('Single record import', () => {
@@ -23,6 +24,8 @@ describe('inventory', () => {
     const OCLCAuthentication = '100481406/PAOLF';
     const profileForImport = 'Inventory Single Record - Default Update Instance (Default)';
     const fileName = `C375146 autotestFile${getRandomPostfix()}.mrc`;
+    const filePathToUpload = 'oneMarcBib.mrc';
+    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const targetIdentifier = '1234567';
     const targetProfile = {
       name: 'OCLC WorldCat',
@@ -36,9 +39,16 @@ describe('inventory', () => {
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
     before('login', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePathToUpload, fileName);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(jobProfileToRun);
+      JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(fileName);
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
@@ -70,13 +80,14 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(

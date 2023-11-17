@@ -96,25 +96,26 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"hrid"=="${instanceHridForReimport}"`,
+        }).then((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"hrid"=="${instanceHridForReimport}"`,
-      }).then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
       });
     });
 
@@ -249,28 +250,30 @@ describe('data-import', () => {
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
-        ExportFile.getExportedFileNameViaApi().then((name) => {
-          exportedFileName = name;
+        cy.getAdminToken(() => {
+          ExportFile.getExportedFileNameViaApi().then((name) => {
+            exportedFileName = name;
 
-          ExportFile.downloadExportedMarcFile(exportedFileName);
-          // upload the exported marc file
-          cy.visit(TopMenu.dataImportPath);
-          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.verifyUploadState();
-          DataImport.uploadExportedFile(exportedFileName);
-          JobProfiles.search(jobProfile.profileName);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(exportedFileName);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(exportedFileName);
-          [
-            FileDetails.columnNameInResultList.srsMarc,
-            FileDetails.columnNameInResultList.instance,
-          ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+            ExportFile.downloadExportedMarcFile(exportedFileName);
+            // upload the exported marc file
+            cy.visit(TopMenu.dataImportPath);
+            // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+            DataImport.verifyUploadState();
+            DataImport.uploadExportedFile(exportedFileName);
+            JobProfiles.search(jobProfile.profileName);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(exportedFileName);
+            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+            Logs.openFileDetails(exportedFileName);
+            [
+              FileDetails.columnNameInResultList.srsMarc,
+              FileDetails.columnNameInResultList.instance,
+            ].forEach((columnName) => {
+              FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+            });
+            FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+            FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
           });
-          FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-          FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
         });
 
         // check instance is updated

@@ -10,8 +10,8 @@ import Users from '../../../support/fragments/users/users';
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    const filePath = 'oneThousandMarcBib.mrc';
-    const marcFileName = `C2325 autotestFileName${getRandomPostfix()}`;
+    const filePath = 'marcFileForC2325.mrc';
+    const marcFileName = `C2325 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('login', () => {

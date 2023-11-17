@@ -95,8 +95,8 @@ describe('inventory', () => {
       () => {
         cy.visit(TopMenu.inventoryPath);
         MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+        MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
         MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach((item) => {
-          MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
           MarkItemAsMissing.openItem(item.barcode);
           MarkItemAsMissing.checkIsMarkAsMissingExist(true);
           InventoryItems.markAsMissing();
@@ -124,7 +124,6 @@ describe('inventory', () => {
         cy.visit(TopMenu.inventoryPath);
         MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
         MarkItemAsMissing.getItemsNotToMarkAsMissing(createdItems).forEach((item) => {
-          MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
           MarkItemAsMissing.openItem(item.barcode);
           MarkItemAsMissing.checkIsMarkAsMissingExist(false);
           ItemRecordView.closeDetailView();

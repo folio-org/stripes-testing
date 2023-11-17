@@ -13,7 +13,7 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import NewRequest from '../../../support/fragments/requests/newRequest';
 
-describe.skip('inventory', () => {
+describe('inventory', () => {
   describe('Item', () => {
     let user;
     let collectionOfItems = [];
@@ -211,7 +211,6 @@ describe.skip('inventory', () => {
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
           InstanceRecordView.verifyInstanceRecordViewOpened();
-          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         });
 
         ['Declared lost', 'Claimed returned', 'Lost and paid', 'Withdrawn', 'Order closed'].forEach(
@@ -219,7 +218,6 @@ describe.skip('inventory', () => {
             cy.visit(TopMenu.inventoryPath);
             InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
             InstanceRecordView.verifyInstanceRecordViewOpened();
-            InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
             InventoryInstance.openItemByStatus(itemStatus);
             InventoryItems.openActions();
             InventoryItems.verifyNewRequestButtonIsAbsent();
