@@ -745,12 +745,4 @@ export default {
       }),
     );
   },
-
-  checkCellValueIsExists(rowNumber, columnIndex, value) {
-    cy.expect(
-      MultiColumnListCell({ row: rowNumber, columnIndex }).has({
-        content: including(value),
-      }),
-    );
-  },
 };
