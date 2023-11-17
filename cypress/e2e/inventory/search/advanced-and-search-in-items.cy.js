@@ -10,19 +10,20 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { LOCATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('Inventory -> Advanced search', () => {
-  let user;
+  const randomCallNumber = `001MYCN2225858${getRandomPostfix()}`;
   const testData = {
+    advSearchOption: 'Advanced search',
     instances: [
       {
         title: `C400622_autotest_instance ${getRandomPostfix()}`,
         itemBarcode: uuid(),
-        itemCallNumber: `CNY${getRandomPostfix()}`,
+        itemCallNumber: randomCallNumber,
         itemNote: 'Case 7 note 007',
       },
       {
         title: `C400622_autotest_instance ${getRandomPostfix()}`,
         itemBarcode: uuid(),
-        itemCallNumber: `CNY${getRandomPostfix()}`,
+        itemCallNumber: randomCallNumber,
       },
     ],
   };
@@ -45,8 +46,8 @@ describe('Inventory -> Advanced search', () => {
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           testData.materialTypeId = res.id;
         });
-        InventoryInstances.getItemNoteTypes({ limit: 1 }).then((noteTypes) => {
-          testData.noteTypeId = noteTypes[0].id;
+        InventoryInstances.getItemNoteTypes({ limit: 1 }).then((res) => {
+          testData.noteTypeId = res[0].id;
         });
       })
       .then(() => {
@@ -64,15 +65,15 @@ describe('Inventory -> Advanced search', () => {
           ],
           items: [
             {
-              barcode: testData[0].instances.itemBarcode,
+              barcode: testData.instances[0].itemBarcode,
               status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
-              itemLevelCallNumber: testData[0].instances.itemCallNumber,
+              itemLevelCallNumber: testData.instances[0].itemCallNumber,
               notes: [
                 {
                   itemNoteTypeId: testData.noteTypeId,
-                  note: testData[0].instances.itemNote,
+                  note: testData.instances[0].itemNote,
                 },
               ],
             },
@@ -92,20 +93,20 @@ describe('Inventory -> Advanced search', () => {
           ],
           items: [
             {
-              barcode: testData.itemBarcode,
+              barcode: testData.instances[1].itemBarcode,
               status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
-              itemLevelCallNumber: testData[1].instances.itemCallNumber,
+              itemLevelCallNumber: testData.instances[1].itemCallNumber,
             },
           ],
         });
       });
 
     cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-      user = userProperties;
+      testData.user = userProperties;
 
-      cy.login(user.username, user.password, {
+      cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
@@ -135,30 +136,29 @@ describe('Inventory -> Advanced search', () => {
       });
       InventoryInstances.clickCancelBtnInAdvSearchModal();
       InventoryInstances.checkAdvSearchModalAbsence();
-
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(
         0,
-        testData.instances[0].itemCallNumber,
+        '001MYCN2225858',
         'Contains all',
-        'Effective call number (item)',
+        'Effective call number (item), normalized',
       );
-      InventoryInstances.checkAdvSearchModalValues(
+      InventoryInstances.checkAdvSearchModalItemValues(
         0,
-        testData.instances[0].itemCallNumber,
+        '001MYCN2225858',
         'Contains all',
-        'Effective call number (item)',
+        'Effective call number (item), normalized',
       );
       InventoryInstances.fillAdvSearchRow(
         1,
-        testData.instances[0].itemNote,
+        '7 note 007',
         'Contains all',
         'Item notes (all)',
         'AND',
       );
-      InventoryInstances.checkAdvSearchModalValues(
+      InventoryInstances.checkAdvSearchModalItemValues(
         1,
-        testData.instances[0].itemNote,
+        '7 note 007',
         'Contains all',
         'Item notes (all)',
         'AND',
@@ -166,7 +166,23 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.clickSearchBtnInAdvSearchModal();
       InventoryInstances.checkAdvSearchModalAbsence();
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-      InventorySearchAndFilter.verifySearchResult([testData.instances[1].title]);
+      InventorySearchAndFilter.verifySearchResult(testData.instances[0].title);
+
+      InventoryInstances.clickAdvSearchButton();
+      InventoryInstances.checkAdvSearchModalItemValues(
+        0,
+        '001MYCN2225858',
+        'Contains all',
+        'Effective call number (item), normalized',
+      );
+      InventoryInstances.checkAdvSearchModalItemValues(
+        1,
+        '7 note 007',
+        'Contains all',
+        'Item notes (all)',
+        'AND',
+      );
+      InventoryInstances.closeAdvancedSearchModal();
     },
   );
 });

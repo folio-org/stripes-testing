@@ -73,6 +73,32 @@ const searchInstancesOptions = [
   'Query search',
   'Advanced search',
 ];
+const searchHoldingsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'ISBN',
+  'ISSN',
+  'Call number, eye readable',
+  'Call number, normalized',
+  'Holdings notes (all)',
+  'Holdings administrative notes',
+  'Holdings HRID',
+  'Holdings UUID',
+  'All',
+];
+const searchItemsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'Barcode',
+  'ISBN',
+  'ISSN',
+  'Effective call number (item), eye readable',
+  'Effective call number (item), normalized',
+  'Item notes (all)',
+  'Item administrative notes',
+  'Circulation notes',
+  'Item HRID',
+  'Item UUID',
+  'All',
+];
 const searchInstancesOptionsValues = [
   'all',
   'contributor',
@@ -92,19 +118,17 @@ const searchInstancesOptionsValues = [
   'querySearch',
   'advancedSearch',
 ];
-const searchItemsOptions = [
-  'Keyword (title, contributor, identifier, HRID, UUID)',
-  'Barcode',
-  'ISBN',
-  'ISSN',
-  'Effective call number (item), eye readable',
-  'Effective call number (item), normalized',
-  'Item notes (all)',
-  'Item administrative notes',
-  'Circulation notes',
-  'Item HRID',
-  'Item UUID',
-  'All',
+const searchHoldingsOptionsValues = [
+  'keyword',
+  'isbn',
+  'issn',
+  'holdingsFullCallNumbers',
+  'holdingsNormalizedCallNumbers',
+  'holdingsNotes',
+  'holdingsAdministrativeNotes',
+  'holdingsHrid',
+  'hid',
+  'allFields',
 ];
 const searchItemsOptionsValues = [
   'keyword',
@@ -121,38 +145,14 @@ const searchItemsOptionsValues = [
   'allFields',
 ];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
+const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
+const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 14);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
-
-const advSearchHoldingsOptions = {
-  'Keyword (title, contributor, identifier, HRID, UUID)': 'keyword',
-  ISBN: 'isbn',
-  ISSN: 'issn',
-  'Call number, eye readable': 'holdingsFullCallNumbers',
-  'Call number, normalized': 'holdingsNormalizedCallNumbers',
-  'Holdings notes (all)': 'holdingsNotes',
-  'Holdings administrative notes': 'holdingsAdministrativeNotes',
-  'Holdings HRID': 'holdingsHrid',
-  'Holdings UUID': 'hid',
-  All: 'allFields',
-};
-
-const advSearchItemOptions = {
-  'Keyword (title, contributor, identifier, HRID, UUID)': 'keyword',
-  Barcode: 'barcode',
-  ISBN: 'isbn',
-  ISSN: 'issn',
-  'Effective call number (item), eye readable': 'itemFullCallNumbers',
-  'Effective call number (item), normalized': 'itemNormalizedCallNumbers',
-  'Item notes (all)': 'itemNotes',
-  'Item administrative notes': 'itemAdministrativeNotes',
-  'Circulation notes': 'itemCirculationNotes',
-  'Item HRID': 'Item HRID',
-  'Item UUID': 'Item UUID',
-  All: 'allFields',
-};
-
+const advSearchHoldingsOptionsValues = searchHoldingsOptionsValues
+  .map((option, index) => (index ? option : 'keyword'))
+  .filter((option, index) => index <= 14);
 const advSearchItemsOptionsValues = searchItemsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
@@ -198,7 +198,7 @@ const getItemNoteTypes = (searchParams) => cy
     isDefaultSearchParamsRequired: false,
   })
   .then((response) => {
-    return response.body.holdingsNoteTypes;
+    return response.body.itemNoteTypes;
   });
 
 export default {
@@ -801,7 +801,7 @@ export default {
           .has({ content: including(modifier) }),
       );
     });
-    advSearchItemOptions.forEach((option) => {
+    advSearchItemsOptions.forEach((option) => {
       cy.expect(
         AdvancedSearchRow({ index: rowIndex })
           .find(advSearchOptionSelect)
@@ -837,8 +837,8 @@ export default {
         .has({
           value:
             advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] ||
-            advSearchHoldingsOptions[option] ||
-            advSearchItemOptions[option],
+            advSearchHoldingsOptionsValues[advSearchHoldingsOptions.indexOf(option)] ||
+            advSearchItemsOptionsValues[advSearchItemsOptions.indexOf(option)],
         }),
     ]);
     if (operator) {
