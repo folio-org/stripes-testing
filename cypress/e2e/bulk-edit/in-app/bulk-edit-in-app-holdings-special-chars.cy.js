@@ -62,13 +62,13 @@ describe('bulk-edit', () => {
             // Popular Reading Collection
             permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
             // Updating holdings with special characters
-            callNumber: "number;special&characters",
-            callNumberPrefix: "number-prefix;special&characters",
-            callNumberSuffix: "number-prefix;special&characters",
-            callNumberTypeId: "5ba6b62e-6858-490a-8102-5b1369873835",
-            copyNumber: "copy-number;special&characters",
-            formerIds: ["former-id;special&characters"],
-            numberOfItems: " number-items;special&characters",
+            callNumber: 'number;special&characters',
+            callNumberPrefix: 'number-prefix;special&characters',
+            callNumberSuffix: 'number-prefix;special&characters',
+            callNumberTypeId: '5ba6b62e-6858-490a-8102-5b1369873835',
+            copyNumber: 'copy-number;special&characters',
+            formerIds: ['former-id;special&characters'],
+            numberOfItems: 'number-items;special&characters',
           });
           FileManager.createFile(`cypress/fixtures/${secondValidHoldingHRIDsFileName}`, holdings[0].hrid);
         });
