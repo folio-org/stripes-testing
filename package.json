@@ -53,6 +53,7 @@
     "@interactors/with-cypress": "^1.0.0-rc1.3",
     "@shelex/cypress-allure-plugin": "^2.40.0",
     "bigtest": "^0.14.0",
+    "convert-csv-to-json": "^2.0.0",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
     "cypress-plugin-tab": "^1.0.5",

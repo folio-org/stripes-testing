@@ -9,7 +9,7 @@ import eHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHolding
 import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import TopMenu from '../../../support/fragments/topMenu';
 import { Pane, Section, Button } from '../../../../interactors';
-import eHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingResourceEdit';
+import eHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
 import dateTools from '../../../support/utils/dateTools';
 import testTypes from '../../../support/dictionary/testTypes';
 import features from '../../../support/dictionary/features';
