@@ -82,15 +82,16 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForExport.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      ActionProfiles.deleteActionProfile(actionProfileForExport.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfileForExport.name);
+      cy.getAdminToken().then(() => {
+        // clean up generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForExport.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        ActionProfiles.deleteActionProfile(actionProfileForExport.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfileForExport.name);
+      });
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
@@ -145,15 +146,15 @@ describe('data-import', () => {
           InventorySearchAndFilter.saveUUIDs();
           ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
           FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-          cy.visit(TopMenu.dataExportPath);
 
           // download exported marc file
-          ExportFile.uploadFile(nameForCSVFile);
-          ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-          ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
-          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-
-          cy.log('#####End Of Export#####');
+          cy.visit(TopMenu.dataExportPath);
+          cy.getAdminToken().then(() => {
+            ExportFile.uploadFile(nameForCSVFile);
+            ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+            ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
+            cy.log('#####End Of Export#####');
+          });
 
           // create Match profile
           cy.visit(SettingsMenu.matchProfilePath);

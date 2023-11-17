@@ -18,6 +18,7 @@ import {
 import UrlParams from '../url-params';
 import InteractorsTools from '../../../utils/interactorsTools';
 
+const rootSection = Pane({ id: 'pane-results' });
 const singleRecordImportsAccordion = Accordion('Inventory single record imports');
 const dataImportList = MultiColumnList({ id: 'list-data-import' });
 const errorsInImportAccordion = Accordion('Errors in import');
@@ -140,7 +141,8 @@ export default {
   },
 
   searchWithTerm(term) {
-    cy.get('#input-job-logs-search').clear().type(term.replace('.mrc', ''));
+    const newFileName = term.replace('.mrc', '');
+    cy.get('#input-job-logs-search').clear().type(newFileName);
     cy.do(Button('Search').click());
     // need to wait until search list is populated
     cy.wait(3000);
@@ -332,7 +334,8 @@ export default {
   },
 
   checkByDateAndJobProfile({ from, end }, profileId) {
-    const queryString = `completedAfter=${from}&completedBefore=${end}&limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED`;
+    waitUIToBeFiltered();
+    const queryString = `completedAfter=${from}&completedBefore=${end}&limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED&subordinationTypeNotAny=COMPOSITE_PARENT`;
     return this.getNumberOfMatchedJobs(queryString).then((count) => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
@@ -419,7 +422,12 @@ export default {
   },
 
   openFileDetails: (fileName) => {
-    cy.do(MultiColumnList({ id: 'list-data-import' }).find(Link(fileName)).click());
+    const newFileName = fileName.replace('.mrc', '');
+    cy.do(
+      MultiColumnList({ id: 'list-data-import' })
+        .find(Link(including(newFileName)))
+        .click(),
+    );
   },
   clickNextPaginationButton: () => {
     cy.do(nextButton.click());
@@ -427,15 +435,24 @@ export default {
   clickPreviousPaginationButton: () => {
     cy.do(previousButton.click());
   },
+  getNumberOfExistingJobProfiles() {
+    let profilesQuantity;
+
+    return cy
+      .get('#paneHeaderpane-results-subtitle')
+      .invoke('text')
+      .then((number) => {
+        profilesQuantity = number;
+      })
+      .then(() => {
+        return profilesQuantity;
+      });
+  },
 
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(selectAllCheckbox.absent()),
 
   verifyQuantityOfLogs: (quantity) => {
-    cy.expect(
-      Pane({ id: 'pane-results' })
-        .find(HTML(including(`${quantity} logs found`)))
-        .exists(),
-    );
+    cy.expect(rootSection.find(HTML(including(`${quantity} logs found`))).exists());
   },
 
   verifyColumnIsSorted: (nameOfColumn, isDescending) => {

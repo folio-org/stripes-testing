@@ -21,22 +21,21 @@ describe('inventory', () => {
     const fileName = `C402775 autotestFile.${getRandomPostfix()}.mrc`;
 
     before('create test data and login', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      cy.getAdminToken().then(() => {
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathForUpload, fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
-        Logs.openFileDetails(fileName);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePathForUpload, fileName);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileName);
+      Logs.openFileDetails(fileName);
 
-        // open Instance for getting hrid
-        FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
-        });
+      // open Instance for getting hrid
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+        instanceHrid = initialInstanceHrId;
       });
 
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
@@ -47,13 +46,14 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(

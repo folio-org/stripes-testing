@@ -54,6 +54,7 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -161,7 +162,7 @@ describe('data-import', () => {
       'C375109 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITH instance match item (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
-        const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
+        const marcFileNameForUpdate = `C375109 firstmarcFile${getRandomPostfix()}.mrc`;
         const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
         const quantityOfItems = '1';
         const collectionOfMappingAndActionProfiles = [
@@ -372,23 +373,24 @@ describe('data-import', () => {
           '*C375109 firstmarcFile*',
           '*SearchInstanceUUIDs*',
         );
-        cy.getAdminToken();
-        JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
-        cy.wrap(collectionOfMatchProfiles).each((profile) => {
-          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-        });
-        cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-        });
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"hrid"=="${testData.firstHrid}"`,
-        }).then((instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
+          cy.wrap(collectionOfMatchProfiles).each((profile) => {
+            MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+          });
+          cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
+            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          });
+          cy.getInstance({
+            limit: 1,
+            expandAll: true,
+            query: `"hrid"=="${testData.firstHrid}"`,
+          }).then((instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
         });
       },
     );
@@ -397,7 +399,7 @@ describe('data-import', () => {
       'C422064 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITHOUT instance match item (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
-        const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
+        const marcFileNameForUpdate = `C375109 firstmarcFile${getRandomPostfix()}.mrc`;
         const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
         const quantityOfItems = '1';
         const collectionOfMappingAndActionProfiles = [
@@ -588,26 +590,27 @@ describe('data-import', () => {
         FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${csvFileName}`);
         FileManager.deleteFileFromDownloadsByMask(
-          '*C375109 firstmarcFile*',
+          '*C422064 firstmarcFile*',
           '*SearchInstanceUUIDs*',
         );
-        cy.getAdminToken();
-        JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
-        cy.wrap(collectionOfMatchProfiles).each((profile) => {
-          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-        });
-        cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-        });
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"hrid"=="${testData.secondHrid}"`,
-        }).then((instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
+          cy.wrap(collectionOfMatchProfiles).each((profile) => {
+            MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+          });
+          cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
+            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          });
+          cy.getInstance({
+            limit: 1,
+            expandAll: true,
+            query: `"hrid"=="${testData.secondHrid}"`,
+          }).then((instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
         });
       },
     );

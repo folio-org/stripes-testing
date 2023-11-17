@@ -369,10 +369,10 @@ describe('data-import', () => {
       'C397984 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 1 match (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
-        const fileNameForCreate = `C397984 autotestFileForCreate.${getRandomPostfix()}.mrc`;
-        const fileNameForUpdate = `C397984 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
-        const editedMarcFileNameForCreate = `C397984 editedAutotestFileForCreate.${getRandomPostfix()}.mrc`;
-        const editedMarcFileNameForUpdate = `C397984 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
+        const fileNameForCreate = `C397984 autotestFileForCreate${getRandomPostfix()}.mrc`;
+        const fileNameForUpdate = `C397984 autotestFileForUpdate${getRandomPostfix()}.mrc`;
+        const editedMarcFileNameForCreate = `C397984 editedAutotestFileForCreate${getRandomPostfix()}.mrc`;
+        const editedMarcFileNameForUpdate = `C397984 editedAutotestFileForUpdate${getRandomPostfix()}.mrc`;
         const uniq001Field = Helper.getRandomBarcode();
         const newUri = 'http://jbjjhhjj:3000/Test';
         // profiles for update
@@ -520,10 +520,10 @@ describe('data-import', () => {
       'C397383 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 3 matches (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
-        const fileNameForCreate = `C397383 autotestFileForCreate.${getRandomPostfix()}.mrc`;
-        const fileNameForUpdate = `C397383 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
-        const editedMarcFileNameForCreate = `C397383 editedAutotestFileForCreate.${getRandomPostfix()}.mrc`;
-        const editedMarcFileNameForUpdate = `C397383 editedAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
+        const fileNameForCreate = `C397383 autotestFileForCreate${getRandomPostfix()}.mrc`;
+        const fileNameForUpdate = `C397383 autotestFileForUpdate${getRandomPostfix()}.mrc`;
+        const editedMarcFileNameForCreate = `C397383 editedAutotestFileForCreate${getRandomPostfix()}.mrc`;
+        const editedMarcFileNameForUpdate = `C397383 editedAutotestFileForUpdate${getRandomPostfix()}.mrc`;
         const uniq001Field = Helper.getRandomBarcode();
         const newUri = 'http://jbjjhhjj:3000/Test3';
         // profiles for update

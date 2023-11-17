@@ -40,13 +40,14 @@ describe('inventory', () => {
     });
 
     afterEach('reset "Fast add" setting', () => {
-      cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-        FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
-      );
-      cy.visit(TopMenu.inventorySettingsFastAddPath);
-      FastAdd.changeDefaultInstanceStatus('Select instance status');
-      Users.deleteViaApi(userId);
+      cy.getAdminToken().then(() => {
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+          FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
+        );
+        cy.visit(TopMenu.inventorySettingsFastAddPath);
+        FastAdd.changeDefaultInstanceStatus('Select instance status');
+        Users.deleteViaApi(userId);
+      });
     });
 
     it(

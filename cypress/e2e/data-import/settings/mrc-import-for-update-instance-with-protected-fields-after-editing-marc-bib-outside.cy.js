@@ -33,8 +33,8 @@ describe('data-import', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const quantityOfItems = '1';
     // unique file names
-    const nameMarcFileForCreate = `C356830 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C356830 marcFileForMatch.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C356830 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C356830 marcFileForMatch${getRandomPostfix()}.mrc`;
     const firstProtectedFieldsData = {
       indicator1: '*',
       indicator2: '*',
@@ -96,29 +96,30 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      Users.deleteViaApi(user.userId);
-      MarcFieldProtection.getListViaApi({
-        query: `"data"=="${firstProtectedFieldsData.data}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        Users.deleteViaApi(user.userId);
+        MarcFieldProtection.getListViaApi({
+          query: `"data"=="${firstProtectedFieldsData.data}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${secondProtectedFieldData.field}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      MarcFieldProtection.getListViaApi({
-        query: `"field"=="${secondProtectedFieldData.field}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
@@ -217,7 +218,7 @@ describe('data-import', () => {
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource(
           '650\t',
-          'Drawing, Dutch $y 21st century $v Exhibitions. $5 amb',
+          'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb',
         );
         InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
       },

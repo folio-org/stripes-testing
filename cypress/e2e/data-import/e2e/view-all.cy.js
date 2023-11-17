@@ -14,6 +14,7 @@ describe('data-import', () => {
     const uniqueFileName = `C11112test${getRandomPostfix()}.${fileType}`;
 
     before('create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
 
       // create dynamically file with given name in fixtures
@@ -27,9 +28,11 @@ describe('data-import', () => {
     });
 
     beforeEach(() => {
-      // fetch dynamic data from server
-      LogsViewAll.getSingleJobProfile().then(({ hrId }) => {
-        id = hrId;
+      cy.getAdminToken(() => {
+        // fetch dynamic data from server
+        LogsViewAll.getSingleJobProfile().then(({ hrId }) => {
+          id = hrId;
+        });
       });
     });
 

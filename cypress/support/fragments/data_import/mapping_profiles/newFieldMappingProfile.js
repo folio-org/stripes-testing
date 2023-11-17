@@ -956,7 +956,8 @@ export default {
 
   markFieldForProtection: (field) => {
     cy.get('div[class^="mclRow--"]')
-      .contains('div[class^="mclCell-"]', field)
+      .find('div[class^="mclCell-"]')
+      .contains(field)
       .then((elem) => {
         elem.parent()[0].querySelector('input[type="checkbox"]').click();
       });

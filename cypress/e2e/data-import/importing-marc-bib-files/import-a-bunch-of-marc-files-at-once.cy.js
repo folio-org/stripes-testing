@@ -37,7 +37,6 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadBunchOfFiles(filePathForUpload, upload.quantityOfFiles, upload.fileName);
-          DataImport.waitFileIsUploaded();
           JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(upload.fileName);
