@@ -56,15 +56,15 @@ const status = {
 };
 
 const visibleColumnsInSummaryTable = {
-  SUMMARY: { columnIndex: 1 },
-  SRS_MARC: { columnIndex: 2 },
-  INSTANCE: { columnIndex: 3 },
-  HOLDINGS: { columnIndex: 4 },
-  ITEM: { columnIndex: 5 },
-  AUTHORITY: { columnIndex: 6 },
-  ORDER: { columnIndex: 7 },
-  INVOICE: { columnIndex: 8 },
-  ERROR: { columnIndex: 9 },
+  SUMMARY: { columnIndex: 0 },
+  SRS_MARC: { columnIndex: 1 },
+  INSTANCE: { columnIndex: 2 },
+  HOLDINGS: { columnIndex: 3 },
+  ITEM: { columnIndex: 4 },
+  AUTHORITY: { columnIndex: 5 },
+  ORDER: { columnIndex: 6 },
+  INVOICE: { columnIndex: 7 },
+  ERROR: { columnIndex: 8 },
 };
 
 const visibleColumnsInResultsList = {
@@ -260,6 +260,24 @@ export default {
     );
   },
 
+  openInstanceInInventoryByStatus: (itemStatus) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ content: itemStatus, columnIndex: 3 }))
+        .perform((element) => {
+          const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+          cy.do(
+            resultsList
+              .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+              .find(MultiColumnListCell({ columnIndex: 3 }))
+              .find(Link(itemStatus))
+              .click(),
+          );
+        }),
+    );
+  },
+
   openHoldingsInInventory: (itemStatus, rowNumber = 0) => {
     cy.do(
       resultsList
@@ -287,14 +305,14 @@ export default {
     );
   },
 
-  openItemInInventoryByTitle: (title, itemStatus = 'Updated') => {
+  openItemInInventoryByTitle: (title, columnIndex, itemStatus = 'Updated') => {
     cy.do(
       MultiColumnListCell({ content: title }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
         cy.do(
           resultsList
-            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex: 5 }))
+            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex }))
             .find(Link(itemStatus))
             .click(),
         );
@@ -303,11 +321,30 @@ export default {
   },
 
   openJsonScreen: (title) => {
+    cy.get('#search-results-list').find('*[class^="mclCell"]').contains(title).focus();
     cy.get('#search-results-list')
       .find('*[class^="mclCell"]')
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();
+    cy.wait(2000);
+  },
+
+  openJsonScreenByStatus: (importStatus, title) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ content: importStatus, columnIndex: 2 }))
+        .perform((element) => {
+          const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+          cy.get('#search-results-list')
+            .eq(rowNumber)
+            .find('*[class^="mclCell"]')
+            .contains(title)
+            .invoke('removeAttr', 'target')
+            .click();
+        }),
+    );
   },
 
   filterRecordsWithError: (index) => {
@@ -450,9 +487,8 @@ export default {
     cy.expect(paneHeader.find(HTML(including(`${number} errors found`))).exists());
   },
 
-  verifyLogSummaryTableIsHidden: () => {
-    cy.expect(jobSummaryTable.absent());
-  },
+  verifyLogSummaryTableIsHidden: () => cy.expect(jobSummaryTable.absent()),
+  verifyResultsListIsVisible: () => cy.expect(resultsList.exists()),
 
   verifyRecordColumnHasStandardSequentialNumberingForRecords() {
     getMultiColumnListCellsValuesInResultsList(visibleColumnsInResultsList.RECORD.columnIndex).then(

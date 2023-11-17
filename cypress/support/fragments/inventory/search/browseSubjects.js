@@ -1,10 +1,11 @@
 /* eslint-disable no-dupe-keys */
 import { including } from 'bigtest';
 import {
+  matching,
   Button,
   MultiColumnListCell,
   Pane,
-  TextField,
+  TextArea,
   Link,
   MultiColumnListHeader,
   MultiColumnListRow,
@@ -14,6 +15,7 @@ import {
   Accordion,
 } from '../../../../../interactors';
 import InventorySearchAndFilter from '../inventorySearchAndFilter';
+import { escapeRegex } from '../../../utils/stringTools';
 
 const searchButton = Button('Search', { type: 'submit' });
 const browseInventoryPane = Pane('Browse inventory');
@@ -28,10 +30,6 @@ const recordSearch = TextInput({ id: 'input-record-search' });
 const browseOptionSelect = Select('Search field index');
 
 export default {
-  verifySearchButtonDisabled() {
-    cy.expect(searchButton.has({ disabled: true }));
-  },
-
   verifyNonExistentSearchResult(searchString) {
     cy.expect(
       MultiColumnListCell({
@@ -102,7 +100,7 @@ export default {
   },
 
   clearSearchTextfield() {
-    cy.do(TextField({ id: 'input-record-search' }).clear());
+    cy.do(TextArea({ id: 'input-record-search' }).fillIn(''));
   },
 
   verifySearchTextFieldEmpty() {
@@ -115,7 +113,6 @@ export default {
   searchBrowseSubjects(searchString) {
     InventorySearchAndFilter.selectBrowseSubjects();
     this.verifySearchTextFieldEmpty();
-    this.verifySearchButtonDisabled();
     InventorySearchAndFilter.browseSearch(searchString);
   },
 
@@ -184,7 +181,46 @@ export default {
     );
   },
 
+  verifyNumberOfTitlesForRowWithValueAndAuthorityIcon(value, itemCount) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(`Linked to MARC authority${value}`),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles', content: itemCount.toString() }))
+        .exists(),
+    );
+  },
+
+  verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(value, itemCount) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: matching(new RegExp('^' + escapeRegex(value))),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles', content: itemCount.toString() }))
+        .exists(),
+    );
+  },
+
+  verifyNumberOfTitlesForRow(rowIndex, itemCount) {
+    cy.expect(
+      MultiColumnListCell({ row: rowIndex, columnIndex: 1 }).has({ content: itemCount.toString() }),
+    );
+  },
+
   verifyNoAccordionsOnPane() {
     cy.expect(Accordion().absent());
+  },
+
+  selectRecordByTitle(title) {
+    cy.do(
+      MultiColumnListRow({
+        isContainer: true,
+        content: title,
+      })
+        .find(Link())
+        .click(),
+    );
   },
 };

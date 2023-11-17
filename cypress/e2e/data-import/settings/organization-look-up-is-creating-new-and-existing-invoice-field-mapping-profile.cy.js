@@ -32,6 +32,7 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 
@@ -39,6 +40,8 @@ describe('data-import', () => {
       'C380521 Verify that Organization look-up is active on creating new and existing Invoice field mapping profile (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
+        const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully updated`;
+
         FieldMappingProfiles.search(profileForDuplicate);
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.addName(mappingProfile.name);
@@ -50,7 +53,7 @@ describe('data-import', () => {
         FieldMappingProfileView.edit();
         NewFieldMappingProfile.selectOrganizationByName(mappingProfile.organizationForChanging);
         FieldMappingProfileEdit.save();
-        FieldMappingProfileView.checkCalloutMessage(mappingProfile.name);
+        FieldMappingProfileView.checkCalloutMessage(calloutMessage);
         FieldMappingProfileView.verifyMappingProfileOpened();
         FieldMappingProfileView.verifyVendorName(mappingProfile.organizationForChanging);
       },

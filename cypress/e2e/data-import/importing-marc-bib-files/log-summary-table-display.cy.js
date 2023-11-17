@@ -21,6 +21,7 @@ describe('data-import', () => {
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile(filePathToUpload, fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
@@ -31,41 +32,63 @@ describe('data-import', () => {
       'C353624 Check the log summary table display (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
+        const columnNumbers = {
+          summary: '1',
+          srs: '2',
+          instance: '3',
+          holdings: '4',
+          item: '5',
+          authority: '6',
+          order: '7',
+          invoice: '8',
+          error: '9',
+        };
+
         Logs.openFileDetails(fileName);
         FileDetails.verifyLogDetailsPageIsOpened();
-
-        FileDetails.verifyColumnValuesInSummaryTable(
-          FileDetails.visibleColumnsInSummaryTable.SUMMARY.columnIndex,
-          ['Created', 'Updated', 'No action', 'Error'],
-        );
-        FileDetails.verifyColumnValuesInSummaryTable(
-          FileDetails.visibleColumnsInSummaryTable.SRS_MARC.columnIndex,
-          ['103', '0', '0', '0'],
-        );
-        FileDetails.verifyColumnValuesInSummaryTable(
-          FileDetails.visibleColumnsInSummaryTable.INSTANCE.columnIndex,
-          ['103', '0', '0', '0'],
-        );
-        FileDetails.verifyColumnValuesInSummaryTable(
-          FileDetails.visibleColumnsInSummaryTable.HOLDINGS.columnIndex,
-          ['No value set-', 'No value set-', 'No value set-', 'No value set-'],
-        );
-        FileDetails.verifyColumnValuesInSummaryTable(
-          FileDetails.visibleColumnsInSummaryTable.ITEM.columnIndex,
-          ['No value set-', 'No value set-', 'No value set-', 'No value set-'],
-        );
-        FileDetails.verifyColumnValuesInSummaryTable(
-          FileDetails.visibleColumnsInSummaryTable.ORDER.columnIndex,
-          ['No value set-', 'No value set-', 'No value set-', 'No value set-'],
-        );
-        FileDetails.verifyColumnValuesInSummaryTable(
-          FileDetails.visibleColumnsInSummaryTable.INVOICE.columnIndex,
-          ['No value set-', 'No value set-', 'No value set-', 'No value set-'],
-        );
-        FileDetails.verifyColumnValuesInSummaryTable(
-          FileDetails.visibleColumnsInSummaryTable.ERROR.columnIndex,
-          ['No value set-', 'No value set-', 'No value set-', '0'],
-        );
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.summary, [
+          'Created',
+          'Updated',
+          'No action',
+          'Error',
+        ]);
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.srs, ['103', '0', '0', '0']);
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.instance, [
+          '103',
+          '0',
+          '0',
+          '0',
+        ]);
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.holdings, [
+          'No value set-',
+          'No value set-',
+          'No value set-',
+          'No value set-',
+        ]);
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.item, [
+          'No value set-',
+          'No value set-',
+          'No value set-',
+          'No value set-',
+        ]);
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.order, [
+          'No value set-',
+          'No value set-',
+          'No value set-',
+          'No value set-',
+        ]);
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.invoice, [
+          'No value set-',
+          'No value set-',
+          'No value set-',
+          'No value set-',
+        ]);
+        FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.error, [
+          'No value set-',
+          'No value set-',
+          'No value set-',
+          '0',
+        ]);
         FileDetails.clickNextPaginationButton();
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.verifyLogSummaryTableIsDisplayed();

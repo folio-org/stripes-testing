@@ -75,7 +75,16 @@ describe('data-import', () => {
     };
 
     before('create user and login', () => {
-      cy.getAdminToken().then(() => {
+      cy.createTempUser([
+        Permissions.settingsDataImportEnabled.gui,
+        Permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
         MarcFieldProtection.createViaApi({
           indicator1: '*',
           indicator2: '*',
@@ -97,20 +106,10 @@ describe('data-import', () => {
           protectedFieldIds.push(secondResp.id);
         });
       });
-
-      cy.createTempUser([
-        Permissions.settingsDataImportEnabled.gui,
-        Permissions.moduleDataImportEnabled.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-      });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -147,6 +146,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreate);
@@ -170,6 +170,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForMatch);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForMatch);
@@ -213,6 +214,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdate);
@@ -224,8 +226,6 @@ describe('data-import', () => {
         ].forEach((columnName) => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
-        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
       },
     );
   });

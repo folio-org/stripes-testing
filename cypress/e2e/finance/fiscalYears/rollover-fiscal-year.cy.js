@@ -167,7 +167,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin();
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

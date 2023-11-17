@@ -35,6 +35,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
       FieldMappingProfileView.deleteViaApi(duplicatedMappingProfile.name);
@@ -44,13 +45,15 @@ describe('data-import', () => {
       'C2352 Duplicate an existing field mapping profile (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
+        const calloutMessage = `The field mapping profile "${duplicatedMappingProfile.name}" was successfully created`;
+
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.addFolioRecordType(duplicatedMappingProfile.typeValue);
         NewFieldMappingProfile.save();
         NewFieldMappingProfile.checkCalloutMessage(calloutErrorMessage);
         NewFieldMappingProfile.addName(duplicatedMappingProfile.name);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkCreateProfileCalloutMessage(duplicatedMappingProfile.name);
+        FieldMappingProfileView.checkCalloutMessage(calloutMessage);
         FieldMappingProfileView.closeViewMode(duplicatedMappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(duplicatedMappingProfile.name);
         FieldMappingProfileView.closeViewMode(duplicatedMappingProfile.name);

@@ -8,10 +8,12 @@ import {
   MultiColumnListRow,
   including,
   Link,
+  Checkbox,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import OrderLines from './orderLines';
 import OrderLineDetails from './orderLineDetails';
+import OrderLineEditForm from './orderLineEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
 import CreateInvoiceModal from './modals/createInvoiceModal';
 import OpenConfirmationModal from './modals/openConfirmationModal';
@@ -21,6 +23,7 @@ import ExportDetails from '../exportManager/exportDetails';
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
 
+const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
@@ -36,9 +39,16 @@ const openPolDetails = (title) => {
 export default {
   openPolDetails,
   checkOrderStatus(orderStatus) {
-    cy.expect(
-      Section({ id: 'POSummary' }).find(KeyValue('Workflow status')).has({ value: orderStatus }),
-    );
+    cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
+  },
+  checkOrderDetails({ summary = [] } = {}) {
+    summary.forEach(({ key, value, checkbox }) => {
+      if (checkbox) {
+        cy.expect(poSummarySection.find(Checkbox(key)).has(value));
+      } else {
+        cy.expect(poSummarySection.find(KeyValue(key)).has({ value: including(value) }));
+      }
+    });
   },
   expandActionsDropdown() {
     cy.do(
@@ -59,7 +69,7 @@ export default {
       OpenConfirmationModal.confirm();
     }
   },
-  unOpenOrder({ orderNumber, checkinItems = false, confirm = true } = {}) {
+  unOpenOrder({ orderNumber, checkinItems = false, confirm = true, submit = false } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('Unopen').click());
 
@@ -68,8 +78,10 @@ export default {
     }
 
     if (confirm) {
-      UnopenConfirmationModal.confirm();
+      UnopenConfirmationModal.confirm({ submit });
     }
+
+    // The Purchase order - <order number> has been successfully unopened
   },
   reOpenOrder({ orderNumber, checkMessage = true } = {}) {
     this.expandActionsDropdown();
@@ -139,9 +151,44 @@ export default {
       }
     });
   },
+  checkOrderLinesTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.poLineNumber) {
+        cy.expect(
+          polListingAccordion
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.poLineNumber) }),
+        );
+      }
+      if (record.poLineTitle) {
+        cy.expect(
+          polListingAccordion
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(record.poLineTitle) }),
+        );
+      }
+    });
+
+    if (!records.length) {
+      cy.expect(polListingAccordion.has({ text: including('The list contains no items') }));
+    }
+  },
   checkIsItemsInInventoryCreated(title, location) {
     openPolDetails(title);
     OrderLines.openInstance();
     InventoryInstance.checkIsInstancePresented(title, location);
+  },
+  selectAddPOLine() {
+    cy.do([
+      polListingAccordion.find(actionsButton).focus(),
+      polListingAccordion.find(actionsButton).click(),
+      Button('Add PO line').click(),
+    ]);
+
+    OrderLineEditForm.waitLoading();
+
+    return OrderLineEditForm;
   },
 };

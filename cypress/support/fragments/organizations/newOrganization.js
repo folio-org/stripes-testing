@@ -9,7 +9,7 @@ const getDefaultOrganization = ({ id = uuid(), accounts = 0 } = {}) => {
     code: `autotest_code_${getRandomPostfix()}`,
     erpCode: getRandomPostfix(),
     isVendor: true,
-    accounts: [...Array(accounts)].map(() => ({
+    accounts: [...Array(accounts).keys()].map((index) => ({
       accountNo: getRandomPostfix(),
       accountStatus: 'Active',
       acqUnitIds: [],
@@ -17,7 +17,7 @@ const getDefaultOrganization = ({ id = uuid(), accounts = 0 } = {}) => {
       description: 'Main library account',
       libraryCode: 'COB',
       libraryEdiCode: getRandomPostfix(),
-      name: 'TestAccout1',
+      name: `autotest_account_${index + 1}`,
       notes: '',
       paymentMethod: 'Cash',
     })),

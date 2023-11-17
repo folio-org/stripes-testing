@@ -109,6 +109,7 @@ const mclLinkHeader = MultiColumnListHeader({ id: 'list-column-link' });
 const mclAuthRefTypeHeader = MultiColumnListHeader({ id: 'list-column-authreftype' });
 const mclHeadingRef = MultiColumnListHeader({ id: 'list-column-headingref' });
 const mclHeadingType = MultiColumnListHeader({ id: 'list-column-headingtype' });
+const mclHeadingSourceFile = MultiColumnListHeader({ id: 'list-column-authoritysource' });
 const contributorsList = MultiColumnList({ id: 'list-contributors' });
 const buttonPrevPageDisabled = Button({
   id: 'authority-result-list-prev-paging-button',
@@ -126,7 +127,7 @@ const buttonLink = Button('Link');
 const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
-const inputSearchField = TextField({ id: 'input-inventory-search' });
+const inputSearchField = TextArea({ id: 'input-inventory-search' });
 const holdingsPane = Pane(including('Holdings'));
 const instancesButton = Button({ id: 'segment-navigation-instances' });
 const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
@@ -186,7 +187,7 @@ const openHoldings = (...holdingToBeOpened) => {
 const openItemByBarcode = (itemBarcode) => {
   cy.do(
     Section({ id: 'pane-instancedetails' })
-      .find(MultiColumnListCell({ content: itemBarcode }))
+      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
       .find(Button(including(itemBarcode)))
       .click(),
   );
@@ -225,6 +226,25 @@ const verifyAlternativeTitle = (indexRow, indexColumn, value) => {
       .find(MultiColumnListRow({ index: indexRow }))
       .find(MultiColumnListCell({ columnIndex: indexColumn }))
       .has({ content: value }),
+  );
+};
+
+const verifySeriesStatement = (indexRow, value) => {
+  cy.expect(
+    titleDataAccordion
+      .find(MultiColumnList({ id: 'list-series-statement' }))
+      .find(MultiColumnListRow({ index: indexRow }))
+      .find(MultiColumnListCell())
+      .has({ content: value }),
+  );
+};
+
+const verifySubjectHeading = (value) => {
+  cy.expect(
+    Accordion('Subject')
+      .find(MultiColumnList({ id: 'list-subject' }))
+      .find(MultiColumnListCell({ content: value }))
+      .exists(),
   );
 };
 
@@ -293,6 +313,8 @@ export default {
   waitInstanceRecordViewOpened,
   openItemByBarcode,
   verifyAlternativeTitle,
+  verifySeriesStatement,
+  verifySubjectHeading,
   verifyContributor,
   verifyContributorWithMarcAppLink,
 
@@ -347,6 +369,10 @@ export default {
 
   newMarcBibRecord() {
     cy.do([paneResultsSection.find(actionsBtn).click(), newMarcBibButton.click()]);
+    cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
+  },
+
+  verifyNewQuickMarcEditorPaneExists() {
     cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
   },
 
@@ -509,6 +535,7 @@ export default {
     cy.expect([
       selectField.has({ content: including('Keyword') }),
       selectField.has({ content: including('Identifier (all)') }),
+      selectField.has({ content: including('LCCN') }),
       selectField.has({ content: including('Personal name') }),
       selectField.has({ content: including('Corporate/Conference name') }),
       selectField.has({ content: including('Geographic name') }),
@@ -549,7 +576,12 @@ export default {
     cy.expect(PaneHeader('MARC authority').exists());
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
-      cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} results found` }).exists());
+      const numberOfRecords = item.response.body.totalRecords;
+      const paneHeaderSubtitle =
+        numberOfRecords === 1
+          ? `${numberOfRecords} result found`
+          : `${numberOfRecords} results found`;
+      cy.expect(Pane({ subtitle: paneHeaderSubtitle }).exists());
       // eslint-disable-next-line no-unused-expressions
       expect(item.response.body.totalRecords < 100).to.be.true;
     });
@@ -561,6 +593,7 @@ export default {
       mclAuthRefTypeHeader.has({ content: 'Authorized/Reference' }),
       mclHeadingRef.has({ content: 'Heading/Reference' }),
       mclHeadingType.has({ content: 'Type of heading' }),
+      mclHeadingSourceFile.has({ content: 'Authority source' }),
       MultiColumnListRow({ index: 0 })
         .find(Button({ ariaLabel: 'Link' }))
         .exists(),
@@ -586,6 +619,8 @@ export default {
       marcViewPane.exists(),
       marcViewPane.find(buttonLink).exists(),
       marcViewPane.has({ mark: markedValue }),
+      marcViewPane.find(HTML({ text: including('$') })).exists(),
+      marcViewPane.find(HTML({ text: including('‡') })).absent(),
     ]);
   },
 
@@ -843,18 +878,24 @@ export default {
     cy.expect(tagButton.find(HTML(including('0'))).exists());
   },
 
-  checkIsInstancePresented: (title, location, content = 'On order') => {
+  checkIsInstancePresented: (title, location, status = 'On order') => {
     cy.expect(Pane({ titleLabel: including(title) }).exists());
     cy.expect(instanceDetailsPane.find(HTML(including(location))).exists());
     openHoldings([location]);
-    cy.expect(instanceDetailsPane.find(MultiColumnListCell(content)).exists());
+    cy.expect(instanceDetailsPane.find(MultiColumnListCell(status)).exists());
   },
 
-  createInstanceViaApi() {
+  createInstanceViaApi({
+    instanceTitle = `Instance ${getRandomPostfix()}`,
+    instanceId = uuid(),
+    instanceTypeId,
+    contributors,
+  } = {}) {
     const instanceData = {
-      instanceTitle: `Instance ${getRandomPostfix()}`,
-      instanceId: uuid(),
-      instanceTypeId: null,
+      instanceTitle,
+      instanceId,
+      instanceTypeId,
+      contributors,
     };
 
     return cy
@@ -967,7 +1008,12 @@ export default {
   },
 
   checkIsItemCreated: (itemBarcode) => {
-    cy.expect(Link(including(itemBarcode)).exists());
+    cy.expect(
+      Section({ id: 'pane-instancedetails' })
+        .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+        .find(Button(including(itemBarcode)))
+        .exists(),
+    );
   },
 
   checkMARCSourceAtNewPane() {
@@ -1037,7 +1083,7 @@ export default {
   verifyLoan: (content) => cy.expect(MultiColumnListCell({ content }).exists()),
 
   verifyLoanInItemPage(barcode, value) {
-    cy.do(MultiColumnListCell({ content: barcode }).find(Button()).click());
+    cy.do(MultiColumnListCell({ content: barcode }).find(Button(barcode)).click());
     cy.expect(KeyValue('Temporary loan type').has({ value }));
     cy.do(Button({ icon: 'times' }).click());
   },

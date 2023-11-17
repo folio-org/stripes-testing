@@ -10,6 +10,7 @@ import {
   SelectionList,
   TextField,
   Pane,
+  PaneContent,
   Checkbox,
   MultiColumnListCell,
   Modal,
@@ -24,6 +25,7 @@ const errorsInImportAccordion = Accordion('Errors in import');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const nextButton = Button({ id: 'list-data-import-next-paging-button' });
 const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
+const logsResultPane = PaneContent({ id: 'pane-results-content' });
 
 function getCheckboxByRow(row) {
   return MultiColumnList()
@@ -450,6 +452,7 @@ export default {
         cy.expect(cells).to.deep.equal(cells.sort());
       }
     });
+  },
 
   verifyPreviousPagination: () => {
     cy.expect([previousButton.has({ disabled: true }), nextButton.has({ disabled: false })]);
@@ -462,7 +465,7 @@ export default {
       .invoke('text')
       .should('include', '100');
   },
-    
+
   verifyNextPagination: () => {
     cy.expect([previousButton.has({ disabled: false }), nextButton.has({ disabled: false })]);
     cy.get('#pane-results')
@@ -473,6 +476,9 @@ export default {
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
       .should('include', '200');
+  },
 
+  noLogResultsFound: () => {
+    cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
   },
 };

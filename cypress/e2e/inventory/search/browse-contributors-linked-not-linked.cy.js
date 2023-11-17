@@ -72,7 +72,7 @@ describe('Inventory: Contributors Browse', () => {
         InventoryInstance.searchResults(testData.contributorName);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `‡a ${marcFiles[1].naturalId}`,
+          `$a ${marcFiles[1].naturalId}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
@@ -88,6 +88,7 @@ describe('Inventory: Contributors Browse', () => {
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);

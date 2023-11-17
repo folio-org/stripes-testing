@@ -66,6 +66,7 @@ describe('loan dates', () => {
           );
           MultipieceCheckOut.confirmMultipleCheckOut(folioInstances[0].barcodes[0]);
           CheckOutActions.endCheckOutSession();
+          cy.getAdminToken();
           cy.updateUser({
             ...Cypress.env('users')[0],
             expirationDate: DateTools.getFormattedDate({ date: expirationUserDate }),
@@ -80,6 +81,7 @@ describe('loan dates', () => {
   });
 
   after('Delete all data', () => {
+    cy.getAdminToken();
     CheckinActions.checkinItemViaApi({
       itemBarcode: folioInstances[0].barcodes[0],
       servicePointId,

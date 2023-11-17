@@ -37,7 +37,7 @@ describe('Create holding records with MARC source', () => {
     tag001ValueInSourceMask: /[a-z]+\d+/,
     tag004ValueInSourceMask: /[a-z]+\d+/,
     tag005ValueInSourceMask: /\d+.\d+/,
-    tag999ValueInSourceMask: /f\sf‡s\s.+\s‡i\s.+\S/,
+    tag999ValueInSourceMask: /f\sf\$s\s.+\s\$i\s.+\S/,
     default008BoxesValues: [
       '0',
       'u',
@@ -124,6 +124,7 @@ describe('Create holding records with MARC source', () => {
   });
 
   after('Deleting created user, data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     cy.deleteHoldingRecordViaApi(recordIDs[3]);
     cy.deleteHoldingRecordViaApi(recordIDs[4]);
@@ -220,7 +221,7 @@ describe('Create holding records with MARC source', () => {
     'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      InventoryInstance.searchByTitle(recordIDs[2]);
+      InventoryInstance.searchByTitle(recordIDs[0]);
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.waitLoading();
       QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);

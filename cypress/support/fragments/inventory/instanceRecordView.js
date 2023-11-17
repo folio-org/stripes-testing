@@ -4,6 +4,7 @@ import {
   MultiColumnList,
   Section,
   MultiColumnListCell,
+  MultiColumnListRow,
   Button,
   Accordion,
   Link,
@@ -14,8 +15,9 @@ import {
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryNewHoldings from './inventoryNewHoldings';
+import InventoryEditMarcRecord from './inventoryEditMarcRecord';
 
-const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
+const rootSection = Section({ id: 'pane-instancedetails' });
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
@@ -30,6 +32,9 @@ const electronicAccessAccordion = Accordion('Electronic access');
 const instanceDetailsPane = Pane({ id: 'pane-instancedetails' });
 const classificationAccordion = Accordion('Classification');
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
+const descriptiveDataAccordion = Accordion('Descriptive data');
+const adminDataAcoordion = Accordion('Administrative data');
+const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 
 const verifyResourceTitle = (value) => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -58,15 +63,13 @@ const verifyInstanceStatusTerm = (value) => {
 
 const verifyMarkAsSuppressed = () => {
   cy.expect(
-    instanceDetailsSection
-      .find(HTML(including('Warning: Instance is marked staff suppressed')))
-      .exists(),
+    rootSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).exists(),
   );
 };
 
 const verifyMarkAsSuppressedFromDiscovery = () => {
   cy.expect(
-    instanceDetailsSection
+    rootSection
       .find(HTML(including('Warning: Instance is marked suppressed from discovery')))
       .exists(),
   );
@@ -74,7 +77,7 @@ const verifyMarkAsSuppressedFromDiscovery = () => {
 
 const verifyMarkAsSuppressedFromDiscoveryAndSuppressed = () => {
   cy.expect(
-    instanceDetailsSection
+    rootSection
       .find(
         HTML(
           including('Warning: Instance is marked suppressed from discovery and staff suppressed'),
@@ -98,7 +101,7 @@ const verifyImportedFieldExists = (field) => {
 
 const viewSource = () => {
   cy.wait(1000);
-  cy.do(instanceDetailsSection.find(actionsButton).click());
+  cy.do(rootSection.find(actionsButton).click());
   cy.wait(1000);
   cy.do(viewSourceButton.click());
 };
@@ -265,7 +268,11 @@ export default {
 
   openHoldingView: () => {
     cy.do(Button('View holdings').click());
-    cy.expect(Button('Actions').exists());
+    cy.expect(actionsButton.exists());
+  },
+
+  duplicate: () => {
+    cy.do([rootSection.find(actionsButton).click(), Button({ id: 'copy-instance' }).click()]);
   },
 
   getAssignedHRID: () => cy.then(() => KeyValue('Instance HRID').value()),
@@ -366,16 +373,41 @@ export default {
 
   verifyNotMarkAsStaffSuppressed() {
     cy.expect(
-      instanceDetailsSection
-        .find(HTML(including('Warning: Instance is marked staff suppressed')))
+      rootSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).absent(),
+    );
+  },
+
+  verifyMarkedAsStaffSuppressed() {
+    cy.expect(
+      rootSection
+        .find(adminDataAcoordion)
+        .find(HTML(including('Staff suppressed')))
+        .exists(),
+    );
+  },
+
+  verifyNotMarkAssuppressFromDiscavery() {
+    cy.expect(
+      rootSection
+        .find(adminDataAcoordion)
+        .find(HTML(including('Suppressed from discovery')))
         .absent(),
+    );
+  },
+
+  verifyMarkedAsPreviouslyHeld() {
+    cy.expect(
+      rootSection
+        .find(adminDataAcoordion)
+        .find(HTML(including('Previously held')))
+        .exists(),
     );
   },
 
   verifyNotMarkAsPreviouslyHeld() {
     cy.expect(
-      instanceDetailsSection
-        .find(Accordion('Administrative data'))
+      rootSection
+        .find(adminDataAcoordion)
         .find(HTML(including('Previously held')))
         .absent(),
     );
@@ -409,12 +441,33 @@ export default {
     cy.expect(KeyValue('Mode of issuance').has({ value }));
   },
 
+  verifyPublisher: ({ publisher, role, place, date }, indexRow = 0) => {
+    cy.expect([
+      publisherList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: publisher }),
+      publisherList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: role }),
+      publisherList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: place }),
+      publisherList
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .has({ content: date }),
+    ]);
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },
 
   edit: () => {
-    cy.do(instanceDetailsSection.find(actionsButton).click());
+    cy.do(rootSection.find(actionsButton).click());
     cy.do(Button('Edit instance').click());
     InstanceRecordEdit.waitLoading();
   },
@@ -422,5 +475,11 @@ export default {
   addHoldings: () => {
     cy.do(Button({ id: 'clickable-new-holdings-record' }).click());
     InventoryNewHoldings.waitLoading();
+  },
+
+  editMarcBibliographicRecord: () => {
+    cy.wait(1000);
+    cy.do([rootSection.find(actionsButton).click(), Button({ id: 'edit-instance-marc' }).click()]);
+    InventoryEditMarcRecord.checkEditableQuickMarcFormIsOpened();
   },
 };

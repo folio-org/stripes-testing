@@ -42,6 +42,7 @@ describe('Importing MARC Authority files', () => {
     acceptedType: 'MARC',
   };
   const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+  const updatedfileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
   let createdAuthorityID;
 
   before('Creating data', () => {
@@ -65,7 +66,9 @@ describe('Importing MARC Authority files', () => {
       NewJobProfile.saveAndClose();
 
       cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile('oneMarcAuthority.mrc', fileName);
+      DataImport.verifyUploadState();
+      DataImport.uploadFileAndRetry('oneMarcAuthority.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -86,6 +89,7 @@ describe('Importing MARC Authority files', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     JobProfiles.deleteJobProfile(createdJobProfile.profileName);
     if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
     Users.deleteViaApi(testData.userProperties.userId);
@@ -96,13 +100,14 @@ describe('Importing MARC Authority files', () => {
     { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile('test-auth-file.mrc', fileName);
+      DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(createdJobProfile.profileName);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
+      JobProfiles.waitFileIsImported(updatedfileName);
       Logs.checkStatusOfJobProfile('Completed');
-      Logs.openFileDetails(fileName);
+      Logs.openFileDetails(updatedfileName);
       Logs.goToTitleLink('Created');
       MarcAuthority.contains('MARC');
     },
@@ -140,6 +145,8 @@ describe('Importing MARC Authority files', () => {
         'Authorized/Reference',
         'Heading/Reference',
         'Type of heading',
+        'Authority source',
+        'Number of titles',
       ];
 
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);

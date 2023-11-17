@@ -10,6 +10,7 @@ import {
   Checkbox,
   Link,
 } from '../../../../../interactors';
+import FileDetails from './fileDetails';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
 const actionsButton = Button('Actions');
@@ -44,7 +45,7 @@ export default {
     cy.do(viewAllLogsButton.click());
     cy.do([
       anyProfileAccordion.clickHeader(),
-      anyProfileAccordion.find(Selection({ singleValue: 'Choose job profile' })).open(),
+      anyProfileAccordion.find(Selection({ singleValue: including('Choose job profile') })).open(),
     ]);
     cy.do(SelectionList().select(jobProfileName));
     cy.expect(MultiColumnListCell(jobProfileName).exists());
@@ -53,6 +54,8 @@ export default {
   checkStatusOfJobProfile: (status = 'Completed', rowNumber = 0) => cy.do(MultiColumnListCell({ row: rowNumber, content: status }).exists()),
   openFileDetails: (fileName) => {
     cy.do(Link(fileName).click());
+    FileDetails.verifyLogDetailsPageIsOpened(fileName);
+    FileDetails.verifyResultsListIsVisible();
     // TODO need to wait until page is uploaded
     cy.wait(3500);
   },

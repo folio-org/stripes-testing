@@ -23,8 +23,6 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
   let user = {};
   const instanceTitle = `autotest title ${getRandomPostfix()}`;
   let servicePoint;
-  let addedCirculationRule;
-  let originalCirculationRules;
   let limitTestInstanceIds;
   let testInstanceIds;
   let loanPolicyForCourseReserves;
@@ -35,6 +33,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
   const limitTestItems = [];
   const testItems = [];
   const limitOfItem = 2;
+  const addedRules = [];
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -93,15 +92,18 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
             (secondLoanPolicy) => {
               loanPolicyForReadingRoom = secondLoanPolicy;
 
-              CirculationRules.getViaApi().then((circulationRule) => {
-                originalCirculationRules = circulationRule.rulesAsText;
-                const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-                const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
+              CirculationRules.addRuleViaApi(
+                { t: limitLoanTypeId },
+                { l: loanPolicyForCourseReserves.id },
+              ).then((newRule) => {
+                addedRules.push(newRule);
+              });
 
-                addedCirculationRule = `\nt ${limitLoanTypeId}: l ${loanPolicyForCourseReserves.id} ${defaultProps} \nt ${loanTypeId}: l ${loanPolicyForReadingRoom.id} ${defaultProps}`;
-                cy.updateCirculationRules({
-                  rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
-                });
+              CirculationRules.addRuleViaApi(
+                { t: loanTypeId },
+                { l: loanPolicyForReadingRoom.id },
+              ).then((newRule) => {
+                addedRules.push(newRule);
               });
             },
           );
@@ -144,6 +146,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
   });
 
   after(() => {
+    cy.getAdminToken();
     limitTestItems.forEach((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -186,7 +189,9 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
     });
     cy.deleteLoanPolicy(loanPolicyForCourseReserves.id);
     cy.deleteLoanPolicy(loanPolicyForReadingRoom.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    cy.wrap(addedRules).each((rule) => {
+      CirculationRules.deleteRuleViaApi(rule);
+    });
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
       ServicePoints.deleteViaApi(servicePoint.id);
       Users.deleteViaApi(user.userId);

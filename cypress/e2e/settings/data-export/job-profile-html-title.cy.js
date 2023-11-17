@@ -15,11 +15,11 @@ let user;
 const jobProfile = {
   name: `Job-Profile-${getRandomPostfix()}`,
   newName: `New-Job-Profile-${getRandomPostfix()}`,
-  mappingProfile: 'Default authority mapping profile'
+  mappingProfile: 'Default authority mapping profile',
 };
 const callout = `Job profile ${jobProfile.name} has been successfully created`;
 
-describe('Job profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -31,6 +31,7 @@ describe('Job profile - setup', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
@@ -50,7 +51,9 @@ describe('Job profile - setup', () => {
       ExportJobProfiles.clickProfileNameFromTheList('Default instances export job profile');
       SingleJobProfile.waitLoading();
       SingleJobProfile.verifyElements();
-      SettingsDataExport.verifyPageTitle('Data export settings - Default instances export job profile - FOLIO');
+      SettingsDataExport.verifyPageTitle(
+        'Data export settings - Default instances export job profile - FOLIO',
+      );
       SingleJobProfile.openActions();
       SingleJobProfile.clickDuplicateButton();
       SettingsDataExport.verifyPageTitle('Data export settings - New job profile - FOLIO');

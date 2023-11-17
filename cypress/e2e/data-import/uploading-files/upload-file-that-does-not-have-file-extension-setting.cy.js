@@ -20,6 +20,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 
@@ -39,7 +40,7 @@ describe('data-import', () => {
           filePathWithNotExistingFileExtension,
           fileNameWithNotExistingFileExtension,
         );
-        JobProfiles.waitLoadingList();
+        JobProfiles.waitFileIsUploaded();
         DataImport.verifyFileIsImported(fileNameWithNotExistingFileExtension);
 
         cy.visit(TopMenu.dataImportPath);

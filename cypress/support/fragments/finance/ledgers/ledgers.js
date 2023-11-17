@@ -235,12 +235,40 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
+  fillInCommonRolloverInfoWithoutCheckboxOngoingEncumbrancesLimits(
+    fiscalYear,
+    rolloverBudgetValue,
+    rolloverValueAs,
+  ) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      Checkbox({ name: 'restrictEncumbrance' }).click(),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(4000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
   continueRollover: () => {
+    cy.wait(4000);
     cy.get('body').then(($body) => {
       if ($body.find('[id=unpaid-invoice-list-modal]').length) {
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(4000);
-        cy.do(Modal({ id: 'unpaid-invoice-list-modal' }).find(continueButton).click());
+        cy.do([
+          Modal({ id: 'unpaid-invoice-list-modal' }).find(continueButton).focus(),
+          Modal({ id: 'unpaid-invoice-list-modal' }).find(continueButton).click(),
+        ]);
       } else {
         // do nothing if modal is not displayed
       }
@@ -354,11 +382,11 @@ export default {
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },
 
-  fillInTestRolloverInfoForOngoingOrdersWithoutAllocations: (
+  fillInTestRolloverInfoForOngoingOrdersWithoutAllocations(
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
-  ) => {
+  ) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
     // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -372,6 +400,7 @@ export default {
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
+    this.continueRollover();
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },
 
@@ -663,11 +692,11 @@ export default {
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
   },
 
-  fillInTestRolloverInfoCashBalanceWithNotActiveAllocation: (
+  fillInTestRolloverInfoCashBalanceWithNotActiveAllocation(
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
-  ) => {
+  ) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
     // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -679,6 +708,7 @@ export default {
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
+    this.continueRollover();
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },
 

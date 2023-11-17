@@ -19,7 +19,7 @@ describe('Agreement Notes', () => {
       .then((agreement) => {
         agreementId = agreement.id;
       })
-      .then(() => NoteTypes.createNoteTypeViaApi(noteType))
+      .then(() => NoteTypes.createNoteTypeViaApi({ name: noteType }))
       .then((note) => {
         noteTypeId = note.id;
       })

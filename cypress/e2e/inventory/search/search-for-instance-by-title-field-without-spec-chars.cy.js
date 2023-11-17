@@ -49,10 +49,21 @@ const testData = {
   },
 };
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        InventoryInstances.getInstancesViaApi({
+          limit: 100,
+          query: 'title="fight club"',
+        }).then((instances) => {
+          if (instances) {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
+        });
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
         JobProfiles.search(testData.marcFile.jobProfileToRun);
@@ -76,6 +87,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       testData.instanceIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);

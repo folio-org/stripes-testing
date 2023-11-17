@@ -17,6 +17,7 @@ export default HTML.extend('text area')
     label,
     value: (el) => el.querySelector('textarea').value,
     textContent: (el) => el.querySelector('textarea').textContent,
+    focused: (el) => el.querySelector('textarea').contains(el.ownerDocument.activeElement),
     warning: (el) => el.querySelector('[class^=feedbackWarning-]').textContent,
     error: (el) => el.querySelector('[class^=feedbackError-]')?.textContent,
     valid: (el) => el.querySelector('textarea').getAttribute('aria-invalid') !== 'true',

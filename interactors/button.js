@@ -15,6 +15,7 @@ export default HTML.extend('button')
     default: (el) => el.classList.contains('default'),
     singleValue: (el) => el.querySelector('[class^=singleValue-]').textContent,
     ariaLabel: (el) => el.ariaLabel,
+    ariaLabelledby: (el) => el.getAttribute('aria-labelledby'),
     ariaExpanded: (el) => el.getAttribute('aria-expanded'),
     dataId: (el) => el.getAttribute('data-id'),
     dataType: (el) => el.getAttribute('data-type-button'),

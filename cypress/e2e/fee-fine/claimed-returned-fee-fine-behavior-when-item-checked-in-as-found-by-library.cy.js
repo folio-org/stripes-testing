@@ -30,8 +30,6 @@ import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import AppPaths from '../../support/fragments/app-paths';
 
 describe('Claimed Returned', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const patronGroup = {
     name: getTestEntityValue('groupClaimedReturned'),
   };
@@ -91,6 +89,11 @@ describe('Claimed Returned', () => {
     replacementAllowed: false,
     lostItemReturned: 'Charge',
     id: uuid(),
+  };
+  const ruleProps = {
+    l: loanPolicyBody.id,
+    o: overdueFinePolicyBody.id,
+    i: lostItemFeePolicyBody.id,
   };
   const ownerBody = {
     id: uuid(),
@@ -160,31 +163,8 @@ describe('Claimed Returned', () => {
         LoanPolicy.createViaApi(loanPolicyBody);
         OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
         LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-        CirculationRules.getViaApi().then((circulationRule) => {
-          originalCirculationRules = circulationRule.rulesAsText;
-          const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-          ruleProps.l = loanPolicyBody.id;
-          ruleProps.o = overdueFinePolicyBody.id;
-          ruleProps.i = lostItemFeePolicyBody.id;
-          addedCirculationRule =
-            't ' +
-            testData.loanTypeId +
-            ': i ' +
-            ruleProps.i +
-            ' l ' +
-            ruleProps.l +
-            ' r ' +
-            ruleProps.r +
-            ' o ' +
-            ruleProps.o +
-            ' n ' +
-            ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            originalCirculationRules,
-            ruleProps,
-            't ',
-            testData.loanTypeId,
-          );
+        CirculationRules.addRuleViaApi({ t: testData.loanTypeId }, ruleProps).then((newRule) => {
+          testData.addedRule = newRule;
         });
       })
       .then(() => {
@@ -268,7 +248,7 @@ describe('Claimed Returned', () => {
     cy.getToken(userData.username, userData.password);
     UserLoans.updateTimerForAgedToLost('reset');
     cy.getAdminToken();
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);

@@ -14,6 +14,7 @@ Cypress.Commands.add(
     body,
     isDefaultSearchParamsRequired = true,
     contentTypeHeader = 'application/json',
+    failOnStatusCode = true,
   }) => {
     const initialParams = new URLSearchParams({ ...searchParams });
     const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;
@@ -33,6 +34,7 @@ Cypress.Commands.add(
       url: queryString ? `${cypressEnvPath}?${queryString}` : cypressEnvPath,
       headers: headersToSet,
       body,
+      failOnStatusCode,
     });
   },
 );
