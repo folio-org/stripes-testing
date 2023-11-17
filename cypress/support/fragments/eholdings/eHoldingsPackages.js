@@ -109,7 +109,7 @@ export default {
   getCustomPackageViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
-      searchParams: { 'filter[custom]': true, count: 10, pageSize: 10 },
+      searchParams: { 'filter[custom]': true /* count: 10, pageSize: 10 */ },
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => {
       const initialPackageNames = body.data

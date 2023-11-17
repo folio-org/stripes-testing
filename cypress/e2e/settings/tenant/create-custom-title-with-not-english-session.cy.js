@@ -2,14 +2,17 @@ import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import { Localization } from '../../../support/fragments/settings/tenant/general';
 import TemporarySessionLocale from '../../../support/fragments/settings/developer/session-locale/temporarySessionLocale';
-import EHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import {
+  EHoldingsSearch,
+  EHoldingsPackages,
+  EHoldingsTitles,
+  EHoldingsResourceView,
+} from '../../../support/fragments/eholdings';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import EHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
-import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 
 describe('eHoldings', () => {
   const testData = {
@@ -35,8 +38,15 @@ describe('eHoldings', () => {
       Permissions.settingsTenantEditLanguageLocationAndCurrency.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-      EHoldingsPackages.createPackageViaAPI().then((response) => {
-        testData.packageName = response.data.attributes.name;
+
+      // EHoldingsPackages.createPackageViaAPI().then(({ data }) => {
+      //   // debugger;
+      //   testData.packageName = data.attributes.name;
+      // });
+
+      AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
+      EHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
+        testData.packageName = packageName;
       });
       cy.login(testData.user.username, testData.user.password, {
         path: SettingsMenu.tenantPath,
