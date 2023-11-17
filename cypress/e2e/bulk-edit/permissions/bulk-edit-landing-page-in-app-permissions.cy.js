@@ -17,101 +17,99 @@ const item = {
 };
 
 describe('bulk-edit', () => {
-  describe('in-app approach', () => {
-    before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditEdit.gui,
-        permissions.bulkEditView.gui,
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiInventoryViewCreateEditHoldings.gui,
-        permissions.uiUserEdit.gui,
-      ])
-        .then((userProperties) => {
-          user = userProperties;
-          item.instanceId = InventoryInstances.createInstanceViaApi(
-            item.instanceName,
-            item.itemBarcode,
-          );
-          cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
-            item.holdingsHRID = holdings[0].hrid;
-            FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdings[0].hrid);
-          });
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
+  before('create test data', () => {
+    cy.createTempUser([
+      permissions.bulkEditEdit.gui,
+      permissions.bulkEditView.gui,
+      permissions.bulkEditUpdateRecords.gui,
+      permissions.uiInventoryViewCreateEditHoldings.gui,
+      permissions.uiUserEdit.gui,
+    ])
+      .then((userProperties) => {
+        user = userProperties;
+        item.instanceId = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
+          item.holdingsHRID = holdings[0].hrid;
+          FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdings[0].hrid);
         });
-    });
-
-    after('delete test data', () => {
-      cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-      FileManager.deleteFile(`cypress/fixtures/${holdingsHRIDFileName}`);
-      Users.deleteViaApi(user.userId);
-    });
-
-    it(
-      'C375096 Verify default state of Bulk edit landing page (In app Users + In app inventory) (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
-      () => {
-        BulkEditSearchPane.verifyPanesBeforeImport();
-        BulkEditSearchPane.verifyBulkEditPaneItems();
-        BulkEditSearchPane.verifySetCriteriaPaneElements();
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-        BulkEditSearchPane.verifyRecordTypesAccordion();
-
-        TopMenuNavigation.navigateToApp('Bulk edit');
-        BulkEditSearchPane.verifyPanesBeforeImport();
-        BulkEditSearchPane.verifyBulkEditPaneItems();
-        BulkEditSearchPane.verifySetCriteriaPaneElements();
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-        BulkEditSearchPane.verifyRecordTypesAccordion();
-
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.isHoldingsRadioChecked(true);
-        BulkEditSearchPane.isItemsRadioChecked(false);
-        BulkEditSearchPane.isUsersRadioChecked(false);
-        BulkEditSearchPane.verifyRecordIdentifierDisabled(false);
-        
-        TopMenuNavigation.navigateToApp('Bulk edit');
-        BulkEditSearchPane.verifyPanesBeforeImport();
-        BulkEditSearchPane.verifyBulkEditPaneItems();
-        BulkEditSearchPane.verifySetCriteriaPaneElements();
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-        BulkEditSearchPane.verifyRecordTypesAccordion();
-
-        BulkEditSearchPane.checkHoldingsRadio();
-        BulkEditSearchPane.isHoldingsRadioChecked(true);
-        BulkEditSearchPane.isItemsRadioChecked(false);
-        BulkEditSearchPane.isUsersRadioChecked(false);
-        BulkEditSearchPane.verifyRecordIdentifierDisabled(false);
-        BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-
-        cy.reload();
-        TopMenuNavigation.navigateToApp('Bulk edit');
-        BulkEditSearchPane.verifyPanesBeforeImport();
-        BulkEditSearchPane.verifyBulkEditPaneItems();
-        BulkEditSearchPane.verifySetCriteriaPaneElements();
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-        BulkEditSearchPane.verifyRecordTypesAccordion();
-
-        BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
-        BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
-        BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
-
-        TopMenuNavigation.navigateToApp('Bulk edit');
-        BulkEditSearchPane.verifyPanesBeforeImport();
-        BulkEditSearchPane.verifyBulkEditPaneItems();
-        BulkEditSearchPane.verifySetCriteriaPaneElements();
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-        BulkEditSearchPane.verifyRecordTypesAccordion();
-      },
-    );
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+      });
   });
+
+  after('delete test data', () => {
+    cy.getAdminToken();
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    FileManager.deleteFile(`cypress/fixtures/${holdingsHRIDFileName}`);
+    Users.deleteViaApi(user.userId);
+  });
+
+  it(
+    'C375096 Verify default state of Bulk edit landing page (In app Users + In app inventory) (firebird) (TaaS)',
+    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    () => {
+      BulkEditSearchPane.verifyPanesBeforeImport();
+      BulkEditSearchPane.verifyBulkEditPaneItems();
+      BulkEditSearchPane.verifySetCriteriaPaneElements();
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.verifyRecordTypesAccordion();
+
+      TopMenuNavigation.navigateToApp('Bulk edit');
+      BulkEditSearchPane.verifyPanesBeforeImport();
+      BulkEditSearchPane.verifyBulkEditPaneItems();
+      BulkEditSearchPane.verifySetCriteriaPaneElements();
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.verifyRecordTypesAccordion();
+
+      BulkEditSearchPane.checkHoldingsRadio();
+      BulkEditSearchPane.isHoldingsRadioChecked(true);
+      BulkEditSearchPane.isItemsRadioChecked(false);
+      BulkEditSearchPane.isUsersRadioChecked(false);
+      BulkEditSearchPane.verifyRecordIdentifierDisabled(false);
+
+      TopMenuNavigation.navigateToApp('Bulk edit');
+      BulkEditSearchPane.verifyPanesBeforeImport();
+      BulkEditSearchPane.verifyBulkEditPaneItems();
+      BulkEditSearchPane.verifySetCriteriaPaneElements();
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.verifyRecordTypesAccordion();
+
+      BulkEditSearchPane.checkHoldingsRadio();
+      BulkEditSearchPane.isHoldingsRadioChecked(true);
+      BulkEditSearchPane.isItemsRadioChecked(false);
+      BulkEditSearchPane.isUsersRadioChecked(false);
+      BulkEditSearchPane.verifyRecordIdentifierDisabled(false);
+      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
+
+      cy.reload();
+      TopMenuNavigation.navigateToApp('Bulk edit');
+      BulkEditSearchPane.verifyPanesBeforeImport();
+      BulkEditSearchPane.verifyBulkEditPaneItems();
+      BulkEditSearchPane.verifySetCriteriaPaneElements();
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.verifyRecordTypesAccordion();
+
+      BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+      BulkEditSearchPane.uploadFile(holdingsHRIDFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyMatchedResults(item.holdingsHRID);
+
+      TopMenuNavigation.navigateToApp('Bulk edit');
+      BulkEditSearchPane.verifyPanesBeforeImport();
+      BulkEditSearchPane.verifyBulkEditPaneItems();
+      BulkEditSearchPane.verifySetCriteriaPaneElements();
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
+      BulkEditSearchPane.verifyRecordTypesAccordion();
+    },
+  );
 });
