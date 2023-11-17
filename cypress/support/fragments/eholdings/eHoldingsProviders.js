@@ -112,7 +112,7 @@ export default {
     cy.expect(Spinner().absent());
   },
 
-  verifyPackageButtonClick(name, open) {
+  verifyAllAccordionsExpandAndCollapseClick(name, open) {
     cy.expect(Button(name).exists());
     cy.do(Button(name).click());
     cy.expect([

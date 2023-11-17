@@ -70,13 +70,13 @@ describe('eHoldings', () => {
         EHoldingsProviders.packageAccordionClick();
         EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
         EHoldingsProviders.verifyPackagesAvailable();
-        EHoldingsProviders.verifyPackageButtonClick(collapseAll, collapsed);
+        EHoldingsProviders.verifyAllAccordionsExpandAndCollapseClick(collapseAll, collapsed);
         EHoldingsProviders.packageAccordionClick();
         EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
         EHoldingsProviders.verifyPackagesAvailable();
         EHoldingsProviders.packageAccordionClick();
         EHoldingsProviders.verifyPackagesAccordionExpanded(collapsed);
-        EHoldingsProviders.verifyPackageButtonClick(expandAll, expanded);
+        EHoldingsProviders.verifyAllAccordionsExpandAndCollapseClick(expandAll, expanded);
         EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
         EHoldingsProviders.verifyPackagesAvailable();
       },
