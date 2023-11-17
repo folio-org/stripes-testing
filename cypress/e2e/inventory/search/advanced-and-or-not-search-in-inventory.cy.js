@@ -11,30 +11,27 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { LOCATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
 
 describe('Inventory -> Advanced search', () => {
-  let user;
-  const instanceIds = [];
-  const callNumber = `IYCN${getRandomPostfix()}`;
   const testData = {
     advSearchOption: 'Advanced search',
     instances: [
       {
-        instanceTitle: `Instance title${getRandomPostfix()}`,
+        instanceTitle: `C400621 Instance title${getRandomPostfix()}`,
         note: 'Adv search note 006',
       },
       {
-        instanceTitle: `Instance title${getRandomPostfix()}`,
+        instanceTitle: `C400621 Instance title${getRandomPostfix()}`,
         note: 'Adv search note 006',
         adminNote: 'Adv search adm note 006',
       },
       {
-        instanceTitle: `Instance title${getRandomPostfix()}`,
-        callNumber,
+        instanceTitle: `C400621 Instance title${getRandomPostfix()}`,
+        holdingsCallNumber: `IYCN${getRandomPostfix()}`,
         barcode: uuid(),
       },
       {
-        instanceTitle: `Instance title${getRandomPostfix()}`,
+        instanceTitle: `C400621 Instance title${getRandomPostfix()}`,
         adminNote: 'Adm note NOT 6 006',
-        callNumber,
+        holdingsCallNumber: `IYCN${getRandomPostfix()}`,
         barcode: uuid(),
       },
     ],
@@ -83,7 +80,7 @@ describe('Inventory -> Advanced search', () => {
           ],
           items: [],
         }).then((specialInstanceIds) => {
-          instanceIds.push(specialInstanceIds);
+          testData.instances[0].instanceIds = specialInstanceIds;
         });
         // create second instance and holdings
         InventoryInstances.createFolioInstanceViaApi({
@@ -106,7 +103,7 @@ describe('Inventory -> Advanced search', () => {
           ],
           items: [],
         }).then((specialInstanceIds) => {
-          instanceIds.push(specialInstanceIds);
+          testData.instances[1].instanceIds = specialInstanceIds;
         });
         // create third instance and holdings and item
         InventoryInstances.createFolioInstanceViaApi({
@@ -118,7 +115,7 @@ describe('Inventory -> Advanced search', () => {
             {
               holdingsTypeId: testData.holdingTypeId,
               permanentLocationId: testData.locationsId,
-              callNumber: testData.instances[2].callNumber,
+              callNumber: testData.instances[2].holdingsCallNumber,
             },
           ],
           items: [
@@ -140,7 +137,7 @@ describe('Inventory -> Advanced search', () => {
             {
               holdingsTypeId: testData.holdingTypeId,
               permanentLocationId: testData.locationsId,
-              callNumber: testData.instances[3].callNumber,
+              callNumber: testData.instances[3].holdingsCallNumber,
               administrativeNotes: [testData.instances[3].adminNote],
             },
           ],
@@ -156,9 +153,9 @@ describe('Inventory -> Advanced search', () => {
       });
 
     cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-      user = userProperties;
+      testData.user = userProperties;
 
-      cy.login(user.username, user.password, {
+      cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
@@ -167,18 +164,17 @@ describe('Inventory -> Advanced search', () => {
 
   after('Deleting data', () => {
     cy.getAdminToken().then(() => {
-      Users.deleteViaApi(user.userId);
-      cy.wrap(
-        instanceIds.holdingIds.forEach((holdingsId) => {
-          cy.deleteHoldingRecordViaApi(holdingsId.id);
-        }),
-      ).then(() => {
-        instanceIds.instanceId.forEach((id) => {
-          InventoryInstance.deleteInstanceViaApi(id);
-        });
-      });
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode3);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode4);
+      Users.deleteViaApi(testData.user.userId);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+        testData.instances[2].barcode,
+      );
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+        testData.instances[3].barcode,
+      );
+      cy.deleteHoldingRecordViaApi(testData.instances[0].instanceIds.holdingIds[0].id);
+      InventoryInstance.deleteInstanceViaApi(testData.instances[0].instanceIds.instanceId);
+      cy.deleteHoldingRecordViaApi(testData.instances[1].instanceIds.holdingIds[0].id);
+      InventoryInstance.deleteInstanceViaApi(testData.instances[1].instanceIds.instanceId);
     });
   });
 
@@ -216,14 +212,14 @@ describe('Inventory -> Advanced search', () => {
       );
       InventoryInstances.fillAdvSearchRow(
         2,
-        testData.instances[2].callNumber,
+        testData.instances[2].holdingsCallNumber,
         'Exact phrase',
         'Call number, normalized',
         'OR',
       );
       InventoryInstances.checkAdvSearchModalValues(
         2,
-        testData.instances[2].callNumber,
+        testData.instances[2].holdingsCallNumber,
         'Exact phrase',
         'Call number, normalized',
         'OR',
@@ -239,10 +235,8 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.clickSearchBtnInAdvSearchModal();
       InventoryInstances.checkAdvSearchModalAbsence();
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-      InventorySearchAndFilter.verifySearchResult([
-        testData.instances[1].instanceTitle,
-        testData.instances[2].instanceTitle,
-      ]);
+      InventorySearchAndFilter.verifySearchResult(testData.instances[1].instanceTitle);
+      InventorySearchAndFilter.verifySearchResult(testData.instances[2].instanceTitle);
       InventorySearchAndFilter.checkRowsCount(2);
     },
   );
