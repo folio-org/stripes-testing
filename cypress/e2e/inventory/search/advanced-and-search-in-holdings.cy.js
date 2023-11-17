@@ -16,6 +16,7 @@ describe('Inventory -> Advanced search', () => {
   const hotKeys = InventoryHotkeys.hotKeys;
   const randomCallNumber = `YCN${getRandomPostfix()}`;
   const testData = {
+    advSearchOption: 'Advanced search',
     instances: [
       {
         title: `C422017_autotest_instance ${getRandomPostfix()}`,
@@ -146,9 +147,6 @@ describe('Inventory -> Advanced search', () => {
       InventorySearchAndFilter.verifySearchResult(testData.instances[1].title);
 
       InventoryInstances.clickAdvSearchButton();
-      InventoryKeyboardShortcuts.openInventoryMenu();
-      InventoryKeyboardShortcuts.openShortcuts();
-      InventoryKeyboardShortcuts.waitModalLoading('Keyboard shortcuts');
       InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
       InventoryInstances.checkAdvSearchModalAbsence();
     },
