@@ -1,6 +1,8 @@
 import {
   Button,
   including,
+  MultiColumnList,
+  MultiColumnListRow,
   MultiColumnListCell,
   MultiColumnListHeader,
   Section,
@@ -9,6 +11,7 @@ import InventorySearchAndFilter from '../inventorySearchAndFilter';
 
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const instanceDetailsPane = Section({ id: 'pane-instancedetails' });
+const resultList = MultiColumnList({ id: 'browse-results-list-callNumbers' });
 
 export default {
   clickOnResult(searchQuery) {
@@ -97,5 +100,13 @@ export default {
     callNumberArray.forEach((callNumber) => {
       cy.expect(MultiColumnListCell(callNumber).absent());
     });
+  },
+
+  checkValueInRowAndColumnName(indexRow, columnName, value) {
+    cy.expect(
+      resultList
+        .find(MultiColumnListCell({ row: indexRow, column: columnName }))
+        .has({ content: value }),
+    );
   },
 };
