@@ -77,8 +77,11 @@ const createJobProfile = (jobProfile) => {
 const search = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
-  cy.do(paneResults.find(searchField).fillIn(jobProfileTitle));
-  cy.do(searchButton.click());
+  cy.do([
+    paneResults.find(searchField).focus(),
+    paneResults.find(searchField).fillIn(jobProfileTitle),
+    searchButton.click(),
+  ]);
 };
 
 export default {
@@ -111,10 +114,11 @@ export default {
     cy.wait(1000);
     cy.expect(paneResults.find(MultiColumnListRow({ index: 0 })).exists());
     cy.do(paneResults.find(MultiColumnListRow({ index: 0 })).click());
+    cy.expect(waitSelector.exists());
   },
 
   runImportFile: () => {
-    waitLoading(waitSelector);
+    cy.wait(1000);
     cy.do([actionsButton.click(), runButton.click()]);
     cy.expect(Modal('Are you sure you want to run this job?').find(runButton).exists());
     cy.do(Modal('Are you sure you want to run this job?').find(runButton).click());
@@ -210,5 +214,4 @@ export default {
         cy.expect(numberOfTrashButtons).to.equal(quantityOfUploadedFiles);
       });
   },
-  waitFileIsUploaded: () => cy.expect(paneContent.find(deleteFileButton).exists()),
 };

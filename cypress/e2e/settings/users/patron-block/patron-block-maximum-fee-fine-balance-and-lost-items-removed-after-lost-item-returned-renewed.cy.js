@@ -34,8 +34,6 @@ import RenewConfirmationModal from '../../../../support/fragments/users/loans/re
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 describe('Patron Block: Lost items', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const renewComment = `AutotestText${getRandomPostfix()}`;
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
@@ -182,6 +180,16 @@ describe('Patron Block: Lost items', () => {
               specialInstanceIds.holdingIds[0].itemIds;
           });
         });
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+        LoanPolicy.createViaApi(loanPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { l: loanPolicyBody.id, i: lostItemFeePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
     UsersOwners.createViaApi(ownerBody).then(({ id }) => {
@@ -190,37 +198,9 @@ describe('Patron Block: Lost items', () => {
         testData.paymentMethodId = paymentMethod.id;
       });
     });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    LoanPolicy.createViaApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.l = loanPolicyBody.id;
-      ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser(
       [
         permissions.uiUsersSettingsOwners.gui,
@@ -236,27 +216,24 @@ describe('Patron Block: Lost items', () => {
         permissions.okapiTimersPatch.gui,
       ],
       patronGroup.name,
-    )
-      .then((userProperties) => {
-        userData.username = userProperties.username;
-        userData.password = userProperties.password;
-        userData.userId = userProperties.userId;
-        userData.barcode = userProperties.barcode;
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userData.userId,
-          testData.userServicePoint.id,
-        );
-        cy.getToken(userData.username, userData.password);
-        UserLoans.updateTimerForAgedToLost('minute');
-        cy.getAdminToken();
-      })
-      .then(() => {
-        cy.login(userData.username, userData.password);
-      });
+    ).then((userProperties) => {
+      userData.username = userProperties.username;
+      userData.password = userProperties.password;
+      userData.userId = userProperties.userId;
+      userData.barcode = userProperties.barcode;
+      UserEdit.addServicePointViaApi(
+        testData.userServicePoint.id,
+        userData.userId,
+        testData.userServicePoint.id,
+      );
+      cy.getToken(userData.username, userData.password);
+      UserLoans.updateTimerForAgedToLost('minute');
+      cy.getAdminToken();
+    });
   });
 
   beforeEach('Assign lost status to items', () => {
+    cy.getAdminToken();
     cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
     cy.get('@items').each((item) => {
       Checkout.checkoutItemViaApi({
@@ -293,6 +270,7 @@ describe('Patron Block: Lost items', () => {
         }
       });
     });
+    cy.login(userData.username, userData.password);
     // needed for the "Lost Item Fee Policy" so patron can recieve fee/fine
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(100000);
@@ -319,6 +297,7 @@ describe('Patron Block: Lost items', () => {
     cy.getToken(userData.username, userData.password);
     UserLoans.updateTimerForAgedToLost('reset');
     cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.get('@items').each((item, index) => {
       cy.deleteItemViaApi(item.itemId);
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
@@ -328,7 +307,6 @@ describe('Patron Block: Lost items', () => {
     UsersOwners.deleteViaApi(testData.ownerId);
     cy.deleteLoanPolicy(loanPolicyBody.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);

@@ -11,10 +11,14 @@ import {
   MultiColumnListCell,
   Label,
   MultiSelect,
+  MultiSelectOption,
   Callout,
   TextField,
+  matching,
 } from '../../../../interactors';
-import eHoldingsPackages from './eHoldingsPackages';
+import EHoldingsPackages from './eHoldingsPackages';
+import EHolgingsStates from './eHolgingsStates';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const actionsButton = Button('Actions');
 const exportButton = Button('Export package (CSV)');
@@ -48,12 +52,13 @@ const searchAgreementButton = findAgreementModal.find(
 );
 const titleFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-title-fields' });
 const packageFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-package-fields' });
+const openDropdownMenu = Button({ ariaLabel: 'open menu' });
 
 export default {
   getCalloutMessageText,
   close() {
     cy.do(Button({ icon: 'times' }).click());
-    eHoldingsPackages.waitLoading();
+    EHoldingsPackages.waitLoading();
   },
 
   waitLoading() {
@@ -108,8 +113,15 @@ export default {
     );
   },
 
-  export() {
+  export({ exportStarted = true } = {}) {
+    cy.expect(exportButtonInModal.has({ disabled: false }));
     cy.do(exportButtonInModal.click());
+
+    if (exportStarted) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(EHolgingsStates.exportJobStartedSuccessfully)),
+      );
+    }
   },
 
   verifyExportButtonInModalDisabled(isDisabled = true) {
@@ -173,6 +185,12 @@ export default {
     );
   },
 
+  getTotalTitlesCount() {
+    return cy
+      .then(() => KeyValue('Total titles').value())
+      .then((count) => parseFloat(count.replace(/,/g, '')));
+  },
+
   getJobIDFromCalloutMessage: () => {
     const regex = /(\d+)/;
 
@@ -193,6 +211,86 @@ export default {
 
   verifySelectedPackageFieldsToExport(packageFieldsArray) {
     cy.expect(packageFieldsSelect.has({ selected: packageFieldsArray }));
+  },
+
+  closePackageFieldOption(option) {
+    cy.do(
+      packageFieldsSelect
+        .find(Button({ icon: 'times', ariaLabelledby: including(option) }))
+        .click(),
+    );
+  },
+
+  closeTitleFieldOption(option) {
+    cy.do(
+      titleFieldsSelect.find(Button({ icon: 'times', ariaLabelledby: including(option) })).click(),
+    );
+  },
+
+  fillInPackageFieldsToExport: (value) => {
+    cy.do([packageFieldsSelect.fillIn(value), MultiSelectOption(including(value)).click()]);
+  },
+
+  fillInTitleFieldsToExport: (value) => {
+    cy.do([titleFieldsSelect.fillIn(value), MultiSelectOption(including(value)).click()]);
+  },
+
+  verifySelectedPackageFieldsOptions() {
+    cy.do(packageFieldsSelect.find(openDropdownMenu).click());
+    cy.expect([
+      MultiSelectOption(including('Access Status Type')).exists(),
+      MultiSelectOption(including('Agreements')).exists(),
+      MultiSelectOption(including('Automatically Select titles')).exists(),
+      MultiSelectOption(including('Custom Coverage')).exists(),
+      MultiSelectOption(including('Holdings status')).exists(),
+      MultiSelectOption(including('Notes')).exists(),
+      MultiSelectOption(including('Package Content Type')).exists(),
+      MultiSelectOption(including('Package Id')).exists(),
+      MultiSelectOption(including('Package Level Token')).exists(),
+      MultiSelectOption(including('Package Name')).exists(),
+      MultiSelectOption(including('Package Type')).exists(),
+      MultiSelectOption(including('Provider Id')).exists(),
+      MultiSelectOption(including('Provider Level Token')).exists(),
+      MultiSelectOption(including('Provider Name')).exists(),
+      MultiSelectOption(including('Proxy')).exists(),
+      MultiSelectOption(including('Show To Patrons')).exists(),
+      MultiSelectOption(including('Tags')).exists(),
+    ]);
+  },
+
+  verifySelectedTitleFieldsOptions() {
+    cy.do(titleFieldsSelect.find(openDropdownMenu).click());
+    cy.expect([
+      MultiSelectOption(including('Access status type')).exists(),
+      MultiSelectOption(including('Agreements')).exists(),
+      MultiSelectOption(including('Alternate title(s)')).exists(),
+      MultiSelectOption(including('Contributors')).exists(),
+      MultiSelectOption(including('Coverage statement')).exists(),
+      MultiSelectOption(including('Custom coverage dates')).exists(),
+      MultiSelectOption(including('Custom Embargo')).exists(),
+      MultiSelectOption(including('Custom label')).exists(),
+      MultiSelectOption(including('Description')).exists(),
+      MultiSelectOption(including('Edition')).exists(),
+      MultiSelectOption(including('Holdings Status')).exists(),
+      MultiSelectOption(including('ISBN_Online')).exists(),
+      MultiSelectOption(including('ISBN_Print')).exists(),
+      MultiSelectOption(including('ISSN_Online')).exists(),
+      MultiSelectOption(including('ISSN_Print')).exists(),
+      MultiSelectOption(including('Managed coverage dates')).exists(),
+      MultiSelectOption(including('Managed Embargo')).exists(),
+      MultiSelectOption(including('Notes')).exists(),
+      MultiSelectOption(including('Peer reviewed')).exists(),
+      MultiSelectOption(including('Proxy')).exists(),
+      MultiSelectOption(including('Publication Type')).exists(),
+      MultiSelectOption(including('Publisher')).exists(),
+      MultiSelectOption(including('Show to patron')).exists(),
+      MultiSelectOption(including('Subjects')).exists(),
+      MultiSelectOption(including('Tags')).exists(),
+      MultiSelectOption(including('Title ID')).exists(),
+      MultiSelectOption(including('Title name')).exists(),
+      MultiSelectOption(including('Title Type')).exists(),
+      MultiSelectOption(including('URL')).exists(),
+    ]);
   },
 
   clearSelectedFieldsToExport() {

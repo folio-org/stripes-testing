@@ -34,10 +34,7 @@ describe('Bulk Edit - Logs', () => {
     cy.getAdminToken();
     FileManager.deleteFile(`cypress/fixtures/${invalidUsernamesFilename}`);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFileFromDownloadsByMask(
-      invalidUsernamesFilename,
-      errorsFromMatchingFileName,
-    );
+    FileManager.deleteFileFromDownloadsByMask(invalidUsernamesFilename, errorsFromMatchingFileName);
   });
 
   it(
