@@ -17,6 +17,7 @@ const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
 const itemDetailsSection = orderLineEditFormRoot.find(Section({ id: 'itemDetails' }));
 const orderLineDetailsSection = orderLineEditFormRoot.find(Section({ id: 'lineDetails' }));
 const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: 'vendor' }));
+const ongoingOrderSection = orderLineEditFormRoot.find(Section({ id: 'ongoingOrder' }));
 const costDetailsSection = orderLineEditFormRoot.find(Section({ id: 'costDetails' }));
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
 
@@ -39,6 +40,10 @@ const vendorDetailsFields = {
   accountNumber: vendorDetailsSection.find(Select({ name: 'vendorDetail.vendorAccount' })),
 };
 
+const ongoingInformationFields = {
+  'Renewal note': ongoingOrderSection.find(TextArea({ name: 'renewalNote' })),
+};
+
 const costDetailsFields = {
   physicalUnitPrice: costDetailsSection.find(TextField({ name: 'cost.listUnitPrice' })),
   quantityPhysical: costDetailsSection.find(TextField({ name: 'cost.quantityPhysical' })),
@@ -58,6 +63,14 @@ export default {
     fields.forEach(({ label, conditions }) => {
       cy.expect(buttons[label].has(conditions));
     });
+  },
+  checkFieldsConditions({ fields, section }) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(section[label].has(conditions));
+    });
+  },
+  checkOngoingOrderInformationSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: ongoingInformationFields });
   },
   fillOrderLineFields(orderLine) {
     if (orderLine.itemDetails) {
