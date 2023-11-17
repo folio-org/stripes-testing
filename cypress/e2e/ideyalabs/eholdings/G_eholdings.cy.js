@@ -44,19 +44,6 @@ describe.skip('Create a custom package', () => {
     },
   );
   it(
-    'C367967 Verify that ""Packages"" accordion will return records after collapsing/expanding in ""Provider"" detail record (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsProvidersSearch.byProvider('Wiley');
-      eHoldingsProviders.viewProvider();
-      eHolding.packageAccordionClick();
-      eHolding.verifyPackageButtonClick('Collapse all', 'false');
-      eHolding.packageAccordionClick();
-      eHolding.verifyPackageButtonClick('Expand all', 'true');
-    },
-  );
-  it(
     'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
     { tags: [testTypes.ideaLabsTests] },
     () => {

@@ -33,11 +33,13 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-          servicePointId = servicePoints[0].id;
-        }).then(() => {
-          UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-        });
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+          .then((servicePoints) => {
+            servicePointId = servicePoints[0].id;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+          });
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         InventoryInstances.createInstanceViaApi(

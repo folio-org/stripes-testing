@@ -25,6 +25,7 @@ const actionsButton = Button('Actions');
 const itemDetailsSection = orderLineDetailsSection.find(Section({ id: 'ItemDetails' }));
 const purchaseOrderLineSection = orderLineDetailsSection.find(Section({ id: 'poLine' }));
 const fundDistributionsSection = orderLineDetailsSection.find(Section({ id: 'FundDistribution' }));
+const vendorDetailsSection = orderLineDetailsSection.find(Section({ id: 'Vendor' }));
 const costDetailsSection = orderLineDetailsSection.find(Section({ id: 'CostDetails' }));
 const locationDetailsSection = orderLineDetailsSection.find(Section({ id: 'location' }));
 const exportDetailsSection = orderLineDetailsSection.find(Section({ id: 'exportDetails' }));
@@ -36,10 +37,19 @@ export default {
   backToOrderDetails() {
     cy.do(backToOrderButton.click());
   },
-  checkOrderLineDetails({ purchaseOrderLineInformation = [], costDetails, locationDetails } = {}) {
+  checkOrderLineDetails({
+    purchaseOrderLineInformation = [],
+    vendorDetails,
+    costDetails,
+    locationDetails,
+  } = {}) {
     purchaseOrderLineInformation.forEach(({ key, value }) => {
       cy.expect(purchaseOrderLineSection.find(KeyValue(key)).has({ value: including(value) }));
     });
+
+    if (vendorDetails) {
+      this.checkVendorDetailsSection(vendorDetails);
+    }
 
     if (costDetails) {
       this.checkCostDetailsSection(costDetails);
@@ -153,6 +163,11 @@ export default {
             .has({ content: including(record.configName) }),
         );
       }
+    });
+  },
+  checkVendorDetailsSection({ vendorDetails = [] } = {}) {
+    vendorDetails.forEach(({ key, value }) => {
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
   },
   checkCostDetailsSection({ costDetails = [] } = {}) {
