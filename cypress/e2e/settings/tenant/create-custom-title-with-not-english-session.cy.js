@@ -38,12 +38,6 @@ describe('eHoldings', () => {
       Permissions.settingsTenantEditLanguageLocationAndCurrency.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-
-      // EHoldingsPackages.createPackageViaAPI().then(({ data }) => {
-      //   // debugger;
-      //   testData.packageName = data.attributes.name;
-      // });
-
       AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
       EHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
         testData.packageName = packageName;
@@ -58,7 +52,6 @@ describe('eHoldings', () => {
   after('Delete test data', () => {
     cy.getAdminToken().then(() => {
       Users.deleteViaApi(testData.user.userId);
-      EHoldingsPackages.deletePackageViaAPI(testData.packageName);
     });
   });
 
