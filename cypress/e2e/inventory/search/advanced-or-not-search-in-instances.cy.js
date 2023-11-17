@@ -9,17 +9,25 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import { LOCATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Inventory -> Advanced search', () => {
-  let user;
+  const randomInstanceIdentifier = `${GenerateIdentifierCode.getRandomIdentifierCode()}123456987`;
   const testData = {
     defaultSearchOption: 'Keyword (title, contributor, identifier, HRID, UUID)',
     advSearchOption: 'Advanced search',
-    instanceTitle: `C422016 Clarinet concerto no. 1, op. 73_${getRandomPostfix()}`,
-    holdingsTitle: 'Roma council. Adv search title 002',
-    callNumber: `YCN${getRandomPostfix()}`,
-    itemBarcode: uuid(),
-    identifierValue: GenerateIdentifierCode.getRandomIdentifierCode(),
+    instances: [
+      {
+        title: `C422016 Clarinet concerto no. 1, op. 73 ${getRandomPostfix()}`,
+        identifier: randomInstanceIdentifier,
+      },
+      {
+        title: `Roma council. Adv search title 002 ${getRandomPostfix()}`,
+        identifier: randomInstanceIdentifier,
+        holdingsCallNumber: `YCN${getRandomPostfix()}`,
+        itemBarcode: uuid(),
+      },
+    ],
   };
 
   before('Creating data', () => {
@@ -45,14 +53,32 @@ describe('Inventory -> Advanced search', () => {
         });
       })
       .then(() => {
+        // create the first instance
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: testData.instanceTypeId,
-            title: testData.instanceTitle,
+            title: testData.instances[0].title,
             identifiers: [
               {
                 identifierTypeId: testData.identifierTypeId,
-                value: testData,
+                value: testData.instances[0].identifier,
+              },
+            ],
+          },
+          holdings: [],
+          items: [],
+        }).then((specialInstanceIds) => {
+          testData.instances[0].testInstanceIds = specialInstanceIds;
+        });
+        // create the second instance
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: testData.instances[1].title,
+            identifiers: [
+              {
+                identifierTypeId: testData.identifierTypeId,
+                value: testData.instances[1].identifier,
               },
             ],
           },
@@ -60,36 +86,26 @@ describe('Inventory -> Advanced search', () => {
             {
               holdingsTypeId: testData.holdingTypeId,
               permanentLocationId: testData.locationsId,
-              callNumber: testData.callNumber,
-              shelvingTitle: testData.holdingsTitle,
+              callNumber: testData.instances[1].holdingsCallNumber,
             },
           ],
           items: [
             {
-              barcode: testData.itemBarcode,
+              barcode: testData.instances[1].itemBarcode,
               status: { name: ITEM_STATUS_NAMES.AVAILABLE },
               permanentLoanType: { id: testData.loanTypeId },
               materialType: { id: testData.materialTypeId },
             },
           ],
         }).then((specialInstanceIds) => {
-          testData.testInstanceIds = specialInstanceIds;
-
-          cy.getInstance({
-            limit: 1,
-            expandAll: true,
-            query: `"id"=="${specialInstanceIds.instanceId}"`,
-          }).then((instance) => {
-            testData.instanceHRID = instance.hrid;
-            testData.instanceHridForSearching = testData.instanceHRID.replace(/[^\d]/g, '');
-          });
+          testData.instances[1].testInstanceIds = specialInstanceIds;
         });
       });
 
     cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
-      user = userProperties;
+      testData.user = userProperties;
 
-      cy.login(user.username, user.password, {
+      cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
@@ -98,8 +114,11 @@ describe('Inventory -> Advanced search', () => {
 
   after('Deleting data', () => {
     cy.getAdminToken().then(() => {
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
+      Users.deleteViaApi(testData.user.userId);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+        testData.instances[1].itemBarcode,
+      );
+      InventoryInstance.deleteInstanceViaApi(testData.instances[0].testInstanceIds.instanceId);
     });
   });
 
@@ -107,57 +126,61 @@ describe('Inventory -> Advanced search', () => {
     'C422016 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
-      InventorySearchAndFilter.switchToInstance();
-      InventoryInstances.clickAdvSearchButton();
-      InventoryInstances.fillAdvSearchRow(
-        0,
-        'Roma council. Adv search',
-        'Starts with',
-        'Title (all)',
-      );
-      InventoryInstances.checkAdvSearchModalValues(
-        0,
-        'Roma council. Adv search',
-        'Starts with',
-        'Title (all)',
-      );
-      InventoryInstances.fillAdvSearchRow(
-        1,
-        testData.instanceHridForSearching,
-        'Contains any',
-        'Instance HRID',
-        'OR',
-      );
-      InventoryInstances.checkAdvSearchModalValues(
-        1,
-        testData.instanceHridForSearching,
-        'Contains any',
-        'Instance HRID',
-        'OR',
-      );
-      InventoryInstances.clickSearchBtnInAdvSearchModal();
-      InventoryInstances.checkAdvSearchModalAbsence();
-      InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-      InventorySearchAndFilter.verifySearchResult([testData.instanceTitle, testData.holdingsTitle]);
+      cy.getInstance({
+        limit: 1,
+        expandAll: true,
+        query: `"id"=="${testData.instances[0].testInstanceIds.instanceId}"`,
+      }).then((instance) => {
+        const instanceHrid = instance.hrid.replace(/[^\d]/g, '');
 
-      InventoryInstances.clickAdvSearchButton();
-      InventoryInstances.checkAdvSearchModalValues(
-        0,
-        'Roma council. Adv search',
-        'Starts with',
-        'Title (all)',
-      );
-      InventoryInstances.checkAdvSearchModalValues(
-        1,
-        testData.instanceHridForSearching,
-        'Contains any',
-        'Instance HRID',
-        'OR',
-      );
-      InventoryInstances.closeAdvancedSearchModal();
-      InventoryInstances.resetAllFilters();
-      InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
-      InventorySearchAndFilter.verifySearchFieldIsEmpty();
+        InventorySearchAndFilter.switchToInstance();
+        InventoryInstances.clickAdvSearchButton();
+        InventoryInstances.fillAdvSearchRow(
+          0,
+          'Roma council. Adv search',
+          'Starts with',
+          'Title (all)',
+        );
+        InventoryInstances.checkAdvSearchModalValues(
+          0,
+          'Roma council. Adv search',
+          'Starts with',
+          'Title (all)',
+        );
+        InventoryInstances.fillAdvSearchRow(1, instanceHrid, 'Contains any', 'Instance HRID', 'OR');
+        InventoryInstances.checkAdvSearchModalValues(
+          1,
+          instanceHrid,
+          'Contains any',
+          'Instance HRID',
+          'OR',
+        );
+        InventoryInstances.clickSearchBtnInAdvSearchModal();
+        InventoryInstances.checkAdvSearchModalAbsence();
+        InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+        InventorySearchAndFilter.verifySearchResult(testData.instances[0].title);
+        InventorySearchAndFilter.verifySearchResult(testData.instances[1].title);
+        InventorySearchAndFilter.checkRowsCount(2);
+
+        InventoryInstances.clickAdvSearchButton();
+        InventoryInstances.checkAdvSearchModalValues(
+          0,
+          'Roma council. Adv search',
+          'Starts with',
+          'Title (all)',
+        );
+        InventoryInstances.checkAdvSearchModalValues(
+          1,
+          instanceHrid,
+          'Contains any',
+          'Instance HRID',
+          'OR',
+        );
+        InventoryInstances.closeAdvancedSearchModal();
+        InventoryInstances.resetAllFilters();
+        InventoryInstances.verifySelectedSearchOption(testData.defaultSearchOption);
+        InventorySearchAndFilter.verifySearchFieldIsEmpty();
+      });
 
       InventoryInstances.clickAdvSearchButton();
       cy.wrap([1, 2, 3, 4]).each((rowNumber) => {
@@ -171,26 +194,26 @@ describe('Inventory -> Advanced search', () => {
       });
       InventoryInstances.fillAdvSearchRow(
         0,
-        `(OCoLC)${testData.identifierValue}`,
+        testData.instances[0].identifier,
         'Exact phrase',
         'Identifier (all)',
       );
       InventoryInstances.checkAdvSearchModalValues(
         0,
-        `(OCoLC)${testData.identifierValue}`,
+        testData.instances[0].identifier,
         'Exact phrase',
         'Identifier (all)',
       );
       InventoryInstances.fillAdvSearchRow(
         1,
-        testData.callNumber,
+        testData.instances[1].holdingsCallNumber,
         'Contains all',
         'Effective call number (item), shelving order',
         'NOT',
       );
       InventoryInstances.checkAdvSearchModalValues(
         1,
-        testData.callNumber,
+        testData.instances[1].holdingsCallNumber,
         'Contains all',
         'Effective call number (item), shelving order',
         'NOT',
@@ -198,7 +221,7 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.clickSearchBtnInAdvSearchModal();
       InventoryInstances.checkAdvSearchModalAbsence();
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
-      InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);
+      InventorySearchAndFilter.verifySearchResult(testData.instances[0].title);
       InventorySearchAndFilter.checkRowsCount(1);
     },
   );
