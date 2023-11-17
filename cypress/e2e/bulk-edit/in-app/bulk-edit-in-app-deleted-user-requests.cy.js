@@ -7,12 +7,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import { getLongDelay } from '../../../support/utils/cypressTools';
 
 let user1;
@@ -56,7 +51,7 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user2.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemUUIDsFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
     });
 
     it(
