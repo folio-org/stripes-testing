@@ -281,9 +281,6 @@ describe('inventory', () => {
         InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);
         BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[4].sudoc);
         BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('sudoc', 4));
-
-        // BrowseSubjects.clickPreviousPaginationButton();
-        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNs('dewey', 0));
       },
     );
   });
