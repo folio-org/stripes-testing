@@ -33,6 +33,7 @@ const instanceDetailsPane = Pane({ id: 'pane-instancedetails' });
 const classificationAccordion = Accordion('Classification');
 const listClassifications = MultiColumnList({ id: 'list-classifications' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
+const adminDataAcoordion = Accordion('Administrative data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 
 const verifyResourceTitle = (value) => {
@@ -267,7 +268,11 @@ export default {
 
   openHoldingView: () => {
     cy.do(Button('View holdings').click());
-    cy.expect(Button('Actions').exists());
+    cy.expect(actionsButton.exists());
+  },
+
+  duplicate: () => {
+    cy.do([rootSection.find(actionsButton).click(), Button({ id: 'copy-instance' }).click()]);
   },
 
   getAssignedHRID: () => cy.then(() => KeyValue('Instance HRID').value()),
@@ -372,10 +377,37 @@ export default {
     );
   },
 
+  verifyMarkedAsStaffSuppressed() {
+    cy.expect(
+      rootSection
+        .find(adminDataAcoordion)
+        .find(HTML(including('Staff suppressed')))
+        .exists(),
+    );
+  },
+
+  verifyNotMarkAssuppressFromDiscavery() {
+    cy.expect(
+      rootSection
+        .find(adminDataAcoordion)
+        .find(HTML(including('Suppressed from discovery')))
+        .absent(),
+    );
+  },
+
+  verifyMarkedAsPreviouslyHeld() {
+    cy.expect(
+      rootSection
+        .find(adminDataAcoordion)
+        .find(HTML(including('Previously held')))
+        .exists(),
+    );
+  },
+
   verifyNotMarkAsPreviouslyHeld() {
     cy.expect(
       rootSection
-        .find(Accordion('Administrative data'))
+        .find(adminDataAcoordion)
         .find(HTML(including('Previously held')))
         .absent(),
     );

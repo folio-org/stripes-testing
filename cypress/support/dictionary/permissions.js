@@ -809,6 +809,18 @@ export default {
     internal: 'ui-myprofile.settings.change-password',
     gui: 'Settings (My profile): Can change your local password',
   },
+  uiSettingsTenantPlugins: {
+    internal: 'ui-tenant-settings.settings.plugins',
+    gui: 'Settings (tenant): Can maintain preferred plugins',
+  },
+  uiSettingsTenantSSO: {
+    internal: 'ui-tenant-settings.settings.sso',
+    gui: 'Settings (tenant): Can maintain SSO settings',
+  },
+  uiSettingsTenantAddresses: {
+    internal: 'ui-tenant-settings.settings.addresses',
+    gui: 'Settings (tenant): Can manage tenant addresses',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingseholdingsViewEditCreateDelete: {
@@ -857,5 +869,11 @@ export default {
   settingsLoanPoliciesAll: {
     internal: 'settings.loan-policies.all',
     gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
+  },
+
+  // Lists
+  listsAll: {
+    internal: 'module.lists.all',
+    gui: 'Lists (Admin): All permissions',
   },
 };

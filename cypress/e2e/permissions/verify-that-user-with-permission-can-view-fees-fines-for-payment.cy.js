@@ -144,6 +144,16 @@ describe('Permissions --> Users', () => {
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+        LoanPolicy.createViaApi(loanPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { l: loanPolicyBody.id, i: lostItemFeePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
     UsersOwners.createViaApi(ownerBody).then(() => {
@@ -151,33 +161,6 @@ describe('Permissions --> Users', () => {
         testData.paymentMethodId = paymentMethod.id;
         testData.paymentMethodName = paymentMethod.name;
       });
-    });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    LoanPolicy.createViaApi(loanPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      testData.originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.l = loanPolicyBody.id;
-      ruleProps.i = lostItemFeePolicyBody.id;
-      testData.addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        testData.originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
     });
 
     PatronGroups.createViaApi(testData.patronGroup.name).then((res) => {
@@ -219,7 +202,7 @@ describe('Permissions --> Users', () => {
       servicePointId: testData.userServicePoint.id,
       checkInDate: new Date().toISOString(),
     });
-    CirculationRules.deleteRuleViaApi(testData.addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanPolicy(loanPolicyBody.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
