@@ -4,6 +4,7 @@ import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 
 describe('Create new MARC bib', () => {
   const testData = {
@@ -49,6 +50,15 @@ describe('Create new MARC bib', () => {
         ['h', 't'],
         ['v', '$'],
       ],
+    },
+    tags: {
+      tag245: '245',
+      tag246: '246',
+      tagLDR: 'LDR',
+    },
+    fieldContents: {
+      tag245Content: 'New title',
+      tagLDRContent: '00000naa\\a2200000uu\\4500',
     },
   };
 
@@ -126,6 +136,41 @@ describe('Create new MARC bib', () => {
       updateLDR06LDR07Values(testData.LDR0607Combinations.invalidLDR06ValidLDR07, 6, false);
       updateLDR06LDR07Values(testData.LDR0607Combinations.validLDR06InvalidLDR07, [6, 7], false);
       QuickMarcEditor.closeWithoutSavingAfterChange();
+    },
+  );
+
+  it(
+    'C380714 "245" field presence validation when creating a new "MARC bib" record (spitfire) (TaaS)',
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    () => {
+      InventoryInstance.newMarcBibRecord();
+
+      QuickMarcEditor.updateExistingField(
+        testData.tags.tagLDR,
+        testData.fieldContents.tagLDRContent,
+      );
+
+      QuickMarcEditor.updateExistingTagName(testData.tags.tag245, testData.tags.tag246);
+
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.verifyNo245TagCallout();
+
+      QuickMarcEditor.updateExistingTagName(testData.tags.tag246, testData.tags.tag245);
+
+      QuickMarcEditor.updateExistingField(
+        testData.tags.tag245,
+        `$a ${testData.fieldContents.tag245Content}`,
+      );
+
+      MarcAuthority.addNewField(
+        4,
+        testData.tags.tag245,
+        `$a ${testData.fieldContents.tag245Content}`,
+      );
+
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.verifyMultiple245TagCallout();
+      InventoryInstance.verifyNewQuickMarcEditorPaneExists();
     },
   );
 });

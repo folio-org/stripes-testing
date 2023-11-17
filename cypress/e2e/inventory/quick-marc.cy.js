@@ -91,7 +91,7 @@ describe('ui-inventory: MARC', () => {
           });
 
           it('should show updated data in View MARC record', () => {
-            cy.contains('650 ‡a Some test data');
+            cy.contains('650 $a Some test data');
           });
         });
       });

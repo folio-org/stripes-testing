@@ -42,6 +42,22 @@ const exportJob = (jobId) => {
 export default {
   getSearchResult,
   exportJob,
+  exportJobRecursively({ jobId, timeout = 600000 }) {
+    cy.recurse(
+      () => {
+        cy.reload();
+        return cy.contains(jobId);
+      },
+      ($el) => $el[0].nodeName !== 'SPAN',
+      {
+        delay: 30000,
+        limit: 20, // max number of iterations
+        timeout,
+      },
+    ).then(() => {
+      this.exportJob(jobId);
+    });
+  },
   waitLoading() {
     cy.expect([
       Pane('Export jobs').exists(),
@@ -241,7 +257,7 @@ export default {
   },
 
   selectOrganizationsSearch() {
-    cy.do(Button('Organizations').click());
+    cy.do(Pane('Search & filter').find(Button('Organizations')).click());
   },
 
   selectExportMethod(integarationName) {

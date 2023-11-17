@@ -168,18 +168,19 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"title"=="${testData.instanceTitle}"`,
-      }).then((instance) => {
-        instance.items.forEach((item) => {
-          cy.deleteItemViaApi(item.id);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"title"=="${testData.instanceTitle}"`,
+        }).then((instance) => {
+          instance.items.forEach((item) => {
+            cy.deleteItemViaApi(item.id);
+          });
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
         });
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     });
 

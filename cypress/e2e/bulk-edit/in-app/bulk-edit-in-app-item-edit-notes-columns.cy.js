@@ -18,6 +18,7 @@ const notes = {
   bindingNote: `binding-note-${getRandomPostfix()}`,
   noteNote: `note-note-${getRandomPostfix()}`,
   copyNote: `copy-note-${getRandomPostfix()}`,
+  // eslint-disable-next-line no-useless-escape
   electronicBookplateNote: `~,!,@,#,$,%,^,&,*,(,),~\",', {.[,]<},>,ø, Æ, §,;-${getRandomPostfix()}`,
   newElectronicBookplateNote: `Item note with special characters-${getRandomPostfix()}`,
 };
@@ -47,26 +48,27 @@ describe('bulk-edit', () => {
                 // "Binding" Item note type
                 itemNoteTypeId: '87c450be-2033-41fb-80ba-dd2409883681',
                 note: notes.bindingNote,
-                staffOnly: true
+                staffOnly: true,
               },
               {
                 // "Note" Item note type
                 itemNoteTypeId: '8d0a5eca-25de-4391-81a9-236eeefdd20b',
                 note: notes.noteNote,
-                staffOnly: true
+                staffOnly: true,
               },
               {
                 // "Copy note" Item note type
                 itemNoteTypeId: '1dde7141-ec8a-4dae-9825-49ce14c728e7',
                 note: notes.copyNote,
-                staffOnly: false
+                staffOnly: false,
               },
               {
                 // "Electronic bookplate" Item note type
                 itemNoteTypeId: 'f3ae3823-d096-4c65-8734-0c1efd2ffea8',
                 note: notes.electronicBookplateNote,
-                staffOnly: false
-              }];
+                staffOnly: false,
+              },
+            ];
             cy.updateItemViaApi(itemData);
           },
         );
@@ -97,11 +99,20 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Binding', 'Note', 'Copy note', 'Electronic bookplate', 'Provenance');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Binding',
+          'Note',
+          'Copy note',
+          'Electronic bookplate',
+          'Provenance',
+        );
         BulkEditSearchPane.verifyResultsUnderColumns('Binding', `${notes.bindingNote}(staff only)`);
         BulkEditSearchPane.verifyResultsUnderColumns('Note', `${notes.noteNote}(staff only)`);
         BulkEditSearchPane.verifyResultsUnderColumns('Copy note', notes.copyNote);
-        BulkEditSearchPane.verifyResultsUnderColumns('Electronic bookplate', notes.electronicBookplateNote);
+        BulkEditSearchPane.verifyResultsUnderColumns(
+          'Electronic bookplate',
+          notes.electronicBookplateNote,
+        );
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.removeMarkAsStaffOnly('Binding');
@@ -110,14 +121,22 @@ describe('bulk-edit', () => {
         BulkEditActions.addNewBulkEditFilterString();
         BulkEditActions.markAsStaffOnly('Copy note', 2);
         BulkEditActions.addNewBulkEditFilterString();
-        BulkEditActions.noteReplaceWith('Electronic bookplate', notes.electronicBookplateNote, notes.newElectronicBookplateNote, 3);
+        BulkEditActions.noteReplaceWith(
+          'Electronic bookplate',
+          notes.electronicBookplateNote,
+          notes.newElectronicBookplateNote,
+          3,
+        );
 
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyChangesUnderColumns('Binding', notes.bindingNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', '');
         BulkEditSearchPane.verifyChangesUnderColumns('Provenance', `${notes.noteNote}(staff only)`);
         BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote}(staff only)`);
-        BulkEditSearchPane.verifyChangesUnderColumns('Electronic bookplate', notes.newElectronicBookplateNote);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Electronic bookplate',
+          notes.newElectronicBookplateNote,
+        );
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
@@ -125,13 +144,16 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangesUnderColumns('Note', '');
         BulkEditSearchPane.verifyChangesUnderColumns('Provenance', `${notes.noteNote}(staff only)`);
         BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote}(staff only)`);
-        BulkEditSearchPane.verifyChangesUnderColumns('Electronic bookplate', notes.newElectronicBookplateNote);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Electronic bookplate',
+          notes.newElectronicBookplateNote,
+        );
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           notes.bindingNote,
           notes.noteNote,
           notes.copyNote,
-          notes.newElectronicBookplateNote
+          notes.newElectronicBookplateNote,
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
@@ -154,7 +176,12 @@ describe('bulk-edit', () => {
           note: notes.newElectronicBookplateNote,
           type: 'Electronic bookplate',
         };
-        ItemRecordView.checkMultipleItemNotes(bindingNote, provenanceNote, copyNote, electronicBookplateNote);
+        ItemRecordView.checkMultipleItemNotes(
+          bindingNote,
+          provenanceNote,
+          copyNote,
+          electronicBookplateNote,
+        );
       },
     );
   });

@@ -39,9 +39,10 @@ const testData = {
   },
 };
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);

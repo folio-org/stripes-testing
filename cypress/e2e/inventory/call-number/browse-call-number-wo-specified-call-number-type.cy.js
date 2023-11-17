@@ -5,7 +5,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Call Number Browse', () => {
     const firstCallNumber = 'QS 11 .GA1 E99 2005';
     const secondCallNumber = 'D15.H63 A3 2002';

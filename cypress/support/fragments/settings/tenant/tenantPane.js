@@ -16,40 +16,43 @@ export const TENANTS = {
   LOCATIONS: 'Locations',
 };
 
-const tenantSections = {
-  [TENANTS.ADDRESSES]: Addresses,
-  [TENANTS.LANGUAGE_AND_LOCALIZATION]: Localization,
-  [TENANTS.INSTITUTIONS]: Institutions,
-  [TENANTS.CAMPUSES]: Campuses,
-  [TENANTS.LIBRARIES]: Libraries,
-  [TENANTS.LOCATIONS]: Locations,
-};
-
 export default {
   waitLoading(section = 'Tenant') {
     cy.expect(Pane(section).exists());
   },
   selectTenant(section) {
+    cy.wait(2000);
     cy.do(NavListItem(section).click());
     cy.expect(Pane(section).exists());
-    // need to wait to prevent application error
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(300);
-
-    return tenantSections[section];
   },
   goToTenantTab() {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());
   },
-  verifyLocationSetupItems() {
-    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach((item) => {
-      cy.expect(NavListItem(item).exists());
-    });
+  verifyLocationSetupItems(exist = true) {
+    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach(
+      (item) => {
+        if (exist) {
+          cy.expect(NavListItem(item).exists());
+        } else {
+          cy.expect(NavListItem(item).absent());
+        }
+      },
+    );
   },
-  verifyNoGeneralItems() {
-    [TENANTS.ADDRESSES, TENANTS.LANGUAGE_AND_LOCALIZATION, TENANTS.PREFERRED_PLUGINS, TENANTS.SSO_SETTINGS, TENANTS.SERVICE_POINTS].forEach((item) => {
-      cy.expect(NavListItem(item).absent());
+  verifyGeneralItems(exist = true) {
+    [
+      TENANTS.ADDRESSES,
+      TENANTS.LANGUAGE_AND_LOCALIZATION,
+      TENANTS.PREFERRED_PLUGINS,
+      TENANTS.SSO_SETTINGS,
+      TENANTS.SERVICE_POINTS,
+    ].forEach((item) => {
+      if (exist) {
+        cy.expect(NavListItem(item).exists());
+      } else {
+        cy.expect(NavListItem(item).absent());
+      }
     });
   },
   verifyPageTitle(title) {

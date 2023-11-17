@@ -53,10 +53,33 @@ const testData = {
   ],
 };
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        InventoryInstances.getInstancesViaApi({
+          limit: 100,
+          query: 'title="Prayer Bible"',
+        }).then((instances) => {
+          if (instances) {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
+        });
+        testData.searchQueries.forEach((query) => {
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id);
+              });
+            }
+          });
+        });
         testData.marcFiles.forEach((marcFile) => {
           DataImport.verifyUploadState();
           DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
