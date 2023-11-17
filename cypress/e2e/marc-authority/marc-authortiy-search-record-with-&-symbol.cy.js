@@ -10,7 +10,6 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
-import Parallelization from '../../support/dictionary/parallelization';
 
 describe('Importing MARC Authority files', () => {
   let user;
@@ -51,7 +50,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350767 Browse for MARC Authority record with " & " symbol in the title (spitfire) (TaaS)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: [TestTypes.smoke, DevTeams.spitfire] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorityBrowse.checkSearchOptions();
