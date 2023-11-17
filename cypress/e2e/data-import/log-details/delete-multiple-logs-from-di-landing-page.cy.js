@@ -33,10 +33,10 @@ describe('data-import', () => {
       () => {
         DataImport.checkMultiColumnListRowsCount(numberOfLogsPerPage);
         new Array(numberOfLogsToDelete).fill(null).forEach((_, index) => {
+          cy.wait(1000);
           DataImport.selectLog(index);
         });
         DataImport.verifyLogsPaneSubtitleExist(numberOfLogsToDelete);
-        DataImport.openActionsMenu();
         DataImport.openDeleteImportLogsModal();
         DataImport.confirmDeleteImportLogs();
         InteractorsTools.checkCalloutMessage(getCalloutSuccessMessage(numberOfLogsToDelete));
