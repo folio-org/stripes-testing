@@ -31,12 +31,12 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
   const marcFiles = [
     {
       marc: 'marcBibFileForC380764.mrc',
-      fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC380764.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     },
     {
       marc: 'marcAuthFileForC380764.mrc',
-      fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC380764.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
     },
   ];
