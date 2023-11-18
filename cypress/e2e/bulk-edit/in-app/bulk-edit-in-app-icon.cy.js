@@ -7,33 +7,22 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import UsersCard from '../../../support/fragments/users/usersCard';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 let user;
-let addressTypeId;
-let addressType;
-const todayDate = new Date();
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
-const previewOfProposedChangesFileName = `*-Updates-Preview-${userBarcodesFileName}`;
-const updatedRecordsFileName = `*-Changed-Records*-${userBarcodesFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
-          permissions.bulkEditView.gui,
-          permissions.bulkEditEdit.gui,
-          permissions.bulkEditUpdateRecords.gui,
-          permissions.uiUserEdit.gui,
-          permissions.bulkEditLogsView.gui,
-          permissions.exportManagerAll.gui,
-        ],
-        'faculty',
+        permissions.bulkEditView.gui,
+        permissions.bulkEditEdit.gui,
+        permissions.bulkEditUpdateRecords.gui,
+        permissions.uiUserEdit.gui,
+        permissions.bulkEditLogsView.gui,
+        permissions.exportManagerAll.gui,
+      ], 'faculty'
       ).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -62,7 +51,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(user.barcode);
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
-        
+
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.verifyPanesBeforeImport();
         BulkEditSearchPane.verifyBulkEditPaneItems();
@@ -77,10 +66,9 @@ describe('bulk-edit', () => {
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillPatronGroup('faculty (Faculty Member)');
         BulkEditActions.confirmChanges();
-        BulkEditActions.downloadPreview();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        
+
         TopMenuNavigation.navigateToApp('Bulk edit');
         BulkEditSearchPane.verifyBulkEditImage();
         BulkEditSearchPane.verifyPanesBeforeImport();
