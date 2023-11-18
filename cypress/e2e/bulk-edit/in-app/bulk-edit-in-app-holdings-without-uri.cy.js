@@ -65,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C409429 Verify Bulk Edit for Holdings without populated "URI" in electronic access (firebird) (TaaS)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
