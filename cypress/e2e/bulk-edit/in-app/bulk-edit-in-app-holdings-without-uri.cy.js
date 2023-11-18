@@ -40,13 +40,11 @@ describe('bulk-edit', () => {
             ...holdings[0],
             electronicAccess: [{
               // Resource
-              relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa', 
-              uri: '', 
+              relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
+              uri: '',
               linkText: '',
               materialsSpecification: '',
               publicNote: '',
-              relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
-              uri: '',
             }]
           });
           FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingsHRID);
