@@ -1000,4 +1000,69 @@ export default {
     cy.wait(2000);
     InteractorsTools.checkCalloutMessage(`${ledger.name} data was successfully exported to CSV`);
   },
+
+  checkColumnNamesInDownloadedLedgerExportFile(fileName) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      expect(fileRows[0].trim()).to.equal(
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Date created (Budget)","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available"',
+      );
+    });
+  },
+
+  checkColumnContentInDownloadedLedgerExportFile(
+    fileName,
+    fileRow,
+    fund,
+    secondFiscalYear,
+    allowableEncumbrance,
+    allowableExpenditure,
+    initialAllocation,
+    increase,
+    decrease,
+    totalAllocation,
+    transfers,
+    totalFunding,
+    encumberedBudget,
+    awaitingPaymentBudget,
+    expendedBudget,
+    unavailable,
+    overEncumbered,
+    overExpended,
+    cashBalance,
+    available,
+  ) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      const actualData = fileRows[fileRow].trim().split(',');
+      expect(actualData[0]).to.equal(`"${fund.name}"`);
+      expect(actualData[1]).to.equal(`"${fund.code}"`);
+      expect(actualData[9]).to.equal(`"${fund.description}"`);
+      expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
+      expect(actualData[12]).to.equal(allowableEncumbrance);
+      expect(actualData[13]).to.equal(allowableExpenditure);
+      expect(actualData[15]).to.equal(initialAllocation);
+      expect(actualData[16]).to.equal(increase);
+      expect(actualData[17]).to.equal(decrease);
+      expect(actualData[18]).to.equal(totalAllocation);
+      expect(actualData[19]).to.equal(transfers);
+      expect(actualData[20]).to.equal(totalFunding);
+      expect(actualData[21]).to.equal(encumberedBudget);
+      expect(actualData[22]).to.equal(awaitingPaymentBudget);
+      expect(actualData[23]).to.equal(expendedBudget);
+      expect(actualData[24]).to.equal(unavailable);
+      expect(actualData[25]).to.equal(overEncumbered);
+      expect(actualData[26]).to.equal(overExpended);
+      expect(actualData[27]).to.equal(cashBalance);
+      expect(actualData[28]).to.equal(available);
+    });
+  },
 };
