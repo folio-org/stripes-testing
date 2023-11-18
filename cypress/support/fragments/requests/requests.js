@@ -16,8 +16,6 @@ import {
   Section,
   Heading,
   Spinner,
-  Link,
-  Select,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -38,18 +36,13 @@ const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
-const resultsPane = Pane({ id: 'pane-results' });
-const actionsButtonInResultsPane = resultsPane.find(Button('Actions'));
+const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
-const instanceDetailsSection = Pane({ id: 'instance-details' });
-const actionsButtonInInstanceDetailsSection = instanceDetailsSection.find(Button('Actions'));
-const editButton = Button({ id: 'clickable-edit-request' });
-const requestExpirationDateInput = TextField({ id: 'requestExpirationDate' });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
   cy.expect(
-    resultsPane
+    requestsResultsSection
       .find(HTML(including('Choose a filter or enter a search query to show results.')))
       .exists(),
   );
@@ -560,82 +553,12 @@ export default {
   },
 
   selectTheFirstRequest() {
-    cy.do(resultsPane.find(MultiColumnListRow({ index: 0 })).click());
+    cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
   },
 
   exportRequestToCsv: () => {
     cy.wait(1000);
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
-  },
-
-  editRequest: () => {
-    cy.wait(1000);
-    cy.do([actionsButtonInInstanceDetailsSection.click(), editButton.click()]);
-  },
-
-  setExpirationDate(value) {
-    cy.do(requestExpirationDateInput.fillIn(value));
-  },
-
-  verifyItemInformation: (itemBarcode, effectiveLocation, title) => {
-    const itemInformation = Section({ id: 'new-item-info' });
-    cy.expect([
-      itemInformation.find(HTML(including('Item barcode'))).exists(),
-      itemInformation.find(Link(including(itemBarcode))).exists(),
-      itemInformation.find(HTML(including('Effective location'))).exists(),
-      itemInformation.find(HTML(including(effectiveLocation))).exists(),
-      itemInformation.find(HTML(including('Item status'))).exists(),
-      itemInformation.find(HTML(including('Paged'))).exists(),
-      itemInformation.find(HTML(including('Title'))).exists(),
-      itemInformation.find(HTML(including(title))).exists(),
-      itemInformation.find(HTML(including('Effective call number string'))).exists(),
-      itemInformation.find(HTML(including('Current due date'))).exists(),
-      itemInformation.find(HTML(including('Contributor'))).exists(),
-      itemInformation.find(HTML(including('Requests on item'))).exists(),
-      itemInformation.find(Link(including(1))).exists(),
-    ]);
-  },
-
-  verifyRequesterInformation: (userFullName, userBarcode) => {
-    const requesterInformation = Section({ id: 'new-requester-info' });
-    cy.expect([
-      requesterInformation.find(HTML(including('Requester'))).exists(),
-      requesterInformation.find(Link(including(userFullName))).exists(),
-      requesterInformation.find(Link(including(userBarcode))).exists(),
-      requesterInformation.find(HTML(including('Requester patron group'))).exists(),
-    ]);
-  },
-
-  verifyRequestInformation(requestType, requestStatus, patronComments) {
-    const requestInformation = Section({ id: 'new-request-info' });
-    cy.expect([
-      requestInformation.find(HTML(including('Request type'))).exists(),
-      requestInformation.find(HTML(including(requestType))).exists(),
-      requestInformation.find(HTML(including('Request status'))).exists(),
-      requestInformation.find(HTML(including(requestStatus))).exists(),
-      requestInformation.find(HTML(including('Request expiration date'))).exists(),
-      requestInformation.find(HTML(including('Patron comments'))).exists(),
-      requestInformation.find(HTML(including(patronComments))).exists(),
-      requestInformation.find(HTML(including('Hold shelf expiration date'))).exists(),
-      requestInformation.find(HTML(including('Fulfillment preference'))).exists(),
-      requestInformation.find(HTML(including('Pickup service point'))).exists(),
-    ]);
-  },
-
-  verifyFulfillmentPreferenceDropdown(value) {
-    cy.get("select[name='fulfillmentPreference'] option:selected").should('have.value', value);
-  },
-
-  verifyServicePointDropdown(value) {
-    cy.get("select[name='pickupServicePointId'] option:selected").should('have.value', value);
-  },
-
-  pickupServicePoint(value) {
-    cy.do(Select({ name: 'pickupServicePointId' }).choose(value));
-  },
-
-  saveAndClose() {
-    cy.do(Button('Save & close').click());
   },
 
   checkCellInCsvFileContainsValue(fileName, rowNumber = 1, columnNumber, value) {

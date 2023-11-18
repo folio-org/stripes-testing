@@ -1,6 +1,16 @@
 import add from 'date-fns/add';
 import { including } from '@interactors/html';
-import { Button, KeyValue, Section, Select, TextField, TextArea } from '../../../../interactors';
+import {
+  Button,
+  KeyValue,
+  Section,
+  Select,
+  TextField,
+  TextArea,
+  Pane,
+  Link,
+  HTML,
+} from '../../../../interactors';
 import { FULFILMENT_PREFERENCES } from '../../constants';
 import Requests from './requests';
 import DateTools from '../../utils/dateTools';
@@ -21,6 +31,12 @@ const requestExpirationDateKeyValue = KeyValue('Request expiration date');
 const holdShelfExpirationDateKeyValue = KeyValue('Hold shelf expiration date');
 const pickupServicePointKeyValue = KeyValue('Pickup service point');
 const patronComment = TextArea({ id: 'patronComments' });
+
+const requestDetailsSection = Section({ id: 'request' });
+const itemInformation = requestDetailsSection.find(Section({ id: 'new-item-info' }));
+const titleInformation = requestDetailsSection.find(Section({ id: 'new-instance-info' }));
+const requesterInformation = requestDetailsSection.find(Section({ id: 'new-requester-info' }));
+const requestInformation = requestDetailsSection.find(Section({ id: 'new-request-info' }));
 
 const expirationDates = [...new Array(5)].map((_, i) => {
   const date = add(new Date(), { years: 1, days: i + 1 });
@@ -180,5 +196,89 @@ export default {
 
   verifyPatronCommentsFieldIsNotEditable: () => {
     cy.expect(patronComment.absent());
+  },
+
+  waitLoading: (type = 'title') => {
+    cy.expect([
+      requestDetailsSection.exists(),
+      requesterInformation.exists(),
+      requestInformation.exists(),
+    ]);
+    if (type === 'title') {
+      cy.expect([titleInformation.exists()]);
+    }
+    if (type === 'item') {
+      cy.expect([itemInformation.exists()]);
+    }
+  },
+
+  verifyItemInformation(data) {
+    InteractorsTools.checkKeyValue(itemInformation, 'Item barcode', data.itemBarcode);
+    InteractorsTools.checkKeyValue(itemInformation, 'Effective location', data.effectiveLocation);
+    InteractorsTools.checkKeyValue(itemInformation, 'Item status', data.itemStatus);
+    InteractorsTools.checkKeyValue(itemInformation, 'Title', data.title);
+    InteractorsTools.checkKeyValue(
+      itemInformation,
+      'Effective call number string',
+      data.effectiveCallNumber,
+    );
+    InteractorsTools.checkKeyValue(itemInformation, 'Current due date', data.currentDueDate);
+    InteractorsTools.checkKeyValue(itemInformation, 'Contributor', data.contributor);
+    InteractorsTools.checkKeyValue(itemInformation, 'Requests on item', data.requestsOnItem);
+  },
+
+  verifyTitleInformation(data) {
+    InteractorsTools.checkKeyValue(
+      titleInformation,
+      'Title level requests',
+      data.titleLevelRequest,
+    );
+    InteractorsTools.checkKeyValue(titleInformation, 'Title', data.title);
+  },
+
+  verifyRequesterInformation(data) {
+    InteractorsTools.checkKeyValue(
+      requesterInformation,
+      'Requester patron group',
+      data.requesterPatronGroup,
+    );
+    cy.expect([
+      requesterInformation.find(HTML(including('Requester'))).exists(),
+      requesterInformation.find(Link(including(data.userFullName))).exists(),
+      requesterInformation.find(Link(including(data.userBarcode))).exists(),
+    ]);
+  },
+
+  verifyRequestInformation(data) {
+    InteractorsTools.checkKeyValue(requestInformation, 'Request type', data.requestType);
+    InteractorsTools.checkKeyValue(requestInformation, 'Request status', data.requestStatus);
+    InteractorsTools.checkKeyValue(requestInformation, 'Patron comments', data.patronComments);
+    InteractorsTools.checkKeyValue(
+      requestInformation,
+      'Hold shelf expiration date',
+      data.holdShelfExpirationDate,
+    );
+    cy.expect([
+      requestInformation.find(HTML(including('Request expiration date'))).exists(),
+      requestInformation.find(HTML(including('Position in queue'))).exists(),
+      requestInformation.find(HTML(including('Fulfillment preference'))).exists(),
+      requestInformation.find(HTML(including('Pickup service point'))).exists(),
+    ]);
+  },
+
+  setExpirationDate(value) {
+    cy.do(requestExpirationDateInput.fillIn(value));
+  },
+
+  verifyFulfillmentPreferenceDropdown(value) {
+    cy.get("select[name='fulfillmentPreference'] option:selected").should('have.value', value);
+  },
+
+  verifyServicePointDropdown(value) {
+    cy.get("select[name='pickupServicePointId'] option:selected").should('have.value', value);
+  },
+
+  setPickupServicePoint(value) {
+    cy.do(Select({ name: 'pickupServicePointId' }).choose(value));
   },
 };

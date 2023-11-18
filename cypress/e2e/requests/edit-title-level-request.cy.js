@@ -21,7 +21,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import DateTools from '../../support/utils/dateTools';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 
-describe('Edit item level request', () => {
+describe('Edit title level request', () => {
   const userData = {};
   const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
@@ -32,11 +32,12 @@ describe('Edit item level request', () => {
   const patronComments = 'test comment';
   let defaultLocation;
   let cancellationReason;
+  let requestId;
 
   const requestData = {
     id: uuid(),
     requestType: REQUEST_TYPES.PAGE,
-    requestLevel: REQUEST_LEVELS.ITEM,
+    requestLevel: REQUEST_LEVELS.TITLE,
     requestDate: new Date().toISOString(),
     fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
   };
@@ -90,8 +91,6 @@ describe('Edit item level request', () => {
       .then((specialInstanceIds) => {
         itemData.testInstanceIds = specialInstanceIds;
         requestData.instanceId = specialInstanceIds.instanceId;
-        requestData.holdingsRecordId = specialInstanceIds.holdingIds[0].id;
-        requestData.itemId = specialInstanceIds.holdingIds[0].itemIds[0];
       })
       .then(() => {
         cy.createTempUser([Permissions.uiRequestsAll.gui, Permissions.checkinAll.gui])
@@ -112,7 +111,9 @@ describe('Edit item level request', () => {
                 requestData.patronComments = patronComments;
               })
               .then(() => {
-                cy.createItemRequestApi(requestData);
+                Requests.createNewRequestViaApi(requestData).then((createdRequest) => {
+                  requestId = createdRequest.body.id;
+                });
               });
 
             UserEdit.addServicePointsViaApi(
@@ -128,13 +129,7 @@ describe('Edit item level request', () => {
 
   after('Delete New Service point, Item and User', () => {
     cy.getAdminToken();
-    EditRequest.updateRequestApi({
-      ...requestData,
-      status: 'Closed - Cancelled',
-      cancelledByUserId: requestData.requesterId,
-      cancellationReasonId: cancellationReason,
-      cancelledDate: new Date().toISOString(),
-    });
+    Requests.deleteRequestViaApi(requestId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
     Users.deleteViaApi(userData.userId);
@@ -149,7 +144,7 @@ describe('Edit item level request', () => {
   });
 
   it(
-    'C350558 Check that the user can Edit request (Item level request) (vega)',
+    'C350559 Check that the user can Edit request (Title level request) (vega)',
     { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       cy.visit(TopMenu.requestsPath);
@@ -158,13 +153,10 @@ describe('Edit item level request', () => {
       Requests.selectTheFirstRequest();
 
       EditRequest.openRequestEditForm();
-      EditRequest.waitLoading('item');
-      EditRequest.verifyItemInformation({
-        itemBarcode: itemData.barcode,
-        effectiveLocation: defaultLocation.name,
-        itemStatus: ITEM_STATUS_NAMES.PAGED,
+      EditRequest.waitLoading('title');
+      EditRequest.verifyTitleInformation({
+        titleLevelRequest: '1',
         title: itemData.instanceTitle,
-        requestsOnItem: '1',
       });
       EditRequest.verifyRequesterInformation({
         userFullName: userData.fullName,
@@ -183,7 +175,7 @@ describe('Edit item level request', () => {
 
       RequestDetail.waitLoading('item');
       RequestDetail.checkTitleInformation({
-        TLRs: '0',
+        TLRs: '1',
         title: itemData.instanceTitle,
       });
       RequestDetail.checkItemInformation({
