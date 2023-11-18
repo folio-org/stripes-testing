@@ -72,6 +72,32 @@ const searchInstancesOptions = [
   'Query search',
   'Advanced search',
 ];
+const searchHoldingsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'ISBN',
+  'ISSN',
+  'Call number, eye readable',
+  'Call number, normalized',
+  'Holdings notes (all)',
+  'Holdings administrative notes',
+  'Holdings HRID',
+  'Holdings UUID',
+  'All',
+];
+const searchItemsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'Barcode',
+  'ISBN',
+  'ISSN',
+  'Effective call number (item), eye readable',
+  'Effective call number (item), normalized',
+  'Item notes (all)',
+  'Item administrative notes',
+  'Circulation notes',
+  'Item HRID',
+  'Item UUID',
+  'All',
+];
 const searchInstancesOptionsValues = [
   'all',
   'contributor',
@@ -91,19 +117,17 @@ const searchInstancesOptionsValues = [
   'querySearch',
   'advancedSearch',
 ];
-const searchItemsOptions = [
-  'Keyword (title, contributor, identifier, HRID, UUID)',
-  'Barcode',
-  'ISBN',
-  'ISSN',
-  'Effective call number (item), eye readable',
-  'Effective call number (item), normalized',
-  'Item notes (all)',
-  'Item administrative notes',
-  'Circulation notes',
-  'Item HRID',
-  'Item UUID',
-  'All',
+const searchHoldingsOptionsValues = [
+  'keyword',
+  'isbn',
+  'issn',
+  'holdingsFullCallNumbers',
+  'holdingsNormalizedCallNumbers',
+  'holdingsNotes',
+  'holdingsAdministrativeNotes',
+  'holdingsHrid',
+  'hid',
+  'allFields',
 ];
 const searchItemsOptionsValues = [
   'keyword',
@@ -120,23 +144,13 @@ const searchItemsOptionsValues = [
   'allFields',
 ];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
+const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
-
-const advSearchHoldingsOptions = {
-  'Keyword (title, contributor, identifier, HRID, UUID)': 'keyword',
-  ISBN: 'isbn',
-  ISSN: 'issn',
-  'Call number, eye readable': 'holdingsFullCallNumbers',
-  'Call number, normalized': 'holdingsNormalizedCallNumbers',
-  'Holdings notes (all)': 'holdingsNotes',
-  'Holdings administrative notes': 'holdingsAdministrativeNotes',
-  'Holdings HRID': 'holdingsHrid',
-  'Holdings UUID': 'hid',
-  All: 'allFields',
-};
-
+const advSearchHoldingsOptionsValues = searchHoldingsOptionsValues
+  .map((option, index) => (index ? option : 'keyword'))
+  .filter((option, index) => index <= 14);
 const advSearchItemsOptionsValues = searchItemsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
@@ -749,6 +763,40 @@ export default {
     }
   },
 
+  checkAdvSearchHoldingsModalFields(rowIndex) {
+    if (rowIndex) {
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
+      advSearchOperators.forEach((operator) => {
+        cy.expect(
+          AdvancedSearchRow({ index: rowIndex })
+            .find(advSearchOperatorSelect)
+            .has({ content: including(operator) }),
+        );
+      });
+    } else {
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).has({ text: including('Search for') }));
+    }
+    cy.expect([
+      AdvancedSearchRow({ index: rowIndex }).find(TextArea()).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchModifierSelect).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchOptionSelect).exists(),
+    ]);
+    advSearchModifiers.forEach((modifier) => {
+      cy.expect(
+        AdvancedSearchRow({ index: rowIndex })
+          .find(advSearchModifierSelect)
+          .has({ content: including(modifier) }),
+      );
+    });
+    advSearchHoldingsOptions.forEach((option) => {
+      cy.expect(
+        AdvancedSearchRow({ index: rowIndex })
+          .find(advSearchOptionSelect)
+          .has({ content: including(option) }),
+      );
+    });
+  },
+
   fillAdvSearchRow(rowIndex, query, modifier, option, operator) {
     cy.do([
       AdvancedSearchRow({ index: rowIndex }).fillQuery(query),
@@ -776,7 +824,7 @@ export default {
         .has({
           value:
             advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] ||
-            advSearchHoldingsOptions[option],
+            advSearchHoldingsOptionsValues[advSearchHoldingsOptions.indexOf(option)],
         }),
     ]);
     if (operator) {
