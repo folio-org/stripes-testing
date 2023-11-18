@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
               linkText: '',
               materialsSpecification: '',
               publicNote: '',
-            }]
+            }];
             cy.updateItemViaApi(res);
             FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, res.hrid);
           },
