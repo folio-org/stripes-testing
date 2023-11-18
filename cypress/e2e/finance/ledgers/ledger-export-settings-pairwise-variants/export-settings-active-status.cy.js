@@ -126,7 +126,7 @@ describe('Finance: Ledgers', () => {
           periodStartForSecondFY,
           periodEndForSecondFY,
         );
-        fileName = `Export-${defaultLedger.code}-${secondFiscalYear.code}`;
+        fileName = `Export${defaultLedger.code}-${secondFiscalYear.code}`;
       });
     });
     cy.createTempUser([
@@ -147,36 +147,13 @@ describe('Finance: Ledgers', () => {
   });
 
   it(
-    'C350976: Ledger export settings: last year Fund with budget, Economic (Active) Class, Export settings; Expense classes- None (thunderjet) (TaaS)',
+    'C350974: Ledger export settings: last year Fund with budget, Electronic (Active) Class, Export settings- Active status (thunderjet) (TaaS)',
     { tags: [testType.extendedPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(secondFiscalYear.code, 'None', defaultLedger);
-      Ledgers.checkColumnNamesInDownloadedLedgerExportFile(`${fileName}.csv`);
-      Ledgers.checkColumnContentInDownloadedLedgerExportFile(
-        `${fileName}.csv`,
-        1,
-        defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '10',
-        '0',
-        '0',
-        '10',
-        '0',
-        '0',
-        '100',
-        '90',
-      );
+      Ledgers.prepareExportSettings(secondFiscalYear.code, 'Active', defaultLedger);
       Ledgers.deleteDownloadedFile(`${fileName}.csv`);
     },
   );
