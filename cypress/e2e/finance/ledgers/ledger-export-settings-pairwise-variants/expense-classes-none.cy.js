@@ -15,7 +15,6 @@ import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Organizations from '../../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
 import NewInvoice from '../../../../support/fragments/invoices/newInvoice';
-import Invoices from '../../../../support/fragments/invoices/invoices';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 
@@ -38,17 +37,13 @@ describe('Finance: Ledgers', () => {
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
-  const todayDate = DateTools.getCurrentDate();
-  const fileNameDate = DateTools.getCurrentDateForFileNaming();
   const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
   const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
   const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
   const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
-  let firstOrderNumber;
   let servicePointId;
   let location;
   let fileName;
