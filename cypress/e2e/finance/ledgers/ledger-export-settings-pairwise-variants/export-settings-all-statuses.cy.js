@@ -80,7 +80,7 @@ describe('Finance: Ledgers', () => {
         periodStartForSecondFY,
         periodEndForSecondFY,
       );
-      fileName = `Export${defaultLedger.code}-${secondFiscalYear.code}`;
+      fileName = `Export-${defaultLedger.code}-${secondFiscalYear.code}`;
     });
     cy.createTempUser([
       permissions.uiFinanceExportFinanceRecords.gui,
@@ -107,6 +107,29 @@ describe('Finance: Ledgers', () => {
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(secondFiscalYear.code, 'All', defaultLedger);
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
+      Ledgers.checkColumnContentInDownloadedLedgerExportFile(
+        `${fileName}.csv`,
+        1,
+        defaultFund,
+        secondFiscalYear,
+        '100',
+        '100',
+        '100',
+        '0',
+        '0',
+        '100',
+        '0',
+        '100',
+        '0',
+        '0',
+        '0',
+        '0',
+        '0',
+        '0',
+        '100',
+        '100',
+      );
       Ledgers.deleteDownloadedFile(`${fileName}.csv`);
     },
   );
