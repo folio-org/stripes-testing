@@ -144,6 +144,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       InventoryInstance.verifySelectMarcAuthorityModal();
       MarcAuthorities.verifyEmptyAuthorityField();
       linkValuesWithoutAuthoritySource.forEach((linkValue) => {
+        MarcAuthorities.switchToSearch();
+        MarcAuthorities.switchToBrowse();
         MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
         MarcAuthorities.checkRow(linkValue.value);
         MarcAuthorities.selectTitle(linkValue.value);
