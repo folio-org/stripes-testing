@@ -52,6 +52,7 @@ const advSearchOptionSelect = Select({ label: 'Search options*' });
 
 const advSearchOperators = ['AND', 'OR', 'NOT'];
 const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
+const advSearchItemModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
 const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith', 'containsAny'];
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
@@ -145,6 +146,7 @@ const searchItemsOptionsValues = [
 ];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
 const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
+const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 14);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
@@ -189,9 +191,20 @@ const getHoldingsNotesTypes = (searchParams) => cy
     return response.body.holdingsNoteTypes;
   });
 
+const getItemNoteTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'item-note-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.itemNoteTypes;
+  });
+
 export default {
   getHoldingsNotesTypes,
   getCallNumberTypes,
+  getItemNoteTypes,
   waitContentLoading,
   waitLoading: () => {
     cy.expect(
@@ -763,6 +776,40 @@ export default {
     }
   },
 
+  checkAdvSearchItemsModalFields(rowIndex) {
+    if (rowIndex) {
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
+      advSearchOperators.forEach((operator) => {
+        cy.expect(
+          AdvancedSearchRow({ index: rowIndex })
+            .find(advSearchOperatorSelect)
+            .has({ content: including(operator) }),
+        );
+      });
+    } else {
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).has({ text: including('Search for') }));
+    }
+    cy.expect([
+      AdvancedSearchRow({ index: rowIndex }).find(TextArea()).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchModifierSelect).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchOptionSelect).exists(),
+    ]);
+    advSearchItemModifiers.forEach((modifier) => {
+      cy.expect(
+        AdvancedSearchRow({ index: rowIndex })
+          .find(advSearchModifierSelect)
+          .has({ content: including(modifier) }),
+      );
+    });
+    advSearchItemsOptions.forEach((option) => {
+      cy.expect(
+        AdvancedSearchRow({ index: rowIndex })
+          .find(advSearchOptionSelect)
+          .has({ content: including(option) }),
+      );
+    });
+  },
+
   checkAdvSearchHoldingsModalFields(rowIndex) {
     if (rowIndex) {
       cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
@@ -824,7 +871,8 @@ export default {
         .has({
           value:
             advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] ||
-            advSearchHoldingsOptionsValues[advSearchHoldingsOptions.indexOf(option)],
+            advSearchHoldingsOptionsValues[advSearchHoldingsOptions.indexOf(option)] ||
+            advSearchItemsOptionsValues[advSearchItemsOptions.indexOf(option)],
         }),
     ]);
     if (operator) {
@@ -862,6 +910,9 @@ export default {
     cy.do(buttonSearchInAdvSearchModal.click());
   },
 
+  clickCancelBtnInAdvSearchModal() {
+    cy.do(buttonCancelInAdvSearchModal.click());
+  },
   closeAdvSearchModalUsingESC() {
     cy.get('#advanced-search-modal').type('{esc}');
   },
