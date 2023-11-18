@@ -196,6 +196,14 @@ export default {
     getEmailField().eq(2).type(newEmailDomain);
   },
 
+  enterOldEmail(oldEmailDomain) {
+    getEmailField().first().clear().type(oldEmailDomain);
+  },
+
+  enterNewEmail(newEmailDomain) {
+    getEmailField().eq(2).clear().type(newEmailDomain);
+  },
+
   clickLocationLookup() {
     cy.do(Button('Location look-up').click());
   },
