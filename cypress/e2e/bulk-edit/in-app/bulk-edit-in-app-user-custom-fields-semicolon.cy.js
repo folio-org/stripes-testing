@@ -39,7 +39,9 @@ describe('bulk-edit', () => {
           permissions.uiUsersPermissionsView.gui,
           permissions.uiUsersCustomField.gui,
           permissions.uiUserEdit.gui,
-        ]).then((userProperties) => { secondUser = userProperties; });
+        ]).then((userProperties) => {
+          secondUser = userProperties;
+        });
       cy.createTempUser(
         [
           permissions.bulkEditUpdateRecords.gui,
