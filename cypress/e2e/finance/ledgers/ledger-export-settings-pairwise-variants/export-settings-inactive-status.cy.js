@@ -44,11 +44,7 @@ describe('Finance: Ledgers', () => {
 
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
-
           cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
         });
       });
 
@@ -80,7 +76,7 @@ describe('Finance: Ledgers', () => {
         periodStartForSecondFY,
         periodEndForSecondFY,
       );
-      fileName = `Export${defaultLedger.code}-${secondFiscalYear.code}`;
+      fileName = `Export-${defaultLedger.code}-${secondFiscalYear.code}`;
     });
     cy.createTempUser([
       permissions.uiFinanceExportFinanceRecords.gui,
@@ -107,6 +103,30 @@ describe('Finance: Ledgers', () => {
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(secondFiscalYear.code, 'Inactive', defaultLedger);
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
+      cy.pause();
+      Ledgers.checkColumnContentInDownloadedLedgerExportFile(
+        `${fileName}.csv`,
+        1,
+        defaultFund,
+        secondFiscalYear,
+        '100',
+        '100',
+        '100',
+        '0',
+        '0',
+        '100',
+        '0',
+        '100',
+        '0',
+        '0',
+        '0',
+        '0',
+        '0',
+        '0',
+        '100',
+        '100',
+      );
       Ledgers.deleteDownloadedFile(`${fileName}.csv`);
     },
   );
