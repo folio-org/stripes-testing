@@ -40,7 +40,7 @@ describe('Finance: Ledgers', () => {
           defaultFund.id = fundResponse.fund.id;
         });
       });
-      fileName = `Export${defaultLedger.code}-${firstFiscalYear.code}`;
+      fileName = `Export-${defaultLedger.code}-${firstFiscalYear.code}`;
     });
     cy.createTempUser([
       permissions.uiFinanceExportFinanceRecords.gui,
@@ -67,6 +67,13 @@ describe('Finance: Ledgers', () => {
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(firstFiscalYear.code, 'Active', defaultLedger);
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
+      cy.pause();
+      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(
+        `${fileName}.csv`,
+        1,
+        defaultFund,
+      );
       Ledgers.deleteDownloadedFile(`${fileName}.csv`);
     },
   );
