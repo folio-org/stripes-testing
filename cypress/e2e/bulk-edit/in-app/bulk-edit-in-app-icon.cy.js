@@ -22,8 +22,7 @@ describe('bulk-edit', () => {
         permissions.uiUserEdit.gui,
         permissions.bulkEditLogsView.gui,
         permissions.exportManagerAll.gui,
-      ], 'faculty'
-      ).then((userProperties) => {
+      ], 'faculty').then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
