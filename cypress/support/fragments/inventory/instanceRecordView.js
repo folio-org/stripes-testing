@@ -268,7 +268,11 @@ export default {
 
   openHoldingView: () => {
     cy.do(Button('View holdings').click());
-    cy.expect(Button('Actions').exists());
+    cy.expect(actionsButton.exists());
+  },
+
+  duplicate: () => {
+    cy.do([rootSection.find(actionsButton).click(), Button({ id: 'copy-instance' }).click()]);
   },
 
   getAssignedHRID: () => cy.then(() => KeyValue('Instance HRID').value()),

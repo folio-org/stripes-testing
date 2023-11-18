@@ -14,8 +14,11 @@ import {
   MultiSelectOption,
   Callout,
   TextField,
+  matching,
 } from '../../../../interactors';
-import eHoldingsPackages from './eHoldingsPackages';
+import EHoldingsPackages from './eHoldingsPackages';
+import EHolgingsStates from './eHolgingsStates';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const actionsButton = Button('Actions');
 const exportButton = Button('Export package (CSV)');
@@ -55,7 +58,7 @@ export default {
   getCalloutMessageText,
   close() {
     cy.do(Button({ icon: 'times' }).click());
-    eHoldingsPackages.waitLoading();
+    EHoldingsPackages.waitLoading();
   },
 
   waitLoading() {
@@ -110,8 +113,15 @@ export default {
     );
   },
 
-  export() {
+  export({ exportStarted = true } = {}) {
+    cy.expect(exportButtonInModal.has({ disabled: false }));
     cy.do(exportButtonInModal.click());
+
+    if (exportStarted) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(EHolgingsStates.exportJobStartedSuccessfully)),
+      );
+    }
   },
 
   verifyExportButtonInModalDisabled(isDisabled = true) {
@@ -173,6 +183,12 @@ export default {
         textContent: including(message),
       }).exists(),
     );
+  },
+
+  getTotalTitlesCount() {
+    return cy
+      .then(() => KeyValue('Total titles').value())
+      .then((count) => parseFloat(count.replace(/,/g, '')));
   },
 
   getJobIDFromCalloutMessage: () => {
