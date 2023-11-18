@@ -13,11 +13,9 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
-describe('MARC › MARC Bibliographic › Edit MARC bib › Manual linking', () => {
+describe('Manual Linking Bib field to Authority 1XX', () => {
   const testData = {
     tag610: '610',
-    authorityValue: 'C380766 Drama Genre',
-    authorityMarkedValue: 'Radio "Roma". Hrvatski program',
     linkedIconText: 'Linked to MARC authority',
     subjectValue: 'Radio "Roma". Hrvatski program test--TestV--TestX--TestY--TestZ',
   };
@@ -105,7 +103,6 @@ describe('MARC › MARC Bibliographic › Edit MARC bib › Manual linking', () 
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
-      // InventoryInstance.searchByTitle('3330355a-2ad3-43f2-8a45-6b0c7b282eda');
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib610FieldValues);
