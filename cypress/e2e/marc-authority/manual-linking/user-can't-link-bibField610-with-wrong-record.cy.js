@@ -17,6 +17,7 @@ import MarcAuthorityBrowse from '../../../support/fragments/marcAuthority/MarcAu
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   const testData = {
     tag610: '610',
+    instanceField610Value: 'Radio Vaticana',
     errorMessage:
       'You have selected an invalid heading based on the bibliographic field you want controlled. Please revise your selection.',
   };
@@ -142,10 +143,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib610FieldValues);
       InventoryInstance.verifyAndClickLinkIcon(testData.tag610);
       InventoryInstance.verifySelectMarcAuthorityModal();
+      MarcAuthorities.checkSearchOption('corporateNameTitle');
+      MarcAuthorities.checkSearchInput(testData.instanceField610Value);
       MarcAuthorities.verifyEmptyAuthorityField();
       linkValuesWithoutAuthoritySource.forEach((linkValue) => {
-        MarcAuthorities.switchToSearch();
-        MarcAuthorities.switchToBrowse();
         MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
         MarcAuthorities.checkRow(linkValue.value);
         MarcAuthorities.selectTitle(linkValue.value);
