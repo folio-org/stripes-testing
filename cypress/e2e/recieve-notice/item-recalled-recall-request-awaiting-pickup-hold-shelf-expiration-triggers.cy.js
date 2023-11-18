@@ -32,7 +32,6 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
 
 describe('Request notice triggers', () => {
-  let addedCirculationRule;
   const patronGroup = {
     name: getTestEntityValue('groupToTestNotices'),
   };
@@ -265,7 +264,7 @@ describe('Request notice triggers', () => {
 
   after('Deleting created entities', () => {
     cy.getAdminToken();
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     Requests.getRequestApi({ query: `(item.barcode=="${instanceData.itemBarcode}")` }).then(
       (requestResponse) => {
         Requests.deleteRequestViaApi(requestResponse[0].id);
@@ -281,7 +280,7 @@ describe('Request notice triggers', () => {
     Users.deleteViaApi(userForRequest.userId);
     Users.deleteViaApi(userForCheckOut.userId);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     PatronGroups.deleteViaApi(patronGroup.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -367,34 +366,17 @@ describe('Request notice triggers', () => {
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
       cy.getAdminToken();
-      CirculationRules.getViaApi().then((response) => {
-        testData.baseRules = response.rulesAsText;
-        testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-          testData.ruleProps.n = noticePolicyRes[0].id;
-          testData.ruleProps.r = requestPolicyBody.id;
-          addedCirculationRule =
-            't ' +
-            testData.loanTypeId +
-            ': i ' +
-            testData.ruleProps.i +
-            ' l ' +
-            testData.ruleProps.l +
-            ' r ' +
-            testData.ruleProps.r +
-            ' o ' +
-            testData.ruleProps.o +
-            ' n ' +
-            testData.ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            testData.baseRules,
-            testData.ruleProps,
-            't ',
-            testData.loanTypeId,
-          );
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        testData.noticePolicyId = noticePolicyRes[0].id;
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId, r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
         });
       });
 
+      cy.getToken(userForRequest.username, userForRequest.password);
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutUser(userForCheckOut.barcode);
       CheckOutActions.checkUserInfo(userForCheckOut, patronGroup.name);

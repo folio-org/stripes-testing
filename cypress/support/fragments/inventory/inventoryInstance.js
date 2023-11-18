@@ -109,6 +109,7 @@ const mclLinkHeader = MultiColumnListHeader({ id: 'list-column-link' });
 const mclAuthRefTypeHeader = MultiColumnListHeader({ id: 'list-column-authreftype' });
 const mclHeadingRef = MultiColumnListHeader({ id: 'list-column-headingref' });
 const mclHeadingType = MultiColumnListHeader({ id: 'list-column-headingtype' });
+const mclHeadingSourceFile = MultiColumnListHeader({ id: 'list-column-authoritysource' });
 const contributorsList = MultiColumnList({ id: 'list-contributors' });
 const buttonPrevPageDisabled = Button({
   id: 'authority-result-list-prev-paging-button',
@@ -238,6 +239,15 @@ const verifySeriesStatement = (indexRow, value) => {
   );
 };
 
+const verifySubjectHeading = (value) => {
+  cy.expect(
+    Accordion('Subject')
+      .find(MultiColumnList({ id: 'list-subject' }))
+      .find(MultiColumnListCell({ content: value }))
+      .exists(),
+  );
+};
+
 const verifyContributor = (indexRow, indexColumn, value) => {
   cy.expect(
     contributorAccordion
@@ -304,6 +314,7 @@ export default {
   openItemByBarcode,
   verifyAlternativeTitle,
   verifySeriesStatement,
+  verifySubjectHeading,
   verifyContributor,
   verifyContributorWithMarcAppLink,
 
@@ -358,6 +369,10 @@ export default {
 
   newMarcBibRecord() {
     cy.do([paneResultsSection.find(actionsBtn).click(), newMarcBibButton.click()]);
+    cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
+  },
+
+  verifyNewQuickMarcEditorPaneExists() {
     cy.expect([quickMarcEditorPane.exists(), quickMarcPaneHeader.has({ text: including('new') })]);
   },
 
@@ -520,6 +535,7 @@ export default {
     cy.expect([
       selectField.has({ content: including('Keyword') }),
       selectField.has({ content: including('Identifier (all)') }),
+      selectField.has({ content: including('LCCN') }),
       selectField.has({ content: including('Personal name') }),
       selectField.has({ content: including('Corporate/Conference name') }),
       selectField.has({ content: including('Geographic name') }),
@@ -560,7 +576,12 @@ export default {
     cy.expect(PaneHeader('MARC authority').exists());
     cy.intercept('GET', '/search/authorities?*').as('getItems');
     cy.wait('@getItems', { timeout: 10000 }).then((item) => {
-      cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} results found` }).exists());
+      const numberOfRecords = item.response.body.totalRecords;
+      const paneHeaderSubtitle =
+        numberOfRecords === 1
+          ? `${numberOfRecords} result found`
+          : `${numberOfRecords} results found`;
+      cy.expect(Pane({ subtitle: paneHeaderSubtitle }).exists());
       // eslint-disable-next-line no-unused-expressions
       expect(item.response.body.totalRecords < 100).to.be.true;
     });
@@ -572,6 +593,7 @@ export default {
       mclAuthRefTypeHeader.has({ content: 'Authorized/Reference' }),
       mclHeadingRef.has({ content: 'Heading/Reference' }),
       mclHeadingType.has({ content: 'Type of heading' }),
+      mclHeadingSourceFile.has({ content: 'Authority source' }),
       MultiColumnListRow({ index: 0 })
         .find(Button({ ariaLabel: 'Link' }))
         .exists(),
@@ -597,6 +619,8 @@ export default {
       marcViewPane.exists(),
       marcViewPane.find(buttonLink).exists(),
       marcViewPane.has({ mark: markedValue }),
+      marcViewPane.find(HTML({ text: including('$') })).exists(),
+      marcViewPane.find(HTML({ text: including('‡') })).absent(),
     ]);
   },
 

@@ -66,6 +66,7 @@ const uploadBunchOfFiles = (editedFileName, numberOfFiles, finalFileName) => {
     });
   }
   cy.get('input[type=file]').attachFile(arrayOfFiles);
+  cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
 };
 
 const waitLoading = () => {

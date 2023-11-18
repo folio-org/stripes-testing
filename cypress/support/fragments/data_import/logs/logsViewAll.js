@@ -10,6 +10,7 @@ import {
   SelectionList,
   TextField,
   Pane,
+  PaneContent,
   Checkbox,
   MultiColumnListCell,
   Modal,
@@ -24,6 +25,7 @@ const errorsInImportAccordion = Accordion('Errors in import');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const nextButton = Button({ id: 'list-data-import-next-paging-button' });
 const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
+const logsResultPane = PaneContent({ id: 'pane-results-content' });
 
 function getCheckboxByRow(row) {
   return MultiColumnList()
@@ -474,5 +476,18 @@ export default {
       .find('div[class^="mclPrevNextPageInfoContainer-"]')
       .invoke('text')
       .should('include', '200');
+  },
+
+  verifyJobProfileIsAbsntInFilter(jobProfile) {
+    cy.do(
+      Accordion({ id: 'profileIdAny' })
+        .find(Selection({ singleValue: 'Choose job profile' }))
+        .open(),
+    );
+    cy.get(jobProfile).should('not.exist');
+  },
+
+  noLogResultsFound: () => {
+    cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
   },
 };

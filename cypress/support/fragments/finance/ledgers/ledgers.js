@@ -20,7 +20,7 @@ import {
 } from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
-import interactorsTools from '../../../utils/interactorsTools';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
@@ -44,7 +44,8 @@ const addAvailableToSelect = Select({
 });
 const resetButton = Button({ id: 'reset-ledgers-filters' });
 const ledgersFiltersSection = Section({ id: 'ledger-filters-pane' });
-
+const actionsButton = Button('Actions');
+const exportSettingsModal = Modal('Export settings');
 export default {
   defaultUiLedger: {
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -78,7 +79,11 @@ export default {
   },
 
   rollover: () => {
-    cy.do([Button('Actions').click(), rolloverButton.click()]);
+    cy.do([actionsButton.click(), rolloverButton.click()]);
+  },
+
+  exportBudgetInformation: () => {
+    cy.do([actionsButton.click(), Button('Export budget information (CSV)').click()]);
   },
 
   closeRolloverInfo: () => {
@@ -223,6 +228,30 @@ export default {
     cy.do([
       fiscalYearSelect.choose(fiscalYear),
       Checkbox({ name: 'needCloseBudgets' }).click(),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(4000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
+  fillInCommonRolloverInfoWithoutCheckboxOngoingEncumbrancesLimits(
+    fiscalYear,
+    rolloverBudgetValue,
+    rolloverValueAs,
+  ) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      Checkbox({ name: 'restrictEncumbrance' }).click(),
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
@@ -446,7 +475,7 @@ export default {
 
   deleteLedgerViaActions: () => {
     cy.do([
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('Delete').click(),
       Button('Delete', {
         id: 'clickable-ledger-remove-confirmation-confirm',
@@ -510,7 +539,7 @@ export default {
   },
 
   rolloverLogs: () => {
-    cy.do([Button('Actions').click(), Button('Rollover logs').click()]);
+    cy.do([actionsButton.click(), Button('Rollover logs').click()]);
   },
 
   checkFinancialSummeryQuality: (quantityValue1, quantityValue2) => {
@@ -954,8 +983,21 @@ export default {
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
-    interactorsTools.checkCalloutErrorMessage(
+    InteractorsTools.checkCalloutErrorMessage(
       `${ledger.name} was already rolled over from the fiscal year ${firstFiscalYear} to the fiscal year ${secondFiscalYear}`,
     );
+  },
+
+  prepareExportSettings(fiscalYear, exportExpenseclasses, ledger) {
+    cy.wait(4000);
+    cy.do([
+      exportSettingsModal.find(Select({ name: 'fiscalYearId' })).choose(fiscalYear),
+      exportSettingsModal.find(Select({ name: 'expenseClasses' })).choose(exportExpenseclasses),
+      exportSettingsModal.find(Button('Export')).click(),
+    ]);
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage(`Export of ${ledger.name} data has started`);
+    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage(`${ledger.name} data was successfully exported to CSV`);
   },
 };

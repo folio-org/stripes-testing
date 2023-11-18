@@ -1,8 +1,18 @@
-import { Section, Button, SearchField, Checkbox, Accordion } from '../../../../interactors';
+import {
+  Section,
+  Button,
+  SearchField,
+  Checkbox,
+  Accordion,
+  MultiColumnList,
+  MultiColumnListRow,
+  MultiColumnListCell,
+} from '../../../../interactors';
 import marcAuthorities from './marcAuthorities';
 
 const rootSection = Section({ id: 'pane-authorities-filters' });
 const referencesFilterAccordion = Accordion('References');
+const authorityList = MultiColumnList({ id: 'authority-result-list' });
 
 export default {
   searchBy: (parameter, value) => {
@@ -18,6 +28,16 @@ export default {
     cy.do([
       referencesFilterAccordion.clickHeader(),
       referencesFilterAccordion.find(Checkbox({ label: 'Exclude see from' })).checkIfNotSelected(),
+    ]);
+  },
+
+  selectAuthorityByIndex(rowIndex) {
+    cy.do([
+      authorityList
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .find(Button())
+        .click(),
     ]);
   },
 };
