@@ -9,6 +9,7 @@ import {
   MultiColumnListHeader,
   Callout,
   Modal,
+  TableRow,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -96,6 +97,18 @@ export default {
   },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
   notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
+  checkTagInRow: (rowIndex, tag) => {
+    cy.expect(
+      rootSection
+        .find(
+          TableRow({
+            index: rowIndex,
+            innerText: including(tag),
+          }),
+        )
+        .exists(),
+    );
+  },
   deleteViaAPI: (internalAuthorityId) => {
     cy.okapiRequest({
       method: 'DELETE',
