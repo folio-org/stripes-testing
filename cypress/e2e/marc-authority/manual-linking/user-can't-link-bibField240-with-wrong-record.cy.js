@@ -141,11 +141,13 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       InventoryInstance.verifySelectMarcAuthorityModal();
       MarcAuthorities.checkSearchOption('nameTitle');
       MarcAuthorities.checkSearchInput(testData.instanceField240Value);
+      MarcAuthorities.switchToSearch();
+      InventoryInstance.verifySearchOptions();
+      MarcAuthorities.checkSearchOption('nameTitle');
+      MarcAuthorities.checkSearchInput('');
       MarcAuthorities.verifyEmptyAuthorityField();
       linkValuesWithoutAuthoritySource.forEach((linkValue) => {
         MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
-        MarcAuthorities.checkRow(linkValue.value);
-        MarcAuthorities.selectTitle(linkValue.value);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.checkCallout(testData.errorMessage);
         InventoryInstance.verifySelectMarcAuthorityModal();
@@ -154,7 +156,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       linkValuesWithAuthoritySource.forEach((linkValue) => {
         MarcAuthorityBrowse.searchBy(linkValue.searchOption, linkValue.value);
         MarcAuthorities.chooseAuthoritySourceOption(linkValue.authoritySource);
-        MarcAuthorities.selectTitle(linkValue.value);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.checkCallout(testData.errorMessage);
         InventoryInstance.verifySelectMarcAuthorityModal();
