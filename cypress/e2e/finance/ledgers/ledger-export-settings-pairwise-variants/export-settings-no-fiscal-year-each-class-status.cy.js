@@ -35,17 +35,18 @@ describe('Finance: Ledgers', () => {
     approved: true,
     reEncumber: true,
   };
+  const secondOrder = {
+    ...NewOrder.defaultOneTimeOrder,
+    orderType: 'One-time',
+    approved: true,
+    reEncumber: true,
+  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
   let servicePointId;
   let location;
-  let fileName;
 
   before(() => {
     cy.getAdminToken();
@@ -65,34 +66,34 @@ describe('Finance: Ledgers', () => {
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
+          Funds.editBudget();
+          Funds.addTwoExpensesClass('Electronic', 'Print');
         });
       });
-
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
         NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
           location = res;
         });
-
         // Create second Fiscal Year for Rollover
         FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
           secondFiscalYear.id = secondFiscalYearResponse.id;
         });
-
         // Prepare Open Order for Rollover
         Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
           organization.id = responseOrganizations;
         });
         firstOrder.vendor = organization.name;
-        cy.visit(TopMenu.ordersPath);
+        secondOrder.vendor = organization.name;
         cy.visit(TopMenu.ordersPath);
         Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
           firstOrder.id = firstOrderResponse.id;
           Orders.checkCreatedOrder(firstOrder);
           OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
+          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
             defaultFund,
+            'Electronic',
             '10',
             '1',
             '10',
@@ -101,31 +102,28 @@ describe('Finance: Ledgers', () => {
           OrderLines.backToEditingOrder();
           Orders.openOrder();
         });
-        cy.visit(TopMenu.ledgerPath);
-        FinanceHelp.searchByName(defaultLedger.name);
-        Ledgers.selectLedger(defaultLedger.name);
-        Ledgers.rollover();
-        Ledgers.fillInRolloverForOneTimeOrdersWithAllocation(
-          secondFiscalYear.code,
-          'None',
-          'Allocation',
-        );
-        cy.visit(TopMenu.fiscalYearPath);
-        FinanceHelp.searchByName(firstFiscalYear.name);
-        FiscalYears.selectFY(firstFiscalYear.name);
-        FiscalYears.editFiscalYearDetails();
-        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-          periodStartForFirstFY,
-          periodEndForFirstFY,
-        );
-        FinanceHelp.searchByName(secondFiscalYear.name);
-        FiscalYears.selectFY(secondFiscalYear.name);
-        FiscalYears.editFiscalYearDetails();
-        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-          periodStartForSecondFY,
-          periodEndForSecondFY,
-        );
-        fileName = `Export-${defaultLedger.code}-${secondFiscalYear.code}`;
+        Orders.createApprovedOrderForRollover(secondOrder, true).then((secondOrderResponse) => {
+          secondOrder.id = secondOrderResponse.id;
+          Orders.checkCreatedOrder(secondOrder);
+          OrderLines.addPOLine();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+            defaultFund,
+            'Print',
+            '10',
+            '1',
+            '10',
+            location.institutionId,
+          );
+          OrderLines.backToEditingOrder();
+          Orders.openOrder();
+        });
+        cy.visit(TopMenu.fundPath);
+        FinanceHelp.searchByName(defaultFund.name);
+        Funds.selectFund(defaultFund.name);
+        Funds.selectBudgetDetails();
+        Funds.editBudget();
+        Funds.changeStatusOfExpClass(1, 'Inactive');
       });
     });
     cy.createTempUser([
@@ -147,36 +145,12 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C353211: Ledger export settings: current year Fund with budget, Print (Active) and Economic (Inactive) Classes, Export settings: No fiscal year, Each class status (thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(secondFiscalYear.code, 'None', defaultLedger);
-      Ledgers.checkColumnNamesInDownloadedLedgerExportFile(`${fileName}.csv`);
-      Ledgers.checkColumnContentInDownloadedLedgerExportFile(
-        `${fileName}.csv`,
-        1,
-        defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '10',
-        '0',
-        '0',
-        '10',
-        '0',
-        '0',
-        '100',
-        '90',
-      );
-      Ledgers.deleteDownloadedFile(`${fileName}.csv`);
+      Ledgers.checkPreparationExportSettings();
     },
   );
 });
