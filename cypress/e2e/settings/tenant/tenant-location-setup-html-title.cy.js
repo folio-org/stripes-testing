@@ -61,7 +61,7 @@ describe('Settings: Tenant', () => {
       TenantPane.verifyPageTitle('Settings - FOLIO');
       TenantPane.goToTenantTab();
       TenantPane.verifyLocationSetupItems();
-      TenantPane.verifyNoGeneralItems();
+      TenantPane.verifyGeneralItems(false);
       TenantPane.verifyPageTitle('Tenant settings - FOLIO');
       TenantPane.selectTenant(TENANTS.INSTITUTIONS);
       Institutions.waitLoading();
