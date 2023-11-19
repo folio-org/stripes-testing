@@ -14,7 +14,6 @@ import Orders from '../../../../support/fragments/orders/orders';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Organizations from '../../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../../../support/fragments/invoices/newInvoice';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 
