@@ -28,6 +28,7 @@ import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import OrderDetails from './orderDetails';
+import OrderEditForm from './orderEditForm';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderLines from './orderLines';
 
@@ -235,6 +236,13 @@ export default {
   receiveOrderViaActions: () => {
     expandActionsDropdown();
     cy.do([Button('Receive').click(), PaneHeader('Receiving').is({ visible: true })]);
+  },
+
+  clickCreateNewOrder() {
+    cy.do([actionsButton.click(), newButton.click()]);
+    OrderEditForm.waitLoading();
+
+    return OrderEditForm;
   },
 
   createOrder(order, isApproved = false, isManual = false) {

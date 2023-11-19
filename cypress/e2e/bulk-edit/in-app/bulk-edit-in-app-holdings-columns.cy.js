@@ -76,8 +76,13 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Tags');
         BulkEditSearchPane.changeShowColumnCheckbox('Tags');
         BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Tags');
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance (Title, Publisher, Publication date)');
-        BulkEditSearchPane.verifyChangesUnderColumns('Instance (Title, Publisher, Publication date)', item.instanceName);
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Instance (Title, Publisher, Publication date)',
+        );
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Instance (Title, Publisher, Publication date)',
+          item.instanceName,
+        );
 
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.clearTemporaryLocation('holdings');

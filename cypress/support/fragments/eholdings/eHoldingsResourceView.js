@@ -11,7 +11,7 @@ import {
   RadioButton,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
-import eHoldingResourceEdit from './eHoldingResourceEdit';
+import EHoldingsResourceEdit from './eHoldingsResourceEdit';
 
 const actionsButton = Button('Actions');
 const holdingStatusSection = Section({ id: 'resourceShowHoldingStatus' });
@@ -70,7 +70,7 @@ export default {
   goToEdit: () => {
     openActionsMenu();
     cy.do(Button('Edit').click());
-    eHoldingResourceEdit.waitLoading();
+    EHoldingsResourceEdit.waitLoading();
   },
   checkCustomPeriods: (expectedPeriods) => {
     let expectedRangesString = '';
