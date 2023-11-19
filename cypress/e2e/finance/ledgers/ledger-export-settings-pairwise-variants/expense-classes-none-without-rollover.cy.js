@@ -60,14 +60,14 @@ describe('Finance: Ledgers', () => {
   });
 
   it(
-    'C353214: Ledger export settings: current year Fund with NO budget, NO Classes, Export settings; Expense class - Active (thunderjet) (TaaS)',
+    'C353215: Ledger export settings: current year Fund with NO budget, NO Classes, Export settings; Expense class - NONE (thunderjet) (TaaS)',
     { tags: [testType.extendedPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(firstFiscalYear.code, 'Active', defaultLedger);
-      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
+      Ledgers.prepareExportSettings(firstFiscalYear.code, 'None', defaultLedger);
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFile(`${fileName}.csv`);
       Ledgers.checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(
         `${fileName}.csv`,
         1,
