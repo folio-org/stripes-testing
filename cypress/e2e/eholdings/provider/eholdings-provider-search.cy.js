@@ -49,5 +49,37 @@ describe('eHoldings', () => {
         EHoldingsProviders.verifyProviderHeaderTitle(providerTitle);
       },
     );
+
+    it(
+      'C367967 Verify that "Packages" accordion will return records after collapsing/expanding in "Provider" detail record. (spitfire)',
+      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      () => {
+        const providerTitle = 'Wiley';
+        const expanded = 'true';
+        const collapsed = 'false';
+        const collapseAll = 'Collapse all';
+        const expandAll = 'Expand all';
+
+        EHoldingsProvidersSearch.byProvider(providerTitle);
+        EHoldingsProviders.viewProvider();
+        EHoldingsProviders.verifyProviderHeaderTitle(providerTitle);
+        EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
+        EHoldingsProviders.verifyPackagesAvailable();
+        EHoldingsProviders.packageAccordionClick();
+        EHoldingsProviders.verifyPackagesAccordionExpanded(collapsed);
+        EHoldingsProviders.packageAccordionClick();
+        EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
+        EHoldingsProviders.verifyPackagesAvailable();
+        EHoldingsProviders.verifyAllAccordionsExpandAndCollapseClick(collapseAll, collapsed);
+        EHoldingsProviders.packageAccordionClick();
+        EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
+        EHoldingsProviders.verifyPackagesAvailable();
+        EHoldingsProviders.packageAccordionClick();
+        EHoldingsProviders.verifyPackagesAccordionExpanded(collapsed);
+        EHoldingsProviders.verifyAllAccordionsExpandAndCollapseClick(expandAll, expanded);
+        EHoldingsProviders.verifyPackagesAccordionExpanded(expanded);
+        EHoldingsProviders.verifyPackagesAvailable();
+      },
+    );
   });
 });
