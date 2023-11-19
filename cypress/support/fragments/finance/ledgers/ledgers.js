@@ -1078,4 +1078,19 @@ export default {
       expect(actualData[29]).to.equal(available);
     });
   },
+
+  checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(fileName, fileRow, fund) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      const actualData = fileRows[fileRow].trim().split(',');
+      expect(actualData[0]).to.equal(`"${fund.name}"`);
+      expect(actualData[1]).to.equal(`"${fund.code}"`);
+      expect(actualData[9]).to.equal(`"${fund.description}"`);
+      expect(actualData[10]).to.equal('"No budget found"');
+    });
+  },
 };
