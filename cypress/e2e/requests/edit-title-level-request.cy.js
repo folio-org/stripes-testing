@@ -31,7 +31,6 @@ describe('Edit title level request', () => {
   };
   const patronComments = 'test comment';
   let defaultLocation;
-  let cancellationReason;
   let requestId;
 
   const requestData = {
@@ -62,9 +61,6 @@ describe('Edit title level request', () => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
         });
-        cy.getCancellationReasonsApi({ limit: 1 }).then((cancellationReasons) => {
-          cancellationReason = cancellationReasons[0].id;
-        });
       })
       .then(() => {
         InventoryInstances.createFolioInstanceViaApi({
@@ -93,7 +89,7 @@ describe('Edit title level request', () => {
         requestData.instanceId = specialInstanceIds.instanceId;
       })
       .then(() => {
-        cy.createTempUser([Permissions.uiRequestsAll.gui, Permissions.checkinAll.gui])
+        cy.createTempUser([Permissions.uiRequestsAll.gui])
           .then((userProperties) => {
             userData.username = userProperties.username;
             userData.password = userProperties.password;

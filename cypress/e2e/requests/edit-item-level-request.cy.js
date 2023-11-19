@@ -94,7 +94,7 @@ describe('Edit item level request', () => {
         requestData.itemId = specialInstanceIds.holdingIds[0].itemIds[0];
       })
       .then(() => {
-        cy.createTempUser([Permissions.uiRequestsAll.gui, Permissions.checkinAll.gui])
+        cy.createTempUser([Permissions.uiRequestsAll.gui])
           .then((userProperties) => {
             userData.username = userProperties.username;
             userData.password = userProperties.password;
