@@ -52,7 +52,7 @@ describe('Importing MARC Authority files', () => {
   });
 
   it(
-    'C350667 Search | Verify that the "Thesaurus" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
+    'C365627 Search | Verify that the "Thesaurus" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       MarcAuthorities.verifyThesaurusAccordionAndClick();
