@@ -16,11 +16,12 @@ import './eholdings';
 import './inventory';
 import './users';
 import 'cypress-file-upload';
+import 'cypress-recurse/commands';
 import './data-import';
 import './commands';
 
 registerCypressGrep();
-setInteractorTimeout(100_000);
+setInteractorTimeout(50_000);
 
 require('cypress-xpath');
 require('@shelex/cypress-allure-plugin');

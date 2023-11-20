@@ -100,6 +100,7 @@ const getDefaultInvoiceLine = ({
   poLineId,
   fundDistributions,
   accountingCode,
+  subTotal = 0,
   subscriptionInfo,
   subscriptionStart,
   subscriptionEnd,
@@ -111,7 +112,7 @@ const getDefaultInvoiceLine = ({
   description: `autotest inLine description ${randomFourDigitNumber()}`,
   fundDistributions,
   quantity: 1,
-  subTotal: 0,
+  subTotal,
   subscriptionInfo,
   subscriptionStart,
   subscriptionEnd,
@@ -213,6 +214,7 @@ export default {
     batchGroupId,
     fundDistributions,
     accountingCode,
+    subTotal,
     releaseEncumbrance,
     exportToAccounting,
   }) {
@@ -230,6 +232,7 @@ export default {
         invoiceLineStatus,
         poLineId,
         fundDistributions,
+        subTotal,
         accountingCode,
         releaseEncumbrance,
       });
@@ -265,6 +268,34 @@ export default {
     cy.wait(4000);
   },
 
+  checkSearchResultsContent({ records = [] } = {}) {
+    records.forEach((record, index) => {
+      if (record.invoiceNumber) {
+        cy.expect(
+          invoiceResultsPane
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.invoiceNumber) }),
+        );
+      }
+      if (record.status) {
+        cy.expect(
+          invoiceResultsPane
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 3 }))
+            .has({ content: including(record.status) }),
+        );
+      }
+      if (record.amount) {
+        cy.expect(
+          invoiceResultsPane
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .has({ content: including(record.amount) }),
+        );
+      }
+    });
+  },
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
@@ -777,6 +808,16 @@ export default {
 
   closeSearchPlugin: () => {
     cy.do(Button('Close').click());
+  },
+  expandInvoiceResultsActions() {
+    cy.do(invoiceResultsHeaderPane.find(actionsButton).click());
+  },
+  checkActionPresentInList({ actionName, present = true }) {
+    if (present) {
+      cy.expect(Button(actionName).exists());
+    } else {
+      cy.expect(Button(actionName).absent());
+    }
   },
   openExportVoucherForm() {
     cy.do([invoiceResultsHeaderPane.find(actionsButton).click(), Button('Voucher export').click()]);
