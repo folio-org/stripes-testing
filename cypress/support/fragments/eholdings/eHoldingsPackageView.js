@@ -15,6 +15,7 @@ import {
   Callout,
   TextField,
   matching,
+  FieldSet,
 } from '../../../../interactors';
 import EHoldingsPackages from './eHoldingsPackages';
 import EHolgingsStates from './eHolgingsStates';
@@ -53,6 +54,7 @@ const searchAgreementButton = findAgreementModal.find(
 const titleFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-title-fields' });
 const packageFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-package-fields' });
 const openDropdownMenu = Button({ ariaLabel: 'open menu' });
+const patronRadioButton = FieldSet('Show titles in package to patrons');
 
 export default {
   getCalloutMessageText,
@@ -321,5 +323,14 @@ export default {
       .invoke('text')
       .then((text) => parseFloat(text.replace(/,/g, '')))
       .should('be.lessThan', number);
+  },
+
+  patronRadioButton: (yesOrNo) => {
+    cy.expect(patronRadioButton.exists());
+    cy.do(patronRadioButton.find(RadioButton(including(yesOrNo))).click());
+  },
+
+  verifyAlternativeRadio(yesOrNo) {
+    cy.expect(KeyValue('Show titles in package to patrons').has({ value: including(yesOrNo) }));
   },
 };

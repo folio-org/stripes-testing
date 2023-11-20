@@ -972,4 +972,13 @@ export default {
       Button('New shared record').absent(),
     ]);
   },
+
+  verifyInstanceResultListIsAbsent() {
+    cy.expect([
+      inventoriesList.absent(),
+      rootSection
+        .find(HTML(including('Choose a filter or enter a search query to show results')))
+        .exists(),
+    ]);
+  },
 };
