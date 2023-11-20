@@ -43,15 +43,10 @@ describe('Finance: Ledgers', () => {
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const allocatedQuantity = '100';
-  const periodStartForFirstFY = DateTools.getThreePreviousDaysDateForFiscalYearOnUIEdit();
-  const periodEndForFirstFY = DateTools.getPreviousDayDateForFiscalYearOnUIEdit();
-  const periodStartForSecondFY = DateTools.getCurrentDateForFiscalYearOnUIEdit();
-  const periodEndForSecondFY = DateTools.getDayTomorrowDateForFiscalYearOnUIEdit();
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
   let user;
   let servicePointId;
   let location;
-  let fileName;
 
   before(() => {
     cy.getAdminToken();
@@ -95,7 +90,7 @@ describe('Finance: Ledgers', () => {
           firstOrder.id = firstOrderResponse.id;
           Orders.checkCreatedOrder(firstOrder);
           OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
           OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
             defaultFund,
             'Electronic',
@@ -111,7 +106,7 @@ describe('Finance: Ledgers', () => {
           secondOrder.id = secondOrderResponse.id;
           Orders.checkCreatedOrder(secondOrder);
           OrderLines.addPOLine();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
           OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
             defaultFund,
             'Print',
@@ -129,31 +124,6 @@ describe('Finance: Ledgers', () => {
         Funds.selectBudgetDetails();
         Funds.editBudget();
         Funds.changeStatusOfExpClass(1, 'Inactive');
-        cy.visit(TopMenu.ledgerPath);
-        FinanceHelp.searchByName(defaultLedger.name);
-        Ledgers.selectLedger(defaultLedger.name);
-        Ledgers.rollover();
-        Ledgers.fillInRolloverForOneTimeOrdersWithAllocation(
-          secondFiscalYear.code,
-          'None',
-          'Allocation',
-        );
-        cy.visit(TopMenu.fiscalYearPath);
-        FinanceHelp.searchByName(firstFiscalYear.name);
-        FiscalYears.selectFY(firstFiscalYear.name);
-        FiscalYears.editFiscalYearDetails();
-        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-          periodStartForFirstFY,
-          periodEndForFirstFY,
-        );
-        FinanceHelp.searchByName(secondFiscalYear.name);
-        FiscalYears.selectFY(secondFiscalYear.name);
-        FiscalYears.editFiscalYearDetails();
-        FiscalYears.filltheStartAndEndDateonCalenderstartDateField(
-          periodStartForSecondFY,
-          periodEndForSecondFY,
-        );
-        fileName = `Export-${defaultLedger.code}-${secondFiscalYear.code}`;
       });
     });
     cy.createTempUser([
@@ -174,71 +144,13 @@ describe('Finance: Ledgers', () => {
   });
 
   it(
-    'C350975: Ledger export settings: last year Fund with budget, Print (Active) and Electronic (Inactive) Classes, Export settings- All statuses (thunderjet) (TaaS)',
+    'C353211: Ledger export settings: current year Fund with budget, Print (Active) and Economic (Inactive) Classes, Export settings: No fiscal year, Each class status (thunderjet) (TaaS)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(secondFiscalYear.code, 'All', defaultLedger);
-      Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
-      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
-        `${fileName}.csv`,
-        1,
-        defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '20',
-        '0',
-        '0',
-        '20',
-        '0',
-        '0',
-        '100',
-        '80',
-        'Electronic',
-        'Elec',
-        'Active',
-        '10',
-        '0',
-        '0',
-      );
-      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
-        `${fileName}.csv`,
-        2,
-        defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '20',
-        '0',
-        '0',
-        '20',
-        '0',
-        '0',
-        '100',
-        '80',
-        'Print',
-        'Prn',
-        'Inactive',
-        '10',
-        '0',
-        '0',
-      );
-      Ledgers.deleteDownloadedFile(`${fileName}.csv`);
+      Ledgers.checkPreparationExportSettings();
     },
   );
 });

@@ -174,45 +174,17 @@ describe('Finance: Ledgers', () => {
   });
 
   it(
-    'C350975: Ledger export settings: last year Fund with budget, Print (Active) and Electronic (Inactive) Classes, Export settings- All statuses (thunderjet) (TaaS)',
+    'C350977: Ledger export settings: current year Fund with budget, Print (Active) and Electronic (Inactive) Classes, Export settings-Inactive status (thunderjet) (TaaS)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(secondFiscalYear.code, 'All', defaultLedger);
+      Ledgers.prepareExportSettings(secondFiscalYear.code, 'Inactive', defaultLedger);
       Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
       Ledgers.checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
         `${fileName}.csv`,
         1,
-        defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '20',
-        '0',
-        '0',
-        '20',
-        '0',
-        '0',
-        '100',
-        '80',
-        'Electronic',
-        'Elec',
-        'Active',
-        '10',
-        '0',
-        '0',
-      );
-      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
-        `${fileName}.csv`,
-        2,
         defaultFund,
         secondFiscalYear,
         '100',
