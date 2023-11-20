@@ -140,7 +140,7 @@ describe('Create Item or Title level request', () => {
       NewRequest.verifyRequesterInformation(userData.username, userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.verifyRequestInformation(REQUEST_TYPES.PAGE);
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyRequestSuccessfullyCreated(userData.username);
     },
