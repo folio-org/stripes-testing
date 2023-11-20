@@ -42,6 +42,36 @@ export default {
     });
   },
 
+  convertCsvToJson(readFileName) {
+    this.findDownloadedFilesByMask(readFileName).then((downloadedFileNames) => {
+      const lastDownloadedFileName = downloadedFileNames.sort()[downloadedFileNames.length - 1];
+
+      cy.task('convertCsvToJson', lastDownloadedFileName).then((data) => {
+        cy.wrap(data).as('jsonData');
+      });
+    });
+
+    return cy.get('@jsonData');
+  },
+
+  writeToSeparateFile({ readFileName, writeFileName, lines = [] } = {}) {
+    cy.wait(Cypress.env('downloadTimeout'));
+
+    this.findDownloadedFilesByMask(readFileName).then((downloadedFileNames) => {
+      const lastDownloadedFileName = downloadedFileNames.sort()[downloadedFileNames.length - 1];
+
+      this.readFile(lastDownloadedFileName).then((content) => {
+        this.createFile(
+          `cypress/downloads/${writeFileName}`,
+          content
+            .split('\n')
+            .slice(...lines)
+            .join('\n'),
+        );
+      });
+    });
+  },
+
   verifyFile(verifyNameFunc, fileNameMask, verifyContentFunc, verifyContentFuncArgs = []) {
     /*
     verifyNameFunc: function for verifying file name

@@ -1,8 +1,9 @@
 const { defineConfig } = require('cypress');
 const path = require('path');
 const globby = require('globby');
-const { rmdir, unlink } = require('fs');
+const csvToJson = require('convert-csv-to-json');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
+const { rmdir, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
@@ -16,8 +17,8 @@ module.exports = defineConfig({
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
-  defaultCommandTimeout: 101000,
-  pageLoadTimeout: 120000,
+  defaultCommandTimeout: 51000,
+  pageLoadTimeout: 60000,
   env: {
     OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     OKAPI_TENANT: 'diku',
@@ -48,6 +49,11 @@ module.exports = defineConfig({
 
           return list;
         },
+
+        convertCsvToJson(fileName) {
+          return csvToJson.fieldDelimiter(',').getJsonFromCsv(fileName);
+        },
+
         downloadFile,
 
         deleteFolder(folderName) {

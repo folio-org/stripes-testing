@@ -30,6 +30,22 @@ export default {
 
     return true;
   },
+
+  checkIsSortedAlphabetically({ array = [], direction = 'ascending' } = {}) {
+    const nonWordCharRegExp = new RegExp(/\W/);
+    const result = [];
+
+    for (let i = 1; i < array.length; i++) {
+      const prev = array[i - 1].replace(/\s+/gi, '').toLowerCase();
+      const current = array[i].replace(/\s+/gi, '').toLowerCase();
+
+      if (!nonWordCharRegExp.test(current)) {
+        result.push(prev.localeCompare(current));
+      }
+    }
+
+    return direction === 'ascending' ? result.every((n) => n <= 0) : result.every((n) => n >= 0);
+  },
 };
 
 export const randomizeArray = (array) => {

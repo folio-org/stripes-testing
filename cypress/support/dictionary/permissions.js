@@ -520,6 +520,10 @@ export default {
     internal: 'ui-invoice.settings.all',
     gui: 'Settings (Invoices): Can view and edit settings',
   },
+  invoiceSettingsBatchGroupViewEdit: {
+    internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
+    gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
+  },
   uiInvoicesCancelInvoices: { internal: 'ui-invoice.cancel', gui: 'Invoice: Cancel invoices' },
   uiInvoicesCanViewAndEditInvoicesAndInvoiceLines: {
     internal: 'ui-invoice.invoice.edit',
