@@ -100,6 +100,7 @@ const getDefaultInvoiceLine = ({
   poLineId,
   fundDistributions,
   accountingCode,
+  subTotal = 0,
   subscriptionInfo,
   subscriptionStart,
   subscriptionEnd,
@@ -111,7 +112,7 @@ const getDefaultInvoiceLine = ({
   description: `autotest inLine description ${randomFourDigitNumber()}`,
   fundDistributions,
   quantity: 1,
-  subTotal: 0,
+  subTotal,
   subscriptionInfo,
   subscriptionStart,
   subscriptionEnd,
@@ -213,6 +214,7 @@ export default {
     batchGroupId,
     fundDistributions,
     accountingCode,
+    subTotal,
     releaseEncumbrance,
     exportToAccounting,
   }) {
@@ -230,6 +232,7 @@ export default {
         invoiceLineStatus,
         poLineId,
         fundDistributions,
+        subTotal,
         accountingCode,
         releaseEncumbrance,
       });
