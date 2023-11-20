@@ -28,6 +28,7 @@ import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import OrderDetails from './orderDetails';
+import OrderEditForm from './orderEditForm';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderLines from './orderLines';
 
@@ -237,6 +238,13 @@ export default {
     cy.do([Button('Receive').click(), PaneHeader('Receiving').is({ visible: true })]);
   },
 
+  clickCreateNewOrder() {
+    cy.do([actionsButton.click(), newButton.click()]);
+    OrderEditForm.waitLoading();
+
+    return OrderEditForm;
+  },
+
   createOrder(order, isApproved = false, isManual = false) {
     cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
@@ -303,7 +311,7 @@ export default {
   },
 
   createApprovedOrderForRollover(order, isApproved = false, reEncumber = false) {
-    cy.do([actionsButton.click(), newButton.click()]);
+    cy.do([Pane({ id: 'orders-results-pane' }).find(actionsButton).click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
     cy.do(Select('Order type*').choose(order.orderType));

@@ -815,4 +815,8 @@ export default {
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
   },
+
+  checkSearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
+  },
 };

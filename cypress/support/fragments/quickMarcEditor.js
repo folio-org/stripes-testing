@@ -595,6 +595,11 @@ export default {
     cy.expect([rootSection.absent(), instanceDetailsPane.exists()]);
   },
 
+  closeAuthorityEditorPane() {
+    cy.do(PaneHeader().find(closeButton).click());
+    cy.expect([rootSection.absent(), viewMarcSection.exists()]);
+  },
+
   checkFieldAbsense(tag) {
     cy.expect(PaneContent({ id: 'marc-view-pane-content', text: including(tag) }).absent());
   },
@@ -1143,22 +1148,20 @@ export default {
     );
   },
 
-  checkHeaderFirstLine(
-    { headingReference: headingTypeFrom1XX, headingType, status },
-    { firstName, name },
-  ) {
-    cy.expect(Pane(`Edit MARC authority record - ${headingTypeFrom1XX}`).exists());
-    cy.then(() => Pane(`Edit MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
+  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, { firstName, name }) {
+    cy.expect(Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).exists());
+    cy.then(() => Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
       (subtitle) => {
         cy.expect(
           Pane({
             subtitle: and(
-              including(`Status: ${status}`),
+              including('Status:'),
+              including(status),
               including(headingType),
-              including('Record last updated:'),
+              including('Last updated:'),
               including(`Source: ${firstName}, ${name}`),
             ),
-          }),
+          }).exists(),
         );
         const stringDate = `${subtitle.split('Last updated: ')[1].split(' •')[0]} UTC`;
         dateTools.verifyDate(Date.parse(stringDate), 120_000);
