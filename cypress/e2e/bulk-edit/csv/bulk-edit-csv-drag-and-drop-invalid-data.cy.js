@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import { Permissions, TestTypes, DevTeams } from '../../../support/dictionary';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
