@@ -479,6 +479,24 @@ export default {
       .should('include', '200');
   },
 
+  verifyUserNameIsAbsntInFilter(userName) {
+    cy.do(
+      Accordion({ id: 'userId' })
+        .find(Selection({ singleValue: 'Choose user' }))
+        .open(),
+    );
+    cy.get(userName).should('not.exist');
+  },
+
+  verifyJobProfileIsAbsntInFilter(jobProfile) {
+    cy.do(
+      Accordion({ id: 'profileIdAny' })
+        .find(Selection({ singleValue: 'Choose job profile' }))
+        .open(),
+    );
+    cy.get(jobProfile).should('not.exist');
+  },
+
   noLogResultsFound: () => {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
   },

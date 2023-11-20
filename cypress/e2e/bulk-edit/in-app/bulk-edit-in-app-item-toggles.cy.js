@@ -17,10 +17,7 @@ const item = {
   barcode: getRandomPostfix(),
   instanceName: `instance-${getRandomPostfix()}`,
 };
-const today = DateTools.getFormattedDate(
-  { date: new Date() },
-  'YYYY-MM-DD',
-);
+const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -76,7 +73,7 @@ describe('bulk-edit', () => {
           'Reviewing changes',
           'Completed',
           'Completed with errors',
-          'Failed'
+          'Failed',
         ];
         statuses.forEach((status) => BulkEditSearchPane.checkLogsStatus(status));
 

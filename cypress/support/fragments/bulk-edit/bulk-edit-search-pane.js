@@ -47,6 +47,7 @@ const logsStatusesAccordion = Accordion('Statuses');
 const saveAndClose = Button('Save and close');
 const textFildTo = TextField('To');
 const textFildFrom = TextField('From');
+const confirmChanges = Button('Confirm changes');
 const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
 const errorsEncounteredBtn = DropdownMenu().find(
   Button('File with errors encountered during the record matching'),
@@ -66,6 +67,11 @@ const logsActionButton = Button({ icon: 'ellipsis' });
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
+  },
+
+  checkForUploading(fileName) {
+    cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
+    cy.expect(HTML(including('Retrieving...')));
   },
 
   verifyNoPermissionWarning() {
@@ -88,6 +94,9 @@ export default {
     cy.expect(actions.absent());
   },
 
+  verifyPopulatedPreviewPage() {
+    cy.expect([errorsAccordion.exists(), resultsAccordion.exists(), actions.exists()]);
+  },
   logActionsIsAbsent() {
     cy.expect(logsActionButton.absent());
   },
@@ -623,7 +632,8 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${validRecordCount + invalidRecordCount
+        `${fileName}: ${
+          validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -634,7 +644,8 @@ export default {
       Accordion('Errors')
         .find(
           HTML(
-            `${fileName}: ${validRecordCount + invalidRecordCount
+            `${fileName}: ${
+              validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
           ),
         )
@@ -935,6 +946,9 @@ export default {
   isBuildQueryButtonDisabled(isDisabled) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);
+  },
+  isConfirmButtonDisabled(isDisabled) {
+    cy.expect(confirmChanges.has({ disabled: isDisabled }));
   },
 
   clickBuildQueryButton() {
