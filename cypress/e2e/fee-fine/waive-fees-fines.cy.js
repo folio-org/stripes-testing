@@ -20,7 +20,6 @@ describe('Waive Fees/Fines', () => {
     ownerData: {},
   };
   const feeFineType = {};
-  const paymentMethod = {};
   let userData;
   let feeFineAccount;
   const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
