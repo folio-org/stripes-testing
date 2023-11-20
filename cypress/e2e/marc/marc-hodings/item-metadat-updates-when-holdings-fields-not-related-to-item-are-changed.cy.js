@@ -103,8 +103,6 @@ describe('MARC -> MARC Holdings', () => {
         itemBarcode: testData.itemBarcode,
         materialTypeId: testData.materialTypeId,
         permanentLoanTypeId: testData.loanTypeId,
-      }).then((res) => {
-        testData.itemData = res;
       });
 
       cy.login(testData.user.username, testData.user.password, {
@@ -149,6 +147,7 @@ describe('MARC -> MARC Holdings', () => {
             testData.user.userId,
           );
         });
+        ItemRecordView.verifyLastUpdatedDate(holdingsUpdateDate, testData.user.username);
       });
     },
   );

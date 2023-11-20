@@ -286,4 +286,12 @@ export default {
         .exists(),
     );
   },
+
+  verifyLastUpdatedDate(date, userName) {
+    cy.get('button[class^="metaHeaderButton-"]').click();
+    cy.expect([
+      administrativeDataAccordion.find(HTML(including(`Record last updated: ${date}`))).exists(),
+      administrativeDataAccordion.find(HTML(including(`Source: ${userName}`))).exists(),
+    ]);
+  },
 };
