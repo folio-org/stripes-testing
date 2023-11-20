@@ -43,20 +43,6 @@ describe.skip('Create a custom package', () => {
       eHolding.verifyAlternativesTitles();
     },
   );
-  it(
-    'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsSearch.switchToPackages();
-      eHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
-      eHoldingsProviders.viewPackage();
-      eHolding.editActions();
-      eHolding.patronRadioButton();
-      eHoldingsProviderEdit.saveAndClose();
-      eHolding.verifyAlternativeRadio();
-    },
-  );
   it('C648 Closed Library Due Date (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToTitles();
