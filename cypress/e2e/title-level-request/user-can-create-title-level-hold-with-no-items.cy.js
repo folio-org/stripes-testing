@@ -84,7 +84,7 @@ describe('Title Level Request', () => {
       NewRequest.verifyTitleLevelRequestsCheckbox('checked');
       NewRequest.verifyRequestTypeHasOptions('Hold');
       NewRequest.chooseRequestType('Hold');
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyRequestSuccessfullyCreated(testData.user.username);
     },
