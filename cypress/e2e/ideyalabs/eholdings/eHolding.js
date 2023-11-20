@@ -1,7 +1,6 @@
 import {
   Accordion,
   Button,
-  FieldSet,
   KeyValue,
   Modal,
   NavListItem,

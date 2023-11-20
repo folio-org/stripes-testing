@@ -331,6 +331,6 @@ export default {
   },
 
   verifyAlternativeRadio(yesOrNo) {
-    cy.expect(KeyValue('Show titles in package to patrons').has({value: including(yesOrNo)}));
+    cy.expect(KeyValue('Show titles in package to patrons').has({ value: including(yesOrNo) }));
   },
 };

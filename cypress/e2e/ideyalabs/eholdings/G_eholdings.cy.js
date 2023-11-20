@@ -1,7 +1,5 @@
 import testTypes from '../../../support/dictionary/testTypes';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
-import eHoldingsProviderEdit from '../../../support/fragments/eholdings/eHoldingsProviderEdit';
-import eHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import newRequest from '../../../support/fragments/requests/newRequest';
