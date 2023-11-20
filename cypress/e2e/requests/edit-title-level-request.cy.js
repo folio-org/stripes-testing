@@ -6,7 +6,6 @@ import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
-import Parallelization from '../../support/dictionary/parallelization';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 import {
@@ -19,37 +18,35 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
+import DateTools from '../../support/utils/dateTools';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
 
-describe('Requests Export CSV File', () => {
-  const patronComment = 'patron test comment';
-  const fileName = 'export.csv';
-
+describe('Edit title level request', () => {
   const userData = {};
-  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
+  const patronComments = 'test comment';
   let defaultLocation;
-  let cancellationReason;
+  let requestId;
 
   const requestData = {
     id: uuid(),
     requestType: REQUEST_TYPES.PAGE,
-    requesterId: null,
-    requestLevel: REQUEST_LEVELS.ITEM,
+    requestLevel: REQUEST_LEVELS.TITLE,
     requestDate: new Date().toISOString(),
     fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-    pickupServicePointId: null,
   };
 
   before('Create New Item and New User', () => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.createViaApi(servicePoint);
-        defaultLocation = Location.getDefaultLocation(servicePoint.id);
+        ServicePoints.createViaApi(servicePoint1);
+        ServicePoints.createViaApi(servicePoint2);
+        defaultLocation = Location.getDefaultLocation(servicePoint1.id);
         Location.createViaApi(defaultLocation);
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           itemData.instanceTypeId = instanceTypes[0].id;
@@ -63,9 +60,6 @@ describe('Requests Export CSV File', () => {
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
-        });
-        cy.getCancellationReasonsApi({ limit: 1 }).then((cancellationReasons) => {
-          cancellationReason = cancellationReasons[0].id;
         });
       })
       .then(() => {
@@ -92,34 +86,37 @@ describe('Requests Export CSV File', () => {
       })
       .then((specialInstanceIds) => {
         itemData.testInstanceIds = specialInstanceIds;
-        requestData.instanceId = specialInstanceIds.id;
-        requestData.holdingsRecordId = specialInstanceIds.holdingIds[0].id;
-        requestData.itemId = specialInstanceIds.holdingIds[0].itemIds[0];
+        requestData.instanceId = specialInstanceIds.instanceId;
       })
       .then(() => {
-        cy.createTempUser([Permissions.uiRequestsAll.gui, Permissions.checkinAll.gui])
+        cy.createTempUser([Permissions.uiRequestsAll.gui])
           .then((userProperties) => {
             userData.username = userProperties.username;
             userData.password = userProperties.password;
             userData.userId = userProperties.userId;
             userData.barcode = userProperties.barcode;
             userData.firstName = userProperties.firstName;
+            userData.patronGroup = userProperties.patronGroup;
+            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             cy.wrap(true)
               .then(() => {
-                requestData.instanceId = itemData.testInstanceIds.instanceId;
-                requestData.holdingsRecordId = itemData.testInstanceIds.holdingIds[0].id;
-                requestData.itemId = itemData.testInstanceIds.holdingIds[0].itemIds[0];
                 requestData.requesterId = userData.userId;
-                requestData.pickupServicePointId = servicePoint.id;
-                requestData.patronComments = patronComment;
+                requestData.pickupServicePointId = servicePoint1.id;
+                requestData.patronComments = patronComments;
               })
               .then(() => {
-                cy.createItemRequestApi(requestData);
+                Requests.createNewRequestViaApi(requestData).then((createdRequest) => {
+                  requestId = createdRequest.body.id;
+                });
               });
 
-            UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
+            UserEdit.addServicePointsViaApi(
+              [servicePoint1.id, servicePoint2.id],
+              userData.userId,
+              servicePoint1.id,
+            );
 
             cy.login(userData.username, userData.password);
           });
@@ -128,15 +125,9 @@ describe('Requests Export CSV File', () => {
 
   after('Delete New Service point, Item and User', () => {
     cy.getAdminToken();
-    EditRequest.updateRequestApi({
-      ...requestData,
-      status: 'Closed - Cancelled',
-      cancelledByUserId: requestData.requesterId,
-      cancellationReasonId: cancellationReason,
-      cancelledDate: new Date().toISOString(),
-    });
+    Requests.deleteRequestViaApi(requestId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
     Users.deleteViaApi(userData.userId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
@@ -144,29 +135,66 @@ describe('Requests Export CSV File', () => {
       defaultLocation.libraryId,
       defaultLocation.id,
     );
-    ServicePoints.deleteViaApi(servicePoint.id);
-    Requests.deleteDownloadedFile(fileName);
+    ServicePoints.deleteViaApi(servicePoint1.id);
+    ServicePoints.deleteViaApi(servicePoint2.id);
   });
 
   it(
-    'C199705 Patron Comments are Displayed in Requests Export CSV File (vega)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    'C350559 Check that the user can Edit request (Title level request) (vega)',
+    { tags: [TestTypes.criticalPath, DevTeams.vega] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
       Requests.findCreatedRequest(itemData.barcode);
-      Requests.exportRequestToCsv();
-      Requests.checkCellInCsvFileContainsValue(fileName, 1, 30, patronComment);
-    },
-  );
+      Requests.selectTheFirstRequest();
 
-  it(
-    'C199708 Patron Comments are Displayed in the "Awaiting pickup for a request" Modal at Check In (vega)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
-    () => {
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemGui(itemData.barcode);
-      AwaitingPickupForARequest.checkPatronComments(patronComment);
+      EditRequest.openRequestEditForm();
+      EditRequest.waitLoading('title');
+      EditRequest.verifyTitleInformation({
+        titleLevelRequest: '1',
+        title: itemData.instanceTitle,
+      });
+      EditRequest.verifyRequesterInformation({
+        userFullName: userData.fullName,
+        userBarcode: userData.barcode,
+        requesterPatronGroup: userData.patronGroup,
+      });
+      EditRequest.verifyRequestInformation({
+        requestType: requestData.requestType,
+        requestStatus: EditRequest.requestStatuses.NOT_YET_FILLED,
+        patronComments: requestData.patronComments,
+      });
+      const currentDate = new Date();
+      EditRequest.setExpirationDate(DateTools.getFormattedDate({ date: currentDate }));
+      EditRequest.setPickupServicePoint(servicePoint2.name);
+      EditRequest.saveAndClose();
+
+      RequestDetail.waitLoading('item');
+      RequestDetail.checkTitleInformation({
+        TLRs: '1',
+        title: itemData.instanceTitle,
+      });
+      RequestDetail.checkItemInformation({
+        itemBarcode: itemData.barcode,
+        title: itemData.instanceTitle,
+        effectiveLocation: defaultLocation.name,
+        itemStatus: ITEM_STATUS_NAMES.PAGED,
+        requestsOnItem: '1',
+      });
+      RequestDetail.checkRequestInformation({
+        type: requestData.requestType,
+        status: EditRequest.requestStatuses.NOT_YET_FILLED,
+        level: requestData.requestLevel,
+        requestExpirationDate: DateTools.getFormattedDate({ date: currentDate }, 'MM/DD/YYYY'),
+        comments: requestData.patronComments,
+      });
+      RequestDetail.checkRequesterInformation({
+        lastName: userData.fullName,
+        barcode: userData.barcode,
+        group: userData.patronGroup,
+        preference: requestData.fulfillmentPreference,
+        pickupSP: servicePoint2.name,
+      });
     },
   );
 });
