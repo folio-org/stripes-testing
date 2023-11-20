@@ -177,6 +177,10 @@ export default {
     } else cy.expect(titleLevelRequest.has({ checked: false }));
   },
 
+  verifyErrorMessageForRequestTypeField: (errorMessage) => {
+    cy.expect(selectRequestType.has({ error: errorMessage }));
+  },
+
   verifyItemInformation: (allContentToCheck) => {
     return allContentToCheck.forEach((contentToCheck) => cy.expect(Section({ id: 'new-item-info' }, including(contentToCheck)).exists()));
   },
