@@ -1177,10 +1177,4 @@ export default {
   verifyItemStatus: (itemStatus) => {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
-
-  verifyNumOfFieldsWithTag: (tag, numOfFields) => {
-    cy.get(`input[name*=".tag"][value="${tag}"]`).then(
-      (elements) => elements.length === numOfFields,
-    );
-  },
 };
