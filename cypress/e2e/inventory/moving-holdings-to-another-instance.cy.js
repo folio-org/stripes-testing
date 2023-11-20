@@ -61,12 +61,12 @@ describe('inventory', () => {
     });
   });
 
-  // after('delete test data', () => {
-  //   cy.getAdminToken();
-  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
-  //   InventoryInstance.deleteInstanceViaApi(item.instanceId);
-  //   Users.deleteViaApi(userId);
-  // });
+  after('delete test data', () => {
+    cy.getAdminToken();
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
+    InventoryInstance.deleteInstanceViaApi(item.instanceId);
+    Users.deleteViaApi(userId);
+  });
 
   it(
     "C15186 Move one holdings with all it's associated items from one instance to another instance (firebird) (TaaS)",
@@ -75,7 +75,6 @@ describe('inventory', () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.byKeywords(item.instanceName);
       InventorySearchAndFilter.selectSearchResultItem();
-      // ItemRecordView.closeDetailView();
 
       InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(
         item.firstHoldingName,

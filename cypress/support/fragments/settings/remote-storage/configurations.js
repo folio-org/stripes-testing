@@ -221,7 +221,7 @@ export default {
         cy.do(configurationFields[param].fillIn(configuration[param]));
       }
     }
-    if (save) cy.do(saveAndCloseBtn.click());    
+    if (save) cy.do(saveAndCloseBtn.click());
   },
 
   verifyEditedConfiguration(name, configuration) {
