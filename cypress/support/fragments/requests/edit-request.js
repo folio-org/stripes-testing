@@ -7,7 +7,6 @@ import {
   Select,
   TextField,
   TextArea,
-  Pane,
   Link,
   HTML,
 } from '../../../../interactors';
