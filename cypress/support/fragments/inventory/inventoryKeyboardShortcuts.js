@@ -8,12 +8,15 @@ import {
   TextArea,
   Section,
 } from '../../../../interactors';
+import InventoryHotkeys from './inventoryHotkeys';
+import QuickMarcEditor from '../quickMarcEditor';
 
 const inventoryApplicationContextDropdown = Dropdown('InventoryApplication context dropdown');
 const keyboardShortcutModal = Modal({ id: 'keyboard-shortcuts-modal' });
 const closeKeyboardShortcutModalButton = keyboardShortcutModal.find(
   Button({ id: 'keyboard-shortcuts-modal-close' }),
 );
+const hotKeys = InventoryHotkeys.hotKeys;
 
 export default {
   verifyInventoryDropdownIsShown(isOpen) {
@@ -61,6 +64,16 @@ export default {
       Section({ id: 'pane-instancedetails' })
         .find(HTML(including(instanceTitle, { class: 'headline' })))
         .exists(),
+    );
+  },
+  moveCursorBetweenSubfieldsAndCheck(rowNumber) {
+    this.pressHotKey(hotKeys.moveToPreviousSubfield);
+    cy.get(`[name="records[${rowNumber}].content"]`).type('{insert} the first subfield is: ');
+    this.pressHotKey(hotKeys.moveToNextSubfield);
+    cy.get(`[name="records[${rowNumber}].content"]`).type('{insert} the second subfield is: ');
+    QuickMarcEditor.checkContent(
+      '$a  the first subfield is: test5 $a  the second subfield is: test6',
+      6,
     );
   },
 };

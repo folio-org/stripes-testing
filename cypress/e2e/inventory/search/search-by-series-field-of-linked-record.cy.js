@@ -89,6 +89,7 @@ const testData = {
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         InventoryInstances.getInstancesViaApi({
           limit: 100,
