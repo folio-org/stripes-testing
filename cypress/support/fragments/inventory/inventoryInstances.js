@@ -201,9 +201,20 @@ const getItemNoteTypes = (searchParams) => cy
     return response.body.itemNoteTypes;
   });
 
+const getIdentifierTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'identifier-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.identifierTypes[0];
+  });
+
 export default {
   getHoldingsNotesTypes,
   getCallNumberTypes,
+  getIdentifierTypes,
   getItemNoteTypes,
   waitContentLoading,
   waitLoading: () => {
