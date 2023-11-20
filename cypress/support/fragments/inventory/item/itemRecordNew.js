@@ -67,20 +67,24 @@ export default {
   save: () => cy.do(saveAndCloseBtn.click()),
 
   createViaApi: ({ holdingsId, itemBarcode, materialTypeId, permanentLoanTypeId, ...props }) => {
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'inventory/items',
-      body: {
-        status: { name: 'Available' },
-        holdingsRecordId: holdingsId,
-        boundWithTitles: [],
-        barcode: itemBarcode,
-        materialType: { id: materialTypeId },
-        permanentLoanType: { id: permanentLoanTypeId },
-        ...props,
-      },
-      isDefaultSearchParamsRequired: false,
-    });
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'inventory/items',
+        body: {
+          status: { name: 'Available' },
+          holdingsRecordId: holdingsId,
+          boundWithTitles: [],
+          barcode: itemBarcode,
+          materialType: { id: materialTypeId },
+          permanentLoanType: { id: permanentLoanTypeId },
+          ...props,
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body;
+      });
   },
 
   clickFormerIdentifierButton() {

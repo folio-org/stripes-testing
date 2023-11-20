@@ -46,7 +46,7 @@ export default {
 
   // actions
   close: () => {
-    cy.do(closeButton.click());
+    cy.do(Pane({ id: 'ui-inventory.holdingsRecordView' }).find(closeButton).click());
     cy.expect(holdingsRecordViewSection.absent());
   },
   editInQuickMarc: () => {
@@ -198,6 +198,17 @@ export default {
     ]);
   },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
+  getRecordLastUpdatedDate: () => cy.then(() => {
+    return cy
+      .get('div[class^="metaHeaderLabel-"]')
+      .invoke('text')
+      .then((text) => {
+        // extract only date and time
+        const colonIndex = text.indexOf(':');
+        const lastUpdatedDate = text.substring(colonIndex + 2).trim();
+        return lastUpdatedDate;
+      });
+  }),
   getId: () => {
     // parse hodling record id from current url
     cy.url().then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
