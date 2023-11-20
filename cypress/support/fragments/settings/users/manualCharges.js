@@ -68,7 +68,7 @@ export default {
   },
   checkSelectedOwner(owner) {
     cy.wait(300);
-    cy.get('#select-owner option').first().should('have.text', owner);
+    cy.expect(ownerSelect.has({ checkedOptionText: owner }));
   },
   checkSelectContainsOwnert(owner) {
     cy.wait(300);
