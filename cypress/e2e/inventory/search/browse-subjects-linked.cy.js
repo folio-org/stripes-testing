@@ -45,7 +45,7 @@ describe('Inventory: Subject Browse', () => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
@@ -120,6 +120,7 @@ describe('Inventory: Subject Browse', () => {
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.clickUnlinkIconInTagField(20);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
       InventorySearchAndFilter.switchToBrowseTab();

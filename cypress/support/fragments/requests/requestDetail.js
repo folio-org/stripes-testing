@@ -32,15 +32,17 @@ const additionalInfoOptionalInput = TextField('Additional information for patron
 const additionalInfoRequiredInput = TextField('Additional information for patron *');
 
 export default {
-  waitLoading: () => {
+  waitLoading: (type = 'title') => {
     cy.expect([
       Pane({ id: 'instance-details', title: 'Request Detail' }).exists(),
       requestDetailsSection.find(titleInformationSection).exists(),
       requestDetailsSection.find(itemInformationSection).exists(),
       requestDetailsSection.find(requestInfoSection).exists(),
       requestDetailsSection.find(requesterInfoSection).exists(),
-      requestDetailsSection.find(staffNotesInfoSection).exists(),
     ]);
+    if (type === 'title') {
+      cy.expect([requestDetailsSection.find(staffNotesInfoSection).exists()]);
+    }
   },
 
   checkTitleInformation: (data) => {

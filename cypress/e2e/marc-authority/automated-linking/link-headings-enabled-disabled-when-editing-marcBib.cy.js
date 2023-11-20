@@ -56,7 +56,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
     ]).then((createdUserProperties) => {
       userData = createdUserProperties;
@@ -143,6 +143,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.checkNoDeletePlaceholder();
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
       QuickMarcEditor.clickUnlinkIconInTagField(fieldsToUpdate[1].rowIndex);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(
         fieldsToUpdate[1].rowIndex,
         fieldsToUpdate[1].tag,

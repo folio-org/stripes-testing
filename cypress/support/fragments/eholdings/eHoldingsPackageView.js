@@ -14,8 +14,12 @@ import {
   MultiSelectOption,
   Callout,
   TextField,
+  matching,
+  FieldSet,
 } from '../../../../interactors';
-import eHoldingsPackages from './eHoldingsPackages';
+import EHoldingsPackages from './eHoldingsPackages';
+import EHolgingsStates from './eHolgingsStates';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const actionsButton = Button('Actions');
 const exportButton = Button('Export package (CSV)');
@@ -50,12 +54,13 @@ const searchAgreementButton = findAgreementModal.find(
 const titleFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-title-fields' });
 const packageFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-package-fields' });
 const openDropdownMenu = Button({ ariaLabel: 'open menu' });
+const patronRadioButton = FieldSet('Show titles in package to patrons');
 
 export default {
   getCalloutMessageText,
   close() {
     cy.do(Button({ icon: 'times' }).click());
-    eHoldingsPackages.waitLoading();
+    EHoldingsPackages.waitLoading();
   },
 
   waitLoading() {
@@ -110,8 +115,15 @@ export default {
     );
   },
 
-  export() {
+  export({ exportStarted = true } = {}) {
+    cy.expect(exportButtonInModal.has({ disabled: false }));
     cy.do(exportButtonInModal.click());
+
+    if (exportStarted) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(EHolgingsStates.exportJobStartedSuccessfully)),
+      );
+    }
   },
 
   verifyExportButtonInModalDisabled(isDisabled = true) {
@@ -173,6 +185,12 @@ export default {
         textContent: including(message),
       }).exists(),
     );
+  },
+
+  getTotalTitlesCount() {
+    return cy
+      .then(() => KeyValue('Total titles').value())
+      .then((count) => parseFloat(count.replace(/,/g, '')));
   },
 
   getJobIDFromCalloutMessage: () => {
@@ -305,5 +323,14 @@ export default {
       .invoke('text')
       .then((text) => parseFloat(text.replace(/,/g, '')))
       .should('be.lessThan', number);
+  },
+
+  patronRadioButton: (yesOrNo) => {
+    cy.expect(patronRadioButton.exists());
+    cy.do(patronRadioButton.find(RadioButton(including(yesOrNo))).click());
+  },
+
+  verifyAlternativeRadio(yesOrNo) {
+    cy.expect(KeyValue('Show titles in package to patrons').has({ value: including(yesOrNo) }));
   },
 };
