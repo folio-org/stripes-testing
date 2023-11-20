@@ -121,7 +121,7 @@ export default {
     cy.get('div[id=new-modal] select[name=ownerId]').select(ownerName);
   },
 
-  chekcFeeFineOwnerExist: (ownerName, isExist = true) => {
+  checkFeeFineOwnerExist: (ownerName, isExist = true) => {
     if (isExist) {
       cy.expect(ownerTypeSelect.find(Option(ownerName)).exists());
     } else {

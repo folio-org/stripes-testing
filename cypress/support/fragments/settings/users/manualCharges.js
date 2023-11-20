@@ -64,14 +64,11 @@ export default {
   },
   selectOwnerByName(owner) {
     cy.do(ownerSelect.choose(owner));
-    cy.wait(1000);
   },
   checkSelectedOwner(owner) {
-    cy.wait(300);
     cy.expect(ownerSelect.has({ checkedOptionText: owner }));
   },
-  checkSelectContainsOwnert(owner) {
-    cy.wait(300);
+  checkOwnersDropdownIncludesOption(owner) {
     cy.expect(ownerSelect.find(Option(owner)).exists());
   },
   fillInFields(data, index = 0) {

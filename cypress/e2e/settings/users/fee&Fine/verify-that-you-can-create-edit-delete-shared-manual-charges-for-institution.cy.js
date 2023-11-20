@@ -21,6 +21,7 @@ describe('Users: Owners', () => {
   let user;
   const ownerError = 'Fee/fine type exists for other Fee/fine owner(s)';
   const ownerSharedError = 'Fee/fine type exists for Shared Fee/fine owner';
+  const amount = '100.00';
 
   before('Create test data', () => {
     cy.getAdminToken();
@@ -38,7 +39,7 @@ describe('Users: Owners', () => {
       })
       .then(() => {
         ManualCharges.createViaApi({
-          defaultAmount: '100.00',
+          defaultAmount: amount,
           automatic: false,
           feeFineType: `Manual_charge-${ownerUser.owner}`,
           ownerId: ownerUser.id,
@@ -65,35 +66,29 @@ describe('Users: Owners', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
 
-    cy.wrap(feeFineType).each((item) => {
+    feeFineType.forEach((item) => {
       ManualCharges.deleteViaApi(item.id);
     });
 
-    ManualCharges.selectOwnerByName(owners[1].owner);
-    cy.get('@manualChargeId').then((manualChargeId) => {
-      ManualCharges.deleteViaApi(manualChargeId);
-    });
-
-    cy.visit(SettingsMenu.usersOwnersPath);
-    cy.wrap(ownersData).each((item) => {
+    ownersData.forEach((item) => {
       UsersOwners.deleteViaApi(item.id);
     });
   });
 
   it(
-    '443 - Verify that you can create/edit/delete "Shared" manual charges for institution (TaaS)',
+    'C443 - Verify that you can create/edit/delete "Shared" manual charges for institution (Spitfire) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       cy.visit(SettingsMenu.manualCharges);
       ManualCharges.waitLoading();
       ManualCharges.checkSelectedOwner(owners[0].owner);
       owners.forEach((owner) => {
-        ManualCharges.checkSelectContainsOwner(owner.owner);
+        ManualCharges.checkOwnersDropdownIncludesOption(owner.owner);
       });
 
       ManualCharges.createViaUi({
         feeFineType: feeFineType[1].name,
-        amount: '10.00',
+        amount,
       });
       ManualCharges.checkValidatorError({ error: ownerError });
       ManualCharges.clickCancelBtn();
@@ -101,7 +96,7 @@ describe('Users: Owners', () => {
       ManualCharges.selectOwnerByName(owners[1].owner);
       ManualCharges.createViaUi({
         feeFineType: feeFineType[0].name,
-        amount: '10.00',
+        amount,
       });
       ManualCharges.checkValidatorError({ error: ownerSharedError });
       ManualCharges.clickCancelBtn();
@@ -110,10 +105,14 @@ describe('Users: Owners', () => {
       ManualCharges.selectOwnerByName(owners[1].owner);
       ManualCharges.createViaUi({
         feeFineType: feeFineType[2].name,
-        amount: '10.00',
+        amount,
       });
       cy.wait('@manualChargeCreate').then((intercept) => {
-        cy.wrap(intercept.response.body.id).as('manualChargeId');
+        feeFineType.push({
+          amount,
+          id: intercept.response.body.id,
+          name: feeFineType[2].name,
+        });
       });
 
       cy.visit(TopMenu.usersPath);
@@ -125,12 +124,11 @@ describe('Users: Owners', () => {
       UsersCard.startFeeFineAdding();
       NewFeeFine.setFeeFineOwner(owners[1].owner);
 
-      NewFeeFine.chekcFeeFineOwnerExist(owners[0].owner, false);
+      NewFeeFine.checkFeeFineOwnerExist(owners[0].owner, false);
       NewFeeFine.setFeeFineOwner(owners[1].owner);
       NewFeeFine.checkFilteredFeeFineType(feeFineType[0].name);
       NewFeeFine.setFeeFineOwner(owners[2].owner);
       NewFeeFine.checkFilteredFeeFineType(feeFineType[0].name);
-      cy.visit(SettingsMenu.manualCharges);
     },
   );
 });
