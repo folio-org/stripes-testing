@@ -15,6 +15,7 @@ let userId;
 const item = {
   instanceName: `Inventory-first-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
+  firstHoldingName: 'Popular Reading Collection'
 };
 
 const secondItem = {
@@ -36,33 +37,45 @@ describe('inventory', () => {
         waiter: InventorySearchAndFilter.waitLoading,
       });
       item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-      InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
-
-      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
-        cy.getLocations({ limit: 1, query: `id="${holdings[0].permanentLocationId}"` }).then(
-          (location) => {
-            item.firstHoldingName = location.name;
-          },
-        );
+      secondItem.instanceId = InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
+      cy.getHoldings({
+        limit: 1,
+        query: `"instanceId"="${item.instanceId}"`,
+      }).then((holdings) => {
+        cy.updateHoldingRecord(holdings[0].id, {
+          ...holdings[0],
+          // Popular Reading Collection
+          permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+        });
+      });
+      cy.getHoldings({
+        limit: 1,
+        query: `"instanceId"="${secondItem.instanceId}"`,
+      }).then((holdings) => {
+        cy.updateHoldingRecord(holdings[0].id, {
+          ...holdings[0],
+          // Annex
+          permanentLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+        });
       });
     });
   });
 
-  after('delete test data', () => {
-    cy.getAdminToken();
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
-    InventoryInstance.deleteInstanceViaApi(item.instanceId);
-    Users.deleteViaApi(userId);
-  });
+  // after('delete test data', () => {
+  //   cy.getAdminToken();
+  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
+  //   InventoryInstance.deleteInstanceViaApi(item.instanceId);
+  //   Users.deleteViaApi(userId);
+  // });
 
   it(
     "C15186 Move one holdings with all it's associated items from one instance to another instance (firebird) (TaaS)",
     { tags: [testTypes.extendedPath, devTeams.firebird] },
     () => {
       InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+      InventorySearchAndFilter.byKeywords(item.instanceName);
       InventorySearchAndFilter.selectSearchResultItem();
-      ItemRecordView.closeDetailView();
+      // ItemRecordView.closeDetailView();
 
       InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(
         item.firstHoldingName,

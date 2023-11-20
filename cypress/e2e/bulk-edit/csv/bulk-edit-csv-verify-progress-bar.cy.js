@@ -12,12 +12,12 @@ let user;
 const invalidBarcode = getRandomPostfix();
 const userBarcodesFileName = `userBarcodes-val-inval${getRandomPostfix()}.csv`;
 
-describe('Bulk-Edit', () => {
+describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
       cy.createTempUser([
-        Permissions.bulkEditLogsView.gui,
-        Permissions.bulkEditUpdateRecords.gui,
+        Permissions.bulkEditCsvView.gui,
+        Permissions.bulkEditCsvEdit.gui,
         Permissions.uiUserEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
@@ -41,7 +41,7 @@ describe('Bulk-Edit', () => {
 
     it(
       'C353529 Verify progress bar for uploading identifier files(firebird) (TaaS)',
-      { tags: [TestTypes.smoke, DevTeams.firebird] },
+      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

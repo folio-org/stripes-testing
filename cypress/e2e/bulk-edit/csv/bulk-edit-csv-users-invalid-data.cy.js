@@ -10,7 +10,8 @@ import ExportFile from '../../../support/fragments/data-export/exportFile';
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFile = `Matched-Records-${userUUIDsFileName}`;
-const editedFileName = `Committing-changes-Errors-${getRandomPostfix()}.csv`;
+const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+const errorsFromCommittingFileName = `*-Committing-changes-Errors-${userUUIDsFileName}`;
 const patronGroup = {
   name: getTestEntityValue('staff'),
 };
@@ -38,7 +39,7 @@ describe('bulk-edit', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-        FileManager.deleteFileFromDownloadsByMask(editedFileName);
+        FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName);
       });
     });
 
@@ -52,15 +53,12 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(userUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.downloadMatchedResults();
-
         BulkEditActions.prepareValidBulkEditFile(
           matchedRecordsFile,
           editedFileName,
           patronGroup,
           invalidPatronGroup,
         );
-
-        BulkEditActions.openActions();
         BulkEditActions.openStartBulkEditForm();
         BulkEditSearchPane.uploadFile(editedFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -70,7 +68,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
         BulkEditActions.openActions();
         BulkEditActions.downloadErrors();
-        ExportFile.verifyFileIncludes(editedFileName, ['No change in value required']);
+        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, ['No change in value required']);
       },
     );
   });
