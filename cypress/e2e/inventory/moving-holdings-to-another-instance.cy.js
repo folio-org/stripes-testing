@@ -9,7 +9,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 
 let userId;
 const item = {
