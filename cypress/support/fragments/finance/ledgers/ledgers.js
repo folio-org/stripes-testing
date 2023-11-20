@@ -1079,6 +1079,70 @@ export default {
     });
   },
 
+  checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
+    fileName,
+    fileRow,
+    fund,
+    secondFiscalYear,
+    allowableEncumbrance,
+    allowableExpenditure,
+    initialAllocation,
+    increase,
+    decrease,
+    totalAllocation,
+    transfers,
+    totalFunding,
+    encumberedBudget,
+    awaitingPaymentBudget,
+    expendedBudget,
+    unavailable,
+    overEncumbered,
+    overExpended,
+    cashBalance,
+    available,
+    expClassName,
+    expClassCode,
+    expClassStatus,
+    expClassEncumbered,
+    expClassAwaitingPayment,
+    expClassExpended,
+  ) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      const actualData = fileRows[fileRow].trim().split(',');
+      expect(actualData[0]).to.equal(`"${fund.name}"`);
+      expect(actualData[1]).to.equal(`"${fund.code}"`);
+      expect(actualData[9]).to.equal(`"${fund.description}"`);
+      expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
+      expect(actualData[12]).to.equal(allowableEncumbrance);
+      expect(actualData[13]).to.equal(allowableExpenditure);
+      expect(actualData[16]).to.equal(initialAllocation);
+      expect(actualData[17]).to.equal(increase);
+      expect(actualData[18]).to.equal(decrease);
+      expect(actualData[19]).to.equal(totalAllocation);
+      expect(actualData[20]).to.equal(transfers);
+      expect(actualData[21]).to.equal(totalFunding);
+      expect(actualData[22]).to.equal(encumberedBudget);
+      expect(actualData[23]).to.equal(awaitingPaymentBudget);
+      expect(actualData[24]).to.equal(expendedBudget);
+      expect(actualData[25]).to.equal(unavailable);
+      expect(actualData[26]).to.equal(overEncumbered);
+      expect(actualData[27]).to.equal(overExpended);
+      expect(actualData[28]).to.equal(cashBalance);
+      expect(actualData[29]).to.equal(available);
+      expect(actualData[30]).to.equal(`"${expClassName}"`);
+      expect(actualData[31]).to.equal(`"${expClassCode}"`);
+      expect(actualData[32]).to.equal(`"${expClassStatus}"`);
+      expect(actualData[33]).to.equal(expClassEncumbered);
+      expect(actualData[34]).to.equal(expClassAwaitingPayment);
+      expect(actualData[35]).to.equal(expClassExpended);
+    });
+  },
+
   checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(fileName, fileRow, fund) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(3000); // wait for the file to load
