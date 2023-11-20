@@ -311,7 +311,7 @@ export default {
   },
 
   createApprovedOrderForRollover(order, isApproved = false, reEncumber = false) {
-    cy.do([actionsButton.click(), newButton.click()]);
+    cy.do([Pane({ id: 'orders-results-pane' }).find(actionsButton).click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
     cy.do(Select('Order type*').choose(order.orderType));
