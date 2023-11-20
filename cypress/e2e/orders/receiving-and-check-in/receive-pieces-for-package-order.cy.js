@@ -7,7 +7,6 @@ import Orders from '../../../support/fragments/orders/orders';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
