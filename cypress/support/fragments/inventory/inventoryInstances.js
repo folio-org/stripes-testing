@@ -201,9 +201,20 @@ const getItemNoteTypes = (searchParams) => cy
     return response.body.itemNoteTypes;
   });
 
+const getIdentifierTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'identifier-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.identifierTypes[0];
+  });
+
 export default {
   getHoldingsNotesTypes,
   getCallNumberTypes,
+  getIdentifierTypes,
   getItemNoteTypes,
   waitContentLoading,
   waitLoading: () => {
@@ -959,6 +970,15 @@ export default {
       Button('New').exists(),
       Button('New local record').absent(),
       Button('New shared record').absent(),
+    ]);
+  },
+
+  verifyInstanceResultListIsAbsent() {
+    cy.expect([
+      inventoriesList.absent(),
+      rootSection
+        .find(HTML(including('Choose a filter or enter a search query to show results')))
+        .exists(),
     ]);
   },
 };

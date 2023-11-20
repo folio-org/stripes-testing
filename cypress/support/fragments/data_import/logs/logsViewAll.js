@@ -26,6 +26,7 @@ const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const nextButton = Button({ id: 'list-data-import-next-paging-button' });
 const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
 const logsResultPane = PaneContent({ id: 'pane-results-content' });
+const visitedLinkColor = 'rgb(47, 96, 159)';
 
 function getCheckboxByRow(row) {
   return MultiColumnList()
@@ -478,6 +479,15 @@ export default {
       .should('include', '200');
   },
 
+  verifyUserNameIsAbsntInFilter(userName) {
+    cy.do(
+      Accordion({ id: 'userId' })
+        .find(Selection({ singleValue: 'Choose user' }))
+        .open(),
+    );
+    cy.get(userName).should('not.exist');
+  },
+
   verifyJobProfileIsAbsntInFilter(jobProfile) {
     cy.do(
       Accordion({ id: 'profileIdAny' })
@@ -489,5 +499,22 @@ export default {
 
   noLogResultsFound: () => {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+  },
+
+  verifyFirstFileNameCellUnderlined: () => {
+    cy.get('#pane-results [class*="mclCell-"]:nth-child(1) a')
+      .eq(0)
+      .should('have.css', 'text-decoration')
+      .and('include', 'underline');
+  },
+
+  verifyVisitedLinkColor: () => {
+    cy.get('#pane-results [class*="mclCell-"]:nth-child(1) a')
+      .eq(0)
+      .should('have.css', 'color', visitedLinkColor);
+  },
+
+  clickFirstFileNameCell: () => {
+    cy.do(dataImportList.find(MultiColumnListCell({ row: 0, columnIndex: 0 })).hrefClick());
   },
 };
