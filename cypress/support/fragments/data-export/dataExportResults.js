@@ -148,14 +148,6 @@ export default {
     cy.expect(result.fileName.has({ content: matching(regex) }));
   },
 
-  verifyLastLogs(lastLogsCount, status) {
-    const results = [];
-    for (let i = 0; i <= lastLogsCount; i++) {
-      results[i] = MultiColumnListCell({ row: i, columnIndex: 1 });
-      cy.expect(results[i].has({ innerText: status }));
-    }
-  },
-
   verifyFileNameIsDisabled(rowNum) {
     const cellLocator = `[data-row-inner="${rowNum}"]>div>span`;
 
