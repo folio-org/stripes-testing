@@ -15,16 +15,24 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC -> MARC Holdings', () => {
   const testData = {
     createdRecordIDs: [],
     itemBarcode: uuid(),
-    itemData: {},
+    createdItemData: {},
     updatedItemData: {},
     tag852: '852',
-    content852:
-      '01$bKU/CC/DI/A$hBR140$i.J86test$xdbe=c$zCurrent issues in Periodicals Room$xCHECK-IN RECORD CREATED$kAB$mXY',
+    content852WithUpdatedCallNumber:
+      '$b KU/CC/DI/A $h BR140TEST $i .J86 $x dbe=c $z Current issues in Periodicals Room $x CHECK-IN RECORD CREATED $k AB $m XY',
+    updatedCallNumber: 'BR140TEST .J86',
+    content852WithUpdatedPrefix:
+      '$b KU/CC/DI/A $h BR140 $i .J86 $x dbe=c $z Current issues in Periodicals Room $x CHECK-IN RECORD CREATED $k ABTEST $m XY',
+    updatedPrefix: 'ABTEST',
+    content852WithUpdatedSuffix:
+      '$b KU/CC/DI/A $h BR140 $i .J86 $x dbe=c $z Current issues in Periodicals Room $x CHECK-IN RECORD CREATED $k AB $m XYTEST',
+    updatedSuffix: 'XYTEST',
   };
   const marcFiles = [
     {
@@ -102,6 +110,8 @@ describe('MARC -> MARC Holdings', () => {
         itemBarcode: testData.itemBarcode,
         materialTypeId: testData.materialTypeId,
         permanentLoanTypeId: testData.loanTypeId,
+      }).then((res) => {
+        testData.createdItemData = res;
       });
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
@@ -112,6 +122,14 @@ describe('MARC -> MARC Holdings', () => {
     });
   });
 
+  after('delete test data', () => {
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(testData.user.userId);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
+    });
+    FileManager.deleteFile(`cypress/fixtures/${marcFiles[1].editedFileName}`);
+  });
+
   it(
     'C388510 Item metadata updates when Holdings call number components changed (MARC record) (spitfire) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
@@ -119,7 +137,10 @@ describe('MARC -> MARC Holdings', () => {
       InventoryInstance.openHoldingView();
       HoldingsRecordView.editInQuickMarc();
       QuickMarcEditor.waitLoading();
-      QuickMarcEditor.updateExistingField(testData.tag852, testData.content852);
+      QuickMarcEditor.updateExistingField(
+        testData.tag852,
+        testData.content852WithUpdatedCallNumber,
+      );
       QuickMarcEditor.pressSaveAndClose();
       HoldingsRecordView.getRecordLastUpdatedDate().then((date) => {
         const holdingsUpdateDate = date;
@@ -128,10 +149,81 @@ describe('MARC -> MARC Holdings', () => {
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ANNEX_UI} >`);
         InventoryInstance.openItemByBarcode(testData.itemBarcode);
         cy.getItems({ query: `"barcode"=="${testData.itemBarcode}"` }).then((item) => {
-          testData.updatedItemData = item;
+          const updatedItemData = item;
 
           ItemRecordView.waitLoading();
+          ItemRecordView.verifyItemMetadata(
+            holdingsUpdateDate,
+            updatedItemData.metadata,
+            testData.user.userId,
+          );
+          ItemRecordView.verifyItemCallNumberChangedAfterChangedInHoldings(
+            testData.createdItemData,
+            updatedItemData,
+            testData.updatedCallNumber,
+          );
         });
+        ItemRecordView.verifyLastUpdatedDate(holdingsUpdateDate, testData.user.username);
+      });
+      ItemRecordView.closeDetailView();
+      InstanceRecordView.verifyInstanceRecordViewOpened();
+
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.editInQuickMarc();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.updateExistingField(testData.tag852, testData.content852WithUpdatedPrefix);
+      QuickMarcEditor.pressSaveAndClose();
+      HoldingsRecordView.getRecordLastUpdatedDate().then((date) => {
+        const holdingsUpdateDate = date;
+
+        HoldingsRecordView.close();
+        InventoryInstance.openItemByBarcode(testData.itemBarcode);
+        cy.getItems({ query: `"barcode"=="${testData.itemBarcode}"` }).then((item) => {
+          const updatedItemData = item;
+
+          ItemRecordView.waitLoading();
+          ItemRecordView.verifyItemMetadata(
+            holdingsUpdateDate,
+            updatedItemData.metadata,
+            testData.user.userId,
+          );
+          ItemRecordView.verifyItemPrefixChangedAfterChangedInHoldings(
+            testData.createdItemData,
+            updatedItemData,
+            testData.updatedPrefix,
+          );
+        });
+        ItemRecordView.verifyLastUpdatedDate(holdingsUpdateDate, testData.user.username);
+      });
+      ItemRecordView.closeDetailView();
+      InstanceRecordView.verifyInstanceRecordViewOpened();
+
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.editInQuickMarc();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.updateExistingField(testData.tag852, testData.content852WithUpdatedSuffix);
+      QuickMarcEditor.pressSaveAndClose();
+      HoldingsRecordView.getRecordLastUpdatedDate().then((date) => {
+        const holdingsUpdateDate = date;
+
+        HoldingsRecordView.close();
+        InventoryInstance.openItemByBarcode(testData.itemBarcode);
+        cy.getItems({ query: `"barcode"=="${testData.itemBarcode}"` }).then((item) => {
+          const updatedItemData = item;
+
+          ItemRecordView.waitLoading();
+          ItemRecordView.verifyItemMetadata(
+            holdingsUpdateDate,
+            updatedItemData.metadata,
+            testData.user.userId,
+          );
+          ItemRecordView.verifyItemSuffixChangedAfterChangedInHoldings(
+            testData.createdItemData,
+            updatedItemData,
+            testData.updatedSuffix,
+          );
+        });
+        ItemRecordView.verifyLastUpdatedDate(holdingsUpdateDate, testData.user.username);
       });
     },
   );
