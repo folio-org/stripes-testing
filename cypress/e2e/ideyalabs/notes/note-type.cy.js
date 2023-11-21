@@ -16,21 +16,6 @@ describe.skip('Settings', () => {
   });
 
   it(
-    'C16985 Settings | Set up a note type (spitfire)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
-    () => {
-      cy.visit(TopMenu.notesPath);
-      NewNote.fillNote(noteData);
-      cy.visit(TopMenu.agreementsPath);
-      AgreementsDetails.agreementListClick('2020 ACS Publications');
-      AgreementsDetails.openNotesSection();
-      AgreementsDetails.clickOnNewButton();
-      NewNote.clickOnNoteType(noteData);
-      NewNote.deleteNote(noteData);
-    },
-  );
-
-  it(
     'C1304 Settings | Edit a note type (spitfire)',
     { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
     () => {
