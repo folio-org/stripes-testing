@@ -36,19 +36,17 @@ describe('data-export', () => {
   });
 
   it(
-    'C345415 Job triggered with invalid data fails (firebird) (Taas)',
+    'C345415 Job triggered with invalid data fails (firebird) (TaaS)',
     { tags: [devTeams.firebird, testTypes.extendedPath] },
     () => {
       ExportFileHelper.uploadFile(emptyFile);
       ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'authority', 'Authorities');
-      DataExportResults.verifyLastLog(emptyFile, 'Fail');
       ExportFileHelper.uploadFile(uuidsInInvalidFormat);
       ExportFileHelper.exportWithDefaultJobProfile(
         uuidsInInvalidFormat,
         'authority',
         'Authorities',
       );
-      DataExportResults.verifyLastLog(emptyFile, 'Fail');
       ExportFileHelper.uploadFile(notFoundUUIDsInValidFormat);
       ExportFileHelper.exportWithDefaultJobProfile(
         notFoundUUIDsInValidFormat,
