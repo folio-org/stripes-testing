@@ -8,8 +8,8 @@ import {
 } from '../../../../interactors';
 
 export default {
-  waitLoading: (title = 'New custom title') => {
-    cy.expect(HTML(including(title)).exists());
+  waitLoading: () => {
+    cy.expect(HTML(including('New custom title')).exists());
   },
 
   fillInRequiredProperties: (packageName, titleName) => {

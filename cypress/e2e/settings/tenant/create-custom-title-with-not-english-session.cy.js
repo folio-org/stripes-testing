@@ -20,13 +20,11 @@ describe('eHoldings', () => {
       titleName: `test_title${getRandomPostfix()}`,
       buttonLanguage: 'Spanish / español',
       paneHeaderTitle: 'Configuración local de la sesión TEMPORAL',
-      newCustomTitlePanerTitle: 'Nuevo título personalizado',
     },
     dataForSecondPackage: {
       titleName: `test_title${getRandomPostfix()}`,
       buttonLanguage: 'Italian (Italy) / italiano (Italia)',
       paneHeaderTitle: 'Localizzazione TEMPORANEA di sessione',
-      newCustomTitlePanerTitle: 'Nuovo titolo personalizzato',
     },
   };
 
@@ -66,11 +64,7 @@ describe('eHoldings', () => {
       TemporarySessionLocale.verifyTitleOfPaneHeader(testData.dataForFirstPackage.paneHeaderTitle);
       TopMenu.openEHoldingsApp();
       EHoldingsSearch.switchToTitles();
-      EHoldingsTitles.create(
-        testData.packageName,
-        testData.dataForFirstPackage.titleName,
-        testData.dataForFirstPackage.newCustomTitlePanerTitle,
-      );
+      EHoldingsTitles.create(testData.packageName, testData.dataForFirstPackage.titleName);
       EHoldingsResourceView.checkNames(
         testData.packageName,
         testData.dataForFirstPackage.titleName,
@@ -83,11 +77,7 @@ describe('eHoldings', () => {
       TemporarySessionLocale.verifyTitleOfPaneHeader(testData.dataForSecondPackage.paneHeaderTitle);
       TopMenu.openEHoldingsApp();
       EHoldingsSearch.switchToTitles();
-      EHoldingsTitles.create(
-        testData.packageName,
-        testData.dataForSecondPackage.titleName,
-        testData.dataForSecondPackage.newCustomTitlePanerTitle,
-      );
+      EHoldingsTitles.create(testData.packageName, testData.dataForSecondPackage.titleName);
       EHoldingsResourceView.checkNames(
         testData.packageName,
         testData.dataForSecondPackage.titleName,

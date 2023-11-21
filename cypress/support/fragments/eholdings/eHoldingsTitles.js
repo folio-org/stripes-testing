@@ -28,9 +28,8 @@ export default {
       eHoldingsTitle.waitLoading(title);
     });
   },
-  create: (packageName, titleName = `title_${getRandomPostfix()}`, paneTitle) => {
+  create: (packageName, titleName = `title_${getRandomPostfix()}`) => {
     cy.do(resultSection.find(Button({ href: '/eholdings/titles/new' })).click());
-    eHoldingsNewCustomTitle.waitLoading(paneTitle);
     eHoldingsNewCustomTitle.fillInRequiredProperties(packageName, titleName);
     eHoldingsNewCustomTitle.saveAndClose();
     return titleName;
