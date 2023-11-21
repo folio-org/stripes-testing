@@ -692,6 +692,9 @@ export default {
     ]);
   },
 
+  verifyDerivedMarcBibSave() {
+    cy.expect(calloutOnDeriveFirst.exists());
+  },
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
@@ -1514,6 +1517,10 @@ export default {
 
   verifyMultiple245TagCallout() {
     cy.expect(calloutMultiple245MarcTags.exists());
+  },
+
+  verifyMultipleTagCallout(tagNumber) {
+    cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
   },
 
   verifyMultiple001TagCallout() {
