@@ -1,13 +1,13 @@
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Users from '../../support/fragments/users/users';
-import { REQUEST_TYPES } from '../../support/constants';
+import { REQUEST_TYPES, ITEM_STATUS_NAMES } from '../../support/constants';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import Permissions from '../../support/dictionary/permissions';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -62,13 +62,13 @@ describe('Title level request for Item with status In process', () => {
   });
 
   after('Delete test data', () => {
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
       servicePoint: testData.servicePoint,
       shouldCheckIn: true,
     });
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
       defaultLocation.campusId,
@@ -78,16 +78,20 @@ describe('Title level request for Item with status In process', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('Check that user can create a TLR Recall for Item with status In process', () => {
-    InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
-    InventoryInstance.checkNewRequestAtNewPane();
-    NewRequest.verifyTitleLevelRequestsCheckbox('checked');
-    NewRequest.enterRequesterBarcode(userData.barcode);
-    NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
-    NewRequest.choosepickupServicePoint(testData.servicePoint.name);
-    NewRequest.saveRequestAndClose();
-    NewRequest.verifyRequestSuccessfullyCreated(userData.username);
-    RequestDetail.checkItemStatus('Recall');
-    RequestDetail.checkRequestsOnItem('1');
-  });
+  it(
+    'Check that user can create a TLR Recall for Item with status In process (vega) (TaaS)',
+    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
+      InventoryInstance.checkNewRequestAtNewPane();
+      NewRequest.verifyTitleLevelRequestsCheckbox('checked');
+      NewRequest.enterRequesterBarcode(userData.barcode);
+      NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
+      NewRequest.choosepickupServicePoint(testData.servicePoint.name);
+      NewRequest.saveRequestAndClose();
+      NewRequest.verifyRequestSuccessfullyCreated(userData.username);
+      RequestDetail.checkItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
+      RequestDetail.checkRequestsOnItem('1');
+    },
+  );
 });
