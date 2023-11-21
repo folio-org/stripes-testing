@@ -164,6 +164,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
       for (let i = 5; i < 9; i++) {
         QuickMarcEditor.clickUnlinkIconInTagField(i);
+        QuickMarcEditor.confirmUnlinkingField();
         cy.wait(500);
       }
       QuickMarcEditor.clickLinkIconInTagField(newFields[0].rowIndex + 1);

@@ -468,8 +468,8 @@ export default {
     ]);
   },
 
-  verifyRecordIdentifierDisabled() {
-    cy.expect(recordIdentifierDropdown.has({ disabled: true }));
+  verifyRecordIdentifierDisabled(disabled = true) {
+    cy.expect(recordIdentifierDropdown.has({ disabled }));
   },
 
   selectRecordIdentifier(value) {
