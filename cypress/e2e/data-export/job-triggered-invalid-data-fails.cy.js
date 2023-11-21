@@ -11,12 +11,11 @@ import DataExportResults from '../../support/fragments/data-export/dataExportRes
 
 let user;
 
-const emptyFile = `emptyFile${getRandomPostfix()}.csv`;
-const uuidsInInvalidFormat = 'invalid-uuids.csv';
-const notFoundUUIDsInValidFormat = 'not-found-uuids.csv';
-
 describe('data-export', () => {
-  beforeEach('create test data', () => {
+  const emptyFile = `emptyFile${getRandomPostfix()}.csv`;
+  const uuidsInInvalidFormat = 'invalid-uuids.csv';
+  const notFoundUUIDsInValidFormat = 'not-found-uuids.csv';
+  before('create test data', () => {
     cy.createTempUser([permissions.dataExportAll.gui, permissions.dataExportEnableModule.gui]).then(
       (userProperties) => {
         user = userProperties;
