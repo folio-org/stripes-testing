@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   Button,
   DropdownMenu,
@@ -11,6 +12,7 @@ import {
   TextField,
 } from '../../../../../interactors';
 import SearchHelper from '../../finance/financeHelper';
+import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const saveButton = Button({ id: 'save-order-template-button' });
@@ -88,5 +90,33 @@ export default {
     cy.wait(6000);
     cy.do(saveButton.click());
     InteractorsTools.checkCalloutMessage('The template was saved');
+  },
+  getDefaultOrderTemplate({
+    orderType = 'One-time',
+    renewalNote = `autotest_renewal_note_${getRandomPostfix()}`,
+  } = {}) {
+    return {
+      isPackage: false,
+      templateName: `autotest_template_name_${getRandomPostfix()}`,
+      templateCode: getRandomPostfix(),
+      orderType,
+      renewalNote,
+      id: uuid(),
+    };
+  },
+  createOrderTemplateViaApi(orderTemplate) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/order-templates',
+        body: orderTemplate,
+      })
+      .then(({ body }) => body);
+  },
+  deleteOrderTemplateViaApi(orderTemplateId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `orders/order-templates/${orderTemplateId}`,
+    });
   },
 };

@@ -11,19 +11,19 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const today = DateTools.getFormattedDate(
-  { date: new Date() },
-  'YYYY-MM-DD',
-);
+const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditLogsView.gui,
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui,
-      ], 'staff').then((userProperties) => {
+      cy.createTempUser(
+        [
+          permissions.bulkEditLogsView.gui,
+          permissions.bulkEditUpdateRecords.gui,
+          permissions.uiUserEdit.gui,
+        ],
+        'staff',
+      ).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -59,7 +59,7 @@ describe('bulk-edit', () => {
           'Reviewing changes',
           'Completed',
           'Completed with errors',
-          'Failed'
+          'Failed',
         ];
         statuses.forEach((status) => BulkEditSearchPane.checkLogsStatus(status));
 

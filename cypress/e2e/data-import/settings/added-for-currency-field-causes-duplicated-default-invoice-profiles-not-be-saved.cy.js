@@ -51,6 +51,7 @@ describe('data-import', () => {
       'C353959 Validation added for Currency field causes duplicated default invoice profiles not to be saved (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
+        const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully created`;
         FieldMappingProfiles.search(profileForDuplicate);
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
@@ -59,7 +60,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillVendorName(mappingProfile.organizationName);
         NewFieldMappingProfile.fillPaymentMethod(mappingProfile.paymentMethod);
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.checkCreateProfileCalloutMessage(mappingProfile.name);
+        FieldMappingProfileView.checkCalloutMessage(calloutMessage);
         FieldMappingProfileView.verifyCurrency(currencyValue);
       },
     );

@@ -177,6 +177,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
 
       QuickMarcEditor.clickUnlinkIconInTagField(bib655FieldValues[0]);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib655AfterUnlinking);
       QuickMarcEditor.verifyIconsAfterUnlinking(bib655FieldValues[0]);
       QuickMarcEditor.pressSaveAndClose();

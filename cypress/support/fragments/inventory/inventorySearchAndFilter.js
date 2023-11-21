@@ -13,7 +13,6 @@ import {
   MultiSelect,
   MultiSelectOption,
   Pane,
-  SearchField,
   Section,
   Select,
   TextArea,
@@ -429,7 +428,7 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
+    cy.do(TextArea({ id: 'input-inventory-search' }).selectIndex(parameter));
     cy.do(keywordInput.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
@@ -493,6 +492,10 @@ export default {
 
   selectSearchOptions(searchOption, text) {
     cy.do([inventorySearchAndFilterInput.choose(searchOption), keywordInput.fillIn(text)]);
+  },
+
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
   },
 
   clickSearch() {
@@ -814,5 +817,9 @@ export default {
     // wait for facet options to reload in all facets
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
+  },
+
+  checkSearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
   },
 };
