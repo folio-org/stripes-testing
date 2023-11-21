@@ -142,6 +142,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.clickUnlinkIconInTagField(18);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(
         18,
         '240',
