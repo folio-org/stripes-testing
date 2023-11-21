@@ -23,8 +23,10 @@ import {
   Select,
   TextArea,
   TextField,
+  ValueChipRoot,
   including,
 } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -67,6 +69,22 @@ const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
+const authoritySourceAccordion = Accordion({ id: 'sourceFileId' });
+const authoritySourceIptions = [
+  'LC Name Authority file (LCNAF)',
+  'LC Subject Headings (LCSH)',
+  "LC Children's Subject Headings",
+  'LC Genre/Form Terms (LCGFT)',
+  'LC Demographic Group Terms (LCFGT)',
+  'LC Medium of Performance Thesaurus for Music (LCMPT)',
+  'Faceted Application of Subject Terminology (FAST)',
+  'Medical Subject Headings (MeSH)',
+  'Thesaurus for Graphic Materials (TGM)',
+  'Rare Books and Manuscripts Section (RBMS)',
+  'Art & architecture thesaurus (AAT)',
+  'GSAFD Genre Terms (GSAFD)',
+  'Not specified',
+];
 
 export default {
   waitLoading() {
@@ -752,5 +770,42 @@ export default {
         content: including(value),
       }),
     );
+  },
+
+  clickAuthoritySourceAccordion() {
+    cy.do([authoritySourceAccordion.clickHeader()]);
+  },
+
+  verifyAuthoritySourceAccordionCollapsed() {
+    cy.expect([authoritySourceAccordion.has({ open: false })]);
+  },
+
+  checkResultsSelectedByAuthoritySource(options) {
+    authoritySourceIptions.forEach((option) => {
+      if (options.includes(option)) {
+        cy.expect([MultiColumnListCell({ columnIndex: 4, content: option }).exists()]);
+      } else {
+        cy.expect([MultiColumnListCell({ columnIndex: 4, content: option }).absent()]);
+      }
+    });
+  },
+
+  checkResultsListRecordsCount() {
+    const alias = `getItems${getRandomPostfix()}`;
+    cy.intercept('GET', '/search/authorities?*').as(alias);
+    cy.wait(`@${alias}`, { timeout: 10000 }).then((item) => {
+      const { totalRecords } = item.response.body;
+      cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());
+    });
+  },
+
+  removeAuthoritySourceOption: (option) => {
+    cy.do(
+      sourceFileAccordion
+        .find(ValueChipRoot(option))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(ValueChipRoot(option).absent());
   },
 };
