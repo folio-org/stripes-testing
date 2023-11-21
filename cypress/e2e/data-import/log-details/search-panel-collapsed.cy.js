@@ -17,6 +17,11 @@ describe('data-import', () => {
         Permissions.dataExportEnableApp.gui,
       ]).then((userProperties) => {
         user = userProperties;
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 
@@ -33,10 +38,6 @@ describe('data-import', () => {
       () => {
         // #1 Go to the "Data import" app
         // The "Data import" page is displayed
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
 
         // #2 Click on "Actions" button -> select "View all"
         // The user is redirected to the View all logs page

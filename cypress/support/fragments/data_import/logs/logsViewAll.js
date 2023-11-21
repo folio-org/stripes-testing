@@ -28,6 +28,7 @@ const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
 const logsResultPane = PaneContent({ id: 'pane-results-content' });
 const collapseButton = Button({ icon: 'caret-left' });
 const expandButton = Button({ icon: 'caret-right' });
+const searchFilterPane = Pane('Search & filter');
 
 function getCheckboxByRow(row) {
   return MultiColumnList()
@@ -378,7 +379,7 @@ export default {
   },
 
   viewAllIsOpened: () => {
-    cy.expect(Pane('Search & filter').exists());
+    cy.expect(searchFilterPane.exists());
     cy.expect(
       Pane('Logs')
         .find(MultiColumnList({ id: 'list-data-import' }))
@@ -488,5 +489,5 @@ export default {
 
   expandButtonClick: () => cy.do(expandButton.click()),
 
-  checkSearchPaneCollapsed: () => cy.expect(Pane('Search & filter').absent()),
+  checkSearchPaneCollapsed: () => cy.expect(searchFilterPane.absent()),
 };
