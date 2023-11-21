@@ -12,6 +12,11 @@ describe('data-import', () => {
     before('create user and login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 
@@ -26,10 +31,6 @@ describe('data-import', () => {
       () => {
         // #1 Go to the "Data Import" app
         // User is on the Data Import landing page
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
 
         // #2 In the log, check that the style of the file names has changed
         // Instead of bold, the file name is lightly underlined.
