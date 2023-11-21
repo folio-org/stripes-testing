@@ -55,6 +55,7 @@ export default HTML.extend('accordion')
       .map((button) => button.textContent)
       .filter((id) => id),
     inputNames: (el) => [...el.querySelectorAll('input')].map((input) => input.getAttribute('name')),
+    isWrapper: (el) => /accordionsWrapper/.test(el.className),
   })
   .actions({
     clickHeader: ({ perform }) => perform((el) => el.querySelector('[class^=labelArea-]').click()),
