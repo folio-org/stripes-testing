@@ -21,6 +21,7 @@ const requesterInfoSection = Section({ id: 'requester-info' });
 const staffNotesInfoSection = Section({ id: 'staff-notes' });
 const actionsButton = requestDetailsSection.find(Button('Actions'));
 const moveRequestButton = Button('Move request');
+const duplicateRequestButton = Button('Duplicate');
 const fulfillmentInProgressAccordion = Accordion({
   id: 'fulfillment-in-progress',
 });
@@ -32,15 +33,17 @@ const additionalInfoOptionalInput = TextField('Additional information for patron
 const additionalInfoRequiredInput = TextField('Additional information for patron *');
 
 export default {
-  waitLoading: () => {
+  waitLoading: (type = 'staff') => {
     cy.expect([
       Pane({ id: 'instance-details', title: 'Request Detail' }).exists(),
       requestDetailsSection.find(titleInformationSection).exists(),
       requestDetailsSection.find(itemInformationSection).exists(),
       requestDetailsSection.find(requestInfoSection).exists(),
       requestDetailsSection.find(requesterInfoSection).exists(),
-      requestDetailsSection.find(staffNotesInfoSection).exists(),
     ]);
+    if (type === 'title') {
+      cy.expect([requestDetailsSection.find(staffNotesInfoSection).exists()]);
+    }
   },
 
   checkTitleInformation: (data) => {
@@ -174,6 +177,10 @@ export default {
 
   openMoveRequest() {
     cy.do(moveRequestButton.click());
+  },
+
+  openDuplicateRequest() {
+    cy.do(duplicateRequestButton.click());
   },
 
   verifyMoveRequestButtonExists() {

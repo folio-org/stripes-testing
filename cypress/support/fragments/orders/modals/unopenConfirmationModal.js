@@ -2,6 +2,7 @@ import { Button, Modal, including } from '../../../../../interactors';
 
 const unopenConfirmationModal = Modal(including('Unopen - purchase order'));
 const cancelButton = unopenConfirmationModal.find(Button('Cancel'));
+const submitButton = unopenConfirmationModal.find(Button('Submit'));
 const deleteHoldingsButton = unopenConfirmationModal.find(
   Button({ id: 'clickable-order-unopen-confirmation-confirm-delete-holdings' }),
 );
@@ -25,7 +26,12 @@ const values = {
 };
 
 export default {
-  confirm({ keepHoldings = false } = {}) {
+  confirm({ submit = false, keepHoldings = false } = {}) {
+    if (submit) {
+      cy.do(submitButton.click());
+      return;
+    }
+
     if (keepHoldings) {
       cy.do(keepHoldingsButton.click());
     } else {

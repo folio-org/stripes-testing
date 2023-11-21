@@ -462,6 +462,16 @@ export default {
     ]);
   },
 
+  verifyContributorWithMarcAppLink: (indexRow, indexColumn, value) => {
+    cy.expect(
+      Accordion('Contributor')
+        .find(MultiColumnList({ id: 'list-contributors' }))
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: indexColumn }))
+        .has({ content: including(value) }),
+    );
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },

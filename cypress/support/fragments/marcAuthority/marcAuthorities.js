@@ -254,6 +254,7 @@ export default {
     cy.expect([
       selectField.has({ content: including('Keyword') }),
       selectField.has({ content: including('Identifier (all)') }),
+      selectField.has({ content: including('LCCN') }),
       selectField.has({ content: including('Personal name') }),
       selectField.has({ content: including('Corporate/Conference name') }),
       selectField.has({ content: including('Geographic name') }),
@@ -728,5 +729,28 @@ export default {
       .then((res) => {
         return res.body.authorities;
       });
+  },
+
+  checkValueResultsColumn: (columnIndex, value) => {
+    cy.expect([
+      rootSection.exists(),
+      MultiColumnListCell({ columnIndex, content: value }).exists(),
+    ]);
+  },
+
+  checkHeadingReferenceColumnValueIsBold(rowNumber) {
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex: 2 }).has({
+        innerHTML: including('anchorLink--'),
+      }),
+    );
+  },
+
+  checkCellValueIsExists(rowNumber, columnIndex, value) {
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex }).has({
+        content: including(value),
+      }),
+    );
   },
 };

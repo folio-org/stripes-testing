@@ -136,6 +136,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
       );
 
       QuickMarcEditor.clickUnlinkIconInTagField(76);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(
         76,
         '700',
