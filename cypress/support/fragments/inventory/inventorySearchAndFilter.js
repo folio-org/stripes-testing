@@ -17,6 +17,7 @@ import {
   Select,
   TextArea,
   TextField,
+  SearchField,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
@@ -428,7 +429,7 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do(TextArea({ id: 'input-inventory-search' }).selectIndex(parameter));
+    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
     cy.do(keywordInput.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());

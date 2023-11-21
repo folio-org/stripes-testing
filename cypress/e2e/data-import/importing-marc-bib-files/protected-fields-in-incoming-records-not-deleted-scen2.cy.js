@@ -91,12 +91,13 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
-        MarcFieldProtection.deleteViaApi(response[0].id);
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
+          MarcFieldProtection.deleteViaApi(response[0].id);
+        });
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+        Users.deleteViaApi(user.userId);
       });
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-      Users.deleteViaApi(user.userId);
     });
 
     it(
