@@ -518,18 +518,23 @@ export default {
   clickUnlinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
+  },
+
+  confirmUnlinkingField() {
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
   },
 
-  checkUnlinkModal(rowIndex, text) {
-    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
+  cancelUnlinkingField() {
+    cy.do(unlinkModal.find(cancelUnlinkButtonInsideModal).click());
+  },
+
+  checkUnlinkModal(text) {
     cy.expect([
       unlinkModal.exists(),
       unlinkButtonInsideModal.exists(),
       cancelUnlinkButtonInsideModal.exists(),
       unlinkModal.has({ content: including(text) }),
     ]);
-    cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
   },
 
   cancelEditConfirmationPresented() {
