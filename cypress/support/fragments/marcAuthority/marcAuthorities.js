@@ -231,13 +231,18 @@ export default {
 
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
+  checkRowsCount: (expectedRowsCount) => {
+    cy.expect([
+      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
+      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent(),
+    ]);
+  },
+
   checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
     authoritiesList
       .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
       .exists(),
   ),
-
-  checkRowsCount: (expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()),
 
   switchToBrowse: () => cy.do(Button({ id: 'segment-navigation-browse' }).click()),
 
@@ -252,6 +257,8 @@ export default {
   searchBy: (parameter, value) => {
     cy.do(filtersSection.find(searchInput).selectIndex(parameter));
     cy.do(filtersSection.find(searchInput).fillIn(value));
+    // need to wait until value will be applied in case when value is long
+    cy.wait(1000);
     cy.do(filtersSection.find(searchButton).click());
   },
 
@@ -1027,5 +1034,13 @@ export default {
 
   verifySelectedTypeOfHeadingCount(selectedCount) {
     cy.expect(typeOfHeadingSelect.has({ selectedCount }));
+  },
+
+  verifyMarcViewPaneIsOpened(isOpened = true) {
+    if (isOpened) {
+      marcViewSection.exists();
+    } else {
+      marcViewSection.absent();
+    }
   },
 };
