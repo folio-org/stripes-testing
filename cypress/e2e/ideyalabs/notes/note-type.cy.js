@@ -7,7 +7,6 @@ import NewNote from '../../../support/fragments/notes/newNote';
 import TopMenu from '../../../support/fragments/topMenu';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
-const noteData = `New Note${randomFourDigitNumber()}`;
 const noteType = `Item${randomFourDigitNumber()}`;
 
 describe.skip('Settings', () => {

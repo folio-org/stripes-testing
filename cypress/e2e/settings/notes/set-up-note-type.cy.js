@@ -3,7 +3,6 @@ import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
 import Users from '../../../support/fragments/users/users';
-import AgreementsDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import Agreements from '../../../support/fragments/agreements/agreements';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import NewNote from '../../../support/fragments/notes/newNote';
@@ -57,7 +56,7 @@ describe('Notes', () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.openNotesSection();
       AgreementViewDetails.verifyNotesIsEmpty();
-      AgreementsDetails.clickOnNewButton();
+      AgreementViewDetails.clickOnNewButton();
       NewNote.verifyNewNoteIsDisplayed();
       NewNote.verifyNoteTypeExists(noteType);
       cy.visit(TopMenu.notesPath);
