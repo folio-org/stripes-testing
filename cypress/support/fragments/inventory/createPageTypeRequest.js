@@ -112,7 +112,7 @@ export default {
   saveAndClose(servicePointName = 'Circ Desk 1') {
     newRequest.chooseRequestType(REQUEST_TYPES.PAGE);
     Requests.verifyFulfillmentPreference();
-    newRequest.choosepickupServicePoint(servicePointName);
+    newRequest.choosePickupServicePoint(servicePointName);
     newRequest.saveRequestAndClose();
     Requests.verifyRequestsPage();
     this.verifyNewRequest();
