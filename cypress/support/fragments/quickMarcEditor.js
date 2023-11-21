@@ -91,6 +91,7 @@ const calloutNo245MarcTag = Callout('Record cannot be saved without field 245.')
 const calloutMultiple245MarcTags = Callout('Record cannot be saved with more than one field 245.');
 const calloutMultiple001MarcTags = Callout('Record cannot be saved. Can only have one MARC 001.');
 const calloutMultiple010MarcTags = Callout('Record cannot be saved with more than one 010 field');
+const calloutMultiple010Subfields = Callout('010 can only have one $a.');
 const calloutInvalidLDRValue = Callout(
   including('Record cannot be saved. Please enter a valid Leader'),
 );
@@ -1530,6 +1531,13 @@ export default {
     cy.expect(calloutMultiple010MarcTags.exists());
     cy.do(calloutMultiple010MarcTags.dismiss());
     cy.expect(calloutMultiple010MarcTags.absent());
+    cy.expect(rootSection.exists());
+  },
+
+  verifyAndDismissMultiple010SubfieldsCallout() {
+    cy.expect(calloutMultiple010Subfields.exists());
+    cy.do(calloutMultiple010Subfields.dismiss());
+    cy.expect(calloutMultiple010Subfields.absent());
     cy.expect(rootSection.exists());
   },
 
