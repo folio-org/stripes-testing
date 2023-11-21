@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
@@ -18,7 +18,7 @@ describe('eHoldings', () => {
     const testData = {
       packageName: 'E-Journal',
       selectedStatus: 'Selected',
-      titlesNumber: '0',
+      titlesNumber: 0,
       firstFieldForExport: 'Holdings status',
       secondFieldForExport: 'Notes',
       fileName: `C356417autoTestFile${getRandomPostfix()}.csv`,
@@ -55,7 +55,7 @@ describe('eHoldings', () => {
 
     it(
       'C356417 Export of selected “Package” without titles. User chooses "Package" fields to export. (spitfire)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
