@@ -47,8 +47,6 @@ describe('Renewal', () => {
     loanPolicy: loanPolicyData.name,
   };
   let addedRule;
-  let userName;
-  let password;
 
   before(() => {
     cy.getAdminToken()
