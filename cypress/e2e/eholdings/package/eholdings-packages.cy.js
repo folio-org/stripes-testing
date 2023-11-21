@@ -256,18 +256,16 @@ describe('eHoldings', () => {
             waiter: EHoldingsPackages.waitLoading,
           });
 
-          EHoldingsPackages.createPackageViaAPI().then(() => {
-            EHoldingSearch.switchToPackages();
-            // wait until package is created via API
-            cy.wait(10000);
-            UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
-            EHoldingsPackagesSearch.bySelectionStatus('Selected');
-            EHoldingsPackages.openPackage();
-            EHoldingsPackage.editProxyActions();
-            EHoldingsPackageView.patronRadioButton('No');
-            EHoldingsPackage.saveAndClose();
-            EHoldingsPackageView.verifyAlternativeRadio('No');
-          });
+          EHoldingSearch.switchToPackages();
+          // wait until package is created via API
+          cy.wait(10000);
+          UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
+          EHoldingsPackagesSearch.bySelectionStatus('Selected');
+          EHoldingsPackages.openPackage();
+          EHoldingsPackage.editProxyActions();
+          EHoldingsPackageView.patronRadioButton('No');
+          EHoldingsPackage.saveAndClose();
+          EHoldingsPackageView.verifyAlternativeRadio('No');
         });
       },
     );
