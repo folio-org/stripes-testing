@@ -12,21 +12,20 @@ describe('Settings: Tenant', () => {
   };
 
   before('Create test data', () => {
-    cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(testData.servicePoint);
-      const { institution, location } = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
-      });
-      testData.institution = institution;
-      testData.location = location;
-      Locations.createViaApi(testData.location);
-    });
-
     cy.createTempUser([Permissions.settingsTenantViewLocation.gui]).then((userProperties) => {
       testData.user = userProperties;
+      cy.getAdminToken().then(() => {
+        ServicePoints.createViaApi(testData.servicePoint);
+        const { institution, location } = Locations.getDefaultLocation({
+          servicePointId: testData.servicePoint.id,
+        });
+        testData.institution = institution;
+        testData.location = location;
+        Locations.createViaApi(testData.location);
+      });
 
       cy.login(testData.user.username, testData.user.password);
-      cy.wait(1000);
+      cy.wait(2000);
       TopMenuNavigation.navigateToApp('Settings');
       TenantPane.goToTenantTab();
     });
