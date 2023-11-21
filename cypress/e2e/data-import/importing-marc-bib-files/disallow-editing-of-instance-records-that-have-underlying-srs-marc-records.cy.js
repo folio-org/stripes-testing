@@ -71,6 +71,17 @@ describe('Data Import', () => {
           InstanceRecordView.verifyInstancePaneExists();
           InstanceRecordView.edit();
           InstanceRecordEdit.checkReadOnlyFields();
+          InstanceRecordEdit.checkCheckboxConditions([
+            { label: 'Suppress from discovery', conditions: { disabled: false } },
+            { label: 'Staff suppress', conditions: { disabled: false } },
+            { label: 'Previously held', conditions: { disabled: false } },
+          ]);
+          InstanceRecordEdit.verifyCatalogDateInputIsDisabled(false);
+          InstanceRecordEdit.verifyInstanceStatusTermConditionIsDisabled(false);
+          InstanceRecordEdit.verifyStatisticalCodeIsEnabled();
+          InstanceRecordEdit.verifyNatureOfContentIsEnabled();
+          InstanceRecordEdit.verifyAddParentInstanceIsEnabled();
+          InstanceRecordEdit.verifyAddChildInstanceIsEnabled();
         });
       },
     );
