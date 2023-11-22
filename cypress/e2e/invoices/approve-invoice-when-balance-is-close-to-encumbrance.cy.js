@@ -135,17 +135,19 @@ describe('Invoices', () => {
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
       const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
-      TransactionDetails.checkTransactionDetails([
-        { key: 'Fiscal year', value: testData.fiscalYear.code },
-        { key: 'Amount', value: '0.00' },
-        { key: 'Source', value: testData.orderLine.poLineNumber },
-        { key: 'Type', value: 'Encumbrance' },
-        { key: 'From', value: testData.fund.name },
-        { key: 'Initial encumbrance', value: '98.00' },
-        { key: 'Awaiting payment', value: '96.00' },
-        { key: 'Expended', value: '0.00' },
-        { key: 'Status', value: 'Released' },
-      ]);
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+          { key: 'Amount', value: '0.00' },
+          { key: 'Source', value: testData.orderLine.poLineNumber },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Initial encumbrance', value: '98.00' },
+          { key: 'Awaiting payment', value: '96.00' },
+          { key: 'Expended', value: '0.00' },
+          { key: 'Status', value: 'Released' },
+        ],
+      });
     },
   );
 });

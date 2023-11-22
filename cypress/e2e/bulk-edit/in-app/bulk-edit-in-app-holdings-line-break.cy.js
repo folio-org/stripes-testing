@@ -61,9 +61,8 @@ describe('bulk-edit', () => {
           waiter: InventoryInstances.waitContentLoading,
         });
         [items[0].instanceName, items[1].instanceName].forEach((instance) => {
-          InventorySearchAndFilter.searchInstanceByTitle(instance);
-          InventoryInstances.selectInstance();
-          InventoryInstance.waitLoading();
+          InventorySearchAndFilter.switchToHoldings();
+          InventorySearchAndFilter.byKeywords(instance);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.edit();
           HoldingsRecordEdit.addHoldingsNotes(holdingsNote);
@@ -98,7 +97,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(...holdingsHRIDs);
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [holdingsNote]);
-        BulkEditSearchPane.changeShowColumnCheckbox('Notes');
+        BulkEditSearchPane.changeShowColumnCheckbox('Action note');
         BulkEditSearchPane.verifySpecificItemsMatched(holdingsNote);
 
         const location = 'Online';
@@ -117,9 +116,8 @@ describe('bulk-edit', () => {
 
         cy.visit(TopMenu.inventoryPath);
         items.forEach((item) => {
-          InventorySearchAndFilter.searchInstanceByTitle(item.instanceName);
-          InventoryInstances.selectInstance();
-          InventoryInstance.waitLoading();
+          InventorySearchAndFilter.switchToHoldings();
+          InventorySearchAndFilter.byKeywords(item.instanceName);
           InventoryInstance.openHoldingView();
           InventoryInstance.verifyHoldingsTemporaryLocation(location);
           InventoryInstance.closeHoldingsView();

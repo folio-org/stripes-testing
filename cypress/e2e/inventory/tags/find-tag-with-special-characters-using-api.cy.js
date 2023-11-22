@@ -10,7 +10,7 @@ import { DevTeams } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-describe('inventory', () => {
+describe('Inventory', () => {
   describe('Tags', () => {
     let userData;
     const testData = {
@@ -21,28 +21,28 @@ describe('inventory', () => {
       title: getTestEntityValue('InstanceStaffSlips'),
     };
     const newTags = [
-      'test',
-      'tag_test',
-      'tag,test',
-      "tag's",
-      'tag50%',
-      'tag^one',
-      '{tag}',
-      '(tags)',
-      '[tags]test',
-      '@tag',
-      'money$tag',
-      'hashtag#tag',
-      'tag&tags',
-      'tag+tag-tag=0',
-      'tag;',
-      'tag.',
-      'ohtag!',
+      'atest',
+      'atag_test',
+      'atag,test',
+      "atag's",
+      'atag50%',
+      'atag^one',
+      '{atag}',
+      '(atags)',
+      '[atags]test',
+      '@atag',
+      'money$atag',
+      'hashtag#atag',
+      'atag&tags',
+      'atag+tag-tag=0',
+      'atag;',
+      'atag.',
+      'ohatag!',
       'really?',
-      '"tags"',
-      'tag/nottag',
-      'tag\\hmm',
-      'new*tag',
+      '"atags"',
+      'atag/nottag',
+      'atag\\hmm',
+      'new*atag',
     ];
     before('Preconditions', () => {
       cy.getAdminToken()
@@ -50,6 +50,13 @@ describe('inventory', () => {
           ServicePoints.createViaApi(testData.userServicePoint);
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
+          });
+          cy.wrap([...newTags, '\\"atags\\"', 'atag\\\\hmm']).each((tag) => {
+            cy.getTagsApi({ query: `label=="${tag}"` }).then(({ body }) => {
+              if (body.tags) {
+                cy.deleteTagApi(body.tags[0].id);
+              }
+            });
           });
         })
         .then(() => {
@@ -99,6 +106,7 @@ describe('inventory', () => {
       { tags: [TestTypes.extendedPath, DevTeams.volaris] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
+        InventorySearchAndFilter.verifySearchResult(instanceData.title);
         InventorySearchAndFilter.selectFoundInstance(instanceData.title);
         InventorySearchAndFilter.verifyInstanceDetailsView();
         InventorySearchAndFilter.openTagsField();
@@ -106,11 +114,11 @@ describe('inventory', () => {
         newTags.forEach((tag) => {
           InventorySearchAndFilter.addTag(tag);
           InteractorsTools.checkCalloutMessage('New tag created');
-          cy.wait(2000);
+          cy.wait(3000);
         });
 
-        newTags[newTags.indexOf('"tags"')] = '\\"tags\\"';
-        newTags[newTags.indexOf('tag\\hmm')] = 'tag\\\\hmm';
+        newTags[newTags.indexOf('"atags"')] = '\\"atags\\"';
+        newTags[newTags.indexOf('atag\\hmm')] = 'atag\\\\hmm';
         newTags.forEach((tag) => {
           cy.getAdminToken();
           cy.getTagsApi({ query: `label=="${tag}"` }).then(({ body }) => {
