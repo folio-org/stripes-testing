@@ -27,6 +27,8 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     tag240rowindex: 29,
     authority100FieldValue:
       'Dowland, John, num 1 test purpose 1563?-1626. (valery pilko) pass (read only) pass (read only) epass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only) pass (read only)',
+    changesSavedCallout:
+      'This record has successfully saved and is in process. Changes may not appear immediately.',
   };
 
   const marcFiles = [
@@ -138,8 +140,8 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib110UnlinkedFieldValues);
       QuickMarcEditor.checkLinkButtonExist(testData.tag240);
-      QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkAfterSaveAndClose();
+      QuickMarcEditor.pressSaveAndKeepEditing(testData.changesSavedCallout);
+      QuickMarcEditor.checkContent(bib110UnlinkedFieldValues[4], bib110UnlinkedFieldValues[0]);
     },
   );
 });
