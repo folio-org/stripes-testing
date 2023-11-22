@@ -12,6 +12,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
+import Requests from '../../support/fragments/requests/requests';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 
 describe('Title level request for Item with status In process', () => {
@@ -62,19 +63,25 @@ describe('Title level request for Item with status In process', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
+    Requests.getRequestApi({
+      query: `(item.barcode=="${testData.folioInstances[0].barcodes[0]}")`,
+    }).then((requests) => {
+      Requests.deleteRequestViaApi(requests[0].id);
+    });
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
       servicePoint: testData.servicePoint,
       shouldCheckIn: true,
     });
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
       defaultLocation.campusId,
       defaultLocation.libraryId,
       defaultLocation.id,
     );
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.userId);
   });
 
