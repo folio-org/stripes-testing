@@ -123,8 +123,8 @@ describe('MARC Authority -> Edit linked Authority record', () => {
       QuickMarcEditor.confirmUpdateLinkedBibs(1);
       MarcAuthorities.searchBy('Keyword', testData.updated155FieldValue);
       MarcAuthorities.checkResultList([testData.updated155FieldValue]);
-      MarcAuthorities.verifyNumberOfTitles(4, '1');
-      MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
+      MarcAuthorities.verifyNumberOfTitles(5, '1');
+      MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
 
       InventoryInstance.checkInstanceTitle(marcFiles[0].instanceTitle);
       InventoryInstance.verifyRecordStatus(testData.autoUpdateUserName);
