@@ -321,6 +321,9 @@ export default {
   waitInventoryLoading() {
     cy.expect(section.exists());
   },
+
+  openSubjectAccordion: () => cy.do(Accordion('Subject').click()),
+
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },

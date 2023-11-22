@@ -66,11 +66,12 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      collectionOfMappingProfiles.forEach((profile) => {
-        FieldMappingProfileView.deleteViaApi(profile.name);
+      cy.getAdminToken().then(() => {
+        collectionOfMappingProfiles.forEach((profile) => {
+          FieldMappingProfileView.deleteViaApi(profile.name);
+        });
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
     });
 
     it(
