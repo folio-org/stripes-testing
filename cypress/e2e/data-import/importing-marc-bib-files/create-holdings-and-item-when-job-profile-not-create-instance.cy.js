@@ -105,24 +105,25 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     const createItemMappingProfile = (itemMappingProfile) => {

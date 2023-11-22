@@ -83,21 +83,22 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      cy.getAdminToken();
-      cy.wrap(
-        testInstanceId.holdingIds.forEach((holdingsId) => {
-          cy.wrap(
-            holdingsId.itemIds.forEach((itemId) => {
-              cy.deleteItemViaApi(itemId);
-            }),
-          ).then(() => {
-            cy.deleteHoldingRecordViaApi(holdingsId.id);
-          });
-        }),
-      ).then(() => {
-        InventoryInstance.deleteInstanceViaApi(testInstanceId.instanceId);
+      cy.getAdminToken().then(() => {
+        cy.wrap(
+          testInstanceId.holdingIds.forEach((holdingsId) => {
+            cy.wrap(
+              holdingsId.itemIds.forEach((itemId) => {
+                cy.deleteItemViaApi(itemId);
+              }),
+            ).then(() => {
+              cy.deleteHoldingRecordViaApi(holdingsId.id);
+            });
+          }),
+        ).then(() => {
+          InventoryInstance.deleteInstanceViaApi(testInstanceId.instanceId);
+        });
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
     });
 
     it(

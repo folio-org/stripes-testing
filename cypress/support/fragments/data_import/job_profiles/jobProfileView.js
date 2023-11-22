@@ -31,6 +31,7 @@ export default {
   edit: () => {
     waitLoading();
     cy.do(viewPane.find(actionsButton).click());
+    waitLoading();
     cy.do(Button('Edit').click());
   },
   duplicate: () => {

@@ -136,25 +136,27 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      ActionProfiles.deleteActionProfile(holdingsActionProfile.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfile.name);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        ActionProfiles.deleteActionProfile(holdingsActionProfile.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfile.name);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
+
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
