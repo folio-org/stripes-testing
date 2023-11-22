@@ -845,6 +845,10 @@ export default {
     internal: 'ui-export-manager.jobs.downloadAndResend',
     gui: 'Export manager: Download and re-send files',
   },
+  exportManagerView: {
+    internal: 'ui-export-manager.export-manager.view',
+    gui: 'Export manager: View',
+  },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',
     gui: 'Bursar exports: Bursar admin',
