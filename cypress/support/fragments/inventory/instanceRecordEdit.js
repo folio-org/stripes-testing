@@ -1,4 +1,3 @@
-import { CheckBox } from 'bigtest';
 import {
   Accordion,
   Button,
