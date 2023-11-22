@@ -90,6 +90,7 @@ const calloutInvalidMarcTag = Callout('Invalid MARC tag. Please try again.');
 const calloutNo245MarcTag = Callout('Record cannot be saved without field 245.');
 const calloutMultiple245MarcTags = Callout('Record cannot be saved with more than one field 245.');
 const calloutMultiple001MarcTags = Callout('Record cannot be saved. Can only have one MARC 001.');
+const calloutMultiple010MarcTags = Callout('Record cannot be saved with more than one 010 field');
 const calloutInvalidLDRValue = Callout(
   including('Record cannot be saved. Please enter a valid Leader'),
 );
@@ -518,18 +519,23 @@ export default {
   clickUnlinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
+  },
+
+  confirmUnlinkingField() {
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
   },
 
-  checkUnlinkModal(rowIndex, text) {
-    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
+  cancelUnlinkingField() {
+    cy.do(unlinkModal.find(cancelUnlinkButtonInsideModal).click());
+  },
+
+  checkUnlinkModal(text) {
     cy.expect([
       unlinkModal.exists(),
       unlinkButtonInsideModal.exists(),
       cancelUnlinkButtonInsideModal.exists(),
       unlinkModal.has({ content: including(text) }),
     ]);
-    cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
   },
 
   cancelEditConfirmationPresented() {
@@ -593,6 +599,11 @@ export default {
   closeEditorPane() {
     cy.do(PaneHeader().find(closeButton).click());
     cy.expect([rootSection.absent(), instanceDetailsPane.exists()]);
+  },
+
+  closeAuthorityEditorPane() {
+    cy.do(PaneHeader().find(closeButton).click());
+    cy.expect([rootSection.absent(), viewMarcSection.exists()]);
   },
 
   checkFieldAbsense(tag) {
@@ -1143,22 +1154,20 @@ export default {
     );
   },
 
-  checkHeaderFirstLine(
-    { headingReference: headingTypeFrom1XX, headingType, status },
-    { firstName, name },
-  ) {
-    cy.expect(Pane(`Edit MARC authority record - ${headingTypeFrom1XX}`).exists());
-    cy.then(() => Pane(`Edit MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
+  checkHeaderFirstLine({ headingTypeFrom1XX, headingType, status }, { firstName, name }) {
+    cy.expect(Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).exists());
+    cy.then(() => Pane(`Edit  MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(
       (subtitle) => {
         cy.expect(
           Pane({
             subtitle: and(
-              including(`Status: ${status}`),
+              including('Status:'),
+              including(status),
               including(headingType),
-              including('Record last updated:'),
+              including('Last updated:'),
               including(`Source: ${firstName}, ${name}`),
             ),
-          }),
+          }).exists(),
         );
         const stringDate = `${subtitle.split('Last updated: ')[1].split(' •')[0]} UTC`;
         dateTools.verifyDate(Date.parse(stringDate), 120_000);
@@ -1517,6 +1526,13 @@ export default {
     cy.expect(calloutMultiple001MarcTags.exists());
   },
 
+  verifyAndDismissMultiple010TagCallout() {
+    cy.expect(calloutMultiple010MarcTags.exists());
+    cy.do(calloutMultiple010MarcTags.dismiss());
+    cy.expect(calloutMultiple010MarcTags.absent());
+    cy.expect(rootSection.exists());
+  },
+
   verifyInvalidLDRValueCallout(positions) {
     let positionsArray = positions;
     if (!Array.isArray(positions)) {
@@ -1638,7 +1654,7 @@ export default {
   },
 
   checkAfterSaveAndCloseAuthority() {
-    cy.expect([calloutAfterSaveAndClose.exists(), viewMarcSection.exists()]);
+    cy.expect([calloutAfterSaveAndClose.exists(), rootSection.absent(), viewMarcSection.exists()]);
   },
 
   checkNoDeletePlaceholder() {
