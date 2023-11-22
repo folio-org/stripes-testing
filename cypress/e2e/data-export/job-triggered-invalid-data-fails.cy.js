@@ -27,10 +27,7 @@ describe('data-export', () => {
         });
         FileManager.createFile(`cypress/fixtures/${emptyFile}`);
         FileManager.createFile(`cypress/fixtures/${uuidsInInvalidFormat}`, getRandomPostfix());
-        FileManager.createFile(
-          `cypress/fixtures/${notFoundUUIDsInValidFormat}`,
-          `${getRandomPostfix()}\r\n${validUserUUID}`,
-        );
+        FileManager.createFile(`cypress/fixtures/${notFoundUUIDsInValidFormat}`, validUserUUID);
       },
     );
   });
