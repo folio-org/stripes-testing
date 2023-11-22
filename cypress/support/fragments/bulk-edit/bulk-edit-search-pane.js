@@ -93,7 +93,7 @@ export default {
   },
 
   clickOnXAppearsNextToUser() {
-    cy.do(xIconButtonUser.click());
+    cy.get('[icon="times-circle-solid"]').eq(1).click();
   },
 
   resetAllBtnIsDisabled(isDisabled) {
@@ -925,13 +925,22 @@ export default {
     ]);
   },
 
+  clickUserAccordion() {
+    cy.do(logsUsersAccordion.clickHeader());
+  },
+
+  clickChooseUserUnderUserAccordion() {
+    cy.do(logsUsersAccordion.find(buttonChooseUser).click());
+  },
+
+  searchUser(name) {
+    SelectionList().filter(name);
+    cy.get('[placeholder="Filter options list"]').type(name);
+    cy.contains('List is empty').should('be.visible');
+    cy.contains('No matching option').should('be.visible');
+  },
   searchAndSelectUser(name) {
-    cy.do([
-      logsUsersAccordion.clickHeader(),
-      logsUsersAccordion.find(buttonChooseUser).click(),
-      SelectionList().filter(name),
-      SelectionList().select(including(name)), // selects the option from filtered list
-    ]);
+    cy.do([SelectionList().filter(name), SelectionList().select(including(name))]);
   },
 
   fillLogsEndDate(fromDate, toDate) {
