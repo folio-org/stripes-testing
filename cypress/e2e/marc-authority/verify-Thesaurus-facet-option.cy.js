@@ -8,13 +8,14 @@ import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import Logs from '../../support/fragments/data_import/logs/logs';
 
 describe('Importing MARC Authority files', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const fileName = '100_MARC_authority_records.mrc';
   const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
-  const trasureType = 'Library of Congress Subject Headings';
+  const thesaurusType = 'Library of Congress Subject Headings';
   let createdAuthorityID;
 
   before('Creating data', () => {
@@ -38,6 +39,12 @@ describe('Importing MARC Authority files', () => {
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(updatedFileName);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(updatedFileName);
+      Logs.getCreatedItemsID().then((link) => {
+        createdAuthorityID = link.split('/')[5];
+      });
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.marcAuthorities,
         waiter: MarcAuthorities.waitLoading,
@@ -56,14 +63,14 @@ describe('Importing MARC Authority files', () => {
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       MarcAuthorities.verifyThesaurusAccordionAndClick();
-      MarcAuthorities.chooseThesaurus(trasureType);
+      MarcAuthorities.chooseThesaurus(thesaurusType);
       MarcAuthorities.searchBy('Keyword', 'Not-existing query');
       MarcAuthorities.verifyThesaurusAccordionAndClick();
       MarcAuthorities.checkNoResultsMessage(
         'No results found for "Not-existing query". Please check your spelling and filters.',
       );
       MarcAuthorities.verifyThesaurusAccordionAndClick();
-      MarcAuthorities.verifySelectedTextOfThesaurus(trasureType);
+      MarcAuthorities.verifySelectedTextOfThesaurus(thesaurusType);
     },
   );
 });
