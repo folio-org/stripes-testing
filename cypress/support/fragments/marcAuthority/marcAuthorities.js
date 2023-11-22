@@ -754,4 +754,47 @@ export default {
   verifySelectedTextOfHeadingType: (headingType) => {
     cy.expect(MultiSelect({ selected: including(headingType) }).exists());
   },
+  checkHeadingReferenceColumnValueIsBold(rowNumber) {
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex: 2 }).has({
+        innerHTML: including('anchorLink--'),
+      }),
+    );
+  },
+
+  checkCellValueIsExists(rowNumber, columnIndex, value) {
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex }).has({
+        content: including(value),
+      }),
+    );
+  },
+
+  getResultsListByColumn(columnIndex) {
+    const cells = [];
+
+    cy.wait(2000);
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        // from each row, choose specific cell
+        cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
+          // extract its text content
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+          });
+      })
+      .then(() => cells);
+  },
+
+  verifyOnlyOneAuthorityRecordInResultsList() {
+    this.getResultsListByColumn(1).then((cells) => {
+      const authorizedRecords = cells.filter((element) => {
+        return element === 'Authorized';
+      });
+      cy.expect(authorizedRecords.length).to.equal(1);
+    });
+  },
 };

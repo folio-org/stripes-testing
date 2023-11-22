@@ -50,7 +50,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.exportManagerAll.gui,
     ]).then((createdUserProperties) => {

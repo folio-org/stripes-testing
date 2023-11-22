@@ -169,7 +169,7 @@ describe('Edit title level request', () => {
       EditRequest.setPickupServicePoint(servicePoint2.name);
       EditRequest.saveAndClose();
 
-      RequestDetail.waitLoading('item');
+      RequestDetail.waitLoading('no staff');
       RequestDetail.checkTitleInformation({
         TLRs: '1',
         title: itemData.instanceTitle,

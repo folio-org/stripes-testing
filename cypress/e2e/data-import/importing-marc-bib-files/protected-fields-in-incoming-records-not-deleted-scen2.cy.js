@@ -80,7 +80,7 @@ describe('data-import', () => {
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.remoteStorageView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
