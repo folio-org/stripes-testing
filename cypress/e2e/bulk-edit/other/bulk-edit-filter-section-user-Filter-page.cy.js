@@ -32,5 +32,9 @@ describe('bulk-edit', () => {
     BulkEditSearchPane.checkItemsCheckbox();
     BulkEditSearchPane.checkUsersCheckbox();
     BulkEditSearchPane.verifyLogsTableHeaders();
+    BulkEditSearchPane.searchAndSelectUser('ADMINISTRATOR, DIKU');
+    BulkEditSearchPane.xAppearsNextToUser();
+    BulkEditSearchPane.resetAllBtnIsDisabled(false);
+    BulkEditSearchPane.clickOnXAppearsNextToUser();
   });
 });
