@@ -520,6 +520,15 @@ export default {
     cy.expect(unlinkModal.exists());
   },
 
+  clickViewMarcAuthorityIconInTagField(rowIndex) {
+    cy.get(`div[class*=quickMarcEditorRow][data-row="record-row[${rowIndex}]"]`)
+      .find('a')
+      .invoke('removeAttr', 'target')
+      .click();
+    cy.wait(2000);
+    cy.expect(Pane({ id: 'marc-view-pane' }).exists());
+  },
+
   confirmUnlinkingField() {
     cy.do(unlinkModal.find(unlinkButtonInsideModal).click());
   },
@@ -1228,9 +1237,18 @@ export default {
     cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
-  checkUnlinkTooltipText(tag, text) {
-    cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
+  checkUnlinkTooltipText(rowIndex, text) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
+  },
+  checkViewMarcAuthorityTooltipText(rowIndex) {
+    cy.do(
+      QuickMarcEditor()
+        .find(QuickMarcEditorRow({ index: rowIndex }))
+        .find(Button({ icon: 'eye-open' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip().has({ text: 'View MARC authority record' }));
   },
 
   checkLinkButtonExistByRowIndex(rowIndex) {
@@ -1720,5 +1738,9 @@ export default {
     this.checkEmptyContent('008');
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
+  },
+
+  checkEditableQuickMarcFormIsOpened: () => {
+    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
   },
 };
