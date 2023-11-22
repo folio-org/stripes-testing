@@ -14,8 +14,10 @@ import {
   Callout,
   TextField,
   FieldSet,
+  ListItem,
 } from '../../../../interactors';
 import EHoldingsPackages from './eHoldingsPackages';
+import EHoldingsResourceView from './eHoldingsResourceView';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import FilterTitlesModal from './modals/filterTitlesModal';
 
@@ -52,6 +54,7 @@ const titleFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-title-fields' 
 const packageFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-package-fields' });
 const openDropdownMenu = Button({ ariaLabel: 'open menu' });
 const patronRadioButton = FieldSet('Show titles in package to patrons');
+const titlesSection = Section({ id: 'packageShowTitles' });
 
 export default {
   getCalloutMessageText,
@@ -306,5 +309,18 @@ export default {
 
   verifyAlternativeRadio(yesOrNo) {
     cy.expect(KeyValue('Show titles in package to patrons').has({ value: including(yesOrNo) }));
+  },
+
+  selectTitleRecord(rowNumber = 0) {
+    cy.do(
+      titlesSection
+        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
+        .find(Button())
+        .click(),
+    );
+
+    EHoldingsResourceView.waitLoading();
+
+    return EHoldingsResourceView;
   },
 };
