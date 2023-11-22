@@ -13,11 +13,11 @@ import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 let user;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
-  instanceName: `validHoldingUUID_${getRandomPostfix()}`,
+  instanceName: `instanceName_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
 
-describe('data-export: failed using  invalid job profile', () => {
+describe('data-export', () => {
   before('create test data', () => {
     cy.createTempUser([permissions.dataExportEnableModule.gui, permissions.inventoryAll.gui]).then(
       (userProperties) => {
@@ -43,6 +43,7 @@ describe('data-export: failed using  invalid job profile', () => {
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
   });
 
   it(
