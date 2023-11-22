@@ -42,12 +42,12 @@ describe('remote-storage-configuration', () => {
 
         configuration.create(name);
         Configurations.verifyCreatedConfiguration(name, configuration);
-        const newName = 'newAutotestConfigurationName';
+        const newName = `newAutotestConfigurationName${getRandomPostfix()}`;
         Configurations.editConfiguration(name, { nameInput: newName });
         Configurations.confirmCreateRemoteStorage();
         Configurations.verifyCreatedConfiguration(name, configuration);
-        Configurations.editConfiguration(name, { nameInput: 'newAutotestConfigurationName2' });
-        Configurations.cancelConfirmation();
+        Configurations.editConfiguration(name, { nameInput: `shouldnotbesaved${getRandomPostfix()}` }, false);
+        Configurations.closeEditConfiguration();
         Configurations.deleteRemoteStorage(newName);
       });
     },
