@@ -167,6 +167,7 @@ describe('Export Manager', () => {
         location.id,
       );
       Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(secondUser.userId);
     });
 
     it(
@@ -207,7 +208,7 @@ describe('Export Manager', () => {
         ExportManagerSearchPane.searchByInProgress();
         ExportManagerSearchPane.searchByScheduled();
         ExportManagerSearchPane.searchByFailed();
-        
+
         ExportManagerSearchPane.searchByInProgress();
         ExportManagerSearchPane.searchByScheduled();
         ExportManagerSearchPane.searchByFailed();
