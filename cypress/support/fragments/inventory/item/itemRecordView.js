@@ -51,11 +51,10 @@ const closeDetailView = () => {
   cy.do(Button({ icon: 'times' }).click());
 };
 const findRowAndClickLink = (enumerationValue) => {
-  cy.get('div[class^="mclRow-"]')
-    .contains('div[class^="mclCell-"]', enumerationValue)
-    .then((elem) => {
-      elem.parent()[0].querySelector('button').click();
-    });
+  cy.get(`div[class^="mclCell-"]:contains('${enumerationValue}')`).then((cell) => {
+    const row = cell.closest('div[class^="mclRow-"]');
+    row.find('button').click();
+  });
 };
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
 
