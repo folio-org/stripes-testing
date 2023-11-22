@@ -136,7 +136,6 @@ describe('data-import', () => {
     };
 
     beforeEach('create test data', () => {
-      cy.loginAsAdmin();
       cy.getAdminToken().then(() => {
         MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFields.firstField}"`,
@@ -176,29 +175,30 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      MarcFieldProtection.deleteViaApi(firstFieldId);
-      MarcFieldProtection.deleteViaApi(secondFieldId);
-      // delete profiles
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForOverride.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
-      ActionProfiles.deleteActionProfile(instanceActionProfile.name);
-      ActionProfiles.deleteActionProfile(marcBibActionProfileOverride.name);
-      ActionProfiles.deleteActionProfile(instanceActionProfileOverride.name);
-      FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(marcBibMappingProfileOverride.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileOverride.name);
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
-      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.deleteViaApi(firstFieldId);
+        MarcFieldProtection.deleteViaApi(secondFieldId);
+        // delete profiles
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForOverride.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
+        ActionProfiles.deleteActionProfile(instanceActionProfile.name);
+        ActionProfiles.deleteActionProfile(marcBibActionProfileOverride.name);
+        ActionProfiles.deleteActionProfile(instanceActionProfileOverride.name);
+        FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(marcBibMappingProfileOverride.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileOverride.name);
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
+        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(

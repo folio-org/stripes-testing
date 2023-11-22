@@ -3,6 +3,7 @@ import { HTML, including } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiColumnListHeader,
   MultiSelect,
   Pane,
@@ -35,14 +36,13 @@ const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
-const resultsPane = Pane({ id: 'pane-results' });
-const actionsButtonInResultsPane = resultsPane.find(Button('Actions'));
+const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
   cy.expect(
-    resultsPane
+    requestsResultsSection
       .find(HTML(including('Choose a filter or enter a search query to show results.')))
       .exists(),
   );
@@ -550,6 +550,10 @@ export default {
       MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).focus(),
       MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).select(servicePoint),
     ]);
+  },
+
+  selectTheFirstRequest() {
+    cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
   },
 
   exportRequestToCsv: () => {
