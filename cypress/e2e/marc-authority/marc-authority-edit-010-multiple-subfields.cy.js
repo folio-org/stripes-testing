@@ -54,14 +54,12 @@ describe('Edit Authority record', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.login(testData.userProperties.username, testData.userProperties.password);
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+        });
       });
     });
-  });
-
-  beforeEach('Visit MARC Authorities', () => {
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthorities.waitLoading();
   });
 
   after('Delete test data', () => {

@@ -1537,8 +1537,7 @@ export default {
   verifyAndDismissMultiple010SubfieldsCallout() {
     cy.expect(calloutMultiple010Subfields.exists());
     cy.do(calloutMultiple010Subfields.dismiss());
-    cy.expect(calloutMultiple010Subfields.absent());
-    cy.expect(rootSection.exists());
+    cy.expect([calloutMultiple010Subfields.absent(), rootSection.exists()]);
   },
 
   verifyInvalidLDRValueCallout(positions) {
