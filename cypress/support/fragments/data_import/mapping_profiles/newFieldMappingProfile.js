@@ -236,6 +236,13 @@ const fillSummaryInMappingProfile = (specialMappingProfile = defaultMappingProfi
     existingRecordType.choose(specialMappingProfile.typeValue),
   ]);
 };
+const fillSummaryForMarcAuthInMappingProfile = (specialMappingProfile = defaultMappingProfile) => {
+  cy.do([
+    nameField.fillIn(specialMappingProfile.name),
+    incomingRecordTypeField.choose(incomingRecordType.marcAuth),
+    existingRecordType.choose(specialMappingProfile.typeValue),
+  ]);
+};
 const fillFolioRecordType = (profile) => {
   cy.do(existingRecordType.choose(profile.typeValue));
 };
@@ -631,7 +638,7 @@ export default {
   },
 
   fillMappingProfileForUpdatesMarcAuthority: (specialMappingProfile = defaultMappingProfile) => {
-    fillSummaryInMappingProfile(specialMappingProfile);
+    fillSummaryForMarcAuthInMappingProfile(specialMappingProfile);
     cy.do(
       Select({ name: 'profile.mappingDetails.marcMappingOption' }).choose(
         actionsFieldMappingsForMarc.update,

@@ -1094,7 +1094,10 @@ export default {
 
   openItemByBarcodeAndIndex: (barcode) => {
     cy.wait(4000);
-    cy.get('[class^="mclCell-"]').contains(barcode).eq(0).click();
+    cy.get(`div[class^="mclCell-"]:contains('${barcode}')`).then((cell) => {
+      const row = cell.closest('div[class^="mclRow-"]');
+      row.find('button').first().click();
+    });
   },
 
   openItemByStatus: (status) => {
