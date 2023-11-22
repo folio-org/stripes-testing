@@ -49,20 +49,53 @@ describe('data-export', () => {
     () => {
       ExportFileHelper.uploadFile(emptyFile);
       ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'authority', 'Authorities');
+      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
+      cy.wait('@getInfo', getLongDelay()).then((interception) => {
+        console.log(interception);
+        const job = interception.response.body.jobExecutions[0];
+        const resultFileName = job.exportedFiles[0].fileName;
+        const recordsCount = job.progress.total;
+        const jobId = job.hrId;
+
+        DataExportResults.verifyFailedExportResultCells(
+          resultFileName,
+          recordsCount,
+          jobId,
+          user.username,
+          'authority',
+        );
+      });
       ExportFileHelper.uploadFile(uuidsInInvalidFormat);
       ExportFileHelper.exportWithDefaultJobProfile(
         uuidsInInvalidFormat,
         'authority',
         'Authorities',
       );
+      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo1');
+      cy.wait('@getInfo1', getLongDelay()).then((interception) => {
+        console.log(interception);
+        const job = interception.response.body.jobExecutions[0];
+        const resultFileName = job.exportedFiles[0].fileName;
+        const recordsCount = job.progress.total;
+        const jobId = job.hrId;
+
+        DataExportResults.verifyFailedExportResultCells(
+          resultFileName,
+          recordsCount,
+          jobId,
+          user.username,
+          'authority',
+        );
+      });
       ExportFileHelper.uploadFile(notFoundUUIDsInValidFormat);
       ExportFileHelper.exportWithDefaultJobProfile(
         notFoundUUIDsInValidFormat,
         'authority',
         'Authorities',
       );
-      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-      cy.wait('@getInfo', getLongDelay()).then((interception) => {
+      cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
+      cy.wait('@getInfo2', getLongDelay()).then((interception) => {
+        console.log(interception);
         const job = interception.response.body.jobExecutions[0];
         const resultFileName = job.exportedFiles[0].fileName;
         const recordsCount = job.progress.total;
