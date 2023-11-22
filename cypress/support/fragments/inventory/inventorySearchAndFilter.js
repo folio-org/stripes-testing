@@ -18,7 +18,6 @@ import {
   Select,
   TextArea,
   TextField,
-  SearchField,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
