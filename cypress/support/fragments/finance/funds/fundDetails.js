@@ -91,16 +91,30 @@ export default {
   },
   checkBudgets(budgets, section) {
     budgets.forEach((budget, index) => {
-      cy.expect([
-        section
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 0 }))
-          .has({ content: including(budget.name) }),
-        section
-          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-          .find(MultiColumnListCell({ columnIndex: 1 }))
-          .has({ content: including(budget.allocated) }),
-      ]);
+      if (budget.name) {
+        cy.expect(
+          section
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(budget.name) }),
+        );
+      }
+      if (budget.allocated) {
+        cy.expect(
+          section
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .has({ content: including(budget.allocated) }),
+        );
+      }
+      if (budget.available) {
+        cy.expect(
+          section
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .has({ content: including(budget.available) }),
+        );
+      }
     });
 
     if (!budgets.length) {
