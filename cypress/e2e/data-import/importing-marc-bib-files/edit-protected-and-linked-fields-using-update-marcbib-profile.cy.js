@@ -136,8 +136,8 @@ describe('data-import', () => {
         marcFiles.forEach((marcFile) => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitFileIsUploaded();
+              DataImport.verifyUploadState();
+              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
@@ -171,7 +171,7 @@ describe('data-import', () => {
           JobProfiles.openNewJobProfileForm();
           NewJobProfile.fillJobProfile(jobProfile);
           NewJobProfile.linkMatchProfile(matchProfile.profileName);
-          NewJobProfile.linkActionProfileByName(actionProfile.name);
+          NewJobProfile.linkActionProfileForMatches(actionProfile.name);
           // waiter needed for the action profile to be linked
           cy.wait(1000);
           NewJobProfile.saveAndClose();
@@ -293,8 +293,8 @@ describe('data-import', () => {
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
-        JobProfiles.waitFileIsUploaded();
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
