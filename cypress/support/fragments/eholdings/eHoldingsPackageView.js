@@ -14,14 +14,21 @@ import {
   MultiSelectOption,
   Callout,
   TextField,
+  matching,
+  FieldSet,
 } from '../../../../interactors';
-import eHoldingsPackages from './eHoldingsPackages';
+import EHoldingsPackages from './eHoldingsPackages';
+import EHolgingsStates from './eHolgingsStates';
+import InteractorsTools from '../../utils/interactorsTools';
+import FilterTitlesModal from './modals/filterTitlesModal';
 
 const actionsButton = Button('Actions');
 const exportButton = Button('Export package (CSV)');
 const exportModal = Modal('Export settings');
 const exportButtonInModal = exportModal.find(Button('Export'));
 const cancelButtonInModal = exportModal.find(Button('Cancel'));
+
+const packageTitlesSection = Section({ id: 'packageShowTitles' });
 const selectedPackageFieldsRadioButton = RadioButton({
   name: 'packageFields',
   ariaLabel: 'Export selected fields',
@@ -50,12 +57,13 @@ const searchAgreementButton = findAgreementModal.find(
 const titleFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-title-fields' });
 const packageFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-package-fields' });
 const openDropdownMenu = Button({ ariaLabel: 'open menu' });
+const patronRadioButton = FieldSet('Show titles in package to patrons');
 
 export default {
   getCalloutMessageText,
   close() {
     cy.do(Button({ icon: 'times' }).click());
-    eHoldingsPackages.waitLoading();
+    EHoldingsPackages.waitLoading();
   },
 
   waitLoading() {
@@ -66,7 +74,12 @@ export default {
     cy.do([actionsButton.click(), exportButton.click()]);
     cy.expect(exportModal.exists());
   },
+  openFilterTitlesModal() {
+    cy.do(packageTitlesSection.find(Button({ icon: 'search' })).click());
+    FilterTitlesModal.verifyModalView();
 
+    return FilterTitlesModal;
+  },
   clickExportSelectedPackageFields() {
     cy.do(selectedPackageFieldsRadioButton.click());
   },
@@ -110,8 +123,15 @@ export default {
     );
   },
 
-  export() {
+  export({ exportStarted = true } = {}) {
+    cy.expect(exportButtonInModal.has({ disabled: false }));
     cy.do(exportButtonInModal.click());
+
+    if (exportStarted) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(EHolgingsStates.exportJobStartedSuccessfully)),
+      );
+    }
   },
 
   verifyExportButtonInModalDisabled(isDisabled = true) {
@@ -175,6 +195,16 @@ export default {
     );
   },
 
+  getTotalTitlesCount() {
+    return cy
+      .then(() => KeyValue('Total titles').value())
+      .then((count) => parseFloat(count.replace(/,/g, '')));
+  },
+  getFilteredTitlesCount() {
+    return cy
+      .then(() => packageTitlesSection.find(KeyValue('Records found')).value())
+      .then((count) => parseFloat(count.replace(/,/g, '')));
+  },
   getJobIDFromCalloutMessage: () => {
     const regex = /(\d+)/;
 
@@ -305,5 +335,14 @@ export default {
       .invoke('text')
       .then((text) => parseFloat(text.replace(/,/g, '')))
       .should('be.lessThan', number);
+  },
+
+  patronRadioButton: (yesOrNo) => {
+    cy.expect(patronRadioButton.exists());
+    cy.do(patronRadioButton.find(RadioButton(including(yesOrNo))).click());
+  },
+
+  verifyAlternativeRadio(yesOrNo) {
+    cy.expect(KeyValue('Show titles in package to patrons').has({ value: including(yesOrNo) }));
   },
 };

@@ -88,7 +88,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
-      Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
     ]).then((createdUserProperties) => {

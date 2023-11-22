@@ -29,6 +29,7 @@ export default {
   addPermissions(permissions) {
     cy.do(Button({ id: 'clickable-add-permission' }).click());
     cy.expect(selectPermissionsModal.exists());
+    cy.wait(2000);
     cy.wrap(permissions).each((permission) => {
       cy.do(userSearch.fillIn(permission));
       cy.do(Button('Search').click());
