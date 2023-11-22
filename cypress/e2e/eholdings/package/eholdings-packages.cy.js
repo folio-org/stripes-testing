@@ -9,6 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import UHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import DateTools from '../../../support/utils/dateTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -237,6 +238,34 @@ describe('eHoldings', () => {
           cy.wait(10000);
           cy.reload();
           EHoldingsPackage.verifyToken(token);
+        });
+      },
+    );
+
+    it(
+      'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
+      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      () => {
+        cy.createTempUser([
+          Permissions.uieHoldingsRecordsEdit.gui,
+          Permissions.moduleeHoldingsEnabled.gui,
+        ]).then((userProperties) => {
+          userId = userProperties.userId;
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: EHoldingsPackages.waitLoading,
+          });
+
+          EHoldingSearch.switchToPackages();
+          // wait until package is created via API
+          cy.wait(10000);
+          UHoldingsProvidersSearch.byProvider(defaultPackage.data.attributes.name);
+          EHoldingsPackagesSearch.bySelectionStatus('Selected');
+          EHoldingsPackages.openPackage();
+          EHoldingsPackage.editProxyActions();
+          EHoldingsPackageView.patronRadioButton('No');
+          EHoldingsPackage.saveAndClose();
+          EHoldingsPackageView.verifyAlternativeRadio('No');
         });
       },
     );

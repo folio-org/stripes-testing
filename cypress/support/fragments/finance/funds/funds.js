@@ -805,6 +805,15 @@ export default {
     cy.wait(2000);
   },
 
+  changeStatusOfExpClass: (rowNumber, statusName) => {
+    cy.do(Select({ name: `statusExpenseClasses[${rowNumber}].status` }).choose(statusName));
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+  },
+
   deleteExpensesClass: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);

@@ -124,6 +124,14 @@ export default {
     cy.do(loanAccordion.find(Link({ href: including('/requests?filters=requestStatus') })).click());
   },
 
+  openBorrowerPage() {
+    cy.do(
+      KeyValue('Borrower')
+        .find(Link({ href: including('/users/view') }))
+        .click(),
+    );
+  },
+
   verifyEffectiveLocation: (location) => {
     cy.expect(
       Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }),
