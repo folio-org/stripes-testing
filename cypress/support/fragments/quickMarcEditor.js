@@ -1519,10 +1519,6 @@ export default {
     cy.expect(calloutMultiple245MarcTags.exists());
   },
 
-  verifyMultipleTagCallout(tagNumber) {
-    cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
-  },
-
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
   },
