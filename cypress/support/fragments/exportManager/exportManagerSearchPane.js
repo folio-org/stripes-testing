@@ -77,7 +77,7 @@ export default {
         cy.reload();
         return cy.contains(jobId);
       },
-      ($el) => $el[0].nodeName !== 'SPAN',
+      ($el) => $el[0].nodeName === 'A',
       {
         delay: 30000,
         limit: 20, // max number of iterations
