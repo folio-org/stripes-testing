@@ -48,7 +48,6 @@ describe('data-export', () => {
       ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'authority', 'Authorities');
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
       cy.wait('@getInfo', getLongDelay()).then((interception) => {
-        console.log(interception);
         const job = interception.response.body.jobExecutions[0];
         const resultFileName = job.exportedFiles[0].fileName;
         const recordsCount = job.progress.total;
@@ -70,7 +69,6 @@ describe('data-export', () => {
       );
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo1');
       cy.wait('@getInfo1', getLongDelay()).then((interception) => {
-        console.log(interception);
         const job = interception.response.body.jobExecutions[0];
         const resultFileName = job.exportedFiles[0].fileName;
         const recordsCount = job.progress.total;
@@ -92,7 +90,6 @@ describe('data-export', () => {
       );
       cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo2');
       cy.wait('@getInfo2', getLongDelay()).then((interception) => {
-        console.log(interception);
         const job = interception.response.body.jobExecutions[0];
         const resultFileName = job.exportedFiles[0].fileName;
         const recordsCount = job.progress.total;

@@ -143,7 +143,7 @@ describe('Circulation log', () => {
       Requests.findCreatedRequest(instanceData.itemBarcode);
       Requests.selectFirstRequest(instanceData.itemBarcode);
       EditRequest.openRequestEditForm();
-      NewRequest.choosepickupServicePoint('Circ Desk 1');
+      NewRequest.choosePickupServicePoint('Circ Desk 1');
       EditRequest.saveAndClose();
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.waitLoading();

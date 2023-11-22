@@ -99,12 +99,12 @@ describe('Circulation log', () => {
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.waitLoading();
     SearchPane.setFilterOptionFromAccordion('fee', filterName);
-    SearchPane.findResultRowIndexByContent(searchResultsData.servicePoint).then((rowIndex) => {
+    SearchPane.findResultRowIndexByContent(filterName).then((rowIndex) => {
       SearchPane.checkResultSearch(searchResultsData, rowIndex);
     });
     SearchPane.resetResults();
     SearchPane.searchByItemBarcode(itemData.barcode);
-    SearchPane.findResultRowIndexByContent(searchResultsData.servicePoint).then((rowIndex) => {
+    SearchPane.findResultRowIndexByContent(filterName).then((rowIndex) => {
       SearchPane.checkResultSearch(searchResultsData, rowIndex);
     });
   };
@@ -266,7 +266,7 @@ describe('Circulation log', () => {
           getActionBody(transferAccount.accountName, fullAmount),
           testData.feeFineId,
         );
-        checkActionsButton('Transferred partially');
+        checkActionsButton('Transferred fully');
       });
     },
   );
