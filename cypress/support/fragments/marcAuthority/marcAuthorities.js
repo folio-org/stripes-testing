@@ -52,7 +52,7 @@ const exportButton = authReportModal.find(Button('Export'));
 
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
-const headinfTypeAccordion = Accordion('Type of heading');
+const headingTypeAccordion = Accordion('Type of heading');
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
@@ -347,7 +347,7 @@ export default {
   },
 
   chooseTypeOfHeading: (headingTypes) => {
-    cy.do(headinfTypeAccordion.clickHeader());
+    cy.do(headingTypeAccordion.clickHeader());
     headingTypes.forEach((headingType) => {
       cy.do(
         MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
@@ -423,7 +423,7 @@ export default {
 
   chooseTypeOfHeadingAndCheck(headingType, headingTypeA, headingTypeB) {
     cy.do([
-      headinfTypeAccordion.clickHeader(),
+      headingTypeAccordion.clickHeader(),
       MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
         including(headingType),
       ]),
@@ -780,5 +780,22 @@ export default {
       });
       cy.expect(authorizedRecords.length).to.equal(1);
     });
+  },
+
+  verifyHeadingTypeAccordionAccordionAndClick: () => {
+    cy.expect(headingTypeAccordion.exists());
+    cy.do(headingTypeAccordion.clickHeader());
+  },
+
+  chooseHeadingType: (headingType) => {
+    cy.do(
+      MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
+        including(headingType),
+      ]),
+    );
+  },
+
+  verifySelectedTextOfHeadingType: (headingType) => {
+    cy.expect(MultiSelect({ selected: including(headingType) }).exists());
   },
 };
