@@ -2,7 +2,6 @@ import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import users from '../../../support/fragments/users/users';
-import { Permissions } from '../../../support/dictionary';
 
 let user;
 describe('bulk-edit', () => {

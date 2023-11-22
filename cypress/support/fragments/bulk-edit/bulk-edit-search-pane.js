@@ -15,7 +15,6 @@ import {
   MultiColumnListRow,
   TextField,
   Image,
-  TextInput,
   SelectionList,
   IconButton,
 } from '../../../../interactors';
