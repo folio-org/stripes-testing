@@ -20,12 +20,15 @@ import {
 import EHoldingsPackages from './eHoldingsPackages';
 import EHolgingsStates from './eHolgingsStates';
 import InteractorsTools from '../../utils/interactorsTools';
+import FilterTitlesModal from './modals/filterTitlesModal';
 
 const actionsButton = Button('Actions');
 const exportButton = Button('Export package (CSV)');
 const exportModal = Modal('Export settings');
 const exportButtonInModal = exportModal.find(Button('Export'));
 const cancelButtonInModal = exportModal.find(Button('Cancel'));
+
+const packageTitlesSection = Section({ id: 'packageShowTitles' });
 const selectedPackageFieldsRadioButton = RadioButton({
   name: 'packageFields',
   ariaLabel: 'Export selected fields',
@@ -71,7 +74,12 @@ export default {
     cy.do([actionsButton.click(), exportButton.click()]);
     cy.expect(exportModal.exists());
   },
+  openFilterTitlesModal() {
+    cy.do(packageTitlesSection.find(Button({ icon: 'search' })).click());
+    FilterTitlesModal.verifyModalView();
 
+    return FilterTitlesModal;
+  },
   clickExportSelectedPackageFields() {
     cy.do(selectedPackageFieldsRadioButton.click());
   },
@@ -192,7 +200,11 @@ export default {
       .then(() => KeyValue('Total titles').value())
       .then((count) => parseFloat(count.replace(/,/g, '')));
   },
-
+  getFilteredTitlesCount() {
+    return cy
+      .then(() => packageTitlesSection.find(KeyValue('Records found')).value())
+      .then((count) => parseFloat(count.replace(/,/g, '')));
+  },
   getJobIDFromCalloutMessage: () => {
     const regex = /(\d+)/;
 

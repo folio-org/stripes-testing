@@ -715,8 +715,13 @@ export default {
         .exists(),
     );
   },
-  verifySearchResultTabletIsAbsent() {
-    cy.expect(authoritiesList.absent());
+
+  verifySearchResultTabletIsAbsent(absent = true) {
+    if (absent) {
+      cy.expect(authoritiesList.absent());
+    } else {
+      cy.expect(authoritiesList.exists());
+    }
   },
 
   getMarcAuthoritiesViaApi(searchParams) {
@@ -752,5 +757,38 @@ export default {
         content: including(value),
       }),
     );
+  },
+
+  getResultsListByColumn(columnIndex) {
+    const cells = [];
+
+    cy.wait(2000);
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        // from each row, choose specific cell
+        cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
+          // extract its text content
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+          });
+      })
+      .then(() => cells);
+  },
+
+  verifyOnlyOneAuthorityRecordInResultsList() {
+    this.getResultsListByColumn(1).then((cells) => {
+      const authorizedRecords = cells.filter((element) => {
+        return element === 'Authorized';
+      });
+      cy.expect(authorizedRecords.length).to.equal(1);
+    });
+  },
+
+  checkTotalRecordsForOption(option, totalRecords) {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
   },
 };

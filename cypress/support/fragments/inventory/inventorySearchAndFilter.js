@@ -13,6 +13,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   Pane,
+  SearchField,
   Section,
   Select,
   TextArea,
