@@ -147,7 +147,7 @@ describe('eHoldings', () => {
           EHoldingsPackagesSearch.bySelectionStatus('Selected');
           EHoldingsPackages.openPackage();
           EHoldingsPackages.titlesSearch('Subject', 'engineering');
-          EHoldingsPackages.clickSearchTitles();
+          EHoldingsPackageView.selectTitleRecord();
           EHoldingsPackages.subjectsAssertion();
         });
       },
