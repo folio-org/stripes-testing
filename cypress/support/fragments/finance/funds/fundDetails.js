@@ -1,5 +1,6 @@
 import {
   Button,
+  HTML,
   KeyValue,
   MultiColumnListCell,
   MultiColumnListRow,
@@ -8,6 +9,7 @@ import {
   including,
 } from '../../../../../interactors';
 import BudgetDetails from '../budgets/budgetDetails';
+import AddBudgetModal from '../modals/addBudgetModal';
 import Transactions from '../transactions/transactions';
 
 const fundDetailsPane = Section({ id: 'pane-fund-details' });
@@ -17,6 +19,7 @@ const fundDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-fund-details' });
 const actionsButton = Button('Actions');
 
 const currentBudgetSection = Section({ id: 'currentBudget' });
+const plannedBudgetSection = Section({ id: 'plannedBudget' });
 const previousBudgetsSection = Section({ id: 'previousBudgets' });
 
 export default {
@@ -34,6 +37,18 @@ export default {
     Transactions.waitLoading();
 
     return Transactions;
+  },
+  clickAddCurrentBudget() {
+    return this.clickAddNewBudget({ section: currentBudgetSection, modalHeader: 'Current budget' });
+  },
+  clickAddPlannedBudget() {
+    return this.clickAddNewBudget({ section: plannedBudgetSection, modalHeader: 'Planned budget' });
+  },
+  clickAddNewBudget({ section, modalHeader }) {
+    cy.do(section.find(Button('New')).click());
+    AddBudgetModal.verifyModalView(modalHeader);
+
+    return AddBudgetModal;
   },
   openCurrentBudgetDetails() {
     cy.do(
@@ -57,13 +72,17 @@ export default {
 
     return BudgetDetails;
   },
-  checkFundDetails({ information = [], currentBudget, previousBudgets } = {}) {
+  checkFundDetails({ information = [], currentBudget, plannedBudget, previousBudgets } = {}) {
     information.forEach(({ key, value }) => {
       cy.expect(fundDetailsPane.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     if (currentBudget) {
       this.checkCurrentBudget(currentBudget);
+    }
+
+    if (plannedBudget) {
+      this.checkPlannedBudgets(plannedBudget);
     }
 
     if (previousBudgets) {
@@ -83,11 +102,19 @@ export default {
           .has({ content: including(budget.allocated) }),
       ]);
     });
+
+    if (!budgets.length) {
+      cy.expect(section.find(HTML('The list contains no items')).exists());
+    }
   },
   checkCurrentBudget(budget) {
-    this.checkBudgets([budget], currentBudgetSection);
+    const budgets = budget ? [budget] : [];
+    this.checkBudgets(budgets, currentBudgetSection);
   },
-  checkPreviousBudgets(budgets) {
+  checkPlannedBudgets(budgets = []) {
+    this.checkBudgets(budgets, plannedBudgetSection);
+  },
+  checkPreviousBudgets(budgets = []) {
     this.checkBudgets(budgets, previousBudgetsSection);
   },
 };
