@@ -53,14 +53,15 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      instanceHrids.forEach((hrid) => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        instanceHrids.forEach((hrid) => {
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
+            (instance) => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+        });
       });
     });
 

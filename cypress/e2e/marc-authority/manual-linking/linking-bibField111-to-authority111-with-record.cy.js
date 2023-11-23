@@ -122,7 +122,7 @@ describe('Manual Linking Bib field to Authority 111', () => {
       InventoryInstance.selectRecord();
       MarcAuthorities.checkFieldAndContentExistence(
         testData.tag111,
-        `‡a ${marcFiles[1].authorityHeading}`,
+        `$a ${marcFiles[1].authorityHeading}`,
       );
       MarcAuthorities.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag111);

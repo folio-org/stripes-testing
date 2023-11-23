@@ -104,6 +104,7 @@ describe('data-import', () => {
     };
 
     before('login', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -206,22 +207,23 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 

@@ -75,7 +75,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
-      Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
       Permissions.moduleDataImportEnabled.gui,
     ]).then((createdUserProperties) => {
