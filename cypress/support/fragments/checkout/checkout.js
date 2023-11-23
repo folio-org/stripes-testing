@@ -55,6 +55,35 @@ export default {
       });
   },
 
+  checkoutThroughOverrideViaApi({
+    id = uuid(),
+    overrideBlocks = {
+      itemNotLoanableBlock: {
+        dueDate: moment().add(2, 'hours').format(),
+      },
+      comment: 'comment',
+    },
+    itemBarcode,
+    servicePointId,
+    userBarcode,
+  }) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.POST,
+        path: 'circulation/check-out-by-barcode',
+        body: {
+          id,
+          overrideBlocks,
+          itemBarcode,
+          servicePointId,
+          userBarcode,
+        },
+      })
+      .then((checkedOutItem) => {
+        return checkedOutItem.body;
+      });
+  },
+
   openItemRecordInInventory: (barcode) => {
     cy.expect(
       MultiColumnListRow({ indexRow: 'row-0' })

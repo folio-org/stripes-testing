@@ -1,22 +1,23 @@
+import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Users from '../../support/fragments/users/users';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import { REQUEST_TYPES, ITEM_STATUS_NAMES } from '../../support/constants';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import Permissions from '../../support/dictionary/permissions';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import UserEdit from '../../support/fragments/users/userEdit';
-import { DevTeams, TestTypes } from '../../support/dictionary';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
 
-describe('Title level request for claimed return item', () => {
+describe('Title level request', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({
-      status: ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+      status: ITEM_STATUS_NAMES.IN_TRANSIT,
     }),
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
@@ -59,8 +60,12 @@ describe('Title level request for claimed return item', () => {
   });
 
   after('Delete test data', () => {
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    cy.getAdminToken();
+    Requests.getRequestApi({
+      query: `(item.barcode=="${testData.folioInstances[0].barcodes[0]}")`,
+    }).then((requests) => {
+      Requests.deleteRequestViaApi(requests[0].id);
+    });
     InventoryInstances.deleteInstanceViaApi({
       instance: testData.folioInstances[0],
       servicePoint: testData.servicePoint,
@@ -72,23 +77,25 @@ describe('Title level request for claimed return item', () => {
       defaultLocation.libraryId,
       defaultLocation.id,
     );
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.userId);
   });
 
   it(
-    'C375949 Check that user can not create a TLR Recall for item with status Claimed return',
+    'C375941 Check that user can create a TLR Recall for Item with status In transit (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
-      // Open new request dialog
       InventoryInstance.checkNewRequestAtNewPane();
       NewRequest.verifyTitleLevelRequestsCheckbox('checked');
-      // Enter requester barcode
       NewRequest.enterRequesterBarcode(userData.barcode);
-      // Error message should be displayed
-      NewRequest.verifyErrorMessageForRequestTypeField(
-        'None available for this title and patron combination',
-      );
+      NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
+      NewRequest.choosepickupServicePoint(testData.servicePoint.name);
+      NewRequest.saveRequestAndClose();
+      NewRequest.verifyRequestSuccessfullyCreated(userData.username);
+      RequestDetail.checkItemStatus(ITEM_STATUS_NAMES.IN_TRANSIT);
+      RequestDetail.checkRequestsOnItem('1');
     },
   );
 });
