@@ -80,10 +80,7 @@ describe('Title level Request', () => {
       })
       .then(() => {
         cy.createTempUser([
-          permissions.uiRequestsView.gui,
-          permissions.uiRequestsCreate.gui,
-          permissions.uiRequestsAll.gui,
-          permissions.uiRequestsEdit.gui,
+          permissions.requestsAll.gui,
           permissions.checkinAll.gui,
           permissions.inventoryAll.gui,
         ]).then((userPropertiesForMainUser) => {
