@@ -19,16 +19,11 @@ describe('Importing MARC Authority files', () => {
   let createdAuthorityID;
 
   before('Creating data', () => {
-    cy.createTempUser([
-      Permissions.settingsDataImportEnabled.gui,
-      Permissions.moduleDataImportEnabled.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-    ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
-    });
+    cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
+      (createdUserProperties) => {
+        testData.userProperties = createdUserProperties;
+      },
+    );
     cy.loginAsAdmin({
       path: TopMenu.dataImportPath,
       waiter: DataImport.waitLoading,
