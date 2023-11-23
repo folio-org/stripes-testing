@@ -3,4 +3,6 @@ export default {
   transferCreatedSuccessfully: '(?:\\S+) was successfully transferred to the budget (?:\\S+)',
   transferConfirmation:
     'Completing this transfer will result in (?:\\S+) having a negative available amount. Are you sure you would like to complete this transaction?',
+  rolloverTestStartedSuccessfully: '(?:\\S+) rollover test has started successfully',
+  rolloverExportStartedSuccessfully: 'Export of budget results has been started',
 };
