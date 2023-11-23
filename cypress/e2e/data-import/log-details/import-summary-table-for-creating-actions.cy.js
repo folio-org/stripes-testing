@@ -104,7 +104,7 @@ describe('data-import', () => {
 
     it(
       'C356801 Check import summary table with "Created" actions for instance, holding and item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

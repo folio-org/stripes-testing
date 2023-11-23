@@ -87,7 +87,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C358996 Verify that user has access to "quickMARC" when user who imported "MARC holdings" record has been deleted (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       UsersSearchPane.searchByUsername(user.userAProperties.username);
       UsersSearchPane.openUser(user.userAProperties.username);

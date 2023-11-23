@@ -170,7 +170,7 @@ describe('inventory', () => {
 
     it(
       'C396366 Browsing call number types when call number, type specified in "Holdings" or "Item" (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

@@ -1,21 +1,19 @@
 /// <reference types="cypress" />
 
-import eHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import eHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
-import eHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
-import eHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
-import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import eHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
-import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
-import TopMenu from '../../../support/fragments/topMenu';
-import { Pane, Section, Button } from '../../../../interactors';
-import eHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
-import dateTools from '../../../support/utils/dateTools';
-import testTypes from '../../../support/dictionary/testTypes';
+import { Button, Pane, Section } from '../../../../interactors';
 import features from '../../../support/dictionary/features';
 import permissions from '../../../support/dictionary/permissions';
+import eHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
+import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import eHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
+import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import eHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import eHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
+import eHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
+import eHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import TopMenu from '../../../support/fragments/topMenu';
 import users from '../../../support/fragments/users/users';
-import devTeams from '../../../support/dictionary/devTeams';
+import dateTools from '../../../support/utils/dateTools';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -26,7 +24,7 @@ describe('eHoldings', () => {
 
     it(
       'C16994 Add a title in a package to holdings (spitfire)',
-      { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] },
+      { tags: ['smoke', 'spitfire', features.eHoldings] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -61,7 +59,7 @@ describe('eHoldings', () => {
 
     it(
       'C700 Title: Add or Edit custom coverage (spitfire)',
-      { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] },
+      { tags: ['smoke', 'spitfire', features.eHoldings] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -121,7 +119,7 @@ describe('eHoldings', () => {
 
     it(
       'C691 Remove a title in a package from your holdings (spitfire)',
-      { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] },
+      { tags: ['smoke', 'spitfire', features.eHoldings] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -150,7 +148,7 @@ describe('eHoldings', () => {
 
     it(
       'C693 Create a custom title. (spitfire)',
-      { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] },
+      { tags: ['smoke', 'spitfire', features.eHoldings] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -172,7 +170,7 @@ describe('eHoldings', () => {
 
     it(
       'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
-      { tags: [testTypes.criticalPath, devTeams.spitfire, features.eHoldings] },
+      { tags: ['criticalPath', 'spitfire', features.eHoldings] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -195,7 +193,7 @@ describe('eHoldings', () => {
 
     it(
       'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
-      { tags: [testTypes.criticalPath, devTeams.spitfire, features.eHoldings] },
+      { tags: ['criticalPath', 'spitfire', features.eHoldings] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;

@@ -36,7 +36,7 @@ describe('Create a new list', () => {
 
   it(
     'C411704 Create new lists: Private list (corsair)',
-    { tags: [TestTypes.criticalPath, DevTeams.corsair] },
+    { tags: ['criticalPath', 'corsair'] },
     () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);

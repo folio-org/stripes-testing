@@ -147,7 +147,7 @@ describe('inventory', () => {
 
     it(
       'C414972 Browsing call number types when "Number of titles" > 1 (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(callNumbers[0].type);

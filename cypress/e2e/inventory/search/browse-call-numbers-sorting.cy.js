@@ -50,7 +50,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const holdingsCallNumbers = ['FIC WAL', 'B WASHINGTON', 'FIC CLE', 'B JORDAN', 'SC BRU'];
       const itemsCallNumbers = ['SC VIV', 'FIC DAN', 'DVD F GON', 'B OBAMA', 'SC DAH'];
@@ -164,7 +164,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C388548 Browse call numbers - Correct sorting for Dewey type call numbers (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const holdingsCallNumbers = ['331.2', '331.042', '331.01', '331.016', '331.1'];
       const itemsCallNumbers = ['331', '331.041', '331.198', '331.0413', '331.02'];

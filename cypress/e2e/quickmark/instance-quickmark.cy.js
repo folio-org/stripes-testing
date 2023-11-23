@@ -1,16 +1,14 @@
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryActions from '../../support/fragments/inventory/inventoryActions';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import testTypes from '../../support/dictionary/testTypes';
+import { Callout } from '../../../interactors';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
-import { replaceByIndex } from '../../support/utils/stringTools';
-import { Callout } from '../../../interactors';
-import Users from '../../support/fragments/users/users';
-import DevTeams from '../../support/dictionary/devTeams';
-import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import InventoryActions from '../../support/fragments/inventory/inventoryActions';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import { replaceByIndex } from '../../support/utils/stringTools';
 
 describe('Manage inventory Bib records with quickMarc editor', () => {
   let userId;
@@ -48,7 +46,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it(
     'C353612 Verify "LDR" validation rules with invalid data for editable (06, 07) and non-editable positions when editing/deriving record (spitfire)',
-    { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] },
+    { tags: ['smoke', 'spitfire', features.quickMarcEditor] },
     () => {
       const checkLdrErrors = () => {
         const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
@@ -142,7 +140,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it(
     'C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)',
-    { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] },
+    { tags: ['smoke', 'spitfire', features.quickMarcEditor] },
     () => {
       const initialLDRValue = '01677cam\\a22003974c\\4500';
       const changesIn06 = ['a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];

@@ -131,7 +131,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
 
   it(
     'C380747 Add non-controllable subfields to a linked field when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField(

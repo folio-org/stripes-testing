@@ -132,7 +132,7 @@ describe('data-import', () => {
 
     it(
       'C377023 A user can see JSON tab for imported Orders with "Data import: Can upload files, import, and view logs" permission (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const message = `Import Log for Record 1 (${title})`;
 

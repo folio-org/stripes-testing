@@ -66,7 +66,7 @@ describe('Create new MARC bib', () => {
 
   it(
     'C380705 Creating a new "MARC bib" record with valid LDR 05, 08, 17, 18, 19 values (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       for (let i = 0; i < testData.LDRValues.validLDR19Values.length; i++) {
         const updatedLDRvalue = `${testData.LDRValues.validLDRvalue.substring(0, 5)}${

@@ -43,7 +43,7 @@ describe('data-import', () => {
 
     it(
       'C2351 Edit an existing field mapping profile (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully updated`;
 

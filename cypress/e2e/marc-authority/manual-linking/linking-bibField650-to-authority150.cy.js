@@ -109,7 +109,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
   it(
     'C375070 Link the "650" of "MARC Bib" field with 150" field of "MARC Authority" record. (spitfire)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();

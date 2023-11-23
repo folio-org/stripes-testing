@@ -38,7 +38,7 @@ describe('data-import', () => {
 
     it(
       'C350645 Suppress the data import profiles, being used for deleting MARC Authority record, from the Data Import settings UI (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.visit(SettingsMenu.dataImportSettingsPath);
         profiles.forEach((profile) => {

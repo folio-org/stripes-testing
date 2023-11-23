@@ -134,7 +134,7 @@ describe('inventory', () => {
 
     it(
       'C375255 Title (all) | Search by "Alternative title" field of linked "MARC Bib" record (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

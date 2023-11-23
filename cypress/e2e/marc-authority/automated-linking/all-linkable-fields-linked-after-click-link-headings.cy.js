@@ -236,7 +236,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C387538 All linkable fields are linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.getAdminToken();
       linkableFields.forEach((tag) => {
@@ -285,7 +285,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C388500 All linkable fields are NOT linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.getAdminToken();
       linkableFields.forEach((tag) => {

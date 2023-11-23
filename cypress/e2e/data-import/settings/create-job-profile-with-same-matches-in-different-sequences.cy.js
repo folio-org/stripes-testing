@@ -73,7 +73,7 @@ describe('data-import', () => {
 
     it(
       'C399081 Verify the ability to create job profile with the same matches in different sequences (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);

@@ -47,7 +47,7 @@ describe('data-import', () => {
 
     it(
       'C380637 Job profile: verify that file name in job profile detail view is a hotlink for job log details (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();

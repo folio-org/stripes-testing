@@ -123,7 +123,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C60551 MARC Authority plug-in | Search: Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.checkAuthoritySourceOptions();
       MarcAuthorities.chooseAuthoritySourceOption(testData.authSourceOptions.NOT_SPECIFIED);

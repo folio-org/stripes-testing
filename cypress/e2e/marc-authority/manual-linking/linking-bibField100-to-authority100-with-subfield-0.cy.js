@@ -93,7 +93,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
   it(
     'C365134 Link "MARC Bib" field without "$0" subfield to "MARC Authority" record. "Authority source file" value from the pre-defined list (100 field to 100) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

@@ -1,23 +1,23 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
-import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import { ACCEPTED_DATA_TYPE_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -75,7 +75,7 @@ describe('data-import', () => {
 
     it(
       'C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create protection fields
         MarcFieldProtection.createViaApi({

@@ -116,7 +116,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
 
   it(
     'C375173 Save linked "MARC authority" record with deleted fields and edited "1XX" field (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
       MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

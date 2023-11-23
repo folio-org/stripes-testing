@@ -65,7 +65,7 @@ describe('data-import', () => {
 
     it(
       'C6709 Import a file with lots of diacritics or non-Roman alphabet records (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);

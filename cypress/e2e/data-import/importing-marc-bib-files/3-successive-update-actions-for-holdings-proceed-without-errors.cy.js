@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -159,7 +159,7 @@ describe('data-import', () => {
 
     it(
       'C401727 Verify that 3 successive update actions for Holdings proceed without errors (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();

@@ -48,7 +48,7 @@ describe('data-import', () => {
 
     it(
       'C358133 Confirm that a duplicated import profile has enabled indicator set to TRUE (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);

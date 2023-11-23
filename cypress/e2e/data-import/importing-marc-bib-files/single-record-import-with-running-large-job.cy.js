@@ -59,7 +59,7 @@ describe('data-import', () => {
 
     it(
       'C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();

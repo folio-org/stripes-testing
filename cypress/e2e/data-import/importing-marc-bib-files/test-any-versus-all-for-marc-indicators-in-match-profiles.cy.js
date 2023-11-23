@@ -166,7 +166,7 @@ describe('data-import', () => {
 
     it(
       'C17036 Test Any versus All for MARC indicators in match profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // change file for adding random barcode
         DataImport.editMarcFile(

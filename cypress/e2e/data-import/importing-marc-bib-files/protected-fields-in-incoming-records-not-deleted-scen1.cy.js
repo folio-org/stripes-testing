@@ -101,7 +101,7 @@ describe('data-import', () => {
 
     it(
       'C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['criticalPath', 'folijet', 'parallel'] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();

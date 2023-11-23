@@ -107,7 +107,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
 
   it(
     'C365602 Derive | Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in deriving window. (spitfire)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,

@@ -83,7 +83,7 @@ describe('Manual Linking Empty Bib field to Authority 1XX', () => {
 
   it(
     'C380755 Link of empty MARC Bib field with "MARC Authority" record (spitfire)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

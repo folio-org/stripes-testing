@@ -48,7 +48,7 @@ describe('data-import', () => {
 
     it(
       'C404371 Verify the error message after attempting to link action and field mapping profiles with different record type (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(actionProfile, mappingProfile.name);

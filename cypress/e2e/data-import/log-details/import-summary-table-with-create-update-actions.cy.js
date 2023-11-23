@@ -270,7 +270,7 @@ describe.skip('data-import', () => {
 
     it(
       'C356791 Check import summary table with "create + update" actions (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles for creating
         FieldMappingProfiles.openNewMappingProfileForm();

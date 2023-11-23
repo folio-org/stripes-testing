@@ -109,7 +109,7 @@ describe('Orders: Export', () => {
 
   it(
     'C196751 Export orders based on orders lines search (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       OrderLines.selectFilterVendorPOL(invoice);
       Orders.exportResoultsCSV();

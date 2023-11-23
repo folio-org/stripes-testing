@@ -131,7 +131,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C388568 Unlink auto-linked fields, manually link, edit and auto-link fields again when creating new "MARC Bib" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();

@@ -116,7 +116,7 @@ describe('MARC Authority Sort', () => {
 
   it(
     'C365113 Apply "Authority source" facet to the search result list (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
       MarcAuthorities.checkResultsListRecordsCountGreaterThan(0);
@@ -151,7 +151,7 @@ describe('MARC Authority Sort', () => {
 
   it(
     'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
+    { tags: ['criticalPath', 'spitfire', 'parallel'] },
     () => {
       MarcAuthorities.checkSearchOptions();
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);

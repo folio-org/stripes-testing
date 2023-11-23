@@ -1,15 +1,13 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
 import TagsGeneral from '../../support/fragments/settings/tags/tags-general';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -61,7 +59,7 @@ describe('Permissions Tags', () => {
 
   it(
     'C396357 Verify that new permission to view all the Tags settings is added (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       TagsGeneral.changeEnableTagsStatus('disable');
       cy.visit(TopMenu.usersPath);

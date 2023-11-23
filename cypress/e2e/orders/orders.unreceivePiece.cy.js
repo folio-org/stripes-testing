@@ -44,7 +44,7 @@ describe('orders: Unreceive piece from Order', () => {
 
   it(
     'C10925 Unreceive piece (thunderjet)',
-    { tags: [TestType.smoke, DevTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['smoke', 'thunderjet', 'nonParallel'] },
     () => {
       const barcode = Helper.getRandomBarcode();
       const caption = 'autotestCaption';

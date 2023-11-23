@@ -43,7 +43,7 @@ describe('Create new MARC bib', () => {
 
   it(
     'C380736 Search created "MARC bib" record by Title, OCLC number (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);

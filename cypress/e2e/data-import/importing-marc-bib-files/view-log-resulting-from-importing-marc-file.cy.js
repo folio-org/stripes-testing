@@ -48,7 +48,7 @@ describe('data-import', () => {
 
     it(
       'C2358 View the log resulting from importing a MARC file (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         Logs.openFileDetails(fileNameToUpload);
         FileDetails.verifyLogDetailsPageIsOpened();

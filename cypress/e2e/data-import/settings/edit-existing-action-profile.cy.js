@@ -39,7 +39,7 @@ describe('data-import', () => {
 
     it(
       'C2348 Edit an existing action profile without associated job profile (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();
         ActionProfiles.search(actionProfile.name);

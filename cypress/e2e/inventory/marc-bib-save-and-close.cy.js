@@ -69,7 +69,7 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
 
   it(
     'C360097 Verify updates are saved after clicking "Save & keep editing" button in "MARC Bibliographic" edit mode (Spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       QuickMarcEditor.updateExistingFieldContent(testData.tag245rowIndex, testData.tag245value1);
       QuickMarcEditor.checkButtonsEnabled();

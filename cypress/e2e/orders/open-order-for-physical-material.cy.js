@@ -33,7 +33,7 @@ describe('orders: create an order', () => {
 
   it(
     'C734 Open order for physical material set to create Instance, Holding, Item (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] },
+    { tags: ['smoke', 'thunderjet', TestType.broken] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;

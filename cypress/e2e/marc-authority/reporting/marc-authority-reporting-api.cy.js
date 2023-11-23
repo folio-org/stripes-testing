@@ -130,7 +130,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
 
   it(
     'C380529 Data for "MARC authority headings updates (CSV)" report includes data on several heading updates for the same "MARC authority" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const expectedFirstUpdateData = {
         naturalIdOld: marcFiles[1].authority010FieldValue,

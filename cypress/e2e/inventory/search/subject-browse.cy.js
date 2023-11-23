@@ -1,16 +1,13 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import permissions from '../../../support/dictionary/permissions';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import permissions from '../../../support/dictionary/permissions';
-import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Parallelization from '../../../support/dictionary/parallelization';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory > Subject Browse', () => {
   const testData = {
@@ -59,7 +56,7 @@ describe('Inventory > Subject Browse', () => {
 
   it(
     'C350387 Verify the "Browse subjects" result list (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       BrowseSubjects.searchBrowseSubjects(testData.testValue);

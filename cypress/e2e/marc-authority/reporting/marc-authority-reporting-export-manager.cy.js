@@ -137,7 +137,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
 
   it(
     'C375996 Correct data for "MARC authority headings updates (CSV)" report shown in "Export manager" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
       MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

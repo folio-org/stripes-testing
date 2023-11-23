@@ -83,7 +83,7 @@ describe('data-import', () => {
 
     it(
       'C402332 Verify that any existing profile search is cleared when switching to a different profile type (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
         FieldMappingProfiles.search(mappingProfile.name);

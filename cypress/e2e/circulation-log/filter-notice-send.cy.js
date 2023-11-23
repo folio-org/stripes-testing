@@ -1,22 +1,20 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NoticePolicyApi, {
   getDefaultNoticePolicy,
 } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
@@ -126,7 +124,7 @@ describe('circulation-log', () => {
 
   it(
     'C17092 Filter circulation log by (notice) send (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,

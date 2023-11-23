@@ -124,7 +124,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C422016 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.getInstance({
         limit: 1,

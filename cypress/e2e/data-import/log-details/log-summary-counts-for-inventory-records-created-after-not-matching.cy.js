@@ -162,7 +162,7 @@ describe('data-import', () => {
 
     it(
       'C378901 Check log summary counts for inventory records created after NOT matching (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // create mapping profiles
         createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);

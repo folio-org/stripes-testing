@@ -82,7 +82,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C358964 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.searchBySource(testData.source);
       InventoryInstance.searchByTitle(createdRecordID);

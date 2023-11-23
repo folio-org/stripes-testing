@@ -43,7 +43,7 @@ describe('Subject Browse', () => {
 
   it(
     'C350420 Verify Browse Subjects field data validation (spitfire) (TaaS)',
-    { tags: [testTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

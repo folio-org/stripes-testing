@@ -186,7 +186,7 @@ describe('data-import', () => {
 
     it(
       'C385663 Update "$0" in linked repeatable field (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

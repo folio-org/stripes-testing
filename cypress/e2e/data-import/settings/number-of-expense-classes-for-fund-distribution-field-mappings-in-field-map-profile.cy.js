@@ -89,7 +89,7 @@ describe('data-import', () => {
 
     it(
       'C365106 Verify the number of expense classes for fund distribution field mappings in field mapping profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();

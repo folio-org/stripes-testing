@@ -61,7 +61,7 @@ describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
 
   it(
     'C396356 "Entered" value in "008" field updated when deriving new "MARC Bib" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.checkSubfieldsPresenceInTag008();

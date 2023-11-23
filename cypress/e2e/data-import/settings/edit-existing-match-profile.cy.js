@@ -44,7 +44,7 @@ describe('data-import', () => {
 
     it(
       'C2339 Edit an existing match profile (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.search(matchProfile.profileName);

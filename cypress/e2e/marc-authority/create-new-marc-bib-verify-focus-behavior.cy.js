@@ -45,7 +45,7 @@ describe('Create new MARC bib', () => {
 
   it(
     'C380717 Verify focus behavior when using field level action icons upon creation of a new "MARC bib" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       // Open New Marc Bibliographic record editor
       InventoryInstance.newMarcBibRecord();

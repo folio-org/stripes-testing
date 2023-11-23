@@ -79,7 +79,7 @@ describe('data-import', () => {
 
     it(
       'C353625 Check import summary table with "Created" action for invoice record (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

@@ -37,7 +37,7 @@ describe('data-import', () => {
 
     it(
       'C353638 Verify proper system behavior for canceled import (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

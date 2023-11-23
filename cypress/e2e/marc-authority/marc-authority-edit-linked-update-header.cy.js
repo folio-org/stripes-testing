@@ -111,7 +111,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
 
   it(
     'C374159 Edit values in "1XX" and "010" fields of linked "MARC Authority" record when "$0" = "010 $a" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy('Keyword', marcFiles[1].authority555FieldValue);
       MarcAuthorities.selectTitle(marcFiles[1].authority555FieldValue);

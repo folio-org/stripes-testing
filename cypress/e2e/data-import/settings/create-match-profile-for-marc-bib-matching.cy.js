@@ -27,7 +27,7 @@ describe('data-import', () => {
 
     it(
       'C9321 Create match profile for MARC Bib matching to a FOLIO record type (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9321 001 to Instance HRID ${getRandomPostfix()}`,
@@ -59,7 +59,7 @@ describe('data-import', () => {
 
     it(
       'C9322 Create match profile for MARC Bib matching to a MARC record type (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9322 autotest match profile_${getRandomPostfix()}`,
@@ -104,7 +104,7 @@ describe('data-import', () => {
 
     it(
       'C9323 Create match profile for Static value TEXT match (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9323 autotest match profile_${getRandomPostfix()}`,
@@ -138,7 +138,7 @@ describe('data-import', () => {
 
     it(
       'C9324 Create match profile for Static value NUMBER match (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9324 autotest match profile_${getRandomPostfix()}`,
@@ -171,7 +171,7 @@ describe('data-import', () => {
 
     it(
       'C9325 Create match profile for Static value DATE match (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9324 autotest match profile_${getRandomPostfix()}`,
@@ -204,7 +204,7 @@ describe('data-import', () => {
 
     it(
       'C9326 Create match profile for Static value DATE RANGE match (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9325 autotest match profile_${getRandomPostfix()}`,

@@ -132,7 +132,7 @@ describe('ui-orders: Orders', () => {
 
   it(
     'C368478 Editing fund distribution in PO line when related Cancelled from approved invoice exists (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();

@@ -30,7 +30,7 @@ describe('data-import', () => {
 
     it(
       'C2349 Create a new field mapping profile with a long name (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully created`;
 

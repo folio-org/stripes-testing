@@ -27,7 +27,7 @@ describe('data-import', () => {
 
     it(
       'C410707 Verify error notification after creating file extension with already existing name (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.fileExtensionsPath);
         FileExtensions.openNewFileExtensionForm();

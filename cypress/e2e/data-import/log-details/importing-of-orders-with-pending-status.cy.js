@@ -134,7 +134,7 @@ describe('data-import', () => {
 
     it(
       'C375178 Verify the log details for created imported order records (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

@@ -91,7 +91,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
 
   it(
     'C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       const dataForC375231 = [
         {

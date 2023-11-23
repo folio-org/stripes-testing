@@ -113,7 +113,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400610 Search Instances using advanced search with "AND" operator (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.checkAdvSearchInstancesModalFields(0);
@@ -158,7 +158,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(
@@ -225,7 +225,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(

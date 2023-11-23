@@ -1,32 +1,30 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import { getTestEntityValue } from '../../support/utils/stringTools';
+import uuid from 'uuid';
 import {
-  ITEM_STATUS_NAMES,
-  REQUEST_TYPES,
-  REQUEST_LEVELS,
   FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
 } from '../../support/constants';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Requests from '../../support/fragments/requests/requests';
+import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import LoansPage from '../../support/fragments/loans/loansPage';
+import Requests from '../../support/fragments/requests/requests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
   const patronGroup = {
@@ -208,7 +206,7 @@ describe('Circulation log', () => {
 
   it(
     'C17004 Check the Actions button from filtering Circulation log by recall requested (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       checkActionsButton('Recall requested');
     },

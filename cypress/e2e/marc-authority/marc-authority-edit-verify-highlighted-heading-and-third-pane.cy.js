@@ -96,7 +96,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C350911 Results List: Display updated and highlighted Heading/reference value at browse result list after editing 1XX, 4XX, 5XX fields (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorities.searchByParameter(
@@ -116,7 +116,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C350946 Verify that third pane still opened after editing first search result (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.switchToSearch();
       MarcAuthorities.searchBeats('Twain');

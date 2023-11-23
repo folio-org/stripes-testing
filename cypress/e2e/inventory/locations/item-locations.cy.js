@@ -89,7 +89,7 @@ describe('ui-inventory: location', () => {
 
   it(
     'C163923 Change a location to remote storage (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[0].name;
       const editedLocationName = Cypress.env('locations')[1].name;
@@ -124,7 +124,7 @@ describe('ui-inventory: location', () => {
 
   it(
     'C163924 Change a remote storage location to standard location (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[1].name;
       const editedLocationName = Cypress.env('locations')[0].name;

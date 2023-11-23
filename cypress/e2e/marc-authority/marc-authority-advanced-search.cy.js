@@ -79,7 +79,7 @@ describe('MARC Authority - Advanced Search', () => {
 
   it(
     'C350684 Updating Advanced Search query from modal window (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.clickActionsButton();
       MarcAuthorities.actionsSortBy('Type of heading');
@@ -142,7 +142,7 @@ describe('MARC Authority - Advanced Search', () => {
 
   it(
     'C350607 Advanced search of MARC authority records (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       MarcAuthorities.clickAdvancedSearchButton();
       MarcAuthorities.checkAdvancedSearchModalFields(

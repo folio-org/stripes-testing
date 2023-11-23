@@ -37,7 +37,7 @@ describe('MARC Authority management', () => {
 
   it(
     'C350967 quickMARC: View MARC bibliographic record (spitfire)',
-    { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', Features.authority, 'spitfire', 'nonParallel'] },
     () => {
       cy.login(userData.name, userData.password, {
         path: TopMenu.inventoryPath,

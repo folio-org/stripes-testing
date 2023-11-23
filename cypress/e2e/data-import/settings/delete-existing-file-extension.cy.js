@@ -27,7 +27,7 @@ describe('data-import', () => {
 
     it(
       'C2336 Delete an existing file extension (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const calloutMessage = `The file extension "${fileExtensionName}" was successfully deleted`;
 

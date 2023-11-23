@@ -104,7 +104,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C375269 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "610" field (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValueForBrowse);

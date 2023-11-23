@@ -94,7 +94,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
 
   it(
     'C357566 Verify "LDR" validation rules with valid data for positions 05, 08, 17, 18, 19 when deriving record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       for (let i = 0; i < testData.LDRValues.validLDR18Values.length; i++) {
         cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);

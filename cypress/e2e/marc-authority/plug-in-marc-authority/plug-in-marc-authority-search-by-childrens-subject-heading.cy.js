@@ -93,7 +93,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C359233 MARC Authority plug-in | Search using "Children\'s subject heading" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

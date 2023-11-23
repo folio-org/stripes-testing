@@ -180,7 +180,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400621 Search Holdings using advanced search with a combination of operators (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToHoldings();
       InventoryInstances.clickAdvSearchButton();

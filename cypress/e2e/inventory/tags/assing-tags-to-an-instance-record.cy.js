@@ -49,7 +49,7 @@ describe('inventory', () => {
 
     it(
       'C196769 Assign tags to an Instance record (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);

@@ -119,7 +119,7 @@ describe('data-import', () => {
 
     it(
       'C345353 Check EDIFACT mapping syntax for multiple fields mapping into 1 invoice field (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.waitLoading();

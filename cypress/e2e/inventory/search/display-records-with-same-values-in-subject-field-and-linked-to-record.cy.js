@@ -136,7 +136,7 @@ describe('Inventory', () => {
     // TODO: remove comment once issue is fixed
     it(
       'C375222 Browse | Display records with same values in "Subject" field and linked to the same "MARC authority" record (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

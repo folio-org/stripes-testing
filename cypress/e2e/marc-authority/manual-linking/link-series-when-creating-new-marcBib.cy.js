@@ -121,7 +121,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
 
   it(
     'C380729 Link "Series" fields when creating "MARC Bibliographic" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField(

@@ -29,7 +29,7 @@ describe('data-import', () => {
 
     it(
       'C2328 Create a file extension for a blocked file type and ensure that file type cannot be uploaded (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const filePath = 'file.txt';
         const fileName = `C2328 autotestFile.${getRandomPostfix()}.txt`;
@@ -62,7 +62,7 @@ describe('data-import', () => {
 
     it(
       'C2329 Create a file extension for an acceptable file type and upload a file (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const filePath = 'file.csv';
         const fileName = `C2329 autotestFile.${getRandomPostfix()}.csv`;

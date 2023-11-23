@@ -106,7 +106,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
 
   it(
     'C376596 Add/Edit/Delete "$z" subfield in "010" field of linked "MARC authority" record when "010" = "$0" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
       MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

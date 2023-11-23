@@ -69,7 +69,7 @@ describe('data-import', () => {
 
     it(
       'C11116 Unlinking a match or action profile from a job profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // create 3 action profiles
         cy.visit(SettingsMenu.actionProfilePath);

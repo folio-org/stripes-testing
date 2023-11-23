@@ -69,7 +69,7 @@ describe('data-import', () => {
 
     it(
       'C359218 Checking import to Create MARC Holdings records when incoming records have 999 ff fields (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         // edit marc file adding instance hrid
         DataImport.editMarcFile(

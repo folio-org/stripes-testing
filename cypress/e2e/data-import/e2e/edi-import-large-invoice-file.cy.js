@@ -1,23 +1,22 @@
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  BATCH_GROUP,
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
-  BATCH_GROUP,
-  ACCEPTED_DATA_TYPE_NAMES,
   VENDOR_NAMES,
 } from '../../../support/constants';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -57,7 +56,7 @@ describe('data-import', () => {
 
     it(
       'C347615 Import a large EDIFACT invoice file (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);

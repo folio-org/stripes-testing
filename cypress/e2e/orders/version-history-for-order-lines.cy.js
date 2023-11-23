@@ -167,7 +167,7 @@ describe('Orders: orders', () => {
 
   it(
     'C369047: "Version history" viewing for Order line (thunderjet)',
-    { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

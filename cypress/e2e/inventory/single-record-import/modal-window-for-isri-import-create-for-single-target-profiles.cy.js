@@ -46,7 +46,7 @@ describe('inventory', () => {
 
     it(
       'C375145 Verify the modal window for ISRI Import/Create in inventory main actions menu for single target profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const calloutMessage = `Record ${testIdentifier} created. Results may take a few moments to become visible in Inventory`;
 

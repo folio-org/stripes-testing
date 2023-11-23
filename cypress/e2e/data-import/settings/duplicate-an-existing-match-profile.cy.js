@@ -49,7 +49,7 @@ describe('data-import', () => {
 
     it(
       'C2340 Duplicate an existing match profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         MatchProfileView.duplicate();
         NewMatchProfile.selectMatchCriterion(duplicatedMatchProfile.matchCriterion);

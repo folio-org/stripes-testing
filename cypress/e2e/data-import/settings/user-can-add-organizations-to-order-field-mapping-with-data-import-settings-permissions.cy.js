@@ -34,7 +34,7 @@ describe('data-import', () => {
 
     it(
       'C376994 A user can add organizations to Order field mapping with "Settings (Data import): Can view, create, edit, and remove" (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);

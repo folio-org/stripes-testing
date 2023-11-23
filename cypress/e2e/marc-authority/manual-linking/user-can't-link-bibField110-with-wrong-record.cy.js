@@ -136,7 +136,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
 
   it(
     'C380450 Verify that user cant link "110" MARC Bib field with wrong record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();

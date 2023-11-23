@@ -1,34 +1,32 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import { getTestEntityValue } from '../../support/utils/stringTools';
+import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
+import permissions from '../../support/dictionary/permissions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import ManualCharges from '../../support/fragments/settings/users/manualCharges';
-import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import WaiveFeeFineModal from '../../support/fragments/users/waiveFeeFineModal';
-import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ManualCharges from '../../support/fragments/settings/users/manualCharges';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import RefundReasons from '../../support/fragments/settings/users/refundReasons';
+import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
+import TopMenu from '../../support/fragments/topMenu';
+import CancelFeeFaine from '../../support/fragments/users/cancelFeeFaine';
+import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
 import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
-import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
-import CancelFeeFaine from '../../support/fragments/users/cancelFeeFaine';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import WaiveFeeFineModal from '../../support/fragments/users/waiveFeeFineModal';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
   let userData;
@@ -234,7 +232,7 @@ describe('Circulation log', () => {
 
   it(
     'C17064 Check the Actions button from filtering Circulation log by transferred partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -249,7 +247,7 @@ describe('Circulation log', () => {
 
   it(
     'C17063 Filter circulation log by transferred partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Transferred partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -258,7 +256,7 @@ describe('Circulation log', () => {
 
   it(
     'C17062 Check the Actions button from filtering Circulation log by transferred fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -273,7 +271,7 @@ describe('Circulation log', () => {
 
   it(
     'C17061 Filter circulation log by transferred fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Transferred fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -282,7 +280,7 @@ describe('Circulation log', () => {
 
   it(
     'C17052 Check the Actions button from filtering Circulation log by Paid partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -297,7 +295,7 @@ describe('Circulation log', () => {
 
   it(
     'C17051 Filter circulation log by paid partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Paid partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -306,7 +304,7 @@ describe('Circulation log', () => {
 
   it(
     'C17050 Check the Actions button from filtering Circulation log by Paid fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -321,7 +319,7 @@ describe('Circulation log', () => {
 
   it(
     'C17049 Filter circulation log by paid fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Paid fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -330,7 +328,7 @@ describe('Circulation log', () => {
 
   it(
     'C17060 Check the Actions button from filtering Circulation log by refunded partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -349,7 +347,7 @@ describe('Circulation log', () => {
 
   it(
     'C17059 Filter circulation log by refunded partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Refunded partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -358,7 +356,7 @@ describe('Circulation log', () => {
 
   it(
     'C17058 Check the Actions button from filtering Circulation log by refunded fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -377,7 +375,7 @@ describe('Circulation log', () => {
 
   it(
     'C17057 Filter circulation log by refunded fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Refunded fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -386,7 +384,7 @@ describe('Circulation log', () => {
 
   it(
     'C17056 Check the Actions button from filtering Circulation log by waived partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -401,7 +399,7 @@ describe('Circulation log', () => {
 
   it(
     'C17055 Filter circulation log by waived partially (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Waived partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -410,7 +408,7 @@ describe('Circulation log', () => {
 
   it(
     'C17054 Check the Actions button from filtering Circulation log by waived fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -425,7 +423,7 @@ describe('Circulation log', () => {
 
   it(
     'C17053 Filter circulation log by waived fully (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Waived fully');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
@@ -434,7 +432,7 @@ describe('Circulation log', () => {
 
   it(
     'C17066 Check the Actions button from filtering Circulation log by cancelled as error (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -454,7 +452,7 @@ describe('Circulation log', () => {
 
   it(
     'C17065 Filter circulation log by cancelled as errorror (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Cancelled as error', `Amount: ${fullAmount}. Cancellation reason`);
     },

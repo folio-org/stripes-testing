@@ -122,7 +122,7 @@ describe('orders: Test Po line filters', () => {
   ].forEach((filter) => {
     it(
       'C6720 Test the POL filters [except tags] (thunderjet)',
-      { tags: [TestType.smoke, devTeams.thunderjet] },
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         filter.filterActions();
         Orders.checkOrderlineSearchResults(orderLineNumber);

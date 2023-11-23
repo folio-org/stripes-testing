@@ -105,7 +105,7 @@ describe('Inventory: Subject Browse', () => {
 
   it(
     'C375163 Browse | Separate entries for "Subjects" from linked and unlinked "6XX" fields of "MARC bib" record (same subject names) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

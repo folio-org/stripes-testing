@@ -34,7 +34,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C375134 User with "Export manager: All" permission can view report options for "MARC authority" records (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       MarcAuthorities.clickActionsAndReportsButtons();
     },

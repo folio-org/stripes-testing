@@ -40,7 +40,7 @@ describe('Inventory: Contributors Browse', () => {
 
   it(
     'C353644 Apply "Name Type" filter to the browse result list (spitfire) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       BrowseContributors.clickBrowseBtn();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

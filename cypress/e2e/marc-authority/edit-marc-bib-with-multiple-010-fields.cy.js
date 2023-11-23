@@ -59,7 +59,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C380643 Editing imported "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,

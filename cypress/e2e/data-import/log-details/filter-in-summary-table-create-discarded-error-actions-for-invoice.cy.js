@@ -78,7 +78,7 @@ describe('data-import', () => {
 
     it(
       'C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

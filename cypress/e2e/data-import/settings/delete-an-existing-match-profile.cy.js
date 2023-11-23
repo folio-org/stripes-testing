@@ -60,7 +60,7 @@ describe('data-import', () => {
 
     it(
       'C2341 Delete an existing match profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         MatchProfiles.search(profile.createMatchProfile);
         MatchProfiles.selectMatchProfileFromList(profile.createMatchProfile);

@@ -95,7 +95,7 @@ describe('orders: export', () => {
 
   it(
     'C350603 Searching POL by specifying acquisition method (thunderjet)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['smoke', 'thunderjet', 'nonParallel'] },
     () => {
       cy.logout();
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });

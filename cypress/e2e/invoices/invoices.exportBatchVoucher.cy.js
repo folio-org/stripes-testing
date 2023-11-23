@@ -1,18 +1,17 @@
-import TopMenu from '../../support/fragments/topMenu';
+import TestType from '../../support/dictionary/testTypes';
+import Funds from '../../support/fragments/finance/funds/funds';
+import NewFund from '../../support/fragments/finance/funds/newFund';
+import Invoices from '../../support/fragments/invoices/invoices';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
-import Invoices from '../../support/fragments/invoices/invoices';
-import TestType from '../../support/dictionary/testTypes';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
-import NewFund from '../../support/fragments/finance/funds/newFund';
-import Funds from '../../support/fragments/finance/funds/funds';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import BatchGroups from '../../support/fragments/settings/invoices/batchGroups';
+import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import FileManager from '../../support/utils/fileManager';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
-import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import BatchGroups from '../../support/fragments/settings/invoices/batchGroups';
 
 describe('ui-invoices-settings: Export batch voucher', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -76,7 +75,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
 
   it(
     'C10943 Run batch voucher export manually (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] },
+    { tags: ['smoke', 'thunderjet', TestType.broken] },
     () => {
       Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);

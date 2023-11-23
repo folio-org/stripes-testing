@@ -80,7 +80,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C350691 Update 008 field of MARC Authority record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.select(createdAuthorityID[0]);
@@ -93,7 +93,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C350696 Edit the imported MARC Authority record via MARC Authority app multiple times (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.select(createdAuthorityID[0]);

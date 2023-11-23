@@ -197,7 +197,7 @@ describe('inventory', () => {
 
     it(
       'C409420 Verify the sorting for Items on Instance details page (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(

@@ -80,7 +80,7 @@ describe('orders: Test PO filters', () => {
   ].forEach((filter) => {
     it(
       'C350906 Test the PO filters with closed Order [except tags] (thunderjet)',
-      { tags: [TestType.smoke, devTeams.thunderjet] },
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         filter.filterActions();
         Orders.checkSearchResultsWithClosedOrder(orderNumber);

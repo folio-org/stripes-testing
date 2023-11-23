@@ -144,7 +144,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C369084 Delete authorized "MARC Authority" record that has two linked field in different "MARC Bib" records (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValue);

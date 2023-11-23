@@ -1,10 +1,9 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -17,7 +16,7 @@ describe('data-import', () => {
 
     it(
       'C6707 Import a bunch of MARC files at once (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         [
           {

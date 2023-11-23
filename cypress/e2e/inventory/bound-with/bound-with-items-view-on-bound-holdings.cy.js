@@ -1,13 +1,13 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Bound-with. One item related to multiple holdings', () => {
@@ -145,7 +145,7 @@ describe('inventory', () => {
 
     it(
       'C409512 Verify the Bound-with items view on bound holdings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.firstInstanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

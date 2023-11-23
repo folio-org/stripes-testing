@@ -85,7 +85,7 @@ describe('orders: export', () => {
 
   it(
     'C350398: Verify that Order is not exported to a definite Vendor if Automatic export option in Order PO Line is disabled (thunderjet)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.createOrder(order, true, true).then((orderId) => {
         order.id = orderId;

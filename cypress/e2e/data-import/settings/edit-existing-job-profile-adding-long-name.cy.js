@@ -36,7 +36,7 @@ describe('data-import', () => {
 
     it(
       'C2332 Edit an existing job profile by adding a long name (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         JobProfiles.checkListOfExistingProfilesIsDisplayed();
         JobProfiles.search(jobProfile.profileName);

@@ -26,7 +26,7 @@ describe('data-import', () => {
 
     it(
       'C377031 A user can view Acquisition Methods in Order field mapping with "Settings (Data import): Can view, create, edit, and remove" (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.waitLoading();

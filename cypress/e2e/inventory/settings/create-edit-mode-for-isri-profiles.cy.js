@@ -44,7 +44,7 @@ describe('inventory', () => {
 
     it(
       'C374178 Verify the create/edit mode for ISRI profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.create();

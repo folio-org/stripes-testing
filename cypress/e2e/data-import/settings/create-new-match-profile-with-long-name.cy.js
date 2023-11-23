@@ -37,7 +37,7 @@ describe('data-import', () => {
 
     it(
       'C2337 Create a new match profile with a long name (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);

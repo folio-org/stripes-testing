@@ -117,7 +117,7 @@ describe('data-import', () => {
 
     it(
       'C367966 Confirm the number of updated instances in the import log does not exceed the number of records in the file (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         MarcFieldProtection.createViaApi({
           indicator1: '*',

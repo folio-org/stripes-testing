@@ -131,7 +131,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
 
   it(
     'C380738 Linking repeatable fields when creating a new "MARC bib" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();

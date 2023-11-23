@@ -77,7 +77,7 @@ describe('inventory', () => {
 
     it(
       'C15184 Move one item between holdings within an instance (firebird) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         // Find the instance from precondition
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);

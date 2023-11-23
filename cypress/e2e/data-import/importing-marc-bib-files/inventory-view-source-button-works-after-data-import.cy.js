@@ -1,17 +1,17 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -69,7 +69,7 @@ describe('data-import', () => {
 
     it(
       'C2360 Confirm the Inventory "View source" button works after Data Import (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyIsInstanceOpened(title);

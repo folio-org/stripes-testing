@@ -30,7 +30,7 @@ describe('Create new MARC bib', () => {
   it(
     'C380427 A new "MARC bib" record is opened in QuickMARC UI (spitfire) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.spitfire],
+      tags: ['criticalPath', 'spitfire'],
     },
     () => {
       // Open "Inventory" app

@@ -1,14 +1,12 @@
 import permissions from '../../../../support/dictionary/permissions';
-import testType from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../../support/fragments/users/users';
-import Funds from '../../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Finance: Ledgers', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -101,7 +99,7 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C353212: Ledger export settings: last year Fund with NO budget, NO Classes, Export settings-All statuses (thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

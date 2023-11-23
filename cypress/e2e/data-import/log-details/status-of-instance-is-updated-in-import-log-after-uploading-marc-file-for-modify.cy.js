@@ -103,7 +103,7 @@ describe('data-import', () => {
 
     it(
       'C357027 Check that status of instance is updated in the Import log after uploading MARC file for modify (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

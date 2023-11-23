@@ -1,15 +1,15 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
-import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
-import Users from '../../../support/fragments/users/users';
-import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
-import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import FileManager from '../../../support/utils/fileManager';
+import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
+import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -50,7 +50,7 @@ describe('eHoldings', () => {
 
     it(
       'C356417 Export of selected “Package” without titles. User chooses "Package" fields to export. (spitfire)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();

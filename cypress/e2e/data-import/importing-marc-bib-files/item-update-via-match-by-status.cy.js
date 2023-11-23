@@ -1,36 +1,36 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
-  LOAN_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  LOCATION_NAMES,
-  FOLIO_RECORD_TYPE,
-  MATERIAL_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  ITEM_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { Permissions } from '../../../support/dictionary';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import TopMenu from '../../../support/fragments/topMenu';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import FileManager from '../../../support/utils/fileManager';
-import StatisticalCodes from '../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
-import Users from '../../../support/fragments/users/users';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import StatisticalCodes from '../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -207,7 +207,7 @@ describe('data-import', () => {
 
     it(
       'C357552 Check item update via match by status (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         mappingProfileForCreateHoldings(collectionOfMappingAndActionProfiles[0].mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(

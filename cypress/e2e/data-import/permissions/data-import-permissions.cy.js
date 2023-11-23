@@ -30,22 +30,18 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it(
-      'C492 Data Import permissions (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
-      () => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.waitLoading();
-        Logs.openFileDetails(fileName);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
-          FileDetails.columnNameInResultList.instance,
-        );
-        cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
-        MarcFieldProtection.clickNewButton();
-        MarcFieldProtection.cancel();
-      },
-    );
+    it('C492 Data Import permissions (folijet)', { tags: ['extendedPath', 'folijet'] }, () => {
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(fileName);
+      FileDetails.checkStatusInColumn(
+        FileDetails.status.created,
+        FileDetails.columnNameInResultList.instance,
+      );
+      cy.visit(SettingsMenu.marcFieldProtectionPath);
+      MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
+      MarcFieldProtection.clickNewButton();
+      MarcFieldProtection.cancel();
+    });
   });
 });

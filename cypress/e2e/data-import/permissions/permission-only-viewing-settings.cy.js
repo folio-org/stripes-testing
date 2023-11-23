@@ -72,7 +72,7 @@ describe('data-import', () => {
 
     it(
       'C353645 Checking the Data import UI permission for only viewing settings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.checkListOfExistingProfilesIsDisplayed();

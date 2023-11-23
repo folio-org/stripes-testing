@@ -1,13 +1,13 @@
 import uuid from 'uuid';
 
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
-import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
-import { MATERIAL_TYPE_NAMES, LOAN_TYPE_NAMES } from '../../../../support/constants';
-import TopMenu from '../../../../support/fragments/topMenu';
+import { LOAN_TYPE_NAMES, MATERIAL_TYPE_NAMES } from '../../../../support/constants';
+import { Permissions } from '../../../../support/dictionary';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
+import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
 describe('inventory', () => {
@@ -55,7 +55,7 @@ describe('inventory', () => {
 
     it(
       'C3493 Add an item to an existing title. There is already a copy at the same library branch. (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // Find the instance from precondition
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);

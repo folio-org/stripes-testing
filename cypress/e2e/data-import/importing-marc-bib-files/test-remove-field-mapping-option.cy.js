@@ -183,7 +183,7 @@ describe('data-import', () => {
 
     it(
       'C17033 Test ###REMOVE### field mapping option (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

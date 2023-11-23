@@ -119,7 +119,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
 
   it(
     'C15185 Move multiple items from one holdings to another holdings within an instance (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
@@ -142,7 +142,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
 
   it(
     'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-    { tags: [TestTypes.smoke, devTeams.spitfire, Features.eHoldings] },
+    { tags: ['smoke', 'spitfire', Features.eHoldings] },
     () => {
       InventoryActions.import();
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

@@ -133,7 +133,7 @@ describe('data-import', () => {
 
     it(
       'C376975 Order field mapping profile: Check fund and expense class mappings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);

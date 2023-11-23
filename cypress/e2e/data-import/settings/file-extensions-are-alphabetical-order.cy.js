@@ -31,7 +31,7 @@ describe('data-import', () => {
 
     it(
       'C15851 Make sure the file extension settings are in alphabetical order when a new one is added (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.fileExtensionsPath);
         FileExtensions.verifyListOfExistingFileExtensionsIsDisplayed();

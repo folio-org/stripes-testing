@@ -67,7 +67,7 @@ describe('data-import', () => {
 
     it(
       'C359245 Checking the error displayed when the import used a "Job Profile" that does not support the "MARC Holding" record type (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691

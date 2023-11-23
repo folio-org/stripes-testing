@@ -57,7 +57,7 @@ describe('Orders', () => {
 
   it(
     'C6531 Save and open PO from POL create or edit form (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

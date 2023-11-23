@@ -113,7 +113,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C360092 Verify that click on the "Save & keep editing" button doesnt close the editing window of "MARC Authority" record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // Verify initial state of edit view
       QuickMarcEditor.checkHeaderFirstLine(
@@ -204,7 +204,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C360093 Verify that updates are saved after clicking "Save & keep editing" button in the editing window of "MARC Authority" (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // Add text to subfield, click Save and keep editing
       MarcAuthority.changeField(

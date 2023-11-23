@@ -149,7 +149,7 @@ describe('data-import', () => {
 
     it(
       'C388506 Check the log result table for imported multiple items with errors in multiple holdings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         let instanceHRID;
         const marcFileName = `C388506 multipleAutotestFileName.${getRandomPostfix()}`;
@@ -213,7 +213,7 @@ describe('data-import', () => {
 
     it(
       'C389502 Check the JSON screen for imported multiple items with error in multiple holdings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         let instanceHrid;
         const marcFileName = `C389502 multipleAutotestFileName.${getRandomPostfix()}`;
@@ -297,7 +297,7 @@ describe('data-import', () => {
 
     it(
       'C388505 Check the log result table for imported multiple items in multiple holdings (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         const arrayOfHoldingsStatuses = [
           'Created (KU/CC/DI/M)',
@@ -358,7 +358,7 @@ describe('data-import', () => {
 
     it(
       'C389587 Check the JSON screen for imported multiple items in multiple holdings (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         let instanceHrid;
         const arrayOfHoldingsStatuses = [

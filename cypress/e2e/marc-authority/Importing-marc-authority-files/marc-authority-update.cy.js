@@ -170,7 +170,7 @@ describe('Data Import - Update MARC Authority files', () => {
 
   it(
     'C374186 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,

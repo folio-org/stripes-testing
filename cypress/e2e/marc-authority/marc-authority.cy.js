@@ -97,7 +97,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       cy.visit(TopMenu.dataImportPath);
       DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
@@ -115,7 +115,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350575 MARC Authority fields LEADER and 008 can not be deleted (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectFirst(testData.authority.title);
@@ -126,7 +126,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350576 Update 008 of Authority record (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectFirst(testData.authority.title);
@@ -137,26 +137,22 @@ describe('Importing MARC Authority files', () => {
     },
   );
 
-  it(
-    'C350578 Browse existing Authorities (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
-    () => {
-      const checkPresentedColumns = [
-        'Authorized/Reference',
-        'Heading/Reference',
-        'Type of heading',
-        'Authority source',
-        'Number of titles',
-      ];
+  it('C350578 Browse existing Authorities (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+    const checkPresentedColumns = [
+      'Authorized/Reference',
+      'Heading/Reference',
+      'Type of heading',
+      'Authority source',
+      'Number of titles',
+    ];
 
-      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-      MarcAuthority.checkPresentedColumns(checkPresentedColumns);
-    },
-  );
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthority.checkPresentedColumns(checkPresentedColumns);
+  });
 
   it(
     'C350513 Browse authority - handling for when there is no exact match (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorityBrowse.checkSearchOptions();
@@ -170,7 +166,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectFirst(testData.authority.title);
@@ -183,7 +179,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350680 Duplicate records do not return when searching by Identifier (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       const searchOption = 'Identifier (all)';
       const identifier = 'n  42008104';
@@ -196,7 +192,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.checkSearchOptions();
       MarcAuthorities.searchBy(
@@ -238,7 +234,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350572 Edit an Authority record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
+    { tags: ['criticalPath', 'spitfire', 'parallel'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectFirst(testData.authority.title);

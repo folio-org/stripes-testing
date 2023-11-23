@@ -68,7 +68,7 @@ describe('data-import', () => {
 
     it(
       'C367994 Edit an existing action profile with associated job profile (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.checkListOfExistingProfilesIsDisplayed();

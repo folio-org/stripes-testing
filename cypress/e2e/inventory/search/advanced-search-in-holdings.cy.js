@@ -96,7 +96,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400617 Search Holdings using advanced search with "AND" operator (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       // #1 Select "Holdings" toggle on "Search & filter" pane
       InventorySearchAndFilter.switchToHoldings();

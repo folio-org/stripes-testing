@@ -98,7 +98,7 @@ describe('Inventory: Contributors Browse', () => {
 
   it(
     'C359595 Verify that contributors with the same "Name" and "Name type" and one has, and one has not "authorityID" will display in different rows in the response (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

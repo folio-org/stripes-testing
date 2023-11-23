@@ -153,7 +153,7 @@ describe('data-import', () => {
 
     it(
       'C11110 Update a holdings via a static value submatch (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

@@ -1,7 +1,7 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
+import { Permissions } from '../../../support/dictionary';
 import { EHoldingsPackage, EHoldingsPackageView } from '../../../support/fragments/eholdings';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import ArrayUtils from '../../../support/utils/arrays';
@@ -55,7 +55,7 @@ describe('eHoldings', () => {
 
     it(
       'C366590 Verify that rows in exported ".csv" file are sorted alphabetically (case insensitive) by "Title name" column (scenario 2) (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         EHoldingsPackageView.getTotalTitlesCount().then((titlesCount) => {
           testData.titlesCount = titlesCount;
@@ -133,7 +133,7 @@ describe('eHoldings', () => {
 
     it(
       'C366591 Verify that rows in exported ".csv" file are sorted alphabetically (case insensitive) by "Title name" column (scenario 1) (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         // Click the "Search" button in "Titles" accordion
         const FilterTitlesModal = EHoldingsPackageView.openFilterTitlesModal();

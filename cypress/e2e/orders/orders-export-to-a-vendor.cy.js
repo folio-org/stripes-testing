@@ -84,7 +84,7 @@ describe('orders: export', () => {
 
   it(
     'C350396: Verify that Order is not exported to a definite Vendor if Acquisition method selected in the Order line DOES NOT match Organization Integration configs (thunderjet)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.createOrder(order, true, false).then((orderId) => {
         order.id = orderId;

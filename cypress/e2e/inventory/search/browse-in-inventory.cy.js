@@ -112,7 +112,7 @@ describe('Browse in Inventory', () => {
 
   it(
     'C388531 Verify that contributors with the same "Name" , "Name type" and "authorityID" will display as one row (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

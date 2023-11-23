@@ -48,7 +48,7 @@ describe('data-import', () => {
 
     it(
       'C17016 Create, edit, and delete field protection settings (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();

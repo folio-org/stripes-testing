@@ -59,7 +59,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380715 LDR length, tag validation when when creating a new "MARC bib" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField(

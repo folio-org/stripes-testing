@@ -80,7 +80,7 @@ describe('inventory', () => {
 
   it(
     'C163927 Move an item with remote effective location from remote storage locations to non-remote storage holding (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);

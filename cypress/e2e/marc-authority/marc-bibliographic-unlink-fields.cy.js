@@ -118,7 +118,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C365598 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in editing window. (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[2]);
       InventoryInstances.selectInstance();

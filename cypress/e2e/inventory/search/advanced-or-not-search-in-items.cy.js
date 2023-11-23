@@ -154,7 +154,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400623 Search Items using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventoryInstances.clickAdvSearchButton();

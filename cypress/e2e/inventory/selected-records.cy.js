@@ -12,7 +12,7 @@ describe('ui-inventory: selecting / changing records', () => {
 
   it(
     'C196755 Selecting records for quick export (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const selectedRecords = 2;
 
@@ -22,38 +22,30 @@ describe('ui-inventory: selecting / changing records', () => {
     },
   );
 
-  it(
-    'C196754 Show selected records (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
-    () => {
-      const selectedRecords = 3;
+  it('C196754 Show selected records (firebird)', { tags: ['smoke', 'firebird'] }, () => {
+    const selectedRecords = 3;
 
-      InventorySearchAndFilter.byKeywords('*');
-      InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
-      InventorySearchAndFilter.verifySelectedRecords(selectedRecords);
-      InventorySearchAndFilter.showSelectedRecords();
+    InventorySearchAndFilter.byKeywords('*');
+    InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
+    InventorySearchAndFilter.verifySelectedRecords(selectedRecords);
+    InventorySearchAndFilter.showSelectedRecords();
 
-      InventoryModals.verifySelectedRecords(selectedRecords);
-      InventoryModals.verifySelectedRecordsCount(selectedRecords);
-      InventoryModals.verifyButtons();
-    },
-  );
+    InventoryModals.verifySelectedRecords(selectedRecords);
+    InventoryModals.verifySelectedRecordsCount(selectedRecords);
+    InventoryModals.verifyButtons();
+  });
 
-  it(
-    'C196756 Change selected records (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
-    () => {
-      const selectedRecords = 3;
-      const unselectedRecords = 1;
+  it('C196756 Change selected records (firebird)', { tags: ['smoke', 'firebird'] }, () => {
+    const selectedRecords = 3;
+    const unselectedRecords = 1;
 
-      InventorySearchAndFilter.byKeywords('*');
-      InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
-      InventorySearchAndFilter.verifySelectedRecords(selectedRecords);
-      InventorySearchAndFilter.showSelectedRecords();
+    InventorySearchAndFilter.byKeywords('*');
+    InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
+    InventorySearchAndFilter.verifySelectedRecords(selectedRecords);
+    InventorySearchAndFilter.showSelectedRecords();
 
-      InventoryModals.clickOnCheckboxes(unselectedRecords);
-      InventoryModals.save();
-      InventorySearchAndFilter.verifySelectedRecords(selectedRecords - unselectedRecords);
-    },
-  );
+    InventoryModals.clickOnCheckboxes(unselectedRecords);
+    InventoryModals.save();
+    InventorySearchAndFilter.verifySelectedRecords(selectedRecords - unselectedRecords);
+  });
 });

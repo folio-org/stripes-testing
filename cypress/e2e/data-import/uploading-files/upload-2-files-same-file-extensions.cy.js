@@ -27,7 +27,7 @@ describe('data-import', () => {
 
     it(
       'C2378 UIDATIMP-252: Uploading 2 files with the same extension, but different case, does not work (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const filesNames = ['C2378_File1.mrc', 'C2378_File2.MRC'];
         const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';

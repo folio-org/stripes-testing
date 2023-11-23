@@ -1,14 +1,13 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import DateTools from '../../../support/utils/dateTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import FileManager from '../../../support/utils/fileManager';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
+import DateTools from '../../../support/utils/dateTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -66,7 +65,7 @@ describe('data-import', () => {
 
     it(
       'C11113 Filter the "View all" log screen (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['smoke', 'folijet', 'parallel'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();

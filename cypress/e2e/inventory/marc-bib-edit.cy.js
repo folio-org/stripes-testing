@@ -93,7 +93,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C360098 MARC Bib | MARC tag validation checks when clicks on the "Save & keep editing" button (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
@@ -145,7 +145,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C356842 [quickMARC] Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
@@ -200,7 +200,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C359239 Edit MARC Bib | Displaying of placeholder message when user deletes a row (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const fieldData = {
         firstFieldForAdding: { tag: '', content: '' },

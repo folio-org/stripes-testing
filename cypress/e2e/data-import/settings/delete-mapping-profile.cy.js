@@ -55,7 +55,7 @@ describe('data-import', () => {
 
     it(
       'C2353 Delete an existing field mapping profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.mappingProfilePath);
 

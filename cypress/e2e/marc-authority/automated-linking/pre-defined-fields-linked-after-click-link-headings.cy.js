@@ -239,7 +239,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C389486 Pre-defined fields are linked after clicking on the "Link headings" button in edit "MARC bib" when only default fields enabled for autolinking (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdRecordsIDs[0]);
       InventoryInstances.selectInstance();

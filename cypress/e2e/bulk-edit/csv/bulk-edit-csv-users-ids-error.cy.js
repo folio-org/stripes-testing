@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350928 Verify error accordion during matching (Local approach) (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

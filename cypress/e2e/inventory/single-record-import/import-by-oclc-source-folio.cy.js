@@ -61,7 +61,7 @@ describe('inventory', () => {
 
     it(
       'C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter(

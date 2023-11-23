@@ -1,25 +1,24 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
+  FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
-import DateTools from '../../../support/utils/dateTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -67,7 +66,7 @@ describe('data-import', () => {
 
     it(
       'C11089 Instance field mapping: Test various field mappings for the "Cataloged date" during Instance creation (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);

@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -44,7 +44,7 @@ describe('data-import', () => {
 
     it(
       'C6691 Check the default mapping of publisher info (260/264) from the MARC record to the Inventory Instance Publication fields (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const publisherInfo = {
           publisher: 'Crown House Publishing',

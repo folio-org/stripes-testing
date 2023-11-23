@@ -1,18 +1,16 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import TestTypes from '../../../support/dictionary/testTypes';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
+import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import Permissions from '../../../support/dictionary/permissions';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import { randomizeArray } from '../../../support/utils/arrays';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Create holding records with MARC source', () => {
   const testData = {
@@ -85,7 +83,7 @@ describe('Create holding records with MARC source', () => {
 
   it(
     'C357063 Verify "LDR" validation rules with valid data for positions 05, 06 ,17, 18 when editing record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       HoldingsRecordView.close();
       InventoryInstance.openHoldingView();

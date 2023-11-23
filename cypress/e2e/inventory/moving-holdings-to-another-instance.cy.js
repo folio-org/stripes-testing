@@ -14,7 +14,7 @@ let userId;
 const item = {
   instanceName: `Inventory-first-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
-  firstHoldingName: 'Popular Reading Collection'
+  firstHoldingName: 'Popular Reading Collection',
 };
 
 const secondItem = {
@@ -36,7 +36,10 @@ describe('inventory', () => {
         waiter: InventorySearchAndFilter.waitLoading,
       });
       item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-      secondItem.instanceId = InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
+      secondItem.instanceId = InventoryInstances.createInstanceViaApi(
+        secondItem.instanceName,
+        secondItem.barcode,
+      );
       cy.getHoldings({
         limit: 1,
         query: `"instanceId"="${item.instanceId}"`,
@@ -69,7 +72,7 @@ describe('inventory', () => {
 
   it(
     "C15186 Move one holdings with all it's associated items from one instance to another instance (firebird) (TaaS)",
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.byKeywords(item.instanceName);

@@ -103,7 +103,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
 
   it(
     'C380730 "$t" validation when linking "MARC Bibliographic" record\'s fields upon record creation (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();

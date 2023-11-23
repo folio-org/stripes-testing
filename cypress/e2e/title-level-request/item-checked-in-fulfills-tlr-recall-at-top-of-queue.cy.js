@@ -1,27 +1,25 @@
 import moment from 'moment';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import permissions from '../../support/dictionary/permissions';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Requests from '../../support/fragments/requests/requests';
-import Checkout from '../../support/fragments/checkout/checkout';
+import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Request queue. TLR', () => {
   const users = {
@@ -180,7 +178,7 @@ describe('Request queue. TLR', () => {
   });
   it(
     'C350682 Check that item checked in fulfills the TLR recall at the top of the queue (vega) (Taas)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
       InventoryInstance.checkNewRequestAtNewPane();

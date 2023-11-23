@@ -86,7 +86,7 @@ describe('plug-in MARC authority | Browse', () => {
 
   it(
     'C380555 MARC Authority plug-in | Browse using "Uniform title" option returns only records with the same "Type of heading" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

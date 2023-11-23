@@ -42,7 +42,7 @@ describe('inventory', () => {
 
     it(
       'C193953 Overlay existing Source = MARC Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         InventoryActions.import(oclc);
         InstanceRecordView.waitLoading();
@@ -53,7 +53,7 @@ describe('inventory', () => {
 
     it(
       'C193952 Create Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchByParameter('OCLC number, normalized', oclc);
         InventorySearchAndFilter.selectSearchResultItem();

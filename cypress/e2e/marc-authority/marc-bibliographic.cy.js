@@ -133,7 +133,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C360541 Verify that "Link to MARC Authority record" icon displays next to MARC fields when editing Bib record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.editMarcBibliographicRecord();
       tagArray.forEach((tag) => {
@@ -145,7 +145,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       InventoryInstance.deriveNewMarcBib();
       tagArray.forEach((tag) => {
@@ -156,7 +156,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C353526 Protection of specified fields when editing "MARC Bibliographic" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.editMarcBibliographicRecord();
       MarcAuthority.checkInfoButton('999');

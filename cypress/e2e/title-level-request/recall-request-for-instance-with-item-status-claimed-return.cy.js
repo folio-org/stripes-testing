@@ -1,17 +1,17 @@
-import TopMenu from '../../support/fragments/topMenu';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
+import Permissions from '../../support/dictionary/permissions';
 import Checkout from '../../support/fragments/checkout/checkout';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import Permissions from '../../support/dictionary/permissions';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../support/fragments/topMenu';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Title level request for claimed return item', () => {
   const testData = {

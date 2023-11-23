@@ -84,7 +84,7 @@ describe('Orders', () => {
 
   it(
     'C402773 PO line for "One-time" order can not be saved when "Expense class" field is empty (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.createOrderForRollover(order).then((firstOrderResponse) => {
         order.id = firstOrderResponse.id;

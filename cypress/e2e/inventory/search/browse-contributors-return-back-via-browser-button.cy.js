@@ -46,7 +46,7 @@ describe('Inventory › Contributors Browse', () => {
 
   it(
     'C353653 Return back to "Browse inventory" pane via the web-browser "Back" button (exact match query)(Spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

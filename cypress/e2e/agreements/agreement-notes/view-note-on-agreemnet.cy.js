@@ -1,10 +1,9 @@
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import Agreements from '../../../support/fragments/agreements/agreements';
+import Notes from '../../../support/fragments/notes/notes';
 import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
 import TopMenu from '../../../support/fragments/topMenu';
-import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
-import Notes from '../../../support/fragments/notes/notes';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 let agreementId;
 let noteTypeId;
@@ -42,7 +41,7 @@ describe('Agreement Notes', () => {
 
   it(
     'C1347 View a note on an Agreement record (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(

@@ -194,7 +194,7 @@ describe('data-import', () => {
 
     it(
       'C385665 Update controllable subfield, "$0" in one of the linked repeatable fields (multiple repeatable fields with same indicators) (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

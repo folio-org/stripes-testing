@@ -193,7 +193,7 @@ describe('data-import', () => {
 
     it(
       'C397983 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 2 matches (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         const fileNameForCreate = `C397983 autotestFileForCreate.${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397983 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
@@ -367,7 +367,7 @@ describe('data-import', () => {
 
     it(
       'C397984 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 1 match (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const fileNameForCreate = `C397984 autotestFileForCreate.${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397984 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
@@ -518,7 +518,7 @@ describe('data-import', () => {
 
     it(
       'C397383 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 3 matches (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         const fileNameForCreate = `C397383 autotestFileForCreate.${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397383 autotestFileForUpdate.${getRandomPostfix()}.mrc`;

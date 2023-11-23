@@ -43,7 +43,7 @@ describe('data-import', () => {
 
     it(
       'C2352 Duplicate an existing field mapping profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const calloutMessage = `The field mapping profile "${duplicatedMappingProfile.name}" was successfully created`;
 

@@ -50,7 +50,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350767 Browse for MARC Authority record with " & " symbol in the title (spitfire) (TaaS)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorityBrowse.checkSearchOptions();

@@ -76,7 +76,7 @@ describe('data-import', () => {
 
     it(
       'C356820 Check the "Source" value of imported "MARC Holdings" record. (spitfire) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         InventoryInstances.searchBySource('MARC');
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);

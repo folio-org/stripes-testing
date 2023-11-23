@@ -90,7 +90,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
 
   it(
     'C380733 "$9" validation when creating a new "MARC bib" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField(

@@ -35,7 +35,7 @@ describe('data-import', () => {
 
     it(
       'C357019 Check that no error when going to the "Uploading jobs" and "Settings/Job profiles" pages from the "View All" page (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // #1 Go to "Data import" app -> click on "Actions" button -> Select the "View all"
         // User is taken to the View all logs screen

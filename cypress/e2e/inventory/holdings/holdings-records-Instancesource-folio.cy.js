@@ -1,12 +1,10 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import testTypes from '../../../support/dictionary/testTypes';
 import features from '../../../support/dictionary/features';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import DevTeams from '../../../support/dictionary/devTeams';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
   beforeEach(() => {
@@ -18,7 +16,7 @@ describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
   });
   it(
     'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
-    { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord] },
+    { tags: ['smoke', 'spitfire', features.holdingsRecord] },
     () => {
       InventoryInstance.createHoldingsRecord();
       InventoryInstance.openHoldingView();

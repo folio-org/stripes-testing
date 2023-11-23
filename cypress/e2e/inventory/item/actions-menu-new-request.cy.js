@@ -186,7 +186,7 @@ describe('inventory', () => {
 
     it(
       'C10946 Actions menu: New Request (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         [
           'Available',

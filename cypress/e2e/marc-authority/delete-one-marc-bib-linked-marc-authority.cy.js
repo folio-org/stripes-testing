@@ -112,7 +112,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C350932 Delete reference "MARC Authority" record that has one linked field in "MARC Bib" record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
       MarcAuthorities.selectTitle(testData.marcValue);

@@ -71,7 +71,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C387521 User without permission "quickMARC: Can Link/unlink authority records to bib records" cant see "Link headings" button when edit "MARC bib" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(testData.userPropertiesC387521.username, testData.userPropertiesC387521.password, {
         path: TopMenu.inventoryPath,
@@ -96,7 +96,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C387523 User without permission "quickMARC: Can Link/unlink authority records to bib records" cant see "Link headings" button when derive "MARC bib" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(testData.userPropertiesC387523.username, testData.userPropertiesC387523.password, {
         path: TopMenu.inventoryPath,
