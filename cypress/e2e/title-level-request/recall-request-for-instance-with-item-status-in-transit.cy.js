@@ -83,7 +83,7 @@ describe('Title level request', () => {
   });
 
   it(
-    '[C375941] Check that user can create a TLR Recall for Item with status In transit (vega) (TaaS)',
+    'C375941 Check that user can create a TLR Recall for Item with status In transit (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
