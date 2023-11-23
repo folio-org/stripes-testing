@@ -1,6 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import TestTypes from '../../support/dictionary/testTypes';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
@@ -8,11 +7,9 @@ import InventorySteps from '../../support/fragments/inventory/inventorySteps';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import Features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -142,7 +139,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
 
   it(
     'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-    { tags: ['smoke', 'spitfire', Features.eHoldings] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       InventoryActions.import();
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

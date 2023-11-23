@@ -1,4 +1,3 @@
-import Features from '../../../support/dictionary/features';
 import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
 import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -11,7 +10,7 @@ describe('Management of waive reasons', () => {
 
   it(
     'C446 Verify that you can create/edit/delete waive reasons (volaris)',
-    { tags: ['smoke', Features.waiveReasons, 'volaris'] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       WaiveReasons.startAdding();
       WaiveReasons.checkSaveButtonState({ isDisabled: true });

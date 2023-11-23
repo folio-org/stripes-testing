@@ -149,7 +149,7 @@ describe('Inventory', () => {
 
     it(
       'C410764 Change selected search option when facet is applied to the result list (spitfire) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', DevTeams.spitfire] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

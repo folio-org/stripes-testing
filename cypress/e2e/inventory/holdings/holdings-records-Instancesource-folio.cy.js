@@ -1,4 +1,3 @@
-import features from '../../../support/dictionary/features';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -16,7 +15,7 @@ describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
   });
   it(
     'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
-    { tags: ['smoke', 'spitfire', features.holdingsRecord] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       InventoryInstance.createHoldingsRecord();
       InventoryInstance.openHoldingView();

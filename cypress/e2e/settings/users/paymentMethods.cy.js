@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import features from '../../../support/dictionary/features';
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -22,7 +21,7 @@ describe('ui-users-settings: payments methods in Fee/fine', () => {
 
   it(
     'C445 Verify that you can create/edit/delete payment methods for a fee/fine owner (volaris)',
-    { tags: ['smoke', features.paymentMethod, 'volaris'] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       // create
       const initialPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };

@@ -1,4 +1,3 @@
-import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -46,7 +45,7 @@ describe('MARC Authority Delete', () => {
 
   it(
     'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
-    { tags: ['criticalPath', Features.authority, 'spitfire'] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
       JobProfiles.waitFileIsUploaded();

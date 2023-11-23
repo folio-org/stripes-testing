@@ -102,7 +102,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C422166 MARC Authority plug-in | Apply "Authority source" facet to the search result list (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', DevTeams.spitfire] },
     () => {
       // #1 - #3 Fill in the input field placed at the "Search & filter" pane with " * ", select search option: "Keyword", click on the "Search" button
       MarcAuthorities.searchByParameter('Keyword', '*');

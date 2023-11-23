@@ -40,7 +40,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380644 Create "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', DevTeams.spitfire] },
     () => {
       // #1 Click on the "Actions" button placed on the second pane >> Select "+New MARC Bib Record" option.
       InventoryInstance.newMarcBibRecord();

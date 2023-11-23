@@ -1,7 +1,3 @@
-/// <reference types="cypress" />
-
-import features from '../../../support/dictionary/features';
-import testTypes from '../../../support/dictionary/testTypes';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -20,7 +16,7 @@ describe('Manage holding records of instance records created through marc file u
 
   it(
     'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
-    { tags: ['smoke', 'spitfire', features.holdingsRecord, testTypes.broken] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       DataImport.uploadMarcBib().then((instanceRecordHrId) => {
         cy.visit(TopMenu.inventoryPath);

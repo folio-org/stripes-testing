@@ -1,19 +1,17 @@
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import Checkout from '../../support/fragments/checkout/checkout';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LoanPolicy from '../../support/fragments/circulation/loan-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
-import LoanPolicy from '../../support/fragments/circulation/loan-policy';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
   let userData;
@@ -131,7 +129,7 @@ describe('Circulation log', () => {
 
   it(
     'C16982 Filter Circulation log by Checked out through override (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Checked out through override', 'Checked out to proxy: no.');
     },

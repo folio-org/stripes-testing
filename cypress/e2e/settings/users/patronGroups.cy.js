@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import Features from '../../../support/dictionary/features';
 import Conditions from '../../../support/fragments/settings/users/conditions';
 import Limits from '../../../support/fragments/settings/users/limits';
 import ManualCharges from '../../../support/fragments/settings/users/manualCharges';
@@ -17,7 +16,7 @@ describe('Patron blocks relations with users, conditions', () => {
   const testData = {};
   it(
     "C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron (vega)",
-    { tags: ['smoke', Features.patronBlocks, 'vega'] },
+    { tags: ['smoke', 'vega'] },
     () => {
       testData.chargeAmount = 100;
 

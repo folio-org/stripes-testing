@@ -1,4 +1,4 @@
-import { Features, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
 import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -48,7 +48,7 @@ describe('eHoldings', () => {
 
     it(
       'C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)',
-      { tags: ['smoke', 'spitfire', Features.eHoldings] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.login(testData.C684UserProperties.username, testData.C684UserProperties.password, {
           path: TopMenu.eholdingsPath,

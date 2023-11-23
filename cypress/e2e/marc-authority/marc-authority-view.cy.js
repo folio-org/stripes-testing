@@ -1,4 +1,3 @@
-import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -34,7 +33,7 @@ describe('MARC Authority management', () => {
 
   it(
     'C350967 quickMARC: View MARC bibliographic record (spitfire)',
-    { tags: ['smoke', Features.authority, 'spitfire', 'nonParallel'] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       cy.login(userData.name, userData.password, {
         path: TopMenu.inventoryPath,

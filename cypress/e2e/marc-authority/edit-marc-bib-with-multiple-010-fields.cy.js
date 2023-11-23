@@ -112,7 +112,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C380645 Edit "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', DevTeams.spitfire] },
     () => {
       InventoryInstance.searchByTitle('C380645 The Journal of ecclesiastical history.');
       InventoryInstances.selectInstance();

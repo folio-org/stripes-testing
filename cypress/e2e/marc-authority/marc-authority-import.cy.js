@@ -1,4 +1,3 @@
-import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -54,7 +53,7 @@ describe('Data Import - Importing MARC Authority files', () => {
 
   it(
     'C360520 Import of "MARC Authority" record with valid prefix in "001" field only (spitfire)',
-    { tags: ['smoke', Features.authority, 'spitfire', 'nonParallel'] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       DataImport.uploadFile('marcFileForC360520.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
@@ -81,7 +80,7 @@ describe('Data Import - Importing MARC Authority files', () => {
 
   it(
     'C360521 Import of "MARC Authority" record with valid prefix in "010 $a" field only (spitfire)',
-    { tags: ['smoke', Features.authority, 'spitfire'] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       DataImport.uploadFile('corporate_name(prefix_in_010Sa)sc_02.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
@@ -108,7 +107,7 @@ describe('Data Import - Importing MARC Authority files', () => {
 
   it(
     'C360522 Import of "MARC Authority" record with same valid prefixes in "001" and "010 $a" fields (spitfire)',
-    { tags: ['smoke', Features.authority, 'spitfire'] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       DataImport.uploadFile('D_genre(prefixes_in_001_010Sa)sc_03.mrc', fileName);
       JobProfiles.waitFileIsUploaded();

@@ -1,5 +1,4 @@
 import { Callout } from '../../../interactors';
-import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -46,7 +45,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it(
     'C353612 Verify "LDR" validation rules with invalid data for editable (06, 07) and non-editable positions when editing/deriving record (spitfire)',
-    { tags: ['smoke', 'spitfire', features.quickMarcEditor] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       const checkLdrErrors = () => {
         const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
@@ -140,7 +139,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it(
     'C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)',
-    { tags: ['smoke', 'spitfire', features.quickMarcEditor] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       const initialLDRValue = '01677cam\\a22003974c\\4500';
       const changesIn06 = ['a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];

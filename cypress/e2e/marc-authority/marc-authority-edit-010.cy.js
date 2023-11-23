@@ -78,7 +78,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C375127 Unable to save imported "MARC authority" record with multiple "010" fields when editing (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', DevTeams.spitfire] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
       MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);

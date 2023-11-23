@@ -3,7 +3,6 @@ Due to test parallelization, it was decided to check only 'Recall overdue by max
 If this test checks all conditions, it may cause other tests that use conditions to fail.
 'Recall overdue by maximum number of days' was chosen because it is not used by other tests.
 */
-import Features from '../../../support/dictionary/features';
 import Condition from '../../../support/fragments/settings/users/condition';
 import Conditions from '../../../support/fragments/settings/users/conditions';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -17,7 +16,7 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
 
   it(
     'C11078 Verify that you can select/edit/remove patron block conditions (vega)',
-    { tags: ['smoke', Features.patronBlocks, 'vega'] },
+    { tags: ['smoke', 'vega'] },
     () => {
       Object.values(Condition.blockCheckboxes).forEach((specialCheckBox) => {
         const conditionType = Conditions.conditionTypes[5];

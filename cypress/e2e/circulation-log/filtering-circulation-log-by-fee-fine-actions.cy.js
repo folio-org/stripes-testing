@@ -1,8 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import TestTypes from '../../support/dictionary/testTypes';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -218,7 +216,7 @@ describe('Circulation log', () => {
 
   it(
     'C17009 Check the Actions button from filtering Circulation log by billed (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -229,7 +227,7 @@ describe('Circulation log', () => {
 
   it(
     'C17008 Filter circulation log by billed (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       filterByAction('Billed');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
