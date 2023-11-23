@@ -70,7 +70,7 @@ const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
 const authoritySourceAccordion = Accordion({ id: 'sourceFileId' });
-const authoritySourceIptions = [
+const authoritySourceOptions = [
   'LC Name Authority file (LCNAF)',
   'LC Subject Headings (LCSH)',
   "LC Children's Subject Headings",
@@ -781,7 +781,7 @@ export default {
   },
 
   checkResultsSelectedByAuthoritySource(options) {
-    authoritySourceIptions.forEach((option) => {
+    authoritySourceOptions.forEach((option) => {
       if (options.includes(option)) {
         cy.expect([MultiColumnListCell({ columnIndex: 4, content: option }).exists()]);
       } else {
