@@ -135,6 +135,7 @@ describe('Edit item level request', () => {
       cancellationReasonId: cancellationReason,
       cancelledDate: new Date().toISOString(),
     });
+    Requests.deleteRequestViaApi(requestData.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint1.id]);
     Users.deleteViaApi(userData.userId);
@@ -150,7 +151,7 @@ describe('Edit item level request', () => {
 
   it(
     'C350558 Check that the user can Edit request (Item level request) (vega)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
@@ -181,7 +182,7 @@ describe('Edit item level request', () => {
       EditRequest.setPickupServicePoint(servicePoint2.name);
       EditRequest.saveAndClose();
 
-      RequestDetail.waitLoading('item');
+      RequestDetail.waitLoading('no staff');
       RequestDetail.checkTitleInformation({
         TLRs: '0',
         title: itemData.instanceTitle,

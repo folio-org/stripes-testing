@@ -13,6 +13,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   Pane,
+  SearchField,
   Section,
   Select,
   TextArea,
@@ -428,7 +429,7 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do(TextArea({ id: 'input-inventory-search' }).selectIndex(parameter));
+    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
     cy.do(keywordInput.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
@@ -491,7 +492,14 @@ export default {
   },
 
   selectSearchOptions(searchOption, text) {
-    cy.do([inventorySearchAndFilterInput.choose(searchOption), keywordInput.fillIn(text)]);
+    cy.do([
+      inventorySearchAndFilterInput.choose(searchOption),
+      inventorySearchAndFilter.fillIn(text),
+    ]);
+  },
+
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
   },
 
   verifySelectedSearchOption(option) {
