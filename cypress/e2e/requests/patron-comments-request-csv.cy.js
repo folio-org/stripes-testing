@@ -144,7 +144,6 @@ describe('Requests Export CSV File', () => {
       defaultLocation.libraryId,
       defaultLocation.id,
     );
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     ServicePoints.deleteViaApi(servicePoint.id);
     Requests.deleteDownloadedFile(fileName);
   });

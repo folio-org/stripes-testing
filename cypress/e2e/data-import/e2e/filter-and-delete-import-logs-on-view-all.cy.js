@@ -72,10 +72,11 @@ describe('data-import', () => {
     });
 
     after(() => {
-      cy.getAdminToken();
-      Users.deleteViaApi(firstUser.userId);
-      Users.deleteViaApi(secondUser.userId);
-      // TODO delete all created instances
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(firstUser.userId);
+        Users.deleteViaApi(secondUser.userId);
+        // TODO delete all created instances
+      });
     });
 
     it(

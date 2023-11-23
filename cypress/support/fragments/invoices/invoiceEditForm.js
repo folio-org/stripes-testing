@@ -1,3 +1,5 @@
+import { HTML } from '@interactors/html';
+
 import {
   Button,
   SearchField,
@@ -7,11 +9,13 @@ import {
   SelectionList,
   TextArea,
   TextField,
+  FieldSet,
   including,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceStates from './invoiceStates';
+import { getLongDelay } from '../../utils/cypressTools';
 
 const invoiceEditFormRoot = Section({ id: 'pane-invoice-form' });
 const informationSection = invoiceEditFormRoot.find(Section({ id: 'invoiceForm-information' }));
@@ -21,8 +25,12 @@ const vendorInformationSection = invoiceEditFormRoot.find(
 const extendedInformationSection = invoiceEditFormRoot.find(
   Section({ id: 'invoiceForm-extendedInformation' }),
 );
-const cancelButtom = Button('Cancel');
-const saveButtom = Button('Save & close');
+const cancelButton = Button('Cancel');
+const saveButton = Button('Save & close');
+const deleteButton = Button({ icon: 'trash' });
+const invoiceFormFieldSet = FieldSet({ id: 'invoice-form-links' });
+const linkNameTextField = TextField('Link name*');
+const externalUrlTextField = TextField('External URL');
 
 const infoFields = {
   fiscalYear: informationSection.find(Button({ id: 'invoice-fiscal-year' })),
@@ -43,8 +51,9 @@ const extendedInfoFields = {
 const buttons = {
   'Fiscal year': infoFields.fiscalYear,
   'Vendor name': vendorFields.vendorName,
-  Cancel: cancelButtom,
-  'Save & close': saveButtom,
+  Cancel: cancelButton,
+  'Save & close': saveButton,
+  Delete: deleteButton,
 };
 
 export default {
@@ -104,13 +113,30 @@ export default {
       cy.expect(infoFields.note.has({ value: invoice.note }));
     }
   },
+  uploadFile(fileName) {
+    cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
+    cy.expect(HTML(including(fileName)).exists());
+  },
+  addLinkToInvoice(name, url) {
+    cy.do(Button('Add link').click());
+    cy.expect([
+      invoiceFormFieldSet.exists(),
+      invoiceFormFieldSet.find(linkNameTextField).exists(),
+      invoiceFormFieldSet.find(externalUrlTextField).exists(),
+      invoiceFormFieldSet.find(deleteButton).exists(),
+    ]);
+    cy.do([
+      invoiceFormFieldSet.find(linkNameTextField).fillIn(name),
+      invoiceFormFieldSet.find(externalUrlTextField).fillIn(url),
+    ]);
+  },
   clickCancelButton() {
-    cy.do(cancelButtom.click());
+    cy.do(cancelButton.click());
     cy.expect(invoiceEditFormRoot.absent());
   },
   clickSaveButton({ invoiceCreated = true, invoiceLineCreated = false } = {}) {
-    cy.expect(saveButtom.has({ disabled: false }));
-    cy.do(saveButtom.click());
+    cy.expect(saveButton.has({ disabled: false }));
+    cy.do(saveButton.click());
 
     if (invoiceCreated) {
       InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);

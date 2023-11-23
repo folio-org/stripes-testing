@@ -79,7 +79,7 @@ describe('Settings: Tenant', () => {
     ]).then((userProperties) => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password);
-      cy.wait(1000);
+      cy.wait(2000);
       TopMenuNavigation.navigateToApp('Settings');
     });
   });
