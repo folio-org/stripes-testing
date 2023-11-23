@@ -24,42 +24,44 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin();
+      cy.getAdminToken().then(() => {
+        // Create files dynamically with given name and content in fixtures
+        FileManager.createFile(`cypress/fixtures/${fileNameForFailedImport}`);
+        // read contents of static file in fixtures
+        cy.readFile(`cypress/fixtures/${pathToStaticFile}`).then((content) => {
+          // and write its contents to the file which runs successfully and create it
+          FileManager.createFile(`cypress/fixtures/${fileNameForSuccessfulImport}`, content);
+        });
 
-      // Create files dynamically with given name and content in fixtures
-      FileManager.createFile(`cypress/fixtures/${fileNameForFailedImport}`);
-      // read contents of static file in fixtures
-      cy.readFile(`cypress/fixtures/${pathToStaticFile}`).then((content) => {
-        // and write its contents to the file which runs successfully and create it
-        FileManager.createFile(`cypress/fixtures/${fileNameForSuccessfulImport}`, content);
+        // import with Single record import
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.importWithOclc(oclcNumber);
+
+        cy.visit(TopMenu.dataImportPath);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        // Upload files
+        // runs with errors
+        cy.uploadFileWithDefaultJobProfile(fileNameForFailedImport);
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        // runs successfully
+        cy.uploadFileWithDefaultJobProfile(fileNameForSuccessfulImport);
       });
-
-      // import with Single record import
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-      cy.visit(TopMenu.inventoryPath);
-      InventoryInstances.importWithOclc(oclcNumber);
-
-      cy.visit(TopMenu.dataImportPath);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      // Upload files
-      // runs with errors
-      cy.uploadFileWithDefaultJobProfile(fileNameForFailedImport);
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      // runs successfully
-      cy.uploadFileWithDefaultJobProfile(fileNameForSuccessfulImport);
-
       // Remove generated test files from fixtures after uploading
       FileManager.deleteFile(`cypress/fixtures/${fileNameForSuccessfulImport}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameForFailedImport}`);
     });
 
     beforeEach(() => {
-      LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy }) => {
-        const { firstName, lastName } = runBy;
-        jobProfileName = jobProfileInfo.name;
-        userFilterValue = `${firstName} ${lastName}`;
-        userName = firstName ? `${firstName} ${lastName}` : `${lastName}`;
+      cy.getAdminToken(() => {
+        LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy }) => {
+          const { firstName, lastName } = runBy;
+          jobProfileName = jobProfileInfo.name;
+          userFilterValue = `${firstName} ${lastName}`;
+          userName = firstName ? `${firstName} ${lastName}` : `${lastName}`;
+        });
       });
     });
 

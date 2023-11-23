@@ -1,18 +1,15 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
-import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
-import Parallelization from '../../support/dictionary/parallelization';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Importing MARC Authority files', () => {
   const testData = {

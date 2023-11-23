@@ -81,15 +81,16 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForExport.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      ActionProfiles.deleteActionProfile(actionProfileForExport.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfileForExport.name);
+      cy.getAdminToken().then(() => {
+        // clean up generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForExport.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        ActionProfiles.deleteActionProfile(actionProfileForExport.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfileForExport.name);
+      });
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

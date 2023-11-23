@@ -46,18 +46,19 @@ describe('inventory', () => {
     });
 
     after(() => {
-      cy.getAdminToken();
-      cy.getInstanceById(instanceIds[0])
-        .then((body) => {
-          const requestBody = body;
-          requestBody.precedingTitles = [];
+      cy.getAdminToken().then(() => {
+        cy.getInstanceById(instanceIds[0])
+          .then((body) => {
+            const requestBody = body;
+            requestBody.precedingTitles = [];
 
-          // reset precedingTitles to get rid of tables dependencies and be able to delete the instances
-          cy.updateInstance(requestBody);
-        })
-        .then(() => {
-          instanceIds.forEach((instanceId) => InventoryInstance.deleteInstanceViaApi(instanceId));
-        });
+            // reset precedingTitles to get rid of tables dependencies and be able to delete the instances
+            cy.updateInstance(requestBody);
+          })
+          .then(() => {
+            instanceIds.forEach((instanceId) => InventoryInstance.deleteInstanceViaApi(instanceId));
+          });
+      });
     });
 
     it(

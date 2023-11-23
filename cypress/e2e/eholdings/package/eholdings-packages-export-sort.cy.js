@@ -62,8 +62,8 @@ describe('eHoldings', () => {
         });
 
         // Click "Actions" button, Select "Export package (CSV)", Click "Export" button.
-        EHoldingsPackageView.openExportModal();
-        EHoldingsPackageView.export();
+        const ExportSettingsModal = EHoldingsPackageView.openExportModal();
+        ExportSettingsModal.clickExportButton();
 
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
           // Go to "Export manager" app
@@ -147,8 +147,8 @@ describe('eHoldings', () => {
         });
 
         // Click "Actions" button, Select "Export package (CSV)", Click "Export" button.
-        EHoldingsPackageView.openExportModal();
-        EHoldingsPackageView.export();
+        const ExportSettingsModal = EHoldingsPackageView.openExportModal();
+        ExportSettingsModal.clickExportButton();
 
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
           // Go to "Export manager" app

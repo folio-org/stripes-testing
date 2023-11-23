@@ -52,6 +52,7 @@ export default HTML.extend('selection')
     singleValue: (el) => el.querySelector('button [class^=singleValue-]').textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
     warning: (el) => el.querySelector('[class^=feedbackWarning]').textContent,
+    name: (el) => el.querySelector('button').name,
     open: (el) => {
       if (el.querySelector('button').getAttribute('aria-expanded') === 'true') {
         return !!document.querySelector('[class^=selectionListRoot]');

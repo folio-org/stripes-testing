@@ -1,13 +1,13 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
+import { Permissions } from '../../support/dictionary';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Edit Authority record', () => {
   const testData = {

@@ -20,6 +20,7 @@ import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 import eHoldingsPackage from './eHoldingsPackage';
 
 const resultSection = Section({ id: 'search-results' });
+const searchResultsList = resultSection.find(List({ testId: 'scroll-view-list' }));
 const selectedText = "#packageShowHoldingStatus div[class^='headline']";
 const actionButton = Button('Actions');
 const deletePackageButton = Button('Delete package');
@@ -81,7 +82,30 @@ export default {
   verifyListOfExistingPackagesIsDisplayed: () => {
     cy.expect(resultSection.find(List()).exists());
   },
+  sortPackagesByTitlesCount({ minTitlesCount = 100 } = {}) {
+    cy.then(() => searchResultsList.links()).then((links) => {
+      const prefix = 'data-test-eholdings-package-list-item';
+      const sortedPackages = (links?.length ? [...links] : [])
+        .map((link) => {
+          const count = link.querySelector(`[${prefix}-num-titles="true"]`).innerText;
 
+          return {
+            id: link.getAttribute('href').replace('/eholdings/packages/', ''),
+            name: link.querySelector(`[${prefix}-name="true"]`).innerText,
+            count: parseFloat(count.replace(/,/g, '')),
+          };
+        })
+        .filter((item) => item.count >= minTitlesCount)
+        .sort((a, b) => a.count - b.count);
+
+      cy.wrap(sortedPackages).as('selectedPackages');
+    });
+
+    return cy.get('@selectedPackages');
+  },
+  openPackageWithExpectedName(packageName) {
+    cy.do(resultSection.find(Link({ text: including(packageName) })).click());
+  },
   openPackageWithExpectedTitels: (totalTitlesNumber) => {
     cy.do(
       resultSection
@@ -109,7 +133,8 @@ export default {
   getCustomPackageViaApi: () => {
     cy.okapiRequest({
       path: 'eholdings/packages',
-      searchParams: { 'filter[custom]': true, count: 10, pageSize: 10 },
+      // count: 10, pageSize: 10 parameters were removed since empty list is returned with such values
+      searchParams: { 'filter[custom]': true },
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => {
       const initialPackageNames = body.data

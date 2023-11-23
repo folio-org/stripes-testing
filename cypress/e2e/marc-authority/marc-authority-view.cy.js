@@ -1,13 +1,10 @@
-import TestTypes from '../../support/dictionary/testTypes';
 import Features from '../../support/dictionary/features';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
+import DataImport from '../../support/fragments/data_import/dataImport';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC Authority management', () => {
   const userData = {};

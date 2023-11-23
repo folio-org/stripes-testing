@@ -74,17 +74,18 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      cy.getAdminToken();
-      createdItems.forEach((item) => {
-        cy.deleteItemViaApi(item.itemId);
+      cy.getAdminToken().then(() => {
+        createdItems.forEach((item) => {
+          cy.deleteItemViaApi(item.itemId);
+        });
+        cy.deleteHoldingRecordViaApi(instanceData.holdingId);
+        InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
+        createdRequestsIds.forEach((id) => {
+          Requests.deleteRequestViaApi(id);
+        });
+        Users.deleteViaApi(user.userId);
+        requesterIds.forEach((id) => Users.deleteViaApi(id));
       });
-      cy.deleteHoldingRecordViaApi(instanceData.holdingId);
-      InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
-      createdRequestsIds.forEach((id) => {
-        Requests.deleteRequestViaApi(id);
-      });
-      Users.deleteViaApi(user.userId);
-      requesterIds.forEach((id) => Users.deleteViaApi(id));
     });
 
     it('C10930: Mark items as withdrawn (folijet)', { tags: ['smoke', 'folijet'] }, () => {

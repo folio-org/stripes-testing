@@ -32,9 +32,10 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+      });
     });
 
     it(

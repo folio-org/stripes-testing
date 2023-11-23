@@ -1,9 +1,9 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 const alphabetLowerCase = 'abcdefghijklmnopqrstuvwxyz';

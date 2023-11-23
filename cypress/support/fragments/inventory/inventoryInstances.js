@@ -231,10 +231,8 @@ export default {
   },
 
   selectInstance: (rowNumber = 0) => {
-    cy.intercept('/inventory/instances/*').as('getView');
     cy.do(inventoriesList.focus({ row: rowNumber }));
     cy.do(inventoriesList.click({ row: rowNumber }));
-    cy.wait('@getView');
   },
 
   addNewInventory() {
@@ -973,12 +971,16 @@ export default {
     ]);
   },
 
-  verifyInstanceResultListIsAbsent() {
-    cy.expect([
-      inventoriesList.absent(),
-      rootSection
-        .find(HTML(including('Choose a filter or enter a search query to show results')))
-        .exists(),
-    ]);
+  verifyInstanceResultListIsAbsent(isAbsent = true) {
+    if (isAbsent) {
+      cy.expect([
+        inventoriesList.absent(),
+        rootSection
+          .find(HTML(including('Choose a filter or enter a search query to show results')))
+          .exists(),
+      ]);
+    } else {
+      cy.expect([inventoriesList.exists, inventoriesList.has({ rowCount: 1 })]);
+    }
   },
 };

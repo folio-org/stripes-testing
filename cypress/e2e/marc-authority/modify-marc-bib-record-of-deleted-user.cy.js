@@ -1,16 +1,14 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import Logs from '../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import getRandomPostfix from '../../support/utils/stringTools';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import Logs from '../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('MARC -> MARC Authority', () => {
   const testData = {

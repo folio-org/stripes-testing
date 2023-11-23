@@ -1,15 +1,12 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
-import Parallelization from '../../support/dictionary/parallelization';
+import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('MARC Authority - Advanced Search', () => {
   const testData = {

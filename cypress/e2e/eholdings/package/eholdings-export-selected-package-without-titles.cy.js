@@ -5,7 +5,9 @@ import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPac
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -33,6 +35,9 @@ describe('eHoldings', () => {
         Permissions.exportManagerAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
@@ -63,12 +68,11 @@ describe('eHoldings', () => {
           testData.selectedStatus,
         );
         EHoldingsPackageView.openExportModal();
-        EHoldingsPackageView.verifyExportModal();
         EHoldingsPackageView.clickExportSelectedPackageFields();
         EHoldingsPackageView.selectPackageFieldsToExport(testData.firstFieldForExport);
         EHoldingsPackageView.selectPackageFieldsToExport(testData.secondFieldForExport);
         EHoldingsPackageView.clickExportSelectedTitleFields();
-        EHoldingsPackageView.export();
+        ExportSettingsModal.clickExportButton();
         EHoldingsPackageView.verifyPackageDetailViewIsOpened(
           testData.packageName,
           testData.titlesNumber,

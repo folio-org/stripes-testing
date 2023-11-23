@@ -11,6 +11,7 @@ describe('data-import', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before(() => {
+      cy.getAdminToken();
       cy.loginAsAdmin();
     });
 

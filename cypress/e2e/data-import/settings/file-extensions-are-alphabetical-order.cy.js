@@ -24,9 +24,10 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
-      cy.getAdminToken();
-      FileExtensionView.delete(testData.fileExtension);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        FileExtensionView.delete(testData.fileExtension);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(

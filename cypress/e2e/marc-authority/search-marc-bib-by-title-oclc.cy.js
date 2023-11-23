@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Create new MARC bib', () => {
   const createdInstanceIDs = [];

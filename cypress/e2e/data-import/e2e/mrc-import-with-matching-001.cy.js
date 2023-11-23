@@ -76,16 +76,17 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        // clean up generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+        FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      });
     });
 
     it('C17044: MARC-MARC matching for 001 field (folijet)', { tags: ['smoke', 'folijet'] }, () => {

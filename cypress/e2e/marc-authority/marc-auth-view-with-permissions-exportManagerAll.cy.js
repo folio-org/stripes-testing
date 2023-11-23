@@ -1,9 +1,7 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC -> MARC Authority', () => {
   const testData = {};

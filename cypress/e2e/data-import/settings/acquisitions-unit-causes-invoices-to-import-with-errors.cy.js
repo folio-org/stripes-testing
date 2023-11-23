@@ -72,16 +72,18 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Invoices.deleteInvoiceViaActions();
-      Invoices.confirmInvoiceDeletion();
-      cy.visit(SettingsMenu.acquisitionUnitsPath);
-      AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-      AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Invoices.deleteInvoiceViaActions();
+        Invoices.confirmInvoiceDeletion();
+        cy.loginAsAdmin();
+        cy.visit(SettingsMenu.acquisitionUnitsPath);
+        AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+        AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(

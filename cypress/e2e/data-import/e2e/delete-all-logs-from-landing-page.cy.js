@@ -55,12 +55,13 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Logs.selectAllLogs();
-      Logs.actionsButtonClick();
-      Logs.deleteLogsButtonClick();
-      DataImport.confirmDeleteImportLogs();
-      Users.deleteViaApi(userId);
+      cy.getAdminToken().then(() => {
+        Logs.selectAllLogs();
+        Logs.actionsButtonClick();
+        Logs.deleteLogsButtonClick();
+        DataImport.confirmDeleteImportLogs();
+        Users.deleteViaApi(userId);
+      });
     });
 
     it(

@@ -115,17 +115,18 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
-        JobProfiles.deleteJobProfile(profile.createJobProfile);
-        JobProfiles.deleteJobProfile(profile.updateJobProfile);
-        ActionProfiles.deleteActionProfile(profile.createActionProfile);
-        ActionProfiles.deleteActionProfile(profile.updateActionProfile);
-        FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
-        FieldMappingProfileView.deleteViaApi(profile.updateMappingProfile);
+      cy.getAdminToken().then(() => {
+        [abcProfile, zbcProfile, zdcProfile, adcProfile].forEach((profile) => {
+          JobProfiles.deleteJobProfile(profile.createJobProfile);
+          JobProfiles.deleteJobProfile(profile.updateJobProfile);
+          ActionProfiles.deleteActionProfile(profile.createActionProfile);
+          ActionProfiles.deleteActionProfile(profile.updateActionProfile);
+          FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
+          FieldMappingProfileView.deleteViaApi(profile.updateMappingProfile);
+        });
+        Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+        Users.deleteViaApi(user.userId);
       });
-      Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
-      Users.deleteViaApi(user.userId);
     });
 
     it(

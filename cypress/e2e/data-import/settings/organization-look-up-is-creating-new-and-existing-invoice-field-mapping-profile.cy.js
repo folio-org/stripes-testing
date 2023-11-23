@@ -45,7 +45,7 @@ describe('data-import', () => {
         FieldMappingProfiles.search(profileForDuplicate);
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.addName(mappingProfile.name);
-        NewFieldMappingProfile.fillDescription(mappingProfile.description);
+        NewFieldMappingProfile.fillSummaryDescription(mappingProfile.description);
         NewFieldMappingProfile.fillBatchGroup(mappingProfile.batchGroup);
         NewFieldMappingProfile.fillPaymentMethod(mappingProfile.paymentMethod);
         NewFieldMappingProfile.selectOrganizationByName(mappingProfile.organization);

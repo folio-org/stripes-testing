@@ -11,6 +11,8 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
 import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import { calloutTypes } from '../../../../interactors';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -51,10 +53,11 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-      Users.deleteViaApi(user.userId);
-      // TODO delete all instances
+      cy.getAdminToken().then(() => {
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+        Users.deleteViaApi(user.userId);
+        // TODO delete all instances
+      });
     });
 
     it(
@@ -84,9 +87,10 @@ describe('data-import', () => {
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
-        InventoryInstance.importWithOclc(oclcForUpdating);
-        InventoryInstance.checkCalloutMessage(
+        InventoryInstance.overlayWithOclc(oclcForUpdating);
+        InteractorsTools.checkCalloutMessage(
           `Record ${oclcForUpdating} updated. Results may take a few moments to become visible in Inventory`,
+          calloutTypes.success,
         );
 
         // check instance is updated
@@ -98,6 +102,7 @@ describe('data-import', () => {
         InventoryInstance.verifyInstancePhysicalcyDescription(
           updatedInstanceData.physicalDescription,
         );
+        InventoryInstance.openSubjectAccordion();
         InventoryInstance.verifyInstanceSubject(0, 0, updatedInstanceData.subject);
         InventoryInstance.checkInstanceNotes(
           updatedInstanceData.notes.noteType,

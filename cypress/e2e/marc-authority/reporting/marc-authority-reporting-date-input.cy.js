@@ -1,7 +1,7 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import DateTools from '../../../support/utils/dateTools';
 
 describe('MARC Authority -> Reporting | MARC authority', () => {

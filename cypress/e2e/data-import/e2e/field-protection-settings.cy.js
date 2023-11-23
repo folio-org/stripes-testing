@@ -108,24 +108,25 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
-      // delete profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      JobProfiles.deleteJobProfile(jobProfileUpdate.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      ActionProfiles.deleteActionProfile(actionProfileUpdate.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfileUpdate.name);
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
+        // delete profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfiles.deleteJobProfile(jobProfileUpdate.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        ActionProfiles.deleteActionProfile(actionProfileUpdate.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfileUpdate.name);
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     const createInstanceMappingProfileForCreate = (instanceMappingProfile) => {

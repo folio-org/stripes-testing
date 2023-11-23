@@ -17,12 +17,13 @@ describe('inventory', () => {
     });
 
     after(() => {
-      cy.getAdminToken();
-      InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
-        (id) => {
-          InventoryInstance.deleteInstanceViaApi(id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` }).then(
+          (id) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          },
+        );
+      });
     });
 
     it('C598 Create new instance with add "New" (folijet)', { tags: ['smoke', 'folijet'] }, () => {

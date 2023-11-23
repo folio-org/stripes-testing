@@ -36,15 +36,16 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      cy.getAdminToken();
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      Users.deleteViaApi(firstUser.userId);
-      Users.deleteViaApi(secondUser.userId);
+      cy.getAdminToken().then(() => {
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        Users.deleteViaApi(firstUser.userId);
+        Users.deleteViaApi(secondUser.userId);
+      });
     });
 
     it(

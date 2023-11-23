@@ -1,16 +1,16 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
+import { Permissions } from '../../support/dictionary';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic', () => {
   const testData = {

@@ -109,25 +109,26 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
+        protectedFieldIds.forEach((fieldId) => MarcFieldProtection.deleteViaApi(fieldId));
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(
+          `${randomIdentifierCode}00999523`,
+        ).then((instances) => {
+          if (instances) {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
+        });
+      });
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      Users.deleteViaApi(user.userId);
-      protectedFieldIds.forEach((fieldId) => MarcFieldProtection.deleteViaApi(fieldId));
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(
-        `${randomIdentifierCode}00999523`,
-      ).then((instances) => {
-        if (instances) {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        }
-      });
     });
 
     it(
