@@ -108,7 +108,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       NewRequest.enterItemInfo(testData.itemBarcode);
       NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
@@ -145,7 +145,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       NewRequest.enterItemInfo(testData.itemBarcode);
       NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.HOLD);
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyErrorMessage('This request was not placed successfully');
       NewRequest.checkRequestIsNotAllowedModal();

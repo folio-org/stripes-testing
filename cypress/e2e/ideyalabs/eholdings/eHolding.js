@@ -1,7 +1,6 @@
 import {
   Accordion,
   Button,
-  FieldSet,
   KeyValue,
   Modal,
   NavListItem,
@@ -36,9 +35,6 @@ const selectionStatusSection = Section({ id: 'filter-packages-selected' });
 const accordionClick = Button({
   id: 'accordion-toggle-button-providerShowProviderList',
 });
-const patronRadioButton = FieldSet('Show titles in package to patrons').find(
-  RadioButton({ checked: false }),
-);
 const tagsClick = Button({ id: 'accordion-toggle-button-providerShowTags' });
 const providerClick = Button({
   id: 'accordion-toggle-button-providerShowProviderSettings',
@@ -105,11 +101,6 @@ export default {
     });
   },
 
-  patronRadioButton: () => {
-    cy.expect(patronRadioButton.exists());
-    cy.do(patronRadioButton.click());
-  },
-
   changeProxy: () => {
     cy.get('select#eholdings-proxy-id option:selected')
       .invoke('text')
@@ -157,16 +148,6 @@ export default {
     this.getToken().then((val) => {
       // eslint-disable-next-line no-unused-expressions
       expect(val).to.be.exist;
-    });
-  },
-
-  getAlternateRadio: () => cy.then(() => KeyValue('Show titles in package to patrons').value()),
-
-  verifyAlternativeRadio() {
-    this.getAlternateRadio().then((val) => {
-      const radioArray = ['Yes', 'No'];
-      const newRadioArray = radioArray.filter((x) => !x.includes(val));
-      expect(val).to.not.equal(newRadioArray[0]);
     });
   },
 
