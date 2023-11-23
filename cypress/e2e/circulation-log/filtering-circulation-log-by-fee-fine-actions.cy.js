@@ -3,13 +3,10 @@ import moment from 'moment';
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -18,7 +15,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import WaiveFeeFineModal from '../../support/fragments/users/waiveFeeFineModal';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
@@ -29,21 +25,17 @@ import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
 import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
 import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
 import CancelFeeFaine from '../../support/fragments/users/cancelFeeFaine';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
 
 describe('Circulation log', () => {
   let userData;
   const [fullAmount, partiallAmount] = ['4.00', '2.00'];
-  const itemData = {
-    barcode: generateItemBarcode(),
-    title: getTestEntityValue('InstanceCircLog'),
-  };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+    folioInstances: InventoryInstances.generateFolioInstances(),
+    userServicePoint: ServicePoints.getDefaultServicePoint(),
     manualChargeName: null,
-    patronGroup: {
-      name: getTestEntityValue('GroupCircLog'),
-    },
   };
+
   const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
   const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
   const transferAccount = TransferAccounts.getDefaultNewTransferAccount(uuid());
@@ -68,7 +60,7 @@ describe('Circulation log', () => {
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.waitLoading();
     SearchPane.setFilterOptionFromAccordion('fee', filterName);
-    SearchPane.searchByItemBarcode(itemData.barcode);
+    SearchPane.searchByItemBarcode(testData.itemBarcode);
     return SearchPane.findResultRowIndexByContent(filterName);
   };
   const checkActionsButton = (filterName) => {
@@ -81,17 +73,16 @@ describe('Circulation log', () => {
       Users.verifyFirstNameOnUserDetailsPane(userData.firstName);
     });
     goToCircLogApp(filterName).then((rowIndex) => {
-      SearchResults.clickOnCell(itemData.barcode, Number(rowIndex));
+      SearchResults.clickOnCell(testData.itemBarcode, Number(rowIndex));
       ItemRecordView.waitLoading();
     });
   };
   const filterByAction = (filterName, desc = `Fee/Fine type: ${testData.manualChargeName}.`) => {
     const searchResultsData = {
       userBarcode: userData.barcode,
-      itemBarcode: itemData.barcode,
+      itemBarcode: testData.itemBarcode,
       object: 'Fee/fine',
       circAction: filterName,
-      // TODO: add check for date with format <C6/8/2022, 6:46 AM>
       servicePoint: testData.userServicePoint.name,
       source: testData.adminSourceRecord,
       desc,
@@ -103,7 +94,7 @@ describe('Circulation log', () => {
       SearchPane.checkResultSearch(searchResultsData, rowIndex);
     });
     SearchPane.resetResults();
-    SearchPane.searchByItemBarcode(itemData.barcode);
+    SearchPane.searchByItemBarcode(testData.itemBarcode);
     SearchPane.findResultRowIndexByContent(filterName).then((rowIndex) => {
       SearchPane.checkResultSearch(searchResultsData, rowIndex);
     });
@@ -117,9 +108,9 @@ describe('Circulation log', () => {
       feeFineType: testData.manualChargeName,
       feeFineOwner: userOwnerBody.owner,
       userId: userData.userId,
-      itemId: itemData.itemId[0],
-      barcode: itemData.barcode,
-      title: itemData.title,
+      itemId: testData.itemId,
+      barcode: testData.itemBarcode,
+      title: testData.folioInstances[0].instanceTitle,
       createdAt: testData.userServicePoint.id,
       dateAction: moment.utc().format(),
       source: testData.adminSourceRecord,
@@ -127,50 +118,24 @@ describe('Circulation log', () => {
   };
 
   before('Preconditions', () => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getAdminSourceRecord().then((record) => {
-          testData.adminSourceRecord = record;
-        });
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          testData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
-        });
-        cy.getLoanTypes({ limit: 1 }).then((loanTypes) => {
-          testData.loanTypeId = loanTypes[0].id;
-        });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
+    cy.getAdminToken();
+    cy.getAdminSourceRecord().then((record) => {
+      testData.adminSourceRecord = record;
+    });
+    ServicePoints.createViaApi(testData.userServicePoint);
+    testData.defaultLocation = Locations.getDefaultLocation({
+      servicePointId: testData.userServicePoint.id,
+    }).location;
+    Locations.createViaApi(testData.defaultLocation)
+      .then((location) => {
+        InventoryInstances.createFolioInstancesViaApi({
+          folioInstances: testData.folioInstances,
+          location,
         });
       })
       .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: itemData.title,
-          },
-          holdings: [
-            {
-              holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
-            },
-          ],
-          items: [
-            {
-              barcode: itemData.barcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            },
-          ],
-        }).then((specialInstanceIds) => {
-          itemData.itemId = specialInstanceIds.holdingIds[0].itemIds;
-        });
+        testData.itemBarcode = testData.folioInstances[0].barcodes[0];
+        testData.itemId = testData.folioInstances[0].itemIds[0];
       });
 
     UsersOwners.createViaApi(userOwnerBody);
@@ -191,20 +156,17 @@ describe('Circulation log', () => {
     });
     RefundReasons.createViaApi(refundReason);
 
-    PatronGroups.createViaApi(testData.patronGroup.name).then((group) => {
-      testData.patronGroup.id = group;
-      cy.createTempUser([permissions.circulationLogAll.gui], testData.patronGroup.name)
-        .then((userProperties) => {
-          userData = userProperties;
-        })
-        .then(() => {
-          UserEdit.addServicePointViaApi(
-            testData.userServicePoint.id,
-            userData.userId,
-            testData.userServicePoint.id,
-          );
-        });
-    });
+    cy.createTempUser([permissions.circulationLogAll.gui])
+      .then((userProperties) => {
+        userData = userProperties;
+      })
+      .then(() => {
+        UserEdit.addServicePointViaApi(
+          testData.userServicePoint.id,
+          userData.userId,
+          testData.userServicePoint.id,
+        );
+      });
   });
 
   beforeEach('Login', () => {
@@ -216,20 +178,18 @@ describe('Circulation log', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
-    PatronGroups.deleteViaApi(testData.patronGroup.id);
     RefundReasons.deleteViaApi(refundReason.id);
     WaiveReasons.deleteViaApi(waiveReason.id);
     ManualCharges.deleteViaApi(testData.manualChargeId);
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
     TransferAccounts.deleteViaApi(transferAccount.id);
     UsersOwners.deleteViaApi(userOwnerBody.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id,
-    );
+    InventoryInstances.deleteInstanceViaApi({
+      instance: testData.folioInstances[0],
+      servicePoint: testData.userServicePoint,
+      shouldCheckIn: true,
+    });
+    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(
@@ -252,6 +212,26 @@ describe('Circulation log', () => {
     { tags: [TestTypes.criticalPath, devTeams.volaris] },
     () => {
       filterByAction('Transferred partially');
+      NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
+    },
+  );
+
+  it(
+    'C17009 Check the Actions button from filtering Circulation log by billed (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      createFeeFine().then((feeFineId) => {
+        testData.feeFineId = feeFineId;
+        checkActionsButton('Billed');
+      });
+    },
+  );
+
+  it(
+    'C17008 Filter circulation log by billed (volaris)',
+    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    () => {
+      filterByAction('Billed');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);
     },
   );
