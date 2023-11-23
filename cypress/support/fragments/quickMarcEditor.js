@@ -1736,4 +1736,10 @@ export default {
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
   },
+
+  verifyNumOfFieldsWithTag: (tag, numOfFields) => {
+    cy.get(`input[name*=".tag"][value="${tag}"]`).then(
+      (elements) => elements.length === numOfFields,
+    );
+  },
 };
