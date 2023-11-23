@@ -53,8 +53,8 @@ describe('MARC -> MARC Authority', () => {
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitFileIsUploaded();
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -109,8 +109,8 @@ describe('MARC -> MARC Authority', () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValueForBrowse);
       MarcAuthorities.checkRow(testData.marcValueForBrowse);
-      MarcAuthorities.verifyNumberOfTitles(4, '1');
-      MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
+      MarcAuthorities.verifyNumberOfTitles(5, '1');
+      MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
       InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);
       InventoryInstance.checkPresentedText(testData.instanceTitle);
     },

@@ -36,8 +36,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         // #1 - #4 upload test marcBibFile
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-        JobProfiles.waitFileIsUploaded();
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
@@ -84,7 +84,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       // #8 Change tag value of second "010" field to "011".
       QuickMarcEditor.updateExistingTagValue(5, testData.tag011);
       // Only one field "010" is shown. For example:
-      InventoryInstance.verifyNumOfFieldsWithTag(testData.tag010, 1);
+      QuickMarcEditor.verifyNumOfFieldsWithTag(testData.tag010, 1);
 
       // #9 Click "Save & close" button
       QuickMarcEditor.pressSaveAndClose();
