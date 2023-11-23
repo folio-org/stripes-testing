@@ -1,4 +1,4 @@
-import { Button, Modal, SelectionOption } from '../../../../../interactors';
+import { Button, Modal, SelectionOption, including } from '../../../../../interactors';
 
 export default {
   switchActiveAffiliation(tenantName) {
@@ -9,7 +9,7 @@ export default {
       Modal('Select affiliation')
         .find(Button({ id: 'consortium-affiliations-select' }))
         .click(),
-      SelectionOption(tenantName).click(),
+      SelectionOption(including(tenantName)).click(),
       Button({ id: 'save-active-affiliation' }).click(),
     ]);
     cy.wait(8000);

@@ -127,7 +127,7 @@ const buttonLink = Button('Link');
 const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
-const inputSearchField = TextField({ id: 'input-inventory-search' });
+const inputSearchField = TextArea({ id: 'input-inventory-search' });
 const holdingsPane = Pane(including('Holdings'));
 const instancesButton = Button({ id: 'segment-navigation-instances' });
 const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
@@ -1176,5 +1176,12 @@ export default {
 
   verifyItemStatus: (itemStatus) => {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
+  },
+
+  verifyLastUpdatedSource: (userFirsttName, userLastName) => {
+    cy.do(Accordion('Administrative data').click());
+    cy.get('div[data-test-updated-by="true"]')
+      .find('a')
+      .should('include.text', `${userLastName}, ${userFirsttName}`);
   },
 };
