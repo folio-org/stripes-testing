@@ -10,34 +10,30 @@ import InstanceStatusTypes from '../../../support/fragments/settings/inventory/i
 
 describe('inventory', () => {
   describe('Instance', () => {
-    let user;
-    const testData = {
-      defaultInsatnceStatusTerms: [
-        'Batch Loaded',
-        'Cataloged',
-        'Electronic Resource',
-        'Not yet assigned',
-        'Other',
-        'Temporary',
-        'Uncataloged',
-      ],
-    };
+    const testData = {};
 
     before('create test data and login', () => {
       cy.createTempUser([
         Permissions.inventoryAll.gui,
         Permissions.uiSettingsInstanceStatuses.gui,
       ]).then((userProperties) => {
-        user = userProperties;
+        testData.user = userProperties;
 
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instance = instanceData;
         });
 
-        cy.login(user.username, user.password, {
+        cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
+      });
+    });
+
+    after('Delete test data', () => {
+      cy.getAdminToken().then(() => {
+        InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
+        Users.deleteViaApi(testData.user.userId);
       });
     });
 
@@ -50,12 +46,10 @@ describe('inventory', () => {
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.edit();
         InstanceRecordEdit.waitLoading();
-        InstanceRecordEdit.getStatusTermsFromInstance(testData.defaultInsatnceStatusTerms).then(
-          (statusNames) => {
-            cy.visit(SettingsMenu.instanceStatusTypesPath);
-            InstanceStatusTypes.verifyListOfStatusTypesIsIdenticalToListInInstance(statusNames);
-          },
-        );
+        InstanceRecordEdit.getStatusTermsFromInstance().then((statusNames) => {
+          cy.visit(SettingsMenu.instanceStatusTypesPath);
+          InstanceStatusTypes.verifyListOfStatusTypesIsIdenticalToListInInstance(statusNames);
+        });
       },
     );
   });

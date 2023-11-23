@@ -25,12 +25,9 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
-  verifyListOfStatusTypesIsIdenticalToListInInstance(statusArray) {
+  verifyListOfStatusTypesIsIdenticalToListInInstance(statusesFromInstance) {
     getListOfStatusTypes().then((statusTypes) => {
-      console.log('statusesFromInstance', statusArray);
-      console.log('statusesFromPage', statusTypes);
-      // cy.expect(statusTypes).to.include(statusArray);
-      // cy.expect(statusTypes).to.deep.equal(statusArray);
+      cy.expect(statusTypes.join(' ')).to.eq(...statusesFromInstance);
     });
   },
 };

@@ -226,7 +226,7 @@ export default {
             .replace('Select instance status', '')
             .trim();
         });
-        return resultArray;
+        return Array.from(resultArray);
       });
   },
 };
