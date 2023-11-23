@@ -127,4 +127,63 @@ describe('Finance', () => {
       },
     );
   });
+
+  describe('Funds', () => {
+    beforeEach('Create test transfer', () => {
+      createTestFunds();
+      const transfer = Transfers.getDefaultTransfer({
+        amount: 110,
+        fromFundId: funds.first.id,
+        toFundId: funds.second.id,
+        fiscalYearId: fiscalYear.id,
+      });
+      Transfers.createTransferViaApi(transfer);
+
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
+      });
+    });
+
+    it(
+      'C375067 Money transfer between funds is successful if budget "To" already has negative available amount (thunderjet) (TaaS)',
+      { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+      () => {
+        // Open Fund B from Preconditions
+        FinanceHelper.searchByName(funds.second.name);
+        const FundDetails = Funds.selectFund(funds.second.name);
+        FundDetails.checkFundDetails({
+          currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '$210.00' },
+        });
+
+        // Click on the record in "Current budget" accordion
+        const BudgetDetails = FundDetails.openCurrentBudgetDetails();
+        BudgetDetails.checkBudgetDetails({
+          balance: { available: '$210.00' },
+        });
+
+        // Click "Actions" button, Select "Transfer" option
+        const AddTransferModal = BudgetDetails.openAddTransferModal();
+
+        // Fill the following fields: "From", "To", "Amount"
+        AddTransferModal.fillTransferDetails({
+          fromFund: funds.second.name,
+          toFund: funds.first.name,
+          amount: '130',
+        });
+
+        // Click "Confirm" button
+        AddTransferModal.clickConfirmButton();
+        BudgetDetails.checkBudgetDetails({
+          balance: { available: '$80.00' },
+        });
+
+        // Close Budget details by clicking "X" button
+        BudgetDetails.closeBudgetDetails();
+        FundDetails.checkFundDetails({
+          currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '$80.00' },
+        });
+      },
+    );
+  });
 });
