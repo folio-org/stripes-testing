@@ -33,7 +33,7 @@ describe('bulk-edit', () => {
     BulkEditSearchPane.verifyLogsTableHeaders();
     BulkEditSearchPane.clickUserAccordion();
     BulkEditSearchPane.clickChooseUserUnderUserAccordion();
-    BulkEditSearchPane.searchAndSelectUser('ADMINISTRATOR, DIKU');
+    BulkEditSearchPane.searchAndSelectUser('Test_All');
     BulkEditSearchPane.xAppearsNextToUser();
     BulkEditSearchPane.resetAllBtnIsDisabled(false);
     BulkEditSearchPane.clickOnXAppearsNextToUser();
