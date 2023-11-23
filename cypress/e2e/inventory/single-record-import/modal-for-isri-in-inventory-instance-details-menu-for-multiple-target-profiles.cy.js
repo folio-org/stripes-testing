@@ -89,14 +89,15 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(

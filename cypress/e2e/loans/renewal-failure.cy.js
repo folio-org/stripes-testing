@@ -47,8 +47,6 @@ describe('Renewal', () => {
     loanPolicy: loanPolicyData.name,
   };
   let addedRule;
-  let userName;
-  let password;
 
   before(() => {
     cy.getAdminToken()
@@ -80,8 +78,8 @@ describe('Renewal', () => {
             renewUserData.lastName = userProperties.username;
             renewUserData.id = userProperties.userId;
             renewUserData.barcode = userProperties.barcode;
-            userName = userProperties.username;
-            password = userProperties.password;
+            renewUserData.password = userProperties.password;
+            renewUserData.username = userProperties.username;
           },
         );
         // create second user
@@ -94,7 +92,6 @@ describe('Renewal', () => {
           renewOverrideUserData.id = userProperties.userId;
           renewOverrideUserData.password = userProperties.password;
           renewOverrideUserData.username = userProperties.username;
-          renewOverrideUserData.password = userProperties.password;
         });
       })
       // create instance
@@ -155,7 +152,6 @@ describe('Renewal', () => {
         }).then((body) => {
           loanId = body.id;
         });
-        cy.login(userName, password);
       });
   });
 
