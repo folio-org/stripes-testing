@@ -492,7 +492,18 @@ export default {
   },
 
   selectSearchOptions(searchOption, text) {
-    cy.do([inventorySearchAndFilterInput.choose(searchOption), keywordInput.fillIn(text)]);
+    cy.do([
+      inventorySearchAndFilterInput.choose(searchOption),
+      inventorySearchAndFilter.fillIn(text),
+    ]);
+  },
+
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
+  },
+
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
   },
 
   clickSearch() {

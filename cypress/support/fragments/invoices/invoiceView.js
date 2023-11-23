@@ -33,6 +33,9 @@ const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
+// Links & documents section
+const linksAndDocumentsSection = Section({ id: 'documents' });
+
 // voucher details
 const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
 const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
@@ -40,6 +43,20 @@ const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher
 export default {
   expandActionsDropdown() {
     cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
+  },
+  verifyLinksDocumentsSection(linkName, externalUrl, documentName) {
+    cy.do(Button('Links & documents').click());
+    cy.expect([
+      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Link name' })).has({
+        content: linkName,
+      }),
+      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'External URL' })).has({
+        content: externalUrl,
+      }),
+      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Document name' })).has({
+        content: documentName,
+      }),
+    ]);
   },
   selectFirstInvoice() {
     cy.do(
@@ -221,5 +238,14 @@ export default {
 
   verifyStatus: (status) => {
     cy.expect(Pane({ id: 'pane-invoiceDetails' }).find(KeyValue('Status')).has({ value: status }));
+  },
+
+  downloadDocument: () => {
+    cy.do(
+      linksAndDocumentsSection
+        .find(MultiColumnListCell({ column: 'Document name' }))
+        .find(Button({ className: including('invoiceDocumentButton') }))
+        .click(),
+    );
   },
 };

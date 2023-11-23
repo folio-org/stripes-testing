@@ -190,8 +190,18 @@ export default {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
+    BulkEditSearchPane.isConfirmButtonDisabled(true);
     getEmailField().first().type(oldEmailDomain);
+    BulkEditSearchPane.isConfirmButtonDisabled(true);
     getEmailField().eq(2).type(newEmailDomain);
+  },
+
+  enterOldEmail(oldEmailDomain) {
+    getEmailField().first().clear().type(oldEmailDomain);
+  },
+
+  enterNewEmail(newEmailDomain) {
+    getEmailField().eq(2).clear().type(newEmailDomain);
   },
 
   clickLocationLookup() {

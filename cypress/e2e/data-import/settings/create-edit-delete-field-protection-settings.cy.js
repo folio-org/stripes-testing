@@ -41,9 +41,10 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      MarcFieldProtection.delete(protectedFieldData.protectedField);
-      MarcFieldProtection.confirmDelete();
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.delete(protectedFieldData.protectedField);
+        MarcFieldProtection.confirmDelete();
+      });
     });
 
     it(

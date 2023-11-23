@@ -1,7 +1,5 @@
 import testTypes from '../../../support/dictionary/testTypes';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
-import eHoldingsProviderEdit from '../../../support/fragments/eholdings/eHoldingsProviderEdit';
-import eHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import newRequest from '../../../support/fragments/requests/newRequest';
@@ -41,20 +39,6 @@ describe.skip('Create a custom package', () => {
         'https://bugfest-orchid.int.aws.folio.org/eholdings/titles/41327?searchType=titles&q=journal&offset=1',
       );
       eHolding.verifyAlternativesTitles();
-    },
-  );
-  it(
-    'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsSearch.switchToPackages();
-      eHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
-      eHoldingsProviders.viewPackage();
-      eHolding.editActions();
-      eHolding.patronRadioButton();
-      eHoldingsProviderEdit.saveAndClose();
-      eHolding.verifyAlternativeRadio();
     },
   );
   it('C648 Closed Library Due Date (vega)', { tags: [testTypes.ideaLabsTests] }, () => {

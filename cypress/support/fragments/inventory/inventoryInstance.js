@@ -321,6 +321,9 @@ export default {
   waitInventoryLoading() {
     cy.expect(section.exists());
   },
+
+  openSubjectAccordion: () => cy.do(Accordion('Subject').click()),
+
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -1094,7 +1097,10 @@ export default {
 
   openItemByBarcodeAndIndex: (barcode) => {
     cy.wait(4000);
-    cy.get('[class^="mclCell-"]').contains(barcode).eq(0).click();
+    cy.get(`div[class^="mclCell-"]:contains('${barcode}')`).then((cell) => {
+      const row = cell.closest('div[class^="mclRow-"]');
+      row.find('button').first().click();
+    });
   },
 
   openItemByStatus: (status) => {

@@ -84,19 +84,20 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      MarcFieldProtection.getListViaApi({
-        query: `"field"=="${protectedFieldData.protectedField}"`,
-      }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${protectedFieldData.protectedField}"`,
+        }).then((list) => {
+          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+        });
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(

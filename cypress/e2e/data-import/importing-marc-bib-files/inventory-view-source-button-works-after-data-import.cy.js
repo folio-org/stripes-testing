@@ -23,6 +23,7 @@ describe('data-import', () => {
     const title = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25';
 
     before('created test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
