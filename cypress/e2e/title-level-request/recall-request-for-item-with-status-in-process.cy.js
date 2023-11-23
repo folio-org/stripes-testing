@@ -11,13 +11,14 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
 import Requests from '../../support/fragments/requests/requests';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 
 describe('Title level request for Item with status In process', () => {
   const testData = {
-    folioInstances: InventoryInstances.generateFolioInstances(),
+    folioInstances: InventoryInstances.generateFolioInstances({
+      status: ITEM_STATUS_NAMES.IN_PROCESS,
+    }),
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   let userData;
@@ -51,10 +52,6 @@ describe('Title level request for Item with status In process', () => {
         waiter: TitleLevelRequests.waitLoading,
       });
       TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-      InventoryItems.updateItemStatusViaAPI(
-        testData.folioInstances[0].itemIds[0],
-        'mark-in-process',
-      );
       cy.login(userData.username, userData.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,
@@ -86,8 +83,8 @@ describe('Title level request for Item with status In process', () => {
   });
 
   it(
-    'Check that user can create a TLR Recall for Item with status In process (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    '[C375941] Check that user can create a TLR Recall for Item with status In process (vega) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       InventoryInstance.checkNewRequestAtNewPane();

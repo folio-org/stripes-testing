@@ -11,6 +11,7 @@ import Permissions from '../../support/dictionary/permissions';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import UserEdit from '../../support/fragments/users/userEdit';
+import { DevTeams, TestTypes } from '../../support/dictionary';
 
 describe('Title level request for claimed return item', () => {
   const testData = {
@@ -74,16 +75,20 @@ describe('Title level request for claimed return item', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('Should not allow title level recall request for claimed return item', () => {
-    InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
-    // Open new request dialog
-    InventoryInstance.checkNewRequestAtNewPane();
-    NewRequest.verifyTitleLevelRequestsCheckbox('checked');
-    // Enter requester barcode
-    NewRequest.enterRequesterBarcode(userData.barcode);
-    // Error message should be displayed
-    NewRequest.verifyErrorMessageForRequestTypeField(
-      'None available for this title and patron combination',
-    );
-  });
+  it(
+    '[C375949] Check that user can not create a TLR Recall for item with status Claimed return',
+    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
+      // Open new request dialog
+      InventoryInstance.checkNewRequestAtNewPane();
+      NewRequest.verifyTitleLevelRequestsCheckbox('checked');
+      // Enter requester barcode
+      NewRequest.enterRequesterBarcode(userData.barcode);
+      // Error message should be displayed
+      NewRequest.verifyErrorMessageForRequestTypeField(
+        'None available for this title and patron combination',
+      );
+    },
+  );
 });
