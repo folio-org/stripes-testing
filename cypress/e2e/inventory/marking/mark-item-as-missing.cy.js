@@ -75,22 +75,22 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      cy.getAdminToken();
-      createdItems.forEach((item) => {
-        cy.deleteItemViaApi(item.itemId);
+      cy.getAdminToken().then(() => {
+        createdItems.forEach((item) => {
+          cy.deleteItemViaApi(item.itemId);
+        });
+        cy.deleteHoldingRecordViaApi(instanceData.holdingId);
+        InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
+        createdRequestsIds.forEach((id) => {
+          Requests.deleteRequestViaApi(id);
+        });
+        Users.deleteViaApi(user.userId);
+        requesterIds.forEach((id) => Users.deleteViaApi(id));
       });
-      cy.deleteHoldingRecordViaApi(instanceData.holdingId);
-      InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
-      createdRequestsIds.forEach((id) => {
-        Requests.deleteRequestViaApi(id);
-      });
-      Users.deleteViaApi(user.userId);
-      requesterIds.forEach((id) => Users.deleteViaApi(id));
     });
 
     it(
       'C714 Mark an item as Missing (folijet)',
-
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         cy.visit(TopMenu.inventoryPath);
