@@ -112,7 +112,8 @@ describe('inventory', () => {
         HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
         HoldingsRecordEdit.saveAndClose();
         HoldingsRecordView.close();
-        InventoryInstance.openHoldings([anotherPermanentLocation]);
+        cy.wait(1000);
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', itemData.itemBarcode);
         ItemRecordView.verifyEffectiveLocation(anotherPermanentLocation);
