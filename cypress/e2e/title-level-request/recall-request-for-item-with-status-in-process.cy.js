@@ -14,7 +14,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Requests from '../../support/fragments/requests/requests';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 
-describe('Title level request for Item with status In process', () => {
+describe('Title level request', () => {
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({
       status: ITEM_STATUS_NAMES.IN_PROCESS,
@@ -83,7 +83,7 @@ describe('Title level request for Item with status In process', () => {
   });
 
   it(
-    '[C375941] Check that user can create a TLR Recall for Item with status In process (vega) (TaaS)',
+    '[C375939] Check that user can create a TLR Recall for Item with status In process (vega) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
