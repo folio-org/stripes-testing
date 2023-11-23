@@ -101,28 +101,29 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      MarcFieldProtection.getListViaApi({
-        query: `"data"=="${firstProtectedFieldsData.data}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.getListViaApi({
+          query: `"data"=="${firstProtectedFieldsData.data}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${secondProtectedFieldData.field}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
       });
-      MarcFieldProtection.getListViaApi({
-        query: `"field"=="${secondProtectedFieldData.field}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(user.userId);
     });
 
     it(
