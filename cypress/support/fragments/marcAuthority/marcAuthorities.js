@@ -759,7 +759,7 @@ export default {
 
   verifySelectedTextOfThesaurus: (thesaurusTypes) => {
     cy.expect(MultiSelect({ selected: including(thesaurusTypes) }).exists());
-  }
+  },
 
   checkHeadingReferenceColumnValueIsBold(rowNumber) {
     cy.expect(
@@ -808,6 +808,5 @@ export default {
   checkTotalRecordsForOption(option, totalRecords) {
     cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
     cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
-
   },
 };
