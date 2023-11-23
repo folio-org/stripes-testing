@@ -20,7 +20,7 @@ describe('Finance', () => {
   let funds;
   let budgets;
 
-  const createTestFunds = () => {
+  const createTestFunds = ({ secondBudget = 100 } = {}) => {
     fiscalYear = FiscalYears.getDefaultFiscalYear();
     ledger = { ...Ledgers.getDefaultLedger(), fiscalYearOneId: fiscalYear.id };
     funds = {
@@ -36,7 +36,7 @@ describe('Finance', () => {
       },
       second: {
         ...Budgets.getDefaultBudget(),
-        allocated: 100,
+        allocated: secondBudget,
         fiscalYearId: fiscalYear.id,
         fundId: funds.second.id,
       },
@@ -182,6 +182,65 @@ describe('Finance', () => {
         BudgetDetails.closeBudgetDetails();
         FundDetails.checkFundDetails({
           currentBudget: { name: budgets.second.name, allocated: '$100.00', available: '$80.00' },
+        });
+      },
+    );
+  });
+
+  describe('Funds', () => {
+    beforeEach('Create test transfer', () => {
+      createTestFunds({ secondBudget: 0 });
+      const transfer = Transfers.getDefaultTransfer({
+        amount: 0,
+        fromFundId: funds.second.id,
+        toFundId: funds.first.id,
+        fiscalYearId: fiscalYear.id,
+      });
+      Transfers.createTransferViaApi(transfer);
+
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.fundPath,
+        waiter: Funds.waitLoading,
+      });
+    });
+
+    it(
+      'C375068 Money transfer between funds is successful if budget "From" already has 0.00 money allocation (thunderjet) (TaaS)',
+      { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+      () => {
+        // Open Fund B from Preconditions
+        FinanceHelper.searchByName(funds.second.name);
+        const FundDetails = Funds.selectFund(funds.second.name);
+        FundDetails.checkFundDetails({
+          currentBudget: { name: budgets.second.name, allocated: '$0.00', available: '$0.00' },
+        });
+
+        // Click on the record in "Current budget" accordion
+        const BudgetDetails = FundDetails.openCurrentBudgetDetails();
+        BudgetDetails.checkBudgetDetails({
+          balance: { available: '$0.00' },
+        });
+
+        // Click "Actions" button, Select "Transfer" option
+        const AddTransferModal = BudgetDetails.openAddTransferModal();
+
+        // Fill the following fields: "From", "To", "Amount"
+        AddTransferModal.fillTransferDetails({
+          fromFund: funds.second.name,
+          toFund: funds.first.name,
+          amount: '40',
+        });
+
+        // Click "Confirm" button
+        AddTransferModal.clickConfirmButton({ confirmNegative: true });
+        BudgetDetails.checkBudgetDetails({
+          balance: { available: '-$40.00' },
+        });
+
+        // Close Budget details by clicking "X" button
+        BudgetDetails.closeBudgetDetails();
+        FundDetails.checkFundDetails({
+          currentBudget: { name: budgets.second.name, allocated: '$0.00', available: '-$40.00' },
         });
       },
     );
