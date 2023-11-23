@@ -91,7 +91,7 @@ describe('Request', () => {
       NewRequest.verifyRequestTypeHasOptions(REQUEST_TYPES.HOLD, REQUEST_TYPES.RECALL);
       // Select "Hold" request type
       NewRequest.chooseRequestType(REQUEST_TYPES.HOLD);
-      NewRequest.choosepickupServicePoint(testData.servicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.servicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {

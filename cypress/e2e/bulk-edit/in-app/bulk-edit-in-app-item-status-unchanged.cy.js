@@ -35,30 +35,33 @@ describe('bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-          servicePointId = servicePoints[0].id;
-        }).then(() => {
-          UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-            (res) => {
-              const itemData = res;
-              // Annex location
-              itemData.permanentLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
-              itemData.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
-              // Selected loan type
-              itemData.permanentLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
-              itemData.temporaryLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
-              cy.updateItemViaApi(itemData);
-            }
-          );
-        }).then(() => {
-          Checkout.checkoutItemViaApi({
-            itemBarcode: item.barcode,
-            servicePointId,
-            userBarcode: user.barcode,
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+          .then((servicePoints) => {
+            servicePointId = servicePoints[0].id;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+            cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+              (res) => {
+                const itemData = res;
+                // Annex location
+                itemData.permanentLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
+                itemData.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
+                // Selected loan type
+                itemData.permanentLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
+                itemData.temporaryLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
+                cy.updateItemViaApi(itemData);
+              },
+            );
+          })
+          .then(() => {
+            Checkout.checkoutItemViaApi({
+              itemBarcode: item.barcode,
+              servicePointId,
+              userBarcode: user.barcode,
+            });
+            FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
           });
-          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
-        });
       });
     });
 
@@ -91,7 +94,7 @@ describe('bulk-edit', () => {
           'Temporary loan type',
           'Item permanent location',
           'Item temporary location',
-          'Suppress from discovery'
+          'Suppress from discovery',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
         const location = 'Online';

@@ -496,7 +496,18 @@ export default {
   },
 
   selectSearchOptions(searchOption, text) {
-    cy.do([inventorySearchAndFilterInput.choose(searchOption), keywordInput.fillIn(text)]);
+    cy.do([
+      inventorySearchAndFilterInput.choose(searchOption),
+      inventorySearchAndFilter.fillIn(text),
+    ]);
+  },
+
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
+  },
+
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
   },
 
   verifySelectedSearchOption(option) {
@@ -826,5 +837,9 @@ export default {
     // wait for facet options to reload in all facets
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
+  },
+
+  checkSearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
   },
 };

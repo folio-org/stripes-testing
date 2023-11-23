@@ -97,7 +97,7 @@ export default {
     internal: 'ui-quick-marc.quick-marc-editor.view',
     gui: 'quickMARC: View MARC bibliographic record',
   },
-  uiCanLinkUnlinkAuthorityRecordsToBibRecords: {
+  uiQuickMarcQuickMarcAuthorityLinkUnlink: {
     internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink',
     gui: 'quickMARC: Can Link/unlink authority records to bib records',
   },
@@ -117,10 +117,6 @@ export default {
   uiMarcAuthoritiesAuthorityRecordDelete: {
     internal: 'ui-marc-authorities.authority-record.delete',
     gui: 'MARC Authority: Delete MARC authority record',
-  },
-  uiQuickMarcQuickMarcAuthorityLinkUnlink: {
-    internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink',
-    gui: 'quickMARC: Can Link/unlink authority records to bib records',
   },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
@@ -520,6 +516,10 @@ export default {
     internal: 'ui-invoice.settings.all',
     gui: 'Settings (Invoices): Can view and edit settings',
   },
+  invoiceSettingsBatchGroupViewEdit: {
+    internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
+    gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
+  },
   uiInvoicesCancelInvoices: { internal: 'ui-invoice.cancel', gui: 'Invoice: Cancel invoices' },
   uiInvoicesCanViewAndEditInvoicesAndInvoiceLines: {
     internal: 'ui-invoice.invoice.edit',
@@ -808,6 +808,18 @@ export default {
   uiSettingsCanChangeLoacalPassword: {
     internal: 'ui-myprofile.settings.change-password',
     gui: 'Settings (My profile): Can change your local password',
+  },
+  uiSettingsTenantPlugins: {
+    internal: 'ui-tenant-settings.settings.plugins',
+    gui: 'Settings (tenant): Can maintain preferred plugins',
+  },
+  uiSettingsTenantSSO: {
+    internal: 'ui-tenant-settings.settings.sso',
+    gui: 'Settings (tenant): Can maintain SSO settings',
+  },
+  uiSettingsTenantAddresses: {
+    internal: 'ui-tenant-settings.settings.addresses',
+    gui: 'Settings (tenant): Can manage tenant addresses',
   },
   // Added the below permissions for custom label creation
 
