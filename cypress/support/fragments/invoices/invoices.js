@@ -1061,7 +1061,7 @@ export default {
 
   openPageCurrentEncumbrance: (title) => {
     cy.get('#invoiceLineFundDistribution')
-      .find('*[class^="mclCell"]')
+      .find('a')
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();

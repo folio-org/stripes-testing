@@ -57,8 +57,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitFileIsUploaded();
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();

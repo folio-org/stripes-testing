@@ -715,8 +715,13 @@ export default {
         .exists(),
     );
   },
-  verifySearchResultTabletIsAbsent() {
-    cy.expect(authoritiesList.absent());
+
+  verifySearchResultTabletIsAbsent(absent = true) {
+    if (absent) {
+      cy.expect(authoritiesList.absent());
+    } else {
+      cy.expect(authoritiesList.exists());
+    }
   },
 
   getMarcAuthoritiesViaApi(searchParams) {
@@ -780,5 +785,10 @@ export default {
       });
       cy.expect(authorizedRecords.length).to.equal(1);
     });
+  },
+
+  checkTotalRecordsForOption(option, totalRecords) {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
   },
 };

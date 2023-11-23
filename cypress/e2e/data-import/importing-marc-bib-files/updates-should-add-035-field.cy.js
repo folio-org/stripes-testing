@@ -186,20 +186,21 @@ describe('data-import', () => {
           InventoryViewSource.contains('035\t');
           InventoryViewSource.contains('(LTSCA)303845');
 
-          cy.getAdminToken();
-          Users.deleteViaApi(user.userId);
-          JobProfiles.deleteJobProfile(jobProfile.profileName);
-          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-          ActionProfiles.deleteActionProfile(actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+          cy.getAdminToken().then(() => {
+            Users.deleteViaApi(user.userId);
+            JobProfiles.deleteJobProfile(jobProfile.profileName);
+            MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+            ActionProfiles.deleteActionProfile(actionProfile.name);
+            FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrId}"` }).then(
+              (instance) => {
+                InventoryInstance.deleteInstanceViaApi(instance.id);
+              },
+            );
+          });
           // delete created files in fixtures
           FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
           FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
-          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrId}"` }).then(
-            (instance) => {
-              InventoryInstance.deleteInstanceViaApi(instance.id);
-            },
-          );
         });
       },
     );
@@ -364,12 +365,13 @@ describe('data-import', () => {
           });
         });
 
-        cy.getAdminToken();
-        Users.deleteViaApi(user.userId);
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.getAdminToken().then(() => {
+          Users.deleteViaApi(user.userId);
+          JobProfiles.deleteJobProfile(jobProfile.profileName);
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+          ActionProfiles.deleteActionProfile(actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        });
         // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
