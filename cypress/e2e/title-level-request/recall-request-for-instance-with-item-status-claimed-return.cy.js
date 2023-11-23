@@ -76,7 +76,7 @@ describe('Title level request for claimed return item', () => {
   });
 
   it(
-    '[C375949] Check that user can not create a TLR Recall for item with status Claimed return',
+    'C375949 Check that user can not create a TLR Recall for item with status Claimed return',
     { tags: [TestTypes.extendedPath, DevTeams.vega] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
