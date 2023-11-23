@@ -10,7 +10,7 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import Requests from '../../support/fragments/requests/requests';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
-describe('Title Level Request. Request notice. Title level request -Settings', () => {
+describe('Title Level Request', () => {
   let userData = {};
   let requestId;
   const testData = {
