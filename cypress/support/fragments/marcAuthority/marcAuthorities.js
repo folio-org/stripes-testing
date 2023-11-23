@@ -67,6 +67,7 @@ const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
+const thesaurusAccordion = Accordion('Thesaurus');
 
 export default {
   waitLoading() {
@@ -741,6 +742,23 @@ export default {
       rootSection.exists(),
       MultiColumnListCell({ columnIndex, content: value }).exists(),
     ]);
+  },
+
+  verifyThesaurusAccordionAndClick: () => {
+    cy.expect(thesaurusAccordion.exists());
+    cy.do(thesaurusAccordion.clickHeader());
+  },
+
+  chooseThesaurus: (thesaurusTypes) => {
+    cy.do(
+      MultiSelect({ ariaLabelledby: 'subjectHeadings-multiselect-label' }).select([
+        including(thesaurusTypes),
+      ]),
+    );
+  },
+
+  verifySelectedTextOfThesaurus: (thesaurusTypes) => {
+    cy.expect(MultiSelect({ selected: including(thesaurusTypes) }).exists());
   },
 
   checkHeadingReferenceColumnValueIsBold(rowNumber) {
