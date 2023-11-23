@@ -40,9 +40,7 @@ describe('Edit Authority record', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
       marcFiles.forEach((marcFile) => {
         DataImport.verifyUploadState();
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFile.fileName);
@@ -62,14 +60,12 @@ describe('Edit Authority record', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.login(testData.userProperties.username, testData.userProperties.password);
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+        });
       });
     });
-  });
-
-  beforeEach('Visit MARC Authorities', () => {
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthorities.waitLoading();
   });
 
   after('Delete test data', () => {
