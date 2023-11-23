@@ -1,4 +1,4 @@
-import { Permissions, TestTypes } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
 import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -46,7 +46,7 @@ describe('inventory', () => {
 
     it(
       'C3495 Edit the title of an instance which has source FOLIO (record which do not have an underlying MARC record stored in SRS) (folijet) (TaaS)',
-      { tags: [TestTypes.extended, 'folijet'] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

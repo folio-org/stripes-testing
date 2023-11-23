@@ -1,6 +1,5 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import testType from '../../support/dictionary/testTypes';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
@@ -69,7 +68,7 @@ describe('ui-requests: Filter requests by tags', () => {
     });
   });
 
-  it('C9320 Filter requests by tags (vega) (TaaS)', { tags: [testType.extended, 'vega'] }, () => {
+  it('C9320 Filter requests by tags (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
     cy.visit(TopMenu.requestsPath);
     instances.forEach((instance, index) => {
       Requests.findCreatedRequest(instance.instanceTitle);

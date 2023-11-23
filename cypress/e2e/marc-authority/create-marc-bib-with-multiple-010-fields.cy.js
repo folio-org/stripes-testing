@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
@@ -40,7 +40,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380644 Create "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-    { tags: ['extendedPath', DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // #1 Click on the "Actions" button placed on the second pane >> Select "+New MARC Bib Record" option.
       InventoryInstance.newMarcBibRecord();

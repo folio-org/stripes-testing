@@ -1,6 +1,4 @@
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
-import TestTypes from '../../support/dictionary/testTypes';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
@@ -112,7 +110,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C380645 Edit "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-    { tags: ['extendedPath', DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle('C380645 The Journal of ecclesiastical history.');
       InventoryInstances.selectInstance();

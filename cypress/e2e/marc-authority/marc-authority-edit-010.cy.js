@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
@@ -78,7 +78,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C375127 Unable to save imported "MARC authority" record with multiple "010" fields when editing (spitfire) (TaaS)',
-    { tags: ['extendedPath', DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
       MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);

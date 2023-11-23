@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -102,7 +102,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C422166 MARC Authority plug-in | Apply "Authority source" facet to the search result list (spitfire) (TaaS)',
-    { tags: ['extendedPath', DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // #1 - #3 Fill in the input field placed at the "Search & filter" pane with " * ", select search option: "Keyword", click on the "Search" button
       MarcAuthorities.searchByParameter('Keyword', '*');

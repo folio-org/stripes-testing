@@ -1,7 +1,6 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
-import testTypes from '../../../../support/dictionary/testTypes';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../../../support/fragments/checkout/checkout';
@@ -241,7 +240,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it(
     'C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)',
-    { tags: ['spitfire', 'smoke', testTypes.broken] },
+    { tags: ['spitfire', 'smoke', 'broken'] },
     () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.checkOutPath,

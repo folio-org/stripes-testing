@@ -1,6 +1,4 @@
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
-import TestTypes from '../../support/dictionary/testTypes';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
@@ -55,7 +53,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C365627 Search | Verify that the "Thesaurus" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
-    { tags: ['extendedPath', DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.verifyThesaurusAccordionAndClick();
       MarcAuthorities.chooseThesaurus(thesaurusType);

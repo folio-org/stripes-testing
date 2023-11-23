@@ -1,7 +1,6 @@
 import { Checkbox } from '../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import testTypes from '../../support/dictionary/testTypes';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
@@ -130,7 +129,7 @@ describe('ui-inventory: exports', () => {
 
   it(
     'C196757 Export selected records (MARC) (firebird)',
-    { tags: ['smoke', 'firebird', testTypes.broken] },
+    { tags: ['smoke', 'firebird', 'broken'] },
     () => {
       InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
       cy.do(InventorySearchAndFilter.getSearchResult().find(Checkbox()).click());

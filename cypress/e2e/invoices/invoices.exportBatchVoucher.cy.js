@@ -1,4 +1,3 @@
-import TestType from '../../support/dictionary/testTypes';
 import Funds from '../../support/fragments/finance/funds/funds';
 import NewFund from '../../support/fragments/finance/funds/newFund';
 import Invoices from '../../support/fragments/invoices/invoices';
@@ -75,7 +74,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
 
   it(
     'C10943 Run batch voucher export manually (thunderjet)',
-    { tags: ['smoke', 'thunderjet', TestType.broken] },
+    { tags: ['smoke', 'thunderjet', 'broken'] },
     () => {
       Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
       Invoices.createInvoiceLine(invoiceLine);
