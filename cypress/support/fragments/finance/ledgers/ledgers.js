@@ -46,6 +46,9 @@ const resetButton = Button({ id: 'reset-ledgers-filters' });
 const ledgersFiltersSection = Section({ id: 'ledger-filters-pane' });
 const actionsButton = Button('Actions');
 const exportSettingsModal = Modal('Export settings');
+const expenseClassesSelect = Select({ name: 'expenseClasses' });
+const exportButton = Button('Export');
+
 export default {
   defaultUiLedger: {
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -556,10 +559,8 @@ export default {
   },
 
   exportRollover: (dataFile) => {
-    cy.get('#rollover-logs-list')
-      .find('div[role="gridcell"]')
-      .contains('a', `${dataFile}-result`)
-      .click();
+    cy.wait(4000);
+    cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-result`).click();
   },
 
   exportRolloverError: (dataFile) => {
@@ -575,10 +576,8 @@ export default {
         .find(MultiColumnListCell('Successful'))
         .exists(),
     ]);
-    cy.get('#rollover-logs-list').find('div[role="gridcell"]').contains('a', `${dataFile}-result`);
-    cy.get('#rollover-logs-list')
-      .find('div[role="gridcell"]')
-      .contains('a', `${dataFile}-settings`);
+    cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-result`);
+    cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-settings`);
   },
 
   checkDownloadedFile(
@@ -992,13 +991,28 @@ export default {
     cy.wait(4000);
     cy.do([
       exportSettingsModal.find(Select({ name: 'fiscalYearId' })).choose(fiscalYear),
-      exportSettingsModal.find(Select({ name: 'expenseClasses' })).choose(exportExpenseclasses),
-      exportSettingsModal.find(Button('Export')).click(),
+      exportSettingsModal.find(expenseClassesSelect).choose(exportExpenseclasses),
+      exportSettingsModal.find(exportButton).click(),
     ]);
     cy.wait(2000);
     InteractorsTools.checkCalloutMessage(`Export of ${ledger.name} data has started`);
     cy.wait(2000);
     InteractorsTools.checkCalloutMessage(`${ledger.name} data was successfully exported to CSV`);
+  },
+
+  checkPreparationExportSettings() {
+    cy.wait(4000);
+    cy.do([
+      exportSettingsModal.find(Select({ name: 'fiscalYearId' })).choose(''),
+      exportSettingsModal.find(expenseClassesSelect).choose('All'),
+    ]);
+    cy.expect(exportSettingsModal.find(exportButton).is({ disabled: true }));
+    cy.do(exportSettingsModal.find(expenseClassesSelect).choose('Active'));
+    cy.expect(exportSettingsModal.find(exportButton).is({ disabled: true }));
+    cy.do(exportSettingsModal.find(expenseClassesSelect).choose('Inactive'));
+    cy.expect(exportSettingsModal.find(exportButton).is({ disabled: true }));
+    cy.do(exportSettingsModal.find(expenseClassesSelect).choose('None'));
+    cy.expect(exportSettingsModal.find(exportButton).is({ disabled: true }));
   },
 
   checkColumnNamesInDownloadedLedgerExportFile(fileName) {

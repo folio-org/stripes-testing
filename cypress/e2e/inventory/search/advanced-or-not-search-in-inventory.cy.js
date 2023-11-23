@@ -37,7 +37,8 @@ describe('Inventory -> Advanced search', () => {
 
   before('Creating data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+    DataImport.verifyUploadState();
+    DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.search(marcFile.jobProfileToRun);
     JobProfiles.runImportFile();

@@ -42,9 +42,10 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
@@ -55,7 +56,7 @@ describe('data-import', () => {
         FieldMappingProfiles.search(profileForDuplicate);
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        NewFieldMappingProfile.fillDescription(mappingProfile.description);
+        NewFieldMappingProfile.fillSummaryDescription(mappingProfile.description);
         NewFieldMappingProfile.fillBatchGroup(mappingProfile.batchGroup);
         NewFieldMappingProfile.fillVendorName(mappingProfile.organizationName);
         NewFieldMappingProfile.fillPaymentMethod(mappingProfile.paymentMethod);

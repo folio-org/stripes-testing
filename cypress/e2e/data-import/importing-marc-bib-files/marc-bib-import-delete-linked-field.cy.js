@@ -114,7 +114,7 @@ describe('data-import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.dataExportEnableApp.gui,
       ]).then((createdUserProperties) => {
@@ -122,8 +122,8 @@ describe('data-import', () => {
         marcFiles.forEach((marcFile) => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-              JobProfiles.waitFileIsUploaded();
+              DataImport.verifyUploadState();
+              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
@@ -156,7 +156,7 @@ describe('data-import', () => {
           JobProfiles.openNewJobProfileForm();
           NewJobProfile.fillJobProfile(jobProfile);
           NewJobProfile.linkMatchProfile(matchProfile.profileName);
-          NewJobProfile.linkActionProfileByName(actionProfile.name);
+          NewJobProfile.linkActionProfileForMatches(actionProfile.name);
           // wait for the action profile to be linked
           cy.wait(1000);
           NewJobProfile.saveAndClose();
