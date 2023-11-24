@@ -564,10 +564,8 @@ export default {
   },
 
   exportRolloverError: (dataFile) => {
-    cy.get('#rollover-logs-list')
-      .find('div[role="gridcell"]')
-      .contains('a', `${dataFile}-error`)
-      .click();
+    cy.wait(4000);
+    cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-error`).click();
   },
 
   checkRolloverLogs: (dataFile) => {

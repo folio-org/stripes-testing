@@ -50,7 +50,7 @@ const testData = {
   ],
 };
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Subject Browse', () => {
     before('Create test data', () => {
       cy.getAdminToken();
