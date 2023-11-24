@@ -32,15 +32,13 @@ const changedRecordsFileName = `*-Changed-Records-${userBarcodesFileName}`;
 describe('bulk-edit', () => {
   describe('in-app approach', { retries: 1 }, () => {
     before('create test data', () => {
-      cy.createTempUser(
-        [
-          permissions.bulkEditUpdateRecords.gui,
-          permissions.bulkEditLogsView.gui,
-          permissions.uiUsersPermissionsView.gui,
-          permissions.uiUsersCustomField.gui,
-          permissions.uiUserEdit.gui
-        ]
-      ).then((userProperties) => {
+      cy.createTempUser([
+        permissions.bulkEditUpdateRecords.gui,
+        permissions.bulkEditLogsView.gui,
+        permissions.uiUsersPermissionsView.gui,
+        permissions.uiUsersCustomField.gui,
+        permissions.uiUserEdit.gui,
+      ]).then((userProperties) => {
         secondUser = userProperties;
       });
       cy.createTempUser(
@@ -70,7 +68,10 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(previewOfProposedChangesFileName, changedRecordsFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        previewOfProposedChangesFileName,
+        changedRecordsFileName,
+      );
       Users.deleteViaApi(user.userId);
     });
 
@@ -128,8 +129,9 @@ describe('bulk-edit', () => {
         BulkEditActions.fillExpirationDate(today);
         BulkEditActions.confirmChanges();
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewOfProposedChangesFileName,
-          [`${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`]);
+        ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [
+          `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
+        ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Custom fields',
@@ -137,18 +139,21 @@ describe('bulk-edit', () => {
         );
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName,
-          [`${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
+        ]);
 
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.checkUsersCheckbox();
         BulkEditSearchPane.clickActionsRunBy(secondUser.username);
         BulkEditSearchPane.downloadFileWithProposedChanges();
-        ExportFile.verifyFileIncludes(previewOfProposedChangesFileName,
-          [`${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`]);
+        ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [
+          `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
+        ]);
         BulkEditSearchPane.downloadFileWithUpdatedRecords();
-        ExportFile.verifyFileIncludes(changedRecordsFileName,
-          [`${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          `${customFieldData.fieldLabel}:${customFieldData.label1};${customFieldData.label2}`,
+        ]);
 
         cy.visit(SettingsMenu.customFieldsPath);
         CustomFields.deleteCustomField(customFieldData.fieldLabel);
