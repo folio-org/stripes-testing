@@ -11,6 +11,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('Data Import', () => {
   describe('Importing MARC Bib files', () => {
@@ -22,25 +23,33 @@ describe('Data Import', () => {
     const title = "101 things I wish I'd known when I started";
 
     before('login', () => {
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.settingsDataImportEnabled.gui,
-        Permissions.inventoryAll.gui,
-      ]).then((userProperties) => {
+      // upload a mrc file as admin
+      cy.loginAsAdmin({
+        path: TopMenu.dataImportPath,
+        waiter: DataImport.waitLoading,
+      });
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(filePath, marcFileName);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(jobProfileToRun);
+      Logs.openFileDetails(marcFileName);
+      FileDetails.verifyLogDetailsPageIsOpened();
+      FileDetails.openJsonScreen(title);
+      JsonScreenView.verifyJsonScreenIsOpened();
+      JsonScreenView.getInstanceHrid().then((hrid) => {
+        instanceHrid = hrid;
+      });
+
+      // create temp user with inventoryAll permissions
+      cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
         user = userProperties;
-
         cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
         });
-
-        // upload a mrc file
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(filePath, marcFileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(jobProfileToRun);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
       });
     });
 
@@ -60,29 +69,20 @@ describe('Data Import', () => {
       'C2361 Disallow editing of Instance records that have underlying SRS MARC records',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
-        Logs.openFileDetails(marcFileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
-        FileDetails.openJsonScreen(title);
-        JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.getInstanceHrid().then((hrid) => {
-          instanceHrid = hrid;
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          InstanceRecordView.verifyInstancePaneExists();
-          InstanceRecordView.edit();
-          InstanceRecordEdit.checkReadOnlyFields();
-          InstanceRecordEdit.checkCheckboxConditions([
-            { label: 'Suppress from discovery', conditions: { disabled: false } },
-            { label: 'Staff suppress', conditions: { disabled: false } },
-            { label: 'Previously held', conditions: { disabled: false } },
-          ]);
-          InstanceRecordEdit.verifyCatalogDateInputIsDisabled(false);
-          InstanceRecordEdit.verifyInstanceStatusTermConditionIsDisabled(false);
-          InstanceRecordEdit.verifyStatisticalCodeIsEnabled();
-          InstanceRecordEdit.verifyNatureOfContentIsEnabled();
-          InstanceRecordEdit.verifyAddParentInstanceIsEnabled();
-          InstanceRecordEdit.verifyAddChildInstanceIsEnabled();
-        });
+        InstanceRecordView.verifyInstancePaneExists();
+        InstanceRecordView.edit();
+        InstanceRecordEdit.checkReadOnlyFields();
+        InstanceRecordEdit.checkCheckboxConditions([
+          { label: 'Suppress from discovery', conditions: { disabled: false } },
+          { label: 'Staff suppress', conditions: { disabled: false } },
+          { label: 'Previously held', conditions: { disabled: false } },
+        ]);
+        InstanceRecordEdit.verifyCatalogDateInputIsDisabled(false);
+        InstanceRecordEdit.verifyInstanceStatusTermConditionIsDisabled(false);
+        InstanceRecordEdit.verifyStatisticalCodeIsEnabled();
+        InstanceRecordEdit.verifyNatureOfContentIsEnabled();
+        InstanceRecordEdit.verifyAddParentInstanceIsEnabled();
+        InstanceRecordEdit.verifyAddChildInstanceIsEnabled();
       },
     );
   });
