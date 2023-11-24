@@ -9,7 +9,6 @@ import {
   including,
   MultiColumnListRow,
   MultiColumnListCell,
-  MultiSelect,
 } from '../../../../interactors';
 
 const searchOptions = {
