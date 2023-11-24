@@ -29,7 +29,7 @@ export default {
       'Description',
       'Error details',
     ];
-    labels.forEach((label) => {
+    labels.forEach(label => {
       cy.expect(KeyValue(label).exists());
     });
   },
