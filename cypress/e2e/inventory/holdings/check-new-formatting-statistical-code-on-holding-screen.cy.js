@@ -51,19 +51,20 @@ describe('inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
-      cy.getHoldings({
-        limit: 1,
-        query: `"instanceId"="${testData.item.instanceId}"`,
-      })
-        .then((holdings) => {
-          testData.item.holdingUUID = holdings[0].id;
+      cy.getAdminToken().then(() => {
+        cy.getHoldings({
+          limit: 1,
+          query: `"instanceId"="${testData.item.instanceId}"`,
         })
-        .then(() => {
-          cy.deleteHoldingRecordViaApi(testData.item.holdingUUID);
-        });
-      InventoryInstance.deleteInstanceViaApi(testData.item.instanceId);
-      Users.deleteViaApi(testData.user.userId);
+          .then((holdings) => {
+            testData.item.holdingUUID = holdings[0].id;
+          })
+          .then(() => {
+            cy.deleteHoldingRecordViaApi(testData.item.holdingUUID);
+          });
+        InventoryInstance.deleteInstanceViaApi(testData.item.instanceId);
+        Users.deleteViaApi(testData.user.userId);
+      });
     });
 
     it(

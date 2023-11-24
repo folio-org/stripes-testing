@@ -34,21 +34,25 @@ describe('bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
-          item.holdingsHRID = holdings[0].hrid;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            electronicAccess: [{
-              // Resource
-              relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
-              uri: '',
-              linkText: '',
-              materialsSpecification: '',
-              publicNote: '',
-            }]
-          });
-          FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingsHRID);
-        });
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+          (holdings) => {
+            item.holdingsHRID = holdings[0].hrid;
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              electronicAccess: [
+                {
+                  // Resource
+                  relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
+                  uri: '',
+                  linkText: '',
+                  materialsSpecification: '',
+                  publicNote: '',
+                },
+              ],
+            });
+            FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingsHRID);
+          },
+        );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -96,7 +100,7 @@ describe('bulk-edit', () => {
         HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
         InventoryInstance.verifyHoldingsPermanentLocation(location);
         InventoryInstance.verifyHoldingsTemporaryLocation(location);
-      }
+      },
     );
   });
 });

@@ -268,27 +268,28 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (initialInstance) => {
+            cy.deleteItemViaApi(initialInstance.items[0].id);
+            cy.deleteHoldingRecordViaApi(initialInstance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(initialInstance.id);
+          },
+        );
+      });
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (initialInstance) => {
-          cy.deleteItemViaApi(initialInstance.items[0].id);
-          cy.deleteHoldingRecordViaApi(initialInstance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(initialInstance.id);
-        },
-      );
     });
 
     it(

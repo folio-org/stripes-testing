@@ -21,7 +21,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import DateTools from '../../support/utils/dateTools';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 
-describe('Edit title level request', () => {
+describe('Title Level Request', () => {
   const userData = {};
   const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();

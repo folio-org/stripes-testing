@@ -9,26 +9,22 @@ import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import Logs from '../../support/fragments/data_import/logs/logs';
+import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
 describe('Importing MARC Authority files', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
-  const fileName = '100_MARC_authority_records (1).mrc';
+  const fileName = '100_MARC_authority_records.mrc';
   const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
   const headingType = 'Geographic Name';
   let createdAuthorityID;
 
   before('Creating data', () => {
-    cy.createTempUser([
-      Permissions.settingsDataImportEnabled.gui,
-      Permissions.moduleDataImportEnabled.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-    ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
-    });
+    cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
+      (createdUserProperties) => {
+        testData.userProperties = createdUserProperties;
+      },
+    );
     cy.loginAsAdmin({
       path: TopMenu.dataImportPath,
       waiter: DataImport.waitLoading,
@@ -63,13 +59,10 @@ describe('Importing MARC Authority files', () => {
     'C365632 Browse | Verify that the "Type of heading" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
-      MarcAuthorities.verifyHeadingTypeAccordionAccordionAndClick();
+      MarcAuthorities.switchToBrowse();
       MarcAuthorities.chooseHeadingType(headingType);
-      MarcAuthorities.searchBy('Keyword', 'Not-existing query');
-      MarcAuthorities.verifyHeadingTypeAccordionAccordionAndClick();
-      MarcAuthorities.checkNoResultsMessage(
-        'No results found for "Not-existing query". Please check your spelling and filters.',
-      );
+      MarcAuthorityBrowse.searchBy('Name-title', 'Not-existing query');
+      MarcAuthorityBrowse.getNotExistingHeadingReferenceValue('Not-existing query');
       MarcAuthorities.verifyHeadingTypeAccordionAccordionAndClick();
       MarcAuthorities.verifySelectedTextOfHeadingType(headingType);
     },

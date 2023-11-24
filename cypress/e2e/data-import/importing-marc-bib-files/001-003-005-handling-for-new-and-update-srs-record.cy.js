@@ -96,25 +96,26 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"hrid"=="${instanceHridForReimport}"`,
+        }).then((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"hrid"=="${instanceHridForReimport}"`,
-      }).then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
       });
     });
 
