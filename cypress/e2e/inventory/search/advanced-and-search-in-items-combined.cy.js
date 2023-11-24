@@ -44,7 +44,7 @@ describe('Inventory -> Advanced search', () => {
     ],
   };
 
-  before('Creating data', () => {
+  before('Create users, data', () => {
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
