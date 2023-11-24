@@ -31,7 +31,7 @@ describe('Data Import', () => {
     });
 
     it(
-      'C357984 Confirm that the logs are in default sort order on the View all page when "Reset all" button is pressed (folijet) (null)',
+      'C357984 Confirm that the logs are in default sort order on the View all page when "Reset all" button is pressed (folijet)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         const jobProfileColumn = 'Job profile';
