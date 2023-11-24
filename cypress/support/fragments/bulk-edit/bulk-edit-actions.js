@@ -32,6 +32,9 @@ const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
+const confirmChangesButton = Button('Confirm changes');
+const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
+const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -324,6 +327,16 @@ export default {
   addNewBulkEditFilterString() {
     cy.do(plusBtn.click());
     cy.wait(1000);
+  },
+
+  verifyNewBulkEditRow() {
+    cy.expect([
+      bulkEditFirstRow.find(plusBtn).absent(),
+      bulkEditFirstRow.find(deleteBtn).has({ disabled: false }),
+      bulkEditSecondRow.find(plusBtn).exists(),
+      bulkEditSecondRow.find(deleteBtn).exists(),
+      confirmChangesButton.has({ disabled: true }),
+    ]);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
@@ -619,7 +632,7 @@ export default {
   },
 
   confirmChanges() {
-    cy.do(Button('Confirm changes').click());
+    cy.do(confirmChangesButton.click());
     cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
 
