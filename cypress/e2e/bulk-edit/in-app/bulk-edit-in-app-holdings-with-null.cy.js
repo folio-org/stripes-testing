@@ -28,7 +28,10 @@ describe('bulk-edit', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        item.instanceId = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
         cy.getHoldings({
           limit: 1,
           query: `"instanceId"="${item.instanceId}"`,
@@ -81,7 +84,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.selectSearchResultItem();
         InventorySearchAndFilter.selectViewHoldings();
         InventoryInstance.verifyHoldingsPermanentLocation(newLocation);
-      }
+      },
     );
   });
 });
