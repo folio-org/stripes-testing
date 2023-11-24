@@ -699,6 +699,9 @@ export default {
     ]);
   },
 
+  verifyDerivedMarcBibSave() {
+    cy.expect(calloutOnDeriveFirst.exists());
+  },
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
@@ -1523,6 +1526,10 @@ export default {
     cy.expect(calloutMultiple245MarcTags.exists());
   },
 
+  verifyMultipleTagCallout(tagNumber) {
+    cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
+  },
+
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
   },
@@ -1735,5 +1742,14 @@ export default {
     this.checkEmptyContent('008');
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
+  },
+
+  verifyNoDuplicatedFieldsWithTag: (tag) => {
+    cy.get(`input[name*=".tag"][value="${tag}"]`).then((elements) => elements.length === 1);
+  },
+  verifyNumOfFieldsWithTag: (tag, numOfFields) => {
+    cy.get(`input[name*=".tag"][value="${tag}"]`).then(
+      (elements) => elements.length === numOfFields,
+    );
   },
 };

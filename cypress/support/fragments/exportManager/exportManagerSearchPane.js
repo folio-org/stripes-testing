@@ -71,7 +71,7 @@ const exportJob = (jobId) => {
 export default {
   getSearchResult,
   exportJob,
-  exportJobRecursively({ jobId, timeout = 600000 }) {
+  exportJobRecursively({ jobId, timeout = 900000 }) {
     cy.recurse(
       () => {
         cy.reload();
@@ -80,7 +80,7 @@ export default {
       ($el) => $el[0].nodeName === 'A',
       {
         delay: 30000,
-        limit: 20, // max number of iterations
+        limit: timeout / 30000, // max number of iterations
         timeout,
       },
     ).then(() => {
@@ -188,6 +188,11 @@ export default {
     this.checkFilterOption({ filterName: 'Authority control' });
   },
 
+  searchByBursar() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'Bursar' });
+  },
+
   searchByCirculationLog() {
     waitClick();
     this.checkFilterOption({ filterName: 'Circulation log' });
@@ -201,6 +206,11 @@ export default {
   searchByBulkEdit() {
     waitClick();
     this.checkFilterOption({ filterName: 'Bulk edit' });
+  },
+
+  searchByEdifactOrders() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'EDIFACT orders export' });
   },
 
   checkFilterOption({ filterName, resetAll = false }) {
