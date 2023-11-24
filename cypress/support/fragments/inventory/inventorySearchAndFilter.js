@@ -330,7 +330,7 @@ export default {
 
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
-    Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
+    Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([value]) => {
       cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
     });
     cy.expect([

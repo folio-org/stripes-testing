@@ -100,12 +100,14 @@ module.exports = defineConfig({
       if ('TESTRAIL_PROJECTID' in process.env && process.env.TESTRAIL_PROJECTID === '') {
         delete process.env.TESTRAIL_PROJECTID;
       }
-      // eslint-disable-next-line global-require
-      await require('cypress-testrail-simple/src/plugin')(on, config);
 
       const configCloud = await cloudPlugin(on, config);
+
       // eslint-disable-next-line global-require
       const result = require('@cypress/grep/src/plugin')(configCloud);
+
+      // eslint-disable-next-line global-require
+      await require('cypress-testrail-simple/src/plugin')(on, config);
 
       return result;
     },
