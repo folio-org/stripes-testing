@@ -188,6 +188,11 @@ export default {
     this.checkFilterOption({ filterName: 'Authority control' });
   },
 
+  searchByBursar() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'Bursar' });
+  },
+
   searchByCirculationLog() {
     waitClick();
     this.checkFilterOption({ filterName: 'Circulation log' });
@@ -201,6 +206,11 @@ export default {
   searchByBulkEdit() {
     waitClick();
     this.checkFilterOption({ filterName: 'Bulk edit' });
+  },
+
+  searchByEdifactOrders() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'EDIFACT orders export' });
   },
 
   checkFilterOption({ filterName, resetAll = false }) {
