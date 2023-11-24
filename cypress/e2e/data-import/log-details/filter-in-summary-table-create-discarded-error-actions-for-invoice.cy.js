@@ -25,9 +25,10 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
     const quantityOfItems = {
-      created: '3',
-      noAction: '3',
-      error: '3',
+      created: '1',
+      noAction: '2',
+      error: '2',
+      recordsWithErrors: '5',
     };
     const invoiceNumber = '1024200';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
@@ -116,7 +117,7 @@ describe('data-import', () => {
         // check Error counter in the Summary table
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems.error, 3);
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.INVOICE);
-        FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.error);
+        FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.recordsWithErrors);
         FileDetails.verifyLogSummaryTableIsHidden();
         FileDetails.verifyRecordsSortingOrder();
       },
