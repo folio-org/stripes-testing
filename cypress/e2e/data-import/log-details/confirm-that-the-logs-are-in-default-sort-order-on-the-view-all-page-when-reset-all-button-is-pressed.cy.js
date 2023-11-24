@@ -13,6 +13,7 @@ describe('Data Import', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
+        Permissions.dataImportDeleteLogs.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -33,24 +34,29 @@ describe('Data Import', () => {
       'C357984 Confirm that the logs are in default sort order on the View all page when "Reset all" button is pressed (folijet) (null)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
+        const jobProfileColumn = 'Job profile';
         Logs.openViewAllLogs();
         LogsViewAll.checkByReverseChronologicalOrder();
-        const beforeFiltertingCells = LogsViewAll.getMultiColumnListCellsValues(
-          LogsViewAll.visibleColumns.JOB_PROFILE.columnIndex,
-        );
-        LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
-        LogsViewAll.checkByJobProfileName('Default - Create SRS MARC Authority');
-        const afterFilteringByJobProfileCells = LogsViewAll.getMultiColumnListCellsValues(
-          LogsViewAll.visibleColumns.JOB_PROFILE.columnIndex,
-        );
-        cy.expect(beforeFiltertingCells).to.not.equal(afterFilteringByJobProfileCells);
-        LogsViewAll.checkByReverseChronologicalOrder();
-        LogsViewAll.resetAllFilters();
-        const afterFilteringResetCells = LogsViewAll.getMultiColumnListCellsValues(
-          LogsViewAll.visibleColumns.JOB_PROFILE.columnIndex,
-        );
-        cy.expect(afterFilteringResetCells).to.not.equal(afterFilteringByJobProfileCells);
-        cy.expect(beforeFiltertingCells).to.equal(afterFilteringResetCells);
+        LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then((beforeFilteringCells) => {
+          LogsViewAll.filterJobsByJobProfile('Inventory Single Record - Default Create Instance');
+          LogsViewAll.checkByJobProfileName('Inventory Single Record - Default Create Instance');
+          LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then(
+            (afterFilteringByJobProfileCells) => {
+              cy.expect(beforeFilteringCells).to.not.deep.equal(afterFilteringByJobProfileCells);
+              LogsViewAll.checkByReverseChronologicalOrder();
+              LogsViewAll.resetAllFilters(false);
+              LogsViewAll.getAllLogsColumnsResults(jobProfileColumn).then(
+                (afterResetFilteringCells) => {
+                  LogsViewAll.checkByReverseChronologicalOrder();
+                  cy.expect(afterResetFilteringCells).to.not.deep.equal(
+                    afterFilteringByJobProfileCells,
+                  );
+                  cy.expect(beforeFilteringCells).to.deep.equal(afterResetFilteringCells);
+                },
+              );
+            },
+          );
+        });
       },
     );
   });

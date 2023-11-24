@@ -170,13 +170,14 @@ export default {
 
   singleRecordImportsStatuses: ['Yes', 'No'],
 
-  resetAllFilters() {
+  resetAllFilters(clickEndedRunningColumn = true) {
     cy.do(Button('Reset all').click());
-
-    // After resetting all filters, we need to sort MultiColumnList
-    // Otherwise, server cannot parse request params and returns error with 422 status
-    // In this case, sort by completed date in ascending order
-    cy.do(MultiColumnListHeader('Ended running').click());
+    if (clickEndedRunningColumn) {
+      // After resetting all filters, we need to sort MultiColumnList
+      // Otherwise, server cannot parse request params and returns error with 422 status
+      // In this case, sort by completed date in ascending order
+      cy.do(MultiColumnListHeader('Ended running').click());
+    }
     waitUIToBeFiltered();
   },
 
