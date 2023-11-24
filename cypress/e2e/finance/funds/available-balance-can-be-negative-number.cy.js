@@ -1,14 +1,12 @@
 import permissions from '../../../support/dictionary/permissions';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import DateTools from '../../../support/utils/dateTools';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
 import OrderLines from '../../../support/fragments/orders/orderLines';
@@ -21,13 +19,6 @@ describe('Finance: Funds', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const firstLedger = { ...Ledgers.defaultUiLedger, restrictEncumbrance: false };
   const firstFund = { ...Funds.defaultUiFund };
-  const secondFund = {
-    name: `autotest_fund_2_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-  };
   const firstOrder = {
     ...NewOrder.defaultOngoingTimeOrder,
     orderType: 'Ongoing',
@@ -112,7 +103,6 @@ describe('Finance: Funds', () => {
         OrderLines.selectFund(`${firstFund.name}(${firstFund.code})`);
         Funds.selectBudgetDetails();
         Funds.checkBudgetQuantity1(`$${allocatedQuantity}`, '-$10.00');
-        cy.pause();
       });
     },
   );

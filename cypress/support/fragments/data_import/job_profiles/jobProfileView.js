@@ -31,6 +31,7 @@ export default {
   edit: () => {
     waitLoading();
     cy.do(viewPane.find(actionsButton).click());
+    waitLoading();
     cy.do(Button('Edit').click());
   },
   duplicate: () => {
@@ -85,7 +86,7 @@ export default {
     cy.expect(
       resultsPane
         .find(jobProfilesList)
-        .find(MultiColumnListCell({ row: 0, columnIndex: 2, content: including(tag) }))
+        .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: including(tag) }))
         .exists(),
     );
   },

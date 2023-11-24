@@ -372,23 +372,24 @@ describe('data-import', () => {
           '*C375109 firstmarcFile*',
           '*SearchInstanceUUIDs*',
         );
-        cy.getAdminToken();
-        JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
-        cy.wrap(collectionOfMatchProfiles).each((profile) => {
-          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-        });
-        cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-        });
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"hrid"=="${testData.firstHrid}"`,
-        }).then((instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
+          cy.wrap(collectionOfMatchProfiles).each((profile) => {
+            MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+          });
+          cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
+            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          });
+          cy.getInstance({
+            limit: 1,
+            expandAll: true,
+            query: `"hrid"=="${testData.firstHrid}"`,
+          }).then((instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
         });
       },
     );
@@ -591,23 +592,24 @@ describe('data-import', () => {
           '*C375109 firstmarcFile*',
           '*SearchInstanceUUIDs*',
         );
-        cy.getAdminToken();
-        JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
-        cy.wrap(collectionOfMatchProfiles).each((profile) => {
-          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-        });
-        cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-        });
-        cy.getInstance({
-          limit: 1,
-          expandAll: true,
-          query: `"hrid"=="${testData.secondHrid}"`,
-        }).then((instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
+          cy.wrap(collectionOfMatchProfiles).each((profile) => {
+            MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+          });
+          cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
+            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          });
+          cy.getInstance({
+            limit: 1,
+            expandAll: true,
+            query: `"hrid"=="${testData.secondHrid}"`,
+          }).then((instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
         });
       },
     );
