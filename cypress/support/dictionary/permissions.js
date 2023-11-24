@@ -821,9 +821,13 @@ export default {
     internal: 'ui-tenant-settings.settings.addresses',
     gui: 'Settings (tenant): Can manage tenant addresses',
   },
-  uiSettingsInstanceStatuses: {
+  uiSettingsInstanceStatusesCreateEditDelete: {
     internal: 'ui-inventory.settings.instance-statuses',
     gui: 'Settings (Inventory): Create, edit, delete instance status types',
+  },
+  uiSettingsStatisticalCodesCreateEditDelete: {
+    internal: 'ui-inventory.settings.statistical-codes',
+    gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
   // Added the below permissions for custom label creation
 
