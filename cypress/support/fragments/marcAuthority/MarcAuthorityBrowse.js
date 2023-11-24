@@ -32,7 +32,6 @@ const enabledSearchButton = Button({ id: 'submit-authorities-search', disabled: 
 const searchInput = SearchField({ id: 'textarea-authorities-search' });
 const mainFilter = SearchField({ id: 'textarea-authorities-search-qindex' });
 const browseSearchAndFilterInput = Select('Search field index');
-
 // TODO: initially first line has data-row-index = 52. Currently it's 0, clarify the reason in case if start index will changed once again
 const getFirstLineIndexRow = (zeroIndex) => `row-${zeroIndex + 0}`;
 
