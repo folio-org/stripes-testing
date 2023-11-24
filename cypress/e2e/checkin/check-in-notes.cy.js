@@ -1,13 +1,14 @@
 import uuid from 'uuid';
 import moment from 'moment/moment';
 
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Locations } from '../../support/fragments/settings/tenant';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import CheckInModal from '../../support/fragments/check-in-actions/checkInModal';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
+import DateTools from '../../support/utils/dateTools';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import Checkout from '../../support/fragments/checkout/checkout';
@@ -21,11 +22,11 @@ describe('Check in', () => {
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
     requestsId: '',
   };
-  const note1 = { title: 'Note 1', details: 'This is Note 1' };
-  const note2 = { title: 'Note 2', details: 'This is Note 2' };
+  const note1 = { title: 'Note 1', details: 'This is Note 1', source: 'ADMINISTRATOR, Diku_admin' };
+  const note2 = { title: 'Note 2', details: 'This is Note 2', source: 'ADMINISTRATOR, Diku_admin' };
   const itemBarcode = testData.folioInstances[0].barcodes[0];
 
-  before('Creating data', () => {
+  before('Creating test data', () => {
     cy.createTempUser([Permissions.checkinAll.gui]).then((userProperties) => {
       userData = userProperties;
       ServicePoints.createViaApi(testData.servicePoint);
@@ -54,6 +55,7 @@ describe('Check in', () => {
         query: `"barcode"=="${testData.folioInstances[0].barcodes[0]}"`,
       }).then((res) => {
         const itemData = res;
+        note1.date = DateTools.getFormattedDateWithTime(new Date(), true);
         itemData.circulationNotes = [{ noteType: 'Check in', note: note1.title, staffOnly: true }];
         cy.updateItemViaApi(itemData);
       });
@@ -67,6 +69,7 @@ describe('Check in', () => {
         query: `"barcode"=="${testData.folioInstances[0].barcodes[0]}"`,
       }).then((res) => {
         const itemData = res;
+        note2.date = DateTools.getFormattedDateWithTime(new Date(), true);
         itemData.circulationNotes = [
           ...itemData.circulationNotes,
           { noteType: 'Check in', note: note2.title, staffOnly: true },
@@ -76,7 +79,7 @@ describe('Check in', () => {
     });
   });
 
-  after('Deleting created entities', () => {
+  after('Deleting test data', () => {
     cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode,
@@ -94,30 +97,29 @@ describe('Check in', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it(
-    'C776 Check in: check in notes (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
-    () => {
-      // Scan item with at least two check in notes in Check In app
-      CheckInActions.checkInItemGui(itemBarcode);
-      // Check in note modal appears
-      CheckInModal.verifyModalTitle();
-      CheckInModal.checkNotes([note2, note1]);
-      // Click cancel on check in note modal
-      CheckInModal.closeModal();
-      // Scan item in Check In app
-      CheckInActions.checkInItemGui(itemBarcode);
-      // Check in note modal appears
-      CheckInModal.verifyModalTitle();
-      CheckInModal.checkNotes([note2, note1]);
-      // Click confirm on check in note modal
-      CheckInModal.confirmModal();
-      // Item is checked in
-      CheckInPane.checkResultsInTheRow([itemBarcode]);
-      // Check in notes appears in menu
-      CheckInActions.checkActionsMenuOptions(['checkInNotes']);
-      // Click check in notes
-      CheckInActions.openCheckInNotes([note2, note1]);
-    },
-  );
+  it('C776 Check in: check in notes (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+    // Scan item with at least two check in notes in Check In app
+    CheckInActions.checkInItemGui(itemBarcode);
+    // Check in note modal appears
+    CheckInModal.verifyModalTitle();
+    CheckInModal.verifyNotesInfo([note2, note1]);
+    // Click cancel on check in note modal
+    CheckInModal.closeModal();
+    CheckInModal.verifyModalIsClosed();
+    CheckInPane.checkItemIsNotCheckedIn(itemBarcode);
+    // Scan item in Check In app
+    CheckInActions.checkInItemGui(itemBarcode);
+    // Check in note modal appears
+    CheckInModal.verifyModalTitle();
+    CheckInModal.verifyNotesInfo([note2, note1]);
+    // Click confirm on check in note modal
+    CheckInModal.confirmModal();
+    // Item is checked in
+    CheckInPane.checkResultsInTheRow([itemBarcode]);
+    // Check in notes appears in menu
+    CheckInActions.checkActionsMenuOptions(['checkInNotes']);
+    // Click check in notes
+    CheckInActions.openCheckInNotes([note2, note1]);
+    CheckInModal.verifyModalIsClosed();
+  });
 });

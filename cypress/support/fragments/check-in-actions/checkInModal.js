@@ -13,26 +13,45 @@ export default {
   closeModal: () => {
     cy.do(checkInModal.find(closeButton).click());
   },
+  verifyModalIsClosed: () => {
+    cy.expect(checkInModal.absent());
+  },
   confirmModal: () => {
     cy.do(checkInModal.find(confirmButton).click());
   },
-  checkNotes: (notes, notesModal) => {
+  verifyNotesInfo: (notes, notesModal) => {
     cy.log(notes);
     notes.forEach((note, index) => {
       if (notesModal) {
-        cy.expect(
+        cy.expect([
           checkInNotesModal
             .find(MultiColumnListRow({ index }))
             .find(MultiColumnListCell({ column: 'Note' }))
             .has({ content: including(note.title) }),
-        );
+          checkInNotesModal
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ column: 'Date' }))
+            .has({ content: including(note.date) }),
+          checkInNotesModal
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ column: 'Source' }))
+            .has({ content: including(note.source) }),
+        ]);
       } else {
-        cy.expect(
+        cy.expect([
           checkInModal
             .find(MultiColumnListRow({ index }))
             .find(MultiColumnListCell({ column: 'Note' }))
             .has({ content: including(note.title) }),
-        );
+          checkInModal
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ column: 'Date' }))
+            .has({ content: including(note.date) }),
+          checkInModal
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ column: 'Source' }))
+            .has({ content: including(note.source) }),
+        ]);
       }
     });
   },

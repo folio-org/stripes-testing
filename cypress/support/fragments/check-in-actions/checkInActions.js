@@ -199,7 +199,7 @@ export default {
     cy.do([availableActionsButton.click(), checkInButtonNotes.click()]);
     cy.expect(Modal(including('Check in notes')).exists());
     if (notes) {
-      CheckInModal.checkNotes(notes, true);
+      CheckInModal.verifyNotesInfo(notes, true);
     }
     cy.expect(Button('Close').exists());
     cy.do(Button('Close').click());
