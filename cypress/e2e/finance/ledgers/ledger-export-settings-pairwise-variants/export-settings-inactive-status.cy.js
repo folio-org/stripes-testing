@@ -10,11 +10,11 @@ import Funds from '../../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
 import DateTools from '../../../../support/utils/dateTools';
 
-describe('Finance: Ledgers', { retries: 3 }, () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+describe('Finance: Ledgers', () => {
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
+    code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
@@ -101,6 +101,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(secondFiscalYear.code, 'Inactive', defaultLedger);
       Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
+      cy.pause();
       Ledgers.checkColumnContentInDownloadedLedgerExportFile(
         `${fileName}.csv`,
         1,
