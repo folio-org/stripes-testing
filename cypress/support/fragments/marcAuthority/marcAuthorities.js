@@ -866,11 +866,13 @@ export default {
   },
 
   chooseHeadingType: (headingType) => {
-    cy.do(
+    cy.do([
+      headingTypeAccordion.clickHeader(),
+      cy.wait(1000), // without wait will immediately close accordion
       MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
         including(headingType),
       ]),
-    );
+    ]);
   },
 
   verifySelectedTextOfHeadingType: (headingType) => {
