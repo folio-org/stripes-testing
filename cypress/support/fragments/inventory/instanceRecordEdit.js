@@ -290,4 +290,26 @@ export default {
         .has({ disabled: false }),
     ]);
   },
+  getStatusTermsFromInstance: () => {
+    const statusNames = [];
+    return cy
+      .get('select[name="statusId"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            statusNames.push(name);
+          });
+      })
+      .then(() => {
+        const resultArray = statusNames.map((str) => {
+          return str
+            .replace(/\([^)]+\)/g, '')
+            .replace(/ *\([^)]*\) */g, '')
+            .replace('Select instance status', '')
+            .trim();
+        });
+        return Array.from(resultArray);
+      });
+  },
 };
