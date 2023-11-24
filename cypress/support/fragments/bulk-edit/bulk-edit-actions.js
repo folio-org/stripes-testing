@@ -87,6 +87,7 @@ export default {
 
   isDisabledRowIcons(isDisabled) {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
+    BulkEditSearchPane.isConfirmButtonDisabled(true);
   },
   afterAllSelectedActions() {
     cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
@@ -208,8 +209,8 @@ export default {
     getEmailField().eq(2).clear().type(newEmailDomain);
   },
 
-  clickLocationLookup() {
-    cy.do(Button('Location look-up').click());
+  clickLocationLookup(rowIndex = 0) {
+    cy.do([RepeatableFieldItem({ index: rowIndex }).find(Button('Location look-up')).click()]);
   },
 
   locationLookupExists() {
@@ -231,7 +232,9 @@ export default {
   locationLookupModalCancel() {
     cy.do(locationLookupModal.find(cancelButton).click());
   },
-
+  locationLookupModalSaveAndClose() {
+    cy.do(locationLookupModal.find(Button('Save and close')).click());
+  },
   replaceTemporaryLocation(location = 'Annex', type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -253,7 +256,16 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
-
+  selectLocation(location, rowIndex) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Replace with'),
+      Button('Select control\nSelect location').click(),
+      SelectionOption(including(location)).click(),
+    ]);
+    BulkEditSearchPane.isConfirmButtonDisabled(false);
+  },
   replacePermanentLocation(location, type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
