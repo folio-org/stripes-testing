@@ -127,7 +127,7 @@ describe('Export Manager', () => {
         ExportManagerSearchPane.verifyResult('Successful');
       });
 
-        cy.createTempUser([
+      cy.createTempUser([
         permissions.exportManagerView.gui,
       ]).then((userProperties) => { secondUser = userProperties; });
 
