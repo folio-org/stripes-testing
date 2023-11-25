@@ -86,7 +86,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         marcFiles.forEach((marcFile) => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.waitLoading();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          DataImport.verifyUploadState();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
@@ -109,6 +110,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);

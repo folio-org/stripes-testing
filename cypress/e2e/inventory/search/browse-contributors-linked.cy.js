@@ -63,7 +63,8 @@ describe('Inventory: Contributors Browse', () => {
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -108,6 +109,7 @@ describe('Inventory: Contributors Browse', () => {
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
     createdRecordIDs.forEach((id, index) => {

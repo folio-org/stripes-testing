@@ -23,8 +23,10 @@ import {
   Select,
   TextArea,
   TextField,
+  ValueChipRoot,
   including,
 } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -66,6 +68,24 @@ const openAuthSourceMenuButton = Button({ ariaLabel: 'open menu' });
 const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
+const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
+const authoritySourceAccordion = Accordion({ id: 'sourceFileId' });
+const authoritySourceOptions = [
+  'LC Name Authority file (LCNAF)',
+  'LC Subject Headings (LCSH)',
+  "LC Children's Subject Headings",
+  'LC Genre/Form Terms (LCGFT)',
+  'LC Demographic Group Terms (LCFGT)',
+  'LC Medium of Performance Thesaurus for Music (LCMPT)',
+  'Faceted Application of Subject Terminology (FAST)',
+  'Medical Subject Headings (MeSH)',
+  'Thesaurus for Graphic Materials (TGM)',
+  'Rare Books and Manuscripts Section (RBMS)',
+  'Art & architecture thesaurus (AAT)',
+  'GSAFD Genre Terms (GSAFD)',
+  'Not specified',
+];
+const thesaurusAccordion = Accordion('Thesaurus');
 
 export default {
   waitLoading() {
@@ -253,6 +273,7 @@ export default {
     cy.expect([
       selectField.has({ content: including('Keyword') }),
       selectField.has({ content: including('Identifier (all)') }),
+      selectField.has({ content: including('LCCN') }),
       selectField.has({ content: including('Personal name') }),
       selectField.has({ content: including('Corporate/Conference name') }),
       selectField.has({ content: including('Geographic name') }),
@@ -386,6 +407,11 @@ export default {
 
   actionsSelectCheckbox(value) {
     cy.do(Checkbox(value).click());
+  },
+
+  downloadSelectedRecordWithRowIdx(checkBoxNumber = 1) {
+    cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
+    cy.do([actionsButton.click(), exportSelectedRecords.click()]);
   },
 
   selectAllRecords() {
@@ -700,5 +726,142 @@ export default {
           .exists(),
       );
     }
+  },
+  verifyTextOfPaneHeaderMarcAuthority(text) {
+    cy.expect(
+      PaneHeader('MARC authority')
+        .find(HTML(including(text)))
+        .exists(),
+    );
+  },
+
+  verifySearchResultTabletIsAbsent(absent = true) {
+    if (absent) {
+      cy.expect(authoritiesList.absent());
+    } else {
+      cy.expect(authoritiesList.exists());
+    }
+  },
+
+  getMarcAuthoritiesViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'search/authorities',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.authorities;
+      });
+  },
+
+  checkValueResultsColumn: (columnIndex, value) => {
+    cy.expect([
+      rootSection.exists(),
+      MultiColumnListCell({ columnIndex, content: value }).exists(),
+    ]);
+  },
+
+  verifyThesaurusAccordionAndClick: () => {
+    cy.expect(thesaurusAccordion.exists());
+    cy.do(thesaurusAccordion.clickHeader());
+  },
+
+  chooseThesaurus: (thesaurusTypes) => {
+    cy.do(
+      MultiSelect({ ariaLabelledby: 'subjectHeadings-multiselect-label' }).select([
+        including(thesaurusTypes),
+      ]),
+    );
+  },
+
+  verifySelectedTextOfThesaurus: (thesaurusTypes) => {
+    cy.expect(MultiSelect({ selected: including(thesaurusTypes) }).exists());
+  },
+
+  checkHeadingReferenceColumnValueIsBold(rowNumber) {
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex: 2 }).has({
+        innerHTML: including('anchorLink--'),
+      }),
+    );
+  },
+
+  checkCellValueIsExists(rowNumber, columnIndex, value) {
+    cy.expect(
+      MultiColumnListCell({ row: rowNumber, columnIndex }).has({
+        content: including(value),
+      }),
+    );
+  },
+
+  clickAuthoritySourceAccordion() {
+    cy.do([authoritySourceAccordion.clickHeader()]);
+  },
+
+  verifyAuthoritySourceAccordionCollapsed() {
+    cy.expect([authoritySourceAccordion.has({ open: false })]);
+  },
+
+  checkResultsSelectedByAuthoritySource(options) {
+    authoritySourceOptions.forEach((option) => {
+      if (options.includes(option)) {
+        cy.expect([MultiColumnListCell({ columnIndex: 4, content: option }).exists()]);
+      } else {
+        cy.expect([MultiColumnListCell({ columnIndex: 4, content: option }).absent()]);
+      }
+    });
+  },
+
+  checkResultsListRecordsCount() {
+    const alias = `getItems${getRandomPostfix()}`;
+    cy.intercept('GET', '/search/authorities?*').as(alias);
+    cy.wait(`@${alias}`, { timeout: 10000 }).then((item) => {
+      const { totalRecords } = item.response.body;
+      cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());
+    });
+  },
+
+  removeAuthoritySourceOption: (option) => {
+    cy.do(
+      sourceFileAccordion
+        .find(ValueChipRoot(option))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(ValueChipRoot(option).absent());
+  },
+
+  getResultsListByColumn(columnIndex) {
+    const cells = [];
+
+    cy.wait(2000);
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        // from each row, choose specific cell
+        cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
+          // extract its text content
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+          });
+      })
+      .then(() => cells);
+  },
+
+  verifyOnlyOneAuthorityRecordInResultsList() {
+    this.getResultsListByColumn(1).then((cells) => {
+      const authorizedRecords = cells.filter((element) => {
+        return element === 'Authorized';
+      });
+      cy.expect(authorizedRecords.length).to.equal(1);
+    });
+  },
+
+  checkTotalRecordsForOption(option, totalRecords) {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
   },
 };

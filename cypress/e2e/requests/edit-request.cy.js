@@ -11,7 +11,6 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   let requestData;
   let instanceData;
   let cancellationReason;
-  let requestPolicyId;
 
   before(() => {
     cy.loginAsAdmin();
@@ -19,9 +18,6 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   beforeEach(() => {
-    Requests.setRequestPolicyApi().then(({ policy }) => {
-      requestPolicyId = policy.id;
-    });
     Requests.createRequestApi().then(
       ({ createdUser, createdRequest, instanceRecordData, cancellationReasonId }) => {
         userId = createdUser.id;
@@ -33,6 +29,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     EditRequest.updateRequestApi({
       ...requestData,
       status: 'Closed - Cancelled',
@@ -41,7 +38,6 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       cancelledDate: new Date().toISOString(),
     });
     Users.deleteViaApi(userId);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   it(

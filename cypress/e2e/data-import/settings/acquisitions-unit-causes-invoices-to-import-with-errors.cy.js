@@ -72,15 +72,18 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Invoices.deleteInvoiceViaActions();
-      Invoices.confirmInvoiceDeletion();
-      cy.visit(SettingsMenu.acquisitionUnitsPath);
-      AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
-      AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Invoices.deleteInvoiceViaActions();
+        Invoices.confirmInvoiceDeletion();
+        cy.loginAsAdmin();
+        cy.visit(SettingsMenu.acquisitionUnitsPath);
+        AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+        AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
@@ -116,6 +119,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();

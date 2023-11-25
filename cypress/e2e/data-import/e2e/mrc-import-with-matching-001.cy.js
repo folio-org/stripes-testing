@@ -76,15 +76,17 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        // clean up generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+        FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      });
     });
 
     it(
@@ -95,6 +97,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         // upload a marc file for export
         DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForMarcFile);

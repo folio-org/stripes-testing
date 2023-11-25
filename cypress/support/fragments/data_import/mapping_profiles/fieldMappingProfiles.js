@@ -27,10 +27,11 @@ const mappingProfileForDuplicate = {
   gobi: 'GOBI monograph invoice',
   harrassowitz: 'Default - Harrassowitz serials invoice',
   ebsco: 'Default - EBSCO serials invoice',
+  erasmus: 'Default - Erasmus monograph invoice',
 };
 
 const search = (nameForSearch) => {
-  cy.do(searchField.fillIn(nameForSearch));
+  cy.do([searchField.focus(), searchField.fillIn(nameForSearch)]);
   cy.expect(searchButton.has({ disabled: false }));
   cy.do(searchButton.click(), getLongDelay());
 };
@@ -108,8 +109,7 @@ export default {
   },
   selectMappingProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   checkMappingProfilePresented: (mappingProfileName) => {
-    cy.do(searchField.fillIn(mappingProfileName));
-    cy.do(searchButton.click());
+    search(mappingProfileName);
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
   checkListOfExistingProfilesIsDisplayed: () => {

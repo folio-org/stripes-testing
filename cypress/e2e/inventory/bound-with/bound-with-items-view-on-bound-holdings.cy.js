@@ -9,7 +9,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Bound-with. One item related to multiple holdings', () => {
     let user;
     const testData = {
@@ -132,14 +132,18 @@ describe('Inventory', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.firstItemBarcode);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-        testData.secondItemBarcode,
-      );
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
-        testData.instanceIds.instanceId,
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+          testData.firstItemBarcode,
+        );
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+          testData.secondItemBarcode,
+        );
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
+          testData.instanceIds.instanceId,
+        );
+      });
     });
 
     it(

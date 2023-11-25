@@ -25,9 +25,28 @@ const identifierAccordion = Accordion('Identifier');
 const contributorAccordion = Accordion('Contributor');
 const contributorButton = Button('Add contributor');
 const deleteButton = Button({ icon: 'trash' });
+const supressFromDiscoveryCheckbox = Checkbox({ name: 'discoverySuppress' });
+const staffSuppressCheckbox = Checkbox({ name: 'staffSuppress' });
+const previoslyHeldCheckbox = Checkbox({ name: 'previouslyHeld' });
+const instanceStatusTerm = Select('Instance status term');
+const addStatisticalCodeButton = Button('Add statistical code');
+const addNatureOfContentButton = Button('Add nature of content');
+const addParentInstanceButton = Button('Add parent instance');
+const addChildInstanceButton = Button('Add child instance');
+const parentInstanceFieldSet = FieldSet({ id: 'clickable-add-parent-instance' });
+const childInstanceFieldSet = FieldSet({ id: 'clickable-add-child-instance' });
+const fieldSetRelationSelect = Select({ content: including('Select type') });
+const findInstanceButton = Button({ id: 'find-instance-trigger' });
+const deleteItemButton = Button({ ariaLabel: 'Delete this item' });
+
+const checkboxes = {
+  'Suppress from discovery': supressFromDiscoveryCheckbox,
+  'Staff suppress': staffSuppressCheckbox,
+  'Previously held': previoslyHeldCheckbox,
+};
 
 function addNatureOfContent() {
-  cy.do(Button('Add nature of content').click());
+  cy.do(addNatureOfContentButton.click());
 }
 
 export default {
@@ -189,6 +208,9 @@ export default {
       cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: true }));
     } else cy.expect(Checkbox({ name: 'staffSuppress' }).has({ checked: false }));
   },
+  markAsStaffSuppress() {
+    cy.do(rootSection.find(Checkbox({ name: 'staffSuppress' })).click());
+  },
   verifyPreviouslyHeldCheckbox(isChecked = false) {
     if (isChecked) {
       cy.expect(Checkbox({ name: 'previouslyHeld' }).has({ checked: true }));
@@ -202,5 +224,92 @@ export default {
     InteractorsTools.checkCalloutMessage(
       matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
     );
+  },
+  checkCheckboxConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(checkboxes[label].has(conditions));
+    });
+  },
+  verifyCatalogDateInputIsDisabled(isDisabled = true) {
+    cy.get('input[name=catalogedDate]').should(`be.${isDisabled ? 'disabled' : 'enabled'}`);
+  },
+  verifyInstanceStatusTermConditionIsDisabled(status) {
+    cy.expect(instanceStatusTerm.has({ disabled: status }));
+  },
+  verifyStatisticalCodeIsEnabled() {
+    cy.do(addStatisticalCodeButton.click());
+    cy.expect(Selection({ singleValue: 'Select code' }).visible());
+    cy.get('[class*=selectionControlContainer] button').should('be.enabled');
+  },
+  verifyNatureOfContentIsEnabled() {
+    addNatureOfContent();
+    cy.expect(Select('Nature of content term').visible());
+    cy.expect(Select('Nature of content term').has({ disabled: false }));
+  },
+  verifyAddParentInstanceIsEnabled() {
+    cy.do(addParentInstanceButton.click());
+    cy.expect([
+      parentInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).visible(),
+      parentInstanceFieldSet.find(RepeatableFieldItem()).find(fieldSetRelationSelect).visible(),
+      parentInstanceFieldSet.find(RepeatableFieldItem()).find(deleteItemButton).visible(),
+    ]);
+    cy.expect([
+      parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(findInstanceButton)
+        .has({ disabled: false }),
+      parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(fieldSetRelationSelect)
+        .has({ disabled: false }),
+      parentInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(deleteItemButton)
+        .has({ disabled: false }),
+    ]);
+  },
+  verifyAddChildInstanceIsEnabled() {
+    cy.do(addChildInstanceButton.click());
+    cy.expect([
+      childInstanceFieldSet.find(RepeatableFieldItem()).find(findInstanceButton).visible(),
+      childInstanceFieldSet.find(RepeatableFieldItem()).find(fieldSetRelationSelect).visible(),
+      childInstanceFieldSet.find(RepeatableFieldItem()).find(deleteItemButton).visible(),
+    ]);
+    cy.expect([
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(findInstanceButton)
+        .has({ disabled: false }),
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(fieldSetRelationSelect)
+        .has({ disabled: false }),
+      childInstanceFieldSet
+        .find(RepeatableFieldItem())
+        .find(deleteItemButton)
+        .has({ disabled: false }),
+    ]);
+  },
+  getStatusTermsFromInstance: () => {
+    const statusNames = [];
+    return cy
+      .get('select[name="statusId"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            statusNames.push(name);
+          });
+      })
+      .then(() => {
+        const resultArray = statusNames.map((str) => {
+          return str
+            .replace(/\([^)]+\)/g, '')
+            .replace(/ *\([^)]*\) */g, '')
+            .replace('Select instance status', '')
+            .trim();
+        });
+        return Array.from(resultArray);
+      });
   },
 };

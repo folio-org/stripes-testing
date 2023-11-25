@@ -14,7 +14,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
-describe('Settings: Location', () => {
+describe('Settings: Tenant', () => {
   const testData = {
     servicePoints: [ServicePoints.getDefaultServicePoint(), ServicePoints.getDefaultServicePoint()],
     user: {},
@@ -44,13 +44,14 @@ describe('Settings: Location', () => {
       testData.user = userProperties;
 
       cy.login(testData.user.username, testData.user.password);
-      cy.wait(1000);
+      cy.wait(2000);
       TopMenuNavigation.navigateToApp('Settings');
       Locations.goToLocationsTab();
     });
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     testData.locations.forEach(({ id }) => {
       Locations.deleteViaApi({ id });
     });

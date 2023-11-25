@@ -14,6 +14,8 @@ import {
   TextField,
   ValueChipRoot,
   including,
+  TextArea,
+  PaneHeader,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix, { randomTwoDigitNumber } from '../../utils/stringTools';
@@ -46,6 +48,8 @@ const waitTitlesLoading = () => cy.url().then((url) => {
   cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
   cy.wait('@getTitles', getLongDelay());
 });
+const providerTokenField = TextArea({ name: 'providerTokenValue' });
+const providerTokenValue = KeyValue('Provider token');
 
 export default {
   filterStatuses,
@@ -155,11 +159,8 @@ export default {
     return newTag;
   },
 
-  close: (packageName) => {
-    const packageId = getElementIdByName(packageName);
-    const section = Section({ id: packageId });
-    cy.do(section.find(Button({ icon: 'times', ariaLabel: `Close ${packageName}` })).click());
-    cy.expect(section.absent());
+  closePackage: () => {
+    cy.do(PaneHeader().find(closeButton).click());
   },
 
   verifyExistingTags: (...expectedTags) => {
@@ -212,7 +213,12 @@ export default {
         cy.do(proxySelect.choose(options[randomTwoDigitNumber()]));
       });
   },
-
+  changeToken(token) {
+    cy.do(providerTokenField.fillIn(token));
+  },
+  verifyToken(token) {
+    cy.expect(providerTokenValue.has({ value: including(token) }));
+  },
   saveAndClose: () => {
     cy.do(Button('Save & close').click());
   },

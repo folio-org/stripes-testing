@@ -178,13 +178,15 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-      });
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
       });
     });
 
@@ -260,7 +262,9 @@ describe('data-import', () => {
         JobProfileView.verifyCalloutMessage(calloutMessage);
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfile.profileName);
+        });
       },
     );
 
@@ -329,7 +333,9 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfile.profileName);
+        });
       },
     );
 
@@ -406,8 +412,10 @@ describe('data-import', () => {
         JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        JobProfiles.deleteJobProfile(jobProfileNameForChanging);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfile.profileName);
+          JobProfiles.deleteJobProfile(jobProfileNameForChanging);
+        });
       },
     );
   });

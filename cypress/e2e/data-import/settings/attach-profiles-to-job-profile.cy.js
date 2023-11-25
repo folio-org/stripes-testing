@@ -38,7 +38,7 @@ describe('data-import', () => {
       },
     ];
     const mappingProfile = {
-      name: `C11116 mapping profile ${getRandomPostfix()}`,
+      name: `C11139 mapping profile ${getRandomPostfix()}`,
     };
     const jobProfile = {
       profileName: `C11139 autotest job profile ${getRandomPostfix()}`,
@@ -78,11 +78,13 @@ describe('data-import', () => {
     });
 
     after('Delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMatchProfiles.forEach((profile) => MatchProfiles.deleteMatchProfile(profile.profileName));
-      collectionOfActionProfiles.forEach((profile) => ActionProfiles.deleteActionProfile(profile.name));
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        collectionOfMatchProfiles.forEach((profile) => MatchProfiles.deleteMatchProfile(profile.profileName));
+        collectionOfActionProfiles.forEach((profile) => ActionProfiles.deleteActionProfile(profile.name));
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(

@@ -31,13 +31,15 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"title"=="${testData.instance.instanceTitle}"`,
-      }).then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"title"=="${testData.instance.instanceTitle}"`,
+        }).then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
       });
     });
 

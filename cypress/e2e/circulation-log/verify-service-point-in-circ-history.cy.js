@@ -59,6 +59,7 @@ describe('Circulation log', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [
       testData.servicePoint.id,
       testData.secondServicePoint.id,
@@ -75,8 +76,8 @@ describe('Circulation log', () => {
   });
 
   it(
-    'C360106 Verify the Service point in the Item Circulation history (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    'C360106 Verify the Service point in the Item Circulation history (volaris) (TaaS)',
+    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
     () => {
       // Go to the "Inventory" => Select "Item" toggle
       InventorySearchAndFilter.switchToItem();

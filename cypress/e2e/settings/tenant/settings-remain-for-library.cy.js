@@ -79,12 +79,13 @@ describe('Settings: Tenant', () => {
     ]).then((userProperties) => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password);
-      cy.wait(1000);
+      cy.wait(2000);
       TopMenuNavigation.navigateToApp('Settings');
     });
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     testData.locations.forEach(({ id, libraryId, campusId }) => {
       Locations.deleteViaApi({ id, libraryId, campusId });
     });

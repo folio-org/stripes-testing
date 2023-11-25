@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
   BATCH_GROUP,
   VENDOR_NAMES,
@@ -66,19 +66,21 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.getInvoiceIdApi({
-        query: `vendorInvoiceNo="${vendorInvoiceNumber}"`,
-      }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        // clean up generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.getInvoiceIdApi({
+          query: `vendorInvoiceNo="${vendorInvoiceNumber}"`,
+        }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
       'C353625 Check import summary table with "Created" action for invoice record (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();
@@ -102,6 +104,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();

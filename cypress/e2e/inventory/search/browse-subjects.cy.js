@@ -15,48 +15,51 @@ const item = {
 };
 const randomSearchString = `randomSearchString-${getRandomPostfix()}`;
 
-describe('Subject Browse', () => {
-  before('create test data', () => {
-    cy.createTempUser([permissions.uiSubjectBrowse.gui]).then((userProperties) => {
-      user = userProperties;
+describe('inventory', () => {
+  describe('Subject Browse', () => {
+    before('create test data', () => {
+      cy.createTempUser([permissions.uiSubjectBrowse.gui]).then((userProperties) => {
+        user = userProperties;
+      });
+
+      const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+      cy.getInstanceById(instanceId).then((body) => {
+        const requestBody = body;
+        requestBody.subjects = [{ value: item.instanceSubjectName }];
+        cy.updateInstance(requestBody);
+      });
     });
 
-    const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-    cy.getInstanceById(instanceId).then((body) => {
-      const requestBody = body;
-      requestBody.subjects = [{ value: item.instanceSubjectName }];
-      cy.updateInstance(requestBody);
+    beforeEach('login', () => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
-  });
 
-  beforeEach('login', () => {
-    cy.login(user.username, user.password, {
-      path: TopMenu.inventoryPath,
-      waiter: InventoryInstances.waitContentLoading,
+    after('delete test data', () => {
+      cy.getAdminToken();
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+      Users.deleteViaApi(user.userId);
     });
+
+    it(
+      'C350392 Verify placeholder for the missing match in subject browse (spitfire)',
+      { tags: [testTypes.criticalPath, devTeams.spitfire] },
+      () => {
+        BrowseSubjects.searchBrowseSubjects(randomSearchString);
+        BrowseSubjects.verifyNonExistentSearchResult(randomSearchString);
+        BrowseSubjects.verifyClickTakesNowhere(randomSearchString);
+      },
+    );
+
+    it(
+      'C350393 Verify selecting row from Browse Result list (firebird)',
+      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      () => {
+        BrowseSubjects.searchBrowseSubjects(item.instanceSubjectName);
+        BrowseSubjects.verifyClickTakesToInventory(item.instanceSubjectName);
+      },
+    );
   });
-
-  after('delete test data', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
-    Users.deleteViaApi(user.userId);
-  });
-
-  it(
-    'C350392 Verify placeholder for the missing match in subject browse (spitfire)',
-    { tags: [testTypes.criticalPath, devTeams.spitfire] },
-    () => {
-      BrowseSubjects.searchBrowseSubjects(randomSearchString);
-      BrowseSubjects.verifyNonExistentSearchResult(randomSearchString);
-      BrowseSubjects.verifyClickTakesNowhere(randomSearchString);
-    },
-  );
-
-  it(
-    'C350393 Verify selecting row from Browse Result list (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
-    () => {
-      BrowseSubjects.searchBrowseSubjects(item.instanceSubjectName);
-      BrowseSubjects.verifyClickTakesToInventory(item.instanceSubjectName);
-    },
-  );
 });

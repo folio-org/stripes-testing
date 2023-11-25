@@ -83,7 +83,8 @@ describe('MARC -> MARC Bibliographic', () => {
             cy.visit(TopMenu.dataImportPath);
             DataImport.waitLoading();
 
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -107,6 +108,7 @@ describe('MARC -> MARC Bibliographic', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[2]);
     createdAuthorityIDs.forEach((id, index) => {
@@ -149,10 +151,11 @@ describe('MARC -> MARC Bibliographic', () => {
       );
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(11);
       QuickMarcEditor.checkUnlinkTooltipText('100', 'Unlink from MARC Authority record');
+      QuickMarcEditor.clickUnlinkIconInTagField(11);
       QuickMarcEditor.checkUnlinkModal(
-        11,
         'By selecting Unlink, then field 100 will be unlinked from the MARC authority record. Are you sure you want to continue?',
       );
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(
         unlinkedField.rowIndex,
         unlinkedField.tag,

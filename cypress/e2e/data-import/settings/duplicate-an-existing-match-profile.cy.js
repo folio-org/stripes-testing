@@ -41,9 +41,11 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      MatchProfiles.deleteMatchProfile(duplicatedMatchProfile.profileName);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        MatchProfiles.deleteMatchProfile(duplicatedMatchProfile.profileName);
+      });
     });
 
     it(

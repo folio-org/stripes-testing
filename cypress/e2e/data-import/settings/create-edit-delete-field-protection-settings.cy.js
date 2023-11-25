@@ -38,12 +38,13 @@ describe('data-import', () => {
     };
     before('login', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
     });
 
     after('delete test data', () => {
-      MarcFieldProtection.delete(protectedFieldData.protectedField);
-      MarcFieldProtection.confirmDelete();
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.delete(protectedFieldData.protectedField);
+        MarcFieldProtection.confirmDelete();
+      });
     });
 
     it(

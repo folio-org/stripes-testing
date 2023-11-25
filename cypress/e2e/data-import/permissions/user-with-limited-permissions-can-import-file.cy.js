@@ -46,7 +46,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356841 item mapping profile ${getRandomPostfix()}`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         },
         actionProfile: {
@@ -78,13 +78,15 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(firstUser.userId);
-      Users.deleteViaApi(secondUser.userId);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(firstUser.userId);
+        Users.deleteViaApi(secondUser.userId);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
       });
     });
 
@@ -108,7 +110,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[1].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -167,6 +169,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFile);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFile);

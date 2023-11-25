@@ -23,10 +23,9 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Requests from '../../support/fragments/requests/requests';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
+import EditRequest from '../../support/fragments/requests/edit-request';
 
 describe('Title Level Request. Request Detail', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   let userData = {};
   let userForTLR = {};
   const requestIds = [];
@@ -95,36 +94,20 @@ describe('Title Level Request. Request Detail', () => {
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
+
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
       userForTLR = userProperties;
       UserEdit.addServicePointViaApi(
@@ -198,7 +181,7 @@ describe('Title Level Request. Request Detail', () => {
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanType(testData.loanTypeId);
     UserEdit.changeServicePointPreferenceViaApi(userForTLR.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
@@ -238,7 +221,7 @@ describe('Title Level Request. Request Detail', () => {
 
       RequestDetail.checkRequestInformation({
         type: REQUEST_TYPES.PAGE,
-        status: 'Open',
+        status: EditRequest.requestStatuses.NOT_YET_FILLED,
         level: REQUEST_LEVELS.ITEM,
       });
 
@@ -270,7 +253,7 @@ describe('Title Level Request. Request Detail', () => {
 
       RequestDetail.checkRequestInformation({
         type: REQUEST_TYPES.HOLD,
-        status: 'Open',
+        status: EditRequest.requestStatuses.NOT_YET_FILLED,
         level: REQUEST_LEVELS.TITLE,
       });
 

@@ -28,9 +28,12 @@ const bulkEditPath = '/bulk-edit';
 const exportManagerPath = '/export-manager';
 const exportManagerOrganizationsPath = 'export-manager/edi-jobs';
 const customFieldsPath = '/settings/users/custom-fields';
+const transferCriteriaPath = 'settings/users/transfer-criteria';
+const settingsUserPath = 'settings/users';
 const notesPath = '/settings/notes/general';
 const permissionSetPath = '/settings/users/perms?layer=add';
 const lostItemsRequiringActualCost = '/users/lost-items';
+const listsPath = '/lists';
 
 export default {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
@@ -65,7 +68,10 @@ export default {
   customFieldsPath,
   notesPath,
   permissionSetPath,
+  transferCriteriaPath,
+  settingsUserPath,
   lostItemsRequiringActualCost,
+  listsPath,
 
   openCheckInApp: () => {
     cy.do(Link({ href: including('/checkin') }).click());

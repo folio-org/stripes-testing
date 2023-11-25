@@ -22,6 +22,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${firstUploadFile}`);
       FileManager.deleteFile(`cypress/fixtures/${secondUploadFile}`);

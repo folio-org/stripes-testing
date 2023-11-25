@@ -69,6 +69,7 @@ describe('ui-inventory: Search in Inventory', () => {
   });
 
   after('Delete all data', () => {
+    cy.getAdminToken();
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` }).then(
       (instance) => {
         instance.items.forEach((item) => {
@@ -108,6 +109,7 @@ describe('ui-inventory: Search in Inventory', () => {
 
         // Waiter required for the pane to be loaded.
         cy.wait(1000);
+        FilterItems.toggleAccordionItemsButton(holdingId);
         FilterItems.toggleAccordionItemsButton(holdingId);
         cy.wait('@getItems');
         FilterItems.verifyItemWithStatusExists(holdingId, status);

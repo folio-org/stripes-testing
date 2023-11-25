@@ -10,7 +10,7 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import Requests from '../../support/fragments/requests/requests';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
-describe('Title Level Request. Request notice. Title level request -Settings', () => {
+describe('Title Level Request', () => {
   let userData = {};
   let requestId;
   const testData = {
@@ -61,6 +61,7 @@ describe('Title Level Request. Request notice. Title level request -Settings', (
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);

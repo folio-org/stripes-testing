@@ -87,6 +87,10 @@ export default {
     ]);
   },
 
+  searchByLoanType(loanType) {
+    cy.do([Accordion({ id: 'loan' }).clickHeader(), Checkbox(loanType).click()]);
+  },
+
   setFilterOptionFromAccordion(accordion, checkboxOption) {
     // accordion = 'loan', 'notice', 'fee', 'request'
     cy.do([Accordion({ id: accordion }).clickHeader(), Checkbox(checkboxOption).click()]);

@@ -15,22 +15,24 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      cy.getAdminToken();
 
       // create dynamically file with given name in fixtures
       FileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
-
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      // remove generated test file from fixtures after uploading
-      cy.uploadFileWithDefaultJobProfile(uniqueFileName);
+      cy.getAdminToken().then(() => {
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        // remove generated test file from fixtures after uploading
+        cy.uploadFileWithDefaultJobProfile(uniqueFileName);
+      });
       FileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
     });
 
     beforeEach(() => {
-      // fetch dynamic data from server
-      LogsViewAll.getSingleJobProfile().then(({ hrId }) => {
-        id = hrId;
+      cy.getAdminToken().then(() => {
+        // fetch dynamic data from server
+        LogsViewAll.getSingleJobProfile().then(({ hrId }) => {
+          id = hrId;
+        });
       });
     });
 

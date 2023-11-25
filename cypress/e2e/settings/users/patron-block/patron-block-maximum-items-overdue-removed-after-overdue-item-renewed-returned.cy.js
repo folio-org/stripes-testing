@@ -30,8 +30,6 @@ import Renewals from '../../../../support/fragments/loans/renewals';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 
 describe('Patron Block: Maximum number of overdue items', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const renewComment = `AutotestText${getRandomPostfix()}`;
   const blockMessage = `You have reached maximum number of overdue items as set by patron group${getRandomPostfix()}`;
   const patronGroup = {
@@ -141,6 +139,14 @@ describe('Patron Block: Maximum number of overdue items', () => {
               specialInstanceIds.holdingIds[0].itemIds;
           });
         });
+      })
+      .then(() => {
+        LoanPolicy.createViaApi(loanPolicyBody);
+        CirculationRules.addRuleViaApi({ t: testData.loanTypeId }, { l: loanPolicyBody.id }).then(
+          (newRule) => {
+            testData.addedRule = newRule;
+          },
+        );
       });
 
     UsersOwners.createViaApi(owner.body).then((response) => {
@@ -149,35 +155,9 @@ describe('Patron Block: Maximum number of overdue items', () => {
         testData.paymentMethodId = resp.id;
       });
     });
-    LoanPolicy.createViaApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
     });
-    CirculationRules.getViaApi().then((response) => {
-      originalCirculationRules = response.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-      ruleProps.l = loanPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser(
       [
         permissions.uiUsersSettingsOwners.gui,
@@ -240,6 +220,8 @@ describe('Patron Block: Maximum number of overdue items', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(owner.data.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
@@ -262,7 +244,6 @@ describe('Patron Block: Maximum number of overdue items', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(

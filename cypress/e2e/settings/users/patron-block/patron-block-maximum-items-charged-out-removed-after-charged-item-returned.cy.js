@@ -137,6 +137,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,

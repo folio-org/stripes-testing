@@ -74,7 +74,7 @@ describe('data-import', () => {
           noteForCheckIn: '878$a',
           staffOnlyForCheckIn: 'Mark for all affected records',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -104,21 +104,23 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      instanceHrids.forEach((hrid) => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-          (instance) => {
-            cy.deleteItemViaApi(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        collectionOfProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        instanceHrids.forEach((hrid) => {
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
+            (instance) => {
+              cy.deleteItemViaApi(instance.items[0].id);
+              cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+        });
       });
     });
 
@@ -145,7 +147,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfProfiles[2].mappingProfile.permanentLoanType,
         );
-        NewFieldMappingProfile.fillStatus(collectionOfProfiles[2].mappingProfile.status);
+        NewFieldMappingProfile.fillStatus(`"${collectionOfProfiles[2].mappingProfile.status}"`);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(collectionOfProfiles[2].mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(
@@ -195,6 +197,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC368005.mrc', marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);

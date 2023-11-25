@@ -88,7 +88,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
-      Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
     ]).then((createdUserProperties) => {
@@ -121,6 +121,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
   });
 
   after('Delete created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     for (let i = 0; i < 2; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
@@ -191,7 +192,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       InventoryInstance.viewSource();
       InventoryViewSource.verifyAbsenceOfValue(linkingTagAndValues[1].value);
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t650\t   \t‡a C380738 Good and evil ‡0 id.loc.gov/authorities/subjects/sh2009125989 ‡9',
+        'Linked to MARC authority\n\t650\t   \t$a C380738 Good and evil $0 id.loc.gov/authorities/subjects/sh2009125989 $9',
       );
     },
   );

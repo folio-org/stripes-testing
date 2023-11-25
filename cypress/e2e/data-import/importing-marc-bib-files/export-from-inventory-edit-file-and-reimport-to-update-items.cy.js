@@ -40,7 +40,7 @@ describe('data-import', () => {
       instanceTitle: 'Love enough / Dionne Brand.',
       instanceSubject: uniqSubject,
       holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
-      itemStatus: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+      itemStatus: ITEM_STATUS_NAMES.AVAILABLE,
     };
     const permanentLocation = LOCATION_NAMES.MAIN_LIBRARY;
     const recordType = 'MARC_BIBLIOGRAPHIC';
@@ -222,73 +222,74 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken().then(() => {
-        testData.jobProfileForCreate = jobProfileForCreate;
+      testData.jobProfileForCreate = jobProfileForCreate;
 
-        testData.forEach((specialPair) => {
-          cy.createOnePairMappingAndActionProfiles(
-            specialPair.mappingProfile,
-            specialPair.actionProfile,
-          ).then((idActionProfile) => {
-            cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
-          });
+      testData.forEach((specialPair) => {
+        cy.createOnePairMappingAndActionProfiles(
+          specialPair.mappingProfile,
+          specialPair.actionProfile,
+        ).then((idActionProfile) => {
+          cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
         });
-        SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
-          (bodyWithjobProfile) => {
-            testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-          },
-        );
-
-        // change file to add uniq subject
-        DataImport.editMarcFile(
-          filePathForUpload,
-          editedMarcFileNameForCreate,
-          ['35678123678'],
-          [uniqSubject],
-        );
-
-        // upload a marc file for creating of the new instance, holding and item
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(editedMarcFileNameForCreate, marcFileForCreate);
-        JobProfiles.search(testData.jobProfileForCreate.profile.name);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileForCreate);
-        Logs.openFileDetails(marcFileForCreate);
-        [
-          FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.instance,
-          FileDetails.columnNameInResultList.holdings,
-          FileDetails.columnNameInResultList.item,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-        });
-        FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
       });
+      SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+        (bodyWithjobProfile) => {
+          testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+        },
+      );
+
+      // change file to add uniq subject
+      DataImport.editMarcFile(
+        filePathForUpload,
+        editedMarcFileNameForCreate,
+        ['35678123678'],
+        [uniqSubject],
+      );
+
+      // upload a marc file for creating of the new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile(editedMarcFileNameForCreate, marcFileForCreate);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search(testData.jobProfileForCreate.profile.name);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileForCreate);
+      Logs.openFileDetails(marcFileForCreate);
+      [
+        FileDetails.columnNameInResultList.srsMarc,
+        FileDetails.columnNameInResultList.instance,
+        FileDetails.columnNameInResultList.holdings,
+        FileDetails.columnNameInResultList.item,
+      ].forEach((columnName) => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      });
+      FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
     });
 
     after('delete test data', () => {
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (initialInstance) => {
+            cy.deleteItemViaApi(initialInstance.items[0].id);
+            cy.deleteHoldingRecordViaApi(initialInstance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(initialInstance.id);
+          },
+        );
+      });
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (initialInstance) => {
-          cy.deleteItemViaApi(initialInstance.items[0].id);
-          cy.deleteHoldingRecordViaApi(initialInstance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(initialInstance.id);
-        },
-      );
     });
 
     it(
@@ -362,6 +363,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpdate);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForUpdate);

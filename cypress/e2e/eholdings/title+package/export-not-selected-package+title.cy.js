@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -8,6 +9,7 @@ import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHolding
 import Users from '../../../support/fragments/users/users';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
+import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
@@ -87,6 +89,9 @@ describe('eHoldings', () => {
         Permissions.exportManagerAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
@@ -96,6 +101,7 @@ describe('eHoldings', () => {
     });
 
     after('Deleting user, data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       FileManager.deleteFile(`cypress/fixtures/${testData.fileName}`);
     });
@@ -109,10 +115,9 @@ describe('eHoldings', () => {
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.waitLoading();
         EHoldingsPackages.titlesSearchFilter('Title', testData.title, testData.selectionStatus);
-        EHoldingsPackages.clickSearchTitles();
+        EHoldingsPackageView.selectTitleRecord();
         eHoldingsResourceView.openExportModal();
-        eHoldingsResourceView.verifyExportModalInPackageTile();
-        EHoldingsPackageView.export();
+        ExportSettingsModal.clickExportButton();
         EHoldingsPackageView.verifyDetailViewPage(testData.title, testData.selectionStatus);
         EHoldingsPackageView.verifyCalloutMessage(calloutMessage);
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {

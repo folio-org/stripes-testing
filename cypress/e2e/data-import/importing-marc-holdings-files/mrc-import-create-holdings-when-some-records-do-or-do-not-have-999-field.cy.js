@@ -19,6 +19,11 @@ describe('data-import', () => {
     const editedMarcFileName = `C359209 editedMarcFile.${getRandomPostfix()}.mrc`;
     const errorMessage =
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
+    const quantityOfItems = {
+      created: '1',
+      noAction: '3',
+      error: '3',
+    };
 
     before('create test data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
@@ -26,6 +31,7 @@ describe('data-import', () => {
       DataImport.verifyUploadState();
       // upload a marc file for creating of the new instance, holding and item
       DataImport.uploadFile(filePathForUpload, fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
@@ -53,14 +59,16 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(
@@ -79,6 +87,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search('Default - Create Holdings and SRS MARC Holdings');
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
@@ -104,12 +113,12 @@ describe('data-import', () => {
           3,
         );
         // check created counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-        FileDetails.checkHoldingsQuantityInSummaryTable('1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.created);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems.created);
         // check No action counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable('3', 2);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.noAction, 2);
         // check Error counter in the Summary table
-        FileDetails.checkSrsRecordQuantityInSummaryTable('3', 3);
+        FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.error, 3);
         FileDetails.verifyErrorMessage(errorMessage);
       },
     );

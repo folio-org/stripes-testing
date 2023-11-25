@@ -45,14 +45,15 @@ describe('data-import', () => {
 
     beforeEach('login', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
     });
 
     after('delete test data', () => {
-      // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        // clean up generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      });
     });
 
     it(
@@ -81,6 +82,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('ediFileForC347615.edi', fileName);
+        JobProfiles.waitFileIsUploaded();
         DataImport.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();

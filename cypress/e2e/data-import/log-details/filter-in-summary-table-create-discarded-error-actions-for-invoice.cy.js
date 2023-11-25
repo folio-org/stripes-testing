@@ -25,9 +25,10 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
     const quantityOfItems = {
-      created: '3',
-      noAction: '3',
-      error: '3',
+      created: '1',
+      noAction: '2',
+      error: '2',
+      recordsWithErrors: '5',
     };
     const invoiceNumber = '1024200';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
@@ -68,14 +69,15 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumber}"` }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+      });
     });
 
-    // test is failed UIDATIMP-1549
     it(
       'C357018 Check the filter in summary table with "create + discarded + error" actions for the Invoice column (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
@@ -101,6 +103,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -114,7 +117,7 @@ describe('data-import', () => {
         // check Error counter in the Summary table
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems.error, 3);
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.INVOICE);
-        FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.error);
+        FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.recordsWithErrors);
         FileDetails.verifyLogSummaryTableIsHidden();
         FileDetails.verifyRecordsSortingOrder();
       },

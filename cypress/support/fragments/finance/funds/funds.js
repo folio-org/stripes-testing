@@ -23,6 +23,7 @@ import {
   PaneHeader,
   Select,
 } from '../../../../../interactors';
+import FundDetails from './fundDetails';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
@@ -222,8 +223,8 @@ export default {
   },
   checkBudgetQuantity1: (quantityValue1, quantityValue2) => {
     // TODO: refactor using interactors (Mutli column list)
-    cy.expect(budgetPane.find(HTML(including('Cash balance: $' + quantityValue1))).exists());
-    cy.expect(budgetPane.find(HTML(including('Available balance: $' + quantityValue2))).exists());
+    cy.expect(budgetPane.find(HTML(including('Cash balance: ' + quantityValue1))).exists());
+    cy.expect(budgetPane.find(HTML(including('Available balance: ' + quantityValue2))).exists());
   },
 
   checkZeroSearchResultsHeader: () => {
@@ -255,7 +256,7 @@ export default {
     ]);
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.do([Button('Save').click()]);
-    cy.wait(4000);
+    cy.wait(6000);
   },
 
   addPlannedBudget: (allocatedQuantity, fiscalYear) => {
@@ -805,6 +806,15 @@ export default {
     cy.wait(2000);
   },
 
+  changeStatusOfExpClass: (rowNumber, statusName) => {
+    cy.do(Select({ name: `statusExpenseClasses[${rowNumber}].status` }).choose(statusName));
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+  },
+
   deleteExpensesClass: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -892,7 +902,9 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.expect(fundDetailsPane.visible());
+    FundDetails.waitLoading();
+
+    return FundDetails;
   },
 
   closeMenu: () => {

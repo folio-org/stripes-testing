@@ -53,13 +53,14 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      });
     });
 
-    // test is failed UIDATIMP-1549
     it(
       'C357016 Check the filter in summary table with "create + no action + error" actions for the Holdings column (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
@@ -90,6 +91,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -97,11 +99,11 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileName);
 
         // check created counter in the Summary table
-        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems.created, 0);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems.created, 0);
         // check No action counter in the Summary table
-        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems.noAction, 2);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems.noAction, 2);
         // check Error counter in the Summary table
-        FileDetails.checkItemQuantityInSummaryTable(quantityOfItems.error, 3);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems.error, 3);
         FileDetails.filterRecordsWithError(FileDetails.visibleColumnsInSummaryTable.HOLDINGS);
         FileDetails.verifyQuantityOfRecordsWithError(quantityOfItems.error);
         FileDetails.verifyLogSummaryTableIsHidden();

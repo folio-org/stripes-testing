@@ -15,6 +15,7 @@ import {
 } from '../../../../interactors';
 import ExportDetails from './exportDetails';
 
+const searchPane = Pane('Search & filter');
 const searchButton = Button({ type: 'submit' });
 const userSearchResults = Pane('User Search Results');
 const startTimeAccordion = Accordion({ id: 'startTime' });
@@ -27,12 +28,40 @@ const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ row, columnIndex: col });
-const exportJobsList = MultiColumnList({ id: 'export-jobs-list' });
-const jobDetailsPane = Pane('Export job ');
 
+const jobDetailsPane = Pane('Export job ');
+const jobsDetailsPane = Pane('Export jobs');
+const exportJobsList = MultiColumnList({ id: 'export-jobs-list' });
+const exportEdiJobsList = MultiColumnList({ id: 'export-edi-jobs-list' });
+
+const statusFilters = {
+  Scheduled: statusAccordion.find(Checkbox({ id: 'clickable-filter-status-scheduled' })),
+  'In progress': statusAccordion.find(Checkbox({ id: 'clickable-filter-status-in-progress' })),
+  Successful: statusAccordion.find(Checkbox({ id: 'clickable-filter-status-successful' })),
+  Failed: statusAccordion.find(Checkbox({ id: 'clickable-filter-status-failed' })),
+};
+const jobTypeFilters = {
+  'Authority control': jobTypeAccordion.find(
+    Checkbox({ id: 'clickable-filter-type-auth-headings-updates' }),
+  ),
+  Bursar: jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-bursar-fees-fines' })),
+  'Circulation log': jobTypeAccordion.find(
+    Checkbox({ id: 'clickable-filter-type-circulation-log' }),
+  ),
+  eHoldings: jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-e-holdings' })),
+  'Bulk edit': jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-bulk-edit' })),
+  'EDIFACT orders export': jobTypeAccordion.find(
+    Checkbox({ id: 'clickable-filter-type-edifact-orders-export' }),
+  ),
+};
+const exportFilters = {
+  'Reset all': Button({ id: 'reset-job-exports-filters' }),
+  ...statusFilters,
+  ...jobTypeFilters,
+};
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => {
-  cy.wait(1000);
+  cy.wait(2000);
 };
 const exportJob = (jobId) => {
   // TODO: redesign to interactors
@@ -42,23 +71,44 @@ const exportJob = (jobId) => {
 export default {
   getSearchResult,
   exportJob,
+  exportJobRecursively({ jobId, timeout = 900000 }) {
+    cy.recurse(
+      () => {
+        cy.reload();
+        return cy.contains(jobId);
+      },
+      ($el) => $el[0].nodeName === 'A',
+      {
+        delay: 30000,
+        limit: timeout / 30000, // max number of iterations
+        timeout,
+      },
+    ).then(() => {
+      this.exportJob(jobId);
+    });
+  },
   waitLoading() {
     cy.expect([
-      Pane('Export jobs').exists(),
+      jobsDetailsPane.exists(),
       HTML('Choose a filter or enter a search query to show results.').exists(),
     ]);
   },
-
+  checkDefaultView() {
+    this.checkTabHighlighted({ tabName: 'All' });
+    this.checkNoResultsMessage();
+  },
+  checkTabHighlighted({ tabName }) {
+    cy.expect(searchPane.find(Button(tabName)).has({ className: including('primary') }));
+  },
+  checkNoResultsMessage() {
+    cy.expect(HTML('Choose a filter or enter a search query to show results.').exists());
+  },
   selectJob(content) {
     return cy.do(MultiColumnListCell(including(content)).click());
   },
 
   sortByJobID() {
-    cy.do(
-      MultiColumnList({ id: 'export-edi-jobs-list' })
-        .find(Button({ id: 'clickable-list-column-jobid' }))
-        .click(),
-    );
+    cy.do(exportEdiJobsList.find(Button({ id: 'clickable-list-column-jobid' })).click());
   },
 
   verifyResultAndClick(content) {
@@ -91,11 +141,7 @@ export default {
 
   selectJobByIntegrationInList(integrationName) {
     cy.wait(6000);
-    cy.do(
-      MultiColumnList({ id: 'export-edi-jobs-list' })
-        .find(MultiColumnListCell(integrationName))
-        .click(),
-    );
+    cy.do(exportEdiJobsList.find(MultiColumnListCell(integrationName)).click());
 
     ExportDetails.waitLoading();
 
@@ -118,25 +164,89 @@ export default {
 
   searchByScheduled() {
     waitClick();
-    cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-scheduled' })).click());
+    this.checkFilterOption({ filterName: 'Scheduled' });
   },
 
   searchByInProgress() {
     waitClick();
-    cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-in-progress' })).click());
+    this.checkFilterOption({ filterName: 'In progress' });
   },
 
   searchBySuccessful() {
     waitClick();
-    cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-successful' })).click());
+    this.checkFilterOption({ filterName: 'Successful' });
     cy.wait(4000);
   },
 
   searchByFailed() {
     waitClick();
-    cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-failed' })).click());
+    this.checkFilterOption({ filterName: 'Failed' });
   },
 
+  searchByAuthorityControl() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'Authority control' });
+  },
+
+  searchByBursar() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'Bursar' });
+  },
+
+  searchByCirculationLog() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'Circulation log' });
+  },
+
+  searchByEHoldings() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'eHoldings' });
+  },
+
+  searchByBulkEdit() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'Bulk edit' });
+  },
+
+  searchByEdifactOrders() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'EDIFACT orders export' });
+  },
+
+  checkFilterOption({ filterName, resetAll = false }) {
+    if (resetAll) {
+      cy.do(exportFilters['Reset all'].click());
+    }
+    cy.do(exportFilters[filterName].click());
+
+    // wait filter to be applied
+    cy.wait(1000);
+  },
+  checkFilterOptions({ jobTypeFilterOption = [] } = {}) {
+    jobTypeFilterOption.forEach((filterOption) => {
+      cy.expect(jobTypeFilters[filterOption].exists());
+    });
+  },
+  checkColumnInResultsTable({ status, jobType } = {}) {
+    if (status) {
+      this.checkColumnValues({ columnIndex: 1, value: status });
+    }
+    if (jobType) {
+      this.checkColumnValues({ columnIndex: 2, value: jobType });
+    }
+  },
+  checkColumnValues({ columnIndex, value }) {
+    cy.then(() => exportJobsList.rowCount()).then((rowsCount) => {
+      [...Array(rowsCount).keys()].forEach((index) => {
+        cy.expect(
+          exportJobsList
+            .find(MultiColumnListRow({ index }))
+            .find(MultiColumnListCell({ columnIndex }))
+            .has({ content: including(value) }),
+        );
+      });
+    });
+  },
   verifyResult(content) {
     cy.expect(MultiColumnListCell(including(content)).exists());
   },
@@ -156,16 +266,6 @@ export default {
   verifyJobIdInThirdPaneHasNoLink() {
     this.verifyThirdPaneExportJobExist();
     cy.expect(KeyValue('Job ID').has({ hasLink: false }));
-  },
-
-  searchByBulkEdit() {
-    waitClick();
-    cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-bulk-edit' })).click());
-  },
-
-  searchByCirculationLog() {
-    waitClick();
-    cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-circulation-log' })).click());
   },
 
   enterStartTime(fromDate, toDate) {
@@ -217,20 +317,6 @@ export default {
     ]);
   },
 
-  searchByAuthorityControl() {
-    waitClick();
-    cy.do(
-      jobTypeAccordion
-        .find(Checkbox({ id: 'clickable-filter-type-auth-headings-updates' }))
-        .click(),
-    );
-  },
-
-  searchByEHoldings() {
-    waitClick();
-    cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-e-holdings' })).click());
-  },
-
   downloadLastCreatedJob(jobId) {
     // TODO: redesign to interactors
     cy.get(`a:contains(${jobId})`).first().click();
@@ -241,7 +327,7 @@ export default {
   },
 
   selectOrganizationsSearch() {
-    Button('Organizations').click();
+    cy.do(searchPane.find(Button('Organizations')).click());
   },
 
   selectExportMethod(integarationName) {

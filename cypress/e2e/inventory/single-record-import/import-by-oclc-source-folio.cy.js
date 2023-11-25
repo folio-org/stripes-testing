@@ -53,9 +53,11 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
-      Users.deleteViaApi(user.userId);
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+      cy.getAdminToken().then(() => {
+        InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
+        Users.deleteViaApi(user.userId);
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+      });
     });
 
     it(

@@ -1,5 +1,4 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { LOCATION_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -33,7 +32,6 @@ describe('MARC -> MARC Holdings', () => {
     InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
       instanceHrid = initialInstanceHrId;
     });
-    cy.logout();
 
     cy.createTempUser([
       Permissions.inventoryAll.gui,
@@ -49,6 +47,7 @@ describe('MARC -> MARC Holdings', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
       (instance) => {
@@ -75,8 +74,11 @@ describe('MARC -> MARC Holdings', () => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveHoldings();
       HoldingsRecordView.checkHoldingRecordViewOpened();
+      HoldingsRecordView.close();
+      InventoryInstance.waitLoading();
+      InventoryInstance.openHoldingView();
       HoldingsRecordView.viewSource();
-      InventoryViewSource.contains(`"${LOCATION_NAMES.ONLINE}"`);
+      InventoryViewSource.contains('$b E');
     },
   );
 });

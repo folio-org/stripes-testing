@@ -79,18 +79,19 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
     });
 
     after('delete test data', () => {
-      // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForExport.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      ActionProfiles.deleteActionProfile(actionProfileForExport.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfileForExport.name);
+      cy.getAdminToken().then(() => {
+        // clean up generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForExport.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        ActionProfiles.deleteActionProfile(actionProfileForExport.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfileForExport.name);
+      });
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
@@ -123,6 +124,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForExport.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForMarcFile);

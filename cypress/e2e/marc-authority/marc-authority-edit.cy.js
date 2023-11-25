@@ -115,7 +115,8 @@ describe('MARC Authority -> Edit Authority record', () => {
 
     marcFiles.forEach((marcFile) => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -137,6 +138,7 @@ describe('MARC Authority -> Edit Authority record', () => {
   });
 
   after('', () => {
+    cy.getAdminToken();
     createdAuthorityID.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
     });
@@ -213,7 +215,7 @@ describe('MARC Authority -> Edit Authority record', () => {
         MarcAuthority.addNewField(10, field[0], field[3], field[1], field[2]);
       });
       QuickMarcEditor.pressSaveAndClose();
-
+      cy.getAdminToken();
       protectedMARCFields.forEach((marcFieldProtectionRule) => {
         MarcFieldProtection.createViaApi({
           indicator1: marcFieldProtectionRule[1],

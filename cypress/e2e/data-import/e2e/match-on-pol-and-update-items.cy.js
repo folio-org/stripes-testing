@@ -209,57 +209,59 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      const itemBarcode = Helper.getRandomBarcode();
+      cy.getAdminToken().then(() => {
+        const itemBarcode = Helper.getRandomBarcode();
 
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${firstOrderNumber}"` }).then(
-        (order) => {
-          Orders.deleteOrderViaApi(order[0].id);
-        },
-      );
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${secondOrderNumber}"` }).then(
-        (order) => {
-          Orders.deleteOrderViaApi(order[0].id);
-        },
-      );
-      Users.deleteViaApi(user.userId);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(specialJobProfile.profileName);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-      });
-      collectionOfProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` }).then(
-        (instance) => {
-          const itemId = instance.items[0].id;
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${firstOrderNumber}"` }).then(
+          (order) => {
+            Orders.deleteOrderViaApi(order[0].id);
+          },
+        );
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${secondOrderNumber}"` }).then(
+          (order) => {
+            Orders.deleteOrderViaApi(order[0].id);
+          },
+        );
+        Users.deleteViaApi(user.userId);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(specialJobProfile.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        collectionOfProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(firstItem.barcode);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` }).then(
+          (instance) => {
+            const itemId = instance.items[0].id;
 
-          cy.getItems({ query: `"id"=="${itemId}"` }).then((item) => {
-            item.barcode = itemBarcode;
-            InventoryItems.editItemViaApi(item).then(() => {
-              CheckInActions.checkinItemViaApi({
-                itemBarcode: item.barcode,
-                servicePointId,
-                checkInDate: new Date().toISOString(),
-              }).then(() => {
-                cy.deleteItemViaApi(itemId);
-                cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-                InventoryInstance.deleteInstanceViaApi(instance.id);
+            cy.getItems({ query: `"id"=="${itemId}"` }).then((item) => {
+              item.barcode = itemBarcode;
+              InventoryItems.editItemViaApi(item).then(() => {
+                CheckInActions.checkinItemViaApi({
+                  itemBarcode: item.barcode,
+                  servicePointId,
+                  checkInDate: new Date().toISOString(),
+                }).then(() => {
+                  cy.deleteItemViaApi(itemId);
+                  cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                  InventoryInstance.deleteInstanceViaApi(instance.id);
+                });
               });
             });
-          });
-        },
-      );
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id,
-      );
+          },
+        );
+        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+          location.institutionId,
+          location.campusId,
+          location.libraryId,
+          location.id,
+        );
+      });
     });
 
     const openOrder = (number) => {
@@ -395,6 +397,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);

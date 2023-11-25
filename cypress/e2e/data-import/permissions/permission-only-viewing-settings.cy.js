@@ -32,28 +32,27 @@ describe('data-import', () => {
     const fileExtensionName = '.dat';
 
     before('create test data', () => {
-      cy.getAdminToken();
-      NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
-        (mappingProfileResponse) => {
-          NewActionProfile.createActionProfileViaApi(
-            actionProfileName,
-            mappingProfileResponse.body.id,
-          ).then((actionProfileResponse) => {
-            NewMatchProfile.createMatchProfileViaApi(matchProfileName).then(
-              (matchProfileResponse) => {
-                NewJobProfile.createJobProfileViaApi(
-                  jobProfileName,
-                  matchProfileResponse.body.id,
-                  actionProfileResponse.body.id,
-                );
-              },
-            );
-          });
-        },
-      );
-
       cy.createTempUser([Permissions.settingsDataImportCanViewOnly.gui]).then((userProperties) => {
         user = userProperties;
+
+        NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName).then(
+          (mappingProfileResponse) => {
+            NewActionProfile.createActionProfileViaApi(
+              actionProfileName,
+              mappingProfileResponse.body.id,
+            ).then((actionProfileResponse) => {
+              NewMatchProfile.createMatchProfileViaApi(matchProfileName).then(
+                (matchProfileResponse) => {
+                  NewJobProfile.createJobProfileViaApi(
+                    jobProfileName,
+                    matchProfileResponse.body.id,
+                    actionProfileResponse.body.id,
+                  );
+                },
+              );
+            });
+          },
+        );
         cy.login(user.username, user.password, {
           path: TopMenu.settingsPath,
           waiter: SettingsPane.waitLoading,
@@ -62,12 +61,14 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfileName);
-      MatchProfiles.deleteMatchProfile(matchProfileName);
-      ActionProfiles.deleteActionProfile(actionProfileName);
-      FieldMappingProfileView.deleteViaApi(mappingProfileName);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfileName);
+        MatchProfiles.deleteMatchProfile(matchProfileName);
+        ActionProfiles.deleteActionProfile(actionProfileName);
+        FieldMappingProfileView.deleteViaApi(mappingProfileName);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(

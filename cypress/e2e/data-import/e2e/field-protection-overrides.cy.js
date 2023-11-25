@@ -136,7 +136,6 @@ describe('data-import', () => {
     };
 
     beforeEach('create test data', () => {
-      cy.loginAsAdmin();
       cy.getAdminToken().then(() => {
         MarcFieldProtection.getListViaApi({
           query: `"field"=="${protectedFields.firstField}"`,
@@ -176,28 +175,30 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      MarcFieldProtection.deleteViaApi(firstFieldId);
-      MarcFieldProtection.deleteViaApi(secondFieldId);
-      // delete profiles
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForOverride.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
-      ActionProfiles.deleteActionProfile(instanceActionProfile.name);
-      ActionProfiles.deleteActionProfile(marcBibActionProfileOverride.name);
-      ActionProfiles.deleteActionProfile(instanceActionProfileOverride.name);
-      FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(marcBibMappingProfileOverride.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileOverride.name);
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
-      FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.deleteViaApi(firstFieldId);
+        MarcFieldProtection.deleteViaApi(secondFieldId);
+        // delete profiles
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForOverride.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
+        ActionProfiles.deleteActionProfile(instanceActionProfile.name);
+        ActionProfiles.deleteActionProfile(marcBibActionProfileOverride.name);
+        ActionProfiles.deleteActionProfile(instanceActionProfileOverride.name);
+        FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(marcBibMappingProfileOverride.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileOverride.name);
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
+        FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(
@@ -284,6 +285,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
@@ -320,6 +322,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameForProtect);
@@ -369,6 +372,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForOverride.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(fileNameForOverride);

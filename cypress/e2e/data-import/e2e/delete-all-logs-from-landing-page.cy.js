@@ -45,20 +45,23 @@ describe('data-import', () => {
             DataImport.verifyUploadState();
             DataImport.waitLoading();
             DataImport.uploadFile(filePath, fileNameToUpload);
+            JobProfiles.waitFileIsUploaded();
             JobProfiles.search(jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(fileNameToUpload);
-            cy.wait(10000);
+            cy.wait(5000);
           });
         });
     });
 
     after('delete test data', () => {
-      Logs.selectAllLogs();
-      Logs.actionsButtonClick();
-      Logs.deleteLogsButtonClick();
-      DataImport.confirmDeleteImportLogs();
-      Users.deleteViaApi(userId);
+      cy.getAdminToken().then(() => {
+        Logs.selectAllLogs();
+        Logs.actionsButtonClick();
+        Logs.deleteLogsButtonClick();
+        DataImport.confirmDeleteImportLogs();
+        Users.deleteViaApi(userId);
+      });
     });
 
     it(

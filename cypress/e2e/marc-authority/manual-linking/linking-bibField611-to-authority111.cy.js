@@ -31,12 +31,12 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
   const marcFiles = [
     {
       marc: 'marcBibFileForC380764.mrc',
-      fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC380764.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     },
     {
       marc: 'marcAuthFileForC380764.mrc',
-      fileName: `testMarcFileC375070.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC380764.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
     },
   ];
@@ -82,8 +82,8 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       cy.loginAsAdmin().then(() => {
         marcFiles.forEach((marcFile) => {
           cy.visit(TopMenu.dataImportPath);
-          DataImport.waitLoading();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          DataImport.verifyUploadState();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
@@ -104,6 +104,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
@@ -176,6 +177,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib611AfterLinkingToAuth111);
 
       QuickMarcEditor.clickUnlinkIconInTagField(bib611FieldValues[0]);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib611AfterUnlinking);
       QuickMarcEditor.verifyIconsAfterUnlinking(bib611FieldValues[0]);
       QuickMarcEditor.pressSaveAndClose();

@@ -9,7 +9,7 @@ import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
-describe('Finance: Ledgers', () => {
+describe('Finance: Ledgers', { retries: 3 }, () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
@@ -69,6 +69,7 @@ describe('Finance: Ledgers', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

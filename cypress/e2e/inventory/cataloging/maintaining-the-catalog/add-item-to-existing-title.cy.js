@@ -45,8 +45,10 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
+      });
     });
 
     it(

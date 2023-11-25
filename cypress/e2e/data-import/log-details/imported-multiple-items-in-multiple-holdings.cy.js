@@ -54,7 +54,7 @@ describe('data-import', () => {
           name: `Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -105,7 +105,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[1].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[1].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -130,13 +130,22 @@ describe('data-import', () => {
       });
     });
 
-    after('delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+    beforeEach('login', () => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.dataImportPath,
+        waiter: DataImport.waitLoading,
       });
-      Users.deleteViaApi(user.userId);
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
@@ -161,6 +170,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -190,13 +200,15 @@ describe('data-import', () => {
             holdingsData[0].itemsQuqntity,
           );
 
-          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-            (instance) => {
-              instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-              instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-              InventoryInstance.deleteInstanceViaApi(instance.id);
-            },
-          );
+          cy.getAdminToken().then(() => {
+            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+              (instance) => {
+                instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+                instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+                InventoryInstance.deleteInstanceViaApi(instance.id);
+              },
+            );
+          });
         });
       },
     );
@@ -236,6 +248,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWithErrorsPathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -271,13 +284,17 @@ describe('data-import', () => {
             jsonItemTestData.forEach((value) => JsonScreenView.verifyContentInTab(value));
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 
-            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-              (instance) => {
+            cy.getAdminToken().then(() => {
+              cy.getInstance({
+                limit: 1,
+                expandAll: true,
+                query: `"hrid"=="${instanceHrid}"`,
+              }).then((instance) => {
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
                 instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
                 InventoryInstance.deleteInstanceViaApi(instance.id);
-              },
-            );
+              });
+            });
           });
         });
       },
@@ -301,6 +318,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -331,13 +349,15 @@ describe('data-import', () => {
             );
           });
 
-          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-            (instance) => {
-              instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-              instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-              InventoryInstance.deleteInstanceViaApi(instance.id);
-            },
-          );
+          cy.getAdminToken().then(() => {
+            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+              (instance) => {
+                instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+                instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+                InventoryInstance.deleteInstanceViaApi(instance.id);
+              },
+            );
+          });
         });
       },
     );
@@ -361,6 +381,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(fileWioutErrorsPathForUpload, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -392,13 +413,17 @@ describe('data-import', () => {
             JsonScreenView.openItemTab();
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 
-            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-              (instance) => {
+            cy.getAdminToken().then(() => {
+              cy.getInstance({
+                limit: 1,
+                expandAll: true,
+                query: `"hrid"=="${instanceHrid}"`,
+              }).then((instance) => {
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
                 instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
                 InventoryInstance.deleteInstanceViaApi(instance.id);
-              },
-            );
+              });
+            });
           });
         });
       },

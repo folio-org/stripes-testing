@@ -68,7 +68,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C357552 Create simple items ${getRandomPostfix()}`,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         },
@@ -81,7 +81,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C357552 Update Item by POL match ${getRandomPostfix()}`,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         },
         actionProfile: {
@@ -107,7 +107,7 @@ describe('data-import', () => {
 
     const matchProfileItemStatus = {
       profileName: `C357552 Item status = Available ${getRandomPostfix()}`,
-      incomingStaticValue: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+      incomingStaticValue: ITEM_STATUS_NAMES.AVAILABLE,
       incomingStaticRecordValue: 'Text',
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
@@ -157,15 +157,17 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(createJobProfile.profileName);
-      JobProfiles.deleteJobProfile(updateJobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfileItemHrid.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfileItemStatus.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(createJobProfile.profileName);
+        JobProfiles.deleteJobProfile(updateJobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfileItemHrid.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfileItemStatus.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
       });
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
@@ -187,7 +189,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
       NewFieldMappingProfile.addStatisticalCode(statisticalCode, 6);
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
+      NewFieldMappingProfile.fillStatus(`"${itemMappingProfile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
@@ -264,6 +266,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(createJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
@@ -328,7 +331,7 @@ describe('data-import', () => {
         FileDetails.checkItemQuantityInSummaryTable('3', 2);
         // check items what statuses were not changed have Updated status
         titlesItemStatusNotChanged.forEach((title) => {
-          FileDetails.openItemInInventoryByTitle(title);
+          FileDetails.openItemInInventoryByTitle(title, 5);
           ItemRecordView.waitLoading();
           ItemRecordView.checkItemNote(itemNote);
           cy.visit(TopMenu.dataImportPath);

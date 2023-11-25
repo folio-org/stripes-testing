@@ -49,7 +49,8 @@ describe('MARC -> MARC Authority', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         }).then(() => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          DataImport.verifyUploadState();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
@@ -88,6 +89,7 @@ describe('MARC -> MARC Authority', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userBProperties.userId);
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
   });
@@ -114,7 +116,7 @@ describe('MARC -> MARC Authority', () => {
       QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.calloutMessage);
-      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.valueAfterUpdate);
+      MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);
     },
   );
 
@@ -152,7 +154,7 @@ describe('MARC -> MARC Authority', () => {
       QuickMarcEditor.updateExistingFieldContent(7, testData.valueForUpdate);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.calloutMessage);
-      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.valueAfterUpdate);
+      MarcAuthorities.checkDetailViewIncludesText(testData.valueAfterUpdate);
     },
   );
 });

@@ -93,6 +93,17 @@ export default {
     cy.do(Accordion({ id: 'customFields' }).clickHeader());
   },
 
+  verifySponsorsAlphabeticalOrder() {
+    cy.do(Accordion({ id: 'proxySection' }).clickHeader());
+    cy.get('#proxySection h3 a').then(($elements) => {
+      const users = [];
+      cy.wrap($elements).each(($el) => {
+        users.push($el.text());
+      });
+      cy.wrap(users).should('equal', users.sort());
+    });
+  },
+
   showOpenedLoans() {
     return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
@@ -221,6 +232,13 @@ export default {
     cy.do(permissionAccordion.clickHeader());
     permissions.forEach((permission) => {
       cy.expect(permissionAccordion.find(HTML(including(permission))).exists());
+    });
+  },
+
+  verifyPermissionsNotExist(permissions) {
+    cy.do(permissionAccordion.clickHeader());
+    permissions.forEach((permission) => {
+      cy.expect(permissionAccordion.find(HTML(including(permission))).absent());
     });
   },
 

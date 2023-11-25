@@ -24,7 +24,7 @@ import InventoryItems from '../../support/fragments/inventory/item/inventoryItem
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('inventory', () => {
-  describe('Cataloging', () => {
+  describe('Cataloging -> Creating new records', () => {
     let effectiveLocation;
     let orderNumber;
     let materialTypeId;
@@ -130,24 +130,26 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
-        Orders.deleteOrderViaApi(res[0].id);
+      cy.getAdminToken().then(() => {
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
+          Orders.deleteOrderViaApi(res[0].id);
+        });
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
+        UserEdit.changeServicePointPreferenceViaApi(userId, [
+          firstServicePoint.id,
+          secondServicePoint.id,
+        ]).then(() => {
+          ServicePoints.deleteViaApi(firstServicePoint.id);
+          ServicePoints.deleteViaApi(secondServicePoint.id);
+          Users.deleteViaApi(userId);
+        });
+        NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+          effectiveLocation.institutionId,
+          effectiveLocation.campusId,
+          effectiveLocation.libraryId,
+          effectiveLocation.id,
+        );
       });
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
-      UserEdit.changeServicePointPreferenceViaApi(userId, [
-        firstServicePoint.id,
-        secondServicePoint.id,
-      ]).then(() => {
-        ServicePoints.deleteViaApi(firstServicePoint.id);
-        ServicePoints.deleteViaApi(secondServicePoint.id);
-        Users.deleteViaApi(userId);
-      });
-      NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        effectiveLocation.institutionId,
-        effectiveLocation.campusId,
-        effectiveLocation.libraryId,
-        effectiveLocation.id,
-      );
     });
 
     it(

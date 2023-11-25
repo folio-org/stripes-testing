@@ -122,6 +122,7 @@ describe('Circulation log', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(testData.requestsId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
@@ -142,7 +143,7 @@ describe('Circulation log', () => {
       Requests.findCreatedRequest(instanceData.itemBarcode);
       Requests.selectFirstRequest(instanceData.itemBarcode);
       EditRequest.openRequestEditForm();
-      NewRequest.choosepickupServicePoint('Circ Desk 1');
+      NewRequest.choosePickupServicePoint('Circ Desk 1');
       EditRequest.saveAndClose();
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.waitLoading();

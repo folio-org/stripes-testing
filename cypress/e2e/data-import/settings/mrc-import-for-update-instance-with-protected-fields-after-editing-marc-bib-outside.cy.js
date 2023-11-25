@@ -96,28 +96,30 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      Users.deleteViaApi(user.userId);
-      MarcFieldProtection.getListViaApi({
-        query: `"data"=="${firstProtectedFieldsData.data}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        Users.deleteViaApi(user.userId);
+        MarcFieldProtection.getListViaApi({
+          query: `"data"=="${firstProtectedFieldsData.data}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${secondProtectedFieldData.field}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      MarcFieldProtection.getListViaApi({
-        query: `"field"=="${secondProtectedFieldData.field}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
@@ -159,6 +161,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC356830.mrc', nameMarcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -196,6 +199,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
@@ -214,7 +218,7 @@ describe('data-import', () => {
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource(
           '650\t',
-          'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb',
+          'Drawing, Dutch $y 21st century $v Exhibitions. $5 amb',
         );
         InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
       },

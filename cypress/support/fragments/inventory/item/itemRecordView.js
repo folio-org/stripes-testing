@@ -51,11 +51,10 @@ const closeDetailView = () => {
   cy.do(Button({ icon: 'times' }).click());
 };
 const findRowAndClickLink = (enumerationValue) => {
-  cy.get('div[class^="mclRow-"]')
-    .contains('div[class^="mclCell-"]', enumerationValue)
-    .then((elem) => {
-      elem.parent()[0].querySelector('a').click();
-    });
+  cy.get(`div[class^="mclCell-"]:contains('${enumerationValue}')`).then((cell) => {
+    const row = cell.closest('div[class^="mclRow-"]');
+    row.find('button').click();
+  });
 };
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
 
@@ -122,6 +121,14 @@ export default {
 
   openRequest() {
     cy.do(loanAccordion.find(Link({ href: including('/requests?filters=requestStatus') })).click());
+  },
+
+  openBorrowerPage() {
+    cy.do(
+      KeyValue('Borrower')
+        .find(Link({ href: including('/users/view') }))
+        .click(),
+    );
   },
 
   verifyEffectiveLocation: (location) => {
@@ -200,7 +207,7 @@ export default {
   checkItemDetails(location, barcode, status) {
     this.verifyEffectiveLocation(location);
     this.checkBarcode(barcode);
-    this.checkStatus(status);
+    this.verifyItemStatus(status);
   },
 
   checkAccessionNumber: (number) => {
@@ -209,7 +216,7 @@ export default {
     );
   },
 
-  checkNumberOfPieces: (number) => {
+  verifyNumberOfPieces: (number) => {
     cy.expect(itemDataAccordion.find(KeyValue('Number of pieces')).has({ value: number }));
   },
 

@@ -84,7 +84,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -108,6 +109,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     for (let i = 0; i < 2; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
@@ -187,17 +189,17 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       QuickMarcEditor.closeEditorPane();
       InventoryInstance.viewSource();
       InventoryViewSource.contains(
-        `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t‡a C380727 Edinburgh tracts in mathematics and mathematical physics ‡l english ‡0 id.loc.gov/authorities/names/n84801249 ‡9`,
+        `${testData.marcAuthIcon}\n\t${newFields[0].tag}\t   \t$a C380727 Edinburgh tracts in mathematics and mathematical physics $l english $0 id.loc.gov/authorities/names/n84801249 $9`,
       );
       InventoryViewSource.contains(
-        `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t‡a C380727 Hosanna Bible ‡0 id.loc.gov/authorities/names/n99036055 ‡9`,
+        `${testData.marcAuthIcon}\n\t${newFields[1].tag}\t   \t$a C380727 Hosanna Bible $0 id.loc.gov/authorities/names/n99036055 $9`,
       );
 
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.searchByParameter(newFields[1].searchOption, newFields[1].marcValue);
       MarcAuthorities.checkRow(newFields[1].marcValue);
-      MarcAuthorities.verifyNumberOfTitles(4, '1');
-      MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
+      MarcAuthorities.verifyNumberOfTitles(5, '1');
+      MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
       InventorySearchAndFilter.verifySearchResult(testData.fieldContents.tag245Content);
       InventoryInstance.checkPresentedText(testData.fieldContents.tag245Content);
     },

@@ -44,6 +44,7 @@ describe('Permissions --> My Profile', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });
@@ -66,7 +67,6 @@ describe('Permissions --> My Profile', () => {
       ChangePassword.openChangePasswordViaUserProfile();
       ChangePassword.checkInitialState();
 
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000);
       ChangePassword.typeNewPassword(randomChar);
       ChangePassword.verifyNewPasswordMessage(ChangePassword.messages.notEnoughSymbols);
@@ -94,6 +94,7 @@ describe('Permissions --> My Profile', () => {
       ChangePassword.verifySaveButtonInactive();
       ChangePassword.typeConfirmPassword(newPassword);
       ChangePassword.saveNewPassword();
+      cy.logout();
 
       cy.login(userData.username, newPassword);
     },

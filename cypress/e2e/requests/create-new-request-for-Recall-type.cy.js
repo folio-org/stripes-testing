@@ -55,6 +55,7 @@ describe('Request', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: testData.servicePoint.id,
@@ -89,7 +90,7 @@ describe('Request', () => {
       NewRequest.verifyRequestTypeHasOptions(REQUEST_TYPES.HOLD, REQUEST_TYPES.RECALL);
       // Select "Recall" request type
       NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
-      NewRequest.choosepickupServicePoint(testData.servicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.servicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {

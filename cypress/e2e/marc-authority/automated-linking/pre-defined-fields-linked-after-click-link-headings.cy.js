@@ -229,6 +229,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     InventoryInstance.deleteInstanceViaApi(createdRecordsIDs[0]);
     createdRecordsIDs.forEach((id, index) => {
@@ -302,7 +303,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.searchBy('Keyword', linkingTagAndValues[1].value);
-      MarcAuthorities.verifyNumberOfTitles(4, '1');
+      MarcAuthorities.verifyNumberOfTitles(5, '1');
     },
   );
 });

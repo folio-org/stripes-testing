@@ -19,7 +19,7 @@ describe('plug-in MARC authority | Search', () => {
       searchOptionA: "Children's subject heading",
       searchOptionB: 'Name-title',
       value: 'María de Jesús, de Agreda, sister, 1602-1665',
-      valueInDetailView: '‡a María de Jesús, ‡c de Agreda, sister, ‡d 1602-1665',
+      valueInDetailView: '$a María de Jesús, $c de Agreda, sister, $d 1602-1665',
       markedValue: 'María de Jesús,',
       noResults:
         'No results found for "María de Jesús, de Agreda, sister, 1602-1665". Please check your spelling and filters.',
@@ -56,7 +56,8 @@ describe('plug-in MARC authority | Search', () => {
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -82,6 +83,7 @@ describe('plug-in MARC authority | Search', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {

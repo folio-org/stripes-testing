@@ -64,7 +64,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.exportManagerAll.gui,
     ]).then((createdUserProperties) => {
@@ -127,6 +127,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
   });
 
   after('Deleting user and data', () => {
+    cy.getAdminToken();
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
       else InventoryInstance.deleteInstanceViaApi(id);

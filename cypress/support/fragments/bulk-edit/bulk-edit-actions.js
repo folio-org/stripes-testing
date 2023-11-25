@@ -32,6 +32,9 @@ const startBulkEditLocalButton = Button('Start bulk edit (Local)');
 const startBulkEditButton = Button('Start bulk edit');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
+const confirmChangesButton = Button('Confirm changes');
+const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
+const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -53,6 +56,9 @@ export default {
     cy.do(startBulkEditButton.click());
     cy.wait(1000);
   },
+  verifyOptionsLength(optionsLength, count) {
+    cy.expect(optionsLength).to.eq(count);
+  },
   startBulkEditAbsent() {
     cy.expect(startBulkEditButton.absent());
   },
@@ -61,6 +67,11 @@ export default {
       RepeatableFieldItem({ index: rowIndex })
         .find(bulkPageSelections.valueType)
         .choose(optionName),
+    );
+  },
+  selectAction(actionName, rowIndex) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose(actionName),
     );
   },
   verifyBulkEditForm(rowIndex = 0) {
@@ -73,6 +84,12 @@ export default {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
 
+  isDisabledRowIcons(isDisabled) {
+    cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
+  },
+  afterAllSelectedActions() {
+    cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
+  },
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
@@ -143,6 +160,9 @@ export default {
     cy.expect(Button('Download errors (CSV)').exists());
   },
 
+  startBulkEditLocalButtonExists() {
+    cy.expect(startBulkEditLocalButton.exists());
+  },
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
     cy.expect([
@@ -173,12 +193,26 @@ export default {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
+    BulkEditSearchPane.isConfirmButtonDisabled(true);
     getEmailField().first().type(oldEmailDomain);
+    BulkEditSearchPane.isConfirmButtonDisabled(true);
     getEmailField().eq(2).type(newEmailDomain);
+  },
+
+  enterOldEmail(oldEmailDomain) {
+    getEmailField().first().clear().type(oldEmailDomain);
+  },
+
+  enterNewEmail(newEmailDomain) {
+    getEmailField().eq(2).clear().type(newEmailDomain);
   },
 
   clickLocationLookup() {
     cy.do(Button('Location look-up').click());
+  },
+
+  locationLookupExists() {
+    cy.expect(Button('Location look-up').exists());
   },
 
   verifyLocationLookupModal() {
@@ -293,6 +327,16 @@ export default {
   addNewBulkEditFilterString() {
     cy.do(plusBtn.click());
     cy.wait(1000);
+  },
+
+  verifyNewBulkEditRow() {
+    cy.expect([
+      bulkEditFirstRow.find(plusBtn).absent(),
+      bulkEditFirstRow.find(deleteBtn).has({ disabled: false }),
+      bulkEditSecondRow.find(plusBtn).exists(),
+      bulkEditSecondRow.find(deleteBtn).exists(),
+      confirmChangesButton.has({ disabled: true }),
+    ]);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)', rowIndex = 0) {
@@ -414,6 +458,39 @@ export default {
     this.verifyPossibleActions(options);
   },
 
+  verifyTheOptionsAfterSelectedOption(content, rowIndex) {
+    const options = [
+      'Check in note',
+      'Check out note',
+      'Action note',
+      'Binding',
+      'Copy note',
+      'Electronic bookplate',
+      'Note',
+      'Provenance',
+      'Reproduction',
+      'Item status',
+      'Permanent loan type',
+      'Temporary loan type',
+      'Permanent item location',
+      'Temporary item location',
+      'Suppress from discovery',
+    ];
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(content),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).click(),
+    ]);
+    this.verifyPossibleActions(options);
+  },
+
+  verifyTheOptionsAfterSelectedAllOptions(content, rowIndex) {
+    const options = ['Suppress from discovery'];
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(content),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click(),
+    ]);
+    this.verifyPossibleActions(options);
+  },
   noteReplaceWith(noteType, oldNote, newNote, rowIndex = 0) {
     cy.do([
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
@@ -425,6 +502,24 @@ export default {
     ]);
     // TODO: redesign with interactors
     cy.xpath(`//*[@data-testid="row-${rowIndex}"]/div[5]//textarea`).type(newNote);
+  },
+
+  noteRemove(noteType, note, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Find'),
+      RepeatableFieldItem({ index: rowIndex }).find(TextArea()).fillIn(note),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ value: '' }))
+        .choose('Remove'),
+    ]);
+  },
+
+  noteRemoveAll(noteType, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(noteType),
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose('Remove all'),
+    ]);
   },
 
   addItemNote(type, value, rowIndex = 0) {
@@ -488,6 +583,18 @@ export default {
     ]);
   },
 
+  changeNoteType(type, newType, rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose(type),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(bulkPageSelections.action)
+        .choose('Change note type'),
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ value: '' }))
+        .choose(newType),
+    ]);
+  },
+
   checkApplyToItemsRecordsCheckbox() {
     cy.do(Checkbox('Apply to items records').click());
   },
@@ -525,7 +632,7 @@ export default {
   },
 
   confirmChanges() {
-    cy.do(Button('Confirm changes').click());
+    cy.do(confirmChangesButton.click());
     cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
 

@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, Select, TextField } from '@interactors/html';
 import ItemRecordView from '../inventory/item/itemRecordView';
 import InteractorsTools from '../../utils/interactorsTools';
 import {
@@ -10,6 +10,7 @@ import {
   Accordion,
   MultiColumnListCell,
   Link,
+  Modal,
 } from '../../../../interactors';
 
 const requestDetailsSection = Pane({ id: 'instance-details' });
@@ -20,20 +21,29 @@ const requesterInfoSection = Section({ id: 'requester-info' });
 const staffNotesInfoSection = Section({ id: 'staff-notes' });
 const actionsButton = requestDetailsSection.find(Button('Actions'));
 const moveRequestButton = Button('Move request');
+const duplicateRequestButton = Button('Duplicate');
 const fulfillmentInProgressAccordion = Accordion({
   id: 'fulfillment-in-progress',
 });
+const cancelRequestButton = Button({ id: 'clickable-cancel-request' });
+const confirmButton = Button('Confirm');
+const confirmRequestCancellationModal = Modal('Confirm request cancellation');
+const reasonDropdown = Select('Reason for cancellation');
+const additionalInfoOptionalInput = TextField('Additional information for patron');
+const additionalInfoRequiredInput = TextField('Additional information for patron *');
 
 export default {
-  waitLoading: () => {
+  waitLoading: (type = 'staff') => {
     cy.expect([
       Pane({ id: 'instance-details', title: 'Request Detail' }).exists(),
       requestDetailsSection.find(titleInformationSection).exists(),
       requestDetailsSection.find(itemInformationSection).exists(),
       requestDetailsSection.find(requestInfoSection).exists(),
       requestDetailsSection.find(requesterInfoSection).exists(),
-      requestDetailsSection.find(staffNotesInfoSection).exists(),
     ]);
+    if (type === 'title') {
+      cy.expect([requestDetailsSection.find(staffNotesInfoSection).exists()]);
+    }
   },
 
   checkTitleInformation: (data) => {
@@ -51,6 +61,10 @@ export default {
 
   checkItemStatus: (status) => {
     cy.expect(itemInformationSection.find(KeyValue('Item status', { value: status })).exists());
+  },
+
+  checkRequestStatus: (status) => {
+    cy.expect(requestInfoSection.find(KeyValue('Request status', { value: status })).exists());
   },
 
   checkRequestsOnItem: (requests) => {
@@ -106,6 +120,14 @@ export default {
     InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
   },
 
+  checkItemBarcode: (barcode) => {
+    requesterInfoSection.find(KeyValue('Item barcode')).has({ value: barcode });
+  },
+
+  checkRequestsCount: (count) => {
+    requesterInfoSection.find(KeyValue('Requests on item')).has({ value: count });
+  },
+
   checkRequesterInformation: (data) => {
     cy.expect([
       requesterInfoSection.find(Heading('Requester')).exists(),
@@ -121,8 +143,52 @@ export default {
     cy.do(actionsButton.click());
   },
 
+  verifyCancelRequestOptionDisplayed() {
+    cy.expect(cancelRequestButton.exists());
+  },
+
+  openCancelRequest() {
+    cy.do(cancelRequestButton.click());
+  },
+
+  verifyCancelRequestModalDisplayed() {
+    cy.expect(confirmRequestCancellationModal.exists());
+  },
+
+  clickOnBackButton() {
+    cy.do(Button('Back').click());
+    cy.expect(confirmRequestCancellationModal.absent());
+  },
+
+  checkRequestCancellationModalInfo() {
+    cy.do(reasonDropdown.choose('INN-Reach'));
+    cy.expect(additionalInfoOptionalInput.exists());
+    cy.do(reasonDropdown.choose('Item Not Available'));
+    cy.expect(additionalInfoOptionalInput.exists());
+    cy.do(reasonDropdown.choose('Needed For Course Reserves'));
+    cy.expect(additionalInfoOptionalInput.exists());
+    cy.do(reasonDropdown.choose('Patron Cancelled'));
+    cy.expect(additionalInfoOptionalInput.exists());
+    cy.do(reasonDropdown.choose('Other'));
+    cy.expect([additionalInfoRequiredInput.exists(), confirmButton.has({ disabled: true })]);
+  },
+
+  confirmRequestCancellation() {
+    cy.do([reasonDropdown.choose('INN-Reach'), confirmButton.click()]);
+  },
+
+  verifyEditButtonAbsent() {
+    cy.expect(Button('Edit').absent());
+    this.openActions();
+    cy.expect(Button('Edit').absent());
+  },
+
   openMoveRequest() {
     cy.do(moveRequestButton.click());
+  },
+
+  openDuplicateRequest() {
+    cy.do(duplicateRequestButton.click());
   },
 
   verifyMoveRequestButtonExists() {
@@ -142,8 +208,8 @@ export default {
     );
   },
 
-  openItemByBarcode() {
-    cy.do(itemInformationSection.find(Link({ href: including('/inventory/view/') })).click());
+  openItemByBarcode(barcode = '') {
+    cy.do(itemInformationSection.find(Link(including(barcode))).click());
     ItemRecordView.waitLoading();
   },
 

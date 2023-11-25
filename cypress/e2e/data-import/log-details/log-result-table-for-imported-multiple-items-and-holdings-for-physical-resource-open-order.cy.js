@@ -84,7 +84,7 @@ describe('data-import', () => {
           name: `C388570 Test multiple items.${getRandomPostfix()}`,
           materialType: '945$a',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.ON_ORDER}"`,
+          status: ITEM_STATUS_NAMES.ON_ORDER,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -114,21 +114,23 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-          instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-        Orders.deleteOrderViaApi(orderId[0].id);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+            instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
       });
     });
 
@@ -170,7 +172,7 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[2].mappingProfile.permanentLoanType,
         );
         NewFieldMappingProfile.fillStatus(
-          collectionOfMappingAndActionProfiles[2].mappingProfile.status,
+          `"${collectionOfMappingAndActionProfiles[2].mappingProfile.status}"`,
         );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(
@@ -201,6 +203,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreate, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);
@@ -217,6 +220,11 @@ describe('data-import', () => {
           arrayOfHoldingsStatuses,
           quantityOfCreatedHoldings,
         );
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1');
+        FileDetails.checkHoldingsQuantityInSummaryTable('3');
+        FileDetails.checkItemQuantityInSummaryTable('6');
+        FileDetails.checkOrderQuantityInSummaryTable('1');
         FileDetails.verifyMultipleItemsStatus(Number(quantityOfCreatedItems));
         FileDetails.openOrder('Created');
         OrderLines.waitLoading();
@@ -226,7 +234,9 @@ describe('data-import', () => {
         });
         OrderLines.checkQuantityPhysical(quantityOfCreatedItems);
         OrderLines.checkPhysicalQuantityInLocation(quantityOfCreatedHoldings);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(marcFileName);
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;

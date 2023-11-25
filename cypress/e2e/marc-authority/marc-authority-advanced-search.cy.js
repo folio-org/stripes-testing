@@ -46,7 +46,8 @@ describe('MARC Authority - Advanced Search', () => {
     );
 
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-      DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+      DataImport.verifyUploadState();
+      DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -69,6 +70,7 @@ describe('MARC Authority - Advanced Search', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     createdAuthorityID.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
     });

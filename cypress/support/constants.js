@@ -64,6 +64,14 @@ export const ITEM_STATUS_NAMES = {
   ORDER_CLOSED: 'Order closed',
 };
 
+export const BUDGET_STATUSES = {
+  ACTIVE: 'Active',
+  CLOZED: 'Clozed',
+  FROZEN: 'Frozed',
+  INACTIVE: 'Inactive',
+  PLANNED: 'Planned',
+};
+
 export const CY_ENV = {
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
@@ -166,6 +174,14 @@ export const ORDER_PAYMENT_STATUS = {
   PAYMENT_NOT_REQUIRED: 'Payment not required',
 };
 
+export const ORDER_LINE_PAYMENT_STATUS = {
+  AWAITING_PAYMENT: 'Awaiting payment',
+  CANCELLED: 'Cancelled',
+  FULLY_PAID: 'Fully paid',
+  PARTIALLY_PAID: 'Partially paid',
+  PAYMENT_NOT_REQUIRED: 'Payment not required',
+};
+
 export const ORDER_FORMAT_NAMES_IN_PROFILE = {
   ELECTRONIC_RESOURCE: 'Electronic Resource',
   PE_MIX: 'P/E Mix',
@@ -233,6 +249,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
   DEWAY_DECIMAL: 'Dewey Decimal classification',
+  SUDOC: 'Superintendent of Documents classification',
 };
 
 export const EXPORT_TRANSFORMATION_NAMES = {

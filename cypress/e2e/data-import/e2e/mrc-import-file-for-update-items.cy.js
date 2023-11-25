@@ -256,7 +256,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `autotestMappingItem${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         },
         actionProfile: {
@@ -324,7 +324,6 @@ describe('data-import', () => {
 
     beforeEach('create test data', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      cy.getAdminToken();
 
       const jobProfile = {
         profile: {
@@ -353,34 +352,36 @@ describe('data-import', () => {
     });
 
     afterEach('delete test data', () => {
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+      cy.getAdminToken().then(() => {
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        JobProfiles.deleteJobProfile(jobProfileNameCreate);
+        ActionProfiles.deleteActionProfile(nameMarcBibActionProfile);
+        ActionProfiles.deleteActionProfile(nameInstanceActionProfile);
+        ActionProfiles.deleteActionProfile(nameHoldingsActionProfile);
+        ActionProfiles.deleteActionProfile(nameItemActionProfile);
+        FieldMappingProfileView.deleteViaApi(nameMarcBibMappingProfile);
+        FieldMappingProfileView.deleteViaApi(nameInstanceMappingProfile);
+        FieldMappingProfileView.deleteViaApi(nameHoldingsMappingProfile);
+        FieldMappingProfileView.deleteViaApi(nameItemMappingProfile);
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
+        FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      JobProfiles.deleteJobProfile(jobProfileNameCreate);
-      ActionProfiles.deleteActionProfile(nameMarcBibActionProfile);
-      ActionProfiles.deleteActionProfile(nameInstanceActionProfile);
-      ActionProfiles.deleteActionProfile(nameHoldingsActionProfile);
-      ActionProfiles.deleteActionProfile(nameItemActionProfile);
-      FieldMappingProfileView.deleteViaApi(nameMarcBibMappingProfile);
-      FieldMappingProfileView.deleteViaApi(nameInstanceMappingProfile);
-      FieldMappingProfileView.deleteViaApi(nameHoldingsMappingProfile);
-      FieldMappingProfileView.deleteViaApi(nameItemMappingProfile);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     const createInstanceMappingProfile = (profile) => {
@@ -414,7 +415,7 @@ describe('data-import', () => {
         'Mark for all affected records',
       );
       NewFieldMappingProfile.fillPermanentLoanType(profile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(profile.status);
+      NewFieldMappingProfile.fillStatus(`"${profile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(profile.name);
     };
@@ -427,6 +428,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         // upload a marc file for creating of the new instance, holding and item
         DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);

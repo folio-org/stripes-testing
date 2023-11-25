@@ -108,6 +108,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.log(`REQUEST ID:    ${requestId}`);
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
@@ -143,7 +144,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
       NewRequest.verifyRequestInformation(ITEM_STATUS_NAMES.AVAILABLE);
       NewRequest.verifyFulfillmentPreference(fulfillmentPreference);
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {

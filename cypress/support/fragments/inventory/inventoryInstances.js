@@ -42,14 +42,18 @@ const buttonSearchInAdvSearchModal = advSearchModal.find(
 const buttonCancelInAdvSearchModal = advSearchModal.find(
   Button({ ariaLabel: 'Cancel', disabled: false }),
 );
+const buttonCloseInAdvSearchModal = advSearchModal.find(
+  Button({ id: 'advanced-search-modal-close-button' }),
+);
 const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
 const advSearchOperatorSelect = Select({ label: 'Operator*' });
 const advSearchModifierSelect = Select({ label: 'Match option*' });
 const advSearchOptionSelect = Select({ label: 'Search options*' });
 
 const advSearchOperators = ['AND', 'OR', 'NOT'];
-const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
-const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith'];
+const advSearchModifiers = ['Exact phrase', 'Contains all', 'Starts with', 'Contains any'];
+const advSearchItemModifiers = ['Exact phrase', 'Contains all', 'Starts with'];
+const advSearchModifiersValues = ['exactPhrase', 'containsAll', 'startsWith', 'containsAny'];
 const searchInstancesOptions = [
   'Keyword (title, contributor, identifier, HRID, UUID)',
   'Contributor',
@@ -68,6 +72,32 @@ const searchInstancesOptions = [
   'All',
   'Query search',
   'Advanced search',
+];
+const searchHoldingsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'ISBN',
+  'ISSN',
+  'Call number, eye readable',
+  'Call number, normalized',
+  'Holdings notes (all)',
+  'Holdings administrative notes',
+  'Holdings HRID',
+  'Holdings UUID',
+  'All',
+];
+const searchItemsOptions = [
+  'Keyword (title, contributor, identifier, HRID, UUID)',
+  'Barcode',
+  'ISBN',
+  'ISSN',
+  'Effective call number (item), eye readable',
+  'Effective call number (item), normalized',
+  'Item notes (all)',
+  'Item administrative notes',
+  'Circulation notes',
+  'Item HRID',
+  'Item UUID',
+  'All',
 ];
 const searchInstancesOptionsValues = [
   'all',
@@ -88,8 +118,42 @@ const searchInstancesOptionsValues = [
   'querySearch',
   'advancedSearch',
 ];
+const searchHoldingsOptionsValues = [
+  'keyword',
+  'isbn',
+  'issn',
+  'holdingsFullCallNumbers',
+  'holdingsNormalizedCallNumbers',
+  'holdingsNotes',
+  'holdingsAdministrativeNotes',
+  'holdingsHrid',
+  'hid',
+  'allFields',
+];
+const searchItemsOptionsValues = [
+  'keyword',
+  'barcode',
+  'isbn',
+  'issn',
+  'itemFullCallNumbers',
+  'itemNormalizedCallNumbers',
+  'itemNotes',
+  'itemAdministrativeNotes',
+  'itemCirculationNotes',
+  'itemHrid',
+  'iid',
+  'allFields',
+];
 const advSearchInstancesOptions = searchInstancesOptions.filter((option, index) => index <= 14);
+const advSearchHoldingsOptions = searchHoldingsOptions.filter((option, index) => index <= 14);
+const advSearchItemsOptions = searchItemsOptions.filter((option, index) => index <= 14);
 const advSearchInstancesOptionsValues = searchInstancesOptionsValues
+  .map((option, index) => (index ? option : 'keyword'))
+  .filter((option, index) => index <= 14);
+const advSearchHoldingsOptionsValues = searchHoldingsOptionsValues
+  .map((option, index) => (index ? option : 'keyword'))
+  .filter((option, index) => index <= 14);
+const advSearchItemsOptionsValues = searchItemsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
 
@@ -117,8 +181,41 @@ const getCallNumberTypes = (searchParams) => cy
     return response.body.callNumberTypes;
   });
 
+const getHoldingsNotesTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'holdings-note-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.holdingsNoteTypes;
+  });
+
+const getItemNoteTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'item-note-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.itemNoteTypes;
+  });
+
+const getIdentifierTypes = (searchParams) => cy
+  .okapiRequest({
+    path: 'identifier-types',
+    searchParams,
+    isDefaultSearchParamsRequired: false,
+  })
+  .then((response) => {
+    return response.body.identifierTypes[0];
+  });
+
 export default {
+  getHoldingsNotesTypes,
   getCallNumberTypes,
+  getIdentifierTypes,
+  getItemNoteTypes,
   waitContentLoading,
   waitLoading: () => {
     cy.expect(
@@ -134,10 +231,8 @@ export default {
   },
 
   selectInstance: (rowNumber = 0) => {
-    cy.intercept('/inventory/instances/*').as('getView');
     cy.do(inventoriesList.focus({ row: rowNumber }));
     cy.do(inventoriesList.click({ row: rowNumber }));
-    cy.wait('@getView');
   },
 
   addNewInventory() {
@@ -562,6 +657,18 @@ export default {
         return res.body.instances[0].id;
       });
   },
+  getInstancesViaApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((res) => {
+        return res.body.instances;
+      });
+  },
+
   deleteInstanceViaApi({ instance, servicePoint, shouldCheckIn = false }) {
     if (shouldCheckIn) {
       instance.barcodes.forEach((barcode) => {
@@ -629,8 +736,11 @@ export default {
       buttonCancelInAdvSearchModal.exists(),
     ]);
   },
-
-  checkAdvSearchInstancesModalFields(rowIndex) {
+  closeAdvancedSearchModal() {
+    cy.do(advSearchModal.find(Button({ id: 'advanced-search-modal-close-button' })).click());
+    this.checkAdvSearchModalAbsence();
+  },
+  checkAdvSearchInstancesModalFields(rowIndex, searchType = 'Instance') {
     if (rowIndex) {
       cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
       advSearchOperators.forEach((operator) => {
@@ -655,7 +765,86 @@ export default {
           .has({ content: including(modifier) }),
       );
     });
-    advSearchInstancesOptions.forEach((option) => {
+    if (searchType === 'Holdings') {
+      for (const [key] of Object.entries(advSearchHoldingsOptions)) {
+        cy.expect(
+          AdvancedSearchRow({ index: rowIndex })
+            .find(advSearchOptionSelect)
+            .has({ content: including(key) }),
+        );
+      }
+    }
+    if (searchType === 'Instance') {
+      advSearchInstancesOptions.forEach((option) => {
+        cy.expect(
+          AdvancedSearchRow({ index: rowIndex })
+            .find(advSearchOptionSelect)
+            .has({ content: including(option) }),
+        );
+      });
+    }
+  },
+
+  checkAdvSearchItemsModalFields(rowIndex) {
+    if (rowIndex) {
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
+      advSearchOperators.forEach((operator) => {
+        cy.expect(
+          AdvancedSearchRow({ index: rowIndex })
+            .find(advSearchOperatorSelect)
+            .has({ content: including(operator) }),
+        );
+      });
+    } else {
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).has({ text: including('Search for') }));
+    }
+    cy.expect([
+      AdvancedSearchRow({ index: rowIndex }).find(TextArea()).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchModifierSelect).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchOptionSelect).exists(),
+    ]);
+    advSearchItemModifiers.forEach((modifier) => {
+      cy.expect(
+        AdvancedSearchRow({ index: rowIndex })
+          .find(advSearchModifierSelect)
+          .has({ content: including(modifier) }),
+      );
+    });
+    advSearchItemsOptions.forEach((option) => {
+      cy.expect(
+        AdvancedSearchRow({ index: rowIndex })
+          .find(advSearchOptionSelect)
+          .has({ content: including(option) }),
+      );
+    });
+  },
+
+  checkAdvSearchHoldingsModalFields(rowIndex) {
+    if (rowIndex) {
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).find(advSearchOperatorSelect).exists());
+      advSearchOperators.forEach((operator) => {
+        cy.expect(
+          AdvancedSearchRow({ index: rowIndex })
+            .find(advSearchOperatorSelect)
+            .has({ content: including(operator) }),
+        );
+      });
+    } else {
+      cy.expect(AdvancedSearchRow({ index: rowIndex }).has({ text: including('Search for') }));
+    }
+    cy.expect([
+      AdvancedSearchRow({ index: rowIndex }).find(TextArea()).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchModifierSelect).exists(),
+      AdvancedSearchRow({ index: rowIndex }).find(advSearchOptionSelect).exists(),
+    ]);
+    advSearchModifiers.forEach((modifier) => {
+      cy.expect(
+        AdvancedSearchRow({ index: rowIndex })
+          .find(advSearchModifierSelect)
+          .has({ content: including(modifier) }),
+      );
+    });
+    advSearchHoldingsOptions.forEach((option) => {
       cy.expect(
         AdvancedSearchRow({ index: rowIndex })
           .find(advSearchOptionSelect)
@@ -688,7 +877,34 @@ export default {
         .has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
       AdvancedSearchRow({ index: rowIndex })
         .find(advSearchOptionSelect)
-        .has({ value: advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] }),
+        .has({
+          value:
+            advSearchInstancesOptionsValues[advSearchInstancesOptions.indexOf(option)] ||
+            advSearchHoldingsOptionsValues[advSearchHoldingsOptions.indexOf(option)] ||
+            advSearchItemsOptionsValues[advSearchItemsOptions.indexOf(option)],
+        }),
+    ]);
+    if (operator) {
+      cy.expect(
+        AdvancedSearchRow({ index: rowIndex })
+          .find(advSearchOperatorSelect)
+          .has({ value: operator.toLowerCase() }),
+      );
+    }
+  },
+
+  checkAdvSearchModalItemValues: (rowIndex, query, modifier, option, operator) => {
+    cy.expect([
+      advSearchModal.exists(),
+      AdvancedSearchRow({ index: rowIndex })
+        .find(TextArea())
+        .has({ value: including(query) }),
+      AdvancedSearchRow({ index: rowIndex })
+        .find(advSearchModifierSelect)
+        .has({ value: advSearchModifiersValues[advSearchModifiers.indexOf(modifier)] }),
+      AdvancedSearchRow({ index: rowIndex })
+        .find(advSearchOptionSelect)
+        .has({ value: advSearchItemsOptionsValues[searchItemsOptions.indexOf(option)] }),
     ]);
     if (operator) {
       cy.expect(
@@ -701,6 +917,17 @@ export default {
 
   clickSearchBtnInAdvSearchModal() {
     cy.do(buttonSearchInAdvSearchModal.click());
+  },
+
+  clickCancelBtnInAdvSearchModal() {
+    cy.do(buttonCancelInAdvSearchModal.click());
+  },
+  closeAdvSearchModalUsingESC() {
+    cy.get('#advanced-search-modal').type('{esc}');
+  },
+
+  clickCloseBtnInAdvSearchModal() {
+    cy.do(buttonCloseInAdvSearchModal.click());
   },
 
   verifySelectedSearchOption(option) {
@@ -742,5 +969,18 @@ export default {
       Button('New local record').absent(),
       Button('New shared record').absent(),
     ]);
+  },
+
+  verifyInstanceResultListIsAbsent(isAbsent = true) {
+    if (isAbsent) {
+      cy.expect([
+        inventoriesList.absent(),
+        rootSection
+          .find(HTML(including('Choose a filter or enter a search query to show results')))
+          .exists(),
+      ]);
+    } else {
+      cy.expect([inventoriesList.exists, inventoriesList.has({ rowCount: 1 })]);
+    }
   },
 };

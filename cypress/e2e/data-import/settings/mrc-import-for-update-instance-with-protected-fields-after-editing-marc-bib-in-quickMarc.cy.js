@@ -101,28 +101,29 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      MarcFieldProtection.getListViaApi({
-        query: `"data"=="${firstProtectedFieldsData.data}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.getListViaApi({
+          query: `"data"=="${firstProtectedFieldsData.data}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${secondProtectedFieldData.field}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
       });
-      MarcFieldProtection.getListViaApi({
-        query: `"field"=="${secondProtectedFieldData.field}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(user.userId);
     });
 
     it(
@@ -182,9 +183,9 @@ describe('data-import', () => {
 
           InventoryInstance.viewSource();
           InventoryViewSource.contains('651\t');
-          InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
+          InventoryViewSource.contains('$a Louisiana $2 fast $5 amb');
           InventoryViewSource.contains('920\t');
-          InventoryViewSource.contains('‡a This should be a protected field');
+          InventoryViewSource.contains('This should be a protected field');
           // The prepared file without fields 651 and 920 is used because it is very difficult
           // to remove fields from the exported file along with the special characters of the .mrc file
           InventoryViewSource.extructDataFrom999Field().then((uuid) => {
@@ -209,6 +210,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedMarcFileName, nameMarcFileForUpload);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(nameMarcFileForUpload);
@@ -228,9 +230,9 @@ describe('data-import', () => {
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.viewSource();
         InventoryViewSource.contains('651\t');
-        InventoryViewSource.contains('‡a Louisiana ‡2 fast ‡5 amb');
+        InventoryViewSource.contains('$a Louisiana $2 fast $5 amb');
         InventoryViewSource.contains('920\t');
-        InventoryViewSource.contains('‡a This should be a protected field');
+        InventoryViewSource.contains('This should be a protected field');
       },
     );
   });

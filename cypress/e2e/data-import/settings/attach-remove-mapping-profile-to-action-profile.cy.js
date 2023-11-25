@@ -24,12 +24,13 @@ describe('data-import', () => {
 
     before('login', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
     });
 
     after('delete test data', () => {
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      });
     });
 
     it(

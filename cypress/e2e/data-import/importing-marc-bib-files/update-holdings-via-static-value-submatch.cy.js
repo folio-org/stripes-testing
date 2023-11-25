@@ -127,28 +127,29 @@ describe('data-import', () => {
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
       });
-      cy.getAdminToken();
     });
 
     after('delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      MatchProfiles.deleteMatchProfile(instanceMatchProfile.profileName);
-      MatchProfiles.deleteMatchProfile(holdingsMatchProfile.profileName);
-      ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.name);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.name);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileForUpdate.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForUpdate.name);
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        MatchProfiles.deleteMatchProfile(instanceMatchProfile.profileName);
+        MatchProfiles.deleteMatchProfile(holdingsMatchProfile.profileName);
+        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.name);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.name);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileForUpdate.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForUpdate.name);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+      });
     });
 
     it(
@@ -228,6 +229,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', marcFileNameForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileNameForCreate);
@@ -342,6 +344,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(editedMarcFileName, marcFileNameForUpdate);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfileForUpdate.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(marcFileNameForUpdate);

@@ -6,7 +6,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     const testData = {
       callNumber: `${randomFourDigitNumber()}`,
@@ -41,17 +41,16 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
-        testData.folioInstances[0].instanceId,
-      );
-      Locations.deleteViaApi(testData.location);
-      ServicePoints.deleteViaApi(testData.servicePoint.id);
-      Users.deleteViaApi(testData.user.userId);
+      cy.getAdminToken().then(() => {
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
+          testData.folioInstances[0].instanceId,
+        );
+        Locations.deleteViaApi(testData.location);
+        ServicePoints.deleteViaApi(testData.servicePoint.id);
+        Users.deleteViaApi(testData.user.userId);
+      });
     });
 
-    // Test is failing because of an Issue:
-    // https://issues.folio.org/browse/UIIN-2452
-    // TODO: remove comment once issue is fixed
     it(
       'C3500 An item is being moved from one shelf to another. Change the call number of the associated holdings record! (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },

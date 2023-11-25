@@ -64,7 +64,7 @@ describe('plug-in MARC authority | Search', () => {
       marc: 'marcFileForC359015.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      numOfRecords: 1,
+      numOfRecords: 2,
     },
     {
       marc: 'marcFileForC359206.mrc',
@@ -119,7 +119,9 @@ describe('plug-in MARC authority | Search', () => {
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitFileIsUploaded();
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -145,6 +147,7 @@ describe('plug-in MARC authority | Search', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {
@@ -169,6 +172,7 @@ describe('plug-in MARC authority | Search', () => {
       InventoryInstance.checkSearchResultsTable();
       InventoryInstance.selectRecord();
       InventoryInstance.checkRecordDetailPage('Starr, Lisa');
+      MarcAuthorities.checkFieldAndContentExistence('100', '$a Starr, Lisa');
       InventoryInstance.closeDetailsView();
       InventoryInstance.closeFindAuthorityModal();
     },

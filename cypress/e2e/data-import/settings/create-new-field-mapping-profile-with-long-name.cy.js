@@ -23,20 +23,24 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      });
     });
 
     it(
       'C2349 Create a new field mapping profile with a long name (folijet) (TaaS)',
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
+        const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully created`;
+
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.verifyMappingProfileOpened();
-        FieldMappingProfileView.checkCreateProfileCalloutMessage(mappingProfile.name);
+        FieldMappingProfileView.checkCalloutMessage(calloutMessage);
         FieldMappingProfileView.verifyMappingProfileTitleName(mappingProfile.name);
         FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);

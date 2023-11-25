@@ -18,7 +18,6 @@ describe('inventory', () => {
     const issnValue = `ISSN test value ${getRandomPostfix()}`;
 
     before('navigate to Inventory', () => {
-      cy.loginAsAdmin();
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });
@@ -41,25 +40,30 @@ describe('inventory', () => {
           }));
         });
 
-      cy.visit(TopMenu.inventoryPath);
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
 
     after(() => {
-      cy.getInstanceById(instanceIds[0])
-        .then((body) => {
-          const requestBody = body;
-          requestBody.precedingTitles = [];
+      cy.getAdminToken().then(() => {
+        cy.getInstanceById(instanceIds[0])
+          .then((body) => {
+            const requestBody = body;
+            requestBody.precedingTitles = [];
 
-          // reset precedingTitles to get rid of tables dependencies and be able to delete the instances
-          cy.updateInstance(requestBody);
-        })
-        .then(() => {
-          instanceIds.forEach((instanceId) => InventoryInstance.deleteInstanceViaApi(instanceId));
-        });
+            // reset precedingTitles to get rid of tables dependencies and be able to delete the instances
+            cy.updateInstance(requestBody);
+          })
+          .then(() => {
+            instanceIds.forEach((instanceId) => InventoryInstance.deleteInstanceViaApi(instanceId));
+          });
+      });
     });
 
     it(
-      'C9215 In Accordion Title --> Test assigning a Preceding title (folijet) (prokopovych)',
+      'C9215 In Accordion Title --> Test assigning a Preceding title (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);

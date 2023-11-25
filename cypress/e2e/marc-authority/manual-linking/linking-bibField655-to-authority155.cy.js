@@ -103,6 +103,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
@@ -176,6 +177,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
 
       QuickMarcEditor.clickUnlinkIconInTagField(bib655FieldValues[0]);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib655AfterUnlinking);
       QuickMarcEditor.verifyIconsAfterUnlinking(bib655FieldValues[0]);
       QuickMarcEditor.pressSaveAndClose();

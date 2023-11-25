@@ -121,6 +121,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   });
 
   after('Deleting created users, Instances', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     for (let i = 0; i < 8; i++) {
       MarcAuthority.deleteViaAPI(createdAuthorityIDs[i]);
@@ -163,6 +164,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
       for (let i = 5; i < 9; i++) {
         QuickMarcEditor.clickUnlinkIconInTagField(i);
+        QuickMarcEditor.confirmUnlinkingField();
         cy.wait(500);
       }
       QuickMarcEditor.clickLinkIconInTagField(newFields[0].rowIndex + 1);
@@ -196,16 +198,16 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
       InventoryInstance.viewSource();
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t240\t   \t‡a Wakanda Forever ‡0 id.loc.gov/authorities/names/n2016004081C388568 ‡9',
+        'Linked to MARC authority\n\t240\t   \t$a Wakanda Forever $0 id.loc.gov/authorities/names/n2016004081C388568 $9',
       );
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t100\t   \t‡a Robertson, Peter, ‡c Inspector Banks series ; ‡d 1950-2022 ‡0 3052007C388568 ‡9',
+        'Linked to MARC authority\n\t100\t   \t$a Robertson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052007C388568 $9',
       );
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t711\t   \t‡a Roma Council ‡c Basilica di San Pietro in Roma) ‡d 1962-1965 : ‡n (2nd : ‡0 id.loc.gov/authorities/names/n79084169C388568 ‡9',
+        'Linked to MARC authority\n\t711\t   \t$a Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $0 id.loc.gov/authorities/names/n79084169C388568 $9',
       );
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t830\t   \t‡a Robinson eminent scholar lecture series ‡0 id.loc.gov/authorities/names/no2011188426C388568 ‡9',
+        'Linked to MARC authority\n\t830\t   \t$a Robinson eminent scholar lecture series $0 id.loc.gov/authorities/names/no2011188426C388568 $9',
       );
     },
   );

@@ -29,7 +29,6 @@ import OtherSettings from '../../support/fragments/settings/circulation/otherSet
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Receiving notice: Checkout', () => {
-  let addedCirculationRule;
   const noticePolicyTemplate = {
     ...NewNoticePolicyTemplate.defaultUi,
     category: NOTICE_CATEGORIES.loan,
@@ -166,11 +165,6 @@ describe('Receiving notice: Checkout', () => {
             testData.userServicePoint.id,
           );
 
-          cy.getCirculationRules().then((response) => {
-            testData.baseRules = response.rulesAsText;
-            testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-          });
-
           cy.login(userData.username, userData.password, {
             path: settingsMenu.circulationPatronNoticePoliciesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
@@ -180,6 +174,7 @@ describe('Receiving notice: Checkout', () => {
   });
 
   afterEach('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -188,9 +183,9 @@ describe('Receiving notice: Checkout', () => {
       });
     });
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each((item, index) => {
@@ -235,29 +230,18 @@ describe('Receiving notice: Checkout', () => {
       NewNoticePolicy.checkAfterSaving(noticePolicy);
       NewNoticePolicy.checkNoticeActions(noticePolicy);
 
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-        testData.ruleProps.n = res[0].id;
-        addedCirculationRule =
-          't ' +
-          testData.loanTypeId +
-          ': i ' +
-          testData.ruleProps.i +
-          ' l ' +
-          testData.ruleProps.l +
-          ' r ' +
-          testData.ruleProps.r +
-          ' o ' +
-          testData.ruleProps.o +
-          ' n ' +
-          testData.ruleProps.n;
+      cy.getAdminToken();
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        testData.noticePolicyId = noticePolicyRes[0].id;
         CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          't ',
-          testData.loanTypeId,
-        );
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(topMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);
@@ -301,29 +285,18 @@ describe('Receiving notice: Checkout', () => {
       NewNoticePolicy.checkAfterSaving(noticePolicy);
       NewNoticePolicy.checkNoticeActions(noticePolicy);
 
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-        testData.ruleProps.n = res[0].id;
-        addedCirculationRule =
-          'g ' +
-          patronGroup.id +
-          ': i ' +
-          testData.ruleProps.i +
-          ' l ' +
-          testData.ruleProps.l +
-          ' r ' +
-          testData.ruleProps.r +
-          ' o ' +
-          testData.ruleProps.o +
-          ' n ' +
-          testData.ruleProps.n;
+      cy.getAdminToken();
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        testData.noticePolicyId = noticePolicyRes[0].id;
         CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          'g ',
-          patronGroup.id,
-        );
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(topMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);

@@ -54,7 +54,7 @@ describe('data-import', () => {
           name: `autotestMappingItem${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -101,18 +101,20 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
       NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
-      NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
+      NewFieldMappingProfile.fillStatus(`"${itemMappingProfile.status}"`);
       NewFieldMappingProfile.save();
       FieldMappingProfileView.closeViewMode(itemMappingProfile.name);
     };
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(specialJobProfile.profileName);
-      collectionOfProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(specialJobProfile.profileName);
+        collectionOfProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
       });
     });
 
@@ -153,13 +155,14 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile();
         Logs.checkImportFile(specialJobProfile.profileName);
         Logs.openFileDetails(fileName);
-
+        cy.reload();
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,

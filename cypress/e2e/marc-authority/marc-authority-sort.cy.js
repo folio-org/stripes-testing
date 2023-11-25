@@ -24,9 +24,9 @@ describe('MARC Authority Sort', () => {
     },
 
     facetOptions: {
-      oprtionA: 'Thesaurus for Graphic Materials (TGM)',
-      oprtionB: 'GSAFD Genre Terms (GSAFD)',
-      oprtionC: 'Not specified',
+      optionA: 'Thesaurus for Graphic Materials (TGM)',
+      optionB: 'GSAFD Genre Terms (GSAFD)',
+      optionC: 'Not specified',
     },
 
     facetValues: {
@@ -37,11 +37,11 @@ describe('MARC Authority Sort', () => {
 
     prefixValues: {
       // eslint-disable-next-line no-tabs
-      prefixValA: '010	   	‡a tgm',
+      prefixValA: '010	   	$a tgm',
       // eslint-disable-next-line no-tabs
-      prefixValB: '010	   	‡a gsafd',
+      prefixValB: '010	   	$a gsafd',
       // eslint-disable-next-line no-tabs
-      prefixValC: '010	   	‡a ',
+      prefixValC: '010	   	$a ',
     },
   };
   const marcFiles = [
@@ -81,7 +81,9 @@ describe('MARC Authority Sort', () => {
 
     marcFiles.forEach((marcFile) => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
@@ -105,6 +107,7 @@ describe('MARC Authority Sort', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     createdAuthorityIDs.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
     });
@@ -118,27 +121,26 @@ describe('MARC Authority Sort', () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
       MarcAuthorities.checkResultsListRecordsCountGreaterThan(0);
       MarcAuthorities.checkAuthoritySourceOptions();
-      MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionA);
-      MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.oprtionA);
-      MarcAuthorities.clickAccordionAndCheckResultList(
-        'Authority source',
-        testData.facetValues.valueA,
-      );
-      MarcAuthorities.clickAccordionAndCheckResultList(
-        'Authority source',
-        testData.facetValues.valueA,
-      );
-      MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.oprtionA);
+      MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionA);
+      MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionA);
+      MarcAuthorities.checkValueResultsColumn(4, testData.facetOptions.optionA);
+      MarcAuthorities.checkValueResultsColumn(2, testData.facetValues.valueA);
       MarcAuthorities.selectTitle(testData.facetValues.valueA);
       MarcAuthority.contains(testData.prefixValues.prefixValA);
       MarcAuthorities.closeAuthoritySourceOption();
 
-      MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionB);
+      MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionB);
+      MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionB);
+      MarcAuthorities.checkValueResultsColumn(4, testData.facetOptions.optionB);
+      MarcAuthorities.checkValueResultsColumn(2, testData.facetValues.valueB);
       MarcAuthorities.selectTitle(testData.facetValues.valueB);
       MarcAuthority.contains(testData.prefixValues.prefixValB);
       MarcAuthorities.closeAuthoritySourceOption();
 
-      MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.oprtionC);
+      MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionC);
+      MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionC);
+      MarcAuthorities.checkValueResultsColumn(5, '');
+      MarcAuthorities.checkValueResultsColumn(2, testData.facetValues.valueC);
       MarcAuthorities.selectTitle(testData.facetValues.valueC);
       MarcAuthority.contains(testData.prefixValues.prefixValC);
       InventoryInstance.closeAuthoritySource();
@@ -151,6 +153,7 @@ describe('MARC Authority Sort', () => {
     'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
     () => {
+      MarcAuthorities.checkSearchOptions();
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.chooseTypeOfHeading(headingTypes);
 
@@ -168,13 +171,17 @@ describe('MARC Authority Sort', () => {
       MarcAuthorities.checkColumnAbsent('Type of heading');
       MarcAuthorities.actionsSelectCheckbox('Number of titles');
       MarcAuthorities.checkColumnAbsent('Number of titles');
+      MarcAuthorities.actionsSelectCheckbox('Authority source');
+      MarcAuthorities.checkColumnAbsent('Authority source');
 
       MarcAuthorities.actionsSelectCheckbox('Authorized/Reference');
       MarcAuthorities.actionsSelectCheckbox('Type of heading');
       MarcAuthorities.actionsSelectCheckbox('Number of titles');
+      MarcAuthorities.actionsSelectCheckbox('Authority source');
       MarcAuthorities.checkColumnExists('Authorized/Reference');
       MarcAuthorities.checkColumnExists('Type of heading');
       MarcAuthorities.checkColumnExists('Number of titles');
+      MarcAuthorities.checkColumnExists('Authority source');
 
       MarcAuthorities.clickResetAndCheck(testData.authority.searchOption);
     },

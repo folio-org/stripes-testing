@@ -50,7 +50,8 @@ describe('Manual Linking Empty Bib field to Authority 1XX', () => {
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -74,6 +75,7 @@ describe('Manual Linking Empty Bib field to Authority 1XX', () => {
   });
 
   after('Deleting created user and records', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[1]);

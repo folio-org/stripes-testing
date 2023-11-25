@@ -1,7 +1,5 @@
 import testTypes from '../../../support/dictionary/testTypes';
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
-import eHoldingsProviderEdit from '../../../support/fragments/eholdings/eHoldingsProviderEdit';
-import eHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import newRequest from '../../../support/fragments/requests/newRequest';
@@ -43,33 +41,6 @@ describe.skip('Create a custom package', () => {
       eHolding.verifyAlternativesTitles();
     },
   );
-  it(
-    'C367967 Verify that ""Packages"" accordion will return records after collapsing/expanding in ""Provider"" detail record (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsProvidersSearch.byProvider('Wiley');
-      eHoldingsProviders.viewProvider();
-      eHolding.packageAccordionClick();
-      eHolding.verifyPackageButtonClick('Collapse all', 'false');
-      eHolding.packageAccordionClick();
-      eHolding.verifyPackageButtonClick('Expand all', 'true');
-    },
-  );
-  it(
-    'C703 Set [Show titles in package to patrons] to Hide (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsSearch.switchToPackages();
-      eHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
-      eHoldingsProviders.viewPackage();
-      eHolding.editActions();
-      eHolding.patronRadioButton();
-      eHoldingsProviderEdit.saveAndClose();
-      eHolding.verifyAlternativeRadio();
-    },
-  );
   it('C648 Closed Library Due Date (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToTitles();
@@ -90,19 +61,6 @@ describe.skip('Create a custom package', () => {
       });
       newRequest.enterRequestAndPatron('Testing');
       newRequest.saveRequestAndClose();
-    },
-  );
-  it(
-    'C3466 Edit/Add a token to the Gale Academic OneFile (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.eholdingsPath);
-      eHoldingsSearch.switchToPackages();
-      eHoldingsProvidersSearch.byProvider('Gale Academic OneFile');
-      eHoldingsProviders.viewPackage();
-      eHolding.editActions();
-      eHolding.providerToken();
-      eHolding.checkToken();
     },
   );
   it('C343241 Access eholdings app menu (spitfire)', { tags: [testTypes.ideaLabsTests] }, () => {

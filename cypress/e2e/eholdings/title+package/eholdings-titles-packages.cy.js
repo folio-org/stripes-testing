@@ -6,7 +6,7 @@ import Users from '../../../support/fragments/users/users';
 import { DevTeams, TestTypes, Permissions, Features } from '../../../support/dictionary';
 import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
-import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingResourceEdit';
+import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -41,6 +41,7 @@ describe('eHoldings', () => {
     });
 
     after('Deleting created users', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.C684UserProperties.userId);
       Users.deleteViaApi(testData.C9240UserProperties.userId);
     });

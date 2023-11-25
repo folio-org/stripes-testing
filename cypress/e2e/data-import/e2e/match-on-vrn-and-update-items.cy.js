@@ -148,23 +148,25 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
-        Orders.deleteOrderViaApi(order[0].id);
+      cy.getAdminToken().then(() => {
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
+          Orders.deleteOrderViaApi(order[0].id);
+        });
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfilesData.name);
+        MatchProfiles.deleteMatchProfile(instanceMatchProfileName);
+        MatchProfiles.deleteMatchProfile(holdingsMatchProfileName);
+        MatchProfiles.deleteMatchProfile(itemMatchProfileName);
+        ActionProfiles.deleteActionProfile(instanceActionProfileName);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileName);
+        ActionProfiles.deleteActionProfile(itemActionProfileName);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileName);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileName);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileName);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
       });
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfilesData.name);
-      MatchProfiles.deleteMatchProfile(instanceMatchProfileName);
-      MatchProfiles.deleteMatchProfile(holdingsMatchProfileName);
-      MatchProfiles.deleteMatchProfile(itemMatchProfileName);
-      ActionProfiles.deleteActionProfile(instanceActionProfileName);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileName);
-      ActionProfiles.deleteActionProfile(itemActionProfileName);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileName);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileName);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileName);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     });
 
     it(
@@ -264,6 +266,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfilesData.name);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);

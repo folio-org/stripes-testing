@@ -77,7 +77,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C350944 Create Item by POL match ${getRandomPostfix()}`,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
         },
@@ -138,32 +138,33 @@ describe('data-import', () => {
         user = userProperties;
 
         cy.login(user.username, user.password);
-        cy.getAdminToken();
       });
     });
 
     after('delete test data', () => {
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+          (instance) => {
+            if (instance) {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            }
+          },
+        );
       });
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-        Orders.deleteOrderViaApi(orderId[0].id);
-      });
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
-        (instance) => {
-          if (instance) {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          }
-        },
-      );
     });
 
     const createInstanceMappingProfile = (instanceMappingProfile) => {
@@ -191,7 +192,7 @@ describe('data-import', () => {
       NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
       NewFieldMappingProfile.fillBarcode('981$b');
       NewFieldMappingProfile.fillCopyNumber('981$a');
-      NewFieldMappingProfile.fillStatus(itemMappingProfile.status);
+      NewFieldMappingProfile.fillStatus(`"${itemMappingProfile.status}"`);
       NewFieldMappingProfile.fillPermanentLoanType(itemMappingProfile.permanentLoanType);
       NewFieldMappingProfile.fillMaterialType(itemMappingProfile.materialType);
       NewFieldMappingProfile.save();
@@ -246,6 +247,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -293,6 +295,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileName);

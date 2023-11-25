@@ -21,6 +21,7 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 
@@ -29,7 +30,7 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         const matchProfile = {
-          profileName: `C368009 001 to Instance HRID ${getRandomPostfix()}`,
+          profileName: `C9321 001 to Instance HRID ${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '001',
           },
@@ -52,7 +53,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithFolioRecordValue(matchProfile, incomingRecordType);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -97,7 +100,9 @@ describe('data-import', () => {
           incomingRecordType,
         );
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -131,7 +136,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -164,7 +171,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -197,7 +206,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -230,7 +241,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
   });

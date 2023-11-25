@@ -100,7 +100,7 @@ describe.skip('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356791 autotest item mapping profile.${getRandomPostfix()}`,
           materialType: `"${MATERIAL_TYPE_NAMES.BOOK}"`,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
         },
         actionProfile: {
@@ -165,7 +165,7 @@ describe.skip('data-import', () => {
           noteUI: 'Smith Family Foundation',
           staffOnly: 'Mark for all affected records',
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
-          status: `"${ITEM_STATUS_NAMES.AVAILABLE}"`,
+          status: ITEM_STATUS_NAMES.AVAILABLE,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
@@ -242,28 +242,30 @@ describe.skip('data-import', () => {
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-      });
-      collectionOfProfilesForCreate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      collectionOfProfilesForUpdate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      Users.deleteViaApi(user.userId);
-      cy.wrap(instanceHrids).each((hrid) => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-          (instance) => {
-            cy.deleteItemViaApi(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        collectionOfProfilesForCreate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        collectionOfProfilesForUpdate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        Users.deleteViaApi(user.userId);
+        cy.wrap(instanceHrids).each((hrid) => {
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
+            (instance) => {
+              cy.deleteItemViaApi(instance.items[0].id);
+              cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+        });
       });
     });
 
@@ -316,7 +318,9 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfProfilesForCreate[3].mappingProfile.permanentLoanType,
         );
-        NewFieldMappingProfile.fillStatus(collectionOfProfilesForCreate[3].mappingProfile.status);
+        NewFieldMappingProfile.fillStatus(
+          `"${collectionOfProfilesForCreate[3].mappingProfile.status}"`,
+        );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(collectionOfProfilesForCreate[3].mappingProfile.name);
 
@@ -339,7 +343,9 @@ describe.skip('data-import', () => {
         // upload the marc file for creating
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
@@ -429,7 +435,9 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillPermanentLoanType(
           collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType,
         );
-        NewFieldMappingProfile.fillStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
+        NewFieldMappingProfile.fillStatus(
+          `"${collectionOfProfilesForUpdate[2].mappingProfile.status}"`,
+        );
         NewFieldMappingProfile.save();
         FieldMappingProfileView.closeViewMode(collectionOfProfilesForUpdate[2].mappingProfile.name);
 
@@ -481,6 +489,7 @@ describe.skip('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.uploadFile(fileNameWithUpdatedContent, fileNameForUpdateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);

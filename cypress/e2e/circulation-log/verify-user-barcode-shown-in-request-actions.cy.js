@@ -56,6 +56,7 @@ describe('Circulation log', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: testData.servicePoint.id,
@@ -87,7 +88,7 @@ describe('Circulation log', () => {
       NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.verifyRequesterInformation(userData.username, userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
-      NewRequest.choosepickupServicePoint(testData.servicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.servicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {

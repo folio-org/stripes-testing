@@ -35,6 +35,7 @@ describe('Inventory -> Contributors Browse', () => {
 
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
@@ -56,6 +57,7 @@ describe('Inventory -> Contributors Browse', () => {
   });
 
   after('Deleting created user and record', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(importedInstanceID[0]);
   });

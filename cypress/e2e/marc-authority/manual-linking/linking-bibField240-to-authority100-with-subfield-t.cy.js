@@ -56,7 +56,8 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -82,6 +83,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
   });
 
   after('Deleting created user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {
@@ -104,11 +106,11 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       InventoryInstance.searchResults(testData.authority100FieldValue);
       MarcAuthorities.checkFieldAndContentExistence(
         testData.tag010,
-        `‡a ${testData.authority010FieldValue}`,
+        `$a ${testData.authority010FieldValue}`,
       );
       MarcAuthorities.checkFieldAndContentExistence(
         testData.tag100,
-        `‡a ${testData.authorityMarkedValue}`,
+        `$a ${testData.authorityMarkedValue}`,
       );
 
       InventoryInstance.clickLinkButton();
@@ -140,6 +142,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.clickUnlinkIconInTagField(18);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(
         18,
         '240',

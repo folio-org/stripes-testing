@@ -52,9 +52,11 @@ describe('data-import', () => {
     });
 
     after('Delete test data', () => {
-      JobProfiles.deleteJobProfile(profile.createJobProfile);
-      MatchProfiles.deleteMatchProfile(profile.createMatchProfile);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(profile.createJobProfile);
+        MatchProfiles.deleteMatchProfile(profile.createMatchProfile);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(

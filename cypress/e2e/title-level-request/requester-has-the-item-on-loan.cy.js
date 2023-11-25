@@ -72,6 +72,7 @@ describe('Create Item or Title level request', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: testData.servicePoint.id,
@@ -103,7 +104,7 @@ describe('Create Item or Title level request', () => {
       NewRequest.enterRequesterBarcode(testData.user.barcode);
       NewRequest.chooseRequestType(requestPolicyBody.requestTypes[0]);
       // Select "Pickup service point"
-      NewRequest.choosepickupServicePoint(testData.servicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.servicePoint.name);
       // Click on the "Save&close" button
       NewRequest.saveRequestAndClose();
       // Verify error message

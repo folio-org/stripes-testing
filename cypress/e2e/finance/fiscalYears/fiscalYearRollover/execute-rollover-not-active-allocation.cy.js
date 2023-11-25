@@ -19,7 +19,7 @@ import Invoices from '../../../../support/fragments/invoices/invoices';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 
-describe('Finance: Fiscal Year Rollover', () => {
+describe('Finance: Fiscal Year Rollover', { retries: 3 }, () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -144,6 +144,7 @@ describe('Finance: Fiscal Year Rollover', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 

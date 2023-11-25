@@ -36,20 +36,24 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      });
     });
 
     it(
       'C2351 Edit an existing field mapping profile (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
+        const calloutMessage = `The field mapping profile "${mappingProfile.name}" was successfully updated`;
+
         FieldMappingProfiles.search(mappingProfile.name);
         FieldMappingProfileView.edit();
         FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);
         FieldMappingProfileEdit.fillInstanceStatusTerm(instanceStatusTerm);
         FieldMappingProfileEdit.save();
-        FieldMappingProfileView.checkCalloutMessage(mappingProfile.name);
+        FieldMappingProfileView.checkCalloutMessage(calloutMessage);
         FieldMappingProfileView.verifyInstanceStatusTerm(instanceStatusTerm);
       },
     );

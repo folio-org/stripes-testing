@@ -40,16 +40,18 @@ describe('inventory', () => {
     });
 
     afterEach('reset "Fast add" setting', () => {
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-        FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
-      );
-      cy.visit(TopMenu.inventorySettingsFastAddPath);
-      FastAdd.changeDefaultInstanceStatus('Select instance status');
-      Users.deleteViaApi(userId);
+      cy.getAdminToken().then(() => {
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+          FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
+        );
+        cy.visit(TopMenu.inventorySettingsFastAddPath);
+        FastAdd.changeDefaultInstanceStatus('Select instance status');
+        Users.deleteViaApi(userId);
+      });
     });
 
     it(
-      'C15850 Create a fast add record from Inventory. Monograph. (folijet) (prokopovych)',
+      'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         cy.visit(TopMenu.inventoryPath);

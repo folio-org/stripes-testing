@@ -37,25 +37,23 @@ describe('inventory', () => {
 
     before('login', () => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      cy.getAdminToken().then(() => {
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-        JobProfiles.waitFileIsImported(fileName);
-        Logs.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory('Created');
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHRID = initialInstanceHrId;
-        });
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-        cy.visit(SettingsMenu.targetProfilesPath);
-        Z3950TargetProfiles.openTargetProfile();
-        ViewTargetProfile.verifyTargetProfileForm(
-          targetProfile.name,
-          targetProfile.url,
-          targetProfile.authentification,
-          targetProfile.externalId,
-          targetProfile.internalId,
-        );
+      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
+      JobProfiles.waitFileIsImported(fileName);
+      Logs.openFileDetails(fileName);
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+        instanceHRID = initialInstanceHrId;
       });
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+      cy.visit(SettingsMenu.targetProfilesPath);
+      Z3950TargetProfiles.openTargetProfile();
+      ViewTargetProfile.verifyTargetProfileForm(
+        targetProfile.name,
+        targetProfile.url,
+        targetProfile.authentification,
+        targetProfile.externalId,
+        targetProfile.internalId,
+      );
 
       cy.createTempUser([
         Permissions.inventoryAll.gui,
@@ -72,12 +70,14 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(

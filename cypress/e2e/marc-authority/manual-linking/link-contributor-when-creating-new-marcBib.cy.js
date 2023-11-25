@@ -74,7 +74,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -93,6 +94,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     MarcAuthority.deleteViaAPI(createdAuthorityIDs[0]);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[1]);
@@ -176,10 +178,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
       InventoryInstance.viewSource();
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t100\t   \t‡a C380726 Jackson, Peter, ‡c Inspector Banks series ; ‡d 1950-2022 ‡0 3052044 ‡9',
+        'Linked to MARC authority\n\t100\t   \t$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9',
       );
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t700\t   \t‡a C380726 Jackson, Peter, ‡c Inspector Banks series ; ‡d 1950-2022 ‡0 3052044 ‡9',
+        'Linked to MARC authority\n\t700\t   \t$a C380726 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022 $0 3052044 $9',
       );
       QuickMarcEditor.closeEditorPane();
 

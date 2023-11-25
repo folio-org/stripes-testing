@@ -93,15 +93,17 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      CheckInActions.checkinItemViaApi({
-        itemBarcode: itemData.barcode,
-        servicePointId: servicePoint.id,
-        checkInDate: new Date().toISOString(),
+      cy.getAdminToken().then(() => {
+        CheckInActions.checkinItemViaApi({
+          itemBarcode: itemData.barcode,
+          servicePointId: servicePoint.id,
+          checkInDate: new Date().toISOString(),
+        });
+        UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]);
+        ServicePoints.deleteViaApi(servicePoint.id);
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
       });
-      UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]);
-      ServicePoints.deleteViaApi(servicePoint.id);
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     });
 
     it(
@@ -138,7 +140,6 @@ describe('inventory', () => {
         ItemRecordView.verifyCalloutMessage();
         ItemRecordView.closeDetailView();
         InstanceRecordView.verifyInstanceRecordViewOpened();
-        InventoryInstance.openHoldingsAccordion(`${holdingsPermanentLocation} >`);
         InventoryInstance.openItemByBarcode(newItemBarcode);
         ItemRecordView.checkItemCirculationHistory('-', '-', '-');
       },

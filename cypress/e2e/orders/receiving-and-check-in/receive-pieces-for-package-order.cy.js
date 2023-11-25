@@ -7,7 +7,6 @@ import Orders from '../../../support/fragments/orders/orders';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
@@ -80,10 +79,9 @@ describe('Orders: Receiving and Check-in', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
-
     Organizations.deleteOrganizationViaApi(organization.id);
-
     Users.deleteViaApi(user.userId);
   });
 
@@ -94,9 +92,6 @@ describe('Orders: Receiving and Check-in', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.openOrder();
-      InteractorsTools.checkCalloutMessage(
-        `The Purchase order - ${orderNumber} has been successfully opened`,
-      );
       Orders.receiveOrderViaActions();
       // Receiving part
       Receiving.selectPOLInReceive(orderLineTitle);

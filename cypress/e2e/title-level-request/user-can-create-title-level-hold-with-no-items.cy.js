@@ -60,6 +60,7 @@ describe('Title Level Request', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Requests.getRequestApi({ query: `(instance.title=="${instanceTitle}")` }).then(
       (requestResponse) => {
         Requests.deleteRequestViaApi(requestResponse[0].id);
@@ -83,7 +84,7 @@ describe('Title Level Request', () => {
       NewRequest.verifyTitleLevelRequestsCheckbox('checked');
       NewRequest.verifyRequestTypeHasOptions('Hold');
       NewRequest.chooseRequestType('Hold');
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyRequestSuccessfullyCreated(testData.user.username);
     },

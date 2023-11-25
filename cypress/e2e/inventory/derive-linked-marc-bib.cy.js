@@ -102,7 +102,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
         InventoryInstance.searchResults(marcFiles[2].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `‡a ${marcFiles[2].authority010FieldValue}`,
+          `$a ${marcFiles[2].authority010FieldValue}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(16, testData.tag650);
@@ -116,7 +116,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
         InventoryInstance.searchResults(marcFiles[2].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `‡a ${marcFiles[2].authority010FieldValue}`,
+          `$a ${marcFiles[2].authority010FieldValue}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(17, testData.tag650);
@@ -132,6 +132,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   });
 
   after('Deleting created user, data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);

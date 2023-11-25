@@ -50,7 +50,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       Permissions.exportManagerAll.gui,
     ]).then((createdUserProperties) => {
@@ -59,7 +59,8 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
 
     marcFiles.forEach((marcFile) => {
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
         JobProfiles.waitLoadingList();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
@@ -81,6 +82,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
   });
 
   after('Deleting user and data', () => {
+    cy.getAdminToken();
     InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
     InventoryInstance.deleteInstanceViaApi(createdAuthorityID[1]);
     MarcAuthority.deleteViaAPI(createdAuthorityID[2]);

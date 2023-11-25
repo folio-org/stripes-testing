@@ -114,7 +114,7 @@ describe('data-import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
         Permissions.dataExportEnableApp.gui,
       ]).then((createdUserProperties) => {
@@ -122,7 +122,8 @@ describe('data-import', () => {
         marcFiles.forEach((marcFile) => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+              DataImport.verifyUploadState();
+              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
@@ -155,7 +156,7 @@ describe('data-import', () => {
           JobProfiles.openNewJobProfileForm();
           NewJobProfile.fillJobProfile(jobProfile);
           NewJobProfile.linkMatchProfile(matchProfile.profileName);
-          NewJobProfile.linkActionProfileByName(actionProfile.name);
+          NewJobProfile.linkActionProfileForMatches(actionProfile.name);
           // wait for the action profile to be linked
           cy.wait(1000);
           NewJobProfile.saveAndClose();
@@ -176,7 +177,7 @@ describe('data-import', () => {
           InventoryInstance.searchResults(marcFiles[1].authorityHeading);
           MarcAuthorities.checkFieldAndContentExistence(
             testData.tag010,
-            `‡a ${marcFiles[1].authority010FieldValue}`,
+            `$a ${marcFiles[1].authority010FieldValue}`,
           );
           InventoryInstance.clickLinkButton();
           QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
@@ -192,6 +193,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       // clean up generated profiles
       JobProfiles.deleteJobProfile(jobProfile.profileName);
@@ -234,6 +236,7 @@ describe('data-import', () => {
         // upload the updated MARC file with 999 subfields and without 100 field
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(nameForUpdatedMarcBibFile, nameForUpdatedMarcBibFile);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();

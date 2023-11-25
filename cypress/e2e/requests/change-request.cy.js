@@ -23,8 +23,6 @@ import EditRequest from '../../support/fragments/requests/edit-request';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 
 describe('Title Level Request', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const instanceData = {
     title: `Instance title_${getRandomPostfix()}`,
     itemBarcode: `item${generateUniqueItemBarcodeWithShift()}`,
@@ -97,29 +95,11 @@ describe('Title Level Request', () => {
           });
         });
         RequestPolicy.createViaApi(requestPolicyBody);
-        CirculationRules.getViaApi().then((circulationRule) => {
-          originalCirculationRules = circulationRule.rulesAsText;
-          const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-          ruleProps.r = requestPolicyBody.id;
-          addedCirculationRule =
-            't ' +
-            testData.loanType.id +
-            ': i ' +
-            ruleProps.i +
-            ' l ' +
-            ruleProps.l +
-            ' r ' +
-            ruleProps.r +
-            ' o ' +
-            ruleProps.o +
-            ' n ' +
-            ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            originalCirculationRules,
-            ruleProps,
-            't ',
-            testData.loanType.id,
-          );
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanType.id },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
         });
       });
 
@@ -142,6 +122,8 @@ describe('Title Level Request', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: instanceData.itemBarcode,
       servicePointId: testData.userServicePoint.id,
@@ -161,7 +143,6 @@ describe('Title Level Request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
   });
 
   it(

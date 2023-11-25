@@ -8,13 +8,19 @@ import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
+const secondValidHoldingHRIDsFileName = `secondValidHoldingHRIDsFileName${getRandomPostfix()}.csv`;
 const inventoryEntity = {
   instanceName: `testBulkEditWithSpecial:;Chars_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  holdingHRID: '',
+};
+const item = {
+  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  itemBarcode: getRandomPostfix(),
 };
 
 describe('bulk-edit', () => {
@@ -26,10 +32,6 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           inventoryEntity.instanceName,
@@ -45,15 +47,50 @@ describe('bulk-edit', () => {
             inventoryEntity.holdingHRID,
           );
         });
+
+        item.instanceId = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
+        cy.getHoldings({
+          limit: 1,
+          query: `"instanceId"="${instanceId}"`,
+        }).then((holdings) => {
+          item.holdingHRID = holdings[0].hrid;
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            // Popular Reading Collection
+            permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+            // Updating holdings with special characters
+            callNumber: 'number;special&characters',
+            callNumberPrefix: 'number-prefix;special&characters',
+            callNumberSuffix: 'number-prefix;special&characters',
+            callNumberTypeId: '5ba6b62e-6858-490a-8102-5b1369873835',
+            copyNumber: 'copy-number;special&characters',
+            formerIds: ['former-id;special&characters'],
+            numberOfItems: 'number-items;special&characters',
+          });
+          FileManager.createFile(
+            `cypress/fixtures/${secondValidHoldingHRIDsFileName}`,
+            holdings[0].hrid,
+          );
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
         inventoryEntity.itemBarcode,
       );
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingHRIDsFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${secondValidHoldingHRIDsFileName}`);
     });
 
     it(
@@ -78,6 +115,40 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyChangedResults(tempLocation);
         BulkEditActions.verifySuccessBanner(1);
+      },
+    );
+
+    it(
+      'C368481 Verify that there no errors during bulk editing Holdings with special characters (firebird) (TaaS)',
+      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      () => {
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        BulkEditSearchPane.checkHoldingsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+
+        BulkEditSearchPane.uploadFile(secondValidHoldingHRIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyMatchedResults(item.holdingHRID);
+
+        const location = 'Annex';
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.replacePermanentLocation(location, 'holdings');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+
+        BulkEditSearchPane.verifyChangedResults(location);
+        BulkEditActions.verifySuccessBanner(1);
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToHoldings();
+        InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingHRID);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventorySearchAndFilter.selectViewHoldings();
+        InventoryInstance.verifyHoldingsPermanentLocation(location);
       },
     );
   });
