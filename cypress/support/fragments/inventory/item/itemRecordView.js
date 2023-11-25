@@ -271,6 +271,15 @@ export default {
       .find('div[class*=kvValue]')
       .should('have.text', value);
   },
+  verifyItemMetadata: (updatedHoldingsDate, updatedItemData, userId) => {
+    const convertedHoldingsDate = new Date(updatedHoldingsDate).getTime();
+    const convertedItemsDate = new Date(updatedItemData.updatedDate).getTime();
+    const timeDifference = (convertedItemsDate - convertedHoldingsDate) / 1000;
+
+    // check that difference in time is less than 1 minute
+    expect(timeDifference).to.be.lessThan(60000);
+    expect(userId).to.eq(updatedItemData.updatedByUserId);
+  },
 
   checkElectronicAccess: (relationshipValue, uriValue) => {
     cy.expect(
@@ -283,5 +292,13 @@ export default {
         .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
         .exists(),
     );
+  },
+
+  verifyLastUpdatedDate(date, userName) {
+    cy.get('button[class^="metaHeaderButton-"]').click();
+    cy.expect([
+      administrativeDataAccordion.find(HTML(including(`Record last updated: ${date}`))).exists(),
+      administrativeDataAccordion.find(HTML(including(`Source: ${userName}`))).exists(),
+    ]);
   },
 };
