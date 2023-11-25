@@ -138,13 +138,14 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
     });
 
     it(
@@ -199,14 +200,15 @@ describe('data-import', () => {
             holdingsData[0].itemsQuqntity,
           );
 
-          cy.getAdminToken();
-          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-            (instance) => {
-              instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-              instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-              InventoryInstance.deleteInstanceViaApi(instance.id);
-            },
-          );
+          cy.getAdminToken().then(() => {
+            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+              (instance) => {
+                instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+                instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+                InventoryInstance.deleteInstanceViaApi(instance.id);
+              },
+            );
+          });
         });
       },
     );
@@ -282,14 +284,17 @@ describe('data-import', () => {
             jsonItemTestData.forEach((value) => JsonScreenView.verifyContentInTab(value));
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 
-            cy.getAdminToken();
-            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-              (instance) => {
+            cy.getAdminToken().then(() => {
+              cy.getInstance({
+                limit: 1,
+                expandAll: true,
+                query: `"hrid"=="${instanceHrid}"`,
+              }).then((instance) => {
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
                 instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
                 InventoryInstance.deleteInstanceViaApi(instance.id);
-              },
-            );
+              });
+            });
           });
         });
       },
@@ -344,14 +349,15 @@ describe('data-import', () => {
             );
           });
 
-          cy.getAdminToken();
-          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-            (instance) => {
-              instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-              instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-              InventoryInstance.deleteInstanceViaApi(instance.id);
-            },
-          );
+          cy.getAdminToken().then(() => {
+            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+              (instance) => {
+                instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+                instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+                InventoryInstance.deleteInstanceViaApi(instance.id);
+              },
+            );
+          });
         });
       },
     );
@@ -407,14 +413,17 @@ describe('data-import', () => {
             JsonScreenView.openItemTab();
             itemHrids.forEach((value) => JsonScreenView.verifyContentInTab(value));
 
-            cy.getAdminToken();
-            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-              (instance) => {
+            cy.getAdminToken().then(() => {
+              cy.getInstance({
+                limit: 1,
+                expandAll: true,
+                query: `"hrid"=="${instanceHrid}"`,
+              }).then((instance) => {
                 instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
                 instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
                 InventoryInstance.deleteInstanceViaApi(instance.id);
-              },
-            );
+              });
+            });
           });
         });
       },

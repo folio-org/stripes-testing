@@ -155,6 +155,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       InventoryInstance.waitLoading();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.clickUnlinkIconInTagField(bib650UnlinkedFieldValues[0]);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib650UnlinkedFieldValues);
       QuickMarcEditor.verifyIconsAfterUnlinking(bib650UnlinkedFieldValues[0]);
       QuickMarcEditor.pressSaveAndClose();
