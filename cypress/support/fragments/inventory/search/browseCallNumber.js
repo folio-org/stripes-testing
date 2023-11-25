@@ -2,7 +2,6 @@ import {
   Button,
   including,
   MultiColumnList,
-  MultiColumnListRow,
   MultiColumnListCell,
   MultiColumnListHeader,
   Section,
