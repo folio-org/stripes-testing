@@ -382,6 +382,31 @@ export default {
       addLocationButton.click(),
     ]);
     cy.wait(4000);
+    cy.do(createNewLocationButton.click());
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      Select('Create inventory*').choose('Instance, holdings, item'),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  POLineInfoWithReceiptNotRequiredStatuswithSelectLocation: (institutionId) => {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED),
+    ]);
+    cy.expect(receivingWorkflowSelect.disabled());
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+    ]);
+    cy.wait(4000);
     cy.do(Button('Location look-up').click());
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
