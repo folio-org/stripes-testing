@@ -21,7 +21,7 @@ import RequestDetail from '../../support/fragments/requests/requestDetail';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import InTransit from '../../support/fragments/checkin/modals/inTransit';
 
-describe('Title Level Request. Request queue. TLR', () => {
+describe('Title Level Request', () => {
   let userData = {};
   let requestId;
   const testData = {

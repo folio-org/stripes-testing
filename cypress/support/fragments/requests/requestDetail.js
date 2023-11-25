@@ -120,6 +120,14 @@ export default {
     InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
   },
 
+  checkItemBarcode: (barcode) => {
+    requesterInfoSection.find(KeyValue('Item barcode')).has({ value: barcode });
+  },
+
+  checkRequestsCount: (count) => {
+    requesterInfoSection.find(KeyValue('Requests on item')).has({ value: count });
+  },
+
   checkRequesterInformation: (data) => {
     cy.expect([
       requesterInfoSection.find(Heading('Requester')).exists(),
@@ -200,8 +208,8 @@ export default {
     );
   },
 
-  openItemByBarcode() {
-    cy.do(itemInformationSection.find(Link({ href: including('/inventory/view/') })).click());
+  openItemByBarcode(barcode = '') {
+    cy.do(itemInformationSection.find(Link(including(barcode))).click());
     ItemRecordView.waitLoading();
   },
 

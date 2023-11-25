@@ -15,4 +15,22 @@ export default {
   downloadExportFile() {
     cy.do([actionsButton.click(), Button('Download').click()]);
   },
+  verifyJobLabels() {
+    const labels = [
+      'Job ID',
+      'Status',
+      'Start time',
+      'End time',
+      'Source',
+      'Organization',
+      'Export method',
+      'Sent to',
+      'File name',
+      'Description',
+      'Error details',
+    ];
+    labels.forEach((label) => {
+      cy.expect(KeyValue(label).exists());
+    });
+  },
 };

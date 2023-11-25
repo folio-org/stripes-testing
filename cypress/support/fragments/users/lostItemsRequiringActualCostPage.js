@@ -52,6 +52,15 @@ export default {
     ]);
   },
 
+  openBillActualCost(instanceTitle) {
+    cy.do([
+      ListRow(including(instanceTitle))
+        .find(Button({ icon: 'ellipsis' }))
+        .click(),
+      Button('Bill actual cost').click(),
+    ]);
+  },
+
   checkDropdownOptionsDisabled(instanceTitle, options) {
     cy.do(
       ListRow(including(instanceTitle))

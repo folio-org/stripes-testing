@@ -23,6 +23,7 @@ import {
   PaneHeader,
   Select,
 } from '../../../../../interactors';
+import FundDetails from './fundDetails';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
@@ -901,7 +902,9 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.expect(fundDetailsPane.visible());
+    FundDetails.waitLoading();
+
+    return FundDetails;
   },
 
   closeMenu: () => {

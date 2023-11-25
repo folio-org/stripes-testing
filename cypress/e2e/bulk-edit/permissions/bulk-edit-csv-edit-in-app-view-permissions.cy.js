@@ -71,7 +71,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isUsersRadioChecked(false);
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.verifyUsersUpdatePermission();
-      }
+      },
     );
   });
 });

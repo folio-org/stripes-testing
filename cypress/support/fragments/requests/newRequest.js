@@ -22,6 +22,8 @@ import dateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectUser from './selectUser';
 
+const rootSection = Pane({ title: 'New request' });
+const itemInformationAccordion = Accordion('Item information');
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
 const itemBarcodeInput = TextField({ name: 'item.barcode' });
@@ -30,6 +32,7 @@ const requesterBarcodeInput = TextField({ name: 'requester.barcode' });
 const enterItemBarcodeButton = Button({ id: 'clickable-select-item' });
 const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' });
 const saveAndCloseButton = Button('Save & close');
+const cancelButton = Button('Cancel');
 const selectServicePoint = Select({ name: 'pickupServicePointId' });
 const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
@@ -137,17 +140,17 @@ export default {
   },
 
   waitLoadingNewRequestPage(TLR = false) {
-    cy.expect(Pane({ title: 'New request' }).exists());
+    cy.expect(rootSection.exists());
     if (TLR) cy.expect(titleLevelRequest.exists());
     cy.expect([
-      Accordion('Item information').exists(),
+      itemInformationAccordion.exists(),
       Accordion('Request information').exists(),
       Accordion('Requester information').exists(),
     ]);
   },
 
   waitLoadingNewTitleRequestPage(TLR = false) {
-    cy.expect(Pane({ title: 'New request' }).exists());
+    cy.expect(rootSection.exists());
     if (TLR) cy.expect(titleLevelRequest.exists());
     cy.expect([
       Accordion('Title information').exists(),
@@ -298,7 +301,7 @@ export default {
   checkRequestIsNotAllowedInstanceModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'This requester already has an open request for this instance',
+        message: 'Not allowed to move title level page request to the same item',
       }),
     );
   },
@@ -319,6 +322,23 @@ export default {
       KeyValue('Title').has({ value: instanceTitle }),
       KeyValue('Effective location').has({ value: location }),
       KeyValue('Item status').has({ value: itemStatus }),
+    ]);
+  },
+  checkTLRRequestsFields(instanceHrid) {
+    cy.expect([
+      rootSection.exists(),
+      TextField({ name: 'instance.hrid' }).has({ value: instanceHrid }),
+      itemInformationAccordion.absent(),
+      cancelButton.has({ disabled: false, visible: true }),
+      saveAndCloseButton.has({ disabled: false, visible: true }),
+    ]);
+  },
+  checkRequestsFields() {
+    cy.expect([
+      rootSection.exists(),
+      itemInformationAccordion.exists(),
+      cancelButton.has({ disabled: false, visible: true }),
+      saveAndCloseButton.has({ disabled: true, visible: true }),
     ]);
   },
 };

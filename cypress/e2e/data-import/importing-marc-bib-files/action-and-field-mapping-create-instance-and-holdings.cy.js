@@ -89,18 +89,19 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(

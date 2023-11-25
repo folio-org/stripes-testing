@@ -139,7 +139,7 @@ describe('MARC Authority Sort', () => {
 
       MarcAuthorities.chooseAuthoritySourceOption(testData.facetOptions.optionC);
       MarcAuthorities.checkSelectedAuthoritySource(testData.facetOptions.optionC);
-      MarcAuthorities.checkValueResultsColumn(4, '');
+      MarcAuthorities.checkValueResultsColumn(5, '');
       MarcAuthorities.checkValueResultsColumn(2, testData.facetValues.valueC);
       MarcAuthorities.selectTitle(testData.facetValues.valueC);
       MarcAuthority.contains(testData.prefixValues.prefixValC);
