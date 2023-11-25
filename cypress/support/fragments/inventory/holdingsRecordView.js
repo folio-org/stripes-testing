@@ -227,4 +227,5 @@ export default {
     cy.do(Button(including('Record last updated:')).click());
     cy.expect(HTML(including(`Source: ${userName}`)).exists());
   },
+  verifyRecordViewingOpen: () => cy.expect(HTML({ id: 'paneHeaderui-inventory.holdingsRecordView' }).exists()),
 };

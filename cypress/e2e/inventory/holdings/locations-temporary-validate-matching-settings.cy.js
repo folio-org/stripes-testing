@@ -1,0 +1,145 @@
+import moment from 'moment';
+import uuid from 'uuid';
+import permissions from '../../../support/dictionary/permissions';
+import TopMenu from '../../../support/fragments/topMenu';
+import TestTypes from '../../../support/dictionary/testTypes';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import CheckInPane from '../../../support/fragments/check-in-actions/checkInPane';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import Users from '../../../support/fragments/users/users';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import devTeams from '../../../support/dictionary/devTeams';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import { Locations } from '../../../support/fragments/settings/tenant';
+import settingsMenu from '../../../support/fragments/settingsMenu';
+
+describe('Create test data', () => {
+  const itemData = {
+    barcode: generateItemBarcode(),
+    instanceTitle: `Instance ${getRandomPostfix()}`,
+    instances: [
+      {
+        title: `instance ${getRandomPostfix()}`,
+      },
+      {
+        title: `instance ${getRandomPostfix()}`,
+      },
+      {
+        title: `instance ${getRandomPostfix()}`,
+      },
+    ],
+  };
+  let location;
+  const service = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  const checkInResultsData = [ITEM_STATUS_NAMES.AVAILABLE, itemData.barcode];
+
+  before('Create New Item, New User and Check out item', () => {
+    cy.getAdminToken()
+      .then(() => {
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          itemData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          itemData.holdingTypeId = res[0].id;
+        });
+        ServicePoints.createViaApi(service);
+        location = Location.getDefaultLocation(service.id);
+        Location.createViaApi(location);
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          itemData.loanTypeId = res[0].id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          itemData.materialTypeId = res.id;
+          itemData.materialTypeName = res.name;
+          checkInResultsData.push(`${itemData.instanceTitle} (${itemData.materialTypeName})`);
+        });
+        [...Array(3)].forEach((_, index) => {
+          const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+          const defaultLocation = Location.getDefaultLocation(servicePoint.id);
+          Location.createViaApi(defaultLocation);
+          itemData.instances[index].defaultLocation = defaultLocation;
+        });
+      })
+      .then(() => {
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: itemData.instanceTypeId,
+            title: itemData.instanceTitle,
+          },
+          holdings: [
+            {
+              holdingsTypeId: itemData.holdingTypeId,
+              permanentLocationId: location.id,
+            },
+          ],
+          items: [
+            {
+              barcode: itemData.barcode,
+              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId },
+            },
+          ],
+        });
+      })
+      .then((specialInstanceIds) => {
+        itemData.testInstanceIds = specialInstanceIds;
+      });
+
+    cy.loginAsAdmin({
+      path: TopMenu.inventoryPath,
+      waiter: InventoryInstances.waitContentLoading,
+    });
+  });
+
+  after('Delete  test data', () => {
+    cy.getAdminToken();
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+    [...Array(3)].forEach((_, index) => {
+      Location.deleteViaApiIncludingInstitutionCampusLibrary(
+        itemData.instances[index].defaultLocation.institutionId,
+        itemData.instances[index].defaultLocation.campusId,
+        itemData.instances[index].defaultLocation.libraryId,
+        itemData.instances[index].defaultLocation.id,
+      );
+    });
+  });
+
+  it(
+    'C622 - Locations --> Temporary Location --> (Validate matching settings) (Folijet)(TaaS)',
+    {
+      tags: [TestTypes.extendedPath, devTeams.folijet],
+    },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+      InventorySearchAndFilter.selectViewHoldings();
+      HoldingsRecordView.verifyRecordViewingOpen();
+
+      HoldingsRecordView.edit();
+      HoldingsRecordEdit.verifyEditViewingOpen();
+      HoldingsRecordEdit.openTemporarylocation();
+      [...Array(3)].forEach((_, index) => {
+        HoldingsRecordEdit.verifyTemporaryLocationItemExists(
+          itemData.instances[index].defaultLocation.name,
+        );
+      });
+
+      cy.visit(settingsMenu.tenantLocationsPath);
+      Locations.waitLoading();
+      [...Array(3)].forEach((_, index) => {
+        Locations.selectInstitution(itemData.instances[index].defaultLocation.institutionName);
+        Locations.selectCampus(itemData.instances[index].defaultLocation.campusName);
+        Locations.selectLibrary(itemData.instances[index].defaultLocation.libraryName);
+        Locations.openLocationDetails(itemData.instances[index].defaultLocation.name);
+      });
+    },
+  );
+});
