@@ -21,8 +21,8 @@ describe('Bulk Edit - Logs', () => {
     cy.createTempUser([
       permissions.bulkEditCsvEdit.gui,
       permissions.uiUserEdit.gui,
-    ]).then((userProperties) => { 
-      userForTesting = userProperties; 
+    ]).then((userProperties) => {
+      userForTesting = userProperties;
       cy.login(userForTesting.username, userForTesting.password, {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading,
@@ -31,7 +31,7 @@ describe('Bulk Edit - Logs', () => {
       cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
         cy.updateUser({
           ...users[0],
-          personal: { 
+          personal: {
             lastName: userForTesting.lastName,
             email: 'test@folio.org',
             preferredContactTypeId: '002'
@@ -79,7 +79,7 @@ describe('Bulk Edit - Logs', () => {
       cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
         cy.updateUser({
           ...users[0],
-          personal: { 
+          personal: {
             ...users[0].personal,
             firstName: names.first,
           },
@@ -88,7 +88,7 @@ describe('Bulk Edit - Logs', () => {
       cy.reload();
       BulkEditSearchPane.verifyActionsRunBy(`${userForTesting.lastName}, ${names.first}`);
 
-      
+
       cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
         cy.updateUser({
           ...users[0],
@@ -101,7 +101,7 @@ describe('Bulk Edit - Logs', () => {
       cy.reload();
       BulkEditSearchPane.verifyActionsRunBy(`${userForTesting.lastName}, ${names.first} ${names.middle}`);
 
-      
+
       cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
         cy.updateUser({
           ...users[0],
