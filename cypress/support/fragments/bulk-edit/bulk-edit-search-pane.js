@@ -468,8 +468,8 @@ export default {
     ]);
   },
 
-  verifyRecordIdentifierDisabled() {
-    cy.expect(recordIdentifierDropdown.has({ disabled: true }));
+  verifyRecordIdentifierDisabled(disabled = true) {
+    cy.expect(recordIdentifierDropdown.has({ disabled }));
   },
 
   selectRecordIdentifier(value) {
@@ -734,7 +734,7 @@ export default {
       DropdownMenu().find(Checkbox('Acquisition format')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Notes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Administrative notes')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),

@@ -8,26 +8,15 @@ import {
   KeyValue,
   Modal,
   Accordion,
-  RadioButton,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 import EHoldingsResourceEdit from './eHoldingsResourceEdit';
+import ExportSettingsModal from './modals/exportSettingsModal';
 
 const actionsButton = Button('Actions');
 const holdingStatusSection = Section({ id: 'resourceShowHoldingStatus' });
 const addToHoldingButton = holdingStatusSection.find(Button('Add to holdings'));
 const exportButton = Button('Export title package (CSV)');
-const exportModal = Modal('Export settings');
-const exportButtonInModal = exportModal.find(Button('Export'));
-const cancelButtonInModal = exportModal.find(Button('Cancel'));
-const selectedPackageFieldsRadioButton = RadioButton({
-  name: 'packageFields',
-  ariaLabel: 'Export selected fields',
-});
-const selectedTitleFieldsRadioButton = RadioButton({
-  name: 'titleFields',
-  ariaLabel: 'Export selected fields',
-});
 
 const checkHoldingStatus = (holdingStatus) => {
   cy.expect(
@@ -105,27 +94,24 @@ export default {
     this.waitLoading();
     cy.expect(customLabelValue(labelName).has({ value }));
   },
+  getResourceDetails() {
+    cy.get('[data-test-eholdings-detail-pane-contents="true"]').then(($details) => {
+      const title = $details[0].querySelector(
+        '[data-testid="details-view-name-heading"]',
+      ).textContent;
+      const sub = $details[0].querySelector(
+        '[data-testid="details-view-panesub-headline"]',
+      ).textContent;
 
-  openExportModal() {
+      cy.wrap({ title, sub }).as('recourceDetails');
+    });
+    return cy.get('@recourceDetails');
+  },
+  openExportModal({ exportDisabled = false } = {}) {
     cy.do([actionsButton.click(), exportButton.click()]);
-    cy.expect(exportModal.exists());
-  },
-  closeExportModalViaCancel() {
-    cy.do(cancelButtonInModal.click());
-    cy.expect(exportModal.absent());
-    this.waitLoading();
-  },
-  verifyExportModalInPackageTile: () => {
-    const modalContent =
-      'This export may take several minutes to complete. When finished, it will be available in the Export manager app. NOTE: This export does not include information available under Usage & analysis accordion (only available to Usage Consolidation subscribers). Please use the Export titles option available under that accordion.';
+    ExportSettingsModal.verifyModalView({ exportDisabled, packageView: false });
 
-    cy.expect(exportModal.find(HTML(including(modalContent))).exists());
-    cy.expect(exportModal.find(Label('Package fields to export')).exists());
-    cy.expect(exportModal.find(Label('Title fields to export')).exists());
-    cy.expect(exportModal.find(selectedPackageFieldsRadioButton).exists());
-    cy.expect(exportModal.find(selectedTitleFieldsRadioButton).exists());
-    cy.expect(cancelButtonInModal.has({ disabled: false }));
-    cy.expect(exportButtonInModal.has({ disabled: false }));
+    return ExportSettingsModal;
   },
   verifyPackagesResourceExportedFileName(actualName) {
     expect(actualName).to.match(

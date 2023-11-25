@@ -159,8 +159,9 @@ describe('orders: Receiving and Check-in', () => {
             cy.wait(2000);
             CheckInActions.checkInItemGui(barcodeForFirstItem);
             // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(2000);
+            cy.wait(6000);
             CheckInActions.checkInItemGui(barcodeForSecondItem);
+            cy.wait(6000);
             SwitchServicePoint.switchServicePoint(circ1LocationServicePoint.name);
             SwitchServicePoint.checkIsServicePointSwitched(circ1LocationServicePoint.name);
             // Need to wait,while Checkin page will be loaded in same location

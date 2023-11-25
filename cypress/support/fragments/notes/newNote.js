@@ -1,4 +1,4 @@
-import { RichEditor, TextField, Button, Select, Label } from '../../../../interactors';
+import { RichEditor, TextField, Button, Select, Label, including } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
 const titleTextField = TextField('Note title*');
@@ -40,6 +40,10 @@ export default {
 
   chooseSelectTypeByTitle(TypeTitle) {
     cy.do(selectNoteType.choose(TypeTitle));
+  },
+
+  verifyNoteTypeExists(TypeTitle) {
+    cy.expect(selectNoteType.has({ content: including(TypeTitle) }));
   },
 
   verifyNewNoteIsDisplayed() {

@@ -23,6 +23,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Requests from '../../support/fragments/requests/requests';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
+import EditRequest from '../../support/fragments/requests/edit-request';
 
 describe('Title Level Request. Request Detail', () => {
   let userData = {};
@@ -220,7 +221,7 @@ describe('Title Level Request. Request Detail', () => {
 
       RequestDetail.checkRequestInformation({
         type: REQUEST_TYPES.PAGE,
-        status: 'Open',
+        status: EditRequest.requestStatuses.NOT_YET_FILLED,
         level: REQUEST_LEVELS.ITEM,
       });
 
@@ -252,7 +253,7 @@ describe('Title Level Request. Request Detail', () => {
 
       RequestDetail.checkRequestInformation({
         type: REQUEST_TYPES.HOLD,
-        status: 'Open',
+        status: EditRequest.requestStatuses.NOT_YET_FILLED,
         level: REQUEST_LEVELS.TITLE,
       });
 

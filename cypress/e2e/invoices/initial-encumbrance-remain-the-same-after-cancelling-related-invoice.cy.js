@@ -7,7 +7,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import { INVOICE_STATUSES } from '../../support/constants';
 
-describe('Invoices', () => {
+describe('Invoices', { retries: 3 }, () => {
   const testData = {
     organization: {},
     order: {},

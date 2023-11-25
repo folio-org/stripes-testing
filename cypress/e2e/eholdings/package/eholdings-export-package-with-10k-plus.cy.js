@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -8,6 +9,7 @@ import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHolding
 import Users from '../../../support/fragments/users/users';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
+import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 
@@ -33,6 +35,8 @@ describe('eHoldings', () => {
         Permissions.exportManagerAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
@@ -56,55 +60,53 @@ describe('eHoldings', () => {
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.verifyDetailViewPage(testData.packageName, testData.selectedStatus);
-        EHoldingsPackageView.openExportModal();
-        EHoldingsPackageView.verifyExportModal(true);
+        EHoldingsPackageView.openExportModal({ exportDisabled: true });
         EHoldingsPackageView.clickExportSelectedPackageFields();
         testData.packageExportFields.forEach((packageField) => {
           EHoldingsPackageView.selectPackageFieldsToExport(packageField);
         });
         EHoldingsPackageView.verifySelectedPackageFieldsToExport(testData.packageExportFields);
-        EHoldingsPackageView.verifyExportButtonInModalDisabled();
+        ExportSettingsModal.verifyExportButtonDisabled();
         EHoldingsPackageView.clickExportSelectedTitleFields();
         testData.titleExportFields.forEach((titleField) => {
           EHoldingsPackageView.selectTitleFieldsToExport(titleField);
         });
         EHoldingsPackageView.verifySelectedTitleFieldsToExport(testData.titleExportFields);
-        EHoldingsPackageView.verifyExportButtonInModalDisabled();
+        ExportSettingsModal.verifyExportButtonDisabled();
         EHoldingsPackageView.clearSelectedFieldsToExport();
         EHoldingsPackageView.verifySelectedPackageFieldsToExport([]);
         EHoldingsPackageView.verifySelectedTitleFieldsToExport([]);
-        EHoldingsPackageView.verifyExportButtonInModalDisabled();
+        ExportSettingsModal.verifyExportButtonDisabled();
         EHoldingsPackageView.clickExportAllPackageFields();
         EHoldingsPackageView.clickExportAllTitleFields();
-        EHoldingsPackageView.verifyExportButtonInModalDisabled();
-        EHoldingsPackageView.closeExportModalViaCancel();
+        ExportSettingsModal.verifyExportButtonDisabled();
+        ExportSettingsModal.clickCancelButton();
         EHoldingsPackages.titlesSearchFilter(...testData.titleFilterParams);
         // wait for titles list to update
         cy.wait(6000);
         EHoldingsPackageView.verifyNumberOfTitlesLessThan(10000);
         EHoldingsPackageView.openExportModal();
-        EHoldingsPackageView.verifyExportModal();
         EHoldingsPackageView.clickExportSelectedPackageFields();
         testData.packageExportFields.forEach((packageField) => {
           EHoldingsPackageView.selectPackageFieldsToExport(packageField);
         });
         EHoldingsPackageView.verifySelectedPackageFieldsToExport(testData.packageExportFields);
-        EHoldingsPackageView.verifyExportButtonInModalDisabled(false);
+        ExportSettingsModal.verifyExportButtonDisabled(false);
         EHoldingsPackageView.clickExportSelectedTitleFields();
         testData.titleExportFields.forEach((titleField) => {
           EHoldingsPackageView.selectTitleFieldsToExport(titleField);
         });
         EHoldingsPackageView.verifySelectedTitleFieldsToExport(testData.titleExportFields);
-        EHoldingsPackageView.verifyExportButtonInModalDisabled(false);
+        ExportSettingsModal.verifyExportButtonDisabled(false);
         EHoldingsPackageView.clearSelectedFieldsToExport();
         EHoldingsPackageView.verifySelectedPackageFieldsToExport([]);
         EHoldingsPackageView.verifySelectedTitleFieldsToExport([]);
-        EHoldingsPackageView.verifyExportButtonInModalDisabled();
+        ExportSettingsModal.verifyExportButtonDisabled();
         EHoldingsPackageView.clickExportAllPackageFields();
         EHoldingsPackageView.clickExportAllTitleFields();
-        EHoldingsPackageView.verifyExportButtonInModalDisabled(false);
+        ExportSettingsModal.verifyExportButtonDisabled(false);
 
-        EHoldingsPackageView.export();
+        ExportSettingsModal.clickExportButton();
         EHoldingsPackageView.verifyPackageName(testData.packageName);
         EHoldingsPackageView.verifyCalloutMessage(calloutMessage);
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((id) => {

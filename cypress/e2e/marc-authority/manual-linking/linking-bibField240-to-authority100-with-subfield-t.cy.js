@@ -56,8 +56,8 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitFileIsUploaded();
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -142,6 +142,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.clickUnlinkIconInTagField(18);
+      QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(
         18,
         '240',
