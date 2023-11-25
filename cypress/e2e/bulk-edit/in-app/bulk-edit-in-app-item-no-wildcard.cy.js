@@ -33,7 +33,7 @@ const allBarcodes = [
   `secondBarcode_${secondItem.barcode}`,
   thirdItem.barcode,
   `secondBarcode_${thirdItem.barcode}`,
-]
+];
 const newBarcodes = [
   `1017625*-AMA${getRandomPostfix()}`,
   `1017625345-AMA${getRandomPostfix()}`,
