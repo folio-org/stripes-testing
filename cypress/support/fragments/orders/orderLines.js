@@ -226,6 +226,10 @@ export default {
     );
   },
 
+  closePOLEditForm: () => {
+    cy.do(Button({ icon: 'clickable-close-new-line-dialog' }).click());
+  },
+
   getSearchParamsMap(orderNumber, currentDate) {
     const searchParamsMap = new Map();
     // 'date opened' parameter verified separately due to different condition
@@ -1638,7 +1642,12 @@ export default {
         .find(Button({ id: 'clickable-break-instance-connection-confirmation-cancel' }))
         .click(),
     );
-    cy.wait(4000);
+    cy.wait(6000);
+  },
+
+  cancelEditingPOL: () => {
+    cy.do(Button({ id: 'clickable-close-new-line-dialog-footer' }).click());
+    cy.wait(6000);
   },
 
   selectCurrentEncumbrance: (currentEncumbrance) => {
