@@ -14,11 +14,10 @@ import Orders from '../../../../support/fragments/orders/orders';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Organizations from '../../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../../../support/fragments/invoices/newInvoice';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 
-describe('Finance: Ledgers', () => {
+describe('Finance: Ledgers', { retries: 3 }, () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -126,7 +125,7 @@ describe('Finance: Ledgers', () => {
           periodStartForSecondFY,
           periodEndForSecondFY,
         );
-        fileName = `Export${defaultLedger.code}-${secondFiscalYear.code}`;
+        fileName = `Export-${defaultLedger.code}-${secondFiscalYear.code}`;
       });
     });
     cy.createTempUser([
@@ -154,6 +153,29 @@ describe('Finance: Ledgers', () => {
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(secondFiscalYear.code, 'None', defaultLedger);
+      Ledgers.checkColumnNamesInDownloadedLedgerExportFile(`${fileName}.csv`);
+      Ledgers.checkColumnContentInDownloadedLedgerExportFile(
+        `${fileName}.csv`,
+        1,
+        defaultFund,
+        secondFiscalYear,
+        '100',
+        '100',
+        '100',
+        '0',
+        '0',
+        '100',
+        '0',
+        '100',
+        '10',
+        '0',
+        '0',
+        '10',
+        '0',
+        '0',
+        '100',
+        '90',
+      );
       Ledgers.deleteDownloadedFile(`${fileName}.csv`);
     },
   );

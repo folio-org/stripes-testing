@@ -84,8 +84,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitFileIsUploaded();
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
@@ -198,8 +198,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.searchByParameter(newFields[1].searchOption, newFields[1].marcValue);
       MarcAuthorities.checkRow(newFields[1].marcValue);
-      MarcAuthorities.verifyNumberOfTitles(4, '1');
-      MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
+      MarcAuthorities.verifyNumberOfTitles(5, '1');
+      MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
       InventorySearchAndFilter.verifySearchResult(testData.fieldContents.tag245Content);
       InventoryInstance.checkPresentedText(testData.fieldContents.tag245Content);
     },

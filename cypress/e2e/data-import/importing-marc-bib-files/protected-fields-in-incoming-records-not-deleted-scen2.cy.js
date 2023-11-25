@@ -27,21 +27,21 @@ describe('data-import', () => {
     const oclcForImport = '19257462';
     const initialFields = {
       first580field:
-        '‡a Merged with: Journal of the Chemical Society. Perkin transactions I; Journal of the Chemical Society. Perkin transactions II; and Journal of the Chemical Society. Dalton transactions, to form: Perkin 1; Perkin 2; and Dalton (Cambridge, England).',
+        '$a Merged with: Journal of the Chemical Society. Perkin transactions I; Journal of the Chemical Society. Perkin transactions II; and Journal of the Chemical Society. Dalton transactions, to form: Perkin 1; Perkin 2; and Dalton (Cambridge, England).',
       first780field:
-        '‡t Acta chemica Scandinavica. Series A, Physical and inorganic chemistry ‡x 0302-4377 ‡w (DLC)sn 79006037 ‡w (OCoLC)981847',
+        '$t Acta chemica Scandinavica. Series A, Physical and inorganic chemistry $x 0302-4377 $w (DLC)sn 79006037 $w (OCoLC)981847',
       second780field:
-        '‡t Acta chemica Scandinavica. Series B, Organic chemistry and biochemistry ‡x 0302-4369 ‡w (DLC)sn 78006299 ‡w (OCoLC)981837',
+        '$t Acta chemica Scandinavica. Series B, Organic chemistry and biochemistry $x 0302-4369 $w (DLC)sn 78006299 $w (OCoLC)981837',
       first785field:
-        '‡t Journal of the Chemical Society. Perkin transactions I ‡x 0300-922X ‡w (DLC)  2006219014 ‡w (OCoLC)1033975',
+        '$t Journal of the Chemical Society. Perkin transactions I $x 0300-922X $w (DLC)  2006219014 $w (OCoLC)1033975',
       second785field:
-        '‡t Journal of the Chemical Society. Perkin transactions II ‡x 0300-9580 ‡w (DLC)   72623335 ‡w (OCoLC)1064266',
+        '$t Journal of the Chemical Society. Perkin transactions II $x 0300-9580 $w (DLC)   72623335 $w (OCoLC)1064266',
       third785field:
-        '‡t Journal of the Chemical Society. Dalton transactions ‡x 0300-9246 ‡w (DLC)   72624566 ‡w (OCoLC)1034240',
-      fourth785field: '‡t Perkin 1 ‡x 1470-4358 ‡w (DLC)   00252538 ‡w (OCoLC)44000773',
-      fifth785field: '‡t Perkin 2 ‡x 1470-1820 ‡w (DLC)   00214936 ‡w (OCoLC)44000837',
+        '$t Journal of the Chemical Society. Dalton transactions $x 0300-9246 $w (DLC)   72624566 $w (OCoLC)1034240',
+      fourth785field: '$t Perkin 1 $x 1470-4358 $w (DLC)   00252538 $w (OCoLC)44000773',
+      fifth785field: '$t Perkin 2 $x 1470-1820 $w (DLC)   00214936 $w (OCoLC)44000837',
       sixth785field:
-        '‡t Dalton (Cambridge, England) ‡x 1470-479X ‡w (DLC)   00252543 ‡w (OCoLC)44000666',
+        '$t Dalton (Cambridge, England) $x 1470-479X $w (DLC)   00252543 $w (OCoLC)44000666',
     };
     const fieldsForChanging = {
       first780Field:
@@ -56,17 +56,17 @@ describe('data-import', () => {
         '$t Dalton (Cambridge, England) $x 1470-479X $w (DLC)   00252543 $w (OCoLC)44000666',
     };
     const changedFields = {
-      first580field: 'Test ‡5 NcD',
+      first580field: 'Test $5 NcD',
       first780field:
-        '‡t Acta chemica Scandinavica. Series B, Organic chemistry and biochemistry ‡x 0302-4369 ‡w (DLC)sn 78006299 ‡w (OCoLC)981837 ‡5 NcD',
+        '$t Acta chemica Scandinavica. Series B, Organic chemistry and biochemistry $x 0302-4369 $w (DLC)sn 78006299 $w (OCoLC)981837 $5 NcD',
       first785field:
-        '‡t Journal of the Chemical Society. Perkin transactions II ‡x 0300-9580 ‡w (DLC)   72623335 ‡w (OCoLC)1064266 ‡5 NcD',
+        '$t Journal of the Chemical Society. Perkin transactions II $x 0300-9580 $w (DLC)   72623335 $w (OCoLC)1064266 $5 NcD',
       third785field:
-        '‡t Journal of the Chemical Society. Dalton transactions ‡x 0300-9246 ‡w (DLC)   72624566 ‡w (OCoLC)1034240 ‡5 NcD',
-      fourth785field: '‡t Perkin 1 ‡x 1470-4358 ‡w (DLC)   00252538 ‡w (OCoLC)44000773 ‡5 NcD',
-      fifth785field: '‡t Perkin 2 ‡x 1470-1820 ‡w (DLC)   00214936 ‡w (OCoLC)44000837 ‡5 NcD',
+        '$t Journal of the Chemical Society. Dalton transactions $x 0300-9246 $w (DLC)   72624566 $w (OCoLC)1034240 $5 NcD',
+      fourth785field: '$t Perkin 1 $x 1470-4358 $w (DLC)   00252538 $w (OCoLC)44000773 $5 NcD',
+      fifth785field: '$t Perkin 2 $x 1470-1820 $w (DLC)   00214936 $w (OCoLC)44000837 $5 NcD',
       sixth785field:
-        '‡t Dalton (Cambridge, England) ‡x 1470-479X ‡w (DLC)   00252543 ‡w (OCoLC)44000666 ‡5 NcD',
+        '$t Dalton (Cambridge, England) $x 1470-479X $w (DLC)   00252543 $w (OCoLC)44000666 $5 NcD',
     };
 
     before('login', () => {
@@ -80,7 +80,7 @@ describe('data-import', () => {
         Permissions.uiInventoryViewCreateEditInstances.gui,
         Permissions.remoteStorageView.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       ]).then((userProperties) => {
         user = userProperties;
 
@@ -91,12 +91,13 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
-        MarcFieldProtection.deleteViaApi(response[0].id);
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.getListViaApi({ query: 'data==NcD' }).then((response) => {
+          MarcFieldProtection.deleteViaApi(response[0].id);
+        });
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+        Users.deleteViaApi(user.userId);
       });
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-      Users.deleteViaApi(user.userId);
     });
 
     it(

@@ -46,6 +46,9 @@ const resetButton = Button({ id: 'reset-ledgers-filters' });
 const ledgersFiltersSection = Section({ id: 'ledger-filters-pane' });
 const actionsButton = Button('Actions');
 const exportSettingsModal = Modal('Export settings');
+const expenseClassesSelect = Select({ name: 'expenseClasses' });
+const exportButton = Button('Export');
+
 export default {
   defaultUiLedger: {
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -556,17 +559,13 @@ export default {
   },
 
   exportRollover: (dataFile) => {
-    cy.get('#rollover-logs-list')
-      .find('div[role="gridcell"]')
-      .contains('a', `${dataFile}-result`)
-      .click();
+    cy.wait(4000);
+    cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-result`).click();
   },
 
   exportRolloverError: (dataFile) => {
-    cy.get('#rollover-logs-list')
-      .find('div[role="gridcell"]')
-      .contains('a', `${dataFile}-error`)
-      .click();
+    cy.wait(4000);
+    cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-error`).click();
   },
 
   checkRolloverLogs: (dataFile) => {
@@ -575,10 +574,8 @@ export default {
         .find(MultiColumnListCell('Successful'))
         .exists(),
     ]);
-    cy.get('#rollover-logs-list').find('div[role="gridcell"]').contains('a', `${dataFile}-result`);
-    cy.get('#rollover-logs-list')
-      .find('div[role="gridcell"]')
-      .contains('a', `${dataFile}-settings`);
+    cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-result`);
+    cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-settings`);
   },
 
   checkDownloadedFile(
@@ -992,12 +989,184 @@ export default {
     cy.wait(4000);
     cy.do([
       exportSettingsModal.find(Select({ name: 'fiscalYearId' })).choose(fiscalYear),
-      exportSettingsModal.find(Select({ name: 'expenseClasses' })).choose(exportExpenseclasses),
-      exportSettingsModal.find(Button('Export')).click(),
+      exportSettingsModal.find(expenseClassesSelect).choose(exportExpenseclasses),
+      exportSettingsModal.find(exportButton).click(),
     ]);
     cy.wait(2000);
     InteractorsTools.checkCalloutMessage(`Export of ${ledger.name} data has started`);
     cy.wait(2000);
     InteractorsTools.checkCalloutMessage(`${ledger.name} data was successfully exported to CSV`);
+  },
+
+  checkPreparationExportSettings() {
+    cy.wait(4000);
+    cy.do([
+      exportSettingsModal.find(Select({ name: 'fiscalYearId' })).choose(''),
+      exportSettingsModal.find(expenseClassesSelect).choose('All'),
+    ]);
+    cy.expect(exportSettingsModal.find(exportButton).is({ disabled: true }));
+    cy.do(exportSettingsModal.find(expenseClassesSelect).choose('Active'));
+    cy.expect(exportSettingsModal.find(exportButton).is({ disabled: true }));
+    cy.do(exportSettingsModal.find(expenseClassesSelect).choose('Inactive'));
+    cy.expect(exportSettingsModal.find(exportButton).is({ disabled: true }));
+    cy.do(exportSettingsModal.find(expenseClassesSelect).choose('None'));
+    cy.expect(exportSettingsModal.find(exportButton).is({ disabled: true }));
+  },
+
+  checkColumnNamesInDownloadedLedgerExportFile(fileName) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      expect(fileRows[0].trim()).to.equal(
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Date created (Budget)","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available"',
+      );
+    });
+  },
+
+  checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(fileName) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      expect(fileRows[0].trim()).to.equal(
+        '"Name (Fund)","Code (Fund)","Status (Fund)","Type","Group (Code)","Acquisition unit","Transfer from","Transfer to","External account number","Description","Name (Budget)","Status (Budget)","Allowable encumbrance","Allowable expenditure","Date created (Budget)","Initial allocation","Increase","Decrease","Total allocation","Transfers","Total Funding","Encumbered (Budget)","Awaiting payment (Budget)","Expended (Budget)","Unavailable","Over encumbered","Over expended","Cash balance","Available","Name (Exp Class)","Code (Exp Class)","Status (Exp Class)","Encumbered (Exp Class)","Awaiting payment (Exp Class)","Expended (Exp Class)","Percentage of total expended"',
+      );
+    });
+  },
+
+  checkColumnContentInDownloadedLedgerExportFile(
+    fileName,
+    fileRow,
+    fund,
+    secondFiscalYear,
+    allowableEncumbrance,
+    allowableExpenditure,
+    initialAllocation,
+    increase,
+    decrease,
+    totalAllocation,
+    transfers,
+    totalFunding,
+    encumberedBudget,
+    awaitingPaymentBudget,
+    expendedBudget,
+    unavailable,
+    overEncumbered,
+    overExpended,
+    cashBalance,
+    available,
+  ) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      const actualData = fileRows[fileRow].trim().split(',');
+      expect(actualData[0]).to.equal(`"${fund.name}"`);
+      expect(actualData[1]).to.equal(`"${fund.code}"`);
+      expect(actualData[9]).to.equal(`"${fund.description}"`);
+      expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
+      expect(actualData[12]).to.equal(allowableEncumbrance);
+      expect(actualData[13]).to.equal(allowableExpenditure);
+      expect(actualData[16]).to.equal(initialAllocation);
+      expect(actualData[17]).to.equal(increase);
+      expect(actualData[18]).to.equal(decrease);
+      expect(actualData[19]).to.equal(totalAllocation);
+      expect(actualData[20]).to.equal(transfers);
+      expect(actualData[21]).to.equal(totalFunding);
+      expect(actualData[22]).to.equal(encumberedBudget);
+      expect(actualData[23]).to.equal(awaitingPaymentBudget);
+      expect(actualData[24]).to.equal(expendedBudget);
+      expect(actualData[25]).to.equal(unavailable);
+      expect(actualData[26]).to.equal(overEncumbered);
+      expect(actualData[27]).to.equal(overExpended);
+      expect(actualData[28]).to.equal(cashBalance);
+      expect(actualData[29]).to.equal(available);
+    });
+  },
+
+  checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
+    fileName,
+    fileRow,
+    fund,
+    secondFiscalYear,
+    allowableEncumbrance,
+    allowableExpenditure,
+    initialAllocation,
+    increase,
+    decrease,
+    totalAllocation,
+    transfers,
+    totalFunding,
+    encumberedBudget,
+    awaitingPaymentBudget,
+    expendedBudget,
+    unavailable,
+    overEncumbered,
+    overExpended,
+    cashBalance,
+    available,
+    expClassName,
+    expClassCode,
+    expClassStatus,
+    expClassEncumbered,
+    expClassAwaitingPayment,
+    expClassExpended,
+  ) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      const actualData = fileRows[fileRow].trim().split(',');
+      expect(actualData[0]).to.equal(`"${fund.name}"`);
+      expect(actualData[1]).to.equal(`"${fund.code}"`);
+      expect(actualData[9]).to.equal(`"${fund.description}"`);
+      expect(actualData[10]).to.equal(`"${fund.code}-${secondFiscalYear.code}"`);
+      expect(actualData[12]).to.equal(allowableEncumbrance);
+      expect(actualData[13]).to.equal(allowableExpenditure);
+      expect(actualData[16]).to.equal(initialAllocation);
+      expect(actualData[17]).to.equal(increase);
+      expect(actualData[18]).to.equal(decrease);
+      expect(actualData[19]).to.equal(totalAllocation);
+      expect(actualData[20]).to.equal(transfers);
+      expect(actualData[21]).to.equal(totalFunding);
+      expect(actualData[22]).to.equal(encumberedBudget);
+      expect(actualData[23]).to.equal(awaitingPaymentBudget);
+      expect(actualData[24]).to.equal(expendedBudget);
+      expect(actualData[25]).to.equal(unavailable);
+      expect(actualData[26]).to.equal(overEncumbered);
+      expect(actualData[27]).to.equal(overExpended);
+      expect(actualData[28]).to.equal(cashBalance);
+      expect(actualData[29]).to.equal(available);
+      expect(actualData[30]).to.equal(`"${expClassName}"`);
+      expect(actualData[31]).to.equal(`"${expClassCode}"`);
+      expect(actualData[32]).to.equal(`"${expClassStatus}"`);
+      expect(actualData[33]).to.equal(expClassEncumbered);
+      expect(actualData[34]).to.equal(expClassAwaitingPayment);
+      expect(actualData[35]).to.equal(expClassExpended);
+    });
+  },
+
+  checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(fileName, fileRow, fund) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000); // wait for the file to load
+    cy.readFile(`cypress/downloads/${fileName}`).then((fileContent) => {
+      // Split the contents of a file into lines
+      const fileRows = fileContent.split('\n');
+
+      const actualData = fileRows[fileRow].trim().split(',');
+      expect(actualData[0]).to.equal(`"${fund.name}"`);
+      expect(actualData[1]).to.equal(`"${fund.code}"`);
+      expect(actualData[9]).to.equal(`"${fund.description}"`);
+      expect(actualData[10]).to.equal('"No budget found"');
+    });
   },
 };

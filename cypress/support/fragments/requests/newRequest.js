@@ -88,7 +88,7 @@ export default {
     cy.do(selectRequestType.choose(newRequest.requestType));
   },
 
-  choosepickupServicePoint(pickupServicePoint) {
+  choosePickupServicePoint(pickupServicePoint) {
     cy.do(selectServicePoint.choose(pickupServicePoint));
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
@@ -99,7 +99,7 @@ export default {
   createNewRequest(newRequest) {
     openNewRequestPane();
     this.fillRequiredFields(newRequest);
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
     this.saveRequestAndClose();
     this.waitLoading();
   },
@@ -125,7 +125,7 @@ export default {
     cy.wait('@getLoans');
     // need to wait until instanceId is uploaded
     cy.wait(2500);
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
     // need to wait for loading dropdown options
     cy.wait(1000);
     this.chooseRequestType(REQUEST_TYPES.PAGE);
@@ -178,6 +178,10 @@ export default {
     if (isChecked) {
       cy.expect(titleLevelRequest.has({ checked: true }));
     } else cy.expect(titleLevelRequest.has({ checked: false }));
+  },
+
+  verifyErrorMessageForRequestTypeField: (errorMessage) => {
+    cy.expect(selectRequestType.has({ error: errorMessage }));
   },
 
   verifyItemInformation: (allContentToCheck) => {
@@ -250,7 +254,7 @@ export default {
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
   },
 
   enterRequesterBarcode: (requesterBarcode) => {
@@ -284,7 +288,7 @@ export default {
     this.chooseRequestType(requestType);
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
   },
 
   checkRequestIsNotAllowedModal() {
@@ -297,7 +301,7 @@ export default {
   checkRequestIsNotAllowedInstanceModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'This requester already has an open request for this instance',
+        message: 'Not allowed to move title level page request to the same item',
       }),
     );
   },

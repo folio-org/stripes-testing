@@ -109,6 +109,26 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
+  receivePieceWithBarcode: (rowNumber, caption) => {
+    const recievingFieldName = `receivedItems[${rowNumber}]`;
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      receiveButton.click(),
+    ]);
+    cy.expect([
+      Button('Cancel').has({ disabled: false, visible: true }),
+      receiveButton.has({ disabled: true, visible: true }),
+    ]);
+    cy.do([
+      Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
+      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+    ]);
+    cy.expect(receiveButton.has({ disabled: false, visible: true }));
+    cy.do(receiveButton.click());
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
   receiveAndChangeLocation: (rowNumber, caption, institutionId) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());

@@ -70,7 +70,7 @@ describe('Create Item or Title level request', () => {
     NewRequest.enterItemInfo(itemBarcode);
     NewRequest.enterRequesterBarcode(user.barcode);
     NewRequest.chooseRequestType(requestType);
-    NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+    NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
     NewRequest.saveRequestAndClose();
     NewRequest.verifyRequestSuccessfullyCreated(user.username);
     RequestDetail.checkItemStatus(itemStatus);
@@ -240,7 +240,7 @@ describe('Create Item or Title level request', () => {
       ItemRecordView.createNewRequest();
       NewRequest.enterRequesterBarcode(users[4].barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyRequestSuccessfullyCreated(users[4].username);
       RequestDetail.checkRequestsOnItem('3');
