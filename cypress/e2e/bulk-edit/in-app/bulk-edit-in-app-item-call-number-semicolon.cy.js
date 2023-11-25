@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
             cy.updateItemViaApi(itemData);
           },
         );
-      })
+      });
       FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
     });
 
@@ -64,7 +64,7 @@ describe('bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
-        const type = 'Can circulate'
+        const type = 'Can circulate';
         BulkEditActions.fillTemporaryLoanType(type);
 
         BulkEditActions.confirmChanges();
