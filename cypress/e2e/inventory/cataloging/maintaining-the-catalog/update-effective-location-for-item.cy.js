@@ -83,21 +83,22 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      cy.getAdminToken();
-      cy.wrap(
-        testInstanceId.holdingIds.forEach((holdingsId) => {
-          cy.wrap(
-            holdingsId.itemIds.forEach((itemId) => {
-              cy.deleteItemViaApi(itemId);
-            }),
-          ).then(() => {
-            cy.deleteHoldingRecordViaApi(holdingsId.id);
-          });
-        }),
-      ).then(() => {
-        InventoryInstance.deleteInstanceViaApi(testInstanceId.instanceId);
+      cy.getAdminToken().then(() => {
+        cy.wrap(
+          testInstanceId.holdingIds.forEach((holdingsId) => {
+            cy.wrap(
+              holdingsId.itemIds.forEach((itemId) => {
+                cy.deleteItemViaApi(itemId);
+              }),
+            ).then(() => {
+              cy.deleteHoldingRecordViaApi(holdingsId.id);
+            });
+          }),
+        ).then(() => {
+          InventoryInstance.deleteInstanceViaApi(testInstanceId.instanceId);
+        });
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
     });
 
     it(
@@ -111,7 +112,8 @@ describe('inventory', () => {
         HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
         HoldingsRecordEdit.saveAndClose();
         HoldingsRecordView.close();
-        InventoryInstance.openHoldings([anotherPermanentLocation]);
+        cy.wait(1000);
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', itemData.itemBarcode);
         ItemRecordView.verifyEffectiveLocation(anotherPermanentLocation);

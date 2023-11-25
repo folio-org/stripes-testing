@@ -16,20 +16,21 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUsersView.gui,
-        permissions.uiUsersCreate.gui
-      ], 'staff').then(
-        (userProperties) => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-        },
-      );
+      cy.createTempUser(
+        [
+          permissions.bulkEditUpdateRecords.gui,
+          permissions.uiUsersView.gui,
+          permissions.uiUsersCreate.gui,
+        ],
+        'staff',
+      ).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+      });
     });
 
     after('delete test data', () => {
@@ -39,7 +40,7 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C365590 Verify that User\'s Email can be edited partially (firebird) (TaaS)',
+      "C365590 Verify that User's Email can be edited partially (firebird) (TaaS)",
       { tags: [testTypes.extendedPath, devTeams.firebird] },
       () => {
         BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
@@ -68,7 +69,7 @@ describe('bulk-edit', () => {
         UsersSearchPane.openUser(user.username);
         UsersCard.openContactInfo();
         UsersCard.verifyEmail(`test@${newEmailDomain}`);
-      }
+      },
     );
   });
 });

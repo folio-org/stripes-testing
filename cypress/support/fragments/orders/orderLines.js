@@ -1408,7 +1408,6 @@ export default {
     this.addCreateInventory(inventory);
     this.addHolding(location, quantity);
     this.addMaterialType(materialType);
-
     if (shouldSave) {
       this.savePol();
     }
@@ -1601,10 +1600,7 @@ export default {
   },
 
   openPageCurrentEncumbrance: (title) => {
-    cy.get('#FundDistribution')
-      .find('*[class^="mclCell"]')
-      .contains(title)
-      .invoke('removeAttr', 'target')
+    cy.get('#FundDistribution').find('a').contains(title).invoke('removeAttr', 'target')
       .click();
   },
 
