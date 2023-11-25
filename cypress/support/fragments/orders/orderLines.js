@@ -1632,6 +1632,15 @@ export default {
     cy.wait(4000);
   },
 
+  cancelRemoveInstanceConnectionModal: () => {
+    cy.do(
+      Modal({ id: 'break-instance-connection-confirmation' })
+        .find(Button({ id: 'clickable-break-instance-connection-confirmation-cancel' }))
+        .click(),
+    );
+    cy.wait(4000);
+  },
+
   selectCurrentEncumbrance: (currentEncumbrance) => {
     cy.do(fundDistributionSection.find(Link(currentEncumbrance)).click());
   },
