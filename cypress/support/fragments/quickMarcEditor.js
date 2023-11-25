@@ -407,7 +407,7 @@ export default {
 
   pressSaveAndKeepEditing(calloutMsg) {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(Callout(calloutMsg).exists());
+    cy.expect(Callout(including(calloutMsg)).exists());
   },
 
   restoreDeletedFields: () => {
@@ -520,6 +520,14 @@ export default {
   clickUnlinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
+  },
+  clickViewMarcAuthorityIconInTagField(rowIndex) {
+    cy.get(`div[class*=quickMarcEditorRow][data-row="record-row[${rowIndex}]"]`)
+      .find('a')
+      .invoke('removeAttr', 'target')
+      .click();
+    cy.wait(2000);
+    cy.expect(Pane({ id: 'marc-view-pane' }).exists());
   },
 
   confirmUnlinkingField() {
@@ -1236,6 +1244,15 @@ export default {
   checkUnlinkTooltipText(tag, text) {
     cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
+  },
+  checkViewMarcAuthorityTooltipText(rowIndex) {
+    cy.do(
+      QuickMarcEditor()
+        .find(QuickMarcEditorRow({ index: rowIndex }))
+        .find(Button({ icon: 'eye-open' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip({ text: 'View MARC authority record' }).exists());
   },
 
   checkLinkButtonExistByRowIndex(rowIndex) {
