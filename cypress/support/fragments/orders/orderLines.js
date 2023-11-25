@@ -1408,7 +1408,6 @@ export default {
     this.addCreateInventory(inventory);
     this.addHolding(location, quantity);
     this.addMaterialType(materialType);
-
     if (shouldSave) {
       this.savePol();
     }
