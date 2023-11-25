@@ -71,10 +71,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(item.itemBarcode, `secondBarcode_${item.itemBarcode}`);
 
-        [item.itemBarcode, `secondBarcode_${item.itemBarcode}`].forEach((item) => {
+        [item.itemBarcode, `secondBarcode_${item.itemBarcode}`].forEach((barcode) => {
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.switchToItem();
-          InventorySearchAndFilter.searchByParameter('Barcode', item);
+          InventorySearchAndFilter.searchByParameter('Barcode', barcode);
           ItemRecordView.waitLoading();
           ItemRecordView.suppressedAsDiscoveryIsAbsent();
           ItemRecordView.verifyPermanentLoanType('Reading room');
