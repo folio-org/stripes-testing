@@ -87,7 +87,6 @@ const authoritySourceOptions = [
 ];
 const thesaurusAccordion = Accordion('Thesaurus');
 
-
 export default {
   waitLoading() {
     cy.expect(PaneHeader('MARC authority').exists());

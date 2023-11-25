@@ -27,7 +27,7 @@ const deletePackageButton = Button('Delete package');
 const confirmModal = Modal('Delete custom package');
 const addNewPackageButton = Button({ href: '/eholdings/packages/new' });
 const searchButton = Button('Search');
-const packageList = Section({ id: 'packageShowTitles' });
+
 const searchIcon = Button({ icon: 'search' });
 const searchField = TextField({ id: 'eholdings-search' });
 const chooseParameterField = Select('Select a field to search');
@@ -277,15 +277,6 @@ export default {
         .find(ListItem({ text: including(eHoldingsPackage.filterStatuses.notSelected) }))
         .absent(),
     ]);
-  },
-
-  clickSearchTitles: (rowNumber = 0) => {
-    cy.do(
-      packageList
-        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
-        .find(Button())
-        .click(),
-    );
   },
 
   subjectsAssertion() {
