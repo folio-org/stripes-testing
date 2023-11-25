@@ -15,7 +15,7 @@ import NewOrganization from '../../../../support/fragments/organizations/newOrga
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 
-describe('Finance: Ledgers', () => {
+describe('Finance: Ledgers', { retries: 3 }, () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };

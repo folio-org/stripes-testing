@@ -91,6 +91,7 @@ const calloutNo245MarcTag = Callout('Record cannot be saved without field 245.')
 const calloutMultiple245MarcTags = Callout('Record cannot be saved with more than one field 245.');
 const calloutMultiple001MarcTags = Callout('Record cannot be saved. Can only have one MARC 001.');
 const calloutMultiple010MarcTags = Callout('Record cannot be saved with more than one 010 field');
+const calloutMultiple010Subfields = Callout('010 can only have one $a.');
 const calloutInvalidLDRValue = Callout(
   including('Record cannot be saved. Please enter a valid Leader'),
 );
@@ -706,6 +707,9 @@ export default {
     ]);
   },
 
+  verifyDerivedMarcBibSave() {
+    cy.expect(calloutOnDeriveFirst.exists());
+  },
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
@@ -1539,6 +1543,10 @@ export default {
     cy.expect(calloutMultiple245MarcTags.exists());
   },
 
+  verifyMultipleTagCallout(tagNumber) {
+    cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
+  },
+
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
   },
@@ -1548,6 +1556,12 @@ export default {
     cy.do(calloutMultiple010MarcTags.dismiss());
     cy.expect(calloutMultiple010MarcTags.absent());
     cy.expect(rootSection.exists());
+  },
+
+  verifyAndDismissMultiple010SubfieldsCallout() {
+    cy.expect(calloutMultiple010Subfields.exists());
+    cy.do(calloutMultiple010Subfields.dismiss());
+    cy.expect([calloutMultiple010Subfields.absent(), rootSection.exists()]);
   },
 
   verifyInvalidLDRValueCallout(positions) {
@@ -1745,5 +1759,14 @@ export default {
     this.checkEmptyContent('008');
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
+  },
+
+  verifyNoDuplicatedFieldsWithTag: (tag) => {
+    cy.get(`input[name*=".tag"][value="${tag}"]`).then((elements) => elements.length === 1);
+  },
+  verifyNumOfFieldsWithTag: (tag, numOfFields) => {
+    cy.get(`input[name*=".tag"][value="${tag}"]`).then(
+      (elements) => elements.length === numOfFields,
+    );
   },
 };

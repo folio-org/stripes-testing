@@ -46,7 +46,11 @@ describe('remote-storage-configuration', () => {
         Configurations.editConfiguration(name, { nameInput: newName });
         Configurations.confirmCreateRemoteStorage();
         Configurations.verifyCreatedConfiguration(name, configuration);
-        Configurations.editConfiguration(name, { nameInput: `shouldnotbesaved${getRandomPostfix()}` }, false);
+        Configurations.editConfiguration(
+          name,
+          { nameInput: `shouldnotbesaved${getRandomPostfix()}` },
+          false,
+        );
         Configurations.closeEditConfiguration();
         Configurations.deleteRemoteStorage(newName);
       });

@@ -1,4 +1,5 @@
 import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -6,6 +7,7 @@ import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldi
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
 import Users from '../../../support/fragments/users/users';
 
 describe('eHoldings Package + Title', () => {
@@ -20,6 +22,9 @@ describe('eHoldings Package + Title', () => {
       Permissions.uieHoldingsRecordsEdit.gui,
     ]).then((userProperties) => {
       testData.userId = userProperties.userId;
+
+      AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.userId });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.eholdingsPath,
         waiter: EHoldingsTitlesSearch.waitLoading,
@@ -44,13 +49,13 @@ describe('eHoldings Package + Title', () => {
       EHoldingsPackageView.waitLoading();
 
       EHoldingsPackages.titlesSearchFilter('Title', '', testData.selectedStatus);
-      EHoldingsPackages.clickSearchTitles();
+      EHoldingsPackageView.selectTitleRecord();
 
       eHoldingsResourceView.openExportModal();
       EHoldingsPackageView.clickExportSelectedPackageFields();
       EHoldingsPackageView.clickExportSelectedTitleFields();
-      EHoldingsPackageView.verifyExportButtonInModalDisabled();
-      eHoldingsResourceView.closeExportModalViaCancel();
+      ExportSettingsModal.verifyExportButtonDisabled();
+      ExportSettingsModal.clickCancelButton();
       eHoldingsResourceView.checkHoldingStatus(testData.selectedStatus);
     },
   );

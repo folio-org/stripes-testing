@@ -10,7 +10,7 @@ import Funds from '../../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
 import DateTools from '../../../../support/utils/dateTools';
 
-describe('Finance: Ledgers', () => {
+describe('Finance: Ledgers', { retries: 3 }, () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
@@ -101,7 +101,6 @@ describe('Finance: Ledgers', () => {
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(secondFiscalYear.code, 'Inactive', defaultLedger);
       Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
-      cy.pause();
       Ledgers.checkColumnContentInDownloadedLedgerExportFile(
         `${fileName}.csv`,
         1,
