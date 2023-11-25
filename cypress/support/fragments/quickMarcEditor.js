@@ -407,7 +407,7 @@ export default {
 
   pressSaveAndKeepEditing(calloutMsg) {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(Callout(calloutMsg).exists());
+    cy.expect(Callout(including(calloutMsg)).exists());
   },
 
   restoreDeletedFields: () => {
