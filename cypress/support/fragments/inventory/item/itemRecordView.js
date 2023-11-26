@@ -161,6 +161,10 @@ export default {
     );
   },
 
+  verifyTextAbsent(text) {
+    cy.expect(HTML(including(text)).absent());
+  },
+
   verifyMaterialType: (type) => {
     cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
   },
