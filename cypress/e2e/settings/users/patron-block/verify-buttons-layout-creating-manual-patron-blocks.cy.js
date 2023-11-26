@@ -10,7 +10,7 @@ import UsersCard from '../../../../support/fragments/users/usersCard';
 import NewRequest from '../../../../support/fragments/requests/newRequest';
 import PatronBlocks from '../../../../support/fragments/users/patronBlocks';
 
-describe('Circulation log', () => {
+describe('Manual Patron Blocks', () => {
   let userData;
   const blockDescription = getTestEntityValue('Test description');
   const testData = {
