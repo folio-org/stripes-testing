@@ -47,6 +47,9 @@ const updateLinkedBibFieldsModal = Modal({ id: 'quick-marc-update-linked-bib-fie
 const saveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-update-linked-bib-fields-confirm' }),
 );
+const keepEditingButton = updateLinkedBibFieldsModal.find(
+  Button({ id: 'clickable-quick-marc-update-linked-bib-fields-cancel' }),
+);
 const continueWithSaveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }),
 );
@@ -1259,16 +1262,6 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists());
   },
 
-  checkViewMarcAuthorityTooltipText(rowIndex) {
-    cy.do(
-      QuickMarcEditor()
-        .find(QuickMarcEditorRow({ index: rowIndex }))
-        .find(Button({ icon: 'eye-open' }))
-        .hoverMouse(),
-    );
-    cy.expect(Tooltip({ text: 'View MARC authority record' }).exists());
-  },
-
   checkButtonSaveAndCloseEnable() {
     cy.expect(saveAndCloseButtonEnabled.exists());
   },
@@ -1404,6 +1397,14 @@ export default {
       ).exists(),
       rootSection.absent(),
       viewMarcSection.exists(),
+    ]);
+  },
+
+  cancelUpdateLinkedBibs() {
+    cy.do(keepEditingButton.click());
+    cy.expect([
+      Modal({ id: 'quick-marc-update-linked-bib-fields' }).absent(),
+      rootSection.exists(),
     ]);
   },
 
