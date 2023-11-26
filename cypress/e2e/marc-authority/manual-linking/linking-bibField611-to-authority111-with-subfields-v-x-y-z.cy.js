@@ -15,45 +15,38 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 
 describe('Manual Linking Bib field to Authority 1XX', () => {
   const testData = {
-    tag600: '600',
-    linkedIconText: 'Linked to MARC authority',
+    tag611: '611',
+    subjectAccordion: 'Subject',
     subjectValue:
-      'Black Panther (Fictitious character) Wakanda Forever--TestV--TestX--TestY--TestZ',
+      'C377027 Roma Council 1962-1965 : Basilica di San Pietro in Roma) (2nd :--TestV--TestX--TestY--TestZ',
+    authorityIconText: 'Linked to MARC authority',
   };
 
   const marcFiles = [
     {
-      marc: 'marcBibFileForC377026.mrc',
-      fileName: `testMarcFileC377026${getRandomPostfix()}.mrc`,
+      marc: 'marcBibFileForC377027.mrc',
+      fileName: `testMarcFileC377027${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     },
     {
-      marc: 'marcAuthFileForC377026.mrc',
-      fileName: `testMarcFile377026.${getRandomPostfix()}.mrc`,
+      marc: 'marcAuthFileForC377027.mrc',
+      fileName: `testMarcFileC377027${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'Black Panther (Fictitious character) Wakanda Forever',
+      authorityHeading: 'C377027 Roma Council (2nd : 1962-1965 : Basilica di San Pietro in Roma)',
     },
   ];
 
   const createdRecordIDs = [];
 
-  const bib600FieldValues = [
-    46,
-    testData.tag600,
-    '0',
-    '0',
-    '$a Black Panther $c (Fictitious character) $4 .prt $2 test $i comics $v TestV $x TestX $y TestY $z TestZ',
-  ];
-
-  const bib600AfterLinkingToAuth100 = [
-    46,
-    testData.tag600,
-    '0',
-    '0',
-    '$a Black Panther $c (Fictitious character) $t Wakanda Forever',
-    '$i comics $v TestV $x TestX $y TestY $z TestZ',
-    '$0 id.loc.gov/authorities/names/n2016004081',
-    '$4 .prt $2 test',
+  const bib611AfterLinkingToAuth111 = [
+    15,
+    testData.tag611,
+    '2',
+    '7',
+    '$a C377027 Roma Council $d 1962-1965 : $c Basilica di San Pietro in Roma) $n (2nd :',
+    '$v TestV $x TestX $y TestY $z TestZ',
+    '$0 id.loc.gov/authorities/names/n79084169',
+    '$2 fast $1 http://viaf.org/viaf/133636573/',
   ];
 
   before('Creating user and data', () => {
@@ -90,36 +83,42 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
   });
 
   after('Deleting created user and data', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(testData.userProperties.userId);
-    createdRecordIDs.forEach((id, index) => {
-      if (index) MarcAuthority.deleteViaAPI(id);
-      else InventoryInstance.deleteInstanceViaApi(id);
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(testData.userProperties.userId);
+      createdRecordIDs.forEach((id, index) => {
+        if (index) MarcAuthority.deleteViaAPI(id);
+        else InventoryInstance.deleteInstanceViaApi(id);
+      });
     });
   });
 
   it(
-    'C377026 Link the "600" of "MARC Bib" field to "MARC Authority" record (with "v", "x", "y", "z" subfields). (spitfire) (TaaS)',
+    'C377027 Link the "611" of "MARC Bib" field to "MARC Authority" record (with "v", "x", "y", "z" subfields). (spitfire) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib600FieldValues);
-      InventoryInstance.verifyAndClickLinkIcon(testData.tag600);
-      MarcAuthorities.switchToSearch();
+      InventoryInstance.verifyAndClickLinkIcon(testData.tag611);
       InventoryInstance.verifySelectMarcAuthorityModal();
+      InventoryInstance.verifySearchOptions();
+      MarcAuthorities.switchToSearch();
+      MarcAuthorities.clickReset();
       InventoryInstance.searchResults(marcFiles[1].authorityHeading);
       InventoryInstance.clickLinkButton();
-      QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag600);
-      QuickMarcEditor.verifyTagFieldAfterLinking(...bib600AfterLinkingToAuth100);
+      QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag611);
+      QuickMarcEditor.checkUnlinkTooltipText(testData.tag611, 'Unlink from MARC Authority record');
+      QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib611AfterLinkingToAuth111[0]);
+      QuickMarcEditor.verifyTagFieldAfterLinking(...bib611AfterLinkingToAuth111);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
-      InventoryInstance.waitInventoryLoading();
       InventoryInstance.verifyInstanceSubject(
         0,
         0,
-        `${testData.linkedIconText}${testData.subjectValue}`,
+        `${testData.authorityIconText}${testData.subjectValue}`,
+      );
+      InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(
+        testData.subjectAccordion,
       );
     },
   );
