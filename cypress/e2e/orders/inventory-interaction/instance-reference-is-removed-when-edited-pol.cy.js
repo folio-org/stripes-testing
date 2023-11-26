@@ -61,6 +61,12 @@ describe('Orders', () => {
       organization.id = responseOrganizations;
     });
     firstOrder.vendor = organization.name;
+    const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
+      (instanceResponse) => {
+        instance = instanceResponse;
+      },
+    );
     cy.loginAsAdmin({
       path: TopMenu.ordersPath,
       waiter: Orders.waitLoading,
@@ -68,19 +74,15 @@ describe('Orders', () => {
     Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
       firstOrder.id = firstOrderResponse.id;
       orderNumber = firstOrderResponse.poNumber;
+      OrderLines.addPOLine();
+      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
+      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.institutionId);
     });
-
-    const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceId}"` }).then(
-      (instanceResponse) => {
-        instance = instanceResponse;
-      },
-    );
 
     cy.createTempUser([
       permissions.uiInventoryViewInstances.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
@@ -121,23 +123,23 @@ describe('Orders', () => {
   });
 
   it(
-    'C374113: Instance reference is removed when user confirms changing that will remove the instance UUID from the POL when creating PO line (thunderjet) (TaaS)',
+    'C374118: Instance reference is removed when user confirms changing that will remove the instance UUID from the POL when editing PO line (thunderjet) (TaaS)',
     { tags: [testType.extendedPath, devTeams.thunderjet] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
+      OrderLines.selectPOLInOrder();
+      OrderLines.editPOLInOrder();
       OrderLines.openPageConnectedInstance();
       InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
+      OrderLines.selectPOLInOrder();
+      OrderLines.editPOLInOrder();
       OrderLines.fillInInvalidDataForPublicationDate();
       OrderLines.removeInstanceConnectionModal();
-      OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.institutionId);
+      OrderLines.saveOrderLine();
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
