@@ -1259,6 +1259,16 @@ export default {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists());
   },
 
+  checkViewMarcAuthorityTooltipText(rowIndex) {
+    cy.do(
+      QuickMarcEditor()
+        .find(QuickMarcEditorRow({ index: rowIndex }))
+        .find(Button({ icon: 'eye-open' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip({ text: 'View MARC authority record' }).exists());
+  },
+
   checkButtonSaveAndCloseEnable() {
     cy.expect(saveAndCloseButtonEnabled.exists());
   },
