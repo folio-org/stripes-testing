@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
         cy.loginAsAdmin({
           path: SettingsMenu.customFieldsPath,
           waiter: CustomFields.waitLoading,
-        })
+        });
         CustomFields.addMultiSelectCustomField(customFieldData);
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.searchByUsername(user.username);
