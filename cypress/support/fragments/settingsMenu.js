@@ -36,6 +36,7 @@ export default {
   materialTypePath: '/settings/inventory/materialtypes',
   targetProfilesPath: 'settings/inventory/targetProfiles',
   urlRelationshipPath: 'settings/inventory/URLrelationship',
+  instanceStatusTypesPath: 'settings/inventory/instanceStatusTypes',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',

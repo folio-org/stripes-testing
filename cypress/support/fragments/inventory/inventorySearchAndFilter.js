@@ -834,4 +834,13 @@ export default {
   checkSearchButtonEnabled() {
     cy.expect(searchButton.has({ disabled: false }));
   },
+
+  varifyInstanceKeyDetails(instanceData) {
+    cy.wait(4000);
+    cy.expect([
+      Section({ id: 'acc01' }).find(KeyValue('Instance HRID')).has({ value: instanceData.hrid }),
+      Section({ id: 'acc01' }).find(KeyValue('Source')).has({ value: instanceData.source }),
+      Section({ id: 'acc02' }).find(KeyValue('Resource title')).has({ value: instanceData.title }),
+    ]);
+  },
 };

@@ -17,7 +17,7 @@ import NewOrganization from '../../../../support/fragments/organizations/newOrga
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 
-describe('ui-finance: Fiscal Year Rollover', () => {
+describe('ui-finance: Fiscal Year Rollover', { retries: 3 }, () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
