@@ -17,7 +17,8 @@ describe('inventory', () => {
       instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
       itemBarcode: GenerateItemBarcode(),
     };
-    const anotherPermanentLocation = 'Main Library';
+    const anotherPermanentLocation = 'Primary Fiction (me2PFiction)';
+    const anotherPermanentLocationUI = 'Primary Fiction';
     let testInstanceId;
     let instanceHrid;
     let user;
@@ -34,7 +35,7 @@ describe('inventory', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             itemData.instanceTypeId = instanceTypes[0].id;
           });
-          cy.getLocations({ limit: 1, query: 'name="Online"' }).then((res) => {
+          cy.getLocations({ limit: 1, query: 'name="Migration"' }).then((res) => {
             itemData.locationId = res.id;
           });
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
@@ -111,10 +112,11 @@ describe('inventory', () => {
         HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
         HoldingsRecordEdit.saveAndClose();
         HoldingsRecordView.close();
-        InventoryInstance.openHoldings([anotherPermanentLocation]);
+        InventoryInstance.openHoldings([anotherPermanentLocationUI]);
+        cy.wait(1000);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', itemData.itemBarcode);
-        ItemRecordView.verifyEffectiveLocation(anotherPermanentLocation);
+        ItemRecordView.verifyEffectiveLocation(anotherPermanentLocationUI);
       },
     );
   });

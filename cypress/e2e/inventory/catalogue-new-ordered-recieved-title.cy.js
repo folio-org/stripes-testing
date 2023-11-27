@@ -25,20 +25,19 @@ import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('inventory', () => {
   describe('Cataloging -> Creating new records', () => {
-    let effectiveLocation;
-    let orderNumber;
-    let materialTypeId;
-    const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
-    const itemQuantity = '1';
-    const barcode = Helper.getRandomBarcode();
-    const caption = 'autotestCaption';
-    const firstServicePoint = NewServicePoint.getDefaultServicePoint(
-      `autotestServicePoint ${Helper.getRandomBarcode()}`,
-    );
-    const secondServicePoint = NewServicePoint.getDefaultServicePoint(
-      `autotestServicePoint ${Helper.getRandomBarcode()}`,
-    );
-    let userId;
+    const testData = {
+      instanceTitle: `autotestTitle ${Helper.getRandomBarcode()}`,
+      itemQuantity: '1',
+      barcode: Helper.getRandomBarcode(),
+      caption: 'autotestCaption',
+      loanType: 'Can circulate',
+      firstServicePoint: NewServicePoint.getDefaultServicePoint(
+        `autotestServicePoint ${Helper.getRandomBarcode()}`,
+      ),
+      secondServicePoint: NewServicePoint.getDefaultServicePoint(
+        `autotestServicePoint ${Helper.getRandomBarcode()}`,
+      ),
+    };
 
     before('create test data', () => {
       cy.getAdminToken();
@@ -68,31 +67,31 @@ describe('inventory', () => {
             module: 'ORDERS',
             configName: 'inventory-loanTypeName',
             enabled: true,
-            value: 'Can circulate',
+            value: testData.loanType,
           });
         }
       });
       cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
-        materialTypeId = materialType.id;
+        testData.materialTypeId = materialType.id;
       });
-      ServicePoints.createViaApi(firstServicePoint);
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(firstServicePoint.id)).then(
+      ServicePoints.createViaApi(testData.firstServicePoint);
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(testData.firstServicePoint.id)).then(
         (location) => {
-          effectiveLocation = location;
+          testData.effectiveLocation = location;
           Orders.createOrderWithOrderLineViaApi(
             NewOrder.getDefaultOrder(),
             BasicOrderLine.getDefaultOrderLine({
-              quantity: itemQuantity,
-              title: instanceTitle,
-              specialLocationId: effectiveLocation.id,
-              specialMaterialTypeId: materialTypeId,
+              quantity: testData.itemQuantity,
+              title: testData.instanceTitle,
+              specialLocationId: testData.effectiveLocation.id,
+              specialMaterialTypeId: testData.materialTypeId,
             }),
           ).then((order) => {
-            orderNumber = order.poNumber;
+            testData.orderNumber = order.poNumber;
           });
         },
       );
-      ServicePoints.createViaApi(secondServicePoint);
+      ServicePoints.createViaApi(testData.secondServicePoint);
 
       cy.createTempUser([
         Permissions.checkinAll.gui,
@@ -102,52 +101,54 @@ describe('inventory', () => {
         Permissions.uiOrdersEdit.gui,
         Permissions.uiReceivingViewEditCreate.gui,
       ]).then((userProperties) => {
-        userId = userProperties.userId;
+        testData.userId = userProperties.userId;
 
         UserEdit.addServicePointsViaApi(
-          [firstServicePoint.id, secondServicePoint.id],
-          userId,
-          firstServicePoint.id,
+          [testData.firstServicePoint.id, testData.secondServicePoint.id],
+          testData.userId,
+          testData.firstServicePoint.id,
         );
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,
         });
 
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
+        Orders.searchByParameter('PO number', testData.orderNumber);
+        Orders.selectFromResultsList(testData.orderNumber);
         Orders.openOrder();
         InteractorsTools.checkCalloutMessage(
-          `The Purchase order - ${orderNumber} has been successfully opened`,
+          `The Purchase order - ${testData.orderNumber} has been successfully opened`,
         );
         Orders.receiveOrderViaActions();
-        Receiving.selectFromResultsList(instanceTitle);
-        Receiving.receivePieceWithoutBarcode(0, caption);
-        Receiving.checkReceivedPiece(0, caption, 'No value set-');
+        Receiving.selectFromResultsList(testData.instanceTitle);
+        Receiving.receivePieceWithoutBarcode(0, testData.caption);
+        Receiving.checkReceivedPiece(0, testData.caption, 'No value set-');
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+        InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
       });
     });
 
     after('delete test data', () => {
       cy.getAdminToken();
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((res) => {
-        Orders.deleteOrderViaApi(res[0].id);
-      });
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(barcode);
-      UserEdit.changeServicePointPreferenceViaApi(userId, [
-        firstServicePoint.id,
-        secondServicePoint.id,
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${testData.orderNumber}"` }).then(
+        (res) => {
+          Orders.deleteOrderViaApi(res[0].id);
+        },
+      );
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
+      UserEdit.changeServicePointPreferenceViaApi(testData.userId, [
+        testData.firstServicePoint.id,
+        testData.secondServicePoint.id,
       ]).then(() => {
-        ServicePoints.deleteViaApi(firstServicePoint.id);
-        ServicePoints.deleteViaApi(secondServicePoint.id);
-        Users.deleteViaApi(userId);
+        ServicePoints.deleteViaApi(testData.firstServicePoint.id);
+        ServicePoints.deleteViaApi(testData.secondServicePoint.id);
+        Users.deleteViaApi(testData.userId);
       });
       NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        effectiveLocation.institutionId,
-        effectiveLocation.campusId,
-        effectiveLocation.libraryId,
-        effectiveLocation.id,
+        testData.effectiveLocation.institutionId,
+        testData.effectiveLocation.campusId,
+        testData.effectiveLocation.libraryId,
+        testData.effectiveLocation.id,
       );
     });
 
@@ -157,67 +158,73 @@ describe('inventory', () => {
       () => {
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();
-        InventoryInstance.openHoldings(effectiveLocation.name);
+        InventoryInstance.openHoldings(testData.effectiveLocation.name);
         InventoryInstance.verifyItemBarcode('No barcode');
-        InventoryInstance.verifyLoan('Can circulate');
+        InventoryInstance.verifyLoan(testData.loanType);
         InventoryInstance.openItemByBarcode('No barcode');
         ItemRecordView.waitLoading();
         ItemRecordView.checkBarcode('-');
         InventoryItems.edit();
-        ItemRecordEdit.waitLoading(instanceTitle);
-        ItemRecordEdit.addBarcode(barcode);
+        ItemRecordEdit.waitLoading(testData.instanceTitle);
+        ItemRecordEdit.addBarcode(testData.barcode);
         ItemRecordEdit.saveAndClose({ itemSaved: true });
         ItemRecordView.waitLoading();
-        ItemRecordView.checkBarcode(barcode);
+        ItemRecordView.checkBarcode(testData.barcode);
 
         cy.visit(TopMenu.checkInPath);
-        CheckInActions.checkInItem(barcode);
+        CheckInActions.checkInItem(testData.barcode);
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.instanceTabIsDefault();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',
-          instanceTitle,
+          testData.instanceTitle,
         );
         // TODO need to wait until result is displayed
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1500);
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();
-        InventoryInstance.openHoldings(effectiveLocation.name);
+        InventoryInstance.openHoldings(testData.effectiveLocation.name);
         InventoryInstance.checkHoldingsTable(
-          effectiveLocation.name,
+          testData.effectiveLocation.name,
           0,
           '-',
-          barcode,
+          testData.barcode,
           ITEM_STATUS_NAMES.AVAILABLE,
         );
-        InventoryInstance.verifyLoan('Can circulate');
-        InventoryInstance.openItemByBarcode(barcode);
+        InventoryInstance.verifyLoan(testData.loanType);
+        InventoryInstance.openItemByBarcode(testData.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkBarcode(barcode);
+        ItemRecordView.checkBarcode(testData.barcode);
 
-        SwitchServicePoint.switchServicePoint(secondServicePoint.name);
+        SwitchServicePoint.switchServicePoint(testData.secondServicePoint.name);
         cy.visit(TopMenu.checkInPath);
-        CheckInActions.checkInItem(barcode);
+        CheckInActions.checkInItem(testData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter(
           'Keyword (title, contributor, identifier, HRID, UUID)',
-          instanceTitle,
+          testData.instanceTitle,
         );
         // TODO need to wait until result is displayed
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1500);
         InventoryInstances.selectInstance();
         InventoryInstances.verifyInstanceDetailsView();
-        InventoryInstance.openHoldings(effectiveLocation.name);
-        InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, 'In transit');
-        InventoryInstance.verifyLoan('Can circulate');
-        InventoryInstance.openItemByBarcode(barcode);
+        InventoryInstance.openHoldings(testData.effectiveLocation.name);
+        InventoryInstance.checkHoldingsTable(
+          testData.effectiveLocation.name,
+          0,
+          '-',
+          testData.barcode,
+          'In transit',
+        );
+        InventoryInstance.verifyLoan(testData.loanType);
+        InventoryInstance.openItemByBarcode(testData.barcode);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkBarcode(barcode);
+        ItemRecordView.checkBarcode(testData.barcode);
       },
     );
   });

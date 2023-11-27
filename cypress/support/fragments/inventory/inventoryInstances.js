@@ -166,6 +166,7 @@ export default {
   },
 
   addNewInventory() {
+    cy.wait(1000);
     cy.do([actionsButton.click(), Button('New local record').click()]);
 
     InventoryNewInstance.waitLoading();
