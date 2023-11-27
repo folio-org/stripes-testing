@@ -1,5 +1,3 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -38,7 +36,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
   const createdRecordIDs = [];
 
-  const bib630AfterLinkingToAuth1150 = [
+  const bib630AfterLinkingToAuth150 = [
     15,
     testData.tag650,
     '\\',
@@ -96,7 +94,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
   it(
     'C377033 Link the "650" of "MARC Bib" field to "MARC Authority" record (with "v", "x", "y", "z" subfields). (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
@@ -110,8 +108,8 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag650);
       QuickMarcEditor.checkUnlinkTooltipText(testData.tag650, 'Unlink from MARC Authority record');
-      QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib630AfterLinkingToAuth1150[0]);
-      QuickMarcEditor.verifyTagFieldAfterLinking(...bib630AfterLinkingToAuth1150);
+      QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib630AfterLinkingToAuth150[0]);
+      QuickMarcEditor.verifyTagFieldAfterLinking(...bib630AfterLinkingToAuth150);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
       InventoryInstance.verifyInstanceSubject(
