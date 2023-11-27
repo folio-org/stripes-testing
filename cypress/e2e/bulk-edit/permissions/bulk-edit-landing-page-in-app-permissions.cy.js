@@ -24,22 +24,21 @@ describe('bulk-edit', () => {
       permissions.bulkEditUpdateRecords.gui,
       permissions.uiInventoryViewCreateEditHoldings.gui,
       permissions.uiUserEdit.gui,
-    ])
-      .then((userProperties) => {
-        user = userProperties;
-        item.instanceId = InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-        );
-        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
-          item.holdingsHRID = holdings[0].hrid;
-          FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdings[0].hrid);
-        });
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+    ]).then((userProperties) => {
+      user = userProperties;
+      item.instanceId = InventoryInstances.createInstanceViaApi(
+        item.instanceName,
+        item.itemBarcode,
+      );
+      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
+        item.holdingsHRID = holdings[0].hrid;
+        FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, holdings[0].hrid);
       });
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
+    });
   });
 
   after('delete test data', () => {

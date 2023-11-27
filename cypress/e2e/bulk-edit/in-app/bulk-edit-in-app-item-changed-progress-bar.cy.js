@@ -33,8 +33,7 @@ describe('bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
-            item.hrid =
-            FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
+            item.hrid = FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
             FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
           },
         );
