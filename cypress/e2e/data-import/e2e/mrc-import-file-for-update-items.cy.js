@@ -110,7 +110,7 @@ describe('data-import', () => {
               name: 'permanentLocationId',
               enabled: true,
               path: 'holdings.permanentLocationId',
-              value: '"Annex (KU/CC/DI/A)"',
+              value: '"Migration (Migration)"',
             },
           ],
         },
