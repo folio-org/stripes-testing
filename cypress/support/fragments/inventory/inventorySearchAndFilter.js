@@ -42,9 +42,9 @@ const dateCreatedAccordion = Accordion({ id: 'createdDate' });
 const dateUpdatedAccordion = Accordion({ id: 'updatedDate' });
 const instanceStatusAccordion = Accordion({ id: 'instanceStatus' });
 const tagsAccordion = Accordion({ id: 'instancesTags' });
-const keywordInput = TextArea({ id: 'input-inventory-search' });
+const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
-const inventorySearchAndFilter = TextArea({ id: 'input-inventory-search' });
+const inventorySearchAndFilter = TextField({ id: 'input-inventory-search' });
 const inventorySearchAndFilterInput = Select({
   id: 'input-inventory-search-qindex',
 });
@@ -100,7 +100,7 @@ const searchHoldingsByHRID = (hrid) => {
 };
 
 const searchInstanceByTitle = (title) => {
-  cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
+  cy.do([TextField({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
   InventoryInstance.waitLoading();
 
   return InventoryInstance;

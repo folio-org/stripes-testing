@@ -5,8 +5,10 @@ export default {
   addMarcHoldingRecord: () => {
     InventoryInstance.goToMarcHoldingRecordAdding();
     QuickMarcEditor.waitLoading();
-    QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
-    QuickMarcEditor.pressSaveAndClose();
+    QuickMarcEditor.getExistingLocation().then((locationSubfield) => {
+      QuickMarcEditor.updateExistingField('852', locationSubfield);
+      QuickMarcEditor.pressSaveAndClose();
+    });
   },
 
   verifyHiddenFieldValueIn008(recordID, fieldLabel, expectedValue) {

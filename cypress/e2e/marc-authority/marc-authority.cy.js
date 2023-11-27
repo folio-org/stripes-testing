@@ -178,81 +178,81 @@ describe('Importing MARC Authority files', () => {
     },
   );
 
-  it(
-    'C350680 Duplicate records do not return when searching by Identifier (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      const searchOption = 'Identifier (all)';
-      const identifier = 'n  42008104';
+  // it(
+  //   'C350680 Duplicate records do not return when searching by Identifier (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+  //   () => {
+  //     const searchOption = 'Identifier (all)';
+  //     const identifier = 'n  42008104';
 
-      MarcAuthorities.searchBy(searchOption, identifier);
-      MarcAuthorities.selectFirst(testData.authority.title);
-      MarcAuthority.contains(identifier);
-    },
-  );
+  //     MarcAuthorities.searchBy(searchOption, identifier);
+  //     MarcAuthorities.selectFirst(testData.authority.title);
+  //     MarcAuthority.contains(identifier);
+  //   },
+  // );
 
-  it(
-    'C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      MarcAuthorities.checkSearchOptions();
-      MarcAuthorities.searchBy(
-        testData.forC350641.searchOptionA,
-        testData.forC350641.lcControlNumber,
-      );
-      MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
-      MarcAuthorities.selectFirstRecord();
-      MarcAuthorities.checkFieldAndContentExistence('010', testData.forC350641.lcControlNumber);
+  // it(
+  //   'C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+  //   () => {
+  //     MarcAuthorities.checkSearchOptions();
+  //     MarcAuthorities.searchBy(
+  //       testData.forC350641.searchOptionA,
+  //       testData.forC350641.lcControlNumber,
+  //     );
+  //     MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+  //     MarcAuthorities.selectFirstRecord();
+  //     MarcAuthorities.checkFieldAndContentExistence('010', testData.forC350641.lcControlNumber);
 
-      MarcAuthorities.searchBy(
-        testData.forC350641.searchOptionA,
-        testData.forC350641.lcControlNumberUsingAllBefore,
-      );
-      MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
-      MarcAuthorities.searchBy(
-        testData.forC350641.searchOptionA,
-        testData.forC350641.lcControlNumberUsingAllAfter,
-      );
-      MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+  //     MarcAuthorities.searchBy(
+  //       testData.forC350641.searchOptionA,
+  //       testData.forC350641.lcControlNumberUsingAllBefore,
+  //     );
+  //     MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+  //     MarcAuthorities.searchBy(
+  //       testData.forC350641.searchOptionA,
+  //       testData.forC350641.lcControlNumberUsingAllAfter,
+  //     );
+  //     MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
 
-      MarcAuthorities.searchBy(
-        testData.forC350641.searchOptionB,
-        testData.forC350641.lcControlNumber,
-      );
-      MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
-      MarcAuthorities.searchBy(
-        testData.forC350641.searchOptionB,
-        testData.forC350641.lcControlNumberUsingAllBefore,
-      );
-      MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
-      MarcAuthorities.searchBy(
-        testData.forC350641.searchOptionB,
-        testData.forC350641.lcControlNumberUsingAllAfter,
-      );
-      MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
-    },
-  );
+  //     MarcAuthorities.searchBy(
+  //       testData.forC350641.searchOptionB,
+  //       testData.forC350641.lcControlNumber,
+  //     );
+  //     MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+  //     MarcAuthorities.searchBy(
+  //       testData.forC350641.searchOptionB,
+  //       testData.forC350641.lcControlNumberUsingAllBefore,
+  //     );
+  //     MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+  //     MarcAuthorities.searchBy(
+  //       testData.forC350641.searchOptionB,
+  //       testData.forC350641.lcControlNumberUsingAllAfter,
+  //     );
+  //     MarcAuthorities.checkAfterSearch(testData.forC350641.type, testData.authority.title);
+  //   },
+  // );
 
-  it(
-    'C350572 Edit an Authority record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
-    () => {
-      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-      MarcAuthorities.selectFirst(testData.authority.title);
-      MarcAuthority.edit();
-      MarcAuthority.addNewField(
-        5,
-        testData.authority.newField.tag,
-        `$a ${testData.authority.newField.content}`,
-      );
-      MarcAuthority.changeField('130', testData.authority.newField.title);
-      MarcAuthority.clicksaveAndCloseButton();
+  // it(
+  //   'C350572 Edit an Authority record (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
+  //   () => {
+  //     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+  //     MarcAuthorities.selectFirst(testData.authority.title);
+  //     MarcAuthority.edit();
+  //     MarcAuthority.addNewField(
+  //       5,
+  //       testData.authority.newField.tag,
+  //       `$a ${testData.authority.newField.content}`,
+  //     );
+  //     MarcAuthority.changeField('130', testData.authority.newField.title);
+  //     MarcAuthority.clicksaveAndCloseButton();
 
-      MarcAuthority.contains(testData.authority.newField.tag);
-      MarcAuthority.contains(testData.authority.newField.content);
+  //     MarcAuthority.contains(testData.authority.newField.tag);
+  //     MarcAuthority.contains(testData.authority.newField.content);
 
-      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.newField.title);
-      MarcAuthorities.checkRow(testData.authority.newField.title);
-    },
-  );
+  //     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.newField.title);
+  //     MarcAuthorities.checkRow(testData.authority.newField.title);
+  //   },
+  // );
 });

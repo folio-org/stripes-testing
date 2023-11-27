@@ -34,6 +34,8 @@ describe('eHoldings', () => {
           Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
           Permissions.moduleeHoldingsEnabled.gui,
         ]).then((userProperties) => {
+          // wait for the created user to be available
+          cy.wait(20000);
           userId = userProperties.userId;
           EHoldingsPackages.getNotSelectedPackageIdViaApi().then((specialPackage) => {
             cy.login(userProperties.username, userProperties.password, {
@@ -60,6 +62,8 @@ describe('eHoldings', () => {
           Permissions.uieHoldingsRecordsEdit.gui,
           Permissions.uiTagsPermissionAll.gui,
         ]).then((userProperties) => {
+          // wait for the created user to be available
+          cy.wait(20000);
           userId = userProperties.userId;
           cy.login(userProperties.username, userProperties.password, {
             path: TopMenu.eholdingsPath,
@@ -113,6 +117,8 @@ describe('eHoldings', () => {
           Permissions.uieHoldingsPackageTitleSelectUnselect.gui,
           Permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
         ]).then((userProperties) => {
+          // wait for the created user to be available
+          cy.wait(20000);
           userId = userProperties.userId;
           EHoldingsPackages.getNotCustomSelectedPackageIdViaApi().then((specialPackage) => {
             cy.login(userProperties.username, userProperties.password, {
