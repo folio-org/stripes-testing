@@ -31,6 +31,7 @@ const defaultUser = {
   active: true,
   // should be defined
   barcode: undefined,
+  type: 'staff',
   personal: {
     preferredContactTypeId: '002',
     firstName: 'testPermFirst',
@@ -45,8 +46,10 @@ const defaultUser = {
 
 export default {
   defaultUser,
-  createViaApi: (user) => cy
-    .okapiRequest({
+  createViaApi: (user) => {
+    user.type = 'staff';
+    user.username = `AutotestUsername_${getRandomPostfix()}`;
+    return cy.okapiRequest({
       method: 'POST',
       path: 'users',
       body: user,
@@ -59,7 +62,8 @@ export default {
       lastName: response.body.personal.lastName,
       firstName: response.body.personal.firstName,
       middleName: response.body.personal.middleName,
-    })),
+    }))
+  },
 
   deleteViaApi: (userId) => cy.okapiRequest({
     method: 'DELETE',

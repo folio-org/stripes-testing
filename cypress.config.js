@@ -19,10 +19,10 @@ module.exports = defineConfig({
   defaultCommandTimeout: 101000,
   pageLoadTimeout: 120000,
   env: {
-    OKAPI_HOST: 'https://okapi-bugfest-poppy-aqa.int.aws.folio.org',
-    OKAPI_TENANT: 'fs09000003',
-    diku_login: 'folio-aqa',
-    diku_password: 'Folio-aqa1',
+    OKAPI_HOST: 'https://okapi-bugfest-poppy-consortium.int.aws.folio.org',
+    OKAPI_TENANT: 'cs00000int_0003',
+    diku_login: 'ecs_0003_admin',
+    diku_password: 'admin',
     is_kiwi_release: false,
     downloadTimeout: 1000,
     allure: 'true',
@@ -96,7 +96,7 @@ module.exports = defineConfig({
 
       return result;
     },
-    baseUrl: 'https://bugfest-poppy-aqa.int.aws.folio.org',
+    baseUrl: 'https://bugfest-poppy-consortium.int.aws.folio.org',
     testIsolation: false,
   },
 });
