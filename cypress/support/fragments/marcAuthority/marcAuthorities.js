@@ -366,7 +366,10 @@ export default {
   },
 
   chooseTypeOfHeading: (headingTypes) => {
-    cy.do(headingTypeAccordion.clickHeader());
+    cy.do([
+      headingTypeAccordion.clickHeader(),
+      cy.wait(1000), // without wait will immediately close accordion
+    ]);
     headingTypes.forEach((headingType) => {
       cy.do(
         MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
@@ -858,16 +861,6 @@ export default {
       });
       cy.expect(authorizedRecords.length).to.equal(1);
     });
-  },
-
-  chooseHeadingType: (headingType) => {
-    cy.do([
-      headingTypeAccordion.clickHeader(),
-      cy.wait(1000), // without wait will immediately close accordion
-      MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
-        including(headingType),
-      ]),
-    ]);
   },
 
   verifySelectedTextOfHeadingType: (headingType) => {

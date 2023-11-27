@@ -14,7 +14,7 @@ import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAutho
 describe('Importing MARC Authority files', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
-  const fileName = '100_MARC_authority_records.mrc';
+  const fileName = 'marcFileForC365632.mrc';
   const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
   const headingType = 'Geographic Name';
   let createdAuthorityID;
@@ -60,7 +60,7 @@ describe('Importing MARC Authority files', () => {
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       MarcAuthorities.switchToBrowse();
-      MarcAuthorities.chooseHeadingType(headingType);
+      MarcAuthorities.chooseTypeOfHeading([headingType]);
       MarcAuthorityBrowse.searchBy('Name-title', 'Not-existing query');
       MarcAuthorityBrowse.getNotExistingHeadingReferenceValue('Not-existing query');
       MarcAuthorities.verifySelectedTextOfHeadingType(headingType);
