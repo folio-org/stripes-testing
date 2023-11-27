@@ -110,7 +110,6 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag655);
       QuickMarcEditor.checkUnlinkTooltipText(testData.tag655, 'Unlink from MARC Authority record');
-      cy.pause();
       QuickMarcEditor.checkViewMarcAuthorityTooltipText(bib655AfterLinkingToAuth155[0]);
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib655AfterLinkingToAuth155);
       QuickMarcEditor.pressSaveAndClose();
