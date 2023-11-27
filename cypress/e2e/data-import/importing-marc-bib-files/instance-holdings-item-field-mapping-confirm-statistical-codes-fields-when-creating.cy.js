@@ -54,7 +54,7 @@ describe('data-import', () => {
           firstStatisticalCodeUI: 'Book, print (books)',
           secondStatisticalCode: 'ARL (Collection stats): mfiche - Microfiche (mfiche)',
           secondStatisticalCodeUI: 'Book, print (books)',
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          permanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -219,9 +219,9 @@ describe('data-import', () => {
           HoldingsRecordView.checkStatisticalCode(
             collectionOfMappingAndActionProfiles[1].mappingProfile.secondStatisticalCodeUI,
           );
-          HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ONLINE_UI);
+          HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.SECONDARY_FICTION_UI);
           HoldingsRecordView.close();
-          InventoryInstance.openHoldings(LOCATION_NAMES.ONLINE_UI);
+          InventoryInstance.openHoldings(LOCATION_NAMES.SECONDARY_FICTION_UI);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.verifyStatisticalCode(
             collectionOfMappingAndActionProfiles[2].mappingProfile.firstStatisticalCodeUI,

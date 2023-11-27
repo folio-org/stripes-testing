@@ -243,7 +243,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `autotestMappingHoldings${getRandomPostfix()}`,
           callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          permanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

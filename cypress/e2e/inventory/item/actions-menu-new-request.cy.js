@@ -30,7 +30,7 @@ describe('inventory', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             testData.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
+          cy.getLocations({ query: `name="${LOCATION_NAMES.PRIMARY_FICTION_UI}"` }).then(
             (locations) => {
               testData.locationsId = locations.id;
             },
@@ -163,7 +163,7 @@ describe('inventory', () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         cy.wait(1000);
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.PRIMARY_FICTION_UI} >`);
       });
     });
 
@@ -205,7 +205,7 @@ describe('inventory', () => {
           NewRequest.waitLoadingNewRequestPage();
           NewRequest.checkItemInformationSecton(
             testData.instanceTitle,
-            LOCATION_NAMES.MAIN_LIBRARY_UI,
+            LOCATION_NAMES.PRIMARY_FICTION_UI,
             itemStatus,
           );
           cy.visit(TopMenu.inventoryPath);

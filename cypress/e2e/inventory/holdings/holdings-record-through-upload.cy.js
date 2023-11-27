@@ -18,25 +18,25 @@ describe('Manage holding records of instance records created through marc file u
   const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
   let instanceId;
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     // required with special tests, but when step into test I see 403 some time in /metadata-provider/jobExecutions request
     cy.getAdminToken();
     cy.visit(TopMenu.dataImportPath);
-      DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry('oneMarcBib.mrc', fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
-      Logs.checkStatusOfJobProfile('Completed');
-      Logs.openFileDetails(fileName);
-      Logs.getCreatedItemsID(0).then((link) => {
-        instanceId = link.split('/')[5];
-      });
+    DataImport.verifyUploadState();
+    DataImport.uploadFileAndRetry('oneMarcBib.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.search(jobProfileToRun);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    Logs.getCreatedItemsID(0).then((link) => {
+      instanceId = link.split('/')[5];
+    });
   });
 
   after('Deleting data', () => {
-    //InventoryInstance.deleteInstanceViaApi(instanceId[0]);
+    // InventoryInstance.deleteInstanceViaApi(instanceId[0]);
   });
 
   it(

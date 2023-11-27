@@ -34,7 +34,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356841 holdings mapping profile ${getRandomPostfix()}}`,
-          pernanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          pernanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

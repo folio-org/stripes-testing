@@ -93,11 +93,11 @@ describe('inventory', () => {
         HoldingsRecordEdit.chooseStatisticalCode(testData.statisticalCode);
         HoldingsRecordEdit.checkErrorMessageForStatisticalCode(false);
 
-        HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.ANNEX);
+        HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.MIGRATION);
         HoldingsRecordEdit.saveAndClose();
         InventoryInstance.waitLoading();
         InventoryInstance.checkCalloutMessage(including(testData.calloutMessage));
-        InventoryInstance.checkIsHoldingsCreated([`${LOCATION_NAMES.ANNEX_UI} >`]);
+        InventoryInstance.checkIsHoldingsCreated([`${LOCATION_NAMES.MIGRATION_UI} >`]);
 
         InventoryInstance.openHoldingView();
         HoldingsRecordView.edit();

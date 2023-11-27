@@ -68,7 +68,7 @@ describe('inventory', () => {
         InventoryNewHoldings.saveAndClose();
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.verifyIsHoldingsCreated([
-          `${LOCATION_NAMES.ANNEX_UI} >  ${testData.callNumber} ${testData.callNumberSuffix}`,
+          `${LOCATION_NAMES.MIGRATION_UI} >  ${testData.callNumber} ${testData.callNumberSuffix}`,
         ]);
         InventoryInstance.addItem();
         ItemRecordNew.addBarcode(testData.barcode);
@@ -77,10 +77,10 @@ describe('inventory', () => {
         ItemRecordNew.save();
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InventoryInstance.openHoldingsAccordion(
-          `Holdings: ${LOCATION_NAMES.ANNEX_UI} > ${testData.callNumber} ${testData.callNumberSuffix}`,
+          `Holdings: ${LOCATION_NAMES.MIGRATION_UI} > ${testData.callNumber} ${testData.callNumberSuffix}`,
         );
         InstanceRecordView.verifyItemIsCreated(
-          `${LOCATION_NAMES.ANNEX_UI} >  ${testData.callNumber} ${testData.callNumberSuffix}`,
+          `${LOCATION_NAMES.MIGRATION_UI} >  ${testData.callNumber} ${testData.callNumberSuffix}`,
           testData.barcode,
         );
         InventoryInstance.verifyItemStatus(testData.itemStatus);

@@ -207,7 +207,7 @@ export default {
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 1, query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` });
+        cy.getLocations({ limit: 1, query: `name="${LOCATION_NAMES.PRIMARY_FICTION_UI}"` });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(
           (holdingSources) => {

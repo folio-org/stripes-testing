@@ -52,8 +52,8 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C11107 autotest holdings mapping profile_${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
-          permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
+          permanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
+          permanentLocationUI: LOCATION_NAMES.SECONDARY_FICTION_UI,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -69,8 +69,8 @@ describe('data-import', () => {
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           status: ITEM_STATUS_NAMES.AVAILABLE,
           missingPieces: '3',
-          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
-          permanentLocationUI: LOCATION_NAMES.ANNEX_UI,
+          permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
+          permanentLocationUI: LOCATION_NAMES.MIGRATION_UI,
           formerIdentifier: `TV_${getRandomPostfix()}`,
           statisticalCode: 'ARL (Collection stats): emusic - Music scores, electronic',
           statisticalCodeUI: 'Music scores, electronic',

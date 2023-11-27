@@ -13,7 +13,7 @@ describe('inventory', () => {
   describe('Bound-with. One item related to multiple holdings', () => {
     let user;
     const testData = {
-      holdingsLocation: LOCATION_NAMES.MAIN_LIBRARY_UI,
+      holdingsLocation: LOCATION_NAMES.PRIMARY_FICTION_UI,
       firstInstanceTitle: `C409512 firstAutotestInstance_${getRandomPostfix()}`,
       firstItemBarcode: uuid(),
       secondInstanceTitle: `C409512 secondAutotestInstance_${getRandomPostfix()}`,
