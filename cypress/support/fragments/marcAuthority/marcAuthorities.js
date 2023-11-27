@@ -860,27 +860,26 @@ export default {
     });
   },
 
-  verifyHeadingTypeAccordionAccordionAndClick: () => {
-    cy.expect(headingTypeAccordion.exists());
-    cy.do(headingTypeAccordion.clickHeader());
+  checkTotalRecordsForOption(option, totalRecords) {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
   },
 
-  chooseHeadingType: (headingType) => {
+  verifyAuthoritySourceAccordionAndClick: () => {
+    cy.expect(authoritySourceAccordion.exists());
+    cy.do(authoritySourceAccordion.clickHeader());
+  },
+
+  chooseAuthoritySource: (authoritySource) => {
     cy.do([
-      headingTypeAccordion.clickHeader(),
       cy.wait(1000), // without wait will immediately close accordion
-      MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
-        including(headingType),
+      MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([
+        including(authoritySource),
       ]),
     ]);
   },
 
-  verifySelectedTextOfHeadingType: (headingType) => {
-    cy.expect(MultiSelect({ selected: including(headingType) }).exists());
-  },
-
-  checkTotalRecordsForOption(option, totalRecords) {
-    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
-    cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
+  verifySelectedTextOfAuthoritySource: (authoritySource) => {
+    cy.expect(MultiSelect({ selected: including(authoritySource) }).exists());
   },
 };

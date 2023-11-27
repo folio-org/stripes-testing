@@ -14,9 +14,9 @@ import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAutho
 describe('Importing MARC Authority files', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
-  const fileName = '100_MARC_authority_records.mrc';
+  const fileName = 'Auth_13(records_from_pre-defined_list+1_not).mrc';
   const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
-  const headingType = 'Geographic Name';
+  const authoritySource = 'LC Subject Headings (LCSH)';
   let createdAuthorityID;
 
   before('Creating data', () => {
@@ -56,15 +56,15 @@ describe('Importing MARC Authority files', () => {
   });
 
   it(
-    'C365632 Browse | Verify that the "Type of heading" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
+    'C365630 Browse | Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       MarcAuthorities.switchToBrowse();
-      MarcAuthorities.chooseHeadingType(headingType);
+      MarcAuthorities.chooseAuthoritySource(authoritySource);
       MarcAuthorityBrowse.searchBy('Name-title', 'Not-existing query');
       MarcAuthorityBrowse.getNotExistingHeadingReferenceValue('Not-existing query');
-      MarcAuthorities.verifyHeadingTypeAccordionAccordionAndClick();
-      MarcAuthorities.verifySelectedTextOfHeadingType(headingType);
+      MarcAuthorities.verifyAuthoritySourceAccordionAndClick();
+      MarcAuthorities.verifySelectedTextOfAuthoritySource(authoritySource);
     },
   );
 });
