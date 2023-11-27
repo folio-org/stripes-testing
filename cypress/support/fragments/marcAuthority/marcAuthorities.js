@@ -860,11 +860,6 @@ export default {
     });
   },
 
-  verifyHeadingTypeAccordionAccordionAndClick: () => {
-    cy.expect(headingTypeAccordion.exists());
-    cy.do(headingTypeAccordion.clickHeader());
-  },
-
   chooseHeadingType: (headingType) => {
     cy.do([
       headingTypeAccordion.clickHeader(),
@@ -876,6 +871,8 @@ export default {
   },
 
   verifySelectedTextOfHeadingType: (headingType) => {
+    cy.expect(headingTypeAccordion.exists());
+    cy.do(headingTypeAccordion.clickHeader());
     cy.expect(MultiSelect({ selected: including(headingType) }).exists());
   },
 

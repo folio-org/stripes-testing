@@ -63,7 +63,6 @@ describe('Importing MARC Authority files', () => {
       MarcAuthorities.chooseHeadingType(headingType);
       MarcAuthorityBrowse.searchBy('Name-title', 'Not-existing query');
       MarcAuthorityBrowse.getNotExistingHeadingReferenceValue('Not-existing query');
-      MarcAuthorities.verifyHeadingTypeAccordionAccordionAndClick();
       MarcAuthorities.verifySelectedTextOfHeadingType(headingType);
     },
   );
