@@ -47,6 +47,9 @@ const updateLinkedBibFieldsModal = Modal({ id: 'quick-marc-update-linked-bib-fie
 const saveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-update-linked-bib-fields-confirm' }),
 );
+const keepEditingButton = updateLinkedBibFieldsModal.find(
+  Button({ id: 'clickable-quick-marc-update-linked-bib-fields-cancel' }),
+);
 const continueWithSaveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }),
 );
@@ -407,7 +410,7 @@ export default {
 
   pressSaveAndKeepEditing(calloutMsg) {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(Callout(calloutMsg).exists());
+    cy.expect(Callout(including(calloutMsg)).exists());
   },
 
   restoreDeletedFields: () => {
@@ -520,6 +523,14 @@ export default {
   clickUnlinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
+  },
+  clickViewMarcAuthorityIconInTagField(rowIndex) {
+    cy.get(`div[class*=quickMarcEditorRow][data-row="record-row[${rowIndex}]"]`)
+      .find('a')
+      .invoke('removeAttr', 'target')
+      .click();
+    cy.wait(2000);
+    cy.expect(Pane({ id: 'marc-view-pane' }).exists());
   },
 
   confirmUnlinkingField() {
@@ -1237,6 +1248,15 @@ export default {
     cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
+  checkViewMarcAuthorityTooltipText(rowIndex) {
+    cy.do(
+      QuickMarcEditor()
+        .find(QuickMarcEditorRow({ index: rowIndex }))
+        .find(Button({ icon: 'eye-open' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip({ text: 'View MARC authority record' }).exists());
+  },
 
   checkLinkButtonExistByRowIndex(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists());
@@ -1377,6 +1397,14 @@ export default {
       ).exists(),
       rootSection.absent(),
       viewMarcSection.exists(),
+    ]);
+  },
+
+  cancelUpdateLinkedBibs() {
+    cy.do(keepEditingButton.click());
+    cy.expect([
+      Modal({ id: 'quick-marc-update-linked-bib-fields' }).absent(),
+      rootSection.exists(),
     ]);
   },
 

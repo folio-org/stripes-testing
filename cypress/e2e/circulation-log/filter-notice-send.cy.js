@@ -18,6 +18,11 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import getRandomPostfix from '../../support/utils/stringTools';
+import SearchResults from '../../support/fragments/circulation-log/searchResults';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 
 let user;
 const templateBody = {
@@ -76,7 +81,8 @@ describe('circulation-log', () => {
         );
       })
       .then(() => {
-        NoticePolicyTemplateApi.createViaApi(templateBody).then(() => {
+        NoticePolicyTemplateApi.createViaApi(templateBody).then((noticeTemplate) => {
+          testData.templateData = noticeTemplate;
           NoticePolicyApi.createWithTemplateApi(noticePolicy);
         });
         cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((response) => {
@@ -145,6 +151,47 @@ describe('circulation-log', () => {
       SearchPane.searchByUserBarcode(user.barcode);
       SearchPane.verifyResultCells();
       SearchPane.checkResultSearch(searchResultsData);
+    },
+  );
+
+  it(
+    'C17093 Check the Actions button from filtering Circulation log by (notices) send (volaris)',
+    { tags: [testTypes.criticalPath, devTeams.volaris] },
+    () => {
+      const goToCircLogApp = (filterName) => {
+        cy.visit(TopMenu.circulationLogPath);
+        SearchPane.waitLoading();
+        SearchPane.setFilterOptionFromAccordion('notice', filterName);
+        SearchPane.searchByItemBarcode(item.barcode);
+        return SearchPane.findResultRowIndexByContent(filterName);
+      };
+
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.chooseActionByRow(rowIndex, 'Loan details');
+        LoansPage.waitLoading();
+      });
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.chooseActionByRow(rowIndex, 'User details');
+        Users.verifyFirstNameOnUserDetailsPane(user.firstName);
+      });
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.chooseActionByRow(rowIndex, 'Notice policy');
+        NewNoticePolicy.checkPolicyName(noticePolicy);
+      });
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.chooseActionByRow(rowIndex, 'Live version of template');
+        NewNoticePolicyTemplate.checkAfterSaving({
+          name: testData.templateData.name,
+          description: testData.templateData.description,
+          category: { requestId: testData.templateData.category },
+          subject: 'Subject_Test',
+          body: 'Test_email_body{{item.title}}',
+        });
+      });
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.clickOnCell(item.barcode, Number(rowIndex));
+        ItemRecordView.waitLoading();
+      });
     },
   );
 });
