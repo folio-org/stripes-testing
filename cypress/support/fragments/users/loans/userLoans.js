@@ -175,6 +175,17 @@ export default {
     });
   },
   openActionsMenuOfLoanByBarcode,
+  checkActionsMenuOptions: (optionsToCheck, barcode) => {
+    openActionsMenuOfLoanByBarcode(barcode);
+    optionsToCheck.forEach((option) => {
+      if (option.exists) {
+        cy.expect(Button(option.value).exists());
+      } else {
+        cy.expect(Button(option.value).absent());
+      }
+    });
+    openActionsMenuOfLoanByBarcode(barcode);
+  },
   openItemRecordInInventory: (barcode) => {
     cy.get('div[class^="mclRow--"]')
       .contains('div[class^="mclCell-"]', barcode)
@@ -200,6 +211,11 @@ export default {
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
     }
+  },
+  renewAllItems: () => {
+    LoansPage.checkAll();
+    cy.expect(renewButton.exists());
+    cy.do(renewButton.click());
   },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {
     return allContentToCheck.forEach((contentToCheck) => cy.expect(
