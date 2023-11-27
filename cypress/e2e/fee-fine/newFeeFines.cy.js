@@ -18,7 +18,8 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
-// eslint-disable-next-line no-unused-vars
+
+// import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Fee/fine management', () => {
