@@ -65,4 +65,9 @@ export default {
   openLostItemsRequiringActualCostPane() {
     cy.do([Button('Actions').click(), Button('Lost items requiring actual cost').click()]);
   },
+
+  verifyLostItemsRequiringActualCostOptionNotDisplayed() {
+    cy.do(Button('Actions').click());
+    cy.expect(Button('Lost items requiring actual cost').absent());
+  },
 };
