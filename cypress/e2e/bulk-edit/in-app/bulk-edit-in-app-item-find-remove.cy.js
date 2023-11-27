@@ -120,7 +120,7 @@ describe('bulk-edit', () => {
 
         BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', `Check out;${notes.checkIn};true`);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative notes', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Action note','');
+        BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', notes.copy);
 
         TopMenuNavigation.navigateToApp('Inventory');
