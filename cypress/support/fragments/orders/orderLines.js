@@ -226,6 +226,10 @@ export default {
     );
   },
 
+  closePOLEditForm: () => {
+    cy.do(Button({ icon: 'clickable-close-new-line-dialog' }).click());
+  },
+
   getSearchParamsMap(orderNumber, currentDate) {
     const searchParamsMap = new Map();
     // 'date opened' parameter verified separately due to different condition
@@ -368,6 +372,31 @@ export default {
   },
 
   POLineInfoWithReceiptNotRequiredStatus: (institutionId) => {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED),
+    ]);
+    cy.expect(receivingWorkflowSelect.disabled());
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+    ]);
+    cy.wait(4000);
+    cy.do(createNewLocationButton.click());
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      Select('Create inventory*').choose('Instance, holdings, item'),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  POLineInfoWithReceiptNotRequiredStatuswithSelectLocation: (institutionId) => {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
       acquisitionMethodButton.click(),
@@ -1604,6 +1633,20 @@ export default {
         .click(),
     );
     cy.wait(4000);
+  },
+
+  cancelRemoveInstanceConnectionModal: () => {
+    cy.do(
+      Modal({ id: 'break-instance-connection-confirmation' })
+        .find(Button({ id: 'clickable-break-instance-connection-confirmation-cancel' }))
+        .click(),
+    );
+    cy.wait(6000);
+  },
+
+  cancelEditingPOL: () => {
+    cy.do(Button({ id: 'clickable-close-new-line-dialog-footer' }).click());
+    cy.wait(6000);
   },
 
   selectCurrentEncumbrance: (currentEncumbrance) => {

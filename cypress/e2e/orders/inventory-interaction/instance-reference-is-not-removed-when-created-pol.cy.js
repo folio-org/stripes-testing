@@ -47,7 +47,7 @@ describe('Orders', () => {
           id,
           module: 'ORDERS',
           configName: 'disableInstanceMatching',
-          value: '{"isInstanceMatchingDisabled":true}',
+          value: '{"isInstanceMatchingDisabled":false}',
         });
       }
     });
@@ -104,24 +104,11 @@ describe('Orders', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     NewLocation.deleteViaApi(location.id);
-    InventoryInteractionsDefaults.getConfigurationInventoryInteractions({
-      query: '(module==ORDERS and configName==disableInstanceMatching)',
-    }).then((body) => {
-      if (body.configs.length !== 0) {
-        const id = body.configs[0].id;
-        InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
-          id,
-          module: 'ORDERS',
-          configName: 'disableInstanceMatching',
-          value: '{"isInstanceMatchingDisabled":false}',
-        });
-      }
-    });
     Users.deleteViaApi(user.userId);
   });
 
   it(
-    'C374113: Instance reference is removed when user confirms changing that will remove the instance UUID from the POL when creating PO line (thunderjet) (TaaS)',
+    'C374119: Instance reference is NOT removed when user does not confirm changing that will remove the instance UUID from the POL when creating PO line (thunderjet) (TaaS)',
     { tags: [testType.extendedPath, devTeams.thunderjet] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
@@ -136,18 +123,13 @@ describe('Orders', () => {
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
       OrderLines.fillInInvalidDataForPublicationDate();
-      OrderLines.removeInstanceConnectionModal();
-      OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.institutionId);
+      OrderLines.cancelRemoveInstanceConnectionModal();
+      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
       OrderLines.selectPOLInOrder();
       OrderLines.openInstanceInPOL(item.instanceName);
-      instance.hrid = instance.hrid.replace(/\d+$/, (match) => {
-        let numericPart = Number(match);
-        numericPart += 1;
-        return numericPart.toString().padStart(match.length, '0');
-      });
       InventorySearchAndFilter.varifyInstanceKeyDetails(instance);
     },
   );
