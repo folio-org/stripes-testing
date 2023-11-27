@@ -30,7 +30,6 @@ module.exports = defineConfig({
     grepFilterSpecs: true,
     grepOmitFiltered: true,
     rtrAuth: false,
-    DEBUG: '@cypress/grep',
   },
   e2e: {
     async setupNodeEvents(on, config) {
