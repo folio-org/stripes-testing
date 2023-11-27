@@ -16,7 +16,7 @@
     "cypress/assertion-before-screenshot": "warn",
     "cypress/no-force": "warn",
     "cypress/no-async-tests": "error",
-	"no-unused-vars": "error",
-	"no-duplicate-imports": "error",
+    "no-unused-vars": "error",
+	"no-duplicate-imports": "error"
   }
 }

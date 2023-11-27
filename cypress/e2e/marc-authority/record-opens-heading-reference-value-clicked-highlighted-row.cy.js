@@ -1,14 +1,12 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import Logs from '../../support/fragments/data_import/logs/logs';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Importing MARC Authority files', () => {
   const testData = {};
@@ -54,7 +52,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C375089 View Authority Record: record opens in third pane when "Heading/Reference" value clicked for highlighted row (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy('Keyword', 'Joseph');
       MarcAuthorities.selectFirst();
