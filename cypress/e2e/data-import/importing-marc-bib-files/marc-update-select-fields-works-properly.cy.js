@@ -26,11 +26,13 @@ import FileManager from '../../../support/utils/fileManager';
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let instanceHrid;
+    const filePathToUpload = 'oneMarcBib.mrc';
+    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const quantityOfItems = '1';
     // unique file names
-    const marcFileForCreate = `C17019 oneMarcBib.mrc${getRandomPostfix()}`;
-    const editedMarcFileName = `C17019 editedMarcFile.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdate = `C17019 marcFileForUpdate.${getRandomPostfix()}.mrc`;
+    const marcFileForCreate = `C17019 oneMarcBib${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17019 editedMarcFile${getRandomPostfix()}.mrc`;
+    const fileNameForUpdate = `C17019 marcFileForUpdate${getRandomPostfix()}.mrc`;
     // profiles for updating instance
     const instanceMappingProfile = {
       name: `C17019 autotest instance mapping profile.${getRandomPostfix()}`,
@@ -75,28 +77,33 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(instanceActionProfile.name);
-      ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(instanceActionProfile.name);
+        ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(
       'C17019 Check that MARC Update select fields works properly (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
-        DataImport.uploadFileViaApi('oneMarcBib.mrc', marcFileForCreate);
+        DataImport.uploadFile(filePathToUpload, marcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfileToRun);
+        JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFileForCreate);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileForCreate);
         // get instance hrid
         FileDetails.openInstanceInInventory('Created');

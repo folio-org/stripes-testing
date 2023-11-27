@@ -5,7 +5,6 @@ import {
   Section,
   Spinner,
   TextField,
-  TextArea,
   including,
   Checkbox,
   KeyValue,
@@ -62,7 +61,7 @@ export default {
   },
 
   searchByValue: (value) => {
-    cy.do(filterSection.find(TextArea({ id: 'input-inventory-search' })).fillIn(value));
+    cy.do(filterSection.find(TextField({ id: 'input-inventory-search' })).fillIn(value));
     searchButton.click();
   },
 

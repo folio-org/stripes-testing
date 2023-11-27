@@ -345,6 +345,7 @@ describe('data-import', () => {
     };
 
     before('login', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({
         path: SettingsMenu.mappingProfilePath,
         waiter: FieldMappingProfiles.waitLoading,
@@ -352,34 +353,35 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
-      FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+      cy.getAdminToken().then(() => {
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
+        FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        ActionProfiles.deleteActionProfile(marcBibActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(marcBibMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      ActionProfiles.deleteActionProfile(marcBibActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(marcBibMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
@@ -419,7 +421,7 @@ describe('data-import', () => {
         FileDetails.openInstanceInInventory(FileDetails.status.created);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
-
+          cy.pause();
           InventoryInstance.checkIsInstancePresented(
             instanceTitle,
             holdingsPermanentLocation,
@@ -589,8 +591,9 @@ describe('data-import', () => {
         InstanceRecordView.verifyStatisticalCode(
           collectionOfMappingAndActionProfiles[0].mappingProfile.statisticalCodeUI,
         );
-        cy.wait(2000);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForImportUpdate);
         FileDetails.openHoldingsInInventory(FileDetails.status.updated);
         HoldingsRecordView.checkHoldingsType(
           collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType,
@@ -607,8 +610,9 @@ describe('data-import', () => {
           collectionOfMappingAndActionProfiles[1].mappingProfile.relationship,
           'https://www.test.org/bro/10.230',
         );
-        cy.wait(2000);
-        cy.go('back');
+
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForImportUpdate);
         FileDetails.openItemInInventory(FileDetails.status.updated);
         ItemRecordView.verifyMaterialType(
           collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,

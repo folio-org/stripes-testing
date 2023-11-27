@@ -38,15 +38,16 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      cy.getAdminToken();
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      Users.deleteViaApi(firstUser.userId);
-      Users.deleteViaApi(secondUser.userId);
+      cy.getAdminToken().then(() => {
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        Users.deleteViaApi(firstUser.userId);
+        Users.deleteViaApi(secondUser.userId);
+      });
     });
 
     it(
@@ -62,9 +63,10 @@ describe('inventory', () => {
 
         // logout and login as a different user
         cy.logout();
-        cy.login(firstUser.username, firstUser.password);
-
-        cy.visit(TopMenu.inventoryPath);
+        cy.login(firstUser.username, firstUser.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventoryInstances.waitContentLoading,
+        });
         InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();

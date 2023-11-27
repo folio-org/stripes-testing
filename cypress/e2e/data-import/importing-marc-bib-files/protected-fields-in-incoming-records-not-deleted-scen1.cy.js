@@ -32,7 +32,7 @@ describe('data-import', () => {
     const OCLCAuthentication = '100481406/PAOLF';
     const oclcForChanging = '466478385';
     const imported856Field =
-      'Notice et cote du catalogue de la Bibliothèque nationale de France $u http://catalogue.bnf.fr/ark:/12148/cb371881758';
+      'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
 
     before('create test data', () => {
       cy.createTempUser([
@@ -84,19 +84,20 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      MarcFieldProtection.getListViaApi({
-        query: `"field"=="${protectedFieldData.protectedField}"`,
-      }).then((list) => {
-        list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${protectedFieldData.protectedField}"`,
+        }).then((list) => {
+          list.forEach(({ id }) => MarcFieldProtection.deleteViaApi(id));
+        });
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(

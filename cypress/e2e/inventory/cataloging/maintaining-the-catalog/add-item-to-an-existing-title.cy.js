@@ -47,10 +47,13 @@ describe('inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
-      Locations.deleteViaApi(testData.location);
-      Users.deleteViaApi(testData.user.userId);
+      cy.getAdminToken().then(() => {
+        // need to wait until instance apeared in base
+        cy.wait(2000);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
+        Locations.deleteViaApi(testData.location);
+        Users.deleteViaApi(testData.user.userId);
+      });
     });
 
     it(

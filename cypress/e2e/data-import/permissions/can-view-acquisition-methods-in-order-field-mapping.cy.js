@@ -29,7 +29,6 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.waitLoading();
         NewFieldMappingProfile.addIncomingRecordType(FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC);
         NewFieldMappingProfile.addFolioRecordType(FOLIO_RECORD_TYPE.ORDER);
         NewFieldMappingProfile.acquisitionMethodsDropdownListIsVisible();

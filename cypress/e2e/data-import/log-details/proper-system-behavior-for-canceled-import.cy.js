@@ -13,11 +13,11 @@ describe('data-import', () => {
     let user;
     // checking of deleting window needs more time that import of 150 records
     const firstFilePathForUpload = 'oneThousandMarcBib.mrc';
-    const firstMarcFileName = `C353638 autotestFileName_${getRandomPostfix()}`;
+    const firstMarcFileName = `C353638 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     // use the file with 150 records for quick import
     const secondFilePathForUpload = 'marcBibFileForC353638.mrc';
-    const secondMarcFileName = `C353638 autotestFileName_${getRandomPostfix()}`;
+    const secondMarcFileName = `C353638 autotestFileName${getRandomPostfix()}.mrc`;
 
     before('login', () => {
       cy.createTempUser([Permissions.moduleDataImportEnabled.gui]).then((userProperties) => {

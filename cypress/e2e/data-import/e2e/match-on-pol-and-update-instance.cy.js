@@ -46,9 +46,9 @@ describe('data-import', () => {
     const instanceTitle =
       'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
     // unique file names
-    const nameMarcFileForCreate = `C350944 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C350944 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
-    const marcFileName = `C350944 autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C350944 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C350944 marcFileForMatchOnPol${getRandomPostfix()}.mrc`;
+    const marcFileName = `C350944 autotestFile${getRandomPostfix()}.mrc`;
 
     const collectionOfProfiles = [
       {
@@ -142,28 +142,29 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+          (instance) => {
+            if (instance) {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            }
+          },
+        );
       });
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-        Orders.deleteOrderViaApi(orderId[0].id);
-      });
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
-        (instance) => {
-          if (instance) {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          }
-        },
-      );
     });
 
     const createInstanceMappingProfile = (instanceMappingProfile) => {
@@ -265,6 +266,7 @@ describe('data-import', () => {
         Orders.createOrder(order, true).then((orderId) => {
           Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((res) => {
             orderNumber = res[0].poNumber;
+            cy.wait(1500);
             Orders.checkIsOrderCreated(orderNumber);
             OrderLines.addPolToOrder({
               title: pol.title,

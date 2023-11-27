@@ -160,25 +160,27 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // delete profiles
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-      });
-      collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        // delete profiles
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
       });
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${marcFileNameForCreate}`);
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     });
 
     it(
@@ -434,7 +436,6 @@ describe('data-import', () => {
 
             cy.visit(TopMenu.inventoryPath);
             InventorySearchAndFilter.searchInstanceByHRID(initialInstanceHrId);
-            InventoryInstance.openHoldingView();
             HoldingsRecordView.checkTemporaryLocation('-');
             HoldingsRecordView.checkDigitizationPolicy('-');
             HoldingsRecordView.close();

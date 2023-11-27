@@ -33,9 +33,9 @@ describe('data-import', () => {
     const title = 'Introductory Solid State Physics with MATLAB Applications';
     const firstFilePathForUpload = 'marcBibFileForC410708_file1.mrc';
     const secondFilePathForUpload = 'marcBibFileForC410708_file2.mrc';
-    const firstFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
-    const secondFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
-    const editedMarcFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
+    const firstFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
+    const secondFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const matchProfile = {
       profileName: `C410708 001 to Instance HRID_${getRandomPostfix()}`,
@@ -100,6 +100,7 @@ describe('data-import', () => {
       { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         DataImport.uploadFile(firstFilePathForUpload, firstFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(firstFileName);
@@ -148,6 +149,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, secondFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondFileName);

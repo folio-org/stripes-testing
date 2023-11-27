@@ -38,7 +38,7 @@ describe('data-import', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         // need to wait untill instance will be created
-        cy.wait(8000);
+        cy.wait(2000);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -68,14 +68,14 @@ describe('data-import', () => {
           InstanceRecordView.viewSource();
           InstanceRecordView.verifySrsMarcRecord();
           [
-            { field: '010', fieldData: '$a    58020553' },
-            { field: '022', fieldData: '$a 0022-0469' },
-            { field: '035', fieldData: '$a (OCoLC)1604275' },
-            { field: '035', fieldData: '$a (CStRLIN)NYCX1604275S' },
-            { field: '035', fieldData: '$a (NIC)notisABP6388' },
-            { field: '035', fieldData: '$a 366832' },
-            { field: '040', fieldData: '$d CtY $d MBTI $d CtY $d MBTI $d NIC $d CStRLIN $d NIC' },
-            { field: '050', fieldData: '$a BR140 $b .J6' },
+            { field: '010', fieldData: 'a    58020553' },
+            { field: '022', fieldData: 'a 0022-0469' },
+            { field: '035', fieldData: 'a (OCoLC)1604275' },
+            { field: '035', fieldData: 'a (CStRLIN)NYCX1604275S' },
+            { field: '035', fieldData: 'a (NIC)notisABP6388' },
+            { field: '035', fieldData: 'a 366832' },
+            { field: '040', fieldData: 'd CtY ‡d MBTI ‡d CtY ‡d MBTI ‡d NIC ‡d CStRLIN ‡d NIC' },
+            { field: '050', fieldData: 'a BR140 ‡b .J6' },
           ].forEach((data) => {
             InventoryViewSource.verifyFieldInMARCBibSource(data.field, data.fieldData);
           });
