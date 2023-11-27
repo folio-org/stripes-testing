@@ -47,18 +47,13 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
 
   const linkingTagAndValues = [
     {
-      rowIndex: 33,
-      value: 'Sprouse, Chris',
-      tag: 100,
-    },
-    {
       rowIndex: 75,
       value: 'Sprouse, Chris',
       tag: 700,
     },
     {
       rowIndex: 78,
-      value: 'Martin, Laura',
+      value: 'Martin, Laura (Comic book artist)',
       tag: 700,
     },
   ];
@@ -144,48 +139,46 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.deriveNewMarcBibRecord();
-      QuickMarcEditor.verifyRemoveLinkingModal(
-        'Do you want to remove authority linking for this new bibliographic record?',
-      );
+      QuickMarcEditor.verifyRemoveLinkingModal();
       InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
       QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
-      QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkingTagAndValues[1].rowIndex);
+      QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkingTagAndValues[0].rowIndex);
       QuickMarcEditor.checkButtonSaveAndCloseEnable();
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
       QuickMarcEditor.checkUnlinkTooltipText(75, 'Unlink from MARC Authority record');
-      QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues[1].rowIndex);
-      QuickMarcEditor.checkUnlinkModal(
-        'By selecting Unlink, then field 700 will be unlinked from the MARC authority record. Are you shure you want to continue?',
-      );
+      QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues[0].rowIndex);
+      QuickMarcEditor.checkUnlinkModal(testData.tag700);
       QuickMarcEditor.cancelUnlinkingField();
       QuickMarcEditor.checkDeleteModalClosed();
       QuickMarcEditor.checkButtonSaveAndCloseEnable();
-      QuickMarcEditor.checkUnlinkModal(
-        'By selecting Unlink, then field 700 will be unlinked from the MARC authority record. Are you shure you want to continue?',
-      );
+      QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues[0].rowIndex);
+      QuickMarcEditor.checkUnlinkModal(testData.tag700);
       InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
       QuickMarcEditor.checkDeleteModalClosed();
       QuickMarcEditor.checkButtonSaveAndCloseEnable();
-      QuickMarcEditor.checkViewMarcAuthorityTooltipText(linkingTagAndValues[1].rowIndex);
-      QuickMarcEditor.clickViewMarcAuthorityIconInTagField(linkingTagAndValues[1].rowIndex);
+      QuickMarcEditor.checkViewMarcAuthorityTooltipText(linkingTagAndValues[0].rowIndex);
+      QuickMarcEditor.clickViewMarcAuthorityIconInTagField(linkingTagAndValues[0].rowIndex);
       MarcAuthorities.checkFieldAndContentExistence(testData.tag100, testData.tag100content);
 
       cy.go('back');
-      QuickMarcEditor.verifyRemoveLinkingModal(
-        'Do you want to remove authority linking for this new bibliographic record?',
-      );
-      InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
+      cy.wait(1000);
+      QuickMarcEditor.clickKeepLinkingButton();
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout('Record created.');
       InstanceRecordView.verifyInstancePaneExists();
-      InstanceRecordView.verifyContributorNameWithMarcAppIcon(0, 1, testData.tag100content);
-      InstanceRecordView.verifyContributorNameWithMarcAppIcon(
-        4,
-        1,
-        'Martin, Laura (Comic book artist)',
+      InstanceRecordView.verifyContributorNameWithMarcAppIcon(1, 1, linkingTagAndValues[0].value);
+      InstanceRecordView.verifyContributorNameWithMarcAppIcon(4, 1, linkingTagAndValues[1].value);
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        71,
+        testData.tag700,
+        '1',
+        '\\',
+        '$a Sprouse, Chris',
+        '$e artist.',
+        '$0 1357871',
+        '',
       );
-      InventoryInstance.deriveNewMarcBibRecord();
-      QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
     },
   );
 });

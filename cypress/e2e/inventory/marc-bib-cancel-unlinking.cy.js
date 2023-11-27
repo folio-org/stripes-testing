@@ -137,15 +137,11 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
       );
       QuickMarcEditor.checkUnlinkTooltipText(11, 'Unlink from MARC Authority record');
       QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues.rowIndex);
-      QuickMarcEditor.checkUnlinkModal(
-        'By selecting Unlink, then field 100 will be unlinked from the MARC authority record. Are you sure you want to continue?',
-      );
+      QuickMarcEditor.checkUnlinkModal(testData.linkedTag);
       QuickMarcEditor.cancelUnlinkingField();
       QuickMarcEditor.checkDeleteModalClosed();
       QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues.rowIndex);
-      QuickMarcEditor.checkUnlinkModal(
-        'By selecting Unlink, then field 100 will be unlinked from the MARC authority record. Are you sure you want to continue?',
-      );
+      QuickMarcEditor.checkUnlinkModal(testData.linkedTag);
       InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
       QuickMarcEditor.checkDeleteModalClosed();
       QuickMarcEditor.pressCancel();

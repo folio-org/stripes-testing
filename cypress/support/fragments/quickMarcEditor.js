@@ -537,12 +537,14 @@ export default {
     cy.do(unlinkModal.find(cancelUnlinkButtonInsideModal).click());
   },
 
-  checkUnlinkModal(text) {
+  checkUnlinkModal(tag) {
     cy.expect([
       unlinkModal.exists(),
       unlinkButtonInsideModal.exists(),
       cancelUnlinkButtonInsideModal.exists(),
-      unlinkModal.has({ content: including(text) }),
+      unlinkModal.has({
+        message: `By selecting Unlink, then field ${tag} will be unlinked from the MARC authority record. Are you sure you want to continue?`,
+      }),
     ]);
   },
 
@@ -1500,17 +1502,21 @@ export default {
     ]);
   },
 
-  verifyRemoveLinkingModal(contentText) {
+  verifyRemoveLinkingModal() {
     cy.expect([
       removeLinkingModal.exists(),
       removeLinkingModal.find(removeLinkingButton).exists(),
       removeLinkingModal.find(keepLinkingButton).exists(),
-      removeLinkingModal.has({ content: including(contentText) }),
+      removeLinkingModal.has({
+        content: including(
+          'Do you want to remove authority linking for this new bibliographic record?',
+        ),
+      }),
     ]);
   },
 
   clickKeepLinkingButton() {
-    cy.do(keepLinkingButton.click());
+    cy.do(removeLinkingModal.find(keepLinkingButton).click());
   },
 
   verifyAndDismissWrongTagLengthCallout() {
