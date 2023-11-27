@@ -57,7 +57,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C365632 Browse | Verify that the "Type of heading" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorities.chooseTypeOfHeading([headingType]);
