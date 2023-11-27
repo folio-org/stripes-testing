@@ -27,7 +27,7 @@ const defaultInstanceAWithContributor = {
   title: `Test_title_A_${getRandomPostfix()}`,
   contributors: [
     {
-      name: `__A_test_contributor_${getRandomPostfix()}`,
+      name: `!!! __A_test_contributor_${getRandomPostfix()}`,
       primary: false,
     },
   ],
@@ -39,7 +39,7 @@ const defaultInstanceZWithContributor = {
   title: `Test_title_Z_${getRandomPostfix()}`,
   contributors: [
     {
-      name: `__Z_test_contributor_${getRandomPostfix()}`,
+      name: `!!! __Z_test_contributor_${getRandomPostfix()}`,
       primary: false,
     },
   ],

@@ -41,6 +41,8 @@ describe('Inventory -> Contributors Browse', () => {
 
     cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((resUserProperties) => {
       testData.user = resUserProperties;
+      // wait for created user to be available
+      cy.wait(10000);
       cy.login(resUserProperties.username, resUserProperties.password);
       cy.visit(TopMenu.inventoryPath);
     });

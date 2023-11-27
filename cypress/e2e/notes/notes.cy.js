@@ -34,6 +34,8 @@ describe('Note creation', () => {
       Permissions.uiNotesItemDelete.gui,
       Permissions.moduleeHoldingsEnabled.gui,
     ]).then((createdUserProperties) => {
+      // wait until created user is available
+      cy.wait(20000);
       testData.userProperties = createdUserProperties;
 
       cy.login(testData.userProperties.username, testData.userProperties.password, {
