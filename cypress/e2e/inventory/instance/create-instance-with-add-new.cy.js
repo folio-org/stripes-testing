@@ -34,6 +34,7 @@ describe('inventory', () => {
         InventoryNewInstance.fillRequiredValues(instanceTitle);
         InventoryNewInstance.clickSaveAndCloseButton();
 
+        cy.wait(2000);
         InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
 
         cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());

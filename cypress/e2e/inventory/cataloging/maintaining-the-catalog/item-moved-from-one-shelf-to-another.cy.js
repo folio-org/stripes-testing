@@ -41,13 +41,14 @@ describe('inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
-        testData.folioInstances[0].instanceId,
-      );
-      Locations.deleteViaApi(testData.location);
-      ServicePoints.deleteViaApi(testData.servicePoint.id);
-      Users.deleteViaApi(testData.user.userId);
+      cy.getAdminToken().then(() => {
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
+          testData.folioInstances[0].instanceId,
+        );
+        Locations.deleteViaApi(testData.location);
+        ServicePoints.deleteViaApi(testData.servicePoint.id);
+        Users.deleteViaApi(testData.user.userId);
+      });
     });
 
     it(

@@ -168,6 +168,7 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin();
       testData.jobProfileForCreate = jobProfileForCreate;
 

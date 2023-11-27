@@ -85,7 +85,7 @@ const searchTypeDropdown = Select('Search field index');
 const searchInstanceByHRID = (id) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
-    TextArea({ id: 'input-inventory-search' }).fillIn(id),
+    inventorySearchAndFilter.fillIn(id),
     searchButton.click(),
   ]);
 };
@@ -93,7 +93,7 @@ const searchInstanceByHRID = (id) => {
 const searchHoldingsByHRID = (hrid) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Holdings HRID'),
-    TextArea({ id: 'input-inventory-search' }).fillIn(hrid),
+    inventorySearchAndFilter.fillIn(hrid),
     searchButton.click(),
   ]);
   InventoryInstances.waitLoading();
@@ -234,7 +234,7 @@ export default {
   },
 
   byKeywords(kw = '*') {
-    cy.do([keywordInput.fillIn(kw), searchButton.click()]);
+    cy.do([inventorySearchAndFilter.fillIn(kw), searchButton.click()]);
     cy.expect(MultiColumnListRow().exists());
   },
 
@@ -430,7 +430,7 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(keywordInput.fillIn(value));
+    cy.do(inventorySearchAndFilter.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },
@@ -492,7 +492,10 @@ export default {
   },
 
   selectSearchOptions(searchOption, text) {
-    cy.do([inventorySearchAndFilterInput.choose(searchOption), keywordInput.fillIn(text)]);
+    cy.do([
+      inventorySearchAndFilterInput.choose(searchOption),
+      inventorySearchAndFilter.fillIn(text),
+    ]);
   },
 
   clickSearch() {
@@ -724,7 +727,7 @@ export default {
   },
 
   checkSearchQueryText(text) {
-    cy.expect(keywordInput.has({ value: text }));
+    cy.expect(inventorySearchAndFilter.has({ value: text }));
   },
 
   browseOptionsDropdownIncludesOptions(options) {
@@ -787,7 +790,7 @@ export default {
   },
 
   verifySearchFieldIsEmpty() {
-    cy.expect(keywordInput.has({ value: '' }));
+    cy.expect(inventorySearchAndFilter.has({ value: '' }));
   },
 
   verifyAccordionByNameExpanded(accordionName, status = true) {

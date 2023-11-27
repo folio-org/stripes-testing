@@ -8,6 +8,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 
 describe('data-import', () => {
   describe('Importing MARC Holdings files', () => {
@@ -15,8 +16,8 @@ describe('data-import', () => {
     let instanceHrid;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathForUpload = 'oneMarcBib.mrc';
-    const fileName = `C359209 autotestFileName.${getRandomPostfix()}`;
-    const editedMarcFileName = `C359209 editedMarcFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C359209 autotestFileName${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C359209 editedMarcFile${getRandomPostfix()}.mrc`;
     const errorMessage =
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
     const quantityOfItems = {
@@ -118,7 +119,9 @@ describe('data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.noAction, 2);
         // check Error counter in the Summary table
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.error, 3);
-        FileDetails.verifyErrorMessage(errorMessage);
+        FileDetails.openJsonScreen('Holdings');
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab(errorMessage);
       },
     );
   });

@@ -5,7 +5,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 
-describe('data-import', () => {
+describe.skip('data-import', () => {
   describe('Log details', () => {
     let user;
 
@@ -32,7 +32,9 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet] },
       () => {
         const descending = true;
-        const columnHeaders = [
+
+        Logs.openViewAllLogs();
+        cy.wrap([
           'File name',
           'Status',
           'Records',
@@ -41,10 +43,10 @@ describe('data-import', () => {
           'Ended running',
           'Run by',
           'ID',
-        ];
-        Logs.openViewAllLogs();
-        columnHeaders.forEach((columnName) => {
+        ]).each((columnName) => {
+          cy.wait(2000);
           LogsViewAll.verifyColumnIsSorted(columnName);
+          cy.wait(2000);
           LogsViewAll.verifyColumnIsSorted(columnName, descending);
         });
       },

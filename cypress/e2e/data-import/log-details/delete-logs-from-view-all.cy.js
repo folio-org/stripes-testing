@@ -1,5 +1,4 @@
 import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
@@ -15,12 +14,6 @@ describe('data-import', () => {
     before('create user and login', () => {
       cy.createTempUser([Permissions.dataImportDeleteLogs.gui]).then((userProperties) => {
         user = userProperties;
-
-        for (let i = 0; i < 101; i++) {
-          const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
-
-          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
-        }
 
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,

@@ -9,9 +9,9 @@ import {
   matching,
   Accordion,
   TextField,
+  Callout,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
-import InteractorsTools from '../../utils/interactorsTools';
 import InstanceStates from './instanceStates';
 
 const rootSection = Section({ id: 'inventoryform-addinventory' });
@@ -119,11 +119,14 @@ export default {
     cy.expect(rootSection.absent());
   },
   clickSaveAndCloseButton() {
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
     cy.expect(rootSection.absent());
 
-    InteractorsTools.checkCalloutMessage(
-      matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
+    cy.expect(
+      Callout({
+        textContent: matching(new RegExp(InstanceStates.instanceSavedSuccessfully)),
+      }).exists(),
     );
   },
 };

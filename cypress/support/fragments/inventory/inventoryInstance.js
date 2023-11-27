@@ -126,7 +126,7 @@ const buttonLink = Button('Link');
 const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
-const inputSearchField = TextArea({ id: 'input-inventory-search' });
+const inputSearchField = TextField({ id: 'input-inventory-search' });
 const holdingsPane = Pane(including('Holdings'));
 const instancesButton = Button({ id: 'segment-navigation-instances' });
 const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
@@ -1085,9 +1085,10 @@ export default {
 
   openItemByStatus: (status) => {
     cy.get('div[class^="mclRow--"]')
-      .contains('div[class^="mclCell-"]', status)
+      .find('div[class^="mclCell-"]')
+      .contains(status)
       .then((elem) => {
-        elem.parent()[0].querySelector('[href]').click();
+        elem.parent()[0].querySelector('button[type="button"]').click();
       });
   },
 

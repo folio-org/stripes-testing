@@ -29,7 +29,7 @@ describe('data-import', () => {
     const orderNumbers = [];
     const quantityOfOrders = '7';
     const filePathForCreateOrder = 'marcFileForC376973.mrc';
-    const marcFileName = `C375173 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C376973 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C376973 mapping profile ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -118,14 +118,15 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.wrap(orderNumbers).each((number) => {
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
-          Orders.deleteOrderViaApi(orderId[0].id);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.wrap(orderNumbers).each((number) => {
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
+            Orders.deleteOrderViaApi(orderId[0].id);
+          });
         });
       });
     });
