@@ -53,7 +53,7 @@ describe('Finance: Ledgers', () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
-      Ledgers.fillInRolloverForOneTimeOrdersWithAllocation(
+      Ledgers.fillInRolloverForOneTimeOrdersWithoutBudgets(
         secondFiscalYear.code,
         'None',
         'Allocation',
@@ -94,35 +94,17 @@ describe('Finance: Ledgers', () => {
 
   it(
     'C353213: Ledger export settings: last year Fund with NO budget, NO Classes, Export settings-Inactive status (thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(secondFiscalYear.code, 'Inactive', defaultLedger);
       Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
-      cy.pause();
-      Ledgers.checkColumnContentInDownloadedLedgerExportFile(
+      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(
         `${fileName}.csv`,
         1,
         defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '100',
-        '100',
       );
       Ledgers.deleteDownloadedFile(`${fileName}.csv`);
     },
