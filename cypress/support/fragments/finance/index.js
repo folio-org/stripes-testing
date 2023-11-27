@@ -5,4 +5,5 @@ export { default as Funds } from './funds/funds';
 export { default as FundDetails } from './funds/fundDetails';
 export { default as LedgerRollovers } from './ledgers/ledgerRollovers';
 export { default as Ledgers } from './ledgers/ledgers';
+export { default as Transfers } from './transfer/transfers';
 export { default as FinanceHelper } from './financeHelper';

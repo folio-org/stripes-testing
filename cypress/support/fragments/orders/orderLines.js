@@ -226,6 +226,10 @@ export default {
     );
   },
 
+  closePOLEditForm: () => {
+    cy.do(Button({ icon: 'clickable-close-new-line-dialog' }).click());
+  },
+
   getSearchParamsMap(orderNumber, currentDate) {
     const searchParamsMap = new Map();
     // 'date opened' parameter verified separately due to different condition
@@ -380,12 +384,39 @@ export default {
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
-      createNewLocationButton.click(),
     ]);
+    cy.wait(4000);
+    cy.do(createNewLocationButton.click());
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
+      Select('Create inventory*').choose('Instance, holdings, item'),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  POLineInfoWithReceiptNotRequiredStatuswithSelectLocation: (institutionId) => {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED),
+    ]);
+    cy.expect(receivingWorkflowSelect.disabled());
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+    ]);
+    cy.wait(4000);
+    cy.do(Button('Location look-up').click());
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      Select('Create inventory*').choose('Instance, holdings, item'),
       saveAndCloseButton.click(),
     ]);
   },
@@ -884,6 +915,10 @@ export default {
   },
   selectreceivedTitleName: (title) => {
     cy.do(receivedtitleDetails.find(Link(title)).click());
+  },
+
+  openInstanceInPOL: (instanceTitle) => {
+    cy.do(itemDetailsSection.find(Link(instanceTitle)).click());
   },
 
   addFundToPOL(fund, value) {
@@ -1408,7 +1443,6 @@ export default {
     this.addCreateInventory(inventory);
     this.addHolding(location, quantity);
     this.addMaterialType(materialType);
-
     if (shouldSave) {
       this.savePol();
     }
@@ -1581,7 +1615,7 @@ export default {
   },
 
   checkConnectedInstance: () => {
-    cy.expect(Section({ id: 'itemDetails' }).find(Link('Connected')).exists());
+    cy.expect(itemDetailsSection.find(Link('Connected')).exists());
   },
 
   fillInInvalidDataForPublicationDate: () => {
@@ -1589,11 +1623,30 @@ export default {
   },
 
   clickNotConnectionInfoButton: () => {
+    cy.do(itemDetailsSection.find(Button({ icon: 'info' })).click());
+  },
+
+  removeInstanceConnectionModal: () => {
     cy.do(
-      Section({ id: 'itemDetails' })
-        .find(Button({ icon: 'info' }))
+      Modal({ id: 'break-instance-connection-confirmation' })
+        .find(Button({ id: 'clickable-break-instance-connection-confirmation-confirm' }))
         .click(),
     );
+    cy.wait(4000);
+  },
+
+  cancelRemoveInstanceConnectionModal: () => {
+    cy.do(
+      Modal({ id: 'break-instance-connection-confirmation' })
+        .find(Button({ id: 'clickable-break-instance-connection-confirmation-cancel' }))
+        .click(),
+    );
+    cy.wait(6000);
+  },
+
+  cancelEditingPOL: () => {
+    cy.do(Button({ id: 'clickable-close-new-line-dialog-footer' }).click());
+    cy.wait(6000);
   },
 
   selectCurrentEncumbrance: (currentEncumbrance) => {
@@ -1601,10 +1654,12 @@ export default {
   },
 
   openPageCurrentEncumbrance: (title) => {
-    cy.get('#FundDistribution')
-      .find('*[class^="mclCell"]')
-      .contains(title)
-      .invoke('removeAttr', 'target')
+    cy.get('#FundDistribution').find('a').contains(title).invoke('removeAttr', 'target')
+      .click();
+  },
+
+  openPageConnectedInstance: () => {
+    cy.get('#itemDetails').find('a').contains('Connected').invoke('removeAttr', 'target')
       .click();
   },
 

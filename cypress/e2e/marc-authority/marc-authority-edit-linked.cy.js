@@ -135,8 +135,8 @@ describe('MARC Authority -> Edit linked Authority record', () => {
       QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
 
       MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
-      MarcAuthorities.verifyNumberOfTitles(4, '1');
-      MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
+      MarcAuthorities.verifyNumberOfTitles(5, '1');
+      MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
 
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterLinking(

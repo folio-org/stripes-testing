@@ -68,9 +68,8 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       cy.loginAsAdmin().then(() => {
         marcFiles.forEach((marcFile) => {
           cy.visit(TopMenu.dataImportPath);
-          DataImport.waitLoading();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitFileIsUploaded();
+          DataImport.verifyUploadState();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
           JobProfiles.runImportFile();
@@ -104,7 +103,6 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
-      // InventoryInstance.searchByTitle('6d79d2bc-e848-4876-8c75-9f206f9b3023');
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib600FieldValues);

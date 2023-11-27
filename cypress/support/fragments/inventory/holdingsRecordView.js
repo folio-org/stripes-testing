@@ -37,8 +37,28 @@ const holdingsViewPane = Pane({ id: 'ui-inventory.holdingsRecordView' });
 function waitLoading() {
   cy.expect([holdingsRecordViewSection.exists(), actionsButton.exists()]);
 }
+function checkCopyNumber(number) {
+  cy.expect(KeyValue('Copy number').has({ value: number }));
+}
+function checkCallNumberType(number) {
+  cy.expect(KeyValue('Call number type').has({ value: number }));
+}
+function checkCallNumber(callNumber) {
+  cy.expect(KeyValue('Call number').has({ value: callNumber }));
+}
+function checkCallNumberPrefix(prefix) {
+  cy.expect(KeyValue('Call number prefix').has({ value: prefix }));
+}
+function checkCallNumberSuffix(prefix) {
+  cy.expect(KeyValue('Call number suffix').has({ value: prefix }));
+}
 
 export default {
+  checkCopyNumber,
+  checkCallNumberType,
+  checkCallNumber,
+  checkCallNumberPrefix,
+  checkCallNumberSuffix,
   waitLoading,
   newHolding: {
     rowsCountInQuickMarcEditor: 6,
@@ -46,7 +66,7 @@ export default {
 
   // actions
   close: () => {
-    cy.do(closeButton.click());
+    cy.do(Pane({ id: 'ui-inventory.holdingsRecordView' }).find(closeButton).click());
     cy.expect(holdingsRecordViewSection.absent());
   },
   editInQuickMarc: () => {
@@ -116,10 +136,6 @@ export default {
   checkEffectiveLocation: (expectedLocation) => cy.expect(KeyValue('Effective location for holdings', { value: expectedLocation }).exists()),
   checkReadOnlyFields: () => {},
   checkHoldingsType: (type) => cy.expect(KeyValue('Holdings type').has({ value: type })),
-  checkCallNumberType: (number) => cy.expect(KeyValue('Call number type').has({ value: number })),
-  checkCallNumber: (callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
-  checkCallNumberPrefix: (prefix) => cy.expect(KeyValue('Call number prefix').has({ value: prefix })),
-  checkCallNumberSuffix: (prefix) => cy.expect(KeyValue('Call number suffix').has({ value: prefix })),
   checkFormerHoldingsId: (value) => cy.expect(KeyValue('Former holdings ID', { value }).exists()),
   checkIllPolicy: (value) => cy.expect(KeyValue('ILL policy', { value }).exists()),
   checkDigitizationPolicy: (expectedPolicy) => cy.expect(KeyValue('Digitization policy', { value: expectedPolicy }).exists()),
@@ -187,7 +203,6 @@ export default {
     cy.expect(acquisitionAccordion.find(MultiColumnListCell({ row: 0, content: number })).exists());
     cy.expect(acquisitionAccordion.find(Link({ href: including('/orders/lines/view') })).exists());
   },
-  checkCopyNumber: (number) => cy.expect(KeyValue('Copy number').has({ value: number })),
   addElectronicAccess: (type) => {
     cy.expect(electronicAccessAccordion.exists());
     cy.do([
@@ -198,6 +213,17 @@ export default {
     ]);
   },
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
+  getRecordLastUpdatedDate: () => cy.then(() => {
+    return cy
+      .get('div[class^="metaHeaderLabel-"]')
+      .invoke('text')
+      .then((text) => {
+        // extract only date and time
+        const colonIndex = text.indexOf(':');
+        const lastUpdatedDate = text.substring(colonIndex + 2).trim();
+        return lastUpdatedDate;
+      });
+  }),
   getId: () => {
     // parse hodling record id from current url
     cy.url().then((url) => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
@@ -226,5 +252,18 @@ export default {
   checkLastUpdatedDate: (userName) => {
     cy.do(Button(including('Record last updated:')).click());
     cy.expect(HTML(including(`Source: ${userName}`)).exists());
+  },
+  checkHoldingsCallNumber: ({
+    copyNumber,
+    callNumberType,
+    callNumberPrefix,
+    callNumber,
+    callNumberSuffix,
+  }) => {
+    checkCopyNumber(copyNumber);
+    checkCallNumberType(callNumberType);
+    checkCallNumber(callNumber);
+    checkCallNumberPrefix(callNumberPrefix);
+    checkCallNumberSuffix(callNumberSuffix);
   },
 };
