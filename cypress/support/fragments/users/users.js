@@ -48,7 +48,7 @@ export default {
   defaultUser,
   createViaApi: (user) => {
     user.type = 'staff';
-    user.username = `AutotestUsername_${getRandomPostfix()}`;
+    //user.username = `AutotestUsername_${getRandomPostfix()}`;
     return cy.okapiRequest({
       method: 'POST',
       path: 'users',
