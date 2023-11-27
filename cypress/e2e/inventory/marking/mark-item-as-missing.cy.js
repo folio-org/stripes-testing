@@ -90,7 +90,6 @@ describe('inventory', () => {
 
     it(
       'C714 Mark an item as Missing (folijet)',
-
       { tags: [TestTypes.smoke, DevTeams.folijet] },
       () => {
         cy.visit(TopMenu.inventoryPath);
