@@ -330,6 +330,7 @@ export default {
 
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
+    // eslint-disable-next-line no-unused-vars
     Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
       cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
     });
