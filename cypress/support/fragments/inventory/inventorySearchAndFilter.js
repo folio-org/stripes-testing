@@ -506,14 +506,6 @@ export default {
     cy.expect(inventorySearchAndFilterInput.has({ value: option }));
   },
 
-  verifySelectedSearchOption(option) {
-    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
-  },
-
-  verifySelectedSearchOption(option) {
-    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
-  },
-
   clickSearch() {
     cy.do(searchButton.click());
   },
