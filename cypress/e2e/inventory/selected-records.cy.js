@@ -1,8 +1,6 @@
-import TopMenu from '../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryModals from '../../support/fragments/inventory/inventoryModals';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-inventory: selecting / changing records', () => {
   beforeEach('navigates to Inventory', () => {

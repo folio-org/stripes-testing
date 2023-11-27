@@ -1,14 +1,14 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
-import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
-import Requests from '../../../support/fragments/requests/requests';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { Permissions } from '../../../support/dictionary';
+import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
+import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
+import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
+import Requests from '../../../support/fragments/requests/requests';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
 
 describe('inventory', () => {
   describe('Item', () => {

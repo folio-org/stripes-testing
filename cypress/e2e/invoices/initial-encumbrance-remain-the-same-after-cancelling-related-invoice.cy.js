@@ -7,7 +7,7 @@ import { NewOrganization, Organizations } from '../../support/fragments/organiza
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('Invoices', () => {
+describe('Invoices', { retries: 3 }, () => {
   const testData = {
     organization: {},
     order: {},

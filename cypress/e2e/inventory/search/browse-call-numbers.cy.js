@@ -1,9 +1,7 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import devTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-inventory: browse call numbers', () => {
   beforeEach('navigate to inventory', () => {

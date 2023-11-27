@@ -94,7 +94,19 @@ export default {
     this.waitLoading();
     cy.expect(customLabelValue(labelName).has({ value }));
   },
+  getResourceDetails() {
+    cy.get('[data-test-eholdings-detail-pane-contents="true"]').then(($details) => {
+      const title = $details[0].querySelector(
+        '[data-testid="details-view-name-heading"]',
+      ).textContent;
+      const sub = $details[0].querySelector(
+        '[data-testid="details-view-panesub-headline"]',
+      ).textContent;
 
+      cy.wrap({ title, sub }).as('recourceDetails');
+    });
+    return cy.get('@recourceDetails');
+  },
   openExportModal({ exportDisabled = false } = {}) {
     cy.do([actionsButton.click(), exportButton.click()]);
     ExportSettingsModal.verifyModalView({ exportDisabled, packageView: false });

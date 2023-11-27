@@ -1,20 +1,18 @@
-import devTeams from '../../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
-import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import Users from '../../../support/fragments/users/users';
-import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import permissions from '../../../support/dictionary/permissions';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Tags', () => {

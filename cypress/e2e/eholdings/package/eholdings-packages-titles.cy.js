@@ -49,7 +49,7 @@ describe('eHoldings Package + Title', () => {
       EHoldingsPackageView.waitLoading();
 
       EHoldingsPackages.titlesSearchFilter('Title', '', testData.selectedStatus);
-      EHoldingsPackages.clickSearchTitles();
+      EHoldingsPackageView.selectTitleRecord();
 
       eHoldingsResourceView.openExportModal();
       EHoldingsPackageView.clickExportSelectedPackageFields();

@@ -1,19 +1,19 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {

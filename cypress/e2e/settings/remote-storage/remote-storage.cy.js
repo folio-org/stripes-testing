@@ -35,7 +35,6 @@ describe('remote-storage-configuration', () => {
       Configurations.configurations.DematicStagingDirector,
     ].forEach((configuration) => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
-
       configuration.create(name);
       Configurations.verifyCreatedConfiguration(name, configuration);
       const newName = `newAutotestConfigurationName${getRandomPostfix()}`;

@@ -1,12 +1,12 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import { Permissions } from '../../../support/dictionary';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 let user;
 const oclc = '1007797324';

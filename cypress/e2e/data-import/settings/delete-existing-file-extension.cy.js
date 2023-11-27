@@ -1,8 +1,8 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
+import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
   describe('Settings', () => {

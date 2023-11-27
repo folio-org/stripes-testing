@@ -1,9 +1,7 @@
 import Permissions from '../../support/dictionary/permissions';
-import DevTeams from '../../support/dictionary/devTeams';
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
 import Lists from '../../support/fragments/lists/lists';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Create a new list', () => {

@@ -1,6 +1,5 @@
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('data-import', () => {
   describe('Settings', () => {

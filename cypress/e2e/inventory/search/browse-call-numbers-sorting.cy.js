@@ -1,14 +1,14 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import { CALL_NUMBER_TYPE_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory -> Call Number Browse', () => {
   let userId;

@@ -10,7 +10,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
-describe('Title Level Request. Request notice. Title level request -Settings', () => {
+describe('Title Level Request', () => {
   let userData = {};
   let requestId;
   const testData = {

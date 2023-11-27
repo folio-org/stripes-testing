@@ -1,14 +1,14 @@
 import uuid from 'uuid';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Call Number Browse', () => {

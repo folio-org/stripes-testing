@@ -19,7 +19,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Duplicate title level request', () => {
+describe('Title Level Request', () => {
   const userData1 = {};
   const userData2 = {};
   const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();

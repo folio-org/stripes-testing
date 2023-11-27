@@ -1,12 +1,12 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
 
 describe('inventory', () => {
   describe('Single record import', () => {

@@ -1,31 +1,31 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 import {
-  JOB_STATUS_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
-  ACCEPTED_DATA_TYPE_NAMES,
+  JOB_STATUS_NAMES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
-import FileManager from '../../../support/utils/fileManager';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FileManager from '../../../support/utils/fileManager';
+import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {

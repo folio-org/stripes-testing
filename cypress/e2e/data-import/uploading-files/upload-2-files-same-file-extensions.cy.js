@@ -1,10 +1,10 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
   describe('Uploading files', () => {

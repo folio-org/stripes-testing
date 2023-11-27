@@ -1,10 +1,10 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import NewTargetProfile from '../../../support/fragments/settings/inventory/integrations/newTargetProfile';
+import { Permissions } from '../../../support/dictionary';
 import EditTargetProfile from '../../../support/fragments/settings/inventory/integrations/editTargetProfile';
+import NewTargetProfile from '../../../support/fragments/settings/inventory/integrations/newTargetProfile';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Settings', () => {

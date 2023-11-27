@@ -1,11 +1,11 @@
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import TopMenu from '../../../support/fragments/topMenu';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},

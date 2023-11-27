@@ -1,14 +1,13 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
+import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import ConfirmRemoval from '../../../support/fragments/data_import/action_profiles/modals/confirmRemoval';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
-import ConfirmRemoval from '../../../support/fragments/data_import/action_profiles/modals/confirmRemoval';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {

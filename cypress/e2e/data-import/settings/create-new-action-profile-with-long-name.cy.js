@@ -1,10 +1,10 @@
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomStringCode from '../../../support/utils/genereteTextCode';
 
 describe('data-import', () => {
   describe('Settings', () => {

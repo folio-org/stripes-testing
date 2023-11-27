@@ -1,14 +1,14 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { NewOrder, Orders, OrderLineDetails } from '../../support/fragments/orders';
-import Organizations from '../../support/fragments/organizations/organizations';
+import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  ORDER_FORMAT_NAMES,
+  ORDER_STATUSES,
+} from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { NewOrder, OrderLineDetails, Orders } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import {
-  ORDER_STATUSES,
-  ORDER_FORMAT_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
-} from '../../support/constants';
 
 describe('Orders', () => {
   const testData = {

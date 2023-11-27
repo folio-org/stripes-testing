@@ -1,14 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import generateUniqueItemBarcodeWithShift from '../../../support/utils/generateUniqueItemBarcodeWithShift';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import Users from '../../../support/fragments/users/users';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { MultiColumnListHeader } from '../../../../interactors';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import generateUniqueItemBarcodeWithShift from '../../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Item', () => {

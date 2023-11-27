@@ -1,11 +1,10 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import NewExpenseClass from '../../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {

@@ -1,16 +1,14 @@
-import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);

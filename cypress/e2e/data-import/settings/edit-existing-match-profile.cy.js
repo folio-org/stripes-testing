@@ -1,13 +1,13 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import MatchProfileEdit from '../../../support/fragments/data_import/match_profiles/matchProfileEdit';
+import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
-import MatchProfileEdit from '../../../support/fragments/data_import/match_profiles/matchProfileEdit';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {

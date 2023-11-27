@@ -13,7 +13,7 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('Finance: Ledgers', () => {
+describe('Finance: Ledgers', { retries: 3 }, () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };

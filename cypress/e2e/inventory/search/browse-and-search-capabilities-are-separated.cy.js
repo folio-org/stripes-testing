@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 const testData = {
   user: {},

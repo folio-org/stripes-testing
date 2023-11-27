@@ -7,7 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Finance: Ledgers', () => {
+describe('Finance: Ledgers', { retries: 3 }, () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };

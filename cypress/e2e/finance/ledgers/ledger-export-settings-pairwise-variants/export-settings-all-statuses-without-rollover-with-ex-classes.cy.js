@@ -23,6 +23,12 @@ describe('Finance: Ledgers', () => {
     approved: true,
     reEncumber: true,
   };
+  const secondOrder = {
+    ...NewOrder.defaultOneTimeOrder,
+    orderType: 'One-time',
+    approved: true,
+    reEncumber: true,
+  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const allocatedQuantity = '100';
   firstFiscalYear.code = firstFiscalYear.code.slice(0, -1) + '1';
@@ -33,7 +39,6 @@ describe('Finance: Ledgers', () => {
 
   before(() => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
       firstFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = firstFiscalYear.id;
@@ -52,17 +57,16 @@ describe('Finance: Ledgers', () => {
           Funds.addExpensesClass('Electronic');
         });
       });
-
       ServicePoints.getViaApi().then((servicePoint) => {
         servicePointId = servicePoint[0].id;
         NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
           location = res;
         });
-
         Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
           organization.id = responseOrganizations;
         });
         firstOrder.vendor = organization.name;
+        secondOrder.vendor = organization.name;
         cy.visit(TopMenu.ordersPath);
         Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
           firstOrder.id = firstOrderResponse.id;
@@ -80,12 +84,6 @@ describe('Finance: Ledgers', () => {
           OrderLines.backToEditingOrder();
           Orders.openOrder();
         });
-        cy.visit(TopMenu.fundPath);
-        FinanceHelp.searchByName(defaultFund.name);
-        Funds.selectFund(defaultFund.name);
-        Funds.selectBudgetDetails();
-        Funds.editBudget();
-        Funds.changeStatusOfExpClass(0, 'Inactive');
         fileName = `Export-${defaultLedger.code}-${firstFiscalYear.code}`;
       });
     });
@@ -107,14 +105,15 @@ describe('Finance: Ledgers', () => {
   });
 
   it(
-    'C350978: Ledger export settings: current year Fund with budget, Economic (Inactive) Class, Export settings-Inactive status (thunderjet) (TaaS)',
+    'C353207: Ledger export settings: current year Fund with budget, Print (Active) Class, Export settings - All statuses (thunderjet) (TaaS)',
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
-      Ledgers.prepareExportSettings(firstFiscalYear.code, 'Inactive', defaultLedger);
+      Ledgers.prepareExportSettings(firstFiscalYear.code, 'All', defaultLedger);
       Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
+      cy.pause();
       Ledgers.checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
         `${fileName}.csv`,
         1,
@@ -138,7 +137,7 @@ describe('Finance: Ledgers', () => {
         '90',
         'Electronic',
         'Elec',
-        'Inactive',
+        'Active',
         '10',
         '0',
         '0',

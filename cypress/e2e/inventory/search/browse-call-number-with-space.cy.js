@@ -1,15 +1,13 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
+import permissions from '../../../support/dictionary/permissions';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
-import TopMenu from '../../../support/fragments/topMenu';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import permissions from '../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory -> Call Number Browse', () => {
   const item = {

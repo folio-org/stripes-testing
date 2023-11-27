@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import { randomFourDigitNumber } from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
+import { Permissions } from '../../support/dictionary';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Move holdings and item', () => {

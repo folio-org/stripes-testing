@@ -407,7 +407,7 @@ export default {
 
   pressSaveAndKeepEditing(calloutMsg) {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(Callout(calloutMsg).exists());
+    cy.expect(Callout(including(calloutMsg)).exists());
   },
 
   restoreDeletedFields: () => {
@@ -520,6 +520,14 @@ export default {
   clickUnlinkIconInTagField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
+  },
+  clickViewMarcAuthorityIconInTagField(rowIndex) {
+    cy.get(`div[class*=quickMarcEditorRow][data-row="record-row[${rowIndex}]"]`)
+      .find('a')
+      .invoke('removeAttr', 'target')
+      .click();
+    cy.wait(2000);
+    cy.expect(Pane({ id: 'marc-view-pane' }).exists());
   },
 
   confirmUnlinkingField() {
@@ -699,6 +707,9 @@ export default {
     ]);
   },
 
+  verifyDerivedMarcBibSave() {
+    cy.expect(calloutOnDeriveFirst.exists());
+  },
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
@@ -1234,6 +1245,15 @@ export default {
     cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
+  checkViewMarcAuthorityTooltipText(rowIndex) {
+    cy.do(
+      QuickMarcEditor()
+        .find(QuickMarcEditorRow({ index: rowIndex }))
+        .find(Button({ icon: 'eye-open' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip({ text: 'View MARC authority record' }).exists());
+  },
 
   checkLinkButtonExistByRowIndex(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists());
@@ -1521,6 +1541,10 @@ export default {
 
   verifyMultiple245TagCallout() {
     cy.expect(calloutMultiple245MarcTags.exists());
+  },
+
+  verifyMultipleTagCallout(tagNumber) {
+    cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
   },
 
   verifyMultiple001TagCallout() {

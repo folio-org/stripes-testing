@@ -1,14 +1,12 @@
 import permissions from '../../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import Users from '../../../support/fragments/users/users';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import { DevTeams } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Inventory', () => {
   describe('Tags', () => {

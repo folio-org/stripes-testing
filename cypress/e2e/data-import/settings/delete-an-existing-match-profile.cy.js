@@ -1,16 +1,16 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import ConfirmDelete from '../../../support/fragments/data_import/match_profiles/modals/confirmDelete';
 import ExceptionDelete from '../../../support/fragments/data_import/match_profiles/modals/exceptionDelete';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {

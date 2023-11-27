@@ -1,5 +1,5 @@
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import Permissions from '../../support/dictionary/permissions';
-import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
@@ -7,15 +7,16 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Title level request for claimed return item', () => {
   const testData = {
-    folioInstances: InventoryInstances.generateFolioInstances(),
+    folioInstances: InventoryInstances.generateFolioInstances({
+      status: ITEM_STATUS_NAMES.CLAIMED_RETURNED,
+    }),
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   let userData;
@@ -44,13 +45,6 @@ describe('Title level request for claimed return item', () => {
         userData.userId,
         testData.servicePoint.id,
       );
-      Checkout.checkoutItemViaApi({
-        itemBarcode: testData.folioInstances[0].barcodes[0],
-        servicePointId: testData.servicePoint.id,
-        userBarcode: userData.barcode,
-      }).then((resp) => {
-        UserLoans.claimItemReturnedViaApi({ id: testData.folioInstances.itemIds }, resp.id);
-      });
       cy.loginAsAdmin({
         path: SettingsMenu.circulationTitleLevelRequestsPath,
         waiter: TitleLevelRequests.waitLoading,
@@ -80,16 +74,20 @@ describe('Title level request for claimed return item', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('Should not allow title level recall request for claimed return item', () => {
-    InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
-    // Open new request dialog
-    InventoryInstance.checkNewRequestAtNewPane();
-    NewRequest.verifyTitleLevelRequestsCheckbox('checked');
-    // Enter requester barcode
-    NewRequest.enterRequesterBarcode(userData.barcode);
-    // Error message should be displayed
-    NewRequest.verifyErrorMessageForRequestTypeField(
-      'None available for this title and patron combination',
-    );
-  });
+  it(
+    'C375949 Check that user can not create a TLR Recall for item with status Claimed return',
+    { tags: ['extendedPath', 'vega'] },
+    () => {
+      InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
+      // Open new request dialog
+      InventoryInstance.checkNewRequestAtNewPane();
+      NewRequest.verifyTitleLevelRequestsCheckbox('checked');
+      // Enter requester barcode
+      NewRequest.enterRequesterBarcode(userData.barcode);
+      // Error message should be displayed
+      NewRequest.verifyErrorMessageForRequestTypeField(
+        'None available for this title and patron combination',
+      );
+    },
+  );
 });

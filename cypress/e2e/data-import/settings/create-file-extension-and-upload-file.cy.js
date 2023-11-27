@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import NewFileExtension from '../../../support/fragments/settings/dataImport/fileExtensions/newFileExtension';
-import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {

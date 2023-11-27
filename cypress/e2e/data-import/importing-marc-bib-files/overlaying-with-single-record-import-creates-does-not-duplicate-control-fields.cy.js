@@ -1,13 +1,13 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { Permissions } from '../../../support/dictionary';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {

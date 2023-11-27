@@ -1,13 +1,11 @@
-import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import TestType from '../../support/dictionary/testTypes';
+import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
+import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };

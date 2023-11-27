@@ -1,14 +1,12 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
+import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Inventory -> Contributors Browse', () => {
   const testData = {

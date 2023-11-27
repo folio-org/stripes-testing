@@ -19,7 +19,7 @@ import DateTools from '../../support/utils/dateTools';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Edit title level request', () => {
+describe('Title Level Request', () => {
   const userData = {};
   const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const servicePoint2 = ServicePoints.getDefaultServicePointWithPickUpLocation();

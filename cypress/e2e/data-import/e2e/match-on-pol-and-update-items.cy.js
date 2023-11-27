@@ -209,7 +209,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken().Then(() => {
+      cy.getAdminToken().then(() => {
         const itemBarcode = Helper.getRandomBarcode();
 
         // delete created files

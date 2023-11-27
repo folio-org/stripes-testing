@@ -21,7 +21,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Title Level Request. Request queue. TLR', () => {
+describe('Title Level Request', () => {
   let userData = {};
   let requestId;
   const testData = {

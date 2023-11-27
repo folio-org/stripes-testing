@@ -1,16 +1,16 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
