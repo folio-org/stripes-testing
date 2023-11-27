@@ -19,7 +19,6 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     linkedIconText: 'Linked to MARC authority',
     subjectAccordion: 'Subject',
   };
-
   const marcFiles = [
     {
       marc: 'marcBibFileC377033.mrc',
@@ -33,9 +32,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       authorityHeading: 'C377033 Speaking Oratory debating',
     },
   ];
-
   const createdRecordIDs = [];
-
   const bib630AfterLinkingToAuth150 = [
     15,
     testData.tag650,
