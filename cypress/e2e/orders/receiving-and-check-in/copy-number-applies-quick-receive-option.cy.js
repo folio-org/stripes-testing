@@ -39,7 +39,7 @@ describe('orders: Receiving and Check-in', () => {
     ],
   };
   const copyNumber = Helper.getRandomBarcode();
-
+  let orderLineTitle;
   let orderNumber;
   let circ2LocationServicePoint;
   let location;
@@ -71,6 +71,11 @@ describe('orders: Receiving and Check-in', () => {
             );
             OrderLines.backToEditingOrder();
             Orders.openOrder();
+            OrderLines.getOrderLineViaApi({
+              query: `poLineNumber=="*${orderNumber}*"`,
+            }).then((orderLinesResponse) => {
+              orderLineTitle = orderLinesResponse[0].titleOrPackage;
+            });
           });
         },
       );
@@ -98,8 +103,10 @@ describe('orders: Receiving and Check-in', () => {
       Orders.selectFromResultsList(orderNumber);
       Orders.receiveOrderViaActions();
       Receiving.selectLinkFromResultsList();
-      Receiving.receivePieceWithOnlyCopyNumber(0, copyNumber);
-      Receiving.selectInstanceLinkInReceive();
+      Receiving.selectPieceByIndexInExpected();
+      Receiving.fillInCopyNumberInAddPieceModal(copyNumber);
+      Receiving.quickReceivePieceAdd();
+      Receiving.selectInstanceInReceive(orderLineTitle);
       InventoryInstance.openHoldingsAccordion(location.name);
       InventoryInstance.openItemByBarcodeAndIndex('No barcode');
       ItemRecordView.verifyEffectiveLocation(location.name);
