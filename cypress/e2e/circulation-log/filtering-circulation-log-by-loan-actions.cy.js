@@ -22,6 +22,7 @@ import Requests from '../../support/fragments/requests/requests';
 import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 
 describe('Circulation log', () => {
   let userData;
@@ -36,7 +37,7 @@ describe('Circulation log', () => {
     loanable: false,
     renewable: false,
   };
-  const loanablePolicySecBody = {
+  const loanablePolicyBody = {
     id: uuid(),
     name: getTestEntityValue('Loanable'),
     loanable: true,
@@ -53,6 +54,34 @@ describe('Circulation log', () => {
       unlimited: true,
       renewFromId: 'SYSTEM_DATE',
     },
+  };
+  const lostItemFeePolicyBody = {
+    name: getTestEntityValue('minuteLost'),
+    chargeAmountItem: {
+      amount: '0.00',
+      chargeType: 'actualCost',
+    },
+    lostItemProcessingFee: '0.00',
+    chargeAmountItemPatron: false,
+    chargeAmountItemSystem: false,
+    returnedLostItemProcessingFee: false,
+    replacedLostItemProcessingFee: false,
+    replacementProcessingFee: '0.00',
+    replacementAllowed: false,
+    lostItemReturned: 'Charge',
+    itemAgedLostOverdue: {
+      duration: 1,
+      intervalId: 'Minutes',
+    },
+    patronBilledAfterAgedLost: {
+      duration: 1,
+      intervalId: 'Minutes',
+    },
+    lostItemChargeFeeFine: {
+      duration: 1,
+      intervalId: 'Days',
+    },
+    id: uuid(),
   };
   const requestPolicyBody = {
     requestTypes: [REQUEST_TYPES.RECALL],
@@ -80,25 +109,24 @@ describe('Circulation log', () => {
       ItemRecordView.waitLoading();
     });
   };
-  const filterByAction = (filterName, desc) => {
+  const filterByAction = (tableData) => {
     const searchResultsData = {
       userBarcode: userData.barcode,
       itemBarcode: testData.itemBarcode,
       object: 'Loan',
-      circAction: filterName,
-      servicePoint: testData.userServicePoint.name,
-      source: testData.adminSourceRecord,
-      desc,
+      circAction: tableData.circAction,
+      source: tableData.source || testData.adminSourceRecord,
+      desc: tableData.desc,
     };
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.waitLoading();
-    SearchPane.setFilterOptionFromAccordion('loan', filterName);
-    SearchPane.findResultRowIndexByContent(filterName).then((rowIndex) => {
+    SearchPane.setFilterOptionFromAccordion('loan', searchResultsData.circAction);
+    SearchPane.findResultRowIndexByContent(searchResultsData.circAction).then((rowIndex) => {
       SearchPane.checkResultSearch(searchResultsData, rowIndex);
     });
     SearchPane.resetResults();
     SearchPane.searchByItemBarcode(testData.itemBarcode);
-    SearchPane.findResultRowIndexByContent(filterName).then((rowIndex) => {
+    SearchPane.findResultRowIndexByContent(searchResultsData.circAction).then((rowIndex) => {
       SearchPane.checkResultSearch(searchResultsData, rowIndex);
     });
   };
@@ -138,7 +166,7 @@ describe('Circulation log', () => {
         cy.updateItemViaApi(res);
       });
     });
-    cy.createTempUser([permissions.circulationLogAll.gui])
+    cy.createTempUser([permissions.circulationLogAll.gui, permissions.okapiTimersPatch.gui])
       .then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(
@@ -163,7 +191,6 @@ describe('Circulation log', () => {
   });
 
   after('Deleting created entities', () => {
-    Requests.deleteRequestViaApi(testData.requestsId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(userForRequest.userId, [
       testData.userServicePoint.id,
@@ -217,7 +244,10 @@ describe('Circulation log', () => {
       'C16982 Filter Circulation log by Checked out through override (volaris)',
       { tags: [TestTypes.criticalPath, devTeams.volaris] },
       () => {
-        filterByAction('Checked out through override', 'Checked out to proxy: no.');
+        filterByAction({
+          circAction: 'Checked out through override',
+          desc: 'Checked out to proxy: no.',
+        });
       },
     );
 
@@ -242,11 +272,12 @@ describe('Circulation log', () => {
 
   describe('Loanable', () => {
     before('Creating circulation rule', () => {
-      LoanPolicy.createViaApi(loanablePolicySecBody);
+      LoanPolicy.createViaApi(loanablePolicyBody);
       RequestPolicy.createViaApi(requestPolicyBody);
+      LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
       CirculationRules.addRuleViaApi(
         { t: testData.loanTypeId },
-        { l: loanablePolicySecBody.id, r: requestPolicyBody.id },
+        { l: loanablePolicyBody.id, r: requestPolicyBody.id, i: lostItemFeePolicyBody.id },
       ).then((newRule) => {
         testData.addedRule = newRule;
       });
@@ -255,17 +286,25 @@ describe('Circulation log', () => {
         servicePointId: testData.userServicePoint.id,
         userBarcode: userData.barcode,
       });
+      cy.getToken(userData.username, userData.password);
+      UserLoans.updateTimerForAgedToLost('minute');
+      cy.getAdminToken();
     });
 
     after('Deleting circulation rule', () => {
       CirculationRules.deleteRuleViaApi(testData.addedRule);
-      cy.deleteLoanPolicy(loanablePolicySecBody.id);
+      cy.getToken(userData.username, userData.password);
+      UserLoans.updateTimerForAgedToLost('reset');
+      cy.getAdminToken();
+      cy.deleteLoanPolicy(loanablePolicyBody.id);
       RequestPolicy.deleteViaApi(requestPolicyBody.id);
+      LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
       CheckInActions.checkinItemViaApi({
         itemBarcode: testData.itemBarcode,
         servicePointId: testData.userServicePoint.id,
         checkInDate: new Date().toISOString(),
       });
+      Requests.deleteRequestViaApi(testData.requestsId);
     });
 
     it(
@@ -278,6 +317,42 @@ describe('Circulation log', () => {
           userBarcode: userData.barcode,
         });
         checkActionsButton('Renewed');
+      },
+    );
+
+    it(
+      'C17007 Filter circulation log by aged to lost (volaris)',
+      { tags: [TestTypes.criticalPath, devTeams.volaris] },
+      () => {
+        UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
+          const loanData = userLoans.loans[0];
+          const newDueDate = new Date(loanData.loanDate);
+          newDueDate.setDate(newDueDate.getDate() - 1);
+          UserLoans.changeDueDateViaApi(
+            {
+              ...loanData,
+              dueDate: newDueDate,
+              action: 'dueDateChanged',
+            },
+            loanData.id,
+          );
+          cy.wait(60000);
+          filterByAction({
+            circAction: 'Aged to lost',
+            source: 'System',
+            desc: 'Additional information',
+          });
+        });
+        CheckInActions.checkinItemViaApi({
+          itemBarcode: testData.itemBarcode,
+          servicePointId: testData.userServicePoint.id,
+          checkInDate: new Date().toISOString(),
+        });
+        Checkout.checkoutItemViaApi({
+          itemBarcode: testData.itemBarcode,
+          servicePointId: testData.userServicePoint.id,
+          userBarcode: userData.barcode,
+        });
       },
     );
 
@@ -308,7 +383,10 @@ describe('Circulation log', () => {
       'C17003 Filter circulation log by recall requested (volaris)',
       { tags: [TestTypes.criticalPath, devTeams.volaris] },
       () => {
-        filterByAction('Recall requested', 'New due date');
+        filterByAction({
+          circAction: 'Recall requested',
+          desc: 'New due date',
+        });
       },
     );
   });
