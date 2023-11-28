@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -8,6 +9,7 @@ import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHolding
 import Users from '../../../support/fragments/users/users';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
+import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 
@@ -16,7 +18,7 @@ describe('eHoldings', () => {
     const testData = {
       packageName: 'E-Journal',
       selectedStatus: 'Selected',
-      titlesNumber: '0',
+      titlesNumber: 0,
       firstFieldForExport: 'Holdings status',
       secondFieldForExport: 'Notes',
       fileName: `C356417autoTestFile${getRandomPostfix()}.csv`,
@@ -33,6 +35,9 @@ describe('eHoldings', () => {
         Permissions.exportManagerAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
+
+        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
@@ -50,7 +55,7 @@ describe('eHoldings', () => {
 
     it(
       'C356417 Export of selected “Package” without titles. User chooses "Package" fields to export. (spitfire)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyListOfExistingPackagesIsDisplayed();
@@ -63,12 +68,11 @@ describe('eHoldings', () => {
           testData.selectedStatus,
         );
         EHoldingsPackageView.openExportModal();
-        EHoldingsPackageView.verifyExportModal();
         EHoldingsPackageView.clickExportSelectedPackageFields();
         EHoldingsPackageView.selectPackageFieldsToExport(testData.firstFieldForExport);
         EHoldingsPackageView.selectPackageFieldsToExport(testData.secondFieldForExport);
         EHoldingsPackageView.clickExportSelectedTitleFields();
-        EHoldingsPackageView.export();
+        ExportSettingsModal.clickExportButton();
         EHoldingsPackageView.verifyPackageDetailViewIsOpened(
           testData.packageName,
           testData.titlesNumber,

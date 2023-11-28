@@ -25,14 +25,14 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
         permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui
+        permissions.bulkEditEdit.gui,
       ]).then((userProperties) => {
         user1 = userProperties;
       });
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui,
-      ], 'faculty').then((userProperties) => {
+      cy.createTempUser(
+        [permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui],
+        'faculty',
+      ).then((userProperties) => {
         user2 = userProperties;
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
 

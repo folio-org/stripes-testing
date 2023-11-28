@@ -70,7 +70,10 @@ describe('bulk-edit', () => {
             formerIds: ['former-id;special&characters'],
             numberOfItems: 'number-items;special&characters',
           });
-          FileManager.createFile(`cypress/fixtures/${secondValidHoldingHRIDsFileName}`, holdings[0].hrid);
+          FileManager.createFile(
+            `cypress/fixtures/${secondValidHoldingHRIDsFileName}`,
+            holdings[0].hrid,
+          );
         });
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,

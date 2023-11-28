@@ -32,14 +32,16 @@ describe('bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
-            res.electronicAccess = [{
-              // Resource
-              relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
-              uri: '',
-              linkText: '',
-              materialsSpecification: '',
-              publicNote: '',
-            }];
+            res.electronicAccess = [
+              {
+                // Resource
+                relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
+                uri: '',
+                linkText: '',
+                materialsSpecification: '',
+                publicNote: '',
+              },
+            ];
             cy.updateItemViaApi(res);
             FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, res.hrid);
           },
@@ -81,7 +83,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkItemNote(note, 'No');
-      }
+      },
     );
   });
 });
