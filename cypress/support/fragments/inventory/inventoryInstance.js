@@ -359,6 +359,7 @@ export default {
 
   deriveNewMarcBibRecord: () => {
     cy.do(actionsButton.click());
+    cy.wait(2000);
     cy.do(deriveNewMarcBibRecord.click());
     cy.expect([QuickMarcEditor().exists(), QuickMarcEditorRow({ tagValue: '999' }).exists()]);
   },
