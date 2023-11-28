@@ -990,8 +990,8 @@ export default {
 
   clickSelectAllInstancesCheckbox() {
     cy.do(selectAllInstancesCheckbox.click());
-    cy.get(Checkbox({ ariaLabel: 'Select instance' })).each(($checkbox) => {
-      cy.expect(Cypress.$($checkbox).checked);
+    cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
+      cy.expect(checkbox.checked);
     });
   },
 
@@ -1002,8 +1002,8 @@ export default {
   },
 
   verifyAllCheckboxesAreUnchecked() {
-    cy.get(Checkbox({ ariaLabel: 'Select instance' })).each(($checkbox) => {
-      cy.expect(!Cypress.$($checkbox).checked);
+    cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
+      cy.expect(!checkbox.checked);
     });
   },
 };
