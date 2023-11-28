@@ -8,16 +8,20 @@ import {
   Modal,
   RadioButton,
   Accordion,
+  MultiColumnListRow,
   MultiColumnListCell,
   MultiSelect,
   MultiSelectOption,
   Callout,
   TextField,
   FieldSet,
+  ListItem,
 } from '../../../../interactors';
 import EHoldingsPackages from './eHoldingsPackages';
+import EHoldingsResourceView from './eHoldingsResourceView';
 import ExportSettingsModal from './modals/exportSettingsModal';
 import FilterTitlesModal from './modals/filterTitlesModal';
+import NoteEditForm from '../notes/existingNoteEdit';
 
 const actionsButton = Button('Actions');
 const exportButton = Button('Export package (CSV)');
@@ -53,6 +57,10 @@ const packageFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-package-fiel
 const openDropdownMenu = Button({ ariaLabel: 'open menu' });
 const patronRadioButton = FieldSet('Show titles in package to patrons');
 
+const packageInformationSection = Section({ id: 'packageShowInformation' });
+const notesSection = Section({ id: 'packageShowNotes' });
+const titlesSection = Section({ id: 'packageShowTitles' });
+
 export default {
   getCalloutMessageText,
   close() {
@@ -61,7 +69,7 @@ export default {
   },
 
   waitLoading() {
-    cy.expect([Section({ id: 'packageShowInformation' }).exists(), Button('Actions').exists()]);
+    cy.expect([packageInformationSection.exists(), Button('Actions').exists()]);
   },
 
   openExportModal({ exportDisabled = false } = {}) {
@@ -135,9 +143,7 @@ export default {
   verifyPackageDetailViewIsOpened: (name, titlesNumber, status) => {
     cy.expect([
       Pane(name).exists(),
-      Accordion({ id: 'packageShowTitles' })
-        .find(KeyValue('Records found'))
-        .has({ value: `${titlesNumber}` }),
+      packageInformationSection.find(KeyValue('Total titles')).has({ floatValue: titlesNumber }),
       Accordion('Holding status').has({ content: including(status) }),
     ]);
   },
@@ -158,9 +164,7 @@ export default {
   },
 
   getTotalTitlesCount() {
-    return cy
-      .then(() => KeyValue('Total titles').value())
-      .then((count) => parseFloat(count.replace(/,/g, '')));
+    return cy.then(() => packageInformationSection.find(KeyValue('Total titles')).floatValue());
   },
   getFilteredTitlesCount() {
     return cy
@@ -306,5 +310,48 @@ export default {
 
   verifyAlternativeRadio(yesOrNo) {
     cy.expect(KeyValue('Show titles in package to patrons').has({ value: including(yesOrNo) }));
+  },
+  checkNotesSectionContent(notes = []) {
+    // wait for section to load
+    cy.wait(900);
+
+    notes.forEach((note, index) => {
+      cy.expect([
+        notesSection
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(`Title: ${note.title}`) }),
+        notesSection
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(`Details: ${note.details.slice(0, 255)}`) }),
+        notesSection
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: note.type }),
+      ]);
+    });
+
+    if (!notes.length) {
+      cy.expect(notesSection.find(HTML('No notes found')).exists());
+    }
+  },
+  openAddNewNoteForm() {
+    cy.do(notesSection.find(Button('New')).click());
+    NoteEditForm.waitLoading();
+
+    return NoteEditForm;
+  },
+  selectTitleRecord(rowNumber = 0) {
+    cy.do(
+      titlesSection
+        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
+        .find(Button())
+        .click(),
+    );
+
+    EHoldingsResourceView.waitLoading();
+
+    return EHoldingsResourceView;
   },
 };

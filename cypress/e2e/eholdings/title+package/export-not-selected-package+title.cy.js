@@ -115,7 +115,7 @@ describe('eHoldings', () => {
         EHoldingsPackages.openPackage();
         EHoldingsPackageView.waitLoading();
         EHoldingsPackages.titlesSearchFilter('Title', testData.title, testData.selectionStatus);
-        EHoldingsPackages.clickSearchTitles();
+        EHoldingsPackageView.selectTitleRecord();
         eHoldingsResourceView.openExportModal();
         ExportSettingsModal.clickExportButton();
         EHoldingsPackageView.verifyDetailViewPage(testData.title, testData.selectionStatus);
