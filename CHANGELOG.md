@@ -1,10 +1,11 @@
 # Change history for stripes-testing
 
-## 3.1.1 (IN PROGRESS)
+## [3.1.1](https://github.com/folio-org/stripes-testing/tree/v3.1.1) (2023-11-28)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v3.1.0...v3.1.1)
 
 * Publish via GitHub Actions instead of Jenkins. Refs UITEST-117.
 
-## [3.1.0](https://github.com/folio-org/stripes-testing/tree/v3.1.0) (2021-10-24)
+## [3.1.0](https://github.com/folio-org/stripes-testing/tree/v3.1.0) (2023-10-24)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v3.0.0...v3.1.0)
 
 * Export some `@bigtest/react` functions. Refs UITEST-108.
