@@ -523,6 +523,9 @@ export default {
         .has({ content: including('Identifier (all)') }),
       AdvancedSearchRow({ index: rowIndex })
         .find(Select({ label: 'Search options*' }))
+        .has({ content: including('LCCN') }),
+      AdvancedSearchRow({ index: rowIndex })
+        .find(Select({ label: 'Search options*' }))
         .has({ content: including('Personal name') }),
       AdvancedSearchRow({ index: rowIndex })
         .find(Select({ label: 'Search options*' }))

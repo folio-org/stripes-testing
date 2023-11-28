@@ -290,7 +290,16 @@ export default {
     cy.wait('@getUsers');
     this.choosePickupServicePoint(newRequest.pickupServicePoint);
   },
-
+  checkPatronblockedModal(reason) {
+    cy.expect(
+      Modal(' Patron blocked from requesting').has({
+        message: including(reason),
+      }),
+    );
+  },
+  openBlockDetails() {
+    cy.do(Button('View block details').click());
+  },
   checkRequestIsNotAllowedModal() {
     cy.expect(
       Modal('Request not allowed').has({
