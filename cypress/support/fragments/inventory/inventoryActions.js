@@ -10,6 +10,7 @@ const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' })
 const importTypeSelect = Select({ name: 'externalIdentifierType' });
 
 function open() {
+  cy.wait(2000);
   cy.do(Section({ id: 'pane-results' }).find(Button('Actions')).click());
 }
 

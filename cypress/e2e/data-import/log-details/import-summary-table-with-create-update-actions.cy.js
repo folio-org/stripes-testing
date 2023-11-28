@@ -87,8 +87,8 @@ describe.skip('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
-          pernanentLocationUI: LOCATION_NAMES.SECONDARY_FICTION_UI,
+          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          pernanentLocationUI: LOCATION_NAMES.ONLINE_UI,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -144,8 +144,8 @@ describe.skip('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356791 autotest holdings mapping profile.${getRandomPostfix()}`,
           holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-          permanetLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
-          permanetLocationUI: LOCATION_NAMES.SECONDARY_FICTION_UI,
+          permanetLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          permanetLocationUI: LOCATION_NAMES.ONLINE_UI,
           callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
           callNumber: '050$a " " 050$b',
         },

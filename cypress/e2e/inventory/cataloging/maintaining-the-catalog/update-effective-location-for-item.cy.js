@@ -9,7 +9,7 @@ import GenerateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import Users from '../../../../support/fragments/users/users';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import Helper from '../../../../support/fragments/finance/financeHelper';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../../support/constants';
 
 describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
@@ -35,7 +35,7 @@ describe('inventory', () => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             itemData.instanceTypeId = instanceTypes[0].id;
           });
-          cy.getLocations({ limit: 1, query: 'name="Migration"' }).then((res) => {
+          cy.getLocations({ limit: 1, query: `name="${LOCATION_NAMES.ONLINE_UI}"` }).then((res) => {
             itemData.locationId = res.id;
           });
           cy.getHoldingTypes({ limit: 1 }).then((res) => {

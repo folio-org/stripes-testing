@@ -64,7 +64,7 @@ describe('inventory', () => {
         // Populate the following fields: "Permanent location", "Call number"
         // Click on "Save & Close" button
         HoldingsRecordEdit.fillHoldingFields({
-          permanentLocation: LOCATION_NAMES.MIGRATION,
+          permanentLocation: LOCATION_NAMES.ANNEX,
           callNumber: testData.callNumber,
         });
         HoldingsRecordEdit.saveAndClose({ holdingSaved: true });
@@ -87,7 +87,7 @@ describe('inventory', () => {
 
         // Expand the holdings accordion
         InventoryInstance.checkHoldingsTableContent({
-          name: LOCATION_NAMES.MIGRATION_UI,
+          name: LOCATION_NAMES.ANNEX_UI,
           records: [{ barcode: testData.barcode, status: 'Available' }],
         });
       },

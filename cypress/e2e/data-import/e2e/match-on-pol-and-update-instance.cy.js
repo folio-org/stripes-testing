@@ -315,8 +315,8 @@ describe('data-import', () => {
 
         FileDetails.openInstanceInInventory('Updated');
         InventoryInstance.checkIsInstanceUpdated();
-        InventoryInstance.checkIsHoldingsCreated([`${LOCATION_NAMES.PRIMARY_FICTION_UI} >`]);
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.PRIMARY_FICTION_UI} >`);
+        InventoryInstance.checkIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InventoryInstance.checkIsItemCreated(itemBarcode);
         InventoryInstance.viewSource();
         InventoryViewSource.verifyBarcodeInMARCBibSource(itemBarcode);

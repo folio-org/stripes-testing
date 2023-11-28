@@ -70,7 +70,7 @@ describe('Inventory -> Call Number Browse', () => {
         InventoryInstance.pressAddHoldingsButton();
         // #4 In "Location" accordion:
         // * Select any value in "Permanent" dropdown in "Location" accordion
-        HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.MIGRATION);
+        HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.ANNEX);
         // * Select "Other scheme" in "Call number type" dropdown
         HoldingsRecordEdit.chooseCallNumberType(CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME);
         // * Input value in "Call number" field ("Holdings call number" section of "Location" accordion):
@@ -94,7 +94,7 @@ describe('Inventory -> Call Number Browse', () => {
       InventoryInstance.pressAddHoldingsButton();
       // #11 In "Location" accordion:
       // * Select any value in "Permanent" dropdown in "Location" accordion
-      HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.PRIMARY_FICTION_UI);
+      HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
       // #12 Click "Save & close"
       HoldingsRecordEdit.saveAndClose();
 
@@ -107,7 +107,7 @@ describe('Inventory -> Call Number Browse', () => {
       itemsCallNumbers.forEach((callNumber, index) => {
         // #13 Click "Add item" button next to added holding line in detail view
         InventoryInstance.clickAddItemByHoldingName({
-          holdingName: LOCATION_NAMES.PRIMARY_FICTION_UI,
+          holdingName: LOCATION_NAMES.MAIN_LIBRARY_UI,
         });
         // #14 Input:
         // * select any value in "Material type" dropdown
@@ -122,7 +122,7 @@ describe('Inventory -> Call Number Browse', () => {
         // #15 Click "Save & close"
         ItemRecordNew.save();
         InventoryInstance.verifyNumberOfItemsInHoldingByName(
-          LOCATION_NAMES.PRIMARY_FICTION_UI,
+          LOCATION_NAMES.MAIN_LIBRARY_UI,
           index + 1,
         );
       });
@@ -184,7 +184,7 @@ describe('Inventory -> Call Number Browse', () => {
         InventoryInstance.pressAddHoldingsButton();
         // #4 In "Location" accordion:
         // * Select any value in "Permanent" dropdown in "Location" accordion
-        HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.MIGRATION);
+        HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.ANNEX);
         // * Select "Dewey Decimal classification" in "Call number type" dropdown
         HoldingsRecordEdit.chooseCallNumberType(CALL_NUMBER_TYPE_NAMES.DEWAY_DECIMAL);
         // * Input  following value in "Call number" field ("Holdings call number" section of "Location" accordion):
@@ -208,7 +208,7 @@ describe('Inventory -> Call Number Browse', () => {
       InventoryInstance.pressAddHoldingsButton();
       // #11 In "Location" accordion:
       // * Select any value in "Permanent" dropdown in "Location" accordion
-      HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.PRIMARY_FICTION_UI);
+      HoldingsRecordEdit.changePermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
       // #12 Click "Save & close"
       HoldingsRecordEdit.saveAndClose();
 
@@ -221,7 +221,7 @@ describe('Inventory -> Call Number Browse', () => {
       itemsCallNumbers.forEach((callNumber, index) => {
         // #13 Click "Add item" button next to added holding line in detail view
         InventoryInstance.clickAddItemByHoldingName({
-          holdingName: LOCATION_NAMES.PRIMARY_FICTION_UI,
+          holdingName: LOCATION_NAMES.MAIN_LIBRARY_UI,
         });
         // #14 Input:
         // * select any value in "Material type" dropdown
@@ -236,7 +236,7 @@ describe('Inventory -> Call Number Browse', () => {
         // #15 Click "Save & close"
         ItemRecordNew.save();
         InventoryInstance.verifyNumberOfItemsInHoldingByName(
-          LOCATION_NAMES.PRIMARY_FICTION_UI,
+          LOCATION_NAMES.MAIN_LIBRARY_UI,
           index + 1,
         );
       });

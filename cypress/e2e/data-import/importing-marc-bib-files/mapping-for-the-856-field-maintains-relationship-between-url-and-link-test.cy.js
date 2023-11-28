@@ -72,7 +72,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C400649 Create ER Holdings ${getRandomPostfix()}`,
           holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-          permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
           relationship: '"Resource"',
           uri: '856$u',
           linkText: '856$y',

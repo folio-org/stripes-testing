@@ -32,7 +32,10 @@ describe('inventory', () => {
             instanceId = specialInstanceId;
           });
         });
-      cy.loginAsAdmin();
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
 
     afterEach(() => {
@@ -41,7 +44,8 @@ describe('inventory', () => {
     });
 
     const searchAndOpenInstance = (parametr, title) => {
-      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.waitLoading();
+      cy.wait(3000);
       InventorySearchAndFilter.searchByParameter(parametr, title);
       InventoryInstances.selectInstance();
     };

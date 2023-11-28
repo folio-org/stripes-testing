@@ -32,7 +32,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C11122 autotest holdings mapping profile_${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
+          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
           relationship: '"Resource"',
           uri: '856$u',
         },

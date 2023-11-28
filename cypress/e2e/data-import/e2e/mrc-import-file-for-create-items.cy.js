@@ -41,7 +41,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `autotestMappingHoldings${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

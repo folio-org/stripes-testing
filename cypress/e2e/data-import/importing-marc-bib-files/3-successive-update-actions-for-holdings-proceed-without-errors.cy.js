@@ -49,7 +49,7 @@ describe('data-import', () => {
     const holdingsMappingProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
       name: `C401727 Create simple Holdings ${getRandomPostfix()}}`,
-      permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
+      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const holdingsActionProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

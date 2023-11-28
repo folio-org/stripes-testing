@@ -55,7 +55,7 @@ describe('data-import', () => {
           currency: 'USD',
           electronicUnitPrice: '25',
           quantityElectronic: '"1"',
-          locationName: `"${LOCATION_NAMES.MIGRATION}"`,
+          locationName: `"${LOCATION_NAMES.ANNEX}"`,
           locationQuantityPhysical: '"1"',
           locationQuantityElectronic: '"1"',
         },
@@ -68,8 +68,8 @@ describe('data-import', () => {
         mappingProfile: {
           name: `C380446 Create simple holdings for open order ${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          permanentLocation: `"${LOCATION_NAMES.PRIMARY_FICTION}"`,
-          permanentLocationUI: LOCATION_NAMES.PRIMARY_FICTION_UI,
+          permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
+          permanentLocationUI: LOCATION_NAMES.MAIN_LIBRARY_UI,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -222,11 +222,11 @@ describe('data-import', () => {
             instanceHrid = initialInstanceHrId;
           });
           InstanceRecordView.verifyHotlinkToPOL(polNumber);
-          InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.PRIMARY_FICTION_UI} >`]);
+          InstanceRecordView.verifyIsHoldingsCreated([`${LOCATION_NAMES.ONLINE_UI} >`]);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.checkHoldingRecordViewOpened();
           HoldingsRecordView.close();
-          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.PRIMARY_FICTION_UI} >`);
+          InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
           InventoryInstance.openItemByBarcode('No barcode');
           ItemRecordView.waitLoading();
           ItemRecordView.checkHotlinksToCreatedPOL(polNumber);

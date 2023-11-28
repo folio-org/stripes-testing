@@ -33,7 +33,7 @@ describe('data-import', () => {
     const mappingProfileForExport = {
       name: `autotestMappingProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
+      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfileForExport = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
@@ -47,7 +47,7 @@ describe('data-import', () => {
       name: `autotestMappingProf${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       update: true,
-      permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
+      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,

@@ -219,12 +219,12 @@ export const ACQUISITION_METHOD_NAMES = {
 };
 
 export const LOCATION_NAMES = {
-  MIGRATION: 'Migration (Migration)',
-  MIGRATION_UI: 'Migration',
-  PRIMARY_FICTION: 'Primary Fiction - me2PFiction primary',
-  PRIMARY_FICTION_UI: 'Primary Fiction',
-  SECONDARY_FICTION: 'Secondary Fiction - me2SFiction primary',
-  SECONDARY_FICTION_UI: 'Secondary Fiction',
+  ANNEX: 'Annex (KU/CC/DI/A)',
+  ANNEX_UI: 'Annex',
+  ONLINE: 'Online (E)',
+  ONLINE_UI: 'Online',
+  MAIN_LIBRARY: 'Main Library (KU/CC/DI/M)',
+  MAIN_LIBRARY_UI: 'Main Library',
 };
 
 export const INSTANCE_STATUS_TERM_NAMES = {
