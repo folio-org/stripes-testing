@@ -226,7 +226,7 @@ describe('Invoices', () => {
 
       // Click "Save & close" button in "Create vendor invoice line" form
       InvoiceLineEditForm.clickSaveButton();
-      InvoiceView.checkTableContent([{ poNumber: '', description }]);
+      InvoiceView.checkInvoiceLinesTableContent([{ poNumber: '', description }]);
 
       // Click "Actions" menu button, Select "Edit" option
       InvoiceView.openInvoiceEditForm();
