@@ -88,13 +88,12 @@ export default {
 
     return InvoiceLineEditForm;
   },
-  checkTableContent(records = []) {
+  checkInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.poNumber) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
             .has({ content: including(record.poNumber) }),
         );
       }
@@ -102,8 +101,7 @@ export default {
       if (record.description) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .find(MultiColumnListCell({ row: index, column: 'Description' }))
             .has({ content: including(record.description) }),
         );
       }
@@ -111,8 +109,7 @@ export default {
       if (record.receiptStatus) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 5 }))
+            .find(MultiColumnListCell({ row: index, column: 'Receipt status' }))
             .has({ content: including(record.receiptStatus) }),
         );
       }
@@ -120,8 +117,7 @@ export default {
       if (record.paymentStatus) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 6 }))
+            .find(MultiColumnListCell({ row: index, column: 'Payment status' }))
             .has({ content: including(record.paymentStatus) }),
         );
       }
@@ -156,7 +152,7 @@ export default {
           text: including(`Total number of invoice lines: ${invoiceLines.length}`),
         }),
       );
-      this.checkTableContent(invoiceLines);
+      this.checkInvoiceLinesTableContent(invoiceLines);
     }
   },
   approveInvoice({ isApprovePayEnabled = false } = {}) {

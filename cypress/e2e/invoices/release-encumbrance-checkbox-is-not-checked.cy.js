@@ -105,7 +105,7 @@ describe('Invoices', () => {
 
       // Click "Save & close" button
       InvoiceLineEditForm.clickSaveButton();
-      InvoiceView.checkTableContent([
+      InvoiceView.checkInvoiceLinesTableContent([
         {
           poNumber: testData.order.poNumber,
           description: testData.orderLine.titleOrPackage,
