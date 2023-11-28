@@ -330,6 +330,7 @@ export default {
 
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
+    // eslint-disable-next-line no-unused-vars
     Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
       cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
     });
@@ -348,6 +349,10 @@ export default {
 
   switchToBrowseTab() {
     cy.do(Button({ id: 'mode-navigation-browse' }).click());
+  },
+
+  verifySpecificTabHighlighted(tab) {
+    cy.expect(Button(`${tab}`).has({ default: false }));
   },
 
   verifyCallNumberBrowseEmptyPane() {
@@ -560,6 +565,10 @@ export default {
   verifyTagIsAbsent(tag) {
     this.searchTag(tag);
     cy.expect(HTML('No matching options').exists());
+  },
+
+  verifyResultPaneEmpty() {
+    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
   resetAllAndVerifyNoResultsAppear() {

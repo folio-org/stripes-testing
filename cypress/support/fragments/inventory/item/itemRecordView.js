@@ -199,6 +199,10 @@ export default {
     cy.expect(administrativeDataAccordion.find(KeyValue('Item barcode')).has({ value: barcode }));
   },
 
+  checkCopyNumber: (copyNumber) => {
+    cy.expect(itemDataAccordion.find(KeyValue('Copy number')).has({ value: copyNumber }));
+  },
+
   checkCalloutMessage: () => {
     cy.expect(
       Callout({ textContent: including('The item - HRID  has been successfully saved.') }).exists(),

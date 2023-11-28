@@ -62,6 +62,19 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
+  receivePieceWithOnlyCopyNumber: (rowNumber, copyNumber) => {
+    const recievingFieldName = `receivedItems[${rowNumber}]`;
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      receiveButton.click(),
+      Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
+      TextField({ name: `${recievingFieldName}.copyNumber` }).fillIn(copyNumber),
+      receiveButton.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
   addPiece: (caption, copyNumber, enumeration, chronology) => {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
@@ -224,6 +237,10 @@ export default {
 
   selectInstanceInReceive: (instanceName) => {
     cy.do(Section({ id: 'pane-title-details' }).find(Link(instanceName)).click());
+  },
+
+  selectInstanceLinkInReceive: () => {
+    cy.do(Section({ id: 'pane-title-details' }).find(Link()).click());
   },
 
   selectPOLInReceive: (POLName) => {
