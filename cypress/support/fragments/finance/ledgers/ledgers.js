@@ -937,6 +937,22 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
+  fillInRolloverForOneTimeOrdersWithoutBudgets(fiscalYear) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(6000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
   fillInTestRolloverForOneTimeOrdersWithAllocation(
     fiscalYear,
     rolloverBudgetValue,
