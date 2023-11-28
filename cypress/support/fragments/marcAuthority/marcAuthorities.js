@@ -418,6 +418,10 @@ export default {
     cy.wait(1000);
   },
 
+  verifyActionsSortedBy(value) {
+    cy.expect(Select({ dataTestID: 'sort-by-selection', checkedOptionText: value }).exists());
+  },
+
   actionsSelectCheckbox(value) {
     cy.do(Checkbox(value).click());
   },
@@ -451,6 +455,10 @@ export default {
 
   checkColumnExists(content) {
     cy.expect(ColumnHeader(content).exists());
+  },
+
+  clickOnColumnHeader(content) {
+    cy.do(authoritiesList.clickHeader(content));
   },
 
   chooseTypeOfHeadingAndCheck(headingType, headingTypeA, headingTypeB) {
@@ -865,9 +873,13 @@ export default {
       .then(() => cells);
   },
 
-  checkResultListSortedByColumn(columnIndex) {
+  checkResultListSortedByColumn(columnIndex, isAscending = true) {
     this.getResultsListByColumn(columnIndex).then((cells) => {
-      cy.expect(cells).to.deep.equal(cells.sort());
+      if (isAscending) {
+        cy.expect(cells).to.deep.equal(cells.sort((a, b) => a - b));
+      } else {
+        cy.expect(cells).to.deep.equal(cells.sort((a, b) => b - a));
+      }
     });
   },
 
