@@ -1227,4 +1227,20 @@ export default {
       );
     }
   },
+
+  verifyOrdersCount(ordersCount) {
+    if (ordersCount === 0) {
+      cy.expect(
+        Accordion({ label: including('Acquisition') })
+          .find(MultiColumnList({ id: 'list-instance-acquisitions' }))
+          .absent(),
+      );
+    } else {
+      cy.expect(
+        Accordion({ label: including('Acquisition') })
+          .find(MultiColumnList({ id: 'list-instance-acquisitions' }))
+          .has({ rowCount: ordersCount }),
+      );
+    }
+  },
 };
