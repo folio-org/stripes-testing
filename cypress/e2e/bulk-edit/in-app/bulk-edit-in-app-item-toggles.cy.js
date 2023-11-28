@@ -75,7 +75,7 @@ describe('bulk-edit', () => {
           'Completed with errors',
           'Failed',
         ];
-        statuses.forEach((status) => BulkEditSearchPane.checkLogsStatus(status));
+        statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
 
         BulkEditSearchPane.checkHoldingsCheckbox();
         BulkEditSearchPane.checkUsersCheckbox();
@@ -103,7 +103,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangedResults(item.hrid);
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifyLogsPane();
-        statuses.forEach((status) => BulkEditSearchPane.checkLogsStatus(status));
+        statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
         BulkEditSearchPane.checkHoldingsCheckbox();
         BulkEditSearchPane.checkUsersCheckbox();
         BulkEditSearchPane.checkItemsCheckbox();

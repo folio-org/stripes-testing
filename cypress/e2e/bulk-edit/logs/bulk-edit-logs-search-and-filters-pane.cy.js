@@ -6,7 +6,7 @@ import Users from '../../../support/fragments/users/users';
 let user;
 
 describe('Bulk Edit - Logs', () => {
-  before('create test data', () => {
+  beforeEach('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditCsvView.gui,
@@ -20,7 +20,7 @@ describe('Bulk Edit - Logs', () => {
     });
   });
 
-  after('delete test data', () => {
+  afterEach('delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
@@ -43,14 +43,35 @@ describe('Bulk Edit - Logs', () => {
       'Completed with errors',
       'Failed',
     ];
-    statuses.forEach((status) => BulkEditSearchPane.checkLogsStatus(status));
+    statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
     BulkEditSearchPane.resetAllBtnIsDisabled(false);
     BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Statuses');
     BulkEditSearchPane.clickClearSelectedFiltersButton('Statuses');
     BulkEditSearchPane.verifyLogsPane();
-    BulkEditSearchPane.checkLogsStatus('New');
+    BulkEditSearchPane.checkLogsCheckbox('New');
     BulkEditSearchPane.resetAllBtnIsDisabled(false);
     BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Statuses');
     BulkEditSearchPane.verifyCellsValues(2, 'New');
+  });
+
+  it('C368034 Filters section: Record types (firebird)', { tags: ['smoke', 'firebird'] }, () => {
+    BulkEditSearchPane.openLogsSearch();
+    BulkEditSearchPane.verifySetCriteriaPaneExists();
+    BulkEditSearchPane.verifyLogsRecordTypesAccordionExistsAndUnchecked();
+    BulkEditSearchPane.clickRecordTypesAccordion();
+    BulkEditSearchPane.verifyLogsRecordTypesAccordionCollapsed();
+    BulkEditSearchPane.clickRecordTypesAccordion();
+    BulkEditSearchPane.verifyLogsRecordTypesAccordionExistsAndUnchecked();
+    BulkEditSearchPane.verifyRecordTypesSortedAlphabetically();
+    const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
+    recordTypes.forEach((recordType) => BulkEditSearchPane.checkLogsCheckbox(recordType));
+    BulkEditSearchPane.resetAllBtnIsDisabled(false);
+    BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
+    BulkEditSearchPane.clickClearSelectedFiltersButton('Record types');
+    BulkEditSearchPane.verifyLogsPane();
+    BulkEditSearchPane.checkLogsCheckbox('Users');
+    BulkEditSearchPane.resetAllBtnIsDisabled(false);
+    BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
+    BulkEditSearchPane.verifyCellsValues(1, 'Users');
   });
 });
