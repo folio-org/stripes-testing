@@ -55,7 +55,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C368005 Create holdings for mapping notes ${getRandomPostfix()}`,
-          permanetLocation: `"${LOCATION_NAMES.ANNEX}"`,
+          permanetLocation: `"${LOCATION_NAMES.MIGRATION}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

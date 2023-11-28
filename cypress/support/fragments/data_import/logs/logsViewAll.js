@@ -1,5 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { or, HTML, including } from '@interactors/html';
+import moment from 'moment';
 import {
   Accordion,
   Button,
@@ -48,7 +49,7 @@ const columnName = {
 function waitUIToBeFiltered() {
   // Need some waiting when jobs list is long, UI takes longer to be filtered
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(1800);
+  cy.wait(2000);
 }
 
 function checkByErrorsInImport(...status) {
@@ -257,7 +258,7 @@ export default {
     this.getMultiColumnListCellsValues(this.visibleColumns.ENDED_RUNNING.columnIndex).then(
       (cells) => {
         // convert each cell value to Date object
-        const dates = cells.map((cell) => new Date(cell));
+        const dates = cells.map((cell) => moment(new Date(cell)).format('M/D/YYYY'));
 
         // create new array from the dates and sort this array in descending order
         const sortedDates = [...dates].sort((a, b) => b - a);
@@ -281,6 +282,7 @@ export default {
 
   checkByJobProfileName(jobProfileName) {
     waitUIToBeFiltered();
+
     return cy.get('#list-data-import').then((element) => {
       // only 100 records shows on every page
       const resultCount =
@@ -294,8 +296,7 @@ export default {
   },
 
   checkByInventorySingleRecord(filter) {
-    // need to wait until selected data will be displayed
-    cy.wait(2000);
+    waitUIToBeFiltered();
     return cy.get('#list-data-import').then((element) => {
       // only 100 records shows on every page
       const resultCount =

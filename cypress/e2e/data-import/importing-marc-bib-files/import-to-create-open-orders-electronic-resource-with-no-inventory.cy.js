@@ -42,7 +42,7 @@ describe('data-import', () => {
       currency: 'USD',
       electronicUnitPrice: '"25"',
       quantityElectronic: '"1"',
-      locationName: `"${LOCATION_NAMES.ANNEX}"`,
+      locationName: `"${LOCATION_NAMES.MIGRATION}"`,
       locationQuantityElectronic: '"1"',
     };
     const actionProfile = {

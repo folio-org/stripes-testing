@@ -61,7 +61,7 @@ describe('data-import', () => {
               name: 'permanentLocationId',
               enabled: true,
               path: 'holdings.permanentLocationId',
-              value: `"${LOCATION_NAMES.ONLINE}"`,
+              value: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
             },
           ],
         },

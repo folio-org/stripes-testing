@@ -57,7 +57,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C357552 Create simple holdings ${getRandomPostfix()}`,
-          permanentLocation: LOCATION_NAMES.ONLINE,
+          permanentLocation: LOCATION_NAMES.SECONDARY_FICTION,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

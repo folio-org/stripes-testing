@@ -14,10 +14,10 @@ import getRandomPostfix from '../../utils/stringTools';
 
 const fastAddNewRecordFormDetails = {
   instanceStatusCodeValue: 'uncat',
-  resourceTitle: 'Monograph',
+  resourceTitle: `Monograph ${getRandomPostfix()}`,
   resourceType: 'text',
-  permanentLocationOption: 'Online (E) ',
-  permanentLocationValue: 'Online',
+  permanentLocationOption: 'Migration (Migration) ',
+  permanentLocationValue: 'Migration',
   itemBarcode: `${getRandomPostfix()}Barcode`,
   materialType: 'text',
   permanentLoanType: 'Course reserves',

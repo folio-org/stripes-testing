@@ -35,6 +35,7 @@ const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList(
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
+    cy.wait(1000);
     cy.do(rootForm.find(Button('Save & close')).click());
 
     if (holdingSaved) {

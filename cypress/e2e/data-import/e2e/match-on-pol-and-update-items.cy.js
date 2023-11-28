@@ -428,12 +428,12 @@ describe('data-import', () => {
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkHoldingsType(HOLDINGS_TYPE_NAMES.MONOGRAPH);
         HoldingsRecordView.checkCallNumberType('Library of Congress classification');
-        HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
+        HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.PRIMARY_FICTION_UI);
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.MAIN_LIBRARY_UI);
+        InventoryInstance.openHoldingsAccordion(LOCATION_NAMES.PRIMARY_FICTION_UI);
         InventoryInstance.openItemByBarcode(firstItem.barcode);
         ItemRecordView.verifyItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);
-        ItemRecordView.verifyEffectiveLocation(LOCATION_NAMES.MAIN_LIBRARY_UI);
+        ItemRecordView.verifyEffectiveLocation(LOCATION_NAMES.PRIMARY_FICTION_UI);
         ItemRecordView.closeDetailView();
         InventoryInstance.viewSource();
         InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);

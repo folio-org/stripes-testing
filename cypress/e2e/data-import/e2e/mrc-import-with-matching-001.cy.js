@@ -46,7 +46,7 @@ describe('data-import', () => {
       name: `autoTestMappingProf.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,
       update: true,
-      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+      permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.INSTANCE,

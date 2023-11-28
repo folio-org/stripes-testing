@@ -28,9 +28,9 @@ describe('data-import', () => {
   describe('Log details', () => {
     let user;
     const holdingsData = [
-      { permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI, itemsQuqntity: 3 },
-      { permanentLocation: LOCATION_NAMES.ANNEX_UI, itemsQuqntity: 2 },
-      { permanentLocation: LOCATION_NAMES.ONLINE_UI, itemsQuqntity: 1 },
+      { permanentLocation: LOCATION_NAMES.PRIMARY_FICTION_UI, itemsQuqntity: 3 },
+      { permanentLocation: LOCATION_NAMES.MIGRATION_UI, itemsQuqntity: 2 },
+      { permanentLocation: LOCATION_NAMES.SECONDARY_FICTION_UI, itemsQuqntity: 1 },
     ];
     const title =
       'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.';

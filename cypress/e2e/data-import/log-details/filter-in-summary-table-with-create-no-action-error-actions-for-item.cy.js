@@ -35,7 +35,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C357017 autotest holdings mapping profile_${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          permanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -50,7 +50,7 @@ describe('data-import', () => {
           permanentLoanType: LOAN_TYPE_NAMES.CAN_CIRCULATE,
           temporaryLoanType: `"${LOAN_TYPE_NAMES.COURSE_RESERVES}"`,
           status: '901$a',
-          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
+          permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,

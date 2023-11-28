@@ -26,7 +26,7 @@ describe('inventory', () => {
       barcode: uuid(),
       instanceTitle: `autotestInstance ${getRandomPostfix()}`,
     };
-    const holdingsPermanentLocation = LOCATION_NAMES.ONLINE_UI;
+    const holdingsPermanentLocation = LOCATION_NAMES.SECONDARY_FICTION_UI;
     const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const testData = [ITEM_STATUS_NAMES.IN_TRANSIT, itemData.barcode];
     const newItemBarcode = uuid();

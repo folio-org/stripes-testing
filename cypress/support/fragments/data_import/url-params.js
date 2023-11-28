@@ -5,15 +5,15 @@ export default {
   },
 
   getDateQueryString({ from, end }) {
-    return `completedAfter=${from}&completedBefore=${end}&limit=100&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED`;
+    return `completedAfter=${from}&completedBefore=${end}&limit=100&sortBy=completed_date%2Casc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED&subordinationTypeNotAny=COMPOSITE_PARENT`;
   },
 
   getSingleJobProfileQueryString() {
-    return 'limit=100&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED';
+    return 'limit=100&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED&subordinationTypeNotAny=COMPOSITE_PARENT';
   },
 
   getJobProfileQueryString({ profileId }) {
-    return `limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED`;
+    return `limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED&subordinationTypeNotAny=COMPOSITE_PARENT`;
   },
 
   getUserQueryString({ userId }) {
