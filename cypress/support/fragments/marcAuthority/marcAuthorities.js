@@ -220,6 +220,12 @@ export default {
 
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
+  checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
+    authoritiesList
+      .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
+      .exists(),
+  ),
+
   checkRowsCount: (expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()),
 
   switchToBrowse: () => cy.do(Button({ id: 'segment-navigation-browse' }).click()),
@@ -855,6 +861,12 @@ export default {
           });
       })
       .then(() => cells);
+  },
+
+  checkResultListSortedByColumn(columnIndex) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      cy.expect(cells).to.deep.equal(cells.sort());
+    });
   },
 
   verifyOnlyOneAuthorityRecordInResultsList() {
