@@ -1,6 +1,6 @@
 {
   "name": "@folio/stripes-testing",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
   "publishConfig": {
