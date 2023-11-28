@@ -13,7 +13,7 @@ import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecord
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import LoanTypesSection from '../../../support/fragments/settings/inventory/loanTypes';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
@@ -86,7 +86,9 @@ describe('Inventory', () => {
 
   after('Delete  test data', () => {
     cy.getAdminToken();
+    ServicePoints.deleteViaApi(service.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+    Location.deleteViaApi(location.id);
     [...Array(3)].forEach((_, index) => {
       cy.deleteLoanType(itemData.loanType[index].id);
     });
