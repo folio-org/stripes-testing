@@ -1,4 +1,4 @@
-import Permissions from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
