@@ -157,16 +157,17 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(createJobProfile.profileName);
-      JobProfiles.deleteJobProfile(updateJobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfileItemHrid.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfileItemStatus.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(createJobProfile.profileName);
+        JobProfiles.deleteJobProfile(updateJobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfileItemHrid.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfileItemStatus.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
       });
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);

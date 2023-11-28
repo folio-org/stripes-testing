@@ -47,6 +47,9 @@ const updateLinkedBibFieldsModal = Modal({ id: 'quick-marc-update-linked-bib-fie
 const saveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-update-linked-bib-fields-confirm' }),
 );
+const keepEditingButton = updateLinkedBibFieldsModal.find(
+  Button({ id: 'clickable-quick-marc-update-linked-bib-fields-cancel' }),
+);
 const continueWithSaveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }),
 );
@@ -90,6 +93,8 @@ const calloutInvalidMarcTag = Callout('Invalid MARC tag. Please try again.');
 const calloutNo245MarcTag = Callout('Record cannot be saved without field 245.');
 const calloutMultiple245MarcTags = Callout('Record cannot be saved with more than one field 245.');
 const calloutMultiple001MarcTags = Callout('Record cannot be saved. Can only have one MARC 001.');
+const calloutMultiple010MarcTags = Callout('Record cannot be saved with more than one 010 field');
+const calloutMultiple010Subfields = Callout('010 can only have one $a.');
 const calloutInvalidLDRValue = Callout(
   including('Record cannot be saved. Please enter a valid Leader'),
 );
@@ -405,7 +410,7 @@ export default {
 
   pressSaveAndKeepEditing(calloutMsg) {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(Callout(calloutMsg).exists());
+    cy.expect(Callout(including(calloutMsg)).exists());
   },
 
   restoreDeletedFields: () => {
@@ -519,7 +524,6 @@ export default {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).click());
     cy.expect(unlinkModal.exists());
   },
-
   clickViewMarcAuthorityIconInTagField(rowIndex) {
     cy.get(`div[class*=quickMarcEditorRow][data-row="record-row[${rowIndex}]"]`)
       .find('a')
@@ -708,6 +712,9 @@ export default {
     ]);
   },
 
+  verifyDerivedMarcBibSave() {
+    cy.expect(calloutOnDeriveFirst.exists());
+  },
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
@@ -1250,7 +1257,7 @@ export default {
         .find(Button({ icon: 'eye-open' }))
         .hoverMouse(),
     );
-    cy.expect(Tooltip().has({ text: 'View MARC authority record' }));
+    cy.expect(Tooltip({ text: 'View MARC authority record' }).exists());
   },
 
   checkLinkButtonExistByRowIndex(rowIndex) {
@@ -1392,6 +1399,14 @@ export default {
       ).exists(),
       rootSection.absent(),
       viewMarcSection.exists(),
+    ]);
+  },
+
+  cancelUpdateLinkedBibs() {
+    cy.do(keepEditingButton.click());
+    cy.expect([
+      Modal({ id: 'quick-marc-update-linked-bib-fields' }).absent(),
+      rootSection.exists(),
     ]);
   },
 
@@ -1545,8 +1560,25 @@ export default {
     cy.expect(calloutMultiple245MarcTags.exists());
   },
 
+  verifyMultipleTagCallout(tagNumber) {
+    cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
+  },
+
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
+  },
+
+  verifyAndDismissMultiple010TagCallout() {
+    cy.expect(calloutMultiple010MarcTags.exists());
+    cy.do(calloutMultiple010MarcTags.dismiss());
+    cy.expect(calloutMultiple010MarcTags.absent());
+    cy.expect(rootSection.exists());
+  },
+
+  verifyAndDismissMultiple010SubfieldsCallout() {
+    cy.expect(calloutMultiple010Subfields.exists());
+    cy.do(calloutMultiple010Subfields.dismiss());
+    cy.expect([calloutMultiple010Subfields.absent(), rootSection.exists()]);
   },
 
   verifyInvalidLDRValueCallout(positions) {
@@ -1670,7 +1702,7 @@ export default {
   },
 
   checkAfterSaveAndCloseAuthority() {
-    cy.expect([calloutAfterSaveAndClose.exists(), viewMarcSection.exists()]);
+    cy.expect([calloutAfterSaveAndClose.exists(), rootSection.absent(), viewMarcSection.exists()]);
   },
 
   checkNoDeletePlaceholder() {
@@ -1748,5 +1780,14 @@ export default {
 
   checkEditableQuickMarcFormIsOpened: () => {
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
+  },
+
+  verifyNoDuplicatedFieldsWithTag: (tag) => {
+    cy.get(`input[name*=".tag"][value="${tag}"]`).then((elements) => elements.length === 1);
+  },
+  verifyNumOfFieldsWithTag: (tag, numOfFields) => {
+    cy.get(`input[name*=".tag"][value="${tag}"]`).then(
+      (elements) => elements.length === numOfFields,
+    );
   },
 };

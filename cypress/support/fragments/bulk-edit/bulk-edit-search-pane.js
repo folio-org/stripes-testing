@@ -711,7 +711,13 @@ export default {
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
   },
-
+  verifyAllCheckboxesInShowColumnMenuAreDisabled() {
+    cy.expect(
+      DropdownMenu()
+        .find(Checkbox({ disabled: false }))
+        .absent(),
+    );
+  },
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
@@ -734,7 +740,7 @@ export default {
       DropdownMenu().find(Checkbox('Acquisition format')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Notes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Administrative notes')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),

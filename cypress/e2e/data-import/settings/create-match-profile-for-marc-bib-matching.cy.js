@@ -53,7 +53,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithFolioRecordValue(matchProfile, incomingRecordType);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -98,7 +100,9 @@ describe('data-import', () => {
           incomingRecordType,
         );
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -132,7 +136,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -165,7 +171,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -198,7 +206,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
@@ -231,7 +241,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
   });

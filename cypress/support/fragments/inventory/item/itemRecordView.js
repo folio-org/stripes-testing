@@ -49,13 +49,13 @@ const verifyItemStatusInPane = (itemStatus) => {
 const closeDetailView = () => {
   cy.expect(Pane(including('Item')).exists());
   cy.do(Button({ icon: 'times' }).click());
+  cy.expect(Pane(including('Item')).absent());
 };
 const findRowAndClickLink = (enumerationValue) => {
-  cy.get('div[class^="mclRow-"]')
-    .contains('div[class^="mclCell-"]', enumerationValue)
-    .then((elem) => {
-      elem.parent()[0].querySelector('button').click();
-    });
+  cy.get(`div[class^="mclCell-"]:contains('${enumerationValue}')`).then((cell) => {
+    const row = cell.closest('div[class^="mclRow-"]');
+    row.find('button').click();
+  });
 };
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
 
@@ -124,6 +124,14 @@ export default {
     cy.do(loanAccordion.find(Link({ href: including('/requests?filters=requestStatus') })).click());
   },
 
+  openBorrowerPage() {
+    cy.do(
+      KeyValue('Borrower')
+        .find(Link({ href: including('/users/view') }))
+        .click(),
+    );
+  },
+
   verifyEffectiveLocation: (location) => {
     cy.expect(
       Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }),
@@ -189,6 +197,10 @@ export default {
 
   checkBarcode: (barcode) => {
     cy.expect(administrativeDataAccordion.find(KeyValue('Item barcode')).has({ value: barcode }));
+  },
+
+  checkCopyNumber: (copyNumber) => {
+    cy.expect(itemDataAccordion.find(KeyValue('Copy number')).has({ value: copyNumber }));
   },
 
   checkCalloutMessage: () => {
@@ -259,10 +271,105 @@ export default {
   },
 
   verifyFormerIdentifiers: (identifier) => cy.expect(KeyValue('Former identifier').has({ value: identifier })),
+  verifyShelvingOrder: (orderValue) => cy.expect(KeyValue('Shelving order').has({ value: orderValue })),
+  verifyCallNumber: (callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
   verifyItemPermanentLocation: (value) => {
     cy.get('div[data-testid="item-permanent-location"]')
       .find('div[class*=kvValue]')
       .should('have.text', value);
+  },
+  verifyItemMetadata: (updatedHoldingsDate, updatedItemData, userId) => {
+    const convertedHoldingsDate = new Date(updatedHoldingsDate).getTime();
+    const convertedItemsDate = new Date(updatedItemData.updatedDate).getTime();
+    const timeDifference = (convertedItemsDate - convertedHoldingsDate) / 1000;
+
+    // check that difference in time is less than 1 minute
+    expect(timeDifference).to.be.lessThan(60000);
+    expect(userId).to.eq(updatedItemData.updatedByUserId);
+  },
+  verifyItemCallNumberChangedAfterChangedInHoldings: (
+    createdItemData,
+    updatedItemData,
+    updatedCallNumber,
+  ) => {
+    const updatedEffectiveCallNumberComponents = {
+      callNumber: updatedItemData.effectiveCallNumberComponents.callNumber,
+      prefix: updatedItemData.effectiveCallNumberComponents.prefix,
+      suffix: updatedItemData.effectiveCallNumberComponents.suffix,
+      typeId: updatedItemData.effectiveCallNumberComponents.typeId,
+    };
+    const createdEffectiveCallNumberComponents = {
+      prefix: createdItemData.effectiveCallNumberComponents.prefix,
+      suffix: createdItemData.effectiveCallNumberComponents.suffix,
+      typeId: createdItemData.effectiveCallNumberComponents.typeId,
+    };
+
+    expect(updatedEffectiveCallNumberComponents.callNumber).to.eq(updatedCallNumber);
+    expect(updatedEffectiveCallNumberComponents.prefix).to.eq(
+      createdEffectiveCallNumberComponents.prefix,
+    );
+    expect(updatedEffectiveCallNumberComponents.suffix).to.eq(
+      createdEffectiveCallNumberComponents.suffix,
+    );
+    expect(updatedEffectiveCallNumberComponents.typeId).to.eq(
+      createdEffectiveCallNumberComponents.typeId,
+    );
+  },
+  verifyItemPrefixChangedAfterChangedInHoldings: (
+    createdItemData,
+    updatedItemData,
+    updatedPrefix,
+  ) => {
+    const updatedEffectiveCallNumberComponents = {
+      callNumber: updatedItemData.effectiveCallNumberComponents.callNumber,
+      prefix: updatedItemData.effectiveCallNumberComponents.prefix,
+      suffix: updatedItemData.effectiveCallNumberComponents.suffix,
+      typeId: updatedItemData.effectiveCallNumberComponents.typeId,
+    };
+    const createdEffectiveCallNumberComponents = {
+      callNumber: createdItemData.effectiveCallNumberComponents.callNumber,
+      suffix: createdItemData.effectiveCallNumberComponents.suffix,
+      typeId: createdItemData.effectiveCallNumberComponents.typeId,
+    };
+
+    expect(updatedEffectiveCallNumberComponents.callNumber).to.eq(
+      createdEffectiveCallNumberComponents.callNumber,
+    );
+    expect(updatedEffectiveCallNumberComponents.prefix).to.eq(updatedPrefix);
+    expect(updatedEffectiveCallNumberComponents.suffix).to.eq(
+      createdEffectiveCallNumberComponents.suffix,
+    );
+    expect(updatedEffectiveCallNumberComponents.typeId).to.eq(
+      createdEffectiveCallNumberComponents.typeId,
+    );
+  },
+  verifyItemSuffixChangedAfterChangedInHoldings: (
+    createdItemData,
+    updatedItemData,
+    updatedSuffix,
+  ) => {
+    const updatedEffectiveCallNumberComponents = {
+      callNumber: updatedItemData.effectiveCallNumberComponents.callNumber,
+      prefix: updatedItemData.effectiveCallNumberComponents.prefix,
+      suffix: updatedItemData.effectiveCallNumberComponents.suffix,
+      typeId: updatedItemData.effectiveCallNumberComponents.typeId,
+    };
+    const createdEffectiveCallNumberComponents = {
+      callNumber: createdItemData.effectiveCallNumberComponents.callNumber,
+      prefix: createdItemData.effectiveCallNumberComponents.prefix,
+      typeId: createdItemData.effectiveCallNumberComponents.typeId,
+    };
+
+    expect(updatedEffectiveCallNumberComponents.callNumber).to.eq(
+      createdEffectiveCallNumberComponents.callNumber,
+    );
+    expect(updatedEffectiveCallNumberComponents.prefix).to.eq(
+      createdEffectiveCallNumberComponents.prefix,
+    );
+    expect(updatedEffectiveCallNumberComponents.suffix).to.eq(updatedSuffix);
+    expect(updatedEffectiveCallNumberComponents.typeId).to.eq(
+      createdEffectiveCallNumberComponents.typeId,
+    );
   },
 
   checkElectronicAccess: (relationshipValue, uriValue) => {
@@ -276,5 +383,13 @@ export default {
         .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
         .exists(),
     );
+  },
+
+  verifyLastUpdatedDate(date, userName) {
+    cy.get('button[class^="metaHeaderButton-"]').click();
+    cy.expect([
+      administrativeDataAccordion.find(HTML(including(`Record last updated: ${date}`))).exists(),
+      administrativeDataAccordion.find(HTML(including(`Source: ${userName}`))).exists(),
+    ]);
   },
 };

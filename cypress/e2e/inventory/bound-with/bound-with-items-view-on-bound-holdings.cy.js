@@ -132,15 +132,18 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.firstItemBarcode);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-        testData.secondItemBarcode,
-      );
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
-        testData.instanceIds.instanceId,
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+          testData.firstItemBarcode,
+        );
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
+          testData.secondItemBarcode,
+        );
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
+          testData.instanceIds.instanceId,
+        );
+      });
     });
 
     it(
