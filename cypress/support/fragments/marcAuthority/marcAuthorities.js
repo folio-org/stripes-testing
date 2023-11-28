@@ -54,7 +54,7 @@ const exportButton = authReportModal.find(Button('Export'));
 
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
-const headinfTypeAccordion = Accordion('Type of heading');
+const headingTypeAccordion = Accordion('Type of heading');
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
@@ -220,6 +220,12 @@ export default {
 
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
+  checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
+    authoritiesList
+      .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
+      .exists(),
+  ),
+
   checkRowsCount: (expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()),
 
   switchToBrowse: () => cy.do(Button({ id: 'segment-navigation-browse' }).click()),
@@ -366,7 +372,10 @@ export default {
   },
 
   chooseTypeOfHeading: (headingTypes) => {
-    cy.do(headinfTypeAccordion.clickHeader());
+    cy.do([
+      headingTypeAccordion.clickHeader(),
+      cy.wait(1000), // without wait will immediately close accordion
+    ]);
     headingTypes.forEach((headingType) => {
       cy.do(
         MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
@@ -442,7 +451,7 @@ export default {
 
   chooseTypeOfHeadingAndCheck(headingType, headingTypeA, headingTypeB) {
     cy.do([
-      headinfTypeAccordion.clickHeader(),
+      headingTypeAccordion.clickHeader(),
       MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
         including(headingType),
       ]),
@@ -854,6 +863,12 @@ export default {
       .then(() => cells);
   },
 
+  checkResultListSortedByColumn(columnIndex) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      cy.expect(cells).to.deep.equal(cells.sort());
+    });
+  },
+
   verifyOnlyOneAuthorityRecordInResultsList() {
     this.getResultsListByColumn(1).then((cells) => {
       const authorizedRecords = cells.filter((element) => {
@@ -861,6 +876,12 @@ export default {
       });
       cy.expect(authorizedRecords.length).to.equal(1);
     });
+  },
+
+  verifySelectedTextOfHeadingType: (headingType) => {
+    cy.expect(headingTypeAccordion.exists());
+    cy.do(headingTypeAccordion.clickHeader());
+    cy.expect(MultiSelect({ selected: including(headingType) }).exists());
   },
 
   checkTotalRecordsForOption(option, totalRecords) {

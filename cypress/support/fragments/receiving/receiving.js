@@ -25,6 +25,7 @@ const receivedPiecesAccordionId = 'received';
 const receiveButton = Button('Receive');
 const unreceiveButton = Button('Unreceive');
 const addPieceModal = Modal({ id: 'add-piece-modal' });
+const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
 const searchByParameter = (parameter, value) => {
   cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
@@ -79,7 +80,7 @@ export default {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
-      Button('Add piece').click(),
+      addPieceButton.click(),
       addPieceModal.find(TextField('Caption')).fillIn(caption),
       addPieceModal.find(TextField('Copy number')).fillIn(copyNumber),
       addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
@@ -94,14 +95,30 @@ export default {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
-      Button('Add piece').click(),
+      addPieceButton.click(),
       addPieceModal.find(TextField('Caption')).fillIn(caption),
       addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
     ]);
   },
 
+  addPieceInActions: () => {
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      addPieceButton.click(),
+    ]);
+  },
+
   selectPiece: (caption) => {
     cy.do(Accordion({ id: expectedPiecesAccordionId }).find(MultiColumnListCell(caption)).click());
+  },
+
+  selectPieceByIndexInExpected: (indexNumber = 0) => {
+    cy.do(
+      Accordion({ id: expectedPiecesAccordionId })
+        .find(MultiColumnListRow({ index: indexNumber }))
+        .click(),
+    );
   },
 
   quickReceivePiece: (enumeration) => {
@@ -286,6 +303,10 @@ export default {
 
   quickReceivePieceAdd: () => {
     cy.do(addPieceModal.find(Button('Quick receive')).click());
+  },
+
+  fillInCopyNumberInAddPieceModal: (copynumber) => {
+    cy.do(addPieceModal.find(TextField({ name: 'copyNumber' })).fillIn(copynumber));
   },
 
   receiveAllPhysicalItemsWithBarcodes: (firstBarcode, secondBarcode) => {
