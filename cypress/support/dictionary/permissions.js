@@ -888,4 +888,16 @@ export default {
     internal: 'module.lists.all',
     gui: 'Lists (Admin): All permissions',
   },
+
+  // Licenses
+  licensesSearchAndView: {
+    internal: 'ui-licenses.licenses.view',
+    gui: 'Licenses: Search & view licenses',
+  },
+
+  // Courses
+  coursesAll: {
+    internal: 'ui-courses.all',
+    gui: 'Courses: All permissions',
+  },
 };

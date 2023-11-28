@@ -7,6 +7,7 @@ import {
   PaneSet,
   TextField,
   including,
+  HTML,
 } from '../../../../../interactors';
 import ConfirmDelete from './modals/confirmDelete';
 import { REQUEST_METHOD } from '../../../constants';
@@ -14,13 +15,14 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const noteTypeRootPane = Pane({ id: 'controlled-vocab-pane' });
 const newNoteTypeButton = Button({ id: 'clickable-add-noteTypes', disabled: false });
-const cancelNoteTypeCreationButton = Button({ id: 'clickable-cancel-noteTypes-0' });
-const saveNoteTypeButton = Button({ id: 'clickable-save-noteTypes-0' });
+const cancelNoteTypeCreationButton = Button({ id: including('clickable-cancel-noteTypes-') });
+const saveNoteTypeButton = Button({ id: including('clickable-save-noteTypes-') });
 const editIcon = Button({ id: including('clickable-edit-noteTypes-') });
 const deleteIcon = Button({ id: including('clickable-delete-noteTypes-') });
 const noteTypeInput = TextField();
 const noteTypePane = PaneSet({ id: 'noteTypes' });
 const rowWithText = (noteType) => MultiColumnListRow({ content: including(noteType) });
+const newButton = Button({ id: 'clickable-add-noteTypes' });
 
 export default {
   createNoteTypeViaApi({
@@ -131,5 +133,19 @@ export default {
       rowWithText(noteType).find(editIcon).exists(),
       rowWithText(noteType).find(deleteIcon).absent(),
     ]);
+  },
+
+  checkNewButtonState(isEnabled = true) {
+    cy.expect(newButton.has({ disabled: !isEnabled }));
+  },
+
+  editNoteTypeAndSave(newName) {
+    cy.do([
+      noteTypeInput.fillIn(newName),
+      cy.wait(1000),
+      cy.expect(saveNoteTypeButton.has({ disabled: false })),
+      saveNoteTypeButton.click(),
+    ]);
+    cy.expect(noteTypePane.find(HTML(including(newName))).exists());
   },
 };
