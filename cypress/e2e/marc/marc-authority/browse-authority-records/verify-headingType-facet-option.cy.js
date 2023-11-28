@@ -1,15 +1,15 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import Permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../support/fragments/users/users';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import Permissions from '../../../../support/dictionary/permissions';
+import TopMenu from '../../../../support/fragments/topMenu';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import Users from '../../../../support/fragments/users/users';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
-describe('Importing MARC Authority files', () => {
+describe('MARC -> MARC Authority -> Browse - Authority records', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const fileName = 'marcFileForC365632.mrc';
