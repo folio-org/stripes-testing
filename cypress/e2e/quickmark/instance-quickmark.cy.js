@@ -31,6 +31,8 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       permissions.uiInventorySingleRecordImport.gui,
       permissions.converterStorageAll.gui,
     ]).then((userProperties) => {
+      //  wait for created user to be available
+      cy.wait(20000);
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.inventoryPath,
@@ -144,7 +146,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     'C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)',
     { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] },
     () => {
-      const initialLDRValue = '01677cam\\a22003974c\\4500';
+      const initialLDRValue = '01681cam\\a22003974c\\4500';
       const changesIn06 = ['a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];
       const changesIn07 = ['a', 'b', 'c', 'd', 'i', 'm', 's'];
 

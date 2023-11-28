@@ -149,7 +149,7 @@ const validOCLC = {
   lastRowNumber: 30,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100',
-  ldrValue: '01677cam\\a22003974a\\4500',
+  ldrValue: '01681cam\\a22003974a\\4500',
   tag008BytesProperties: {
     srce: { interactor: TextField('Srce'), defaultValue: '\\' },
     lang: { interactor: TextField('Lang'), defaultValue: 'rus' },
