@@ -1012,7 +1012,7 @@ export default {
       editMARCBibRecordButton.absent(),
     ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());
-    cy.expect(HTML('MARC bibliographic record').exists());
+    cy.expect(HTML('Local MARC bibliographic record').exists());
   },
 
   checkNewRequestAtNewPane() {
