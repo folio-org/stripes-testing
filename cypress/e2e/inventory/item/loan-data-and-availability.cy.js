@@ -11,7 +11,7 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import LoanTypesSection from '../../../support/fragments/settings/inventory/loanTypes';
+import LoanTypesSection from '../../../support/fragments/settings/inventory/items/loanTypes';
 
 describe('Inventory', () => {
   describe('item', () => {
@@ -108,7 +108,7 @@ describe('Inventory', () => {
 
         InventoryItems.edit();
         [...Array(3)].forEach((_, index) => {
-          ItemRecordEdit.chooseAndExistsItemPermanentLoanType(itemData.loanType[index].title);
+          ItemRecordEdit.chooseItemPermanentLoanType(itemData.loanType[index].title);
         });
 
         cy.visit(SettingsMenu.loantypesPath);

@@ -1,4 +1,4 @@
-import { including, Pane, HTML, PaneHeader, NavListItem } from '../../../../../interactors';
+import { including, Pane, HTML, PaneHeader, NavListItem } from '../../../../../../interactors';
 
 const paneHeader = PaneHeader({ id: 'paneHeadercontrolled-vocab-pane' });
 const paneLoanType = Pane('Loan types');
