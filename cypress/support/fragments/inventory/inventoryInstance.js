@@ -1171,10 +1171,6 @@ export default {
         .absent(),
     );
   },
-  goToMarcApp: () => {
-    cy.get('#list-alternative-titles').find('a').invoke('removeAttr', 'target').click();
-    cy.wait(1000);
-  },
   verifyCheckedOutDate: (date) => {
     cy.expect(itemStatusKeyValue.has({ subValue: including(date) }));
   },

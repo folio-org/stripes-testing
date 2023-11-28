@@ -20,6 +20,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     authorityIconText: 'Linked to MARC authority',
     calloutMessage:
       'This record has successfully saved and is in process. Changes may not appear immediately.',
+    accordion: 'Title data',
   };
 
   const marcFiles = [
@@ -131,7 +132,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
         1,
         `${testData.authorityIconText}${marcFiles[0].instanceAlternativeTitle}`,
       );
-      InventoryInstance.goToMarcApp();
+      InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(testData.accordion);
       MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authority110FieldValue);
 
       cy.visit(TopMenu.inventoryPath);
