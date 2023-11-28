@@ -431,6 +431,16 @@ export default {
       });
   },
 
+  verifyTrashIconInvisibleForUser: (user) => {
+    cy.login(user.username, user.password, {
+      path: TopMenu.dataImportPath,
+      waiter: waitLoading,
+    });
+    cy.reload();
+    cy.wait(3000);
+    cy.get('div[class^="listContainer-"] button[icon="trash').should('have.length', 0);
+  },
+
   verifyCancelImportJobModal: () => {
     const headerModalContent = 'Are you sure that you want to cancel this import job?';
     const modalContent =
