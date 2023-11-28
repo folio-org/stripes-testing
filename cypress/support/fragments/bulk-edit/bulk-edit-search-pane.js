@@ -711,7 +711,13 @@ export default {
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
   },
-
+  verifyAllCheckboxesInShowColumnMenuAreDisabled() {
+    cy.expect(
+      DropdownMenu()
+        .find(Checkbox({ disabled: false }))
+        .absent(),
+    );
+  },
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),

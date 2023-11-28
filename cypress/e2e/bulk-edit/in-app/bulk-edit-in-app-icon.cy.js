@@ -15,14 +15,17 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui,
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui,
-        permissions.bulkEditLogsView.gui,
-        permissions.exportManagerAll.gui,
-      ], 'faculty').then((userProperties) => {
+      cy.createTempUser(
+        [
+          permissions.bulkEditView.gui,
+          permissions.bulkEditEdit.gui,
+          permissions.bulkEditUpdateRecords.gui,
+          permissions.uiUserEdit.gui,
+          permissions.bulkEditLogsView.gui,
+          permissions.exportManagerAll.gui,
+        ],
+        'faculty',
+      ).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -72,7 +75,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyBulkEditImage();
         BulkEditSearchPane.verifyPanesBeforeImport();
         BulkEditSearchPane.verifyBulkEditPaneItems();
-      }
+      },
     );
   });
 });
