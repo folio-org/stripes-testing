@@ -10,16 +10,17 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import usersCard from '../../support/fragments/users/usersCard';
 import AgreementsDetails from '../../support/fragments/agreements/agreementViewDetails';
 import getRandomPostfix, { randomFourDigitNumber } from '../../support/utils/stringTools';
-import NotesEholdings from '../../support/fragments/notes/notesEholdings';
+import { NOTE_TYPES } from '../../support/constants';
 
 describe('Notes', () => {
   const fourDigits = randomFourDigitNumber();
-  const urlToEholdings = '/eholdings/providers/38';
   const testData = {
     customNoteTypeName: `C1304NoteType_${getRandomPostfix()}`,
     updatedNoteTypeName: `C1304NoteTypeUPD_${getRandomPostfix()}`,
   };
   let servicePoint;
+  const noteTypeC1304 = NOTE_TYPES.GENERAL;
+  const noteC1304 = { title: `Note ${randomFourDigitNumber()}`, details: 'This is Note 1' };
 
   before('Creating data', () => {
     cy.createTempUser([
@@ -31,6 +32,16 @@ describe('Notes', () => {
       Permissions.uiNotesSettingsEdit.gui,
     ]).then((userProperties) => {
       testData.userProperties = userProperties;
+
+      cy.loginAsAdmin().then(() => {
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.waitLoading();
+        UsersSearchPane.searchByUsername(testData.userProperties.username);
+        UsersSearchPane.waitLoading();
+        usersCard.openNotesSection();
+        AgreementsDetails.createNote({ ...noteC1304, checkoutApp: false }, noteTypeC1304);
+      });
+
       cy.createTempUser([
         Permissions.uiUsersView.gui,
         Permissions.uiAgreementsSearchAndView.gui,
@@ -54,8 +65,8 @@ describe('Notes', () => {
         );
 
         NoteTypes.createNoteTypeViaApi({ id: uuid(), name: testData.customNoteTypeName }).then(
-          (note) => {
-            testData.customNoteTypeId = note.id;
+          (newNoteType) => {
+            testData.customNoteTypeId = newNoteType.id;
           },
         );
       });
@@ -108,8 +119,6 @@ describe('Notes', () => {
     'C1304 Settings | Edit a note type (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      // const noteType = `Note type ${fourDigits}`;
-      // const note1 = { title: 'Note 1', details: 'This is Note 1' };
       cy.login(testData.userC1304Properties.username, testData.userC1304Properties.password, {
         path: TopMenu.notesPath,
         waiter: NoteTypes.waitLoading,
@@ -119,12 +128,13 @@ describe('Notes', () => {
       NoteTypes.checkNoteButtonsState();
       NoteTypes.fillInNoteType(testData.updatedNoteTypeName);
       NoteTypes.saveNoteType(testData.updatedNoteTypeName);
-      cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
-      });
-      //   NotesEholdings.createNote(note.title, note.details);
-      //   NotesEholdings.verifyNoteTitle(note.title);
+
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      UsersSearchPane.searchByUsername(testData.userProperties.username);
+      UsersSearchPane.waitLoading();
+      usersCard.openNotesSection();
+      cy.wait(10000);
     },
   );
 });
