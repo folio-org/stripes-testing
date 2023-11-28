@@ -40,7 +40,10 @@ describe('bulk-edit', () => {
         Users.deleteViaApi(user.userId);
         FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
         FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
-        FileManager.deleteFileFromDownloadsByMask(errorsFromCommittingFileName, `*${matchedRecordsFile}`);
+        FileManager.deleteFileFromDownloadsByMask(
+          errorsFromCommittingFileName,
+          `*${matchedRecordsFile}`,
+        );
       });
     });
 
@@ -69,7 +72,9 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyErrorLabelAfterChanges(editedFileName, 0, 1);
         BulkEditActions.openActions();
         BulkEditActions.downloadErrors();
-        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, ['No change in value required']);
+        ExportFile.verifyFileIncludes(errorsFromCommittingFileName, [
+          'No change in value required',
+        ]);
       },
     );
   });
