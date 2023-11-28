@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
-    const filePath = 'oneThousandMarcBib.mrc';
+    const filePath = 'marcBibFileForC2325.mrc';
     const marcFileName = `C2325 autotestFileName ${getRandomPostfix()}`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
@@ -48,8 +48,6 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
-        // TODO wait until file will be imported
-        cy.wait(7000);
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       },

@@ -64,6 +64,14 @@ export const ITEM_STATUS_NAMES = {
   ORDER_CLOSED: 'Order closed',
 };
 
+export const BUDGET_STATUSES = {
+  ACTIVE: 'Active',
+  CLOZED: 'Clozed',
+  FROZEN: 'Frozed',
+  INACTIVE: 'Inactive',
+  PLANNED: 'Planned',
+};
+
 export const CY_ENV = {
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
@@ -293,6 +301,12 @@ export const VENDOR_NAMES = {
 export const HOLDINGS_TYPE_NAMES = {
   ELECTRONIC: 'Electronic',
   MONOGRAPH: 'Monograph',
+};
+
+export const NOTE_TYPES = {
+  GENERAL: 'General note',
+  NOTE_1516: 'Note type 1516',
+  NOTE_1654: 'Note-type-1654',
 };
 
 export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {

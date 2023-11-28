@@ -17,8 +17,8 @@ module.exports = defineConfig({
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
-  defaultCommandTimeout: 101000,
-  pageLoadTimeout: 120000,
+  defaultCommandTimeout: 51000,
+  pageLoadTimeout: 60000,
   env: {
     OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     OKAPI_TENANT: 'diku',
