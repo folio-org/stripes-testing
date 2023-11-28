@@ -14,6 +14,7 @@ import {
   TextInput,
   TextArea,
   PaneHeader,
+  MultiColumnListHeader,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -29,6 +30,9 @@ import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advan
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
+const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
+  Checkbox({ ariaLabel: 'Select instance' }),
+);
 const singleRecordImportModal = Modal('Single record import');
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button('Search', { type: 'submit' });
@@ -982,5 +986,24 @@ export default {
     } else {
       cy.expect([inventoriesList.exists, inventoriesList.has({ rowCount: 1 })]);
     }
+  },
+
+  clickSelectAllInstancesCheckbox() {
+    cy.do(selectAllInstancesCheckbox.click());
+    cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
+      cy.expect(checkbox.checked);
+    });
+  },
+
+  verifyInventoryLabelText(textLabel) {
+    cy.wrap(Pane({ id: 'pane-results' }).subtitle()).then((element) => {
+      cy.expect(element).contains(textLabel);
+    });
+  },
+
+  verifyAllCheckboxesAreUnchecked() {
+    cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
+      cy.expect(!checkbox.checked);
+    });
   },
 };
