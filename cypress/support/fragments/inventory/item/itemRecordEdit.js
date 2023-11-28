@@ -73,6 +73,6 @@ export default {
   },
   chooseItemPermanentLoanType: (permanentLoanType) => {
     cy.do(loanDataFields.loanType.choose(permanentLoanType));
-    cy.expect(loanDataFields.loanType.find(HTML(including(permanentLoanType))).exists());
+    cy.expect(loanDataFields.loanType.has({ checkedOptionText: permanentLoanType }));
   },
 };
