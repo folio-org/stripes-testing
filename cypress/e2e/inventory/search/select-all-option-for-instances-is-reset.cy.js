@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Permissions from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
