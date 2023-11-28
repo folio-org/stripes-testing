@@ -15,7 +15,7 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import Parallelization from '../../../../support/dictionary/parallelization';
 
-describe('MARC Authority -> Edit linked Authority record', () => {
+describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
   const testData = {
     tag001: '001',
     tag035: '035',
