@@ -302,4 +302,24 @@ export default {
       isDefaultSearchParamsRequired: false,
     });
   },
+
+  checkActionDropdownContent() {
+    const content = [];
+    const expectedContent = ['Edit', 'Print', 'Delete'];
+    const icons = ['edit', 'print', 'trash'];
+    const buttonSelector = 'section[data-testid="marc-view-pane"] button[class*="dropdownItem"]';
+    const iconSelector =
+      'section[data-testid="marc-view-pane"] button[class*="dropdownItem"] svg[class*="icon-"]';
+    cy.get(buttonSelector)
+      .each((button) => {
+        content.push(button.text().trim());
+      })
+      .then(() => {
+        cy.expect(content).to.deep.equal(expectedContent);
+      });
+    cy.get(iconSelector).each((icon, index) => {
+      const regex = new RegExp(icons[index]);
+      cy.expect(icon).to.have.attr('class').match(regex);
+    });
+  },
 };
