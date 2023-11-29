@@ -1,16 +1,16 @@
 import uuid from 'uuid';
-import { Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import { Permissions } from '../../../../support/dictionary';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import getRandomStringCode from '../../../../support/utils/genereteTextCode';
 
 describe('plug-in MARC authority | Browse', () => {
   const testData = {
