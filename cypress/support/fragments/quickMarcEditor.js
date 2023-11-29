@@ -1244,6 +1244,10 @@ export default {
     cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
+  checkLinkButtonToolTipTextByIndex(rowIndex) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Link to MARC Authority record' }));
+  },
   checkUnlinkTooltipText(tag, text) {
     cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
@@ -1515,13 +1519,22 @@ export default {
     ]);
   },
 
-  verifyRemoveLinkingModal(contentText) {
+  verifyRemoveLinkingModal() {
     cy.expect([
       removeLinkingModal.exists(),
       removeLinkingModal.find(removeLinkingButton).exists(),
       removeLinkingModal.find(keepLinkingButton).exists(),
-      removeLinkingModal.has({ content: including(contentText) }),
+      removeLinkingModal.has({
+        content: including(
+          'Do you want to remove authority linking for this new bibliographic record?',
+        ),
+      }),
     ]);
+  },
+
+  confirmRemoveAuthorityLinking() {
+    cy.do(removeLinkingModal.find(removeLinkingButton).click());
+    cy.expect([removeLinkingModal.absent(), rootSection.exists()]);
   },
 
   clickKeepLinkingButton() {
