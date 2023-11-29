@@ -48,9 +48,13 @@ const checkboxes = {
 function addNatureOfContent() {
   cy.do(addNatureOfContentButton.click());
 }
+function addStatisticalCode() {
+  cy.do(Button('Add statistical code').click());
+}
 
 export default {
   addNatureOfContent,
+  addStatisticalCode,
   close: () => cy.do(closeButton.click()),
   waitLoading: () => cy.expect(Section({ id: 'instance-form' }).exists()),
   // related with Actions->Overlay
@@ -310,6 +314,15 @@ export default {
             .trim();
         });
         return Array.from(resultArray);
+      });
+  },
+  getStatisticalCodesFromInstance: () => {
+    return cy
+      .get('[class^=overlay-]')
+      .find('div[class^=optionSegment-]')
+      .then((elements) => {
+        const arrayOfCodes = [...elements].map((el) => el.innerText);
+        return arrayOfCodes;
       });
   },
 };

@@ -22,8 +22,7 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import devTeams from '../../support/dictionary/devTeams';
-// eslint-disable-next-line no-unused-vars
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+// import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
 describe('Fee/fine management', () => {
