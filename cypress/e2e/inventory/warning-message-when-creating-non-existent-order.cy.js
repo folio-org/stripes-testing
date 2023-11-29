@@ -22,6 +22,7 @@ describe('Inventory interaction', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
   });
 
