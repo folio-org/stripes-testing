@@ -150,11 +150,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         linkedField.seventhBox,
       );
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(11);
-      QuickMarcEditor.checkUnlinkTooltipText('100', 'Unlink from MARC Authority record');
+      QuickMarcEditor.checkUnlinkTooltipText(11, 'Unlink from MARC Authority record');
       QuickMarcEditor.clickUnlinkIconInTagField(11);
-      QuickMarcEditor.checkUnlinkModal(
-        'By selecting Unlink, then field 100 will be unlinked from the MARC authority record. Are you sure you want to continue?',
-      );
+      QuickMarcEditor.checkUnlinkModal(testData.tag100);
       QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(
         unlinkedField.rowIndex,
