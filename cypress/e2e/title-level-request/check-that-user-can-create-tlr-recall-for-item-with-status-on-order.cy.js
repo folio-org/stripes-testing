@@ -1,5 +1,3 @@
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
