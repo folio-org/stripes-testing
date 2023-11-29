@@ -25,7 +25,7 @@ module.exports = defineConfig({
     diku_login: 'diku_admin',
     diku_password: 'admin',
     is_kiwi_release: false,
-    downloadTimeout: 1000,
+    downloadTimeout: 2000,
     allure: 'true',
     grepFilterSpecs: true,
     grepOmitFiltered: true,
@@ -51,7 +51,7 @@ module.exports = defineConfig({
         },
 
         convertCsvToJson(fileName) {
-          return csvToJson.fieldDelimiter(',').getJsonFromCsv(fileName);
+          return csvToJson.supportQuotedField(true).fieldDelimiter(',').getJsonFromCsv(fileName);
         },
 
         downloadFile,
