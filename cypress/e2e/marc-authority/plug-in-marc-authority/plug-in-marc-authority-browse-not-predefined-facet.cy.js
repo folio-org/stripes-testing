@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -110,7 +110,6 @@ describe('plug-in MARC authority | Browse', () => {
       MarcAuthority.deleteViaAPI(id);
     });
     Users.deleteViaApi(testData.userProperties.userId);
-    MarcAuthority.deleteAuthoritySource(testData.authoritySourceFile.id);
   });
 
   it(
