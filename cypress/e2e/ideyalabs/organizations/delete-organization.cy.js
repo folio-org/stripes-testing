@@ -1,4 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -27,13 +26,9 @@ describe.skip('ui-organizations: Organizations creation', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 
-  it(
-    'C674 Delete existing organization record (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
-      organizations.selectOrganization(newOrganization.name);
-      organizations.deleteOrganization();
-    },
-  );
+  it('C674 Delete existing organization record (thunderjet)', { tags: ['ideaLabsTests'] }, () => {
+    organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
+    organizations.selectOrganization(newOrganization.name);
+    organizations.deleteOrganization();
+  });
 });

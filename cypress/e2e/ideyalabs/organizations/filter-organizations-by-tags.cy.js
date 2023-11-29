@@ -1,4 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 
@@ -21,7 +20,7 @@ describe.skip('ui-organizations: Organizations creation', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 
-  it('C6711 Filter Organizations by tags (thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
+  it('C6711 Filter Organizations by tags (thunderjet)', { tags: ['ideaLabsTests'] }, () => {
     organizations.tagFilter(tags);
     organizations.checkOrganizationFilter();
     organizations.resetFilters();

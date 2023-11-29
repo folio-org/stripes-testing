@@ -1,11 +1,9 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../support/fragments/topMenu';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import SettingsMenu from '../../support/fragments/settingsMenu';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
 describe('Acquisition Units', () => {
@@ -83,7 +81,7 @@ describe('Acquisition Units', () => {
 
   it(
     'C375078 Acquisition unit restrictions for "Fiscal year" records (Edit, Create, Delete options are active) when user is NOT assigned to acquisition unit (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByAll(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);

@@ -1,4 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -34,7 +33,7 @@ describe.skip('ui-organizations: Organizations creation', () => {
 
   it(
     'C725 Add new contact and assign to an organization record (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
+    { tags: ['ideaLabsTests'] },
     () => {
       organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
       organizations.selectOrganization(newOrganization.name);
