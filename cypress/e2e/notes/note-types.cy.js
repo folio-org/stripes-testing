@@ -105,6 +105,8 @@ describe('Notes', () => {
         waiter: NoteTypes.waitLoading,
       });
       // Create a note type.
+      // wait for page to fully load
+      cy.wait(1000);
       NoteTypes.addNoteType();
       NoteTypes.fillInNoteType(noteType);
       NoteTypes.saveNoteType(noteType);
@@ -132,6 +134,8 @@ describe('Notes', () => {
       waiter: NoteTypes.waitLoading,
     });
     NoteTypes.checkNewButtonState();
+    // wait for page to fully load
+    cy.wait(1000);
     NoteTypes.clickEditNoteType(testData.customNoteTypeName);
     NoteTypes.checkNoteButtonsState();
     NoteTypes.fillInNoteType(testData.updatedNoteTypeName);
