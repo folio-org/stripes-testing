@@ -25,7 +25,7 @@ describe('Bulk Edit - Logs', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C368033 Filters section: Statuses (firebird)', { tags: ['smoke', 'firebird'] }, () => {
+  it('C368033 Filters section: Statuses (firebird)', { tags: ['extended', 'firebird'] }, () => {
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifySetCriteriaPaneExists();
     BulkEditSearchPane.verifyLogsStatusesAccordionExistsAndUnchecked();
