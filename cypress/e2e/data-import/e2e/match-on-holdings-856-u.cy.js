@@ -193,7 +193,6 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameForCreateMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameForCreateMarcFile);
-        cy.pause();
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;

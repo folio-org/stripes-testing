@@ -48,6 +48,12 @@ export default {
     cy.expect(rootSection.find(HTML(including(expectedText))).absent());
   },
 
+  verifyAbsenceOfValueInRow(expectedText, rowIndex) {
+    cy.expect(
+      rootSection.find(TableRow({ index: rowIndex, innerText: including(expectedText) })).absent(),
+    );
+  },
+
   verifyRecordNotContainsDuplicatedContent: (value) => {
     cy.get(`td:contains("${value}")`).then((elements) => elements.length === 1);
   },

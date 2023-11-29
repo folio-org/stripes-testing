@@ -18,7 +18,7 @@ describe('eHoldings', () => {
     const testData = {
       packageName: 'E-Journal',
       selectedStatus: 'Selected',
-      titlesNumber: '0',
+      titlesNumber: 0,
       firstFieldForExport: 'Holdings status',
       secondFieldForExport: 'Notes',
       fileName: `C356417autoTestFile${getRandomPostfix()}.csv`,

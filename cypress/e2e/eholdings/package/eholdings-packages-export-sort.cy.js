@@ -84,8 +84,10 @@ describe('eHoldings', () => {
         });
         FileManager.convertCsvToJson(testData.packageData).then((data) => {
           // Check information matches "Package" record
-          cy.expect(packageId === data.PackageId);
-          cy.expect(packageName === data.PackageName);
+          const { PackageId, PackageName } = data[0];
+
+          cy.expect(PackageId).to.equal(testData.package.id);
+          cy.expect(PackageName).to.equal(testData.package.name);
         });
 
         FileManager.writeToSeparateFile({

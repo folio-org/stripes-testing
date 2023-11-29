@@ -49,7 +49,7 @@ describe('Create a new list', () => {
 
       Lists.closeListDetailsPane();
       Lists.verifySuccessCalloutMessage(
-        `${listData.name} was created. Refresh to see changes. Note that list may not appear if filters are applied.`,
+        `List ${listData.name} was created. Reload to see changes. Note: the list may not appear based on filters.`,
       );
       cy.reload();
       Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {

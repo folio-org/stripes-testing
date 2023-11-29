@@ -58,8 +58,8 @@ describe('Agreement Notes', () => {
       ExistingNoteView.gotoEdit();
       ExistingNoteEdit.waitLoading();
 
-      ExistingNoteEdit.fill(changedNote);
-      ExistingNoteEdit.save();
+      ExistingNoteEdit.fillNoteFields(changedNote);
+      ExistingNoteEdit.saveNote();
       ExistingNoteView.checkProperties(changedNote);
 
       ExistingNoteView.close();

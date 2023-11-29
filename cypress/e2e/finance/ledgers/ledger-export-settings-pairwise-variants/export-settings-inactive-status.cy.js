@@ -8,11 +8,11 @@ import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('Finance: Ledgers', { retries: 3 }, () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+describe('Finance: Ledgers', () => {
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
+    code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
@@ -51,7 +51,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
-      Ledgers.fillInRolloverForOneTimeOrdersWithAllocation(
+      Ledgers.fillInRolloverForOneTimeOrdersWithoutBudgets(
         secondFiscalYear.code,
         'None',
         'Allocation',
@@ -99,27 +99,10 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(secondFiscalYear.code, 'Inactive', defaultLedger);
       Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
-      Ledgers.checkColumnContentInDownloadedLedgerExportFile(
+      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(
         `${fileName}.csv`,
         1,
         defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '100',
-        '100',
       );
       Ledgers.deleteDownloadedFile(`${fileName}.csv`);
     },

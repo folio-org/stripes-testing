@@ -113,7 +113,6 @@ describe('Finance: Ledgers', () => {
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(firstFiscalYear.code, 'All', defaultLedger);
       Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
-      cy.pause();
       Ledgers.checkColumnContentInDownloadedLedgerExportFileWithExpClasses(
         `${fileName}.csv`,
         1,
