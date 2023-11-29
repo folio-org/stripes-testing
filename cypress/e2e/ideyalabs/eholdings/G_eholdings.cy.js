@@ -31,16 +31,6 @@ describe.skip('Create a custom package', () => {
     eHoldingsSearch.switchToPackages();
     eHolding.createAndVerify();
   });
-  it(
-    'C360543 Check the content of ""Title information"" accordion in ""Title"" detail record (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(
-        'https://bugfest-orchid.int.aws.folio.org/eholdings/titles/41327?searchType=titles&q=journal&offset=1',
-      );
-      eHolding.verifyAlternativesTitles();
-    },
-  );
   it('C648 Closed Library Due Date (vega)', { tags: [testTypes.ideaLabsTests] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToTitles();

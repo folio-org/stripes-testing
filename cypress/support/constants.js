@@ -303,6 +303,12 @@ export const HOLDINGS_TYPE_NAMES = {
   MONOGRAPH: 'Monograph',
 };
 
+export const NOTE_TYPES = {
+  GENERAL: 'General note',
+  NOTE_1516: 'Note type 1516',
+  NOTE_1654: 'Note-type-1654',
+};
+
 export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
   APPROVAL_PLAN: 'Approval Plan',
   DDA: 'Demand Driven Acquisitions (DDA)',

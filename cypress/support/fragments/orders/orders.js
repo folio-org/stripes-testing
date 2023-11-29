@@ -414,6 +414,12 @@ export default {
     );
   },
 
+  checkOrderIsNotOpened: (fundCode) => {
+    InteractorsTools.checkCalloutErrorMessage(
+      `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`,
+    );
+  },
+
   resetFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
