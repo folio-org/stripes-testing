@@ -48,8 +48,6 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
       permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       permissions.converterStorageAll.gui,
     ]).then((userProperties) => {
-      // wait for the created user to be available
-      cy.wait(20000);
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.inventoryPath);
