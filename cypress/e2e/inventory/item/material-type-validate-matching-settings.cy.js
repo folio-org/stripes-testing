@@ -84,7 +84,9 @@ describe('Material Type', () => {
 
   after('Delete  test data', () => {
     cy.getAdminToken();
+    ServicePoints.deleteViaApi(service.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+    Location.deleteViaApi(location.id);
     [...Array(3)].forEach((_, index) => {
       MaterialTypes.deleteApi(itemData.materialTypes[index].materialType.id);
     });
