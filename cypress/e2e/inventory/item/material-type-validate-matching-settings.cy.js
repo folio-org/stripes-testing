@@ -95,7 +95,7 @@ describe('Material Type', () => {
   it(
     'C628 - Item Data --> Material Type --> (Validate matching settings) (Folijet)(TaaS)',
     {
-      tags: [TestTypes.extendedPath, devTeams.folijet],
+      tags: ['extendedPath', 'folijet'],
     },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
