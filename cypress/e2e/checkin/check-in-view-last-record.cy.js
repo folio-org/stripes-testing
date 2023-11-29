@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
