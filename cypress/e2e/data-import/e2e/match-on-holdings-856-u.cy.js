@@ -29,46 +29,46 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 describe('data-import', () => {
   describe('End to end scenarios', () => {
     let instanceHRID = null;
-    const nameForCreateMarcFile = `createFile${getRandomPostfix()}.mrc`;
-    const nameForUpdateCreateMarcFile = `updateFile${getRandomPostfix()}.mrc`;
+    const nameForCreateMarcFile = `C17025 createFile${getRandomPostfix()}.mrc`;
+    const nameForUpdateCreateMarcFile = `C17025 updateFile${getRandomPostfix()}.mrc`;
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `createInstanceMappingProf${getRandomPostfix()}`,
+          name: `C17025 createInstanceMappingProf${getRandomPostfix()}`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-          name: `createInstanceActionProf${getRandomPostfix()}`,
+          name: `C17025 createInstanceActionProf${getRandomPostfix()}`,
         },
       },
       {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `createEHoldingsMappingProf${getRandomPostfix()}`,
+          name: `C17025 createEHoldingsMappingProf${getRandomPostfix()}`,
           permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `createEHoldingsActionProf${getRandomPostfix()}`,
+          name: `C17025 createEHoldingsActionProf${getRandomPostfix()}`,
         },
       },
       {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `updateEHoldingsMappingProf${getRandomPostfix()}`,
+          name: `C17025 updateEHoldingsMappingProf${getRandomPostfix()}`,
           callNumberType: `"${CALL_NUMBER_TYPE_NAMES.OTHER_SCHEME}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-          name: `updateEHoldingsActionProf${getRandomPostfix()}`,
+          name: `C17025 updateEHoldingsActionProf${getRandomPostfix()}`,
           action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
         },
       },
     ];
 
     const matchProfile = {
-      profileName: `autotestMatchProf${getRandomPostfix()}`,
+      profileName: `C17025 autotestMatchProf${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '856',
         in1: '4',
@@ -82,11 +82,11 @@ describe('data-import', () => {
 
     const createInstanceAndEHoldingsJobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `createInstanceAndEHoldingsJobProf${getRandomPostfix()}`,
+      profileName: `C17025 createInstanceAndEHoldingsJobProf${getRandomPostfix()}`,
     };
     const updateEHoldingsJobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `updateEHoldingsJobProf${getRandomPostfix()}`,
+      profileName: `C17025 updateEHoldingsJobProf${getRandomPostfix()}`,
     };
 
     before('login', () => {
@@ -97,20 +97,21 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfile.profileName);
-      JobProfiles.deleteJobProfile(updateEHoldingsJobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfile.profileName);
+        JobProfiles.deleteJobProfile(updateEHoldingsJobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     const createInstanceMappingProfile = (profile) => {

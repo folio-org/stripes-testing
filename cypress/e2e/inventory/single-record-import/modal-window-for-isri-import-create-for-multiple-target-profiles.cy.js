@@ -72,17 +72,18 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(profile.createJobProfile);
-      ActionProfiles.deleteActionProfile(profile.createActionProfile);
-      FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
-      Users.deleteViaApi(user.userId);
-      Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(profile.createJobProfile);
+        ActionProfiles.deleteActionProfile(profile.createActionProfile);
+        FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
+        Users.deleteViaApi(user.userId);
+        Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(

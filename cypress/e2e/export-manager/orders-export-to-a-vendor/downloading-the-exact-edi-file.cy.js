@@ -13,6 +13,7 @@ import ExportManagerSearchPane from '../../../support/fragments/exportManager/ex
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import DateTools from '../../../support/utils/dateTools';
+import ExportDetails from '../../../support/fragments/exportManager/exportDetails';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -60,6 +61,7 @@ describe('Export Manager', () => {
     const vendorEDICodeFor2Integration = getRandomPostfix();
     const libraryEDICodeFor2Integration = getRandomPostfix();
     let user;
+    let secondUser;
     let location;
     let servicePointId;
     let orderNumber;
@@ -125,6 +127,10 @@ describe('Export Manager', () => {
         ExportManagerSearchPane.verifyResult('Successful');
       });
 
+      cy.createTempUser([permissions.exportManagerView.gui]).then((userProperties) => {
+        secondUser = userProperties;
+      });
+
       cy.createTempUser([
         permissions.uiOrdersView.gui,
         permissions.uiOrdersCreate.gui,
@@ -161,6 +167,7 @@ describe('Export Manager', () => {
         location.id,
       );
       Users.deleteViaApi(user.userId);
+      Users.deleteViaApi(secondUser.userId);
     });
 
     it(
@@ -174,6 +181,40 @@ describe('Export Manager', () => {
         ExportManagerSearchPane.selectJob('Successful');
         ExportManagerSearchPane.downloadJob();
         ExportManagerSearchPane.resetAll();
+      },
+    );
+
+    it(
+      'C405555 Verify that User is able to see the executed jobs but not to download the files with View permissions (firebird)',
+      { tags: [TestTypes.smoke, devTeams.firebird] },
+      () => {
+        cy.login(secondUser.username, secondUser.password, {
+          path: TopMenu.exportManagerPath,
+          waiter: ExportManagerSearchPane.waitLoading,
+        });
+        ExportManagerSearchPane.waitLoading();
+        ExportManagerSearchPane.searchByAuthorityControl();
+        ExportManagerSearchPane.searchByBursar();
+        ExportManagerSearchPane.searchByCirculationLog();
+        ExportManagerSearchPane.searchByEHoldings();
+        ExportManagerSearchPane.searchByBulkEdit();
+        ExportManagerSearchPane.searchByEdifactOrders();
+        ExportManagerSearchPane.searchBySuccessful();
+        ExportManagerSearchPane.selectSearchResultItem();
+        ExportManagerSearchPane.verifyJobIdInThirdPaneHasNoLink();
+
+        ExportManagerSearchPane.selectOrganizationsSearch();
+        ExportManagerSearchPane.searchBySuccessful();
+        ExportManagerSearchPane.searchByInProgress();
+        ExportManagerSearchPane.searchByScheduled();
+        ExportManagerSearchPane.searchByFailed();
+
+        ExportManagerSearchPane.searchByInProgress();
+        ExportManagerSearchPane.searchByScheduled();
+        ExportManagerSearchPane.searchByFailed();
+        ExportManagerSearchPane.selectJob(integrationName1);
+        ExportManagerSearchPane.verifyJobIdInThirdPaneHasNoLink();
+        ExportDetails.verifyJobLabels();
       },
     );
   });

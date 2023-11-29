@@ -55,15 +55,15 @@ describe('eHoldings', () => {
 
     it(
       'C366590 Verify that rows in exported ".csv" file are sorted alphabetically (case insensitive) by "Title name" column (scenario 2) (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         EHoldingsPackageView.getTotalTitlesCount().then((titlesCount) => {
           testData.titlesCount = titlesCount;
         });
 
         // Click "Actions" button, Select "Export package (CSV)", Click "Export" button.
-        EHoldingsPackageView.openExportModal();
-        EHoldingsPackageView.export();
+        const ExportSettingsModal = EHoldingsPackageView.openExportModal();
+        ExportSettingsModal.clickExportButton();
 
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
           // Go to "Export manager" app
@@ -84,8 +84,10 @@ describe('eHoldings', () => {
         });
         FileManager.convertCsvToJson(testData.packageData).then((data) => {
           // Check information matches "Package" record
-          cy.expect(packageId === data.PackageId);
-          cy.expect(packageName === data.PackageName);
+          const { PackageId, PackageName } = data[0];
+
+          cy.expect(PackageId).to.equal(testData.package.id);
+          cy.expect(PackageName).to.equal(testData.package.name);
         });
 
         FileManager.writeToSeparateFile({
@@ -147,8 +149,8 @@ describe('eHoldings', () => {
         });
 
         // Click "Actions" button, Select "Export package (CSV)", Click "Export" button.
-        EHoldingsPackageView.openExportModal();
-        EHoldingsPackageView.export();
+        const ExportSettingsModal = EHoldingsPackageView.openExportModal();
+        ExportSettingsModal.clickExportButton();
 
         EHoldingsPackageView.getJobIDFromCalloutMessage().then((jobId) => {
           // Go to "Export manager" app
