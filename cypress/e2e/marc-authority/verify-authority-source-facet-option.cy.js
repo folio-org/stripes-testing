@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
@@ -14,7 +12,7 @@ import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAutho
 describe('Importing MARC Authority files', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
-  const fileName = 'Auth_13(records_from_pre-defined_list+1_not).mrc';
+  const fileName = 'marFileForC365630.mrc';
   const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
   const authoritySource = 'LC Subject Headings (LCSH)';
   let createdAuthorityID;
@@ -57,13 +55,12 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C365630 Browse | Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorities.chooseAuthoritySource(authoritySource);
       MarcAuthorityBrowse.searchBy('Name-title', 'Not-existing query');
       MarcAuthorityBrowse.getNotExistingHeadingReferenceValue('Not-existing query');
-      MarcAuthorities.verifyAuthoritySourceAccordionAndClick();
       MarcAuthorities.verifySelectedTextOfAuthoritySource(authoritySource);
     },
   );

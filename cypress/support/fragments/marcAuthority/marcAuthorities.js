@@ -865,11 +865,6 @@ export default {
     cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
   },
 
-  verifyAuthoritySourceAccordionAndClick: () => {
-    cy.expect(authoritySourceAccordion.exists());
-    cy.do(authoritySourceAccordion.clickHeader());
-  },
-
   chooseAuthoritySource: (authoritySource) => {
     cy.do([
       cy.wait(1000), // without wait will immediately close accordion
@@ -880,6 +875,7 @@ export default {
   },
 
   verifySelectedTextOfAuthoritySource: (authoritySource) => {
+    cy.do(authoritySourceAccordion.clickHeader());
     cy.expect(MultiSelect({ selected: including(authoritySource) }).exists());
   },
 };
