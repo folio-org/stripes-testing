@@ -1,5 +1,6 @@
 import {
   Button,
+  RepeatableFieldItem,
   Section,
   Select,
   Selection,
@@ -19,6 +20,9 @@ const orderLineDetailsSection = orderLineEditFormRoot.find(Section({ id: 'lineDe
 const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: 'vendor' }));
 const ongoingOrderSection = orderLineEditFormRoot.find(Section({ id: 'ongoingOrder' }));
 const costDetailsSection = orderLineEditFormRoot.find(Section({ id: 'costDetails' }));
+const fundDistributionDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: 'fundDistributionAccordion' }),
+);
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
 
 const cancelButtom = Button('Cancel');
@@ -138,6 +142,15 @@ export default {
   },
   addFundDistribution() {
     cy.do(Button('Add fund distribution').click());
+  },
+  deleteFundDistribution({ index = 0 } = {}) {
+    cy.do(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+    cy.wait(2000);
   },
   selectDropDownValue(label, option) {
     cy.do([

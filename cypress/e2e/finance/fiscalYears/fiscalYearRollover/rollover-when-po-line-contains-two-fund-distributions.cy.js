@@ -242,10 +242,12 @@ describe('Finance', () => {
 
         // Click "View transactions" link in "Budget information" accordion
         BudgetDetails.clickViewTransactionsLink();
-        Transactions.checkTransactionsList([
-          { type: 'Encumbrance', amount: '$10.00' },
-          { type: 'Encumbrance', amount: '$30.00' },
-        ]);
+        Transactions.checkTransactionsList({
+          records: [
+            { type: 'Encumbrance', amount: '$10.00' },
+            { type: 'Encumbrance', amount: '$30.00' },
+          ]
+        });
       },
     );
   });
