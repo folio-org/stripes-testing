@@ -13,7 +13,7 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 import NewMaterialType from '../../../support/fragments/settings/inventory/newMaterialType';
 
-describe('Material Type', () => {
+describe('inventory', () => {
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
