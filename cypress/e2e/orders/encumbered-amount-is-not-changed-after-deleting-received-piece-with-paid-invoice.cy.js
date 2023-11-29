@@ -107,6 +107,7 @@ describe('Orders', () => {
       // Need to wait, while data will be loaded
       cy.wait(4000);
       Invoices.approveInvoice();
+      Invoices.payInvoice();
     });
     cy.createTempUser([
       permissions.uiInventoryViewInstances.gui,
@@ -128,7 +129,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C375110: Encumbered amount is not changed after deleting received piece when related approved invoice exists (thunderjet) (TaaS)',
+    'C375111: Encumbered amount is not changed after deleting received piece when related paid invoice exists (thunderjet) (TaaS)',
     { tags: ['extended', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
