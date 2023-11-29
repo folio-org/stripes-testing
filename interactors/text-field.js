@@ -36,6 +36,10 @@ export default HTML.extend('text field')
       return clearBtn.length === 1;
     },
     maxLength: (el) => el.querySelector('input').getAttribute('maxLength'),
+    errorBorder: (el) => getComputedStyle(el.querySelector('[class*=formControl]')).getPropertyValue(
+      'border-color',
+    ) === 'rgb(153, 0, 0)',
+    errorIcon: (el) => !!el.querySelector('[class*="errorIcon-"]'),
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),

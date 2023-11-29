@@ -80,10 +80,9 @@ describe('Bulk Edit - Logs', () => {
     'C368035 Filters section: Started, Ended (firebird)',
     { tags: ['extended', 'firebird'] },
     () => {
-      const currentDate = DateTools.getFormattedDate(
-        { date: DateTools.getCurrentDate() },
-        'YYYY-MM-DD',
-      );
+      const currentDate = DateTools.getCurrentDateForFiscalYear();
+      const yesterday = DateTools.getPreviousDayDateForFiscalYear();
+      const dayBeforeYesterday = DateTools.getTwoPreviousDaysDateForFiscalYear();
       BulkEditSearchPane.openLogsSearch();
       BulkEditSearchPane.verifySetCriteriaPaneExists();
       BulkEditSearchPane.verifyLogsPane();
@@ -93,19 +92,64 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.clickLogsEndedAccordion();
       BulkEditSearchPane.verifyLogsEndedAccordionExistsWithElements();
       BulkEditSearchPane.fillLogsDate('Started', 'From', currentDate);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Started');
-      BulkEditSearchPane.verifyLogsDateFiledIsEqual('From', currentDate);
+      BulkEditSearchPane.verifyClearSelectedDateButtonExists('Started', 'From');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'From', currentDate);
       BulkEditSearchPane.applyStartDateFilters();
-      const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
-      recordTypes.forEach((recordType) => BulkEditSearchPane.checkLogsCheckbox(recordType));
-      BulkEditSearchPane.resetAllBtnIsDisabled(false);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
-      BulkEditSearchPane.clickClearSelectedFiltersButton('Record types');
+      BulkEditSearchPane.verifyDateFieldWithError('Started', 'To', 'Please enter an end date');
+      BulkEditSearchPane.fillLogsDate('Started', 'To', yesterday);
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'To', yesterday);
+      BulkEditSearchPane.verifyClearSelectedDateButtonExists('Started', 'To');
+      BulkEditSearchPane.applyStartDateFilters();
+      BulkEditSearchPane.verifyDateAccordionValidationMessage(
+        'Started',
+        'Start date is greater than end date',
+      );
+      BulkEditSearchPane.clickClearSelectedDateButton('Started', 'From');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'From', '');
+      BulkEditSearchPane.verifyLogsStartedAccordionExistsWithElements();
+      BulkEditSearchPane.fillLogsDate('Started', 'From', dayBeforeYesterday);
+      BulkEditSearchPane.applyStartDateFilters();
+      BulkEditSearchPane.verifyDateCellsValues(6, dayBeforeYesterday, yesterday);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Started');
+      BulkEditSearchPane.fillLogsDate('Ended', 'To', dayBeforeYesterday);
+      BulkEditSearchPane.verifyClearSelectedDateButtonExists('Ended', 'To');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Ended', 'To', dayBeforeYesterday);
+      BulkEditSearchPane.applyEndDateFilters();
+      BulkEditSearchPane.verifyDateFieldWithError('Ended', 'From', 'Please enter a start date');
+      BulkEditSearchPane.fillLogsDate('Ended', 'From', yesterday);
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Ended', 'From', yesterday);
+      BulkEditSearchPane.verifyClearSelectedDateButtonExists('Ended', 'From');
+      BulkEditSearchPane.applyEndDateFilters();
+      BulkEditSearchPane.verifyDateAccordionValidationMessage(
+        'Ended',
+        'Start date is greater than end date',
+      );
+      BulkEditSearchPane.clickClearSelectedDateButton('Ended', 'To');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Ended', 'To', '');
+      BulkEditSearchPane.verifyLogsStartedAccordionExistsWithElements();
+      BulkEditSearchPane.fillLogsDate('Ended', 'To', currentDate);
+      BulkEditSearchPane.applyEndDateFilters();
+      BulkEditSearchPane.verifyDateCellsValues(7, yesterday, currentDate);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Ended');
+      BulkEditSearchPane.fillLogsDate('Ended', 'From', yesterday);
+      BulkEditSearchPane.fillLogsDate('Ended', 'To', yesterday);
+      BulkEditSearchPane.applyEndDateFilters();
+      BulkEditSearchPane.verifyDateCellsValues(6, dayBeforeYesterday, yesterday);
+      BulkEditSearchPane.verifyDateCellsValues(7, yesterday, yesterday);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Ended');
+      BulkEditSearchPane.clickClearSelectedFiltersButton('Started');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'From', '');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'To', '');
+      BulkEditSearchPane.verifyDateCellsValues(7, yesterday, yesterday);
+      BulkEditSearchPane.resetAll();
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'From', '');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'To', '');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Ended', 'From', '');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('Ended', 'To', '');
+      BulkEditSearchPane.clickLogsStartedAccordion();
+      BulkEditSearchPane.clickLogsEndedAccordion();
+      BulkEditSearchPane.verifySetCriteriaPaneExists();
       BulkEditSearchPane.verifyLogsPane();
-      BulkEditSearchPane.checkLogsCheckbox('Users');
-      BulkEditSearchPane.resetAllBtnIsDisabled(false);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
-      BulkEditSearchPane.verifyCellsValues(1, 'Users');
     },
   );
 });

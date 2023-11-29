@@ -45,8 +45,8 @@ const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
 const saveAndClose = Button('Save and close');
-const textFildTo = TextField('To');
-const textFildFrom = TextField('From');
+const textFieldTo = TextField('To');
+const textFieldFrom = TextField('From');
 const confirmChanges = Button('Confirm changes');
 const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
 const errorsEncounteredBtn = DropdownMenu().find(
@@ -812,6 +812,20 @@ export default {
       });
   },
 
+  verifyDateCellsValues(column, fromDate, toDate) {
+    this.getMultiColumnListCellsValues(column)
+      .should('have.length.at.least', 1)
+      .each((value) => {
+        if (!value.includes('No value set')) {
+          const cellDate = new Date(value);
+          const to = new Date(toDate);
+          to.setDate(to.getDate() + 1);
+          expect(cellDate).to.greaterThan(new Date(fromDate));
+          expect(cellDate).to.lessThan(to);
+        }
+      });
+  },
+
   verifyResultColumTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
@@ -906,32 +920,67 @@ export default {
   verifyLogsStartedAccordionExistsWithElements() {
     cy.expect([
       logsStartDateAccordion.has({ open: true }),
-      logsStartDateAccordion.find(textFildFrom).has(Button({ icon: 'calendar' })),
-      logsStartDateAccordion.find(textFildTo).has(Button({ icon: 'calendar' })),
-      logsStartDateAccordion.find(textFildFrom).has({ placeholder: 'YYYY-MM-DD' }),
-      logsStartDateAccordion.find(textFildTo).has({ placeholder: 'YYYY-MM-DD' }),
+      logsStartDateAccordion
+        .find(textFieldFrom)
+        .find(Button({ icon: 'calendar' }))
+        .exists(),
+      logsStartDateAccordion
+        .find(textFieldTo)
+        .find(Button({ icon: 'calendar' }))
+        .exists(),
+      logsStartDateAccordion.find(textFieldFrom).has({ placeholder: 'YYYY-MM-DD' }),
+      logsStartDateAccordion.find(textFieldTo).has({ placeholder: 'YYYY-MM-DD' }),
       logsStartDateAccordion.find(applyBtn).exists(),
     ]);
+  },
+
+  verifyDateFieldWithError(accordion, textField, errorMessage) {
+    cy.expect([
+      Accordion(accordion).find(TextField(textField)).has({ errorIcon: true }),
+      Accordion(accordion).find(TextField(textField)).has({ errorBorder: true }),
+      Accordion(accordion).find(TextField(textField)).has({ error: errorMessage }),
+    ]);
+  },
+
+  verifyDateAccordionValidationMessage(accordion, message) {
+    cy.expect(Accordion(accordion).has({ validationMessage: message }));
   },
 
   verifyLogsEndedAccordionExistsWithElements() {
     cy.expect([
       logsEndDateAccordion.has({ open: true }),
-      logsEndDateAccordion.find(textFildFrom).has(Button({ icon: 'calendar' })),
-      logsEndDateAccordion.find(textFildTo).has(Button({ icon: 'calendar' })),
-      logsEndDateAccordion.find(textFildFrom).has({ placeholder: 'YYYY-MM-DD' }),
-      logsEndDateAccordion.find(textFildTo).has({ placeholder: 'YYYY-MM-DD' }),
+      logsEndDateAccordion
+        .find(textFieldFrom)
+        .find(Button({ icon: 'calendar' }))
+        .exists(),
+      logsEndDateAccordion
+        .find(textFieldTo)
+        .find(Button({ icon: 'calendar' }))
+        .exists(),
+      logsEndDateAccordion.find(textFieldFrom).has({ placeholder: 'YYYY-MM-DD' }),
+      logsEndDateAccordion.find(textFieldTo).has({ placeholder: 'YYYY-MM-DD' }),
       logsEndDateAccordion.find(applyBtn).exists(),
     ]);
   },
 
-  verifyLogsDateFiledIsEqual(fieldName, valueToVerify) {
-    cy.expect(TextField(fieldName).has({ value: valueToVerify }));
+  verifyLogsDateFiledIsEqual(accordion, fieldName, valueToVerify) {
+    cy.expect(Accordion(accordion).find(TextField(fieldName)).has({ value: valueToVerify }));
   },
 
   verifyClearSelectedFiltersButtonExists(accordion) {
     cy.expect(
       Accordion(accordion)
+        .find(
+          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
+        )
+        .exists(),
+    );
+  },
+
+  verifyClearSelectedDateButtonExists(accordion, textField) {
+    cy.expect(
+      Accordion(accordion)
+        .find(TextField({ label: textField }))
         .find(Button({ icon: 'times-circle-solid' }))
         .exists(),
     );
@@ -940,6 +989,17 @@ export default {
   clickClearSelectedFiltersButton(accordion) {
     cy.do(
       Accordion(accordion)
+        .find(
+          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
+        )
+        .click(),
+    );
+  },
+
+  clickClearSelectedDateButton(accordion, textField) {
+    cy.do(
+      Accordion(accordion)
+        .find(TextField({ label: textField }))
         .find(Button({ icon: 'times-circle-solid' }))
         .click(),
     );
