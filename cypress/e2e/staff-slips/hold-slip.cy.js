@@ -1,29 +1,26 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import parallelization from '../../support/dictionary/parallelization';
-import TopMenu from '../../support/fragments/topMenu';
+import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import getRandomPostfix from '../../support/utils/stringTools';
+import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
-import Requests from '../../support/fragments/requests/requests';
-import Users from '../../support/fragments/users/users';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Check In - Actions', () => {
   const userData = {};
@@ -182,33 +179,29 @@ describe('Check In - Actions', () => {
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
-  it(
-    'C347898 Hold slip (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
-    () => {
-      cy.visit(TopMenu.checkOutPath);
-      Checkout.waitLoading();
-      // without this waiter, the user will not be found
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(3000);
-      CheckOutActions.checkOutUser(userData.barcode, userData.username);
-      CheckOutActions.checkOutItem(itemData.barcode);
-      CheckOutActions.endCheckOutSession();
+  it('C347898 Hold slip (vega)', { tags: ['criticalPath', 'vega', 'nonParallel'] }, () => {
+    cy.visit(TopMenu.checkOutPath);
+    Checkout.waitLoading();
+    // without this waiter, the user will not be found
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
+    CheckOutActions.checkOutUser(userData.barcode, userData.username);
+    CheckOutActions.checkOutItem(itemData.barcode);
+    CheckOutActions.endCheckOutSession();
 
-      cy.visit(TopMenu.requestsPath);
-      NewRequest.createNewRequest({
-        requesterBarcode: requestUserData.barcode,
-        itemBarcode: itemData.barcode,
-        pickupServicePoint: testData.userServicePoint.name,
-        requestType: REQUEST_TYPES.HOLD,
-      });
+    cy.visit(TopMenu.requestsPath);
+    NewRequest.createNewRequest({
+      requesterBarcode: requestUserData.barcode,
+      itemBarcode: itemData.barcode,
+      pickupServicePoint: testData.userServicePoint.name,
+      requestType: REQUEST_TYPES.HOLD,
+    });
 
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemGui(itemData.barcode);
-      AwaitingPickupForARequest.verifyModalTitle();
-      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-      AwaitingPickupForARequest.checkModalMessage(itemData);
-      AwaitingPickupForARequest.closeModal();
-    },
-  );
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemGui(itemData.barcode);
+    AwaitingPickupForARequest.verifyModalTitle();
+    AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+    AwaitingPickupForARequest.checkModalMessage(itemData);
+    AwaitingPickupForARequest.closeModal();
+  });
 });

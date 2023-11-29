@@ -1,15 +1,13 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TestType from '../../../support/dictionary/testTypes';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Organizations from '../../../support/fragments/organizations/organizations';
+import Orders from '../../../support/fragments/orders/orders';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import OrderTemplate from '../../../support/fragments/settings/orders/orderTemplates';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import AcquisitionMethods from '../../../support/fragments/settings/orders/acquisitionMethods';
+import OrderTemplate from '../../../support/fragments/settings/orders/orderTemplates';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Orders from '../../../support/fragments/orders/orders';
-import TopMenu from '../../../support/fragments/topMenu';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -60,7 +58,7 @@ describe('orders: Settings', () => {
 
   it(
     'C6726 Edit existing order template (thunderjet)',
-    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       OrderTemplate.selectTemplate(orderTemplateName);
       OrderTemplate.editTemplate(orderTemplateName);
