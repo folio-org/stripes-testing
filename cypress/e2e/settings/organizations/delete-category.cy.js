@@ -4,9 +4,12 @@ import Users from '../../../support/fragments/users/users';
 import SettingsOrganizations from '../../../support/fragments/settings/organizations/settingsOrganizations';
 
 describe('Organizations: Settings (Organizations)', () => {
+  const category = { ...SettingsOrganizations.defaultCategories };
   let user;
   before(() => {
-    cy.createTempUser([permissions.uiSettingsOrganizationsCanViewOnlySettings.gui]).then(
+    cy.getAdminToken();
+    SettingsOrganizations.createCategoriesViaApi(category);
+    cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
       (userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -24,8 +27,6 @@ describe('Organizations: Settings (Organizations)', () => {
 
   it('C367989: Delete category (thunderjet)', { tags: ['criticalPth', 'thunderjet'] }, () => {
     SettingsOrganizations.selectCategories();
-    SettingsOrganizations.checkButtonNewInCategoriesIsDisabled();
-    SettingsOrganizations.selectTypes();
-    SettingsOrganizations.checkButtonNewInTypesIsDisabled();
+    SettingsOrganizations.deleteCategory(category);
   });
 });
