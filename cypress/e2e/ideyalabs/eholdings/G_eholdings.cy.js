@@ -31,7 +31,7 @@ describe.skip('Create a custom package', () => {
     eHolding.createAndVerify();
   });
 
-  it('C648 Closed Library Due Date (vega)', { tags: ['ideaLabsTests'] }, () => {9
+  it('C648 Closed Library Due Date (vega)', { tags: ['ideaLabsTests'] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsSearch.switchToTitles();
     eHoldingsProvidersSearch.byProvider('Fashion');
