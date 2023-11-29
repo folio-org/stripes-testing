@@ -1,4 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 
@@ -25,22 +24,18 @@ describe.skip('ui-organizations: Organizations creation', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 
-  it(
-    'C728 Filter organizations by status (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      organizations.selectActiveStatus();
-      organizations.checkSearchResults({ name: organizationStatus.active });
-      organizations.resetFilters();
-      organizations.selectInActiveStatus();
-      organizations.checkSearchResults({ name: organizationStatus.inActive });
-      organizations.resetFilters();
-      organizations.selectPendingStatus();
-      organizations.checkZeroSearchResultsHeader({
-        name: organizationStatus.pending,
-      });
-      organizations.resetFilters();
-      organizations.verifyResetFilters();
-    },
-  );
+  it('C728 Filter organizations by status (thunderjet)', { tags: ['ideaLabsTests'] }, () => {
+    organizations.selectActiveStatus();
+    organizations.checkSearchResults({ name: organizationStatus.active });
+    organizations.resetFilters();
+    organizations.selectInActiveStatus();
+    organizations.checkSearchResults({ name: organizationStatus.inActive });
+    organizations.resetFilters();
+    organizations.selectPendingStatus();
+    organizations.checkZeroSearchResultsHeader({
+      name: organizationStatus.pending,
+    });
+    organizations.resetFilters();
+    organizations.verifyResetFilters();
+  });
 });

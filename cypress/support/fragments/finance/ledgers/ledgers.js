@@ -18,6 +18,7 @@ import {
   HTML,
   including,
 } from '../../../../../interactors';
+import LedgerDetails from './ledgerDetails';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -583,10 +584,11 @@ export default {
   }),
 
   selectLedger: (ledgerName) => {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(8000);
-
+    cy.wait(4000);
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
+    LedgerDetails.waitLoading();
+
+    return LedgerDetails;
   },
 
   rolloverLogs: () => {

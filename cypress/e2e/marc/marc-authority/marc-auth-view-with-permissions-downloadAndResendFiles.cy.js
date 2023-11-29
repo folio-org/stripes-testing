@@ -1,9 +1,7 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import DateTools from '../../../support/utils/dateTools';
 
 describe('MARC -> MARC Authority', () => {
@@ -35,7 +33,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C375135 User with "Export manager: Download and re-send files" permission can view report options for "MARC authority" records (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
       const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();

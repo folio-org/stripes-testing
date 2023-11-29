@@ -29,4 +29,5 @@ export default HTML.extend('button')
   })
   .actions({
     hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))),
+    triggerClick: ({ perform }) => perform((el) => cy.wrap(el).trigger('click')),
   });

@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import NewFileExtension from '../../../support/fragments/settings/dataImport/fileExtensions/newFileExtension';
-import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -29,7 +29,7 @@ describe('data-import', () => {
 
     it(
       'C2328 Create a file extension for a blocked file type and ensure that file type cannot be uploaded (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const filePath = 'file.txt';
         const fileName = `C2328 autotestFile.${getRandomPostfix()}.txt`;
@@ -62,7 +62,7 @@ describe('data-import', () => {
 
     it(
       'C2329 Create a file extension for an acceptable file type and upload a file (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const filePath = 'file.csv';
         const fileName = `C2329 autotestFile.${getRandomPostfix()}.csv`;

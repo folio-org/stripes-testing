@@ -1,11 +1,9 @@
-import TopMenu from '../../support/fragments/topMenu';
-import Requests from '../../support/fragments/requests/requests';
 import { MultiColumnListHeader } from '../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../support/dictionary/devTeams';
-import TestTypes from '../../support/dictionary/testTypes';
+import Requests from '../../support/fragments/requests/requests';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('ui-requests: Sort requests', () => {
   const userIds = [];
@@ -47,7 +45,7 @@ describe('ui-requests: Sort requests', () => {
   });
 
   // Test is failed. This is a known issue.
-  it('C2379 Test Request app sorting (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
+  it('C2379 Test Request app sorting (vega)', { tags: ['smoke', 'vega'] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');

@@ -1,8 +1,6 @@
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewBatchGroup from '../../../support/fragments/invoices/newBatchGroup';
 import SettingsInvoices from '../../../support/fragments/invoices/settingsInvoices';
-import TestType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('ui-invoices-settings: System Batch Group deletion', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
@@ -25,7 +23,7 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
 
   it(
     'C10938 FOLIO Batch group is created by system and can only be edited (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       systemBatchGroup.name = systemBatchGroupName;
       systemBatchGroup.description = systemBatchGroupDescription;
