@@ -10,6 +10,8 @@ import {
   TextField,
   including,
   matching,
+  Modal,
+  HTML,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -24,10 +26,12 @@ const fundDistributionDetailsSection = orderLineEditFormRoot.find(
   Section({ id: 'fundDistributionAccordion' }),
 );
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
-
-const cancelButtom = Button('Cancel');
-const saveButtom = Button('Save & close');
+const keepEditingBtn = Button('Keep editing');
+const areYouSureForm = Modal('Are you sure?');
+const cancelButton = Button('Cancel');
+const saveButton = Button('Save & close');
 const saveAndOpenOrderButtom = Button('Save & open order');
+const closeWithoutSavingButton = Button('Close without saving');
 
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
@@ -54,14 +58,16 @@ const costDetailsFields = {
 };
 
 const buttons = {
-  Cancel: cancelButtom,
-  'Save & close': saveButtom,
+  Cancel: cancelButton,
+  'Save & close': saveButton,
   'Save & open order': saveAndOpenOrderButtom,
 };
 
 export default {
   waitLoading() {
     cy.expect(orderLineEditFormRoot.exists());
+    cy.expect(cancelButton.exists());
+    cy.expect(saveButton.exists());
   },
   checkButtonsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
@@ -174,13 +180,17 @@ export default {
       );
     }
   },
-  clickCancelButton() {
-    cy.do(cancelButtom.click());
-    cy.expect(orderLineEditFormRoot.absent());
+  clickCancelButton(shouldModalExsist = false) {
+    if (shouldModalExsist) {
+      cy.do(cancelButton.click());
+    } else {
+      cy.do(cancelButton.click());
+      cy.expect(orderLineEditFormRoot.absent());
+    }
   },
   clickSaveButton({ orderLineCreated = false, orderLineUpdated = true } = {}) {
-    cy.expect(saveButtom.has({ disabled: false }));
-    cy.do(saveButtom.click());
+    cy.expect(saveButton.has({ disabled: false }));
+    cy.do(saveButton.click());
 
     if (orderLineCreated) {
       InteractorsTools.checkCalloutMessage(
@@ -213,5 +223,18 @@ export default {
 
     // wait for changes to be applied
     cy.wait(2000);
+  },
+  clickCloseWithoutSavingButton() {
+    cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
+  },
+  checkAreYouSureModalIsClosed() {
+    cy.expect(areYouSureForm.absent());
+  },
+  verifyAreYouSureForm() {
+    cy.expect([
+      areYouSureForm.find(HTML(including('There are unsaved changes'))).exists(),
+      areYouSureForm.find(keepEditingBtn).exists(),
+      areYouSureForm.find(closeWithoutSavingButton).exists(),
+    ]);
   },
 };
