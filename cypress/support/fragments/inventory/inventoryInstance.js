@@ -209,6 +209,15 @@ const verifyLastUpdatedDate = () => {
   );
 };
 
+const verifyLastUpdatedUser = (userName) => {
+  cy.do(administrativeDataAccordion.find(Button(including('Record last updated'))).click());
+  cy.expect(
+    Accordion('Administrative data')
+      .find(HTML(including(userName)))
+      .exists(),
+  );
+};
+
 const verifyInstancePublisher = (indexRow, indexColumn, type) => {
   cy.expect(
     descriptiveDataAccordion
@@ -306,6 +315,7 @@ export default {
   openHoldings,
   verifyInstanceTitle,
   verifyLastUpdatedDate,
+  verifyLastUpdatedUser,
   verifyInstancePublisher,
   verifyInstanceSubject,
   verifyResourceIdentifier,
@@ -1104,12 +1114,12 @@ export default {
   },
 
   openItemByStatus: (status) => {
-    cy.get('div[class^="mclRow--"]')
-      .contains('div[class^="mclCell-"]', status)
+    cy.get('div[class^="mclRowContainer-"]')
+      .find('div[class^="mclCell-"]')
+      .contains(status)
       .then((elem) => {
         elem.parent()[0].querySelector('button[type="button"]').click();
       });
-    cy.wait(2000);
   },
 
   verifyCellsContent: (...content) => {

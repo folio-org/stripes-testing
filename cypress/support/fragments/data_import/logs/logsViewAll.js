@@ -26,6 +26,9 @@ const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const nextButton = Button({ id: 'list-data-import-next-paging-button' });
 const previousButton = Button({ id: 'list-data-import-prev-paging-button' });
 const logsResultPane = PaneContent({ id: 'pane-results-content' });
+const collapseButton = Button({ icon: 'caret-left' });
+const expandButton = Button({ icon: 'caret-right' });
+const searchFilterPane = Pane('Search & filter');
 const visitedLinkColor = 'rgb(47, 96, 159)';
 
 function getCheckboxByRow(row) {
@@ -170,13 +173,14 @@ export default {
 
   singleRecordImportsStatuses: ['Yes', 'No'],
 
-  resetAllFilters() {
+  resetAllFilters(clickEndedRunningColumn = true) {
     cy.do(Button('Reset all').click());
-
-    // After resetting all filters, we need to sort MultiColumnList
-    // Otherwise, server cannot parse request params and returns error with 422 status
-    // In this case, sort by completed date in ascending order
-    cy.do(MultiColumnListHeader('Ended running').click());
+    if (clickEndedRunningColumn) {
+      // After resetting all filters, we need to sort MultiColumnList
+      // Otherwise, server cannot parse request params and returns error with 422 status
+      // In this case, sort by completed date in ascending order
+      cy.do(MultiColumnListHeader('Ended running').click());
+    }
     waitUIToBeFiltered();
   },
 
@@ -377,7 +381,7 @@ export default {
   },
 
   viewAllIsOpened: () => {
-    cy.expect(Pane('Search & filter').exists());
+    cy.expect(searchFilterPane.exists());
     cy.expect(
       Pane('Logs')
         .find(MultiColumnList({ id: 'list-data-import' }))
@@ -500,6 +504,12 @@ export default {
   noLogResultsFound: () => {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
   },
+
+  collapseButtonClick: () => cy.do(collapseButton.click()),
+
+  expandButtonClick: () => cy.do(expandButton.click()),
+
+  checkSearchPaneCollapsed: () => cy.expect(searchFilterPane.absent()),
 
   verifyFirstFileNameCellUnderlined: () => {
     cy.get('#pane-results [class*="mclCell-"]:nth-child(1) a')

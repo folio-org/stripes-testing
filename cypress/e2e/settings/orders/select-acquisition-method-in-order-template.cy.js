@@ -1,11 +1,9 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TestType from '../../../support/dictionary/testTypes';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import OrderTemplate from '../../../support/fragments/settings/orders/orderTemplates';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import AcquisitionMethods from '../../../support/fragments/settings/orders/acquisitionMethods';
+import OrderTemplate from '../../../support/fragments/settings/orders/orderTemplates';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -42,7 +40,7 @@ describe('orders: Settings', () => {
 
   it(
     'C350602 Select Acquisition Method in Order Template (thunderjet)',
-    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       OrderTemplate.newTemplate();
       OrderTemplate.fillTemplateInformationWithAcquisitionMethod(

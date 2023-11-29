@@ -23,8 +23,11 @@ import {
   Select,
   TextArea,
   TextField,
+  ValueChipRoot,
   including,
+  not,
 } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -36,6 +39,7 @@ const searchButton = Button({ id: 'submit-authorities-search' });
 const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
+const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
 
 // actions dropdown window
 const authorityActionsDropDown = DropdownMenu();
@@ -52,7 +56,7 @@ const exportButton = authReportModal.find(Button('Export'));
 
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
-const headinfTypeAccordion = Accordion('Type of heading');
+const headingTypeAccordion = Accordion('Type of heading');
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
@@ -67,6 +71,23 @@ const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
+const authoritySourceAccordion = Accordion({ id: 'sourceFileId' });
+const authoritySourceOptions = [
+  'LC Name Authority file (LCNAF)',
+  'LC Subject Headings (LCSH)',
+  "LC Children's Subject Headings",
+  'LC Genre/Form Terms (LCGFT)',
+  'LC Demographic Group Terms (LCFGT)',
+  'LC Medium of Performance Thesaurus for Music (LCMPT)',
+  'Faceted Application of Subject Terminology (FAST)',
+  'Medical Subject Headings (MeSH)',
+  'Thesaurus for Graphic Materials (TGM)',
+  'Rare Books and Manuscripts Section (RBMS)',
+  'Art & architecture thesaurus (AAT)',
+  'GSAFD Genre Terms (GSAFD)',
+  'Not specified',
+];
+const thesaurusAccordion = Accordion('Thesaurus');
 
 export default {
   waitLoading() {
@@ -200,6 +221,12 @@ export default {
   },
 
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
+
+  checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
+    authoritiesList
+      .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
+      .exists(),
+  ),
 
   checkRowsCount: (expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()),
 
@@ -347,13 +374,17 @@ export default {
   },
 
   chooseTypeOfHeading: (headingTypes) => {
-    cy.do(headinfTypeAccordion.clickHeader());
-    headingTypes.forEach((headingType) => {
-      cy.do(
-        MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
-          including(headingType),
-        ]),
-      );
+    cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(headingTypeAccordion.clickHeader());
+      }
+    });
+    const headingTypesArray = Array.isArray(headingTypes) ? headingTypes : [headingTypes];
+
+    headingTypesArray.forEach((headingType) => {
+      cy.do([typeOfHeadingSelect.select([including(headingType)])]);
+      // need to wait until filter will be applied
+      cy.wait(1000);
     });
   },
 
@@ -423,10 +454,8 @@ export default {
 
   chooseTypeOfHeadingAndCheck(headingType, headingTypeA, headingTypeB) {
     cy.do([
-      headinfTypeAccordion.clickHeader(),
-      MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
-        including(headingType),
-      ]),
+      headingTypeAccordion.clickHeader(),
+      typeOfHeadingSelect.select([including(headingType)]),
     ]);
     cy.expect([
       MultiSelect({ selected: including(headingType) }).exists(),
@@ -502,6 +531,9 @@ export default {
       AdvancedSearchRow({ index: rowIndex })
         .find(Select({ label: 'Search options*' }))
         .has({ content: including('Identifier (all)') }),
+      AdvancedSearchRow({ index: rowIndex })
+        .find(Select({ label: 'Search options*' }))
+        .has({ content: including('LCCN') }),
       AdvancedSearchRow({ index: rowIndex })
         .find(Select({ label: 'Search options*' }))
         .has({ content: including('Personal name') }),
@@ -743,6 +775,23 @@ export default {
     ]);
   },
 
+  verifyThesaurusAccordionAndClick: () => {
+    cy.expect(thesaurusAccordion.exists());
+    cy.do(thesaurusAccordion.clickHeader());
+  },
+
+  chooseThesaurus: (thesaurusTypes) => {
+    cy.do(
+      MultiSelect({ ariaLabelledby: 'subjectHeadings-multiselect-label' }).select([
+        including(thesaurusTypes),
+      ]),
+    );
+  },
+
+  verifySelectedTextOfThesaurus: (thesaurusTypes) => {
+    cy.expect(MultiSelect({ selected: including(thesaurusTypes) }).exists());
+  },
+
   checkHeadingReferenceColumnValueIsBold(rowNumber) {
     cy.expect(
       MultiColumnListCell({ row: rowNumber, columnIndex: 2 }).has({
@@ -757,6 +806,43 @@ export default {
         content: including(value),
       }),
     );
+  },
+
+  clickAuthoritySourceAccordion() {
+    cy.do([authoritySourceAccordion.clickHeader()]);
+  },
+
+  verifyAuthoritySourceAccordionCollapsed() {
+    cy.expect([authoritySourceAccordion.has({ open: false })]);
+  },
+
+  checkResultsSelectedByAuthoritySource(options) {
+    authoritySourceOptions.forEach((option) => {
+      if (options.includes(option)) {
+        cy.expect([MultiColumnListCell({ columnIndex: 4, content: option }).exists()]);
+      } else {
+        cy.expect([MultiColumnListCell({ columnIndex: 4, content: option }).absent()]);
+      }
+    });
+  },
+
+  checkResultsListRecordsCount() {
+    const alias = `getItems${getRandomPostfix()}`;
+    cy.intercept('GET', '/search/authorities?*').as(alias);
+    cy.wait(`@${alias}`, { timeout: 10000 }).then((item) => {
+      const { totalRecords } = item.response.body;
+      cy.expect(Pane({ subtitle: including(`${totalRecords}`) }).exists());
+    });
+  },
+
+  removeAuthoritySourceOption: (option) => {
+    cy.do(
+      sourceFileAccordion
+        .find(ValueChipRoot(option))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(ValueChipRoot(option).absent());
   },
 
   getResultsListByColumn(columnIndex) {
@@ -778,6 +864,12 @@ export default {
       .then(() => cells);
   },
 
+  checkResultListSortedByColumn(columnIndex) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      cy.expect(cells).to.deep.equal(cells.sort());
+    });
+  },
+
   verifyOnlyOneAuthorityRecordInResultsList() {
     this.getResultsListByColumn(1).then((cells) => {
       const authorizedRecords = cells.filter((element) => {
@@ -787,8 +879,51 @@ export default {
     });
   },
 
+  verifySelectedTextOfHeadingType: (headingType) => {
+    cy.expect(headingTypeAccordion.exists());
+    cy.do(headingTypeAccordion.clickHeader());
+    cy.expect(MultiSelect({ selected: including(headingType) }).exists());
+  },
+
   checkTotalRecordsForOption(option, totalRecords) {
     cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
     cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
+  },
+
+  verifyColumnValuesOnlyExist(column, expectedValues = []) {
+    const actualValues = [];
+    cy.then(() => authoritiesList.rowCount())
+      .then((rowsCount) => {
+        for (let i = 0; i < rowsCount; i++) {
+          cy.then(() => authoritiesList.find(MultiColumnListCell({ column, row: i })).content()).then((content) => {
+            actualValues.push(content);
+          });
+        }
+      })
+      .then(() => {
+        const isOnlyValuesExist = actualValues.every((value) => expectedValues.includes(value));
+        expect(isOnlyValuesExist).to.equal(true);
+      });
+  },
+
+  unselectHeadingType: (headingType) => {
+    cy.do([
+      typeOfHeadingSelect
+        .find(ValueChipRoot(headingType))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    ]);
+    // need to wait until filter will be applied
+    cy.wait(1000);
+    cy.expect(typeOfHeadingSelect.has({ selected: not(headingType) }));
+  },
+
+  resetTypeOfHeading() {
+    cy.do(
+      Accordion({ id: 'headingType' })
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
+    cy.expect(typeOfHeadingSelect.has({ selectedCount: 0 }));
   },
 };

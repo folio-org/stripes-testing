@@ -1,15 +1,15 @@
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import { Permissions } from '../../../../support/dictionary';
+import Helper from '../../../../support/fragments/finance/financeHelper';
 import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import TopMenu from '../../../../support/fragments/topMenu';
-import GenerateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import Users from '../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import Helper from '../../../../support/fragments/finance/financeHelper';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import GenerateItemBarcode from '../../../../support/utils/generateItemBarcode';
 
 describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
@@ -103,7 +103,7 @@ describe('inventory', () => {
 
     it(
       'C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.waitInstanceRecordViewOpened(itemData.instanceTitle);
@@ -112,7 +112,8 @@ describe('inventory', () => {
         HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
         HoldingsRecordEdit.saveAndClose();
         HoldingsRecordView.close();
-        InventoryInstance.openHoldings([anotherPermanentLocation]);
+        cy.wait(1000);
+        InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', itemData.itemBarcode);
         ItemRecordView.verifyEffectiveLocation(anotherPermanentLocation);

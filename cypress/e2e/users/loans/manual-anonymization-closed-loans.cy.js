@@ -1,29 +1,27 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import testTypes from '../../../support/dictionary/testTypes';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
-import { getNewItem } from '../../../support/fragments/inventory/item';
-import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
-import permissions from '../../../support/dictionary/permissions';
-import Checkout from '../../../support/fragments/checkout/checkout';
-import AppPaths from '../../../support/fragments/app-paths';
-import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
 import { CY_ENV } from '../../../support/constants';
+import permissions from '../../../support/dictionary/permissions';
+import AppPaths from '../../../support/fragments/app-paths';
 import checkInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import RequestPolicy from '../../../support/fragments/circulation/request-policy';
-import OverdueFinePolicy from '../../../support/fragments/circulation/overdue-fine-policy';
-import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
-import NoticePolicy from '../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import DevTeams from '../../../support/dictionary/devTeams';
+import Checkout from '../../../support/fragments/checkout/checkout';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import NewFeeFine from '../../../support/fragments/users/newFeeFine';
-import Users from '../../../support/fragments/users/users';
 import LoanPolicy from '../../../support/fragments/circulation/loan-policy';
+import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
+import OverdueFinePolicy from '../../../support/fragments/circulation/overdue-fine-policy';
+import RequestPolicy from '../../../support/fragments/circulation/request-policy';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { getNewItem } from '../../../support/fragments/inventory/item';
+import NoticePolicy from '../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
+import NewFeeFine from '../../../support/fragments/users/newFeeFine';
+import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('ui-users-loans: Manual anonymization in closed loans', () => {
   const newOwnerData = UsersOwners.getDefaultNewOwner();
@@ -219,17 +217,13 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it(
-    'C9217 Manual anonymization in closed loans (volaris)',
-    { tags: [testTypes.smoke, DevTeams.volaris] },
-    () => {
-      LoanDetails.createFeeFine(newOwnerData.owner, feeFineType);
-      LoanDetails.anonymizeAllLoans();
-      LoanDetails.checkAnonymizeAllLoansModalOpen();
-      LoanDetails.confirmAnonymizeAllLoans();
-      LoanDetails.checkAnonymizeModalOpen();
-      LoanDetails.closeAnonymizeModal();
-      LoanDetails.checkLoanAbsent(newFirstItemData.barcode);
-    },
-  );
+  it('C9217 Manual anonymization in closed loans (volaris)', { tags: ['smoke', 'volaris'] }, () => {
+    LoanDetails.createFeeFine(newOwnerData.owner, feeFineType);
+    LoanDetails.anonymizeAllLoans();
+    LoanDetails.checkAnonymizeAllLoansModalOpen();
+    LoanDetails.confirmAnonymizeAllLoans();
+    LoanDetails.checkAnonymizeModalOpen();
+    LoanDetails.closeAnonymizeModal();
+    LoanDetails.checkLoanAbsent(newFirstItemData.barcode);
+  });
 });

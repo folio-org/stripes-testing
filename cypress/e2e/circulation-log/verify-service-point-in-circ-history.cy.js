@@ -1,16 +1,16 @@
 import moment from 'moment';
 
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Circulation log', () => {
   const testData = {
@@ -77,7 +77,7 @@ describe('Circulation log', () => {
 
   it(
     'C360106 Verify the Service point in the Item Circulation history (volaris) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       // Go to the "Inventory" => Select "Item" toggle
       InventorySearchAndFilter.switchToItem();
