@@ -74,7 +74,7 @@ describe('Check in', () => {
 
   it(
     'C9179 - Check in: view last check in on item record (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       CheckInActions.checkInItemGui(ITEM_BARCODE);
       CheckInPane.verifyResultCells();
