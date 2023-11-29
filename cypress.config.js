@@ -57,7 +57,7 @@ module.exports = defineConfig({
         },
 
         convertCsvToJson(fileName) {
-          return csvToJson.fieldDelimiter(',').getJsonFromCsv(fileName);
+          return csvToJson.supportQuotedField(true).fieldDelimiter(',').getJsonFromCsv(fileName);
         },
 
         downloadFile,
