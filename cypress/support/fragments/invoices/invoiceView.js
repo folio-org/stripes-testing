@@ -106,6 +106,14 @@ export default {
         );
       }
 
+      if (record.fundCode) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Fund code' }))
+            .has({ content: including(record.fundCode) }),
+        );
+      }
+
       if (record.receiptStatus) {
         cy.expect(
           invoiceLinesSection
