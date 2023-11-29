@@ -31,8 +31,6 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       permissions.uiInventorySingleRecordImport.gui,
       permissions.converterStorageAll.gui,
     ]).then((userProperties) => {
-      //  wait for created user to be available
-      cy.wait(20000);
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.inventoryPath,

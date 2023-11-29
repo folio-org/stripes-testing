@@ -58,7 +58,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C368009 Testing holding for SRS MARC bib ${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
+          permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
@@ -224,7 +224,7 @@ describe('data-import', () => {
 
           // check created items
           FileDetails.openHoldingsInInventory('Created');
-          HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.MIGRATION_UI);
+          HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
           cy.wait(2000);
           cy.go('back');
           FileDetails.openItemInInventory('Created');

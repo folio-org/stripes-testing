@@ -39,10 +39,10 @@ describe('data-import', () => {
     const instance = {
       instanceTitle: 'Love enough / Dionne Brand.',
       instanceSubject: uniqSubject,
-      holdingsLocation: `${LOCATION_NAMES.PRIMARY_FICTION_UI} >`,
+      holdingsLocation: `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
       itemStatus: ITEM_STATUS_NAMES.AVAILABLE,
     };
-    const permanentLocation = LOCATION_NAMES.PRIMARY_FICTION;
+    const permanentLocation = LOCATION_NAMES.MAIN_LIBRARY;
     const recordType = 'MARC_BIBLIOGRAPHIC';
     const note = 'Test administrative note for item';
     // unique file name

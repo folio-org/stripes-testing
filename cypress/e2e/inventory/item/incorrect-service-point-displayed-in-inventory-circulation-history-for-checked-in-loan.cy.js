@@ -26,7 +26,7 @@ describe('inventory', () => {
       barcode: uuid(),
       instanceTitle: `autotestInstance ${getRandomPostfix()}`,
     };
-    const holdingsPermanentLocation = LOCATION_NAMES.SECONDARY_FICTION_UI;
+    const holdingsPermanentLocation = LOCATION_NAMES.ONLINE_UI;
     const firstServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const secondServicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const testData = [ITEM_STATUS_NAMES.AVAILABLE, itemData.barcode];
@@ -133,7 +133,7 @@ describe('inventory', () => {
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.byKeywords(itemData.instanceTitle);
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.SECONDARY_FICTION_UI} >`);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkItemCirculationHistory(

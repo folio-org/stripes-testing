@@ -2,7 +2,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FastAddNewRecord from '../../support/fragments/inventory/fastAddNewRecord';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -70,6 +69,7 @@ describe('inventory', () => {
           InteractorsTools.checkCalloutMessage(
             FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
           );
+          cy.wait(3000);
           InventoryInstance.searchByTitle(
             FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
           );

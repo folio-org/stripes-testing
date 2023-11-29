@@ -267,8 +267,8 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C356802 update holdings mapping profile ${getRandomPostfix()}`,
           holdingsType: HOLDINGS_TYPE_NAMES.ELECTRONIC,
-          permanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
-          permanentLocationUI: LOCATION_NAMES.SECONDARY_FICTION_UI,
+          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
+          permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
           callNumberType: CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS,
           callNumber: '050$a " " 050$b',
           relationship: 'Resource',
@@ -421,7 +421,7 @@ describe('data-import', () => {
         FileDetails.openInstanceInInventory(FileDetails.status.created);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
-          cy.pause();
+
           InventoryInstance.checkIsInstancePresented(
             instanceTitle,
             holdingsPermanentLocation,

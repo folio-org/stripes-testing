@@ -110,7 +110,7 @@ describe('data-import', () => {
               name: 'permanentLocationId',
               enabled: true,
               path: 'holdings.permanentLocationId',
-              value: '"Migration (Migration)"',
+              value: `"${LOCATION_NAMES.ANNEX}"`,
             },
           ],
         },
@@ -243,7 +243,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `autotestMappingHoldings${getRandomPostfix()}`,
           callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
-          permanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
+          permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

@@ -29,6 +29,8 @@ describe('MARC -> MARC Bibliographic', () => {
       Permissions.uiInventorySingleRecordImport.gui,
       Permissions.converterStorageAll.gui,
     ]).then((createdUserProperties) => {
+      // wait for the created user to be available
+      cy.wait(20000);
       testData.userProperties = createdUserProperties;
 
       cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -201,7 +203,8 @@ describe('MARC -> MARC Bibliographic', () => {
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.deleteConfirmationPresented();
           QuickMarcEditor.confirmDelete();
-
+          cy.wait(5000);
+          cy.reload();
           InventoryInstance.checkUpdatedHRID(instanceHRID);
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.checkPresentedText(expectedUpdatedValue);

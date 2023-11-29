@@ -15,6 +15,8 @@ describe('eHoldings', () => {
         Permissions.uieHoldingsRecordsEdit.gui,
         Permissions.moduleeHoldingsEnabled.gui,
       ]).then((userProperties) => {
+        // wait for the created user to be available
+        cy.wait(20000);
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
         cy.visit(TopMenu.eholdingsPath);

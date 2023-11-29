@@ -56,6 +56,7 @@ describe('MARC -> MARC Holdings', () => {
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
     });
+    cy.wait(2000);
     InventorySearchAndFilter.searchInstanceByTitle(instanceID);
     InventorySearchAndFilter.selectViewHoldings();
     // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.

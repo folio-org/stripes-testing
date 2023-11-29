@@ -48,6 +48,8 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
       permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       permissions.converterStorageAll.gui,
     ]).then((userProperties) => {
+      // wait for the created user to be available
+      cy.wait(20000);
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.inventoryPath);
@@ -122,6 +124,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
     { tags: [TestTypes.smoke, devTeams.firebird] },
     () => {
       InventorySearchAndFilter.switchToItem();
+      cy.wait(3000);
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
       InventorySearchAndFilter.selectSearchResultItem();
       ItemRecordView.closeDetailView();

@@ -63,7 +63,7 @@ describe('data-import', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             testData.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ query: `name="${LOCATION_NAMES.PRIMARY_FICTION_UI}"` }).then(
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
             (locations) => {
               testData.locationsId = locations.id;
             },

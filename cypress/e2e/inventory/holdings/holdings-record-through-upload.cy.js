@@ -47,7 +47,7 @@ describe('Manage holding records of instance records created through marc file u
       InventoryInstance.searchByTitle(instanceId);
       InventoryInstances.selectInstance();
       InventoryInstance.waitLoading();
-      InventoryInstance.createHoldingsRecord();
+      InventoryInstance.createHoldingsRecord('Migration (Migration) ');
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkSource('FOLIO');
       HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
@@ -55,6 +55,7 @@ describe('Manage holding records of instance records created through marc file u
       HoldingsRecordEdit.waitLoading();
       HoldingsRecordEdit.checkReadOnlyFields();
       HoldingsRecordEdit.closeWithoutSave();
+      InventoryInstance.openHoldingView();
       HoldingsRecordView.checkReadOnlyFields();
       HoldingsRecordView.tryToDelete();
       HoldingsRecordView.duplicate();

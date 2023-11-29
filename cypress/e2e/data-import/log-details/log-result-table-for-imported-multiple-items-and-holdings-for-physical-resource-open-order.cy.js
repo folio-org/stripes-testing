@@ -40,9 +40,9 @@ describe('data-import', () => {
     const quantityOfCreatedHoldings = 3;
     const quantityOfCreatedItems = '6';
     const holdingsData = [
-      { permanentLocation: LOCATION_NAMES.PRIMARY_FICTION_UI, itemsQuqntity: 3 },
-      { permanentLocation: LOCATION_NAMES.MIGRATION_UI, itemsQuqntity: 2 },
-      { permanentLocation: LOCATION_NAMES.SECONDARY_FICTION_UI, itemsQuqntity: 1 },
+      { permanentLocation: LOCATION_NAMES.MAIN_LIBRARY_UI, itemsQuqntity: 3 },
+      { permanentLocation: LOCATION_NAMES.ANNEX_UI, itemsQuqntity: 2 },
+      { permanentLocation: LOCATION_NAMES.ONLINE_UI, itemsQuqntity: 1 },
     ];
     const collectionOfMappingAndActionProfiles = [
       {
@@ -59,7 +59,7 @@ describe('data-import', () => {
           physicalUnitPrice: '"20"',
           quantityPhysical: '"1"',
           currency: 'USD',
-          locationName: `"${LOCATION_NAMES.MIGRATION}"`,
+          locationName: `"${LOCATION_NAMES.ANNEX}"`,
           locationQuantityPhysical: '"1"',
         },
         actionProfile: {

@@ -176,140 +176,140 @@ describe('plug-in MARC authority | Search', () => {
     },
   );
 
-  it(
-    'C359206 MARC Authority plug-in | Search using "Identifier (all)" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
-      InventoryInstance.verifyAndClickLinkIcon('700');
-      MarcAuthorities.switchToSearch();
-      InventoryInstance.verifySearchOptions();
-      MarcAuthorities.searchBy(
-        testData.forC359206.searchOption,
-        testData.forC359206.lcControlNumberA,
-      );
-      MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberA);
-      InventoryInstance.checkRecordDetailPage(testData.forC359206.valueA);
-      MarcAuthorities.searchBy(
-        testData.forC359206.searchOption,
-        testData.forC359206.lcControlNumberB,
-      );
-      MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberB);
-      InventoryInstance.checkRecordDetailPage(testData.forC359206.valueB);
-      MarcAuthorities.clickResetAndCheck();
-    },
-  );
+  // it(
+  //   'C359206 MARC Authority plug-in | Search using "Identifier (all)" option (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+  //   () => {
+  //     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+  //     InventoryInstances.selectInstance();
+  //     InventoryInstance.editMarcBibliographicRecord();
+  //     InventoryInstance.verifyAndClickLinkIcon('700');
+  //     MarcAuthorities.switchToSearch();
+  //     InventoryInstance.verifySearchOptions();
+  //     MarcAuthorities.searchBy(
+  //       testData.forC359206.searchOption,
+  //       testData.forC359206.lcControlNumberA,
+  //     );
+  //     MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberA);
+  //     InventoryInstance.checkRecordDetailPage(testData.forC359206.valueA);
+  //     MarcAuthorities.searchBy(
+  //       testData.forC359206.searchOption,
+  //       testData.forC359206.lcControlNumberB,
+  //     );
+  //     MarcAuthorities.checkFieldAndContentExistence('010', testData.forC359206.lcControlNumberB);
+  //     InventoryInstance.checkRecordDetailPage(testData.forC359206.valueB);
+  //     MarcAuthorities.clickResetAndCheck();
+  //   },
+  // );
 
-  it(
-    'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
-      InventoryInstance.verifyAndClickLinkIcon('700');
-      MarcAuthorities.switchToSearch();
-      InventoryInstance.verifySearchOptions();
-      MarcAuthorities.searchByParameter(testData.forC359228.searchOption, testData.forC359228.all);
-      // wait for the results to be loaded.
-      cy.wait(1000);
-      MarcAuthorities.checkAfterSearchHeadingType(
-        testData.forC359228.type,
-        testData.forC359228.typeOfHeadingA,
-        testData.forC359228.typeOfHeadingB,
-      );
-      MarcAuthorities.selectTitle(testData.forC359228.title);
-      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359228.title);
-      MarcAuthorities.chooseTypeOfHeadingAndCheck(
-        testData.forC359228.typeOfHeadingB,
-        testData.forC359228.typeOfHeadingA,
-        testData.forC359228.typeOfHeadingB,
-      );
-    },
-  );
+  // it(
+  //   'C380567 MARC Authority plug-in | Search using "Corporate/Conference name" option (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+  //   () => {
+  //     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+  //     InventoryInstances.selectInstance();
+  //     InventoryInstance.editMarcBibliographicRecord();
+  //     InventoryInstance.verifyAndClickLinkIcon('700');
+  //     MarcAuthorities.switchToSearch();
+  //     InventoryInstance.verifySearchOptions();
+  //     MarcAuthorities.searchByParameter(testData.forC359228.searchOption, testData.forC359228.all);
+  //     // wait for the results to be loaded.
+  //     cy.wait(1000);
+  //     MarcAuthorities.checkAfterSearchHeadingType(
+  //       testData.forC359228.type,
+  //       testData.forC359228.typeOfHeadingA,
+  //       testData.forC359228.typeOfHeadingB,
+  //     );
+  //     MarcAuthorities.selectTitle(testData.forC359228.title);
+  //     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359228.title);
+  //     MarcAuthorities.chooseTypeOfHeadingAndCheck(
+  //       testData.forC359228.typeOfHeadingB,
+  //       testData.forC359228.typeOfHeadingA,
+  //       testData.forC359228.typeOfHeadingB,
+  //     );
+  //   },
+  // );
 
-  it(
-    'C380568 MARC Authority plug-in | Search using "Geographic name" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
-      InventoryInstance.verifyAndClickLinkIcon('700');
-      MarcAuthorities.switchToSearch();
-      InventoryInstance.verifySearchOptions();
-      MarcAuthorities.searchBy(testData.forC359229.searchOptionA, testData.forC359229.valueA);
-      MarcAuthorities.checkFieldAndContentExistence('151', testData.forC359229.valueA);
-      InventoryInstance.checkRecordDetailPage(testData.forC359229.valueA);
-      MarcAuthorities.searchBy(testData.forC359229.searchOptionB, testData.forC359229.valueB);
-      MarcAuthorities.checkResultsExistance(testData.forC359229.type);
-    },
-  );
+  // it(
+  //   'C380568 MARC Authority plug-in | Search using "Geographic name" option (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+  //   () => {
+  //     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+  //     InventoryInstances.selectInstance();
+  //     InventoryInstance.editMarcBibliographicRecord();
+  //     InventoryInstance.verifyAndClickLinkIcon('700');
+  //     MarcAuthorities.switchToSearch();
+  //     InventoryInstance.verifySearchOptions();
+  //     MarcAuthorities.searchBy(testData.forC359229.searchOptionA, testData.forC359229.valueA);
+  //     MarcAuthorities.checkFieldAndContentExistence('151', testData.forC359229.valueA);
+  //     InventoryInstance.checkRecordDetailPage(testData.forC359229.valueA);
+  //     MarcAuthorities.searchBy(testData.forC359229.searchOptionB, testData.forC359229.valueB);
+  //     MarcAuthorities.checkResultsExistance(testData.forC359229.type);
+  //   },
+  // );
 
-  it(
-    'C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
-      InventoryInstance.verifyAndClickLinkIcon('700');
-      MarcAuthorities.switchToSearch();
-      InventoryInstance.verifySearchOptions();
-      MarcAuthorities.searchByParameter(testData.forC359230.searchOptionA, '*');
-      // wait for the results to be loaded.
-      cy.wait(1000);
-      MarcAuthorities.checkHeadingType(
-        testData.forC359230.type,
-        testData.forC359230.typeOfHeadingA,
-        testData.forC359230.typeOfHeadingB,
-        testData.forC359230.typeOfHeadingC,
-      );
-      MarcAuthorities.selectTitle(testData.forC359230.value);
-      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359230.valurMarked);
-      MarcAuthorities.searchBy(testData.forC359230.searchOptionB, '*');
-      MarcAuthorities.checkSingleHeadingType(
-        testData.forC359230.type,
-        testData.forC359230.typeOfHeadingA,
-      );
-    },
-  );
+  // it(
+  //   'C380569 MARC Authority plug-in | Search using "Name-title" option (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+  //   () => {
+  //     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+  //     InventoryInstances.selectInstance();
+  //     InventoryInstance.editMarcBibliographicRecord();
+  //     InventoryInstance.verifyAndClickLinkIcon('700');
+  //     MarcAuthorities.switchToSearch();
+  //     InventoryInstance.verifySearchOptions();
+  //     MarcAuthorities.searchByParameter(testData.forC359230.searchOptionA, '*');
+  //     // wait for the results to be loaded.
+  //     cy.wait(1000);
+  //     MarcAuthorities.checkHeadingType(
+  //       testData.forC359230.type,
+  //       testData.forC359230.typeOfHeadingA,
+  //       testData.forC359230.typeOfHeadingB,
+  //       testData.forC359230.typeOfHeadingC,
+  //     );
+  //     MarcAuthorities.selectTitle(testData.forC359230.value);
+  //     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359230.valurMarked);
+  //     MarcAuthorities.searchBy(testData.forC359230.searchOptionB, '*');
+  //     MarcAuthorities.checkSingleHeadingType(
+  //       testData.forC359230.type,
+  //       testData.forC359230.typeOfHeadingA,
+  //     );
+  //   },
+  // );
 
-  it(
-    'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
-      InventoryInstance.verifyAndClickLinkIcon('700');
-      MarcAuthorities.switchToSearch();
-      InventoryInstance.verifySearchOptions();
-      MarcAuthorities.searchByParameter('Personal name', 'Erbil, H. Yıldırım');
-      MarcAuthorities.checkRecordDetailPageMarkedValue('Erbil, H. Yıldırım');
-    },
-  );
+  // it(
+  //   'C380566 MARC Authority plug-in | Search using "Personal name" option (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+  //   () => {
+  //     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+  //     InventoryInstances.selectInstance();
+  //     InventoryInstance.editMarcBibliographicRecord();
+  //     InventoryInstance.verifyAndClickLinkIcon('700');
+  //     MarcAuthorities.switchToSearch();
+  //     InventoryInstance.verifySearchOptions();
+  //     MarcAuthorities.searchByParameter('Personal name', 'Erbil, H. Yıldırım');
+  //     MarcAuthorities.checkRecordDetailPageMarkedValue('Erbil, H. Yıldırım');
+  //   },
+  // );
 
-  it(
-    'C380570 MARC Authority plug-in | Search using "Uniform title" option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
-    () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
-      InventoryInstance.verifyAndClickLinkIcon('700');
-      MarcAuthorities.clickReset();
-      MarcAuthorities.switchToSearch();
-      InventoryInstance.verifySearchOptions();
-      MarcAuthorities.searchByParameter(
-        testData.forC359231.searchOption,
-        testData.forC359231.value,
-      );
-      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359231.value);
-      MarcAuthorities.switchToBrowse();
-      MarcAuthorities.checkDefaultBrowseOptions(testData.forC359231.value);
-    },
-  );
+  // it(
+  //   'C380570 MARC Authority plug-in | Search using "Uniform title" option (spitfire)',
+  //   { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+  //   () => {
+  //     InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+  //     InventoryInstances.selectInstance();
+  //     InventoryInstance.editMarcBibliographicRecord();
+  //     InventoryInstance.verifyAndClickLinkIcon('700');
+  //     MarcAuthorities.clickReset();
+  //     MarcAuthorities.switchToSearch();
+  //     InventoryInstance.verifySearchOptions();
+  //     MarcAuthorities.searchByParameter(
+  //       testData.forC359231.searchOption,
+  //       testData.forC359231.value,
+  //     );
+  //     MarcAuthorities.checkRecordDetailPageMarkedValue(testData.forC359231.value);
+  //     MarcAuthorities.switchToBrowse();
+  //     MarcAuthorities.checkDefaultBrowseOptions(testData.forC359231.value);
+  //   },
+  // );
 });

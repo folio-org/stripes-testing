@@ -10,9 +10,10 @@ import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(TopMenu.inventoryPath);
     const InventoryNewInstance = InventoryInstances.addNewInventory();
+    cy.wait(2000);
     InventoryNewInstance.fillRequiredValues();
     InventoryNewInstance.clickSaveAndCloseButton();
   });
@@ -20,7 +21,7 @@ describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
     'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
     { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord] },
     () => {
-      InventoryInstance.createHoldingsRecord();
+      InventoryInstance.createHoldingsRecord('Migration (Migration) ');
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkSource('FOLIO');
       HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
@@ -28,6 +29,7 @@ describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
       HoldingsRecordEdit.waitLoading();
       HoldingsRecordEdit.checkReadOnlyFields();
       HoldingsRecordEdit.closeWithoutSave();
+      InventoryInstance.openHoldingView();
       HoldingsRecordView.tryToDelete();
       HoldingsRecordView.duplicate();
       InventoryNewHoldings.checkSource();

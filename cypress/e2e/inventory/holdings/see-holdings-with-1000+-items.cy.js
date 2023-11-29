@@ -30,7 +30,7 @@ describe('inventory', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             testData.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ query: `name="${LOCATION_NAMES.PRIMARY_FICTION_UI}"` }).then((res) => {
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then((res) => {
             testData.locationId = res.id;
           });
           cy.getLoanTypes({ limit: 1 }).then((res) => {
@@ -102,15 +102,15 @@ describe('inventory', () => {
           testData.instanceTitle,
         );
         InstanceRecordView.verifyInstanceRecordViewOpened();
-        InstanceRecordView.verifyItemsCount(quantityOfItems, LOCATION_NAMES.PRIMARY_FICTION_UI);
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.PRIMARY_FICTION_UI} >`);
+        InstanceRecordView.verifyItemsCount(quantityOfItems, LOCATION_NAMES.MAIN_LIBRARY_UI);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
-          `${LOCATION_NAMES.PRIMARY_FICTION_UI} >`,
+          `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
           quantityOfItemsOnPage,
         );
         InstanceRecordView.clickNextPaginationButton();
         InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
-          `${LOCATION_NAMES.PRIMARY_FICTION_UI} >`,
+          `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
           quantityOfItemsOnPage,
         );
       },

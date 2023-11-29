@@ -44,7 +44,7 @@ describe('Data Import - Update MARC Authority files', () => {
     name: 'Update MARC authority records by matching 999 ff $s subfield value',
     typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
     update: true,
-    permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
+    permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
   };
   const actionProfile = {
     typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,

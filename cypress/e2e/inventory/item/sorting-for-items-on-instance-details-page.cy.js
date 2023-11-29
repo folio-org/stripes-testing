@@ -26,7 +26,7 @@ describe('inventory', () => {
           cy.getHoldingTypes({ limit: 1 }).then((res) => {
             itemData.holdingTypeId = res[0].id;
           });
-          cy.getLocations({ query: `name="${LOCATION_NAMES.PRIMARY_FICTION_UI}"` }).then(
+          cy.getLocations({ query: `name="${LOCATION_NAMES.MAIN_LIBRARY_UI}"` }).then(
             (locations) => {
               itemData.locationsId = locations.id;
             },
@@ -200,9 +200,9 @@ describe('inventory', () => {
       'C409420 Verify the sorting for Items on Instance details page (folijet)',
       { tags: [TestTypes.criticalPath, DevTeams.folijet] },
       () => {
-        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.PRIMARY_FICTION_UI} >`);
+        InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(
-          `${LOCATION_NAMES.PRIMARY_FICTION_UI} >`,
+          `${LOCATION_NAMES.MAIN_LIBRARY_UI} >`,
           10,
         );
 

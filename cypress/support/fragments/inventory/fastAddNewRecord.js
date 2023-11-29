@@ -11,13 +11,14 @@ import {
   Pane,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import { LOCATION_NAMES } from '../../constants';
 
 const fastAddNewRecordFormDetails = {
   instanceStatusCodeValue: 'uncat',
   resourceTitle: `Monograph ${getRandomPostfix()}`,
   resourceType: 'text',
-  permanentLocationOption: 'Migration (Migration) ',
-  permanentLocationValue: 'Migration',
+  permanentLocationOption: 'Online (E) ',
+  permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
   itemBarcode: `${getRandomPostfix()}Barcode`,
   materialType: 'text',
   permanentLoanType: 'Course reserves',

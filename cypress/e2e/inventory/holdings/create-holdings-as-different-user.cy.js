@@ -9,7 +9,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import DevTeams from '../../../support/dictionary/devTeams';
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
   describe('Holdings', () => {
@@ -18,8 +18,8 @@ describe('inventory', () => {
     const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
     const recordsData = {
       instanceTitle,
-      permanentLocationOption: 'Migration (Migration) ',
-      permanentLocationValue: 'Migration',
+      permanentLocationOption: 'Online (E) ',
+      permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
       source: INSTANCE_SOURCE_NAMES.FOLIO,
     };
 
@@ -39,6 +39,7 @@ describe('inventory', () => {
 
     afterEach(() => {
       cy.getAdminToken().then(() => {
+        cy.wait(2000);
         cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
           (instance) => {
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
@@ -57,7 +58,7 @@ describe('inventory', () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);
         InventoryNewInstance.clickSaveAndCloseButton();
-
+        cy.wait(2000);
         InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
         cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 

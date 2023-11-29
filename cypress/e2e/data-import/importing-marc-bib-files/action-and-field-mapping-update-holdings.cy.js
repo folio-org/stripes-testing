@@ -60,7 +60,7 @@ describe('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `C11106 holdingsMappingProf${getRandomPostfix()}`,
-          permanentLocation: `"${LOCATION_NAMES.SECONDARY_FICTION}"`,
+          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
           formerHoldingsId: `autotestFormerHoldingsId.${getRandomPostfix()}`,
           holdingsStatements: `autotestHoldingsStatements.${getRandomPostfix()}`,
         },
@@ -79,7 +79,7 @@ describe('data-import', () => {
     const mappingProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
       name: `C11106 holdingsMappingProfileForUpdate_${getRandomPostfix()}`,
-      permanentLocation: `"${LOCATION_NAMES.MIGRATION}"`,
+      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
       copyNumber: '1',
     };
     const actionProfile = {
@@ -281,7 +281,7 @@ describe('data-import', () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.openHoldingView();
-        HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.MIGRATION_UI);
+        HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
         HoldingsRecordView.checkCopyNumber(mappingProfile.copyNumber);
       },
     );
