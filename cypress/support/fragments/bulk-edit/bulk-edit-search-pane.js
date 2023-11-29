@@ -836,6 +836,14 @@ export default {
     cy.do(logsStatusesAccordion.clickHeader());
   },
 
+  clickLogsStartedAccordion() {
+    cy.do(logsStartDateAccordion.clickHeader());
+  },
+
+  clickLogsEndedAccordion() {
+    cy.do(logsEndDateAccordion.clickHeader());
+  },
+
   verifyRecordTypesAccordionCollapsed() {
     cy.expect([
       recordTypesAccordion.has({ open: false }),
@@ -843,6 +851,10 @@ export default {
       itemsRadio.absent(),
       holdingsRadio.absent(),
     ]);
+  },
+
+  verifyUserAccordionCollapsed() {
+    cy.expect(Accordion('User').has({ open: false }));
   },
 
   verifyLogsStatusesAccordionCollapsed() {
@@ -889,6 +901,32 @@ export default {
       holdingsCheckbox.has({ checked: false }),
       itemsCheckbox.has({ checked: false }),
     ]);
+  },
+
+  verifyLogsStartedAccordionExistsWithElements() {
+    cy.expect([
+      logsStartDateAccordion.has({ open: true }),
+      logsStartDateAccordion.find(textFildFrom).has(Button({ icon: 'calendar' })),
+      logsStartDateAccordion.find(textFildTo).has(Button({ icon: 'calendar' })),
+      logsStartDateAccordion.find(textFildFrom).has({ placeholder: 'YYYY-MM-DD' }),
+      logsStartDateAccordion.find(textFildTo).has({ placeholder: 'YYYY-MM-DD' }),
+      logsStartDateAccordion.find(applyBtn).exists(),
+    ]);
+  },
+
+  verifyLogsEndedAccordionExistsWithElements() {
+    cy.expect([
+      logsEndDateAccordion.has({ open: true }),
+      logsEndDateAccordion.find(textFildFrom).has(Button({ icon: 'calendar' })),
+      logsEndDateAccordion.find(textFildTo).has(Button({ icon: 'calendar' })),
+      logsEndDateAccordion.find(textFildFrom).has({ placeholder: 'YYYY-MM-DD' }),
+      logsEndDateAccordion.find(textFildTo).has({ placeholder: 'YYYY-MM-DD' }),
+      logsEndDateAccordion.find(applyBtn).exists(),
+    ]);
+  },
+
+  verifyLogsDateFiledIsEqual(fieldName, valueToVerify) {
+    cy.expect(TextField(fieldName).has({ value: valueToVerify }));
   },
 
   verifyClearSelectedFiltersButtonExists(accordion) {
@@ -1004,20 +1042,20 @@ export default {
     ]);
   },
 
+  fillLogsDate(accordion, dataPicker, value) {
+    cy.do(Accordion(accordion).find(TextField(dataPicker)).fillIn(value));
+  },
+
   fillLogsStartDate(fromDate, toDate) {
-    cy.do([
-      logsStartDateAccordion.clickHeader(),
-      logsStartDateAccordion.find(textFildFrom).fillIn(fromDate),
-      logsStartDateAccordion.find(textFildTo).fillIn(toDate),
-    ]);
+    this.fillLogsDate('Started', 'From', fromDate);
+    this.fillLogsDate('Started', 'To', toDate);
+    cy.do(logsStartDateAccordion.clickHeader());
   },
 
   fillLogsEndDate(fromDate, toDate) {
-    cy.do([
-      logsEndDateAccordion.clickHeader(),
-      logsEndDateAccordion.find(textFildFrom).fillIn(fromDate),
-      logsEndDateAccordion.find(textFildTo).fillIn(toDate),
-    ]);
+    this.fillLogsDate('Ended', 'From', fromDate);
+    this.fillLogsDate('Ended', 'To', toDate);
+    cy.do(logsEndDateAccordion.clickHeader());
   },
 
   applyStartDateFilters() {

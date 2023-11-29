@@ -2,6 +2,7 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import DateTools from '../../../support/utils/dateTools';
 
 let user;
 
@@ -74,4 +75,37 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
     BulkEditSearchPane.verifyCellsValues(1, 'Users');
   });
+
+  it(
+    'C368035 Filters section: Started, Ended (firebird)',
+    { tags: ['extended', 'firebird'] },
+    () => {
+      const currentDate = DateTools.getFormattedDate(
+        { date: DateTools.getCurrentDate() },
+        'YYYY-MM-DD',
+      );
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifySetCriteriaPaneExists();
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.verifyUserAccordionCollapsed();
+      BulkEditSearchPane.clickLogsStartedAccordion();
+      BulkEditSearchPane.verifyLogsStartedAccordionExistsWithElements();
+      BulkEditSearchPane.clickLogsEndedAccordion();
+      BulkEditSearchPane.verifyLogsEndedAccordionExistsWithElements();
+      BulkEditSearchPane.fillLogsDate('Started', 'From', currentDate);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Started');
+      BulkEditSearchPane.verifyLogsDateFiledIsEqual('From', currentDate);
+      BulkEditSearchPane.applyStartDateFilters();
+      const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
+      recordTypes.forEach((recordType) => BulkEditSearchPane.checkLogsCheckbox(recordType));
+      BulkEditSearchPane.resetAllBtnIsDisabled(false);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
+      BulkEditSearchPane.clickClearSelectedFiltersButton('Record types');
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkLogsCheckbox('Users');
+      BulkEditSearchPane.resetAllBtnIsDisabled(false);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
+      BulkEditSearchPane.verifyCellsValues(1, 'Users');
+    },
+  );
 });
