@@ -1,14 +1,13 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes } from '../../../../support/dictionary';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import permissions from '../../../../support/dictionary/permissions';
 import ManualCharges from '../../../../support/fragments/settings/users/manualCharges';
 import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
-import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../../support/fragments/users/usersCard';
 import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
-import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
+import UsersCard from '../../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 
 describe('Users: Owners', () => {
   const owners = [
@@ -77,7 +76,7 @@ describe('Users: Owners', () => {
 
   it(
     'C443 - Verify that you can create/edit/delete "Shared" manual charges for institution (Spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(SettingsMenu.manualCharges);
       ManualCharges.waitLoading();

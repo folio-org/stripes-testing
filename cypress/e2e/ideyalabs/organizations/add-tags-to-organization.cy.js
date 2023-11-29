@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-import testTypes from '../../../support/dictionary/testTypes';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
@@ -27,18 +26,14 @@ describe.skip('ui-organizations: Organizations creation', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 
-  it(
-    'C6710 Add tags to an Organization record (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      organizations.selectActiveStatus();
-      organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
-      organizations.selectOrganization(newOrganization.name);
-      organizations.organizationTagDetails();
-      organizations.addTag();
-      organizations.tagsPane();
-      organizations.verifyTagCount();
-      organizations.resetFilters();
-    },
-  );
+  it('C6710 Add tags to an Organization record (thunderjet)', { tags: ['ideaLabsTests'] }, () => {
+    organizations.selectActiveStatus();
+    organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
+    organizations.selectOrganization(newOrganization.name);
+    organizations.organizationTagDetails();
+    organizations.addTag();
+    organizations.tagsPane();
+    organizations.verifyTagCount();
+    organizations.resetFilters();
+  });
 });

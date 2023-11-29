@@ -8,5 +8,7 @@ export { default as LedgerRolloverDetails } from './ledgers/ledgerRolloverDetail
 export { default as LedgerRolloverInProgress } from './ledgers/ledgerRolloverInProgress';
 export { default as LedgerRollovers } from './ledgers/ledgerRollovers';
 export { default as Ledgers } from './ledgers/ledgers';
+export { default as Transactions } from './transactions/transactions';
+export { default as TransactionDetails } from './transactions/transactionDetails';
 export { default as Transfers } from './transfer/transfers';
 export { default as FinanceHelper } from './financeHelper';

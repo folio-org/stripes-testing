@@ -1,14 +1,12 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../support/fragments/users/users';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 const patronGroup = {
   name: getTestEntityValue('groupToTestNotices'),
@@ -54,7 +52,7 @@ describe('Circulation log', () => {
 
   it(
     'C365625 Verify that users can select filters, but not the Actions menus with "Circulation log: View permission " (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       SearchPane.filterByLastWeek();
       SearchResults.checkTableWithoutLinks();

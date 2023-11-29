@@ -1,15 +1,13 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../support/fragments/users/users';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../support/fragments/finance/funds/funds';
 import Groups from '../../../support/fragments/finance/groups/groups';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -111,28 +109,24 @@ describe('ui-finance: Groups', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C4056 Add funds to a group (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
-    () => {
-      FinanceHelp.searchByName(firstFund.name);
-      Funds.selectFund(firstFund.name);
-      Funds.addGroupToFund(firstGroup.name);
-      InteractorsTools.checkCalloutMessage('Fund has been saved');
-      Funds.checkAddGroupToFund(firstGroup.name);
-      Funds.addGroupToFund(secondGroup.name);
-      InteractorsTools.checkCalloutMessage('Fund has been saved');
-      Funds.checkAddGroupToFund(`${firstGroup.name}, ${secondGroup.name}`);
-      cy.visit(TopMenu.groupsPath);
-      FinanceHelp.searchByName(firstGroup.name);
-      Groups.selectGroup(firstGroup.name);
-      Groups.addFundToGroup(secondFund.name);
-      InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
-      Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
-      FinanceHelp.searchByName(secondGroup.name);
-      Groups.selectGroup(secondGroup.name);
-      Groups.addFundToGroup(firstFund.name);
-      InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
-    },
-  );
+  it('C4056 Add funds to a group (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+    FinanceHelp.searchByName(firstFund.name);
+    Funds.selectFund(firstFund.name);
+    Funds.addGroupToFund(firstGroup.name);
+    InteractorsTools.checkCalloutMessage('Fund has been saved');
+    Funds.checkAddGroupToFund(firstGroup.name);
+    Funds.addGroupToFund(secondGroup.name);
+    InteractorsTools.checkCalloutMessage('Fund has been saved');
+    Funds.checkAddGroupToFund(`${firstGroup.name}, ${secondGroup.name}`);
+    cy.visit(TopMenu.groupsPath);
+    FinanceHelp.searchByName(firstGroup.name);
+    Groups.selectGroup(firstGroup.name);
+    Groups.addFundToGroup(secondFund.name);
+    InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
+    Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
+    FinanceHelp.searchByName(secondGroup.name);
+    Groups.selectGroup(secondGroup.name);
+    Groups.addFundToGroup(firstFund.name);
+    InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
+  });
 });

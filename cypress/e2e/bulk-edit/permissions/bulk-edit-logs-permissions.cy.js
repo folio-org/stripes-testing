@@ -2,8 +2,6 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 
 let user;
 
@@ -30,7 +28,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368011 Verify that the "Logs" tab is added (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');

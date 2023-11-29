@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Users from '../../support/fragments/users/users';
@@ -100,7 +100,7 @@ describe('Accessibility', () => {
   it(
     'C8358 Verify checkin note is readable with screenreader (vega) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.vega],
+      tags: ['criticalPath', 'vega'],
     },
     () => {
       // Checkin item

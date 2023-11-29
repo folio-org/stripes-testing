@@ -1,35 +1,33 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
 import { REQUEST_TYPES } from '../../support/constants';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi, {
-  NOTICE_CATEGORIES,
-} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
-import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
 } from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import Requests from '../../support/fragments/requests/requests';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
 
 describe('Request notice triggers', () => {
   const patronGroup = {
@@ -324,7 +322,7 @@ describe('Request notice triggers', () => {
 
   it(
     'C347867 Item recalled + Recall request + Awaiting pickup + Hold shelf expiration triggers (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.itemRecaled);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.itemRecaled);
