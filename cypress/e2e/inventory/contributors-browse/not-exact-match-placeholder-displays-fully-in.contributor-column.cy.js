@@ -1,11 +1,11 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Contributors Browse', () => {
@@ -49,7 +49,7 @@ describe('inventory', () => {
 
     it(
       'C357577 Verify that not-exact match placeholder displays fully in the "Contributor" column (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         // Select "Browse", Click on the browse option dropdown and select “Contributors” option
         InventorySearchAndFilter.selectBrowseContributors();

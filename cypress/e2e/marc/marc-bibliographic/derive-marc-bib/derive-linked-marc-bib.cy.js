@@ -1,19 +1,16 @@
-import TestTypes from '../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../support/dictionary/devTeams';
-import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../../../support/constants';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import Permissions from '../../../../support/dictionary/permissions';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import Parallelization from '../../../../support/dictionary/parallelization';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   const testData = {
@@ -142,7 +139,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
 
   it(
     'C375994 Add controllable subfields to multiple linked fields in "MARC bib" record when deriving record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();

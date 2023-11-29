@@ -1,16 +1,11 @@
-/// <reference types="cypress" />
-
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import testTypes from '../../../support/dictionary/testTypes';
-import features from '../../../support/dictionary/features';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import DevTeams from '../../../support/dictionary/devTeams';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('MARC -> MARC Holdings', () => {
   beforeEach(() => {
@@ -21,7 +16,7 @@ describe('MARC -> MARC Holdings', () => {
 
   it(
     'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
-    { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord, testTypes.broken] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       DataImport.uploadMarcBib().then((instanceRecordHrId) => {
         cy.visit(TopMenu.inventoryPath);
