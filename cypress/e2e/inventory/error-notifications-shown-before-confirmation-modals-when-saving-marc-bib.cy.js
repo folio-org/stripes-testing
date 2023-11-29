@@ -8,11 +8,19 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 
-describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
+describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   const testData = {
     createdRecordIDs: [],
+    tag0: '0',
+    tag040: '040',
+    tag300: '300',
+    tag300content: 'TEST',
+    tagLDR: 'LDR',
+    invalidLDR: '01338cas\\a2200409\\\\\\450',
+    validLDR: '01338cas\\a2200409\\\\\\4500',
+    errorMessage:
+      'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
   };
   const marcFile = {
     marc: 'marcBibFileForC375176.mrc',
@@ -21,31 +29,33 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
     numOfRecords: 1,
   };
 
-  cy.createTempUser([
-    Permissions.inventoryAll.gui,
-    Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-  ]).then((userProperties) => {
-    testData.user = userProperties;
+  before('Creating data', () => {
+    cy.createTempUser([
+      Permissions.inventoryAll.gui,
+      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+    ]).then((userProperties) => {
+      testData.user = userProperties;
 
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-      DataImport.verifyUploadState();
-      DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.search(marcFile.jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(marcFile.fileName);
-      Logs.checkStatusOfJobProfile('Completed');
-      Logs.openFileDetails(marcFile.fileName);
-      for (let i = 0; i < marcFile.numOfRecords; i++) {
-        Logs.getCreatedItemsID(i).then((link) => {
-          testData.createdRecordIDs.push(link.split('/')[5]);
-        });
-      }
-    });
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitLoadingList();
+        JobProfiles.search(marcFile.jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(marcFile.fileName);
+        for (let i = 0; i < marcFile.numOfRecords; i++) {
+          Logs.getCreatedItemsID(i).then((link) => {
+            testData.createdRecordIDs.push(link.split('/')[5]);
+          });
+        }
+      });
 
-    cy.login(testData.user.username, testData.user.password, {
-      path: TopMenu.inventoryPath,
-      waiter: InventoryInstances.waitContentLoading,
+      cy.login(testData.user.username, testData.user.password, {
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
     });
   });
 
@@ -53,7 +63,6 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
     cy.getAdminToken().then(() => {
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
-      MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
     });
   });
 
@@ -65,17 +74,16 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
       InventoryInstance.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.updateExistingTagName('040', '0');
-      QuickMarcEditor.updateExistingField('LDR', '01338cas\\a2200409\\\\450');
-      QuickMarcEditor.deleteTag('76');
-      QuickMarcEditor.updateExistingField('300', 'TEST');
-      QuickMarcEditor.pressSaveAndKeepEditing(
-        'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
-      );
-      QuickMarcEditor.updateExistingField('LDR', '01338cas\\a2200409\\\\4500');
+      QuickMarcEditor.updateExistingTagName(testData.tag040, testData.tag0);
+      QuickMarcEditor.updateExistingField(testData.tagLDR, testData.invalidLDR);
+      QuickMarcEditor.deleteTag(13);
+      QuickMarcEditor.updateExistingField(testData.tag300, testData.tag300content);
+      QuickMarcEditor.pressSaveAndKeepEditing(testData.errorMessage);
+      QuickMarcEditor.updateExistingField(testData.tagLDR, testData.validLDR);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.verifyAndDismissWrongTagLengthCallout();
-      QuickMarcEditor.updateExistingTagName('0', '040');
+      QuickMarcEditor.closeCallout();
+      QuickMarcEditor.updateExistingTagName(testData.tag0, testData.tag040);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.verifyConfirmModal();
       QuickMarcEditor.clickRestoreDeletedField();
