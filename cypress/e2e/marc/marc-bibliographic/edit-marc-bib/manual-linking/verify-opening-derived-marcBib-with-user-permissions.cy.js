@@ -114,9 +114,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBibRecord();
-      QuickMarcEditor.verifyRemoveLinkingModal(
-        'Do you want to remove authority linking for this new bibliographic record?',
-      );
+      QuickMarcEditor.verifyRemoveLinkingModal();
 
       QuickMarcEditor.clickKeepLinkingButton();
       QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245Content);
@@ -128,9 +126,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
         `${testData.marcAuthIcon}\n${testData.marcValue}`,
       );
       InventoryInstance.deriveNewMarcBibRecord();
-      QuickMarcEditor.verifyRemoveLinkingModal(
-        'Do you want to remove authority linking for this new bibliographic record?',
-      );
+      QuickMarcEditor.verifyRemoveLinkingModal();
     },
   );
 });

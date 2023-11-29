@@ -116,9 +116,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBibRecord();
-      QuickMarcEditor.verifyRemoveLinkingModal(
-        'Do you want to remove authority linking for this new bibliographic record?',
-      );
+      QuickMarcEditor.verifyRemoveLinkingModal();
 
       QuickMarcEditor.clickKeepLinkingButton();
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(76);

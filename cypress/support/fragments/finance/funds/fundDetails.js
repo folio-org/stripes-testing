@@ -72,7 +72,7 @@ export default {
 
     return BudgetDetails;
   },
-  checkFundDetails({ information = [], currentBudget, plannedBudget, previousBudgets } = {}) {
+  checkFundDetails({ information = [], currentBudget, plannedBudgets, previousBudgets } = {}) {
     information.forEach(({ key, value }) => {
       cy.expect(fundDetailsPane.find(KeyValue(key)).has({ value: including(value) }));
     });
@@ -81,8 +81,8 @@ export default {
       this.checkCurrentBudget(currentBudget);
     }
 
-    if (plannedBudget) {
-      this.checkPlannedBudgets(plannedBudget);
+    if (plannedBudgets) {
+      this.checkPlannedBudgets(plannedBudgets);
     }
 
     if (previousBudgets) {
@@ -94,24 +94,28 @@ export default {
       if (budget.name) {
         cy.expect(
           section
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .find(MultiColumnListCell({ row: index, column: 'Name' }))
             .has({ content: including(budget.name) }),
         );
       }
       if (budget.allocated) {
         cy.expect(
           section
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .find(MultiColumnListCell({ row: index, column: 'Allocated' }))
             .has({ content: including(budget.allocated) }),
+        );
+      }
+      if (budget.unavailable) {
+        cy.expect(
+          section
+            .find(MultiColumnListCell({ row: index, column: 'Unavailable' }))
+            .has({ content: including(budget.unavailable) }),
         );
       }
       if (budget.available) {
         cy.expect(
           section
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .find(MultiColumnListCell({ row: index, column: 'Available' }))
             .has({ content: including(budget.available) }),
         );
       }
@@ -130,5 +134,8 @@ export default {
   },
   checkPreviousBudgets(budgets = []) {
     this.checkBudgets(budgets, previousBudgetsSection);
+  },
+  closeFundDetails() {
+    cy.do(fundDetailsPaneHeader.find(Button({ icon: 'times' })).click());
   },
 };
