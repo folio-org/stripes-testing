@@ -54,7 +54,7 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyCellsValues(2, 'New');
   });
 
-  it('C368034 Filters section: Record types (firebird)', { tags: ['smoke', 'firebird'] }, () => {
+  it('C368034 Filters section: Record types (firebird)', { tags: ['extended', 'firebird'] }, () => {
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifySetCriteriaPaneExists();
     BulkEditSearchPane.verifyLogsRecordTypesAccordionExistsAndUnchecked();
