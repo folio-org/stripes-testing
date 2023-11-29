@@ -239,6 +239,8 @@ export default {
     cy.do(inventoriesList.click({ row: rowNumber }));
   },
 
+  selectInstanceById: (specialInternalId) => cy.do(inventoriesList.find(Button({ href: including(specialInternalId) })).click()),
+
   addNewInventory() {
     cy.do([actionsButton.click(), Button('New').click()]);
 
