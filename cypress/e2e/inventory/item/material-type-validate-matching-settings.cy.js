@@ -1,10 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
