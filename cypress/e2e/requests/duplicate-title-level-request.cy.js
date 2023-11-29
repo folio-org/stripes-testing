@@ -21,7 +21,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import NewRequest from '../../support/fragments/requests/newRequest';
 
-describe('Duplicate title level request', () => {
+describe('Title Level Request', () => {
   const userData1 = {};
   const userData2 = {};
   const servicePoint1 = ServicePoints.getDefaultServicePointWithPickUpLocation();

@@ -18,6 +18,7 @@ import {
   HTML,
   including,
 } from '../../../../../interactors';
+import LedgerDetails from './ledgerDetails';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -412,6 +413,30 @@ export default {
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
   },
 
+  fillInTestRolloverInfoForOngoingOrdersWithAllocations(
+    fiscalYear,
+    rolloverBudgetValue,
+    rolloverValueAs,
+  ) {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
+    cy.do([
+      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
+      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
+    cy.wait(2000);
+    this.continueRollover();
+    cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
+    cy.wait(4000);
+  },
+
   fillInRolloverInfoForOngoingOrdersWithoutAllocations(
     fiscalYear,
     rolloverBudgetValue,
@@ -432,6 +457,30 @@ export default {
     cy.wait(4000);
     this.continueRollover();
     cy.do(rolloverConfirmButton.click());
+  },
+
+  fillInRolloverInfoForOngoingOrdersWithAllocations(
+    fiscalYear,
+    rolloverBudgetValue,
+    rolloverValueAs,
+  ) {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000);
+    cy.do([
+      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
+      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(4000);
+    this.continueRollover();
+    cy.do(rolloverConfirmButton.click());
+    cy.wait(4000);
   },
 
   checkZeroSearchResultsHeader: () => {
@@ -535,10 +584,11 @@ export default {
   }),
 
   selectLedger: (ledgerName) => {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(8000);
-
+    cy.wait(4000);
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
+    LedgerDetails.waitLoading();
+
+    return LedgerDetails;
   },
 
   rolloverLogs: () => {
@@ -564,10 +614,8 @@ export default {
   },
 
   exportRolloverError: (dataFile) => {
-    cy.get('#rollover-logs-list')
-      .find('div[role="gridcell"]')
-      .contains('a', `${dataFile}-error`)
-      .click();
+    cy.wait(4000);
+    cy.contains('#rollover-logs-list div[role="gridcell"] a', `${dataFile}-error`).click();
   },
 
   checkRolloverLogs: (dataFile) => {
@@ -882,6 +930,22 @@ export default {
       rolloverAllocationCheckbox.click(),
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(6000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
+  fillInRolloverForOneTimeOrdersWithoutBudgets(fiscalYear) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
     ]);
