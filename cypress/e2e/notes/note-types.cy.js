@@ -7,10 +7,12 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import NoteTypes from '../../support/fragments/settings/notes/noteTypes';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import usersCard from '../../support/fragments/users/usersCard';
+import UsersCard from '../../support/fragments/users/usersCard';
 import AgreementsDetails from '../../support/fragments/agreements/agreementViewDetails';
 import getRandomPostfix, { randomFourDigitNumber } from '../../support/utils/stringTools';
 import { NOTE_TYPES } from '../../support/constants';
+import NewNote from '../../support/fragments/notes/newNote';
+import ExistingNoteEdit from '../../support/fragments/notes/existingNoteEdit';
 
 describe('Notes', () => {
   const fourDigits = randomFourDigitNumber();
@@ -32,15 +34,13 @@ describe('Notes', () => {
       Permissions.uiNotesSettingsEdit.gui,
     ]).then((userProperties) => {
       testData.userProperties = userProperties;
-
-      cy.loginAsAdmin().then(() => {
-        cy.visit(TopMenu.usersPath);
-        UsersSearchPane.waitLoading();
-        UsersSearchPane.searchByUsername(testData.userProperties.username);
-        UsersSearchPane.waitLoading();
-        usersCard.openNotesSection();
-        AgreementsDetails.createNote({ ...noteC1304, checkoutApp: false }, noteTypeC1304);
-      });
+      servicePoint = NewServicePoint.getDefaultServicePoint();
+      ServicePoints.createViaApi(servicePoint);
+      UserEdit.addServicePointViaApi(
+        servicePoint.id,
+        testData.userProperties.userId,
+        servicePoint.id,
+      );
 
       cy.createTempUser([
         Permissions.uiUsersView.gui,
@@ -56,11 +56,10 @@ describe('Notes', () => {
         Permissions.uiNotesSettingsEdit.gui,
       ]).then((userC1304Properties) => {
         testData.userC1304Properties = userC1304Properties;
-        servicePoint = NewServicePoint.getDefaultServicePoint();
-        ServicePoints.createViaApi(servicePoint);
+
         UserEdit.addServicePointViaApi(
           servicePoint.id,
-          testData.userProperties.userId,
+          testData.userC1304Properties.userId,
           servicePoint.id,
         );
 
@@ -69,6 +68,15 @@ describe('Notes', () => {
             testData.customNoteTypeId = newNoteType.id;
           },
         );
+
+        cy.loginAsAdmin().then(() => {
+          cy.visit(TopMenu.usersPath);
+          UsersSearchPane.waitLoading();
+          UsersSearchPane.searchByUsername(testData.userC1304Properties.username);
+          UsersSearchPane.waitLoading();
+          UsersCard.openNotesSection();
+          AgreementsDetails.createNote({ ...noteC1304, checkoutApp: false }, noteTypeC1304);
+        });
       });
     });
   });
@@ -76,6 +84,9 @@ describe('Notes', () => {
   after('Deleting created entities', () => {
     cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(testData.userProperties.userId, [servicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(testData.userC1304Properties.userId, [
+      servicePoint.id,
+    ]);
     ServicePoints.deleteViaApi(servicePoint.id);
     Users.deleteViaApi(testData.userProperties.userId);
     Users.deleteViaApi(testData.userC1304Properties.userId);
@@ -105,7 +116,7 @@ describe('Notes', () => {
       UsersSearchPane.searchByUsername(testData.userProperties.username);
       UsersSearchPane.waitLoading();
       // Scroll down to the "Notes" accordion and click on it.
-      usersCard.openNotesSection();
+      UsersCard.openNotesSection();
       // Create a new note.
       AgreementsDetails.createNote({ ...note1, checkoutApp: true }, noteType);
       // Return to the "Notes" >> "General".
@@ -115,26 +126,28 @@ describe('Notes', () => {
     },
   );
 
-  it(
-    'C1304 Settings | Edit a note type (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire'] },
-    () => {
-      cy.login(testData.userC1304Properties.username, testData.userC1304Properties.password, {
-        path: TopMenu.notesPath,
-        waiter: NoteTypes.waitLoading,
-      });
-      NoteTypes.checkNewButtonState();
-      NoteTypes.clickEditNoteType(testData.customNoteTypeName);
-      NoteTypes.checkNoteButtonsState();
-      NoteTypes.fillInNoteType(testData.updatedNoteTypeName);
-      NoteTypes.saveNoteType(testData.updatedNoteTypeName);
+  it('C1304 Settings | Edit a note type (spitfire)', { tags: ['extendedPath', 'spitfire'] }, () => {
+    cy.login(testData.userC1304Properties.username, testData.userC1304Properties.password, {
+      path: TopMenu.notesPath,
+      waiter: NoteTypes.waitLoading,
+    });
+    NoteTypes.checkNewButtonState();
+    NoteTypes.clickEditNoteType(testData.customNoteTypeName);
+    NoteTypes.checkNoteButtonsState();
+    NoteTypes.fillInNoteType(testData.updatedNoteTypeName);
+    NoteTypes.saveNoteType(testData.updatedNoteTypeName);
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByUsername(testData.userProperties.username);
-      UsersSearchPane.waitLoading();
-      usersCard.openNotesSection();
-      cy.wait(10000);
-    },
-  );
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.waitLoading();
+    UsersSearchPane.searchByUsername(testData.userC1304Properties.username);
+    UsersSearchPane.waitLoading();
+    UsersCard.openNotesSection();
+    UsersCard.clickNewNoteButton();
+    NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
+    NewNote.close();
+    UsersCard.openNotesSection();
+    UsersCard.openNoteForEdit(noteC1304.title);
+    ExistingNoteEdit.waitLoading();
+    NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
+  });
 });

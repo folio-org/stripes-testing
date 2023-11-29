@@ -18,6 +18,7 @@ import {
   ListItem,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
+import NewNote from '../notes/newNote';
 
 const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
@@ -31,6 +32,7 @@ const errors = {
   patronHasBlocksInPlace: 'Patron has block(s) in place',
 };
 const feesFinesAccordion = rootSection.find(Accordion({ id: 'accountsSection' }));
+const newNoteButton = notesSection.find(Button({ id: 'note-create-button' }));
 
 export default {
   errors,
@@ -303,5 +305,14 @@ export default {
         .find(ListItem(including('open')))
         .has({ text: including(`${count.toString()} open` && `Total: ${totalAmount.toString()}`) }),
     );
+  },
+
+  clickNewNoteButton() {
+    cy.do(newNoteButton.click());
+    NewNote.verifyNewNoteIsDisplayed();
+  },
+
+  openNoteForEdit(noteTitle) {
+    cy.do(MultiColumnListCell(including(noteTitle)).find(Button('Edit')).click());
   },
 };
