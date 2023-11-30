@@ -1194,4 +1194,14 @@ export default {
   verifyItemStatus: (itemStatus) => {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
+
+  verifyContributorAbsent: (text) => {
+    cy.expect(section.find(Button(including('Contributor'))).exists());
+    cy.expect(
+      Accordion('Contributor')
+        .find(contributorsList)
+        .find(MultiColumnListCell(including(text)))
+        .absent(),
+    );
+  },
 };
