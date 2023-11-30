@@ -1,16 +1,16 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import {
-  RECEIVING_WORKFLOWS,
   CHECKIN_ITEMS_VALUE,
+  RECEIVING_WORKFLOWS,
 } from '../../support/fragments/orders/basicOrderLine';
-import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Orders', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -96,7 +96,7 @@ describe('Orders', () => {
 
   it(
     'C402353 Holdings records creation when open order with "Electronic Resource" format PO line and Independent workflow (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Open Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

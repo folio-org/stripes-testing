@@ -1,11 +1,9 @@
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let userId;
 const item = {
@@ -63,7 +61,7 @@ describe('ui-inventory: query search', () => {
   ].forEach((searcher) => {
     it(
       'C9202 Test search field working for Query Search in Instance, Holdings and Item segment (spitfire)',
-      { tags: [TestTypes.smoke, DevTeams.spitfire] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         searcher.searchTab();
         InventorySearchAndFilter.searchByParameter('Query search', searcher.value);

@@ -1,8 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
@@ -45,7 +43,7 @@ describe('inventory', () => {
 
     it(
       'C350392 Verify placeholder for the missing match in subject browse (spitfire)',
-      { tags: [testTypes.criticalPath, devTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(randomSearchString);
         BrowseSubjects.verifyNonExistentSearchResult(randomSearchString);
@@ -55,7 +53,7 @@ describe('inventory', () => {
 
     it(
       'C350393 Verify selecting row from Browse Result list (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         BrowseSubjects.searchBrowseSubjects(item.instanceSubjectName);
         BrowseSubjects.verifyClickTakesToInventory(item.instanceSubjectName);
