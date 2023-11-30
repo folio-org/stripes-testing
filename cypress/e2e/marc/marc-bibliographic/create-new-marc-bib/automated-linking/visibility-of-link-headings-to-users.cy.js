@@ -6,7 +6,6 @@ import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 
-
 describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking', () => {
   const testData = {
     tags: {
