@@ -1,8 +1,6 @@
 import TopMenu from '../../../../support/fragments/topMenu';
-import testTypes from '../../../../support/dictionary/testTypes';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import Users from '../../../../support/fragments/users/users';
@@ -67,7 +65,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C380443 Verify the correctness of the Bulk Edit job status in Logs tab (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
