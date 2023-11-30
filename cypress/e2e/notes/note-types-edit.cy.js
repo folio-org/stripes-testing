@@ -79,26 +79,27 @@ describe('Notes', () => {
     cy.login(testData.userC1304Properties.username, testData.userC1304Properties.password, {
       path: TopMenu.notesPath,
       waiter: NoteTypes.waitLoading,
-    });
-    // wait for page to fully load
-    cy.wait(3000);
-    NoteTypes.checkNewButtonState();
-    NoteTypes.clickEditNoteType(testData.customNoteTypeName);
-    NoteTypes.checkNoteButtonsState();
-    NoteTypes.fillInNoteType(testData.updatedNoteTypeName);
-    NoteTypes.saveNoteType(testData.updatedNoteTypeName);
+    }).then(() => {
+      // wait for page to fully load
+      cy.wait(3000);
+      NoteTypes.checkNewButtonState();
+      NoteTypes.clickEditNoteType(testData.customNoteTypeName);
+      NoteTypes.checkNoteButtonsState();
+      NoteTypes.fillInNoteType(testData.updatedNoteTypeName);
+      NoteTypes.saveNoteType(testData.updatedNoteTypeName);
 
-    cy.visit(TopMenu.usersPath);
-    UsersSearchPane.waitLoading();
-    UsersSearchPane.searchByUsername(testData.userC1304Properties.username);
-    UsersSearchPane.waitLoading();
-    UsersCard.openNotesSection();
-    UsersCard.clickNewNoteButton();
-    NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
-    NewNote.close();
-    UsersCard.openNotesSection();
-    UsersCard.openNoteForEdit(noteC1304.title);
-    ExistingNoteEdit.waitLoading();
-    NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
+      cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
+      UsersSearchPane.searchByUsername(testData.userC1304Properties.username);
+      UsersSearchPane.waitLoading();
+      UsersCard.openNotesSection();
+      UsersCard.clickNewNoteButton();
+      NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
+      NewNote.close();
+      UsersCard.openNotesSection();
+      UsersCard.openNoteForEdit(noteC1304.title);
+      ExistingNoteEdit.waitLoading();
+      NewNote.verifyNoteTypeExists(testData.updatedNoteTypeName);
+    });
   });
 });
