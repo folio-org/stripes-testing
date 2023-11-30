@@ -26,9 +26,9 @@ describe('data-import', () => {
     let user;
     const quantityOfItems = {
       created: '1',
-      noAction: '2',
-      error: '2',
-      recordsWithErrors: '5',
+      noAction: '1',
+      error: '1',
+      recordsWithErrors: '3',
     };
     const invoiceNumber = '1024200';
     const profileForDuplicate = FieldMappingProfiles.mappingProfileForDuplicate.ebsco;
