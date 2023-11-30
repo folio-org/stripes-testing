@@ -1,8 +1,32 @@
-import { Button, NavListItem, Section } from '../../../../../interactors';
+import uuid from 'uuid';
+import {
+  Button,
+  EditableListRow,
+  MultiColumnListCell,
+  NavListItem,
+  Section,
+} from '../../../../../interactors';
+import getRandomPostfix from '../../../utils/stringTools';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const organizationsSettingsSection = Section({ id: 'settings-nav-pane' });
-
+const defaultCategories = {
+  id: uuid(),
+  value: `autotest_category_name_${getRandomPostfix()}`,
+};
+const defaultTypes = {
+  id: uuid(),
+  name: `autotest_type_name_${getRandomPostfix()}`,
+  status: 'Active',
+};
+const trashIconButton = Button({ icon: 'trash' });
+const editIconButton = Button({ icon: 'edit' });
+function getEditableListRow(rowNumber) {
+  return EditableListRow({ index: +rowNumber.split('-')[1] });
+}
 export default {
+  defaultCategories,
+  defaultTypes,
   waitLoadingOrganizationSettings: () => {
     cy.expect(organizationsSettingsSection.exists());
   },
@@ -27,7 +51,64 @@ export default {
     cy.do(NavListItem('Categories').click());
   },
 
+  editCategory(categoryName, oldCategoryName) {
+    cy.do(
+      MultiColumnListCell({ content: oldCategoryName }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do(getEditableListRow(rowNumber).find(editIconButton).click());
+        this.fillRequiredFields(categoryName);
+      }),
+    );
+  },
+
+  deleteCategory: (categoryName) => {
+    cy.do(
+      MultiColumnListCell({ content: categoryName.value }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([
+          getEditableListRow(rowNumber).find(trashIconButton).click(),
+          Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click(),
+        ]);
+      }),
+    );
+    InteractorsTools.checkCalloutMessage(
+      `The category ${categoryName.value} was successfully deleted`,
+    );
+  },
+
+  deleteType: (typeName) => {
+    cy.do(
+      MultiColumnListCell({ content: typeName.name }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([
+          getEditableListRow(rowNumber).find(trashIconButton).click(),
+          Button({ id: 'clickable-delete-controlled-vocab-entry-confirmation-confirm' }).click(),
+        ]);
+      }),
+    );
+    InteractorsTools.checkCalloutMessage(`The category ${typeName.name} was successfully deleted`);
+  },
   selectTypes: () => {
     cy.do(NavListItem('Types').click());
+  },
+
+  createCategoriesViaApi(categories) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'organizations-storage/categories',
+        body: categories,
+      })
+      .then(({ body }) => body);
+  },
+
+  createTypesViaApi(categories) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'organizations-storage/organization-types',
+        body: categories,
+      })
+      .then(({ body }) => body);
   },
 };
