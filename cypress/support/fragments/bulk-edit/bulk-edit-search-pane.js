@@ -15,11 +15,14 @@ import {
   MultiColumnListRow,
   TextField,
   Image,
+  SelectionList,
+  IconButton,
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
 
 const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const logsStartDateAccordion = Accordion('Started');
+const logsUsersAccordion = Accordion('User');
 const logsEndDateAccordion = Accordion('Ended');
 const applyBtn = Button('Apply');
 const logsResultPane = Pane({ id: 'bulk-edit-logs-pane' });
@@ -47,6 +50,8 @@ const logsStatusesAccordion = Accordion('Statuses');
 const saveAndClose = Button('Save and close');
 const textFildTo = TextField('To');
 const textFildFrom = TextField('From');
+const buttonChooseUser = Button('Select control\nChoose user');
+const xIconButtonUser = IconButton('Clear selected filters for "[object Object]"');
 const confirmChanges = Button('Confirm changes');
 const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
 const errorsEncounteredBtn = DropdownMenu().find(
@@ -89,6 +94,14 @@ export default {
 
   searchBtnIsDisabled(isDisabled) {
     cy.expect(searchButton.has({ disabled: isDisabled }));
+  },
+
+  xAppearsNextToUser() {
+    cy.expect(xIconButtonUser.exists());
+  },
+
+  clickOnXAppearsNextToUser() {
+    cy.get('[icon="times-circle-solid"]').eq(1).click();
   },
 
   resetAllBtnIsDisabled(isDisabled) {
@@ -1039,6 +1052,24 @@ export default {
       logsStartDateAccordion.find(textFildFrom).fillIn(fromDate),
       logsStartDateAccordion.find(textFildTo).fillIn(toDate),
     ]);
+  },
+
+  clickUserAccordion() {
+    cy.do(logsUsersAccordion.clickHeader());
+  },
+
+  clickChooseUserUnderUserAccordion() {
+    cy.do(logsUsersAccordion.find(buttonChooseUser).click());
+  },
+
+  searchUser(name) {
+    SelectionList().filter(name);
+    cy.get('[placeholder="Filter options list"]').type(name);
+    cy.contains('List is empty').should('be.visible');
+    cy.contains('No matching option').should('be.visible');
+  },
+  searchAndSelectUser(name) {
+    cy.do([SelectionList().filter(name), SelectionList().select(including(name))]);
   },
 
   fillLogsEndDate(fromDate, toDate) {
