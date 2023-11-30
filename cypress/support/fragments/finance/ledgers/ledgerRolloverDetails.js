@@ -68,6 +68,20 @@ export default {
       if (details.checked) {
         cy.do(Checkbox({ name: `budgetsRollover[${index}].rolloverAllocation` }).click());
       }
+
+      if (details.rolloverBudget) {
+        cy.do([
+          Select({ name: `budgetsRollover[${index}].rolloverBudgetValue` }).click(),
+          Select({ name: `budgetsRollover[${index}].rolloverBudgetValue` }).choose(details.rolloverBudget),
+        ]);
+      }
+
+      if (details.rolloverValue) {
+        cy.do([
+          Select({ name: `budgetsRollover[${index}].addAvailableTo` }).click(),
+          Select({ name: `budgetsRollover[${index}].addAvailableTo` }).choose(details.rolloverValue),
+        ]);
+      }
     });
   },
   setRolloverEncumbranceFields(rolloverEncumbrance) {
