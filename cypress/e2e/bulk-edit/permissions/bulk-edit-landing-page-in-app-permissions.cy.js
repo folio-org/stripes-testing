@@ -1,5 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -50,7 +48,7 @@ describe('bulk-edit', () => {
 
   it(
     'C375096 Verify default state of Bulk edit landing page (In app Users + In app inventory) (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyPanesBeforeImport();
       BulkEditSearchPane.verifyBulkEditPaneItems();

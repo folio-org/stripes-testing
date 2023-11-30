@@ -1,21 +1,18 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../../../support/fragments/users/users';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
-import Parallelization from '../../../../support/dictionary/parallelization';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('MARC Authority -> Edit linked Authority record', () => {
+describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
   const testData = {
     tag001: '001',
     tag035: '035',
@@ -116,7 +113,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
 
   it(
     'C375173 Save linked "MARC authority" record with deleted fields and edited "1XX" field (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
       MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
