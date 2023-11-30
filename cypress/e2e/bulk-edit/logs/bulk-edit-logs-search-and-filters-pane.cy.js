@@ -1,4 +1,4 @@
-import permissions from '../../../support/dictionary/permissions';
+import Permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -9,9 +9,9 @@ let user;
 describe('Bulk Edit - Logs', () => {
   beforeEach('create test data', () => {
     cy.createTempUser([
-      permissions.bulkEditLogsView.gui,
-      permissions.bulkEditCsvView.gui,
-      permissions.bulkEditView.gui,
+      Permissions.bulkEditLogsView.gui,
+      Permissions.bulkEditCsvView.gui,
+      Permissions.bulkEditView.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
@@ -26,7 +26,7 @@ describe('Bulk Edit - Logs', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C368033 Filters section: Statuses (firebird)', { tags: ['smoke', 'firebird'] }, () => {
+  it('C368033 Filters section: Statuses (firebird) (TaaS)', { tags: ['smoke', 'firebird'] }, () => {
     BulkEditSearchPane.openLogsSearch();
     BulkEditSearchPane.verifySetCriteriaPaneExists();
     BulkEditSearchPane.verifyLogsStatusesAccordionExistsAndUnchecked();
@@ -55,29 +55,33 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.verifyCellsValues(2, 'New');
   });
 
-  it('C368034 Filters section: Record types (firebird)', { tags: ['smoke', 'firebird'] }, () => {
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.verifySetCriteriaPaneExists();
-    BulkEditSearchPane.verifyLogsRecordTypesAccordionExistsAndUnchecked();
-    BulkEditSearchPane.clickRecordTypesAccordion();
-    BulkEditSearchPane.verifyLogsRecordTypesAccordionCollapsed();
-    BulkEditSearchPane.clickRecordTypesAccordion();
-    BulkEditSearchPane.verifyLogsRecordTypesAccordionExistsAndUnchecked();
-    BulkEditSearchPane.verifyRecordTypesSortedAlphabetically();
-    const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
-    recordTypes.forEach((recordType) => BulkEditSearchPane.checkLogsCheckbox(recordType));
-    BulkEditSearchPane.resetAllBtnIsDisabled(false);
-    BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
-    BulkEditSearchPane.clickClearSelectedFiltersButton('Record types');
-    BulkEditSearchPane.verifyLogsPane();
-    BulkEditSearchPane.checkLogsCheckbox('Users');
-    BulkEditSearchPane.resetAllBtnIsDisabled(false);
-    BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
-    BulkEditSearchPane.verifyCellsValues(1, 'Users');
-  });
+  it(
+    'C368034 Filters section: Record types (firebird) (TaaS)',
+    { tags: ['smoke', 'firebird'] },
+    () => {
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifySetCriteriaPaneExists();
+      BulkEditSearchPane.verifyLogsRecordTypesAccordionExistsAndUnchecked();
+      BulkEditSearchPane.clickRecordTypesAccordion();
+      BulkEditSearchPane.verifyLogsRecordTypesAccordionCollapsed();
+      BulkEditSearchPane.clickRecordTypesAccordion();
+      BulkEditSearchPane.verifyLogsRecordTypesAccordionExistsAndUnchecked();
+      BulkEditSearchPane.verifyRecordTypesSortedAlphabetically();
+      const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
+      recordTypes.forEach((recordType) => BulkEditSearchPane.checkLogsCheckbox(recordType));
+      BulkEditSearchPane.resetAllBtnIsDisabled(false);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
+      BulkEditSearchPane.clickClearSelectedFiltersButton('Record types');
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkLogsCheckbox('Users');
+      BulkEditSearchPane.resetAllBtnIsDisabled(false);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
+      BulkEditSearchPane.verifyCellsValues(1, 'Users');
+    },
+  );
 
   it(
-    'C368035 Filters section: Started, Ended (firebird)',
+    'C368035 Filters section: Started, Ended (firebird) (TaaS)',
     { tags: ['extended', 'firebird'] },
     () => {
       const currentDate = DateTools.getCurrentDateForFiscalYear();
