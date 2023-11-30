@@ -1,15 +1,13 @@
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 let hrid;
@@ -70,7 +68,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         [
           {
@@ -103,7 +101,7 @@ describe('bulk-edit', () => {
 
     it(
       'C356810 Verify uploading file with holdings UUIDs (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird], retries: 1 },
+      { tags: ['smoke', 'firebird'], retries: 1 },
       () => {
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -124,7 +122,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 
@@ -162,7 +160,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367975 Verify Bulk edit Holdings records with empty Electronic access Relationship type (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 

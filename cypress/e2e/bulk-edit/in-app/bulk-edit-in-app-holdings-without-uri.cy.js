@@ -1,17 +1,15 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import FileManager from '../../../support/utils/fileManager';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -34,21 +32,25 @@ describe('bulk-edit', () => {
           item.instanceName,
           item.itemBarcode,
         );
-        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
-          item.holdingsHRID = holdings[0].hrid;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            electronicAccess: [{
-              // Resource
-              relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
-              uri: '',
-              linkText: '',
-              materialsSpecification: '',
-              publicNote: '',
-            }]
-          });
-          FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingsHRID);
-        });
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then(
+          (holdings) => {
+            item.holdingsHRID = holdings[0].hrid;
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              electronicAccess: [
+                {
+                  // Resource
+                  relationshipId: 'f5d0068e-6272-458e-8a81-b85e7b9a14aa',
+                  uri: '',
+                  linkText: '',
+                  materialsSpecification: '',
+                  publicNote: '',
+                },
+              ],
+            });
+            FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingsHRID);
+          },
+        );
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
@@ -65,7 +67,7 @@ describe('bulk-edit', () => {
 
     it(
       'C409429 Verify Bulk Edit for Holdings without populated "URI" in electronic access (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
@@ -96,7 +98,7 @@ describe('bulk-edit', () => {
         HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
         InventoryInstance.verifyHoldingsPermanentLocation(location);
         InventoryInstance.verifyHoldingsTemporaryLocation(location);
-      }
+      },
     );
   });
 });

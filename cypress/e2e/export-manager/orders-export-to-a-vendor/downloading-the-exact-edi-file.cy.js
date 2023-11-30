@@ -1,18 +1,16 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TopMenu from '../../../support/fragments/topMenu';
-import Orders from '../../../support/fragments/orders/orders';
-import TestTypes from '../../../support/dictionary/testTypes';
-import Users from '../../../support/fragments/users/users';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import OrderLines from '../../../support/fragments/orders/orderLines';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportDetails from '../../../support/fragments/exportManager/exportDetails';
 
 describe('Export Manager', () => {
@@ -127,9 +125,9 @@ describe('Export Manager', () => {
         ExportManagerSearchPane.verifyResult('Successful');
       });
 
-      cy.createTempUser([
-        permissions.exportManagerView.gui,
-      ]).then((userProperties) => { secondUser = userProperties; });
+      cy.createTempUser([permissions.exportManagerView.gui]).then((userProperties) => {
+        secondUser = userProperties;
+      });
 
       cy.createTempUser([
         permissions.uiOrdersView.gui,
@@ -172,7 +170,7 @@ describe('Export Manager', () => {
 
     it(
       'C365123: Downloading the exact ".edi" file that was exported for a given export job with "Successful" status (thunderjet)',
-      { tags: [TestTypes.smoke, devTeams.thunderjet] },
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         cy.visit(TopMenu.exportManagerOrganizationsPath);
         ExportManagerSearchPane.selectOrganizationsSearch();
@@ -186,7 +184,7 @@ describe('Export Manager', () => {
 
     it(
       'C405555 Verify that User is able to see the executed jobs but not to download the files with View permissions (firebird)',
-      { tags: [TestTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         cy.login(secondUser.username, secondUser.password, {
           path: TopMenu.exportManagerPath,
