@@ -37,8 +37,6 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
       });
       Invoices.createDefaultInvoiceWithoutAddress(invoice);
     });
-    console.log(invoice);
-    console.log(firstBatchGroup);
     cy.createTempUser([permissions.invoiceSettingsAll.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {
