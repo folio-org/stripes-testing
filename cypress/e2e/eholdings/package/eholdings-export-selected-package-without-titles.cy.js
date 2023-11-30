@@ -1,17 +1,17 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import { Permissions } from '../../../support/dictionary';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
+import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
+import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
-import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
-import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import Users from '../../../support/fragments/users/users';
-import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
-import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
 import FileManager from '../../../support/utils/fileManager';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('eHoldings', () => {
   describe('Package', () => {

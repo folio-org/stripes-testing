@@ -1,18 +1,15 @@
-import TestTypes from '../../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../../support/dictionary/devTeams';
 import Permissions from '../../../../../support/dictionary/permissions';
+import DataImport from '../../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
-import Parallelization from '../../../../../support/dictionary/parallelization';
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   const testData = {
@@ -93,7 +90,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
 
   it(
     'C365134 Link "MARC Bib" field without "$0" subfield to "MARC Authority" record. "Authority source file" value from the pre-defined list (100 field to 100) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

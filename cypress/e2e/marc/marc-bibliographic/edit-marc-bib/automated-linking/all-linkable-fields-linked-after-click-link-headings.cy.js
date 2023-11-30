@@ -1,17 +1,15 @@
-import TestTypes from '../../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../../support/dictionary/devTeams';
 import Permissions from '../../../../../support/dictionary/permissions';
-import TopMenu from '../../../../../support/fragments/topMenu';
-import Users from '../../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import getRandomPostfix from '../../../../../support/utils/stringTools';
+import Logs from '../../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
-import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import Users from '../../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () => {
   const testData = {
@@ -236,7 +234,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C387538 All linkable fields are linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.getAdminToken();
       linkableFields.forEach((tag) => {
@@ -285,7 +283,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C388500 All linkable fields are NOT linked after clicking on the "Link headings" button when edit "MARC bib" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.getAdminToken();
       linkableFields.forEach((tag) => {

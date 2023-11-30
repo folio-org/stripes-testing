@@ -1,14 +1,14 @@
-import { DevTeams, Permissions, TestTypes } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC -> plug-in MARC authority | Search', () => {
   const testData = {
@@ -102,7 +102,7 @@ describe('MARC -> plug-in MARC authority | Search', () => {
 
   it(
     'C422166 MARC Authority plug-in | Apply "Authority source" facet to the search result list (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // #1 - #3 Fill in the input field placed at the "Search & filter" pane with " * ", select search option: "Keyword", click on the "Search" button
       MarcAuthorities.searchByParameter('Keyword', '*');

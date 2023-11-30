@@ -4,23 +4,21 @@ import {
   REQUEST_LEVELS,
   REQUEST_TYPES,
 } from '../../support/constants';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Requests from '../../support/fragments/requests/requests';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
 import MoveRequest from '../../support/fragments/requests/move-request';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Title Level Request', () => {
   let userData = {};
@@ -153,7 +151,7 @@ describe('Title Level Request', () => {
 
   it(
     'C353980: Check that user can choose the item to which to move Title Level Request (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.get('@itemsToMove').each((item) => {
         if (item.barcode !== testData.currentItem) {

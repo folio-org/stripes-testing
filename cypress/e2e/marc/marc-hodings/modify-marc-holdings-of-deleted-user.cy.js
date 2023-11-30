@@ -1,18 +1,16 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC -> MARC Holdings', () => {
   const testData = {
@@ -87,7 +85,7 @@ describe('MARC -> MARC Holdings', () => {
 
   it(
     'C358996 Verify that user has access to "quickMARC" when user who imported "MARC holdings" record has been deleted (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       UsersSearchPane.searchByUsername(user.userAProperties.username);
       UsersSearchPane.openUser(user.userAProperties.username);

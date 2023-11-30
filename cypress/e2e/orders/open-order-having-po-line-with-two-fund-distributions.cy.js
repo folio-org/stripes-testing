@@ -1,17 +1,17 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import {
   Budgets,
   FiscalYears,
   Funds,
-  Ledgers,
   LedgerRollovers,
+  Ledgers,
 } from '../../support/fragments/finance';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
-import { StringTools, CodeTools, DateTools } from '../../support/utils';
+import { CodeTools, DateTools, StringTools } from '../../support/utils';
 
 describe('Orders', () => {
   const date = new Date();
@@ -143,7 +143,7 @@ describe('Orders', () => {
 
   it(
     'C407711 Open order having PO line with two fund distributions related to different ledgers and same fiscal year after executing rollover (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click on "PO number" link on "Orders" pane
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
