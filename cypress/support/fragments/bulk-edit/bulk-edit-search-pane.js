@@ -849,6 +849,15 @@ export default {
     ]);
   },
 
+  verifyLogsRowActionWhenNoChangesApplied() {
+    cy.expect([
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      errorsCommittingBtn.exists(),
+    ]);
+  },
+
   verifyLogsRowActionWhenCompletedWithErrors() {
     cy.expect([
       triggerBtn.exists(),
