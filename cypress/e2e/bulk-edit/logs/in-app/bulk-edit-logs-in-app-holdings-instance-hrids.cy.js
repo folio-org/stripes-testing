@@ -1,6 +1,4 @@
 import permissions from '../../../../support/dictionary/permissions';
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -191,7 +189,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375298 Verify generated Logs files for Holdings In app -- valid and invalid records (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');

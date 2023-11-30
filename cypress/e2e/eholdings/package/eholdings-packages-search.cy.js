@@ -1,9 +1,9 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('eHoldings', () => {
@@ -33,7 +33,7 @@ describe('eHoldings', () => {
 
     it(
       'C683 Search packages for [JSTOR]. Filter results to only show selected packages (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         EHoldingSearch.switchToPackages();
         EHoldingsPackagesSearch.byName(testData.searchQuery);

@@ -1,27 +1,26 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -94,7 +93,7 @@ describe('data-import', () => {
 
     it(
       'C17019 Check that MARC Update select fields works properly (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         DataImport.uploadFileViaApi('oneMarcBib.mrc', marcFileForCreate);
         JobProfiles.waitFileIsImported(marcFileForCreate);

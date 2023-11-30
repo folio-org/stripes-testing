@@ -1,14 +1,12 @@
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import FileManager from '../../support/utils/fileManager';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
+import DataExportResults from '../../support/fragments/data-export/dataExportResults';
+import ExportFileHelper from '../../support/fragments/data-export/exportFile';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import FileManager from '../../support/utils/fileManager';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -48,7 +46,7 @@ describe('data-export', () => {
 
   it(
     'C350536 Negative: Verify that a user cannot EXPORT HOLDINGS using invalid job profile (Firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       ExportFileHelper.uploadFile(holdingUUIDsFileName);
       ExportFileHelper.exportWithDefaultJobProfile(holdingUUIDsFileName);
