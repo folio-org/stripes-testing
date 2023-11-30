@@ -66,7 +66,7 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(addTransferModal.absent());
   },
-  clickConfirmButton({ confirmNegative = false, transferCreated = true } = {}) {
+  clickConfirmButton({ transferCreated = true, confirmNegative } = {}) {
     cy.do(confirmButton.click());
 
     if (confirmNegative) {
@@ -75,9 +75,13 @@ export default {
         message: matching(new RegExp(States.transferConfirmation)),
       });
       cy.expect(confirmationModal.exists());
-      cy.do(confirmationModal.confirm());
+
+      if (confirmNegative.confirm) {
+        cy.do(confirmationModal.confirm());
+      } else {
+        cy.do(confirmationModal.cancel());
+      }
     }
-    cy.expect(addTransferModal.absent());
 
     if (transferCreated) {
       InteractorsTools.checkCalloutMessage(

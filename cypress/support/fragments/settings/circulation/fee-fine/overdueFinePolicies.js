@@ -63,6 +63,7 @@ export default {
   },
 
   fillOverdueFine(value) {
+    // eslint-disable-next-line cypress/no-force
     cy.get('[name="overdueFine.quantity"]')
       .invoke('val', '')
       .clear()
@@ -71,6 +72,7 @@ export default {
   },
 
   fillMaxFine(value) {
+    // eslint-disable-next-line cypress/no-force
     cy.get('[name="maxOverdueFine"]')
       .focus()
       .invoke('val', '')
@@ -80,6 +82,7 @@ export default {
   },
 
   fillOverdueRecall(value) {
+    // eslint-disable-next-line cypress/no-force
     cy.get('[name="overdueRecallFine.quantity"]')
       .invoke('val', '')
       .clear()
@@ -88,6 +91,7 @@ export default {
   },
 
   fillMaxRecall(value) {
+    // eslint-disable-next-line cypress/no-force
     cy.get('[name="maxOverdueRecallFine"]')
       .invoke('val', '')
       .clear()

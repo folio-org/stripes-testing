@@ -1,10 +1,11 @@
-import { RichEditor, TextField, Button } from '../../../../interactors';
+import { RichEditor, TextField, Button, Select } from '../../../../interactors';
 
 export default class ExistingNoteEdit {
   static #rootCss = 'section[id=notes-form]';
   static #nameCss = `${this.#rootCss} input[name=title]`;
   static #detailsCss = `${this.#rootCss} div[class*=editor]>p`;
 
+  static #noteTypeSelect = Select('Note type');
   static #titleTextField = TextField('Note title*');
   static #detailsTextField = RichEditor('Details');
 
@@ -14,14 +15,14 @@ export default class ExistingNoteEdit {
     return this.#rootCss;
   }
 
-  static fill(specialNote) {
-    cy.do([
-      this.#titleTextField.fillIn(specialNote.title),
-      RichEditor('Details').fillIn(specialNote.details),
-    ]);
+  static fillNoteFields(note) {
+    if (note.type) {
+      cy.do(this.#noteTypeSelect.choose(note.type));
+    }
+    cy.do([this.#titleTextField.fillIn(note.title), this.#detailsTextField.fillIn(note.details)]);
   }
 
-  static save() {
+  static saveNote() {
     cy.do(this.#saveButton.click());
   }
 
