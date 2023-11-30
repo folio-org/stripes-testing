@@ -28,7 +28,7 @@ describe('orders: Settings', () => {
       path: SettingsMenu.ordersOrderTemplatesPath,
       waiter: OrderTemplate.waitLoading,
     });
-    OrderTemplate.newTemplate();
+    OrderTemplate.clickNewOrderTemplateButton();
     OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
       orderTemplateName,
       organization.name,
@@ -61,7 +61,7 @@ describe('orders: Settings', () => {
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       OrderTemplate.selectTemplate(orderTemplateName);
-      OrderTemplate.editTemplate(orderTemplateName);
+      OrderTemplate.editTemplate(`${orderTemplateName}-edited`);
       OrderTemplate.checkTemplateCreated(`${orderTemplateName}-edited`);
       cy.visit(TopMenu.ordersPath);
       Orders.createOrderByTemplate(`${orderTemplateName}-edited`);
