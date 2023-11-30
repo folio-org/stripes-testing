@@ -1,25 +1,23 @@
 import uuid from 'uuid';
+import { ITEM_STATUS_NAMES, ORDER_STATUSES, REQUEST_TYPES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
-import { NewOrder, BasicOrderLine, Orders } from '../../../support/fragments/orders';
-import devTeams from '../../../support/dictionary/devTeams';
-import testType from '../../../support/dictionary/testTypes';
-import Receiving from '../../../support/fragments/receiving/receiving';
-import TopMenu from '../../../support/fragments/topMenu';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import { ServicePoints } from '../../../support/fragments/settings/tenant';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import { ORDER_STATUSES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../../support/constants';
-import Users from '../../../support/fragments/users/users';
-import NewRequest from '../../../support/fragments/requests/newRequest';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import TitleLevelRequests from '../../../support/fragments/settings/circulation/titleLevelRequests';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import Receiving from '../../../support/fragments/receiving/receiving';
+import NewRequest from '../../../support/fragments/requests/newRequest';
 import Requests from '../../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../../support/fragments/settings/circulation/titleLevelRequests';
+import { ServicePoints } from '../../../support/fragments/settings/tenant';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
 
 describe('Orders: Receiving and Check-in', () => {
   const testData = {
@@ -130,7 +128,7 @@ describe('Orders: Receiving and Check-in', () => {
 
   it(
     'C402758 Receiving an item with open title level request (thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);

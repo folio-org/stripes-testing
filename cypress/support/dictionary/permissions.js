@@ -493,6 +493,10 @@ export default {
     internal: 'ui-receiving.create',
     gui: 'Receiving: View, edit, create',
   },
+  uiReceivingViewEditDelete: {
+    internal: 'ui-receiving.delete',
+    gui: 'Receiving: View, edit, delete',
+  },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
     internal: 'ui-invoice.invoice.delete',

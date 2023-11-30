@@ -1,14 +1,12 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import Users from '../../support/fragments/users/users';
 import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Permissions', () => {
   let userData;
@@ -47,7 +45,7 @@ describe('Permissions', () => {
 
   it(
     'C208822 Add Create, edit, delete remote storage permission to user (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UsersSearchPane.waitLoading();

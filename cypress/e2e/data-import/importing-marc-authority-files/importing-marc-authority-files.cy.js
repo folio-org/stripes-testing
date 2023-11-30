@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
@@ -62,7 +62,7 @@ describe('data-import', () => {
 
     it(
       'C350666 Create a MARC authority record via data import (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         DataImport.uploadFile('test-auth-file.mrc', fileName);
         JobProfiles.waitFileIsUploaded();
@@ -82,7 +82,7 @@ describe('data-import', () => {
 
     it(
       'C350668 Update a MARC authority record via data import. Record match with 999 ff $s (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         DataImport.uploadFile('test-auth-file.mrc', fileName);
         JobProfiles.waitFileIsUploaded();

@@ -1,21 +1,19 @@
 import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import TestType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Users from '../../support/fragments/users/users';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import SettingsMenu from '../../support/fragments/settingsMenu';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('orders: create an order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -84,7 +82,7 @@ describe('orders: create an order', () => {
 
   it(
     'C8357 Create purchase order in foreign currency (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;

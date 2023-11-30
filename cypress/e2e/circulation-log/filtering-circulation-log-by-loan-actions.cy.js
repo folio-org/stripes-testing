@@ -1,28 +1,26 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
+import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import Checkout from '../../support/fragments/checkout/checkout';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
-import LoanPolicy from '../../support/fragments/circulation/loan-policy';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LoanPolicy from '../../support/fragments/circulation/loan-policy';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import Requests from '../../support/fragments/requests/requests';
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
-import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
   let userData;
@@ -234,7 +232,7 @@ describe('Circulation log', () => {
     });
     it(
       'C16995 Check the Actions button from filtering Circulation log by Checked out through override (volaris)',
-      { tags: [TestTypes.criticalPath, devTeams.volaris] },
+      { tags: ['criticalPath', 'volaris'] },
       () => {
         checkActionsButton('Checked out through override');
       },
@@ -242,7 +240,7 @@ describe('Circulation log', () => {
 
     it(
       'C16982 Filter Circulation log by Checked out through override (volaris)',
-      { tags: [TestTypes.criticalPath, devTeams.volaris] },
+      { tags: ['criticalPath', 'volaris'] },
       () => {
         filterByAction({
           circAction: 'Checked out through override',
@@ -253,7 +251,7 @@ describe('Circulation log', () => {
 
     it(
       'C45935 Check the Actions button from filtering Circulation log by renewed through override (volaris)',
-      { tags: [TestTypes.criticalPath, devTeams.volaris] },
+      { tags: ['criticalPath', 'volaris'] },
       () => {
         UserLoans.renewItemViaApi({
           id: uuid(),
@@ -309,7 +307,7 @@ describe('Circulation log', () => {
 
     it(
       'C17006 Check the Actions button from filtering Circulation log by renewed (volaris)',
-      { tags: [TestTypes.criticalPath, devTeams.volaris] },
+      { tags: ['criticalPath', 'volaris'] },
       () => {
         UserLoans.renewItemViaApi({
           id: uuid(),
@@ -322,7 +320,7 @@ describe('Circulation log', () => {
 
     it(
       'C17007 Filter circulation log by aged to lost (volaris)',
-      { tags: [TestTypes.criticalPath, devTeams.volaris] },
+      { tags: ['criticalPath', 'volaris'] },
       () => {
         UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
           const loanData = userLoans.loans[0];
@@ -358,7 +356,7 @@ describe('Circulation log', () => {
 
     it(
       'C17004 Check the Actions button from filtering Circulation log by recall requested (volaris)',
-      { tags: [TestTypes.criticalPath, devTeams.volaris] },
+      { tags: ['criticalPath', 'volaris'] },
       () => {
         Requests.createNewRequestViaApi({
           fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
@@ -381,7 +379,7 @@ describe('Circulation log', () => {
 
     it(
       'C17003 Filter circulation log by recall requested (volaris)',
-      { tags: [TestTypes.criticalPath, devTeams.volaris] },
+      { tags: ['criticalPath', 'volaris'] },
       () => {
         filterByAction({
           circAction: 'Recall requested',

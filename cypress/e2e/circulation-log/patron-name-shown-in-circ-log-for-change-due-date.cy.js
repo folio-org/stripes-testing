@@ -1,22 +1,20 @@
-import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import { getTestEntityValue } from '../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
-import Checkout from '../../support/fragments/checkout/checkout';
+import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import LoansPage from '../../support/fragments/loans/loansPage';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
   const patronGroup = {
@@ -138,7 +136,7 @@ describe('Circulation log', () => {
 
   it(
     'C407706 Correct Patron name shown in the "Source" field of Circulation log for "Change Due Date" loan type (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       CheckOutActions.checkOutUser(userB.barcode);
       CheckOutActions.checkOutItem(itemData.barcode);
