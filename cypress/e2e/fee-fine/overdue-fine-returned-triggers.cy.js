@@ -1,42 +1,40 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi, {
-  NOTICE_CATEGORIES,
-} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
-import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import LoanPolicy from '../../support/fragments/circulation/loan-policy';
+import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
 } from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../support/utils/stringTools';
-import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import LoanPolicy from '../../support/fragments/circulation/loan-policy';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Overdue fine', () => {
   const patronGroup = {
@@ -279,7 +277,7 @@ describe('Overdue fine', () => {
 
   it(
     'C347874 Overdue fine, returned triggers (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       noticeTemplates.forEach((template, index) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

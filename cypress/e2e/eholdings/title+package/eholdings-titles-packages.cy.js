@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { Permissions } from '../../../support/dictionary';
+import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
+import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { DevTeams, TestTypes, Permissions, Features } from '../../../support/dictionary';
-import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
-import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
-import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -48,7 +48,7 @@ describe('eHoldings', () => {
 
     it(
       'C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)',
-      { tags: [TestTypes.smoke, DevTeams.spitfire, Features.eHoldings] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.login(testData.C684UserProperties.username, testData.C684UserProperties.password, {
           path: TopMenu.eholdingsPath,
@@ -64,7 +64,7 @@ describe('eHoldings', () => {
 
     it(
       'C9240 Selected Title+Package: Add a value to a custom label (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.login(testData.C9240UserProperties.username, testData.C9240UserProperties.password, {
           path: TopMenu.eholdingsPath,

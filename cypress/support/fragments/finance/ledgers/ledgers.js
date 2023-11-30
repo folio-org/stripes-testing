@@ -18,6 +18,7 @@ import {
   HTML,
   including,
 } from '../../../../../interactors';
+import LedgerDetails from './ledgerDetails';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -167,6 +168,29 @@ export default {
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
+    ]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    cy.wait(6000);
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
+  fillInRolloverInfoForAllExpendedEncumbrances(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
+    cy.wait(4000);
+    cy.do(fiscalYearSelect.click());
+    cy.wait(4000);
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([
+      fiscalYearSelect.choose(fiscalYear),
+      rolloverAllocationCheckbox.click(),
+      rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
+      addAvailableToSelect.choose(rolloverValueAs),
+      Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
+      Checkbox({ name: 'encumbrancesRollover[1].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[1].basedOn' }).choose('Expended'),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Expended'),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(6000);
@@ -583,10 +607,11 @@ export default {
   }),
 
   selectLedger: (ledgerName) => {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(8000);
-
+    cy.wait(4000);
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
+    LedgerDetails.waitLoading();
+
+    return LedgerDetails;
   },
 
   rolloverLogs: () => {
