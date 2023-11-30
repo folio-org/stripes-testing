@@ -1,17 +1,13 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import Features from '../../../../support/dictionary/features';
-import DevTeams from '../../../../support/dictionary/devTeams';
 import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import Users from '../../../../support/fragments/users/users';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
-import Parallelization from '../../../../support/dictionary/parallelization';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Authority -> Browse - Authority records', () => {
   const testData = {
@@ -58,7 +54,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
   it(
     'C360520 Import of "MARC Authority" record with valid prefix in "001" field only (spitfire)',
     {
-      tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire, Parallelization.nonParallel],
+      tags: ['smoke', 'authority', 'spitfire', 'nonParallel'],
     },
     () => {
       DataImport.uploadFile('marcFileForC360520.mrc', fileName);
@@ -86,7 +82,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
 
   it(
     'C360521 Import of "MARC Authority" record with valid prefix in "010 $a" field only (spitfire)',
-    { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] },
+    { tags: ['smoke', 'authority', 'spitfire'] },
     () => {
       DataImport.uploadFile('corporate_name(prefix_in_010Sa)sc_02.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
@@ -113,7 +109,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
 
   it(
     'C360522 Import of "MARC Authority" record with same valid prefixes in "001" and "010 $a" fields (spitfire)',
-    { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] },
+    { tags: ['smoke', 'authority', 'spitfire'] },
     () => {
       DataImport.uploadFile('D_genre(prefixes_in_001_010Sa)sc_03.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
@@ -140,7 +136,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
 
   it(
     'C353997 Browse for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       DataImport.uploadFile('marcFileForC353997.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
@@ -184,7 +180,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
 
   it(
     'C356766 Browse for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       DataImport.uploadFile('marcFileForC356766.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
@@ -213,7 +209,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
 
   it(
     'C356765 Search for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       DataImport.uploadFile('marcFileForC356765.mrc', fileName);
       JobProfiles.waitFileIsUploaded();
@@ -248,7 +244,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
 
   it(
     'C353995 Search for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       DataImport.uploadFile('marcFileForC353995.mrc', fileName);
       JobProfiles.waitFileIsUploaded();

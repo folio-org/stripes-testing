@@ -1,14 +1,14 @@
 import moment from 'moment';
 
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
-import { Invoices, InvoiceView } from '../../support/fragments/invoices';
-import { Approvals, BatchGroups } from '../../support/fragments/settings/invoices';
+import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
-import { NewOrder, Orders, BasicOrderLine, OrderLines } from '../../support/fragments/orders';
+import { InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import { Approvals, BatchGroups } from '../../support/fragments/settings/invoices';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
   const date = moment();
@@ -100,7 +100,7 @@ describe('Invoices', () => {
 
   it(
     'C350952 Allow editing of subscription dates and subscription info after an invoice is approved/paid (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
     () => {
       Approvals.setApprovePayValue(false);
 

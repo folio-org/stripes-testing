@@ -1,5 +1,6 @@
 import {
   Button,
+  RepeatableFieldItem,
   Section,
   Select,
   Selection,
@@ -19,6 +20,9 @@ const orderLineDetailsSection = orderLineEditFormRoot.find(Section({ id: 'lineDe
 const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: 'vendor' }));
 const ongoingOrderSection = orderLineEditFormRoot.find(Section({ id: 'ongoingOrder' }));
 const costDetailsSection = orderLineEditFormRoot.find(Section({ id: 'costDetails' }));
+const fundDistributionDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: 'fundDistributionAccordion' }),
+);
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
 
 const cancelButtom = Button('Cancel');
@@ -79,6 +83,9 @@ export default {
     if (orderLine.poLineDetails) {
       this.fillPoLineDetails(orderLine.poLineDetails);
     }
+    if (orderLine.ongoingOrder) {
+      this.fillOngoingOrderInformation(orderLine.ongoingOrder);
+    }
     if (orderLine.vendorDetails) {
       this.fillVendorDetails(orderLine.vendorDetails);
     }
@@ -109,6 +116,11 @@ export default {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
     }
   },
+  fillOngoingOrderInformation({ renewalNote }) {
+    if (renewalNote) {
+      cy.do(ongoingInformationFields['Renewal note'].fillIn(renewalNote));
+    }
+  },
   fillVendorDetails(vendorDetails) {
     if (vendorDetails.accountNumber) {
       cy.do(vendorDetailsFields.accountNumber.choose(including(vendorDetails.accountNumber)));
@@ -130,6 +142,15 @@ export default {
   },
   addFundDistribution() {
     cy.do(Button('Add fund distribution').click());
+  },
+  deleteFundDistribution({ index = 0 } = {}) {
+    cy.do(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+    cy.wait(2000);
   },
   selectDropDownValue(label, option) {
     cy.do([

@@ -1,13 +1,13 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../../support/dictionary';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Authority -> Edit Authority record', () => {
   const testData = {
@@ -113,7 +113,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
 
   it(
     'C360092 Verify that click on the "Save & keep editing" button doesnt close the editing window of "MARC Authority" record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // Verify initial state of edit view
       QuickMarcEditor.checkHeaderFirstLine(
@@ -204,7 +204,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
 
   it(
     'C360093 Verify that updates are saved after clicking "Save & keep editing" button in the editing window of "MARC Authority" (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // Add text to subfield, click Save and keep editing
       MarcAuthority.changeField(

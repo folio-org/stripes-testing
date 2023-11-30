@@ -1,33 +1,30 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import parallelization from '../../support/dictionary/parallelization';
-import permissions from '../../support/dictionary/permissions';
+import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../support/utils/stringTools';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import LoanPolicy from '../../support/fragments/circulation/loan-policy';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import UsersCard from '../../support/fragments/users/usersCard';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Renewals from '../../support/fragments/loans/renewals';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('TLR: Item renew', () => {
   let instanceHRID;
@@ -278,7 +275,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360533: TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       cy.getToken(userForRenew.username, userForRenew.password);
       cy.visit(TopMenu.requestsPath);
@@ -311,7 +308,7 @@ describe('TLR: Item renew', () => {
 
   it(
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       cy.getToken(userForRenew.username, userForRenew.password);
       cy.visit(TopMenu.requestsPath);

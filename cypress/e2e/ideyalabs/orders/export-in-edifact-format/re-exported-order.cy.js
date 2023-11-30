@@ -1,6 +1,5 @@
-import order from '../../../../support/ideyaLabs/orders';
 import topMenu from '../../../../support/fragments/topMenu';
-import testTypes from '../../../../support/dictionary/testTypes';
+import order from '../../../../support/ideyaLabs/orders';
 
 describe.skip('Orders: Export in edifact format ', () => {
   before(() => {
@@ -9,7 +8,7 @@ describe.skip('Orders: Export in edifact format ', () => {
 
   it(
     'C365619 Re-exported Order contains more than two PO lines is successfully exported in the next scheduled run (Thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
+    { tags: ['ideaLabsTests'] },
     () => {
       cy.visit(topMenu.ordersPath);
       order.switchToOrders();

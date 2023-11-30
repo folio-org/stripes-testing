@@ -1,11 +1,10 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('inventory', () => {
   describe('Tags', () => {
@@ -50,7 +49,7 @@ describe('inventory', () => {
 
     it(
       'C196769 Assign tags to an Instance record (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);

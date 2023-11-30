@@ -1,26 +1,23 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import EditRequest from '../../support/fragments/requests/edit-request';
-import TopMenu from '../../support/fragments/topMenu';
-import Requests from '../../support/fragments/requests/requests';
-import Users from '../../support/fragments/users/users';
-import DevTeams from '../../support/dictionary/devTeams';
-import Permissions from '../../support/dictionary/permissions';
-import Parallelization from '../../support/dictionary/parallelization';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
 import {
-  ITEM_STATUS_NAMES,
-  REQUEST_TYPES,
-  REQUEST_LEVELS,
   FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
 } from '../../support/constants';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import getRandomPostfix from '../../support/utils/stringTools';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import EditRequest from '../../support/fragments/requests/edit-request';
+import Requests from '../../support/fragments/requests/requests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Requests Export CSV File', () => {
   const patronComment = 'patron test comment';
@@ -150,7 +147,7 @@ describe('Requests Export CSV File', () => {
 
   it(
     'C199705 Patron Comments are Displayed in Requests Export CSV File (vega)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
@@ -162,7 +159,7 @@ describe('Requests Export CSV File', () => {
 
   it(
     'C199708 Patron Comments are Displayed in the "Awaiting pickup for a request" Modal at Check In (vega)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItemGui(itemData.barcode);
