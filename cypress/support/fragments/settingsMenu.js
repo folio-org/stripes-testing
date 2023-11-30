@@ -37,6 +37,7 @@ export default {
   targetProfilesPath: 'settings/inventory/targetProfiles',
   urlRelationshipPath: 'settings/inventory/URLrelationship',
   instanceStatusTypesPath: 'settings/inventory/instanceStatusTypes',
+  statisticalCodesPath: 'settings/inventory/StatisticalCodeSettings',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',

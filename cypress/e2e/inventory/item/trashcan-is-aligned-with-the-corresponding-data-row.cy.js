@@ -1,11 +1,11 @@
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import TopMenu from '../../../support/fragments/topMenu';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},
@@ -46,7 +46,7 @@ describe('inventory', () => {
 
     it(
       'C380748 Item Create screen: trashcan is aligned with the corresponding data row (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventoryInstance.searchByTitle(testData.item.instanceName);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);

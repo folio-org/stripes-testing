@@ -33,6 +33,7 @@ const startBulkEditButton = Button('Start bulk edit');
 const calendarButton = Button({ icon: 'calendar' });
 const locationLookupModal = Modal('Select permanent location');
 const confirmChangesButton = Button('Confirm changes');
+const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
 const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
 const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
 
@@ -166,7 +167,7 @@ export default {
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
     cy.expect([
-      Button('Download changed records (CSV)').exists(),
+      downloadChnagedRecordsButton.exists(),
       Button('Download errors (CSV)').exists(),
     ]);
   },
@@ -797,11 +798,15 @@ export default {
   },
 
   verifyActionsDownloadChangedCSV() {
-    cy.expect(DropdownMenu().find(Button('Download changed records (CSV)')).exists());
+    cy.expect(DropdownMenu().find(downloadChnagedRecordsButton).exists());
+  },
+
+  verifyDownloadChangedRecordsAbsent() {
+    cy.expect(DropdownMenu().find(downloadChnagedRecordsButton).absent());
   },
 
   downloadChangedCSV() {
-    cy.do(Button('Download changed records (CSV)').click());
+    cy.do(downloadChnagedRecordsButton.click());
     BulkEditSearchPane.waitingFileDownload();
   },
 
