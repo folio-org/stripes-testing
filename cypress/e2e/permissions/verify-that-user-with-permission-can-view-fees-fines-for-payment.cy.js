@@ -1,31 +1,29 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import LoanPolicy from '../../support/fragments/circulation/loan-policy';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Permissions --> Users', () => {
   let userData;
@@ -223,7 +221,7 @@ describe('Permissions --> Users', () => {
 
   it(
     'C380503 Verify that user with permission can view fees/fines for payment (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, devTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkOutItem(instanceData.itemBarcode);
