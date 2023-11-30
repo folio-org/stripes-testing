@@ -174,7 +174,15 @@ describe('Title Level Request', () => {
         UsersCard.viewCurrentLoans();
         UserLoans.openLoanDetails(firstItemBarcode);
         UserLoans.renewItem(firstItemBarcode, true);
-        RenewConfirmationModal.verifyRenewConfirmationModal('Item not renewed:');
+        RenewConfirmationModal.verifyRenewConfirmationModal(
+          [
+            {
+              itemBarcode: firstItemBarcode,
+              status: 'Item not renewed:',
+            },
+          ],
+          true,
+        );
       });
     },
   );
