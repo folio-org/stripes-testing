@@ -25,6 +25,7 @@ import {
   TextField,
   ValueChipRoot,
   including,
+  not,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -38,6 +39,7 @@ const searchButton = Button({ id: 'submit-authorities-search' });
 const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
+const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
 
 // actions dropdown window
 const authorityActionsDropDown = DropdownMenu();
@@ -54,7 +56,7 @@ const exportButton = authReportModal.find(Button('Export'));
 
 const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
-const headinfTypeAccordion = Accordion('Type of heading');
+const headingTypeAccordion = Accordion('Type of heading');
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
@@ -86,7 +88,6 @@ const authoritySourceOptions = [
   'Not specified',
 ];
 const thesaurusAccordion = Accordion('Thesaurus');
-
 
 export default {
   waitLoading() {
@@ -220,6 +221,12 @@ export default {
   },
 
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
+
+  checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
+    authoritiesList
+      .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
+      .exists(),
+  ),
 
   checkRowsCount: (expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()),
 
@@ -367,13 +374,17 @@ export default {
   },
 
   chooseTypeOfHeading: (headingTypes) => {
-    cy.do(headinfTypeAccordion.clickHeader());
-    headingTypes.forEach((headingType) => {
-      cy.do(
-        MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
-          including(headingType),
-        ]),
-      );
+    cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(headingTypeAccordion.clickHeader());
+      }
+    });
+    const headingTypesArray = Array.isArray(headingTypes) ? headingTypes : [headingTypes];
+
+    headingTypesArray.forEach((headingType) => {
+      cy.do([typeOfHeadingSelect.select([including(headingType)])]);
+      // need to wait until filter will be applied
+      cy.wait(1000);
     });
   },
 
@@ -443,10 +454,8 @@ export default {
 
   chooseTypeOfHeadingAndCheck(headingType, headingTypeA, headingTypeB) {
     cy.do([
-      headinfTypeAccordion.clickHeader(),
-      MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' }).select([
-        including(headingType),
-      ]),
+      headingTypeAccordion.clickHeader(),
+      typeOfHeadingSelect.select([including(headingType)]),
     ]);
     cy.expect([
       MultiSelect({ selected: including(headingType) }).exists(),
@@ -522,6 +531,9 @@ export default {
       AdvancedSearchRow({ index: rowIndex })
         .find(Select({ label: 'Search options*' }))
         .has({ content: including('Identifier (all)') }),
+      AdvancedSearchRow({ index: rowIndex })
+        .find(Select({ label: 'Search options*' }))
+        .has({ content: including('LCCN') }),
       AdvancedSearchRow({ index: rowIndex })
         .find(Select({ label: 'Search options*' }))
         .has({ content: including('Personal name') }),
@@ -852,6 +864,12 @@ export default {
       .then(() => cells);
   },
 
+  checkResultListSortedByColumn(columnIndex) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      cy.expect(cells).to.deep.equal(cells.sort());
+    });
+  },
+
   verifyOnlyOneAuthorityRecordInResultsList() {
     this.getResultsListByColumn(1).then((cells) => {
       const authorizedRecords = cells.filter((element) => {
@@ -861,8 +879,51 @@ export default {
     });
   },
 
+  verifySelectedTextOfHeadingType: (headingType) => {
+    cy.expect(headingTypeAccordion.exists());
+    cy.do(headingTypeAccordion.clickHeader());
+    cy.expect(MultiSelect({ selected: including(headingType) }).exists());
+  },
+
   checkTotalRecordsForOption(option, totalRecords) {
     cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
     cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
+  },
+
+  verifyColumnValuesOnlyExist(column, expectedValues = []) {
+    const actualValues = [];
+    cy.then(() => authoritiesList.rowCount())
+      .then((rowsCount) => {
+        for (let i = 0; i < rowsCount; i++) {
+          cy.then(() => authoritiesList.find(MultiColumnListCell({ column, row: i })).content()).then((content) => {
+            actualValues.push(content);
+          });
+        }
+      })
+      .then(() => {
+        const isOnlyValuesExist = actualValues.every((value) => expectedValues.includes(value));
+        expect(isOnlyValuesExist).to.equal(true);
+      });
+  },
+
+  unselectHeadingType: (headingType) => {
+    cy.do([
+      typeOfHeadingSelect
+        .find(ValueChipRoot(headingType))
+        .find(Button({ icon: 'times' }))
+        .click(),
+    ]);
+    // need to wait until filter will be applied
+    cy.wait(1000);
+    cy.expect(typeOfHeadingSelect.has({ selected: not(headingType) }));
+  },
+
+  resetTypeOfHeading() {
+    cy.do(
+      Accordion({ id: 'headingType' })
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
+    cy.expect(typeOfHeadingSelect.has({ selectedCount: 0 }));
   },
 };

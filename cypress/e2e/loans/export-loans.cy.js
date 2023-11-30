@@ -1,15 +1,15 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
+import { Permissions } from '../../support/dictionary';
 import AppPaths from '../../support/fragments/app-paths';
-import Loans from '../../support/fragments/loans/loansPage';
-import FileManager from '../../support/utils/fileManager';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Loans from '../../support/fragments/loans/loansPage';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import Checkout from '../../support/fragments/checkout/checkout';
+import FileManager from '../../support/utils/fileManager';
 
 describe('Export Loans ', () => {
   const testData = {};
@@ -95,7 +95,7 @@ describe('Export Loans ', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C721 Export patron*s loans to CSV (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
+  it('C721 Export patron*s loans to CSV (vega)', { tags: ['smoke', 'vega'] }, () => {
     const fileNameMask = 'export*';
     cy.wait(10000);
     cy.visit(TopMenu.checkInPath);

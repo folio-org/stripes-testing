@@ -1,13 +1,11 @@
+import Permissions from '../../support/dictionary/permissions';
+import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
+import ExportFileHelper from '../../support/fragments/data-export/exportFile';
+import SelectJobProfile from '../../support/fragments/data-export/selectJobProfile';
 import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
 import GetRandomPostfix from '../../support/utils/stringTools';
-import Permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import DevTeams from '../../support/dictionary/devTeams';
-import TestTypes from '../../support/dictionary/testTypes';
-import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
-import SelectJobProfile from '../../support/fragments/data-export/selectJobProfile';
 
 let user;
 
@@ -36,7 +34,7 @@ describe('data-export', () => {
 
   it(
     'C396382 CQL: Verify filtering job profiles on the "Select job profile to run the export" pane (firebird) (Taas)',
-    { tags: [DevTeams.firebird, TestTypes.extendedPath] },
+    { tags: ['firebird', 'extendedPath'] },
     () => {
       const defaultAuthority = 'Default authority export job profile';
       const jobProfile = 'Job profile';

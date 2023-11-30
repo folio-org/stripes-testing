@@ -25,7 +25,7 @@ module.exports = defineConfig({
     diku_login: 'diku_admin',
     diku_password: 'admin',
     is_kiwi_release: false,
-    downloadTimeout: 1000,
+    downloadTimeout: 2000,
     allure: 'true',
     grepFilterSpecs: true,
     grepOmitFiltered: true,
@@ -36,6 +36,12 @@ module.exports = defineConfig({
       allureWriter(on, config);
 
       on('task', {
+        log(message) {
+          // eslint-disable-next-line no-console
+          console.log(message);
+          return null;
+        },
+
         async findFiles(mask) {
           if (!mask) {
             throw new Error('Missing a file mask to search');
@@ -51,7 +57,7 @@ module.exports = defineConfig({
         },
 
         convertCsvToJson(fileName) {
-          return csvToJson.fieldDelimiter(',').getJsonFromCsv(fileName);
+          return csvToJson.supportQuotedField(true).fieldDelimiter(',').getJsonFromCsv(fileName);
         },
 
         downloadFile,
@@ -98,7 +104,10 @@ module.exports = defineConfig({
       const configCloud = await cloudPlugin(on, config);
 
       // eslint-disable-next-line global-require
-      const result = await require('cypress-testrail-simple/src/plugin')(on, configCloud);
+      const result = require('@cypress/grep/src/plugin')(configCloud);
+
+      // eslint-disable-next-line global-require
+      await require('cypress-testrail-simple/src/plugin')(on, config);
 
       return result;
     },

@@ -1,9 +1,8 @@
-import Agreements from '../../../support/fragments/agreements/agreements';
-import TopMenu from '../../../support/fragments/topMenu';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
+import AgreementLineInformation from '../../../support/fragments/agreements/agreementLineInformation';
 import AgreementLines from '../../../support/fragments/agreements/agreementLines';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
-import AgreementLineInformation from '../../../support/fragments/agreements/agreementLineInformation';
+import Agreements from '../../../support/fragments/agreements/agreements';
+import TopMenu from '../../../support/fragments/topMenu';
 
 let agreementLine;
 let agreementId;
@@ -36,7 +35,7 @@ describe('Agreement Lines', () => {
 
   it(
     'C343340 Add tags to an Agreement Line record (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
