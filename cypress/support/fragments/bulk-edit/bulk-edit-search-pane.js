@@ -838,6 +838,12 @@ export default {
     );
   },
 
+  verifyActionsRunBy(name) {
+    cy.expect(
+      ListRow({ text: including(`\n${name}\n`) }).exists(),
+    );
+  },
+
   verifyTriggerLogsAction() {
     cy.expect(triggerBtn.exists());
   },
