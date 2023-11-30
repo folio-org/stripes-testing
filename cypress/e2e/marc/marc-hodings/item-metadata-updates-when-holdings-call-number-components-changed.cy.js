@@ -1,21 +1,21 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { JOB_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import Users from '../../../support/fragments/users/users';
-import FileManager from '../../../support/utils/fileManager';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC -> MARC Holdings', () => {
   const testData = {
@@ -132,7 +132,7 @@ describe('MARC -> MARC Holdings', () => {
 
   it(
     'C388510 Item metadata updates when Holdings call number components changed (MARC record) (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.openHoldingView();
       HoldingsRecordView.editInQuickMarc();

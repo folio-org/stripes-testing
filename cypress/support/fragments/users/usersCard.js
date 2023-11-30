@@ -16,6 +16,7 @@ import {
   and,
   Badge,
   ListItem,
+  Modal,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -31,6 +32,12 @@ const errors = {
   patronHasBlocksInPlace: 'Patron has block(s) in place',
 };
 const feesFinesAccordion = rootSection.find(Accordion({ id: 'accountsSection' }));
+const newBlockPane = Pane('New Block');
+const saveAndCloseButton = Button({ id: 'patron-block-save-close' });
+const cancelButton = Button({ id: 'expirationDate-modal-cancel-btn' });
+const keepEditingButton = Button({ id: 'clickable-cancel-editing-confirmation-confirm' });
+const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
+const areYouSureModal = Modal('Are you sure?');
 
 export default {
   errors,
@@ -114,6 +121,62 @@ export default {
 
   createPatronBlock() {
     cy.do(Button({ id: 'create-patron-block' }).click());
+  },
+
+  verifyNewBlockForm(saveBtnDisabled = true) {
+    cy.expect([
+      newBlockPane.exists(),
+      saveAndCloseButton.has({ disabled: saveBtnDisabled }),
+      cancelButton.has({ disabled: false }),
+    ]);
+  },
+
+  cancelNewBlock() {
+    cy.do(cancelButton.click());
+    cy.expect([
+      areYouSureModal.exists(),
+      HTML(including('There are unsaved changes')),
+      closeWithoutSavingButton.exists(),
+      keepEditingButton.has({ focused: true }),
+    ]);
+  },
+
+  keepEditingNewBlockForm() {
+    cy.do(keepEditingButton.click());
+    cy.expect(areYouSureModal.absent());
+    this.verifyNewBlockForm(false);
+  },
+
+  closeWithoutSavingBlockForm() {
+    cy.do(closeWithoutSavingButton.click());
+    cy.expect(areYouSureModal.absent());
+  },
+
+  verifyCreatedPatronBlock(content) {
+    cy.expect([
+      newBlockPane.absent(),
+      patronBlocksSection
+        .find(
+          MultiColumnListCell({
+            column: 'Display description',
+            row: 0,
+          }),
+        )
+        .has({ content }),
+    ]);
+  },
+
+  openPatronBlockByDescription(text) {
+    cy.do(patronBlocksSection.find(MultiColumnListCell(including(text))).click());
+  },
+
+  verifyBlockInfo() {
+    cy.expect([
+      Accordion('Block information'),
+      Button('Delete').has({ disabled: false }),
+      saveAndCloseButton.has({ disabled: true }),
+      cancelButton.has({ disabled: false }),
+    ]);
   },
 
   createAndSaveNewPatronBlock(text) {
@@ -208,6 +271,12 @@ export default {
 
   fillDescription(text) {
     cy.do(TextArea({ name: 'desc' }).fillIn(text));
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
+  },
+
+  fillDate(date) {
+    cy.do(TextField('Expiration date').fillIn(date));
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
   },
 
   selectTemplate(templateName) {
@@ -215,8 +284,8 @@ export default {
   },
 
   saveAndClose() {
-    cy.do(Button({ id: 'patron-block-save-close' }).click());
-    cy.expect(Button({ id: 'patron-block-save-close' }).absent());
+    cy.do(saveAndCloseButton.click());
+    cy.expect(saveAndCloseButton.absent());
   },
 
   getApi(userId) {

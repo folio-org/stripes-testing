@@ -208,6 +208,13 @@ export default {
         .exists(),
     ));
   },
+  checkColumnContentInTheRowByBarcode: (itemBarcode, column, content) => {
+    cy.expect(
+      MultiColumnListRow({ text: matching(itemBarcode), isContainer: false })
+        .find(MultiColumnListCell({ column }))
+        .has({ content }),
+    );
+  },
   verifyNumberOfLoans: (number) => {
     // verify every string in result table
     for (let i = 0; i < number; i++) {

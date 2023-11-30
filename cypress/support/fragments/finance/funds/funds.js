@@ -959,4 +959,8 @@ export default {
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
     );
   },
+
+  varifyCanNotCreatePlannedBudget: () => {
+    cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
+  },
 };
