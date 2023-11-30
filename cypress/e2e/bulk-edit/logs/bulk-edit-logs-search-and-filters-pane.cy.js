@@ -61,7 +61,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C368034 Filters section: Record types (firebird) (TaaS)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['extended', 'firebird'] },
     () => {
       BulkEditSearchPane.openLogsSearch();
       BulkEditSearchPane.verifySetCriteriaPaneExists();
