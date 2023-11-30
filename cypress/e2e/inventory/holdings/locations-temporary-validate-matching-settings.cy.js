@@ -11,7 +11,7 @@ import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRec
 import { Locations } from '../../../support/fragments/settings/tenant';
 import settingsMenu from '../../../support/fragments/settingsMenu';
 
-describe('Temporary Location', () => {
+describe('inventory', () => {
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
@@ -90,7 +90,7 @@ describe('Temporary Location', () => {
     });
   });
 
-  after('Delete  test data', () => {
+  after('Delete test data', () => {
     cy.getAdminToken();
     ServicePoints.deleteViaApi(service.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
