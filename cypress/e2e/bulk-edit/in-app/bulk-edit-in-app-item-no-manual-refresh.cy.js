@@ -67,7 +67,10 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyAreYouSureForm(2, item.itemBarcode);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangedResults(item.itemBarcode, `secondBarcode_${item.itemBarcode}`);
+        BulkEditSearchPane.verifyChangedResults(
+          item.itemBarcode,
+          `secondBarcode_${item.itemBarcode}`,
+        );
 
         [item.itemBarcode, `secondBarcode_${item.itemBarcode}`].forEach((barcode) => {
           cy.visit(TopMenu.inventoryPath);
@@ -77,7 +80,7 @@ describe('bulk-edit', () => {
           ItemRecordView.suppressedAsDiscoveryIsAbsent();
           ItemRecordView.verifyPermanentLoanType('Reading room');
         });
-      }
+      },
     );
   });
 });

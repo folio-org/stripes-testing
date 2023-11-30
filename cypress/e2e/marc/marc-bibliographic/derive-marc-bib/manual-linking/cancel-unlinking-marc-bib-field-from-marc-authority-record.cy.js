@@ -21,7 +21,6 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
     tag100: '100',
     tag100content: 'Sprouse, Chris',
   };
-
   const marcFiles = [
     {
       marc: 'marcBibFileForC365603.mrc',

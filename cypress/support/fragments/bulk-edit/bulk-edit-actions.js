@@ -167,10 +167,7 @@ export default {
   },
   verifyActionAfterChangingRecords() {
     cy.do(actionsBtn.click());
-    cy.expect([
-      downloadChnagedRecordsButton.exists(),
-      Button('Download errors (CSV)').exists(),
-    ]);
+    cy.expect([downloadChnagedRecordsButton.exists(), Button('Download errors (CSV)').exists()]);
   },
 
   verifySuccessBanner(validRecordsCount) {

@@ -47,7 +47,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
         BulkEditSearchPane.isConfirmButtonDisabled(false);
-      }
+      },
     );
   });
 });

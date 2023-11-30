@@ -45,7 +45,7 @@ describe('orders: Settings', () => {
   });
 
   it('C6725 Create order template (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
-    OrderTemplate.newTemplate();
+    OrderTemplate.clickNewOrderTemplateButton();
     OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
       orderTemplateName,
       organization.name,

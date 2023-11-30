@@ -369,6 +369,7 @@ export default {
 
   deriveNewMarcBibRecord: () => {
     cy.do(actionsButton.click());
+    cy.wait(2000);
     cy.do(deriveNewMarcBibRecord.click());
     cy.expect([QuickMarcEditor().exists(), QuickMarcEditorRow({ tagValue: '999' }).exists()]);
   },
@@ -1192,5 +1193,15 @@ export default {
 
   verifyItemStatus: (itemStatus) => {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
+  },
+
+  verifyContributorAbsent: (text) => {
+    cy.expect(section.find(Button(including('Contributor'))).exists());
+    cy.expect(
+      Accordion('Contributor')
+        .find(contributorsList)
+        .find(MultiColumnListCell(including(text)))
+        .absent(),
+    );
   },
 };

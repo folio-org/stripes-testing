@@ -38,14 +38,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.verifyLogsTableHeaders();
       BulkEditSearchPane.verifyDirection('Ended');
 
-      let headers = [
-        'Ended',
-        'ID',
-        'Started',
-        'Ended',
-        '# of records',
-        'Processed'
-      ];
+      let headers = ['Ended', 'ID', 'Started', 'Ended', '# of records', 'Processed'];
       for (let i = 1; i < headers.length; i++) {
         BulkEditSearchPane.clickLogHeader(headers[i]);
         BulkEditSearchPane.verifyNoDirection(headers[i - 1]);
@@ -64,8 +57,10 @@ describe('Bulk Edit - Logs', () => {
         'Reviewing changes',
         'Completed',
         'Completed with errors',
-        'Failed'
-      ].forEach((status) => { BulkEditSearchPane.checkLogsStatus(status); });
+        'Failed',
+      ].forEach((status) => {
+        BulkEditSearchPane.checkLogsStatus(status);
+      });
       BulkEditSearchPane.checkHoldingsCheckbox();
       BulkEditSearchPane.checkUsersCheckbox();
       BulkEditSearchPane.checkItemsCheckbox();
@@ -75,14 +70,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.applyEndDateFilters();
       BulkEditSearchPane.verifyDirection('Processed');
 
-      headers = [
-        'Processed',
-        'Ended',
-        'ID',
-        'Started',
-        'Ended',
-        '# of records',
-      ];
+      headers = ['Processed', 'Ended', 'ID', 'Started', 'Ended', '# of records'];
       for (let i = 1; i < headers.length; i++) {
         BulkEditSearchPane.clickLogHeader(headers[i]);
         BulkEditSearchPane.verifyNoDirection(headers[i - 1]);
