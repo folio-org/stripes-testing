@@ -63,6 +63,10 @@ export default {
   startBulkEditAbsent() {
     cy.expect(startBulkEditButton.absent());
   },
+  closeBulkEditInAppForm() {
+    cy.do(cancelBtn.click());
+    cy.wait(1000);
+  },
   selectOption(optionName, rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
