@@ -18,7 +18,7 @@ export default {
     cy.expect(rootModal.absent());
   },
 
-  verifyRenewConfirmationModal: (loansToCheck, hasOverridePermission) => {
+  verifyRenewConfirmationModal: (loansToCheck, hasOverridePermission = false) => {
     cy.expect(Button('Close').exists());
     loansToCheck.forEach((loan) => {
       cy.expect(
