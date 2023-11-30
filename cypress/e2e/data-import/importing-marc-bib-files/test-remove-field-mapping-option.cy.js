@@ -1,34 +1,33 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import {
+  EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+} from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import FileManager from '../../../support/utils/fileManager';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import {
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  LOCATION_NAMES,
-  FOLIO_RECORD_TYPE,
-  EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES,
-} from '../../../support/constants';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -184,7 +183,7 @@ describe('data-import', () => {
 
     it(
       'C17033 Test ###REMOVE### field mapping option (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

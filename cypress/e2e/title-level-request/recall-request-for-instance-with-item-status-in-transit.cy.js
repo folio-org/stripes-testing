@@ -1,18 +1,18 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
-import { REQUEST_TYPES, ITEM_STATUS_NAMES } from '../../support/constants';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import UserEdit from '../../support/fragments/users/userEdit';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Title level request', () => {
   const testData = {
@@ -84,7 +84,7 @@ describe('Title level request', () => {
 
   it(
     'C375941 Check that user can create a TLR Recall for Item with status In transit (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       InventoryInstance.checkNewRequestAtNewPane();

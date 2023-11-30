@@ -1,13 +1,13 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import SettingsDataImport from '../../../support/fragments/data_import/settingsDataImport';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -35,7 +35,7 @@ describe('data-import', () => {
 
     it(
       'C357019 Check that no error when going to the "Uploading jobs" and "Settings/Job profiles" pages from the "View All" page (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // #1 Go to "Data import" app -> click on "Actions" button -> Select the "View all"
         // User is taken to the View all logs screen

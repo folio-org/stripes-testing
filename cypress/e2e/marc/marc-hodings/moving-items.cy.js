@@ -1,24 +1,21 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TestTypes from '../../../support/dictionary/testTypes';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import Features from '../../../support/dictionary/features';
+import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import devTeams from '../../../support/dictionary/devTeams';
 import InventoryInstancesMovement from '../../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
-import users from '../../../support/fragments/users/users';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC -> MARC Holdings', { retries: 2 }, () => {
   const successCalloutMessage = '1 item has been successfully moved.';
@@ -119,7 +116,7 @@ describe('MARC -> MARC Holdings', { retries: 2 }, () => {
 
   it(
     'C15185 Move multiple items from one holdings to another holdings within an instance (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
@@ -142,7 +139,7 @@ describe('MARC -> MARC Holdings', { retries: 2 }, () => {
 
   it(
     'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-    { tags: [TestTypes.smoke, devTeams.spitfire, Features.eHoldings] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       InventoryActions.import();
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

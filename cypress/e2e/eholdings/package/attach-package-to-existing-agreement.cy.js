@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
-import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
-import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import Agreements from '../../../support/fragments/agreements/agreements';
+import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
+import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -51,7 +51,7 @@ describe('eHoldings', () => {
 
     it(
       'C751 Attach a package to an existing Agreement (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         EHoldingSearch.switchToPackages();
         // wait until package is created via API

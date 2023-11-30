@@ -1,16 +1,14 @@
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
@@ -81,7 +79,7 @@ describe('bulk-edit', () => {
 
     it(
       'C411642 Verify update Holdings with multiple Items associated (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcodes');

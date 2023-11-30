@@ -1,15 +1,13 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../support/fragments/users/users';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../support/fragments/finance/funds/funds';
 import Groups from '../../../support/fragments/finance/groups/groups';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Groups', () => {
   const firstFund = { ...Funds.defaultUiFund };
@@ -100,7 +98,7 @@ describe('ui-finance: Groups', () => {
 
   it(
     'C347878 Add multiple funds to a group with plugin  (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultGroup.name);
       Groups.selectGroup(defaultGroup.name);

@@ -1,13 +1,11 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../support/fragments/users/users';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Finance: Ledgers', { retries: 3 }, () => {
   const defaultFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
@@ -75,7 +73,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
 
   it(
     'C411576 Ledger summary calculation after allocation movement to 0 budget (thunderjet) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

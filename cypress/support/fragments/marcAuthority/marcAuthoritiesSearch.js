@@ -7,6 +7,9 @@ import {
   MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
+  MultiSelect,
+  Select,
+  TextArea,
 } from '../../../../interactors';
 import marcAuthorities from './marcAuthorities';
 
@@ -38,6 +41,16 @@ export default {
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .find(Button())
         .click(),
+    ]);
+  },
+
+  verifyFiltersState: (selectedFilterValue, searchValue) => {
+    cy.expect([
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ value: selectedFilterValue }),
+      TextArea({ id: 'textarea-authorities-search' }).has({ value: searchValue }),
+      Section({ id: 'sourceFileId' })
+        .find(MultiSelect({ selectedCount: 0 }))
+        .exists(),
     ]);
   },
 };

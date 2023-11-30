@@ -1,12 +1,10 @@
-import TopMenu from '../../support/fragments/topMenu';
 import permissions from '../../support/dictionary/permissions';
-import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import devTeams from '../../support/dictionary/devTeams';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-organizations: EDI convention in Organization Integration', () => {
   let userId;
@@ -67,7 +65,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
 
   it(
     'C350762: User can Create and Edit Integrations for an Organization-Vendor (thunderjet)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       // Found and edit created organization
       Organizations.searchByParameters('Name', organization.name);

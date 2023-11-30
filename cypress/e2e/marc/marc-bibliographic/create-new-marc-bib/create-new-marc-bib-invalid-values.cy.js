@@ -1,10 +1,10 @@
-import { DevTeams, Permissions, TestTypes } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   const testData = {
@@ -109,7 +109,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380706 Creating a new "MARC bib" record with invalid LDR 05, 06, 07, 08, 17, 18, 19 values (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);
@@ -126,7 +126,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380712 "008" field updated when invalid LDR 06, 07 values entered upon creation of "MARC bib" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField('245', `$a ${testData.marcBibTitle}`);
@@ -141,7 +141,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380714 "245" field presence validation when creating a new "MARC bib" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
 

@@ -1,11 +1,10 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
-import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -28,7 +27,7 @@ describe('data-import', () => {
 
     it(
       'C2334 Delete an existing job profile (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfileView.delete();

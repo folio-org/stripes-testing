@@ -780,6 +780,14 @@ export default {
       });
   },
 
+  checkFieldContentToEqual(selector, fieldContent) {
+    cy.get(selector)
+      .invoke('val')
+      .then((text) => {
+        expect(text).to.equal(fieldContent);
+      });
+  },
+
   checkEmptyContent(tagName) {
     cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).exists());
     cy.expect(
@@ -1242,9 +1250,17 @@ export default {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
 
+  checkLinkButtonDontExist(tag) {
+    cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).absent());
+  },
+
   checkLinkButtonToolTipText(text) {
     cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
+  },
+  checkLinkButtonToolTipTextByIndex(rowIndex) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Link to MARC Authority record' }));
   },
   checkUnlinkTooltipText(rowIndex, text) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).hoverMouse());
@@ -1528,6 +1544,11 @@ export default {
         ),
       }),
     ]);
+  },
+
+  confirmRemoveAuthorityLinking() {
+    cy.do(removeLinkingModal.find(removeLinkingButton).click());
+    cy.expect([removeLinkingModal.absent(), rootSection.exists()]);
   },
 
   clickKeepLinkingButton() {
