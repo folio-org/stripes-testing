@@ -5,6 +5,10 @@ export default createInteractor('key value')
   .locator((el) => el.querySelector('[class^=kvLabel]').textContent)
   .filters({
     value: (el) => el.querySelector('[class^=kvValue]').textContent,
+    floatValue: (el) => {
+      const value = el.querySelector('[class^=kvValue]').textContent;
+      return parseFloat(value.replace(/,/g, ''));
+    },
     subValue: (el) => el.querySelector('[class^=kvSub]').textContent,
     dataTestId: (el) => el.getAttribute('data-testid'),
     hasLink: (el) => el.getAttribute('data-test-text-link') === 'true',

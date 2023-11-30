@@ -436,6 +436,14 @@ export default {
     cy.do(logsStatusesAccordion.find(Checkbox(status)).click());
   },
 
+  resetStatuses() {
+    cy.do(
+      Accordion('Statuses')
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
+  },
+
   verifyCsvViewPermission() {
     cy.expect([
       usersRadio.absent(),
@@ -711,7 +719,13 @@ export default {
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
   },
-
+  verifyAllCheckboxesInShowColumnMenuAreDisabled() {
+    cy.expect(
+      DropdownMenu()
+        .find(Checkbox({ disabled: false }))
+        .absent(),
+    );
+  },
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
@@ -814,12 +828,24 @@ export default {
     );
   },
 
+  verifyLogStatus(runByUsername, content) {
+    cy.do(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content }))
+        .click(),
+    );
+  },
+
   clickActionsRunBy(runByUsername) {
     cy.do(
       ListRow({ text: including(runByUsername) })
         .find(logsActionButton)
         .click(),
     );
+  },
+
+  verifyActionsRunBy(name) {
+    cy.expect(ListRow({ text: including(`\n${name}\n`) }).exists());
   },
 
   verifyTriggerLogsAction() {
@@ -836,6 +862,15 @@ export default {
       matchingRecordsBtn.exists(),
       previewPorposedChangesBtn.exists(),
       updatedRecordBtn.exists(),
+    ]);
+  },
+
+  verifyLogsRowActionWhenNoChangesApplied() {
+    cy.expect([
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      errorsCommittingBtn.exists(),
     ]);
   },
 
@@ -925,6 +960,28 @@ export default {
 
   applyEndDateFilters() {
     cy.do(logsEndDateAccordion.find(applyBtn).click());
+  },
+
+  verifyDirection(header, direction = 'descending') {
+    cy.get('[class^="mclHeader"]')
+      .contains(header)
+      .then((mclHeader) => {
+        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
+        expect(sort).to.eq(direction);
+      });
+  },
+
+  verifyNoDirection(header) {
+    cy.get('[class^="mclHeader"]')
+      .contains(header)
+      .then((mclHeader) => {
+        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
+        expect(sort).to.eq('none');
+      });
+  },
+
+  clickLogHeader(header) {
+    cy.do(MultiColumnListHeader(header).click());
   },
 
   noLogResultsFound() {

@@ -1,20 +1,20 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import TopMenu from '../../../support/fragments/topMenu';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
 } from '../../../support/constants';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('Orders: Inventory interaction', () => {
   const testData = {
@@ -88,7 +88,7 @@ describe('Orders: Inventory interaction', () => {
 
   it(
     'C375232 Create new holdings for already existing location when creating an order line (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Click on "PO number" link on "Orders" pane
       Orders.selectOrderByPONumber(testData.order.poNumber);

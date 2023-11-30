@@ -47,6 +47,9 @@ const updateLinkedBibFieldsModal = Modal({ id: 'quick-marc-update-linked-bib-fie
 const saveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-update-linked-bib-fields-confirm' }),
 );
+const keepEditingButton = updateLinkedBibFieldsModal.find(
+  Button({ id: 'clickable-quick-marc-update-linked-bib-fields-cancel' }),
+);
 const continueWithSaveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }),
 );
@@ -538,12 +541,14 @@ export default {
     cy.do(unlinkModal.find(cancelUnlinkButtonInsideModal).click());
   },
 
-  checkUnlinkModal(text) {
+  checkUnlinkModal(tag) {
     cy.expect([
       unlinkModal.exists(),
       unlinkButtonInsideModal.exists(),
       cancelUnlinkButtonInsideModal.exists(),
-      unlinkModal.has({ content: including(text) }),
+      unlinkModal.has({
+        message: `By selecting Unlink, then field ${tag} will be unlinked from the MARC authority record. Are you sure you want to continue?`,
+      }),
     ]);
   },
 
@@ -1241,8 +1246,8 @@ export default {
     cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
-  checkUnlinkTooltipText(tag, text) {
-    cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
+  checkUnlinkTooltipText(rowIndex, text) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
   checkViewMarcAuthorityTooltipText(rowIndex) {
@@ -1257,16 +1262,6 @@ export default {
 
   checkLinkButtonExistByRowIndex(rowIndex) {
     cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists());
-  },
-
-  checkViewMarcAuthorityTooltipText(rowIndex) {
-    cy.do(
-      QuickMarcEditor()
-        .find(QuickMarcEditorRow({ index: rowIndex }))
-        .find(Button({ icon: 'eye-open' }))
-        .hoverMouse(),
-    );
-    cy.expect(Tooltip({ text: 'View MARC authority record' }).exists());
   },
 
   checkButtonSaveAndCloseEnable() {
@@ -1407,6 +1402,14 @@ export default {
     ]);
   },
 
+  cancelUpdateLinkedBibs() {
+    cy.do(keepEditingButton.click());
+    cy.expect([
+      Modal({ id: 'quick-marc-update-linked-bib-fields' }).absent(),
+      rootSection.exists(),
+    ]);
+  },
+
   checkPaneheaderContains(text) {
     cy.expect(PaneHeader({ text: including(text) }).exists());
   },
@@ -1514,17 +1517,21 @@ export default {
     ]);
   },
 
-  verifyRemoveLinkingModal(contentText) {
+  verifyRemoveLinkingModal() {
     cy.expect([
       removeLinkingModal.exists(),
       removeLinkingModal.find(removeLinkingButton).exists(),
       removeLinkingModal.find(keepLinkingButton).exists(),
-      removeLinkingModal.has({ content: including(contentText) }),
+      removeLinkingModal.has({
+        content: including(
+          'Do you want to remove authority linking for this new bibliographic record?',
+        ),
+      }),
     ]);
   },
 
   clickKeepLinkingButton() {
-    cy.do(keepLinkingButton.click());
+    cy.do(removeLinkingModal.find(keepLinkingButton).click());
   },
 
   verifyAndDismissWrongTagLengthCallout() {
@@ -1769,6 +1776,10 @@ export default {
     this.checkEmptyContent('008');
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
+  },
+
+  checkEditableQuickMarcFormIsOpened: () => {
+    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
   },
 
   verifyNoDuplicatedFieldsWithTag: (tag) => {

@@ -1,12 +1,12 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragments/invoices';
-import { Budgets } from '../../support/fragments/finance';
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Users from '../../support/fragments/users/users';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { Budgets } from '../../support/fragments/finance';
+import { InvoiceLineDetails, InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -82,7 +82,7 @@ describe('Invoices', () => {
 
   it(
     'C399084 Invoice can be approved when balance is close to the encumbrance available balance (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click invoice line record on invoice
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

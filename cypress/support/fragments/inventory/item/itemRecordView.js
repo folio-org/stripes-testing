@@ -162,6 +162,10 @@ export default {
     );
   },
 
+  verifyTextAbsent(text) {
+    cy.expect(HTML(including(text)).absent());
+  },
+
   verifyMaterialType: (type) => {
     cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
   },
@@ -197,6 +201,10 @@ export default {
 
   checkBarcode: (barcode) => {
     cy.expect(administrativeDataAccordion.find(KeyValue('Item barcode')).has({ value: barcode }));
+  },
+
+  checkCopyNumber: (copyNumber) => {
+    cy.expect(itemDataAccordion.find(KeyValue('Copy number')).has({ value: copyNumber }));
   },
 
   checkCalloutMessage: () => {
