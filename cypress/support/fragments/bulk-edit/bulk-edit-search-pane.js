@@ -636,8 +636,7 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${
-          validRecordCount + invalidRecordCount
+        `${fileName}: ${validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -648,8 +647,7 @@ export default {
       Accordion('Errors')
         .find(
           HTML(
-            `${fileName}: ${
-              validRecordCount + invalidRecordCount
+            `${fileName}: ${validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
           ),
         )
@@ -824,6 +822,14 @@ export default {
     );
   },
 
+  verifyLogStatus(runByUsername, content) {
+    cy.do(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content }))
+        .click(),
+    );
+  },
+
   clickActionsRunBy(runByUsername) {
     cy.do(
       ListRow({ text: including(runByUsername) })
@@ -846,6 +852,15 @@ export default {
       matchingRecordsBtn.exists(),
       previewPorposedChangesBtn.exists(),
       updatedRecordBtn.exists(),
+    ]);
+  },
+
+  verifyLogsRowActionWhenNoChangesApplied() {
+    cy.expect([
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      errorsCommittingBtn.exists(),
     ]);
   },
 
