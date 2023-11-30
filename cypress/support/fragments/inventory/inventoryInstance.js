@@ -209,6 +209,15 @@ const verifyLastUpdatedDate = () => {
   );
 };
 
+const verifyLastUpdatedUser = (userName) => {
+  cy.do(administrativeDataAccordion.find(Button(including('Record last updated'))).click());
+  cy.expect(
+    Accordion('Administrative data')
+      .find(HTML(including(userName)))
+      .exists(),
+  );
+};
+
 const verifyInstancePublisher = (indexRow, indexColumn, type) => {
   cy.expect(
     descriptiveDataAccordion
@@ -306,6 +315,7 @@ export default {
   openHoldings,
   verifyInstanceTitle,
   verifyLastUpdatedDate,
+  verifyLastUpdatedUser,
   verifyInstancePublisher,
   verifyInstanceSubject,
   verifyResourceIdentifier,

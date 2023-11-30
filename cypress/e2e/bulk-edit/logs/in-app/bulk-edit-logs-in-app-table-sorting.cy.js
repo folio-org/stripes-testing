@@ -65,7 +65,7 @@ describe('Bulk Edit - Logs', () => {
         'Completed',
         'Completed with errors',
         'Failed'
-      ].forEach((status) => { BulkEditSearchPane.checkLogsStatus(status) })
+      ].forEach((status) => { BulkEditSearchPane.checkLogsStatus(status); });
       BulkEditSearchPane.checkHoldingsCheckbox();
       BulkEditSearchPane.checkUsersCheckbox();
       BulkEditSearchPane.checkItemsCheckbox();
@@ -74,7 +74,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.fillLogsEndDate(today, today);
       BulkEditSearchPane.applyEndDateFilters();
       BulkEditSearchPane.verifyDirection('Processed');
-      
+
       headers = [
         'Processed',
         'Ended',

@@ -3,6 +3,8 @@ import {
   HTML,
   KeyValue,
   Link,
+  MultiColumnListCell,
+  MultiColumnListRow,
   PaneHeader,
   Section,
   including,
@@ -13,13 +15,22 @@ const budgetPane = Section({ id: 'pane-budget' });
 const budgetDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-budget' });
 const actionsButton = budgetDetailsPaneHeader.find(Button('Actions'));
 
+const summarySection = Section({ id: 'summary' });
 const informationSection = Section({ id: 'information' });
 
 export default {
   waitLoading() {
     cy.expect(budgetPane.exists());
   },
-  checkBudgetDetails({ information = [], balance = {} } = {}) {
+  checkBudgetDetails({ summary = [], information = [], balance = {} } = {}) {
+    summary.forEach(({ key, value }) => {
+      cy.expect(
+        summarySection
+          .find(MultiColumnListRow({ isContainer: true, content: including(key) }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(value) }),
+      );
+    });
     information.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
     });

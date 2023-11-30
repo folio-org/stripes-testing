@@ -1,20 +1,18 @@
 import permissions from '../../../../support/dictionary/permissions';
-import testType from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../../support/fragments/users/users';
-import Funds from '../../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('Finance: Ledgers', { retries: 3 }, () => {
-  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+describe('Finance: Ledgers', () => {
+  const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCodeForRollover(2000, 9999),
+    code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
@@ -53,7 +51,7 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
-      Ledgers.fillInRolloverForOneTimeOrdersWithAllocation(
+      Ledgers.fillInRolloverForOneTimeOrdersWithoutBudgets(
         secondFiscalYear.code,
         'None',
         'Allocation',
@@ -94,34 +92,17 @@ describe('Finance: Ledgers', { retries: 3 }, () => {
 
   it(
     'C353213: Ledger export settings: last year Fund with NO budget, NO Classes, Export settings-Inactive status (thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.exportBudgetInformation();
       Ledgers.prepareExportSettings(secondFiscalYear.code, 'Inactive', defaultLedger);
       Ledgers.checkColumnNamesInDownloadedLedgerExportFileWithExpClasses(`${fileName}.csv`);
-      Ledgers.checkColumnContentInDownloadedLedgerExportFile(
+      Ledgers.checkColumnContentInDownloadedLedgerExportFileWithoutBudgets(
         `${fileName}.csv`,
         1,
         defaultFund,
-        secondFiscalYear,
-        '100',
-        '100',
-        '100',
-        '0',
-        '0',
-        '100',
-        '0',
-        '100',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '0',
-        '100',
-        '100',
       );
       Ledgers.deleteDownloadedFile(`${fileName}.csv`);
     },
