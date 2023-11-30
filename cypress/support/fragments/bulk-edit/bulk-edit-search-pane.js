@@ -1144,9 +1144,11 @@ export default {
   },
 
   fillLogsEndDate(fromDate, toDate) {
-    this.fillLogsDate('Ended', 'From', fromDate);
-    this.fillLogsDate('Ended', 'To', toDate);
-    cy.do(logsEndDateAccordion.clickHeader());
+    cy.do([
+      logsEndDateAccordion.clickHeader(),
+      logsEndDateAccordion.find(textFieldFrom).fillIn(fromDate),
+      logsEndDateAccordion.find(textFieldTo).fillIn(toDate),
+    ]);
   },
 
   applyStartDateFilters() {
