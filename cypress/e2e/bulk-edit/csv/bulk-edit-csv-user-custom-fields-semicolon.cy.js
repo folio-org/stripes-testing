@@ -91,7 +91,7 @@ describe('bulk-edit', () => {
         cy.visit(TopMenu.usersPath);
         UsersSearchPane.searchByUsername(user.username);
         Users.verifyFirstNameOnUserDetailsPane(newFirstName);
-      }
+      },
     );
   });
 });

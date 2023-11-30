@@ -92,7 +92,7 @@ describe('bulk-edit', () => {
           'Action note',
           'Circulation Notes',
           'Administrative notes',
-          'Copy note'
+          'Copy note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
 
@@ -116,7 +116,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyChangedResults(item.barcode);
         BulkEditActions.openActions();
 
-        BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', `Check out;${notes.checkIn};true`);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Circulation Notes',
+          `Check out;${notes.checkIn};true`,
+        );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative notes', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', notes.copy);

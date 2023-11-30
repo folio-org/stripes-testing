@@ -27,7 +27,7 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditEdit.gui,
       permissions.bulkEditLogsView.gui,
       permissions.inventoryAll.gui,
-      permissions.exportManagerAll.gui
+      permissions.exportManagerAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(user.username, user.password, {

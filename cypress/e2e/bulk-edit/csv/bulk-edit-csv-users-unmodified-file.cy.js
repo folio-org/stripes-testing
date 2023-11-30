@@ -69,7 +69,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.checkUsersCheckbox();
         BulkEditSearchPane.clickActionsRunBy(user.username);
         BulkEditSearchPane.verifyLogsRowActionWhenNoChangesApplied();
-      }
+      },
     );
   });
 });

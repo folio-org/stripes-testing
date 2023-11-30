@@ -437,7 +437,11 @@ export default {
   },
 
   resetStatuses() {
-    cy.do(Accordion('Statuses').find(Button({ icon: 'times-circle-solid' })).click());
+    cy.do(
+      Accordion('Statuses')
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
   },
 
   verifyCsvViewPermission() {
@@ -636,7 +640,8 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${validRecordCount + invalidRecordCount
+        `${fileName}: ${
+          validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -647,7 +652,8 @@ export default {
       Accordion('Errors')
         .find(
           HTML(
-            `${fileName}: ${validRecordCount + invalidRecordCount
+            `${fileName}: ${
+              validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
           ),
         )
@@ -839,9 +845,7 @@ export default {
   },
 
   verifyActionsRunBy(name) {
-    cy.expect(
-      ListRow({ text: including(`\n${name}\n`) }).exists(),
-    );
+    cy.expect(ListRow({ text: including(`\n${name}\n`) }).exists());
   },
 
   verifyTriggerLogsAction() {
@@ -959,17 +963,21 @@ export default {
   },
 
   verifyDirection(header, direction = 'descending') {
-    cy.get('[class^="mclHeader"]').contains(header).then((mclHeader) => {
-      const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
-      expect(sort).to.eq(direction);
-    });
+    cy.get('[class^="mclHeader"]')
+      .contains(header)
+      .then((mclHeader) => {
+        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
+        expect(sort).to.eq(direction);
+      });
   },
 
   verifyNoDirection(header) {
-    cy.get('[class^="mclHeader"]').contains(header).then((mclHeader) => {
-      const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
-      expect(sort).to.eq('none');
-    });
+    cy.get('[class^="mclHeader"]')
+      .contains(header)
+      .then((mclHeader) => {
+        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
+        expect(sort).to.eq('none');
+      });
   },
 
   clickLogHeader(header) {

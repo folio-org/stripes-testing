@@ -10,38 +10,37 @@ let userForTesting;
 const names = {
   first: 'firstName',
   middle: 'middle',
-  preferred: 'preferred'
+  preferred: 'preferred',
 };
 const userUUIDsFileName = `userUUIDs-${getRandomPostfix()}.csv`;
 
 describe('Bulk Edit - Logs', () => {
   before('create test data', () => {
-    cy.createTempUser([
-      permissions.bulkEditCsvEdit.gui,
-      permissions.uiUserEdit.gui,
-    ]).then((userProperties) => {
-      userForTesting = userProperties;
-      cy.login(userForTesting.username, userForTesting.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
-
-      cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
-        cy.updateUser({
-          ...users[0],
-          personal: {
-            lastName: userForTesting.lastName,
-            email: 'test@folio.org',
-            preferredContactTypeId: '002'
-          },
+    cy.createTempUser([permissions.bulkEditCsvEdit.gui, permissions.uiUserEdit.gui]).then(
+      (userProperties) => {
+        userForTesting = userProperties;
+        cy.login(userForTesting.username, userForTesting.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
-      });
-      FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${userForTesting.userId}`);
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-    });
+
+        cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
+          cy.updateUser({
+            ...users[0],
+            personal: {
+              lastName: userForTesting.lastName,
+              email: 'test@folio.org',
+              preferredContactTypeId: '002',
+            },
+          });
+        });
+        FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${userForTesting.userId}`);
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+      },
+    );
     cy.createTempUser([
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditCsvView.gui,
@@ -86,7 +85,6 @@ describe('Bulk Edit - Logs', () => {
       cy.reload();
       BulkEditSearchPane.verifyActionsRunBy(`${userForTesting.lastName}, ${names.first}`);
 
-
       cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
         cy.updateUser({
           ...users[0],
@@ -97,8 +95,9 @@ describe('Bulk Edit - Logs', () => {
         });
       });
       cy.reload();
-      BulkEditSearchPane.verifyActionsRunBy(`${userForTesting.lastName}, ${names.first} ${names.middle}`);
-
+      BulkEditSearchPane.verifyActionsRunBy(
+        `${userForTesting.lastName}, ${names.first} ${names.middle}`,
+      );
 
       cy.getUsers({ limit: 1, query: `username=${userForTesting.username}` }).then((users) => {
         cy.updateUser({
@@ -110,7 +109,9 @@ describe('Bulk Edit - Logs', () => {
         });
       });
       cy.reload();
-      BulkEditSearchPane.verifyActionsRunBy(`${userForTesting.lastName}, ${names.preferred} ${names.middle}`);
+      BulkEditSearchPane.verifyActionsRunBy(
+        `${userForTesting.lastName}, ${names.preferred} ${names.middle}`,
+      );
     },
   );
 });

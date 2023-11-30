@@ -86,7 +86,7 @@ export default {
         ]);
       }),
     );
-    InteractorsTools.checkCalloutMessage(`The category ${typeName.name} was successfully deleted`);
+    InteractorsTools.checkCalloutMessage(`The type ${typeName.name} was successfully deleted`);
   },
   selectTypes: () => {
     cy.do(NavListItem('Types').click());
@@ -102,12 +102,12 @@ export default {
       .then(({ body }) => body);
   },
 
-  createTypesViaApi(categories) {
+  createTypesViaApi(types) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'organizations-storage/organization-types',
-        body: categories,
+        body: types,
       })
       .then(({ body }) => body);
   },
