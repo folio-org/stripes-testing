@@ -1,37 +1,36 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import { FULFILMENT_PREFERENCES, REQUEST_TYPES } from '../../../support/constants';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import TopMenu from '../../../support/fragments/topMenu';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import Receiving from '../../../support/fragments/receiving/receiving';
 import permissions from '../../../support/dictionary/permissions';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
-import NewRequest from '../../../support/fragments/requests/newRequest';
-import CheckOut from '../../../support/fragments/checkout/checkout';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../support/fragments/users/usersCard';
 import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
-import UserLoans from '../../../support/fragments/users/loans/userLoans';
-import ConfirmItemStatusModal from '../../../support/fragments/users/loans/confirmItemStatusModal';
-import RenewConfirmationModal from '../../../support/fragments/users/loans/renewConfirmationModal';
-import OverrideAndRenewModal from '../../../support/fragments/users/loans/overrideAndRenewModal';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../../support/fragments/users/users';
 import CheckOutActions from '../../../support/fragments/check-out-actions/check-out-actions';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import DateTools from '../../../support/utils/dateTools';
-import UserEdit from '../../../support/fragments/users/userEdit';
+import CheckOut from '../../../support/fragments/checkout/checkout';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import Orders from '../../../support/fragments/orders/orders';
+import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
+import Receiving from '../../../support/fragments/receiving/receiving';
+import NewRequest from '../../../support/fragments/requests/newRequest';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
+import TopMenu from '../../../support/fragments/topMenu';
+import ConfirmItemStatusModal from '../../../support/fragments/users/loans/confirmItemStatusModal';
+import OverrideAndRenewModal from '../../../support/fragments/users/loans/overrideAndRenewModal';
+import RenewConfirmationModal from '../../../support/fragments/users/loans/renewConfirmationModal';
+import UserLoans from '../../../support/fragments/users/loans/userLoans';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe.skip('inventory', () => {
   describe('Item', () => {
@@ -170,152 +169,148 @@ describe.skip('inventory', () => {
     };
 
     // test is looping
-    it(
-      'C9200 Item status date updates (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
-      () => {
-        const caption = `autotest_caption_${getRandomPostfix()}`;
-        const numberOfPieces = '3';
-        // open order and create Item
-        cy.visit(TopMenu.ordersPath);
-        selectOrderWithNumber(orderNumber);
-        Orders.openOrder();
-        OrdersHelper.verifyOrderDateOpened();
-        openItem(instanceTitle, effectiveLocation.name, 'No barcode');
-        fullCheck(ItemRecordView.itemStatuses.onOrder);
+    it('C9200 Item status date updates (folijet)', { tags: ['smoke', 'folijet'] }, () => {
+      const caption = `autotest_caption_${getRandomPostfix()}`;
+      const numberOfPieces = '3';
+      // open order and create Item
+      cy.visit(TopMenu.ordersPath);
+      selectOrderWithNumber(orderNumber);
+      Orders.openOrder();
+      OrdersHelper.verifyOrderDateOpened();
+      openItem(instanceTitle, effectiveLocation.name, 'No barcode');
+      fullCheck(ItemRecordView.itemStatuses.onOrder);
 
-        // receive item
-        cy.visit(TopMenu.ordersPath);
-        selectOrderWithNumber(orderNumber);
-        Orders.receiveOrderViaActions();
-        Receiving.selectFromResultsList(instanceTitle);
-        Receiving.receivePiece(0, caption, itemBarcode);
-        openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-        fullCheck(ItemRecordView.itemStatuses.inProcess);
+      // receive item
+      cy.visit(TopMenu.ordersPath);
+      selectOrderWithNumber(orderNumber);
+      Orders.receiveOrderViaActions();
+      Receiving.selectFromResultsList(instanceTitle);
+      Receiving.receivePiece(0, caption, itemBarcode);
+      openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+      fullCheck(ItemRecordView.itemStatuses.inProcess);
 
-        // check in item at service point assigned to its effective location
-        SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-        checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
+      // check in item at service point assigned to its effective location
+      SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+      checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
-        // mark item as missing
-        InventoryItems.markAsMissing();
-        InventoryItems.confirmMarkAsMissing();
-        fullCheck(ItemRecordView.itemStatuses.missing);
+      // mark item as missing
+      InventoryItems.markAsMissing();
+      InventoryItems.confirmMarkAsMissing();
+      fullCheck(ItemRecordView.itemStatuses.missing);
 
-        // check in item at service point assigned to its effective location
-        checkIn(
-          itemBarcode,
-          ItemRecordView.itemStatuses.available,
-          ConfirmItemInModal.confirmMissingModal,
-        );
+      // check in item at service point assigned to its effective location
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.available,
+        ConfirmItemInModal.confirmMissingModal,
+      );
 
-        // check in item at service point assigned to its effective location
-        checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
+      // check in item at service point assigned to its effective location
+      checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
-        // check in item at service point not assigned to its effective location
-        SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-        checkIn(
-          itemBarcode,
-          ItemRecordView.itemStatuses.inTransit,
-          ConfirmItemInModal.confirmInTransitModal,
-        );
+      // check in item at service point not assigned to its effective location
+      SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.inTransit,
+        ConfirmItemInModal.confirmInTransitModal,
+      );
 
-        // check in item at service point not assigned to its effective location
-        checkIn(
-          itemBarcode,
-          ItemRecordView.itemStatuses.inTransit,
-          ConfirmItemInModal.confirmInTransitModal,
-        );
+      // check in item at service point not assigned to its effective location
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.inTransit,
+        ConfirmItemInModal.confirmInTransitModal,
+      );
 
-        // check in item at service point assigned to its effective location
-        SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-        checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
+      // check in item at service point assigned to its effective location
+      SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+      checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
-        // create Page request on an item
-        cy.visit(TopMenu.requestsPath);
-        NewRequest.createWithUserName({
-          itemBarcode,
-          requesterName: userName,
-          pickupServicePoint: effectiveLocationServicePoint.name,
-        });
-        openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-        fullCheck(ItemRecordView.itemStatuses.paged);
+      // create Page request on an item
+      cy.visit(TopMenu.requestsPath);
+      NewRequest.createWithUserName({
+        itemBarcode,
+        requesterName: userName,
+        pickupServicePoint: effectiveLocationServicePoint.name,
+      });
+      openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+      fullCheck(ItemRecordView.itemStatuses.paged);
 
-        // check in item at a service point other than the pickup service point for the request
-        SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-        checkIn(
-          itemBarcode,
-          ItemRecordView.itemStatuses.inTransit,
-          ConfirmItemInModal.confirmInTransitModal,
-        );
+      // check in item at a service point other than the pickup service point for the request
+      SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.inTransit,
+        ConfirmItemInModal.confirmInTransitModal,
+      );
 
-        // check in item at the pickup service point for the page request
-        SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-        checkIn(
-          itemBarcode,
-          ItemRecordView.itemStatuses.awaitingPickup,
-          ConfirmItemInModal.confirmAvaitingPickUpModal,
-        );
+      // check in item at the pickup service point for the page request
+      SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+      checkIn(
+        itemBarcode,
+        ItemRecordView.itemStatuses.awaitingPickup,
+        ConfirmItemInModal.confirmAvaitingPickUpModal,
+      );
 
-        // check out item to user for whom page request was created
-        checkOut(
-          userName,
-          itemBarcode,
-          ItemRecordView.itemStatuses.checkedOut,
-          ConfirmItemInModal.confirmAvaitingPickupCheckInModal,
-        );
+      // check out item to user for whom page request was created
+      checkOut(
+        userName,
+        itemBarcode,
+        ItemRecordView.itemStatuses.checkedOut,
+        ConfirmItemInModal.confirmAvaitingPickupCheckInModal,
+      );
 
-        // declare item lost
-        openUser(userName);
-        UserLoans.declareLoanLost(itemBarcode);
-        ConfirmItemStatusModal.confirmItemStatus();
-        openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-        fullCheck(ItemRecordView.itemStatuses.declaredLost);
+      // declare item lost
+      openUser(userName);
+      UserLoans.declareLoanLost(itemBarcode);
+      ConfirmItemStatusModal.confirmItemStatus();
+      openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+      fullCheck(ItemRecordView.itemStatuses.declaredLost);
 
-        // renew item (through override)
-        openUser(userName);
-        UserLoans.renewItem(itemBarcode);
-        RenewConfirmationModal.confirmRenewOverrideItem();
-        OverrideAndRenewModal.confirmOverrideItem();
-        openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-        fullCheck(ItemRecordView.itemStatuses.checkedOut);
+      // renew item (through override)
+      openUser(userName);
+      UserLoans.renewItem(itemBarcode);
+      RenewConfirmationModal.confirmRenewOverrideItem();
+      OverrideAndRenewModal.confirmOverrideItem();
+      openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+      fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
-        // edit item record so that it has multiple pieces
-        InventoryInstance.edit();
-        ItemRecordView.addPieceToItem(numberOfPieces);
-        fullCheck(ItemRecordView.itemStatuses.checkedOut);
+      // edit item record so that it has multiple pieces
+      InventoryInstance.edit();
+      ItemRecordView.addPieceToItem(numberOfPieces);
+      fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
-        // create delivery request (hold or recall) on item
-        cy.visit(TopMenu.requestsPath);
-        NewRequest.createDeliveryRequest({
-          itemBarcode,
-          itemTitle: null,
-          requesterBarcode: userForDeliveryRequest.barcode,
-          requestType: REQUEST_TYPES.HOLD,
-        });
-        cy.visit(TopMenu.checkInPath);
-        CheckInActions.checkInItem(itemBarcode);
-        ConfirmItemInModal.confirmMultipieceCheckInModal();
-        cy.visit(TopMenu.checkOutPath);
-        CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-        CheckOutActions.cancelMultipleCheckOutModal();
-        openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-        fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
+      // create delivery request (hold or recall) on item
+      cy.visit(TopMenu.requestsPath);
+      NewRequest.createDeliveryRequest({
+        itemBarcode,
+        itemTitle: null,
+        requesterBarcode: userForDeliveryRequest.barcode,
+        requestType: REQUEST_TYPES.HOLD,
+      });
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.checkInItem(itemBarcode);
+      ConfirmItemInModal.confirmMultipieceCheckInModal();
+      cy.visit(TopMenu.checkOutPath);
+      CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+      CheckOutActions.cancelMultipleCheckOutModal();
+      openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+      fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
 
-        // check out item to user with delivery request
-        checkOut(
-          userForDeliveryRequest.username,
-          itemBarcode,
-          ItemRecordView.itemStatuses.checkedOut,
-        );
+      // check out item to user with delivery request
+      checkOut(
+        userForDeliveryRequest.username,
+        itemBarcode,
+        ItemRecordView.itemStatuses.checkedOut,
+      );
 
-        // check in item at service point assigned to its effective location
-        SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-        cy.visit(TopMenu.checkInPath);
-        CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
-        openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-        fullCheck(ItemRecordView.itemStatuses.available);
-      },
-    );
+      // check in item at service point assigned to its effective location
+      SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+      cy.visit(TopMenu.checkInPath);
+      CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
+      openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+      fullCheck(ItemRecordView.itemStatuses.available);
+    });
   });
 });

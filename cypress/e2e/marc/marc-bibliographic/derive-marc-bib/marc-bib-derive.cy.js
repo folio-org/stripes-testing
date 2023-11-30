@@ -1,16 +1,16 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
-import TopMenu from '../../../../support/fragments/topMenu';
+import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Users from '../../../../support/fragments/users/users';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
 import InventorySteps from '../../../../support/fragments/inventory/inventorySteps';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   const testData = {
@@ -61,7 +61,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
 
   it(
     'C396356 "Entered" value in "008" field updated when deriving new "MARC Bib" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.checkSubfieldsPresenceInTag008();

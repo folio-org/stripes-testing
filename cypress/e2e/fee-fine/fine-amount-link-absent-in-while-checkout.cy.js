@@ -1,23 +1,21 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../support/fragments/users/users';
-import ManualCharges from '../../support/fragments/settings/users/manualCharges';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
-import UserEdit from '../../support/fragments/users/userEdit';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ManualCharges from '../../support/fragments/settings/users/manualCharges';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import UserFeeFines from '../../support/fragments/users/feeFines';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -120,7 +118,7 @@ describe('Fee fine amout link in checkout', () => {
 
   it(
     'C388525 Check that User can not click the fine amount as a link with necessary permissions (vega)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.checkOutPath);
