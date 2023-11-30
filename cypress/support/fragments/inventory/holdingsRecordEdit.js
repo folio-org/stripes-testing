@@ -32,7 +32,7 @@ const statisticalCodeFieldSet = FieldSet('Statistical code');
 const addStatisticalCodeButton = Button('Add statistical code');
 const callNumberType = rootForm.find(Select('Call number type'));
 const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
-const additemTemporarylocation = Button({ id: 'additem_temporarylocation' });
+const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
 const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
 
 export default {
@@ -165,9 +165,8 @@ export default {
   chooseCallNumberType(type) {
     cy.do(callNumberType.choose(type));
   },
-  verifyEditViewingOpen: () => cy.expect(HTML({ id: 'clickable-create-holdings-record' }).exists()),
-  openTemporarylocation() {
-    cy.do(additemTemporarylocation.click());
+  openTemporaryLocation() {
+    cy.do(temporaryLocationDropdown.click());
   },
   verifyTemporaryLocationItemExists: (temporarylocation) => {
     cy.expect(temporaryLocationList.exists());
