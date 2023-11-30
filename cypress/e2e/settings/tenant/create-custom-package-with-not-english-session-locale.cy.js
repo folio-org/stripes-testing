@@ -1,14 +1,14 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import { Permissions } from '../../../support/dictionary';
+import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
+import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import TemporarySessionLocale from '../../../support/fragments/settings/developer/session-locale/temporarySessionLocale';
 import { Localization } from '../../../support/fragments/settings/tenant/general';
-import EHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 
 describe('eHoldings', () => {
   const testData = {
@@ -53,7 +53,7 @@ describe('eHoldings', () => {
 
   it(
     'C402348 Create custom package when session locale is not "English" (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.clickChangeSessionLocalLanguage();

@@ -1,11 +1,11 @@
-import { TestTypes, DevTeams, Permissions } from '../../../support/dictionary';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import { Permissions } from '../../../support/dictionary';
+import { ServicePoints } from '../../../support/fragments/settings/tenant';
 import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
-import Users from '../../../support/fragments/users/users';
-import { ServicePoints } from '../../../support/fragments/settings/tenant';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -63,7 +63,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C398009 Verify that hyperlink "# of Campuses" navigates to a list of Campuses (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
 

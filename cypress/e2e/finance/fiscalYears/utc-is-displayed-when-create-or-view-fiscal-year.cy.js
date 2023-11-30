@@ -1,10 +1,8 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import Users from '../../../support/fragments/users/users';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFiscalYear';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-finance: Fiscal Year', () => {
   const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
@@ -30,7 +28,7 @@ describe('ui-finance: Fiscal Year', () => {
 
   it(
     'C380514: "UTC" is displayed in "Period begin date" and "Period end date" fields when create or view fiscal year (Orchid +) (thunderjet) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
       FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
