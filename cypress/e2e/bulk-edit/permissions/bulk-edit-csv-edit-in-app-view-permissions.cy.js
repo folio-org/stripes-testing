@@ -1,6 +1,4 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -43,7 +41,7 @@ describe('bulk-edit', () => {
 
     it(
       'C388493 Verify that User with "Bulk Edit: Local Edit" and "Bulk Edit: In app - View inventory" permissions can edit user records | Local (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.isUsersRadioChecked(false);

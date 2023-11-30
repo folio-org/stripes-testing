@@ -1,10 +1,8 @@
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -41,7 +39,7 @@ describe('bulk-edit', () => {
 
     it(
       'C388541 Verify preview of records switching between toggles (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
@@ -61,7 +59,7 @@ describe('bulk-edit', () => {
           'Completed with errors',
           'Failed',
         ];
-        statuses.forEach((status) => BulkEditSearchPane.checkLogsStatus(status));
+        statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
 
         BulkEditSearchPane.checkHoldingsCheckbox();
         BulkEditSearchPane.checkUsersCheckbox();
@@ -89,7 +87,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 0, 1);
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifyLogsPane();
-        statuses.forEach((status) => BulkEditSearchPane.checkLogsStatus(status));
+        statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
         BulkEditSearchPane.checkHoldingsCheckbox();
         BulkEditSearchPane.checkUsersCheckbox();
         BulkEditSearchPane.checkItemsCheckbox();

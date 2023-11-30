@@ -1,18 +1,15 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import Features from '../../../../support/dictionary/features';
-import DevTeams from '../../../../support/dictionary/devTeams';
 import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
-import Users from '../../../../support/fragments/users/users';
-import MarcAuthoritiesDelete from '../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesDelete from '../../../../support/fragments/marcAuthority/marcAuthoritiesDelete';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Authority -> Browse - Authority records', () => {
   const testData = {
@@ -48,7 +45,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
 
   it(
     'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
-    { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
       JobProfiles.waitFileIsUploaded();
@@ -75,7 +72,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
 
   it(
     'C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName2);
       JobProfiles.waitFileIsUploaded();

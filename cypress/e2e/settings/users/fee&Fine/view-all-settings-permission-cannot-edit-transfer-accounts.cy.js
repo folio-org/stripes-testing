@@ -1,16 +1,14 @@
 import uuid from 'uuid';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
-import UserEdit from '../../../../support/fragments/users/userEdit';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
-import Users from '../../../../support/fragments/users/users';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { getTestEntityValue } from '../../../../support/utils/stringTools';
-import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
+import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
 import TransferAccounts from '../../../../support/fragments/settings/users/transferAccounts';
+import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
 import UsersSettingsGeneral from '../../../../support/fragments/settings/users/usersSettingsGeneral';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import Users from '../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 describe('Settings Users', () => {
   const patronGroup = {
@@ -69,7 +67,7 @@ describe('Settings Users', () => {
 
   it(
     'C407704 User with "Setting (Users): View all settings" permission cannot edit transfer accounts (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.transferAccounts);
       UsersSettingsGeneral.checkEntityInTable({

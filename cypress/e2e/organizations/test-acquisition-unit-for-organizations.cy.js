@@ -1,12 +1,10 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('ui-organizations: Organizations', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -48,7 +46,7 @@ describe('ui-organizations: Organizations', () => {
 
   it(
     'C350693 Test acquisition unit restrictions for Organization records (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

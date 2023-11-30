@@ -1,8 +1,8 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
@@ -57,7 +57,7 @@ describe('Inventory', () => {
 
     it(
       'C353938 Verify that the search option dropdown doesnt reset selected value after user cleared search box (spitfire) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.selectSearchOptions(
           testData.searchOptions.titleAllSearchOption,

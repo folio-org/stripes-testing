@@ -15,6 +15,15 @@ export default {
   waitLoading() {
     cy.expect(transactionResultsPane.exists());
   },
+  checkTransactionsList(records = []) {
+    records.forEach(({ type, amount }) => {
+      cy.expect(
+        transactionResultsList
+          .find(MultiColumnListRow({ content: including(`${type}(${amount})`), isContainer: true }))
+          .exists(),
+      );
+    });
+  },
   selectTransaction(type) {
     cy.do(
       transactionResultsList

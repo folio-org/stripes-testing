@@ -1,14 +1,14 @@
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
-import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
-import { getTestEntityValue } from '../../../../support/utils/stringTools';
+import { Permissions } from '../../../../support/dictionary';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import UserEdit from '../../../../support/fragments/users/userEdit';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../../support/fragments/users/usersCard';
 import NewRequest from '../../../../support/fragments/requests/newRequest';
+import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
+import TopMenu from '../../../../support/fragments/topMenu';
 import PatronBlocks from '../../../../support/fragments/users/patronBlocks';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import Users from '../../../../support/fragments/users/users';
+import UsersCard from '../../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 describe('Manual Patron Blocks', () => {
   let userData;
@@ -64,7 +64,7 @@ describe('Manual Patron Blocks', () => {
 
   it(
     'C374699 Verify buttons layout creating manual Patron blocks (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       UsersSearchPane.searchByKeywords(userData.barcode);
       UsersCard.startBlock();
