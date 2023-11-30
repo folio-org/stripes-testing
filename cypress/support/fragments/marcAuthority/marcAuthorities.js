@@ -394,9 +394,10 @@ export default {
   },
 
   chooseAuthoritySourceOption: (option) => {
-    cy.do(
+    cy.do([
+      cy.wait(1000), // without wait will immediately close accordion
       MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]),
-    );
+    ]);
   },
 
   verifyEmptyAuthorityField: () => {
@@ -925,15 +926,6 @@ export default {
         .click(),
     );
     cy.expect(typeOfHeadingSelect.has({ selectedCount: 0 }));
-  },
-
-  chooseAuthoritySource: (authoritySource) => {
-    cy.do([
-      cy.wait(1000), // without wait will immediately close accordion
-      MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([
-        including(authoritySource),
-      ]),
-    ]);
   },
 
   verifySelectedTextOfAuthoritySource: (authoritySource) => {

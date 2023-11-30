@@ -58,7 +58,7 @@ describe('Importing MARC Authority files', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.switchToBrowse();
-      MarcAuthorities.chooseAuthoritySource(authoritySource);
+      MarcAuthorities.chooseAuthoritySourceOption(authoritySource);
       MarcAuthorityBrowse.searchBy('Name-title', 'Not-existing query');
       MarcAuthorityBrowse.getNotExistingHeadingReferenceValue('Not-existing query');
       MarcAuthorities.verifySelectedTextOfAuthoritySource(authoritySource);
