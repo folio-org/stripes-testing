@@ -113,6 +113,10 @@ export default {
     cy.do(Accordion({ id: expectedPiecesAccordionId }).find(MultiColumnListCell(caption)).click());
   },
 
+  selectPieceInReceived: (caption) => {
+    cy.do(Accordion({ id: 'received' }).find(MultiColumnListCell(caption)).click());
+  },
+
   selectPieceByIndexInExpected: (indexNumber = 0) => {
     cy.do(
       Accordion({ id: expectedPiecesAccordionId })
@@ -124,6 +128,13 @@ export default {
   quickReceivePiece: (enumeration) => {
     cy.do(addPieceModal.find(Button('Quick receive')).click());
     InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
+  },
+
+  deleteItemPiece: () => {
+    cy.do([
+      addPieceModal.find(Button('Delete')).click(),
+      Modal({ id: 'delete-piece-confirmation' }).find(Button('Delete item')).click(),
+    ]);
   },
 
   receivePieceWithoutBarcode: (rowNumber, caption) => {
