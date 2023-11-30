@@ -1,12 +1,12 @@
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
-import Users from '../../../support/fragments/users/users';
-import Agreements from '../../../support/fragments/agreements/agreements';
+import { Permissions } from '../../../support/dictionary';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
+import Agreements from '../../../support/fragments/agreements/agreements';
 import NewNote from '../../../support/fragments/notes/newNote';
+import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Notes', () => {
   let user;
@@ -42,7 +42,7 @@ describe('Notes', () => {
 
   it(
     'C16985 Settings | Set up a note type (spitfire)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       cy.login(user.username, user.password, {
         path: TopMenu.notesPath,

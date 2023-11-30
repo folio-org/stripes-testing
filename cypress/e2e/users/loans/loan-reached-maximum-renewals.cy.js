@@ -1,25 +1,23 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import { getNewItem } from '../../../support/fragments/inventory/item';
-import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import Checkout from '../../../support/fragments/checkout/checkout';
 import AppPaths from '../../../support/fragments/app-paths';
-import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
-import LoansPage from '../../../support/fragments/loans/loansPage';
-import RenewConfirmationModal from '../../../support/fragments/users/loans/renewConfirmationModal';
-import OverrideAndRenewModal from '../../../support/fragments/users/loans/overrideAndRenewModal';
-import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import Users from '../../../support/fragments/users/users';
-import DevTeams from '../../../support/dictionary/devTeams';
-import LoanPolicyActions from '../../../support/fragments/circulation/loan-policy';
+import Checkout from '../../../support/fragments/checkout/checkout';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
+import LoanPolicyActions from '../../../support/fragments/circulation/loan-policy';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { getNewItem } from '../../../support/fragments/inventory/item';
+import LoansPage from '../../../support/fragments/loans/loansPage';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import OverrideAndRenewModal from '../../../support/fragments/users/loans/overrideAndRenewModal';
+import RenewConfirmationModal from '../../../support/fragments/users/loans/renewConfirmationModal';
+import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
+import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('ui-users-loans: renewal failure because loan has reached maximum renewals', () => {
   let loanType;
@@ -227,7 +225,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
 
   it(
     'C569: renewal failure because loan has reached maximum renewals (vega)',
-    { tags: [testTypes.smoke, DevTeams.vega] },
+    { tags: ['smoke', 'vega'] },
     () => {
       cy.login(firstUser.username, firstUser.password, {
         path: AppPaths.getOpenLoansPath(firstUser.userId),
