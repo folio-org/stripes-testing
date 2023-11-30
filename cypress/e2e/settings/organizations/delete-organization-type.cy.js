@@ -4,9 +4,12 @@ import Users from '../../../support/fragments/users/users';
 import SettingsOrganizations from '../../../support/fragments/settings/organizations/settingsOrganizations';
 
 describe('Organizations: Settings (Organizations)', () => {
+  const type = { ...SettingsOrganizations.defaultTypes };
   let user;
   before(() => {
-    cy.createTempUser([permissions.uiSettingsOrganizationsCanViewOnlySettings.gui]).then(
+    cy.getAdminToken();
+    SettingsOrganizations.createTypesViaApi(type);
+    cy.createTempUser([permissions.uiSettingsOrganizationsCanViewAndEditSettings.gui]).then(
       (userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -26,10 +29,8 @@ describe('Organizations: Settings (Organizations)', () => {
     'C367990: Delete organization type (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      SettingsOrganizations.selectCategories();
-      SettingsOrganizations.checkButtonNewInCategoriesIsDisabled();
       SettingsOrganizations.selectTypes();
-      SettingsOrganizations.checkButtonNewInTypesIsDisabled();
+      SettingsOrganizations.deleteType(type);
     },
   );
 });
