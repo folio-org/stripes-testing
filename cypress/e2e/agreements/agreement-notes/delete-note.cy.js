@@ -1,12 +1,11 @@
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import Agreements from '../../../support/fragments/agreements/agreements';
-import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
-import TopMenu from '../../../support/fragments/topMenu';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
-import Notes from '../../../support/fragments/notes/notes';
+import Agreements from '../../../support/fragments/agreements/agreements';
 import ExistingNoteView from '../../../support/fragments/notes/existingNoteView';
 import DeleteConfirmationModal from '../../../support/fragments/notes/modal/deleteConfirmationModal';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
+import Notes from '../../../support/fragments/notes/notes';
+import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
+import TopMenu from '../../../support/fragments/topMenu';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 let agreementId;
 let noteTypeId;
@@ -38,7 +37,7 @@ describe('Agreement Notes', () => {
     Agreements.deleteViaApi(agreementId);
   });
 
-  it('C1312 Delete a note (erm) (TaaS)', { tags: [TestTypes.extendedPath, DevTeams.erm] }, () => {
+  it('C1312 Delete a note (erm) (TaaS)', { tags: ['extendedPath', 'erm'] }, () => {
     AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
     AgreementViewDetails.openNotesSection();
     AgreementViewDetails.verifySpecialNotesRow({

@@ -1,22 +1,20 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import devTeams from '../../support/dictionary/devTeams';
+import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import testTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
-import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
-import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../support/utils/stringTools';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import DateTools from '../../support/utils/dateTools';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import FileManager from '../../support/utils/fileManager';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import DateTools from '../../support/utils/dateTools';
+import FileManager from '../../support/utils/fileManager';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let userData = {};
 const testData = {};
@@ -122,7 +120,7 @@ describe('export manager', () => {
 
   it(
     'C350727 Verify search filter options Export Manager (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       ExportManagerSearchPane.waitLoading();
       ExportManagerSearchPane.searchBySuccessful();

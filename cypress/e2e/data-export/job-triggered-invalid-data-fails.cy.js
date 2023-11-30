@@ -1,15 +1,13 @@
 import uuid from 'uuid';
-import TopMenu from '../../support/fragments/topMenu';
 import permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import getRandomPostfix from '../../support/utils/stringTools';
-import devTeams from '../../support/dictionary/devTeams';
-import testTypes from '../../support/dictionary/testTypes';
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
-import FileManager from '../../support/utils/fileManager';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
+import ExportFileHelper from '../../support/fragments/data-export/exportFile';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import { getLongDelay } from '../../support/utils/cypressTools';
+import FileManager from '../../support/utils/fileManager';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const emptyFile = `emptyFile${getRandomPostfix()}.csv`;
@@ -42,7 +40,7 @@ describe('data-export', () => {
 
   it(
     'C345415 Job triggered with invalid data fails (firebird) (TaaS)',
-    { tags: [devTeams.firebird, testTypes.extendedPath] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       ExportFileHelper.uploadFile(emptyFile);
       ExportFileHelper.exportWithDefaultJobProfile(emptyFile, 'authority', 'Authorities');

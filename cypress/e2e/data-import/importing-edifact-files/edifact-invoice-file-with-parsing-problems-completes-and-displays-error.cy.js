@@ -1,26 +1,26 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import {
-  FOLIO_RECORD_TYPE,
-  PAYMENT_METHOD,
-  BATCH_GROUP,
   ACCEPTED_DATA_TYPE_NAMES,
-  VENDOR_NAMES,
+  BATCH_GROUP,
+  FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  PAYMENT_METHOD,
+  VENDOR_NAMES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing EDIFACT files', () => {
@@ -76,7 +76,7 @@ describe('data-import', () => {
 
     it(
       'C377019 Confirm an EDIFACT invoice file with parsing problems completes and displays an error (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);

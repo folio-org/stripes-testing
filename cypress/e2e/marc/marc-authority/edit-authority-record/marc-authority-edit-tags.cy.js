@@ -1,13 +1,13 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../../support/dictionary';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Authority -> Edit Authority record', () => {
   const testData = {
@@ -92,7 +92,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
 
   it(
     'C375090 No additional records appear after user edits "1XX" MARC tag in MARC authority record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchByParameter(
         testData.authority.searchOption,
@@ -114,7 +114,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
 
   it(
     'C375099 Unable to add multiple "010" fields to "MARC authority" record which is NOT linked to "MARC Bib" record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchByParameter(
         testData.authority2.searchOption,

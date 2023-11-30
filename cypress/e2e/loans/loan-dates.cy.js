@@ -1,21 +1,21 @@
-import TopMenu from '../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import { REQUEST_TYPES } from '../../support/constants';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import LoansPage from '../../support/fragments/loans/loansPage';
-import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import DateTools from '../../support/utils/dateTools';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import Users from '../../support/fragments/users/users';
+import { Permissions } from '../../support/dictionary';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import UserEdit from '../../support/fragments/users/userEdit';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import DateTools from '../../support/utils/dateTools';
 
 const folioInstances = InventoryInstances.generateFolioInstances({
   properties: { missingPieces: '3', numberOfMissingPieces: '3' },
@@ -25,6 +25,7 @@ let checkOutUser;
 const checkInUser = {};
 const expirationUserDate = DateTools.getFutureWeekDateObj();
 let servicePointId;
+let servicePointName;
 
 describe('loan dates', () => {
   before('create inventory instance', () => {
@@ -42,6 +43,7 @@ describe('loan dates', () => {
           source = InventoryHoldings.getHoldingSources({ limit: 1 });
           ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
             servicePointId = res[0].id;
+            servicePointName = res[0].name;
           });
           cy.getUsers({
             limit: 1,
@@ -100,7 +102,7 @@ describe('loan dates', () => {
 
   it(
     'C566 Loan: Change due date warnings and alerts (volaris)',
-    { tags: [TestTypes.smoke, DevTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       cy.visit(TopMenu.usersPath);
       // show open loans
@@ -134,7 +136,7 @@ describe('loan dates', () => {
         itemBarcode: folioInstances[0].barcodes[0],
         itemTitle: folioInstances[0].instanceTitle,
         requesterBarcode: checkInUser.barcode,
-        pickupServicePoint: 'Circ Desk 1',
+        pickupServicePoint: servicePointName,
         requestType: REQUEST_TYPES.RECALL,
       });
 

@@ -1,18 +1,16 @@
-import TopMenu from '../../support/fragments/topMenu';
-import FileManager from '../../support/utils/fileManager';
-import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import devTeams from '../../support/dictionary/devTeams';
-import testTypes from '../../support/dictionary/testTypes';
-import SelectJobProfile from '../../support/fragments/data-export/selectJobProfile';
-import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
-import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
+import DataExportResults from '../../support/fragments/data-export/dataExportResults';
+import ExportFileHelper from '../../support/fragments/data-export/exportFile';
+import SelectJobProfile from '../../support/fragments/data-export/selectJobProfile';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../support/fragments/topMenu';
+import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import Users from '../../support/fragments/users/users';
+import FileManager from '../../support/utils/fileManager';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 
@@ -47,7 +45,7 @@ describe('data-export', () => {
 
   it(
     'C399097 Verify trigger Data export with an empty .cql file (firebird) (Taas)',
-    { tags: [devTeams.firebird, testTypes.extendedPath] },
+    { tags: ['firebird', 'extendedPath'] },
     () => {
       DataExportLogs.waitLoading();
       ExportFileHelper.uploadFile(emptyFile);

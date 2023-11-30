@@ -1,18 +1,16 @@
-import TestTypes from '../../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES } from '../../../../../support/constants';
 import Permissions from '../../../../../support/dictionary/permissions';
+import DataImport from '../../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
 
 describe('Manual Linking Bib field to Authority 1XX', () => {
   const testData = {
@@ -96,7 +94,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
 
   it(
     'C377035 Link the "655" of "MARC Bib" field to "MARC Authority" record (with "v", "x", "y", "z" subfields). (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();

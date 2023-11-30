@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
@@ -229,7 +228,7 @@ describe('data-import', () => {
 
     it(
       'C11106 Action and field mapping: Update a holdings (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // change file for adding random barcode and holdings hrid
         DataImport.editMarcFile(

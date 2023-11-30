@@ -1,20 +1,18 @@
-import TestTypes from '../../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../../support/dictionary/devTeams';
 import Permissions from '../../../../../support/dictionary/permissions';
+import DataImport from '../../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../../support/fragments/data_import/logs/logs';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
+import InventoryHotkeys from '../../../../../support/fragments/inventory/inventoryHotkeys';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import InventoryKeyboardShortcuts from '../../../../../support/fragments/inventory/inventoryKeyboardShortcuts';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import InventoryKeyboardShortcuts from '../../../../../support/fragments/inventory/inventoryKeyboardShortcuts';
-import InventoryHotkeys from '../../../../../support/fragments/inventory/inventoryHotkeys';
-import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
-import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () => {
   const hotKeys = InventoryHotkeys.hotKeys;
@@ -134,7 +132,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
 
   it(
     'C365603 Derive | Cancel unlinking "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in deriving window. (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.deriveNewMarcBibRecord();
       QuickMarcEditor.verifyRemoveLinkingModal();

@@ -1,16 +1,16 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
-import TopMenu from '../../../../support/fragments/topMenu';
+import { Permissions } from '../../../../support/dictionary';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
-import Users from '../../../../support/fragments/users/users';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import MarcFieldProtection from '../../../../support/fragments/settings/dataImport/marcFieldProtection';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   const testData = {
@@ -133,7 +133,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C360541 Verify that "Link to MARC Authority record" icon displays next to MARC fields when editing Bib record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.editMarcBibliographicRecord();
       tagArray.forEach((tag) => {
@@ -145,7 +145,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C360542 Verify that "Link to MARC Authority record" icon displays next to MARC fields when deriving Bib record (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       InventoryInstance.deriveNewMarcBib();
       tagArray.forEach((tag) => {
@@ -156,7 +156,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C353526 Protection of specified fields when editing "MARC Bibliographic" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.editMarcBibliographicRecord();
       MarcAuthority.checkInfoButton('999');

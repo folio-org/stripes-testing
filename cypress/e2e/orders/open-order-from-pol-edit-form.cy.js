@@ -1,14 +1,14 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
-import { NewOrder, Orders, OrderLineDetails } from '../../support/fragments/orders';
-import { NewOrganization, Organizations } from '../../support/fragments/organizations';
-import OpenOrder from '../../support/fragments/settings/orders/openOrder';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
 import {
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
   ORDER_FORMAT_NAMES,
   ORDER_STATUSES,
 } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { NewOrder, OrderLineDetails, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
+import OpenOrder from '../../support/fragments/settings/orders/openOrder';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('Orders', () => {
   const isOpenOrderEnabled = true;
@@ -57,7 +57,7 @@ describe('Orders', () => {
 
   it(
     'C6531 Save and open PO from POL create or edit form (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
     () => {
       // Click on the record with Order name from precondition
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

@@ -1,25 +1,23 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import EditRequest from '../../support/fragments/requests/edit-request';
-import TopMenu from '../../support/fragments/topMenu';
-import Requests from '../../support/fragments/requests/requests';
-import Users from '../../support/fragments/users/users';
-import DevTeams from '../../support/dictionary/devTeams';
-import Permissions from '../../support/dictionary/permissions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
 import {
-  ITEM_STATUS_NAMES,
-  REQUEST_TYPES,
-  REQUEST_LEVELS,
   FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
+  REQUEST_LEVELS,
+  REQUEST_TYPES,
 } from '../../support/constants';
+import Permissions from '../../support/dictionary/permissions';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import EditRequest from '../../support/fragments/requests/edit-request';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import DateTools from '../../support/utils/dateTools';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import DateTools from '../../support/utils/dateTools';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
 
 describe('Edit item level request', () => {
   const userData = {};
@@ -151,7 +149,7 @@ describe('Edit item level request', () => {
 
   it(
     'C350558 Check that the user can Edit request (Item level request) (vega)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
