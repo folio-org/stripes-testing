@@ -1,21 +1,21 @@
-import TopMenu from '../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import DateTools from '../../support/utils/dateTools';
-import Users from '../../support/fragments/users/users';
+import { Permissions } from '../../support/dictionary';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import UserEdit from '../../support/fragments/users/userEdit';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import Loans from '../../support/fragments/users/userDefaultObjects/loans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import DateTools from '../../support/utils/dateTools';
 
 const folioInstances = InventoryInstances.generateFolioInstances({
   properties: { missingPieces: '3', numberOfMissingPieces: '3' },
@@ -97,7 +97,7 @@ describe('change loan due dates', () => {
   });
   it(
     'C581 Loan Details: Test change due date (Vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       const itemBarcode = folioInstances[0].barcodes[0];
       cy.visit(TopMenu.usersPath);

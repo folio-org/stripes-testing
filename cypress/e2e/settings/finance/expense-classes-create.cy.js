@@ -1,8 +1,6 @@
 import NewExpenceClass from '../../../support/fragments/settings/finance/newExpenseClass';
-import TestType from '../../../support/dictionary/testTypes';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import devTeams from '../../../support/dictionary/devTeams';
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('ui-invoices-settings: Batch Group creation', () => {
   const expenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
@@ -23,7 +21,7 @@ describe('ui-invoices-settings: Batch Group creation', () => {
 
   it(
     'C15857: Create edit and delete Expense classes (thunderjet)',
-    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       SettingsFinance.waitExpenseClassesLoading();
       SettingsFinance.createNewExpenseClass(expenseClass);

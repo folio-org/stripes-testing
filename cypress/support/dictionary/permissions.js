@@ -493,6 +493,10 @@ export default {
     internal: 'ui-receiving.create',
     gui: 'Receiving: View, edit, create',
   },
+  uiReceivingViewEditDelete: {
+    internal: 'ui-receiving.delete',
+    gui: 'Receiving: View, edit, delete',
+  },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
     internal: 'ui-invoice.invoice.delete',
@@ -821,9 +825,13 @@ export default {
     internal: 'ui-tenant-settings.settings.addresses',
     gui: 'Settings (tenant): Can manage tenant addresses',
   },
-  uiSettingsInstanceStatuses: {
+  uiSettingsInstanceStatusesCreateEditDelete: {
     internal: 'ui-inventory.settings.instance-statuses',
     gui: 'Settings (Inventory): Create, edit, delete instance status types',
+  },
+  uiSettingsStatisticalCodesCreateEditDelete: {
+    internal: 'ui-inventory.settings.statistical-codes',
+    gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
   // Added the below permissions for custom label creation
 
@@ -883,5 +891,17 @@ export default {
   listsAll: {
     internal: 'module.lists.all',
     gui: 'Lists (Admin): All permissions',
+  },
+
+  // Licenses
+  licensesSearchAndView: {
+    internal: 'ui-licenses.licenses.view',
+    gui: 'Licenses: Search & view licenses',
+  },
+
+  // Courses
+  coursesAll: {
+    internal: 'ui-courses.all',
+    gui: 'Courses: All permissions',
   },
 };

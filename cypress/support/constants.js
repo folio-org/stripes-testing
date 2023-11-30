@@ -143,6 +143,7 @@ export const BATCH_GROUP = {
 
 export const INVOICE_STATUSES = {
   OPEN: 'Open',
+  REVIEWED: 'Reviewed',
   APPROVED: 'Approved',
   CANCELLED: 'Cancelled',
   PAID: 'Paid',
@@ -301,6 +302,12 @@ export const VENDOR_NAMES = {
 export const HOLDINGS_TYPE_NAMES = {
   ELECTRONIC: 'Electronic',
   MONOGRAPH: 'Monograph',
+};
+
+export const NOTE_TYPES = {
+  GENERAL: 'General note',
+  NOTE_1516: 'Note type 1516',
+  NOTE_1654: 'Note-type-1654',
 };
 
 export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {

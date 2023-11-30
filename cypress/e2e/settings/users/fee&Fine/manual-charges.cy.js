@@ -1,9 +1,8 @@
-import { DevTeams, TestTypes } from '../../../../support/dictionary';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import ManualCharges from '../../../../support/fragments/settings/users/manualCharges';
-import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
 import { NOTICE_CATEGORIES } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticeTemplates from '../../../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import ManualCharges from '../../../../support/fragments/settings/users/manualCharges';
+import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
 
 describe('Users: Manual charges', () => {
   const owners = [UsersOwners.getDefaultNewOwner(), UsersOwners.getDefaultNewOwner()];
@@ -40,7 +39,7 @@ describe('Users: Manual charges', () => {
 
   it(
     'C442 Verify that you can create/edit/delete manual charges for a fee/fine owner (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       ManualCharges.selectOwner(owners[0]);
       ManualCharges.createViaUi(manualCharge);
