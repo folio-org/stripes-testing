@@ -929,7 +929,7 @@ export default {
 
   chooseAuthoritySource: (authoritySource) => {
     cy.do([
-      cy.wait(2000), // without wait will immediately close accordion
+      cy.wait(5000), // without wait will immediately close accordion
       MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([
         including(authoritySource),
       ]),

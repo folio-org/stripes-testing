@@ -9,14 +9,14 @@ import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthoriti
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
-describe('Importing MARC Authority files', () => {
-  const testData = {};
-  const jobProfileToRun = 'Default - Create SRS MARC Authority';
-  const fileName = 'marFileForC365630.mrc';
-  const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
-  const authoritySource = 'LC Subject Headings (LCSH)';
-  let createdAuthorityID;
+const testData = {};
+const jobProfileToRun = 'Default - Create SRS MARC Authority';
+const fileName = 'marFileForC365630.mrc';
+const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
+const authoritySource = 'LC Subject Headings (LCSH)';
+let createdAuthorityID;
 
+describe('Importing MARC Authority files', () => {
   before('Creating data', () => {
     cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
       (createdUserProperties) => {
