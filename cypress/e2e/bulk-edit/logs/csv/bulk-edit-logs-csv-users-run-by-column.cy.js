@@ -2,8 +2,6 @@ import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../../support/dictionary/devTeams';
-import testTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 
@@ -69,7 +67,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C380628 Verify how User\'s names are displayed in "Run by" column of Bulk edit Logs (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       BulkEditSearchPane.openLogsSearch();
       BulkEditSearchPane.verifyLogsPane();
