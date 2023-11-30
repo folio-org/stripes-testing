@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -39,8 +39,8 @@ describe('data-import', () => {
     });
 
     it(
-      'C356788 A user cannot stop running jobs with "Data import: Can view only" permission (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      'C356788 A user cannot stop running jobs with "Data import: Can view only" permission (folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
@@ -52,7 +52,13 @@ describe('data-import', () => {
         JobProfiles.runImportFile();
         DataImport.checkIsLandingPageOpened();
         Logs.checkFileIsRunning(marcFileName);
-        DataImport.verifyTrashIconInvisibleForUser(userA);
+        cy.login(userA.username, userA.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
+        cy.reload();
+        cy.wait(3000);
+        DataImport.verifyTrashIconInvisibleForUser();
       },
     );
   });
