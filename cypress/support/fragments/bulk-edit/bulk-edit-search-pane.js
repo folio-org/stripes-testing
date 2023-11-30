@@ -437,8 +437,8 @@ export default {
     ]);
   },
 
-  checkLogsStatus(status) {
-    cy.do(logsStatusesAccordion.find(Checkbox(status)).click());
+  checkLogsCheckbox(status) {
+    cy.do(Checkbox(status).click());
   },
 
   resetStatuses() {
@@ -804,6 +804,14 @@ export default {
     });
   },
 
+  verifyRecordTypesSortedAlphabetically() {
+    cy.get('#entityType [class*="labelText"]').then((checkboxes) => {
+      const textArray = checkboxes.get().map((el) => el.innerText);
+      const sortedArray = [...textArray].sort((a, b) => a - b);
+      expect(sortedArray).to.eql(textArray);
+    });
+  },
+
   verifyCellsValues(column, status) {
     this.getMultiColumnListCellsValues(column)
       .should('have.length.at.least', 1)
@@ -859,6 +867,15 @@ export default {
     ]);
   },
 
+  verifyLogsRecordTypesAccordionCollapsed() {
+    cy.expect([
+      recordTypesAccordion.has({ open: false }),
+      usersCheckbox.absent(),
+      holdingsCheckbox.absent(),
+      itemsCheckbox.absent(),
+    ]);
+  },
+
   verifyLogsStatusesAccordionExistsAndUnchecked() {
     cy.expect([
       logsStatusesAccordion.has({ open: true }),
@@ -870,6 +887,15 @@ export default {
       completedCheckbox.has({ checked: false }),
       completedWithErrorsCheckbox.has({ checked: false }),
       failedCheckbox.has({ checked: false }),
+    ]);
+  },
+
+  verifyLogsRecordTypesAccordionExistsAndUnchecked() {
+    cy.expect([
+      recordTypesAccordion.has({ open: true }),
+      usersCheckbox.has({ checked: false }),
+      holdingsCheckbox.has({ checked: false }),
+      itemsCheckbox.has({ checked: false }),
     ]);
   },
 
