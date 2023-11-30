@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
-import { Invoices, InvoiceView } from '../../support/fragments/invoices';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
-import { Organizations, NewOrganization } from '../../support/fragments/organizations';
+import { InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
   const testData = {
@@ -84,7 +84,7 @@ describe('Invoices', () => {
 
   it(
     'C399092 Initial encumbrance amount remains the same as it was before payment after cancelling related paid invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Open invoice from precondition
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

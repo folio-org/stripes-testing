@@ -1,31 +1,31 @@
-import { TestTypes, DevTeams, Parallelization, Permissions } from '../../../../support/dictionary';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import {
+  LOAN_POLICY_NAMES,
+  LOST_ITEM_FEES_POLICY_NAMES,
+  NOTICE_POLICY_NAMES,
+  OVERDUE_FINE_POLICY_NAMES,
+  REQUEST_POLICY_NAMES,
+} from '../../../../support/constants';
+import { Permissions } from '../../../../support/dictionary';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
-import OverdueFinePolicy, {
-  defaultOverdueFinePolicy,
-} from '../../../../support/fragments/circulation/overdue-fine-policy';
-import LostItemFeePolicy, {
-  defaultLostItemFeePolicy,
-} from '../../../../support/fragments/circulation/lost-item-fee-policy';
-import RequestPolicy, {
-  defaultRequestPolicy,
-} from '../../../../support/fragments/circulation/request-policy';
 import LoanPolicy, {
   defaultLoanPolicy,
 } from '../../../../support/fragments/circulation/loan-policy';
+import LostItemFeePolicy, {
+  defaultLostItemFeePolicy,
+} from '../../../../support/fragments/circulation/lost-item-fee-policy';
+import OverdueFinePolicy, {
+  defaultOverdueFinePolicy,
+} from '../../../../support/fragments/circulation/overdue-fine-policy';
+import RequestPolicy, {
+  defaultRequestPolicy,
+} from '../../../../support/fragments/circulation/request-policy';
 import NoticePolicy, {
   defaultNoticePolicy,
 } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
-import Users from '../../../../support/fragments/users/users';
 import NewMaterialType from '../../../../support/fragments/settings/inventory/newMaterialType';
-import {
-  LOAN_POLICY_NAMES,
-  OVERDUE_FINE_POLICY_NAMES,
-  LOST_ITEM_FEES_POLICY_NAMES,
-  NOTICE_POLICY_NAMES,
-  REQUEST_POLICY_NAMES,
-} from '../../../../support/constants';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import Users from '../../../../support/fragments/users/users';
 
 describe('ui-circulation-settings: Edit circulation rules', () => {
   const defaultMaterialType = NewMaterialType.getDefaultMaterialType();
@@ -70,7 +70,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C650: Test adding fallback policies (loan, request, notice, overdue, lost item) (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       // Delete Circulation Rules
       CirculationRules.clearCirculationRules();
@@ -111,7 +111,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C2268: Add notice policy to circulation rules (vega)',
-    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['smoke', 'vega', 'nonParallel'] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();
@@ -156,7 +156,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C654: Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error)',
-    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['smoke', 'vega', 'nonParallel'] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();
@@ -185,7 +185,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C656: Ensure interface alerts user of syntax errors in rules',
-    { tags: [TestTypes.smoke, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['smoke', 'vega', 'nonParallel'] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();

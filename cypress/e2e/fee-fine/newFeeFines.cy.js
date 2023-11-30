@@ -1,27 +1,24 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import TestType from '../../support/dictionary/testTypes';
-import Parallelization from '../../support/dictionary/parallelization';
-import Features from '../../support/dictionary/features';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
-import Users from '../../support/fragments/users/users';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import ManualCharges from '../../support/fragments/settings/users/manualCharges';
+import uuid from 'uuid';
 import AppPaths from '../../support/fragments/app-paths';
-import UsersCard from '../../support/fragments/users/usersCard';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
-import topMenu from '../../support/fragments/topMenu';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ManualCharges from '../../support/fragments/settings/users/manualCharges';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import topMenu from '../../support/fragments/topMenu';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import devTeams from '../../support/dictionary/devTeams';
+import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+
 // import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
@@ -125,7 +122,7 @@ describe('Fee/fine management', () => {
 
   it(
     'C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (vega)',
-    { tags: [TestType.smoke, Features.feeFine, devTeams.vega, Parallelization.nonParallel] },
+    { tags: ['smoke', 'feeFine', 'vega', 'nonParallel'] },
     () => {
       const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
       const itemInfo = [testData.instanceTitle + ' (book)', itemBarcode];

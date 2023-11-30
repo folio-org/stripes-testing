@@ -1,19 +1,17 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import uuid from 'uuid';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../support/utils/stringTools';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -105,7 +103,7 @@ describe('circulation-log', () => {
 
   it(
     'C17137 Filter circulation log by renewed through override (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,

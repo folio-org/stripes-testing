@@ -1,17 +1,15 @@
-import TestTypes from '../../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../../support/dictionary/devTeams';
 import Permissions from '../../../../../support/dictionary/permissions';
+import DataImport from '../../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
-import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 
 describe('Manual Unlinking Bib field from Authority 1XX', () => {
   const testData = {};
@@ -107,7 +105,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
 
   it(
     'C365602 Derive | Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in deriving window. (spitfire)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
@@ -116,9 +114,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBibRecord();
-      QuickMarcEditor.verifyRemoveLinkingModal(
-        'Do you want to remove authority linking for this new bibliographic record?',
-      );
+      QuickMarcEditor.verifyRemoveLinkingModal();
 
       QuickMarcEditor.clickKeepLinkingButton();
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(76);
