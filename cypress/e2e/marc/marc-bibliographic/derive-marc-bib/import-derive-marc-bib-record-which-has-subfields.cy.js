@@ -1,13 +1,13 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import Permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import Users from '../../support/fragments/users/users';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import Permissions from '../../../../support/dictionary/permissions';
+import TopMenu from '../../../../support/fragments/topMenu';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import Users from '../../../../support/fragments/users/users';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 
 const testData = {
   new050fieldRecord: '$a BR140 $b .J6 $9 testing',
