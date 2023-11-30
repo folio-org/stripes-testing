@@ -1177,4 +1177,11 @@ export default {
   verifyItemStatus: (itemStatus) => {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
+
+  verifyLastUpdatedSource: (userFirsttName, userLastName) => {
+    cy.do(Accordion('Administrative data').click());
+    cy.get('div[data-test-updated-by="true"]')
+      .find('a')
+      .should('include.text', `${userLastName}, ${userFirsttName}`);
+  },
 };
