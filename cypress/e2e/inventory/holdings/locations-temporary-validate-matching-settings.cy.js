@@ -92,7 +92,9 @@ describe('Temporary Location', () => {
 
   after('Delete  test data', () => {
     cy.getAdminToken();
+    ServicePoints.deleteViaApi(service.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+    Location.deleteViaApi(location.id);
     [...Array(3)].forEach((_, index) => {
       Location.deleteViaApiIncludingInstitutionCampusLibrary(
         itemData.instances[index].defaultLocation.institutionId,
@@ -114,8 +116,8 @@ describe('Temporary Location', () => {
       HoldingsRecordView.verifyRecordViewingOpen();
 
       HoldingsRecordView.edit();
-      HoldingsRecordEdit.verifyEditViewingOpen();
-      HoldingsRecordEdit.openTemporarylocation();
+      HoldingsRecordEdit.waitLoading();
+      HoldingsRecordEdit.openTemporaryLocation();
       [...Array(3)].forEach((_, index) => {
         HoldingsRecordEdit.verifyTemporaryLocationItemExists(
           itemData.instances[index].defaultLocation.name,
@@ -128,7 +130,7 @@ describe('Temporary Location', () => {
         Locations.selectInstitution(itemData.instances[index].defaultLocation.institutionName);
         Locations.selectCampus(itemData.instances[index].defaultLocation.campusName);
         Locations.selectLibrary(itemData.instances[index].defaultLocation.libraryName);
-        Locations.openLocationDetails(itemData.instances[index].defaultLocation.name);
+        Locations.checkResultsTableContent([itemData.instances[index].defaultLocation]);
       });
     },
   );
