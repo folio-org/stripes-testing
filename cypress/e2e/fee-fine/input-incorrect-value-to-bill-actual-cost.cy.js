@@ -1,23 +1,23 @@
-import uuid from 'uuid';
 import moment from 'moment/moment';
+import uuid from 'uuid';
 
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
-import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
-import BillActualCostModal from '../../support/fragments/users/billActualCostModal';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import UserEdit from '../../support/fragments/users/userEdit';
+import { Permissions } from '../../support/dictionary';
 import Checkout from '../../support/fragments/checkout/checkout';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
+import BillActualCostModal from '../../support/fragments/users/billActualCostModal';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Lost items requiring actual cost', () => {
   const testData = {
@@ -163,7 +163,7 @@ describe('Lost items requiring actual cost', () => {
   it(
     'C374123 Verify ability to input incorrect value to bill actual cost for item with "Declared lost" status (vega) (TaaS)',
     {
-      tags: [TestTypes.extendedPath, DevTeams.vega],
+      tags: ['extendedPath', 'vega'],
     },
     () => {
       const firstValue = '0.00';

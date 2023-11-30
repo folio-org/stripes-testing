@@ -1,7 +1,7 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { NewInvoice, Invoices, InvoiceView } from '../../support/fragments/invoices';
+import { Permissions } from '../../support/dictionary';
+import { InvoiceView, Invoices, NewInvoice } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
-import { NewOrder, Orders, BasicOrderLine } from '../../support/fragments/orders';
 import { BatchGroups } from '../../support/fragments/settings/invoices';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -62,7 +62,7 @@ describe('Invoices', () => {
 
   it(
     'C350949 Remove "Folio invoice number" from display in invoice line column (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Click "Actions" button, Select "New" option
       // Fill in required fields with valid data and click "Save & close" button

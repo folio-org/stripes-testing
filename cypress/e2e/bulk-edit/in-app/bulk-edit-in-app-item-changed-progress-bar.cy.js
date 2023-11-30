@@ -1,13 +1,11 @@
 import permissions from '../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import FileManager from '../../../support/utils/fileManager';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
@@ -33,8 +31,7 @@ describe('bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
-            item.hrid =
-            FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
+            item.hrid = FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, res.id);
             FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
           },
         );
@@ -51,7 +48,7 @@ describe('bulk-edit', () => {
 
     it(
       'C409437 Verify progressbar starting bulk edit by changed identifiers _ Inventory (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');

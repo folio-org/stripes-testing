@@ -1,5 +1,3 @@
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
 import AgreementsDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import ExistingNoteEdit from '../../../support/fragments/notes/existingNoteEdit';
 import ExistingNoteView from '../../../support/fragments/notes/existingNoteView';
@@ -16,7 +14,7 @@ describe.skip('Settings', () => {
 
   it(
     'C1304 Settings | Edit a note type (spitfire)',
-    { tags: [TestTypes.ideaLabsTests, DevTeams.ideaLabsTests] },
+    { tags: ['ideaLabsTests', 'ideaLabsTests'] },
     () => {
       cy.visit(TopMenu.notesPath);
       ExistingNoteEdit.clickEditButton(noteType);
