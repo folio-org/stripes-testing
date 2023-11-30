@@ -16,7 +16,7 @@ import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAu
 describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () => {
   const testData = {
     tag700: '700',
-    rowIndex: 56,
+    rowIndex: 22,
     createdRecordsIDs: [],
   };
 
@@ -40,7 +40,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
     testData.tag700,
     '\\',
     '\\',
-    '$a Coates, Ta-Nehis',
+    '$a C380760 Coates, Ta-Nehisi',
     '',
     '$0 id.loc.gov/authorities/names/n2008001084',
     '',
@@ -65,22 +65,6 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
         }
         cy.visit(TopMenu.dataImportPath);
       });
-      // cy.visit(TopMenu.inventoryPath).then(() => {
-      //   InventoryInstance.searchByTitle(createdRecordsIDs[0]);
-      //   InventoryInstances.selectInstance();
-      //   InventoryInstance.editMarcBibliographicRecord();
-      //   linkingTagAndValues.forEach((linking) => {
-      //     QuickMarcEditor.clickLinkIconInTagField(linking.rowIndex);
-      //     MarcAuthorities.switchToSearch();
-      //     InventoryInstance.verifySelectMarcAuthorityModal();
-      //     InventoryInstance.verifySearchOptions();
-      //     InventoryInstance.searchResults(linking.value);
-      //     InventoryInstance.clickLinkButton();
-      //     QuickMarcEditor.verifyAfterLinkingUsingRowIndex(linking.tag, linking.rowIndex);
-      //   });
-      //   QuickMarcEditor.pressSaveAndClose();
-      //   QuickMarcEditor.checkAfterSaveAndClose();
-      // });
     });
 
     cy.createTempUser([
@@ -103,7 +87,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
 
   after('delete test data', () => {
     cy.getAdminToken();
-    Users.deleteViaApi(testData.userProperties.userId);
+    Users.deleteViaApi(testData.userData.userId);
     InventoryInstance.deleteInstanceViaApi(testData.createdRecordsIDs[0]);
     MarcAuthority.deleteViaAPI(testData.createdRecordsIDs[1]);
   });
@@ -113,23 +97,24 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
     { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.deriveNewMarcBib();
-      QuickMarcEditor.addNewField(testData.tag700, '', testData.rowIndex);
+      QuickMarcEditor.addNewField(testData.tag700, '', 21);
       QuickMarcEditor.clickLinkIconInTagField(testData.rowIndex);
       MarcAuthorities.switchToSearch();
       InventoryInstance.verifySelectMarcAuthorityModal();
       InventoryInstance.searchResults(marcFiles[1].authorityHeading);
       InventoryInstance.clickLinkButton();
-      QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
+      QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag700, testData.rowIndex);
       QuickMarcEditor.checkUnlinkTooltipText(
         testData.rowIndex,
         'Unlink from MARC Authority record',
       );
       QuickMarcEditor.checkViewMarcAuthorityTooltipText(testData.rowIndex);
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib700AfterLinkingToAuth100);
-      QuickMarcEditor.deleteFieldAndCheck(testData.rowIndex, testData.tag700);
+      QuickMarcEditor.deleteField(testData.rowIndex);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseDerive();
-      InventoryInstance.verifyContributorAbsent();
+      cy.wait(1500);
+      InventoryInstance.verifyContributorAbsent('C380760 Coates, Ta-Nehisi');
     },
   );
 });
