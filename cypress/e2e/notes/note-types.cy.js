@@ -15,7 +15,7 @@ import NewNote from '../../support/fragments/notes/newNote';
 import ExistingNoteEdit from '../../support/fragments/notes/existingNoteEdit';
 
 describe('Notes', () => {
-  const fourDigits = randomFourDigitNumber();
+  const noteType = `Note type ${randomFourDigitNumber()}`;
   const testData = {
     customNoteTypeName: `C1304NoteType_${getRandomPostfix()}`,
     updatedNoteTypeName: `C1304NoteTypeUPD_${getRandomPostfix()}`,
@@ -90,6 +90,9 @@ describe('Notes', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
     Users.deleteViaApi(testData.userProperties.userId);
     Users.deleteViaApi(testData.userC1304Properties.userId);
+    NoteTypes.getNoteTypeIdViaAPI(noteType).then((id) => {
+      NoteTypes.deleteNoteTypeViaApi(id);
+    });
     NoteTypes.deleteNoteTypeViaApi(testData.customNoteTypeId);
   });
 
@@ -97,7 +100,6 @@ describe('Notes', () => {
     'C357554 Verify that user cant delete a "Note type" when the "Note" was created (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      const noteType = `Note type ${fourDigits}`;
       const note1 = { title: 'Note 1', details: 'This is Note 1' };
       // Go to "Notes" >> "General".
       cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -106,7 +108,7 @@ describe('Notes', () => {
       });
       // Create a note type.
       // wait for page to fully load
-      cy.wait(1000);
+      cy.wait(3000);
       NoteTypes.addNoteType();
       NoteTypes.fillInNoteType(noteType);
       NoteTypes.saveNoteType(noteType);
@@ -135,7 +137,7 @@ describe('Notes', () => {
     });
     NoteTypes.checkNewButtonState();
     // wait for page to fully load
-    cy.wait(1000);
+    cy.wait(3000);
     NoteTypes.clickEditNoteType(testData.customNoteTypeName);
     NoteTypes.checkNoteButtonsState();
     NoteTypes.fillInNoteType(testData.updatedNoteTypeName);

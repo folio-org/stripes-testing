@@ -7,7 +7,6 @@ import {
   PaneSet,
   TextField,
   including,
-  HTML,
 } from '../../../../../interactors';
 import ConfirmDelete from './modals/confirmDelete';
 import { REQUEST_METHOD } from '../../../constants';
@@ -94,6 +93,7 @@ export default {
 
   fillInNoteType: (noteTypeName) => {
     cy.do(noteTypeInput.fillIn(noteTypeName));
+    cy.wait(1000);
     cy.expect(saveNoteTypeButton.has({ disabled: false }));
   },
 
@@ -139,13 +139,13 @@ export default {
     cy.expect(newButton.has({ disabled: !isEnabled }));
   },
 
-  editNoteTypeAndSave(newName) {
-    cy.do([
-      noteTypeInput.fillIn(newName),
-      cy.wait(1000),
-      cy.expect(saveNoteTypeButton.has({ disabled: false })),
-      saveNoteTypeButton.click(),
-    ]);
-    cy.expect(noteTypePane.find(HTML(including(newName))).exists());
+  getNoteTypeIdViaAPI(noteTypeName) {
+    return cy
+      .okapiRequest({
+        method: REQUEST_METHOD.GET,
+        path: `note-types?query=(name="${noteTypeName}")`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.noteTypes[0].id);
   },
 };
