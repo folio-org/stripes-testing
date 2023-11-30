@@ -1,15 +1,15 @@
-import Permissions from '../../support/dictionary/permissions';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import getRandomPostfix from '../../support/utils/stringTools';
+import Permissions from '../../../../support/dictionary/permissions';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   const testData = {
