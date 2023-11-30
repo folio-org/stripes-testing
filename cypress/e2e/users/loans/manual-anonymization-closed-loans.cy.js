@@ -1,6 +1,5 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import testTypes from '../../../support/dictionary/testTypes';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
@@ -12,7 +11,6 @@ import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loa
 import checkInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import DevTeams from '../../../support/dictionary/devTeams';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import Users from '../../../support/fragments/users/users';
@@ -183,25 +181,21 @@ describe('Loans: Anonymization', () => {
     Locations.deleteViaApi(testData.defaultLocation);
   });
 
-  it(
-    'C9217 Manual anonymization in closed loans (volaris)',
-    { tags: [testTypes.smoke, DevTeams.volaris] },
-    () => {
-      LoanDetails.anonymizeAllLoans();
-      LoanDetails.checkAnonymizeAllLoansModalOpen();
-      LoanDetails.confirmAnonymizeAllLoans();
-      LoanDetails.checkAnonymizeModalOpen();
-      LoanDetails.closeAnonymizeModal();
-      LoansPage.verifyResultsInTheRow([
-        testData.itemBarcodes[0],
-        lostItemFeePolicyBody.lostItemProcessingFee,
-      ]);
-    },
-  );
+  it('C9217 Manual anonymization in closed loans (volaris)', { tags: ['smoke', 'volaris'] }, () => {
+    LoanDetails.anonymizeAllLoans();
+    LoanDetails.checkAnonymizeAllLoansModalOpen();
+    LoanDetails.confirmAnonymizeAllLoans();
+    LoanDetails.checkAnonymizeModalOpen();
+    LoanDetails.closeAnonymizeModal();
+    LoansPage.verifyResultsInTheRow([
+      testData.itemBarcodes[0],
+      lostItemFeePolicyBody.lostItemProcessingFee,
+    ]);
+  });
 
   it(
     'C17136 Filter circulation log by Anonymized (volaris)',
-    { tags: [testTypes.criticalPath, DevTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       const searchResultsData = {
         userBarcode: '-',

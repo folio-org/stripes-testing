@@ -1,17 +1,15 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import Checkout from '../../../support/fragments/checkout/checkout';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 let servicePointId;
@@ -79,7 +77,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380491 Verify that User can bulk edit items with "Checked Out" or "Paged" status (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

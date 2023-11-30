@@ -6,8 +6,6 @@ import {
   REQUEST_LEVELS,
   REQUEST_TYPES,
 } from '../../support/constants';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -208,7 +206,7 @@ describe('Check In - Actions', () => {
   });
   it(
     'C7148 Check In: item with at least one open request (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();

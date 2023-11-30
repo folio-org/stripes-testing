@@ -1,14 +1,12 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('ui-finance: Orders', () => {
@@ -49,24 +47,20 @@ describe('ui-finance: Orders', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C664 Edit an existing PO (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
-    () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.ordersPath,
-        waiter: Orders.waitLoading,
-      });
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectPendingStatusFilter();
-      Orders.selectFromResultsList(orderNumber);
-      Orders.editOrder();
-      Orders.selectOngoingOrderTypeInPOForm();
-      Orders.saveEditingOrder();
-      InteractorsTools.checkCalloutMessage(
-        `The Purchase order - ${orderNumber} has been successfully saved`,
-      );
-      Orders.checkEditedOngoingOrder(orderNumber, organization.name);
-    },
-  );
+  it('C664 Edit an existing PO (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+    cy.login(user.username, user.password, {
+      path: TopMenu.ordersPath,
+      waiter: Orders.waitLoading,
+    });
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.selectPendingStatusFilter();
+    Orders.selectFromResultsList(orderNumber);
+    Orders.editOrder();
+    Orders.selectOngoingOrderTypeInPOForm();
+    Orders.saveEditingOrder();
+    InteractorsTools.checkCalloutMessage(
+      `The Purchase order - ${orderNumber} has been successfully saved`,
+    );
+    Orders.checkEditedOngoingOrder(orderNumber, organization.name);
+  });
 });
