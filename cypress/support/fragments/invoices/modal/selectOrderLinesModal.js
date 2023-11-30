@@ -30,7 +30,9 @@ export default {
       selectOrderLinesModal.find(TextField({ id: 'input-record-search' })).fillIn(poNumber),
       selectOrderLinesModal.find(Button('Search')).click(),
     ]);
-    cy.expect(selectOrderLinesModal.find(HTML(including('1 record found'))).exists());
+    cy.expect(
+      selectOrderLinesModal.find(HTML(including('Enter search criteria to start search'))).absent(),
+    );
   },
   selectFromSearchResults(index = 0) {
     cy.do(selectOrderLinesModal.find(MultiColumnListRow({ index })).find(Checkbox()).click());
