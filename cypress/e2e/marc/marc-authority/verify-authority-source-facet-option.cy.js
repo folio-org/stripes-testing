@@ -16,7 +16,7 @@ const updatedFileName = `testMarcFileUpd.${getRandomPostfix()}.mrc`;
 const authoritySource = 'LC Subject Headings (LCSH)';
 let createdAuthorityID;
 
-describe('Importing MARC Authority files', () => {
+describe('MARC › MARC Authority › Browse - Authority records', () => {
   before('Creating data', () => {
     cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(
       (createdUserProperties) => {
