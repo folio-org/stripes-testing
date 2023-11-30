@@ -1,14 +1,12 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import testTypes from '../../../support/dictionary/testTypes';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import FileManager from '../../../support/utils/fileManager';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import { getLongDelay } from '../../../support/utils/cypressTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user1;
 let user2;
@@ -63,7 +61,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380393 Verify that bulk edit jobs run by correct user (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         cy.login(user1.username, user1.password, {
           path: TopMenu.bulkEditPath,

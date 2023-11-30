@@ -79,6 +79,9 @@ export default {
     if (orderLine.poLineDetails) {
       this.fillPoLineDetails(orderLine.poLineDetails);
     }
+    if (orderLine.ongoingOrder) {
+      this.fillOngoingOrderInformation(orderLine.ongoingOrder);
+    }
     if (orderLine.vendorDetails) {
       this.fillVendorDetails(orderLine.vendorDetails);
     }
@@ -107,6 +110,11 @@ export default {
     }
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
+    }
+  },
+  fillOngoingOrderInformation({ renewalNote }) {
+    if (renewalNote) {
+      cy.do(ongoingInformationFields['Renewal note'].fillIn(renewalNote));
     }
   },
   fillVendorDetails(vendorDetails) {
