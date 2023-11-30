@@ -1,16 +1,16 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { BUDGET_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import {
   BudgetDetails,
+  Budgets,
   FinanceHelper,
   FiscalYears,
-  Ledgers,
   Funds,
-  Budgets,
+  Ledgers,
 } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { StringTools, CodeTools } from '../../../support/utils';
-import { BUDGET_STATUSES } from '../../../support/constants';
+import { CodeTools, StringTools } from '../../../support/utils';
 
 describe('Finance', () => {
   describe('Funds', () => {
@@ -79,7 +79,7 @@ describe('Finance', () => {
 
     it(
       'C353527 Allow user to create multiple planned budgets (thunderjet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Open Fund from Preconditions
         FinanceHelper.searchByName(fund.name);
