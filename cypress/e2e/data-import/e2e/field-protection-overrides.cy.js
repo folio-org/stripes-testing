@@ -171,6 +171,7 @@ describe('data-import', () => {
           secondFieldId = resp.id;
         });
       });
+      cy.loginAsAdmin();
     });
 
     after('delete test data', () => {
