@@ -1,17 +1,17 @@
-import TopMenu from '../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import InventoryActions from '../../support/fragments/inventory/inventoryActions';
+import { INSTANCE_STATUS_TERM_NAMES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import FastAddNewRecord from '../../support/fragments/inventory/fastAddNewRecord';
+import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
+import InventoryActions from '../../support/fragments/inventory/inventoryActions';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import { getLongDelay } from '../../support/utils/cypressTools';
-import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import FastAdd from '../../support/fragments/settings/inventory/instance-holdings-item/fastAdd';
-import { INSTANCE_STATUS_TERM_NAMES } from '../../support/constants';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import { getLongDelay } from '../../support/utils/cypressTools';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('inventory', () => {
   describe('Fast Add', () => {
@@ -52,7 +52,7 @@ describe('inventory', () => {
 
     it(
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryActions.openNewFastAddRecordForm();

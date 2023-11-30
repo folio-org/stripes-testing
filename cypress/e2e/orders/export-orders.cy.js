@@ -1,16 +1,14 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import TopMenu from '../../support/fragments/topMenu';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
-import TestTypes from '../../support/dictionary/testTypes';
+import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
 describe('orders: export', () => {
@@ -79,7 +77,7 @@ describe('orders: export', () => {
 
   it(
     'C196749 Export orders based on orders search (thunderjet)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.selectOpenStatusFilter();
       Orders.exportResoultsCSV();

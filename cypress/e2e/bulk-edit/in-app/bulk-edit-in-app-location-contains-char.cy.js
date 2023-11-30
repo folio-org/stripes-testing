@@ -1,4 +1,3 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { Locations } from '../../../support/fragments/settings/tenant/location-setup';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -66,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357064 Verify Items bulk edit if the location name contains "/" (firebird) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         // Select "Inventory-items" record type => Select "Items barcode" from "Record identifier" dropdown
         BulkEditSearchPane.checkItemsRadio();

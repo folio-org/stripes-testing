@@ -43,6 +43,8 @@ export default {
   },
 
   convertCsvToJson(readFileName) {
+    cy.wait(Cypress.env('downloadTimeout'));
+
     this.findDownloadedFilesByMask(readFileName).then((downloadedFileNames) => {
       const lastDownloadedFileName = downloadedFileNames.sort()[downloadedFileNames.length - 1];
 

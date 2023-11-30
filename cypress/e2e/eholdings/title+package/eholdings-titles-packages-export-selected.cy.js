@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
+import { Permissions } from '../../../support/dictionary';
 import {
+  EHoldingsPackageView,
   EHoldingsPackages,
   EHoldingsPackagesSearch,
-  EHoldingsPackageView,
 } from '../../../support/fragments/eholdings';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -48,7 +48,7 @@ describe('eHoldings', () => {
 
     it(
       'C354001 Export of selected “Package+Title” with all fields of “Package” and “Title” selected by default settings (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         // Fill in the input field with the search query, Click on the "Search" button.
         EHoldingsPackagesSearch.byName('Wiley Online Library');
@@ -104,8 +104,10 @@ describe('eHoldings', () => {
           });
           FileManager.convertCsvToJson(testData.packageData).then((data) => {
             // Check information matches "Package" record
-            cy.expect(testData.package.id === data.PackageId);
-            cy.expect(testData.package.name === data.PackageName);
+            const { PackageId, PackageName } = data[0];
+
+            cy.expect(PackageId).to.equal(testData.package.id);
+            cy.expect(PackageName).to.equal(testData.package.name);
           });
 
           FileManager.writeToSeparateFile({

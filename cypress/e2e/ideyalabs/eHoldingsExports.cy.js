@@ -1,7 +1,6 @@
-import exportJobs from '../../support/fragments/ideyalabs/exportJobs';
-import testTypes from '../../support/dictionary/testTypes';
 import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
+import exportJobs from '../../support/fragments/ideyalabs/exportJobs';
 import Invoices from '../../support/fragments/invoices/invoices';
 import loansPage from '../../support/fragments/loans/loansPage';
 import topMenu from '../../support/fragments/topMenu';
@@ -34,7 +33,7 @@ describe.skip('Eholdings - exports', () => {
 
   it(
     'C367972 Export button must be disabled when user tries to export Package record with more than 10k of Title records (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
+    { tags: ['ideaLabsTests'] },
     () => {
       cy.visit(topMenu.eholdingsPath);
       eHoldingsSearch.switchToPackages();
@@ -65,7 +64,7 @@ describe.skip('Eholdings - exports', () => {
 
   it(
     'C353217 Download batch export files from full screen view with Voucher export permission (FTP/JSON) - upload to server (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
+    { tags: ['ideaLabsTests'] },
     () => {
       cy.visit(topMenu.invoicesPath);
       Invoices.selectFolio();
