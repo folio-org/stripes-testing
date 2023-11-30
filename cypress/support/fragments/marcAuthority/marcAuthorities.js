@@ -935,12 +935,4 @@ export default {
       sourceFileAccordion.find(MultiSelectOption(including(`(${count})`))).exists(),
     ]);
   },
-
-  verifySecondPaneIsCleared: () => {
-    cy.expect(
-      rootSection
-        .find(HTML(including('Choose a filter or enter a search query to show results')))
-        .exists(),
-    );
-  },
 };
