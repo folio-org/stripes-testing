@@ -780,6 +780,14 @@ export default {
       });
   },
 
+  checkFieldContentToEqual(selector, fieldContent) {
+    cy.get(selector)
+      .invoke('val')
+      .then((text) => {
+        expect(text).to.equal(fieldContent);
+      });
+  },
+
   checkEmptyContent(tagName) {
     cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).exists());
     cy.expect(
@@ -1240,6 +1248,10 @@ export default {
 
   checkLinkButtonExist(tag) {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
+  },
+
+  checkLinkButtonDontExist(tag) {
+    cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).absent());
   },
 
   checkLinkButtonToolTipText(text) {
