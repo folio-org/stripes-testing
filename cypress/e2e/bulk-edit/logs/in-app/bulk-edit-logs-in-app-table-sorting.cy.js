@@ -1,7 +1,5 @@
 import permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
-import devTeams from '../../../../support/dictionary/devTeams';
-import testTypes from '../../../../support/dictionary/testTypes';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../../support/fragments/users/users';
 import DateTools from '../../../../support/utils/dateTools';
@@ -30,7 +28,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C380770 Verify sorting in "Bulk edit logs" table (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.viewport(2560, 1440);
       BulkEditSearchPane.openLogsSearch();
