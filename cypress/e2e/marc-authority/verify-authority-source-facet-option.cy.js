@@ -57,11 +57,14 @@ describe('Importing MARC Authority files', () => {
     'C365630 Browse | Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
+      MarcAuthorities.checkAuthoritySourceOptions();
       MarcAuthorities.switchToBrowse();
       MarcAuthorities.chooseAuthoritySourceOption(authoritySource);
       MarcAuthorityBrowse.searchBy('Name-title', 'Not-existing query');
       MarcAuthorityBrowse.getNotExistingHeadingReferenceValue('Not-existing query');
-      MarcAuthorities.verifySelectedTextOfAuthoritySource(authoritySource);
+      MarcAuthorities.verifySelectedTextOfAuthoritySourceAndCount(authoritySource, 0);
+      MarcAuthorities.switchToSearch();
+      MarcAuthorities.verifySecondPaneIsCleared();
     },
   );
 });

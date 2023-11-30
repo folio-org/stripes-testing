@@ -928,8 +928,19 @@ export default {
     cy.expect(typeOfHeadingSelect.has({ selectedCount: 0 }));
   },
 
-  verifySelectedTextOfAuthoritySource: (authoritySource) => {
-    cy.do(authoritySourceAccordion.clickHeader());
-    cy.expect(MultiSelect({ selected: including(authoritySource) }).exists());
+  verifySelectedTextOfAuthoritySourceAndCount: (authoritySource, count = '') => {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect([
+      MultiSelect({ selected: including(authoritySource) }).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including(`(${count})`))).exists(),
+    ]);
+  },
+
+  verifySecondPaneIsCleared: () => {
+    cy.expect(
+      rootSection
+        .find(HTML(including('Choose a filter or enter a search query to show results')))
+        .exists(),
+    );
   },
 };
