@@ -25,6 +25,7 @@ let checkOutUser;
 const checkInUser = {};
 const expirationUserDate = DateTools.getFutureWeekDateObj();
 let servicePointId;
+let servicePointName;
 
 describe('loan dates', () => {
   before('create inventory instance', () => {
@@ -42,6 +43,7 @@ describe('loan dates', () => {
           source = InventoryHoldings.getHoldingSources({ limit: 1 });
           ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
             servicePointId = res[0].id;
+            servicePointName = res[0].name;
           });
           cy.getUsers({
             limit: 1,
@@ -134,7 +136,7 @@ describe('loan dates', () => {
         itemBarcode: folioInstances[0].barcodes[0],
         itemTitle: folioInstances[0].instanceTitle,
         requesterBarcode: checkInUser.barcode,
-        pickupServicePoint: 'Circ Desk 1',
+        pickupServicePoint: servicePointName,
         requestType: REQUEST_TYPES.RECALL,
       });
 
