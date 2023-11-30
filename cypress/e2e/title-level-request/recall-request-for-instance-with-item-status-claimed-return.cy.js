@@ -1,17 +1,16 @@
-import TopMenu from '../../support/fragments/topMenu';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Permissions from '../../support/dictionary/permissions';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import Permissions from '../../support/dictionary/permissions';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import UserEdit from '../../support/fragments/users/userEdit';
-import { DevTeams, TestTypes } from '../../support/dictionary';
 
 describe('Title level request for claimed return item', () => {
   const testData = {
@@ -77,7 +76,7 @@ describe('Title level request for claimed return item', () => {
 
   it(
     'C375949 Check that user can not create a TLR Recall for item with status Claimed return',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       // Open new request dialog
