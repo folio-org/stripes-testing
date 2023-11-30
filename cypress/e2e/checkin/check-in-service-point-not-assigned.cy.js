@@ -1,4 +1,4 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
@@ -87,7 +87,7 @@ describe('Check In - Actions', () => {
 
   it(
     "C588 Check in: at service point not assigned to item's effective location (vega) (TaaS)",
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();

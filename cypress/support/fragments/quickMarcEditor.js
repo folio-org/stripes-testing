@@ -541,12 +541,14 @@ export default {
     cy.do(unlinkModal.find(cancelUnlinkButtonInsideModal).click());
   },
 
-  checkUnlinkModal(text) {
+  checkUnlinkModal(tag) {
     cy.expect([
       unlinkModal.exists(),
       unlinkButtonInsideModal.exists(),
       cancelUnlinkButtonInsideModal.exists(),
-      unlinkModal.has({ content: including(text) }),
+      unlinkModal.has({
+        message: `By selecting Unlink, then field ${tag} will be unlinked from the MARC authority record. Are you sure you want to continue?`,
+      }),
     ]);
   },
 
@@ -775,6 +777,14 @@ export default {
       .invoke('val')
       .then((text) => {
         expect(text).to.match(regExp);
+      });
+  },
+
+  checkFieldContentToEqual(selector, fieldContent) {
+    cy.get(selector)
+      .invoke('val')
+      .then((text) => {
+        expect(text).to.equal(fieldContent);
       });
   },
 
@@ -1240,12 +1250,16 @@ export default {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
 
+  checkLinkButtonDontExist(tag) {
+    cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).absent());
+  },
+
   checkLinkButtonToolTipText(text) {
     cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
-  checkUnlinkTooltipText(tag, text) {
-    cy.do(getRowInteractorByTagName(tag).find(unlinkIconButton).hoverMouse());
+  checkUnlinkTooltipText(rowIndex, text) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
   },
   checkViewMarcAuthorityTooltipText(rowIndex) {
@@ -1515,17 +1529,21 @@ export default {
     ]);
   },
 
-  verifyRemoveLinkingModal(contentText) {
+  verifyRemoveLinkingModal() {
     cy.expect([
       removeLinkingModal.exists(),
       removeLinkingModal.find(removeLinkingButton).exists(),
       removeLinkingModal.find(keepLinkingButton).exists(),
-      removeLinkingModal.has({ content: including(contentText) }),
+      removeLinkingModal.has({
+        content: including(
+          'Do you want to remove authority linking for this new bibliographic record?',
+        ),
+      }),
     ]);
   },
 
   clickKeepLinkingButton() {
-    cy.do(keepLinkingButton.click());
+    cy.do(removeLinkingModal.find(keepLinkingButton).click());
   },
 
   verifyAndDismissWrongTagLengthCallout() {
@@ -1770,6 +1788,10 @@ export default {
     this.checkEmptyContent('008');
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
+  },
+
+  checkEditableQuickMarcFormIsOpened: () => {
+    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
   },
 
   verifyNoDuplicatedFieldsWithTag: (tag) => {

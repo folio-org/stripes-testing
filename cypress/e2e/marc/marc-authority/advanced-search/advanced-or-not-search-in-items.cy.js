@@ -1,13 +1,11 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../support/dictionary/devTeams';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import { LOCATION_NAMES, ITEM_STATUS_NAMES } from '../../../../support/constants';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Authority -> Advanced search', () => {
   let user;
@@ -154,7 +152,7 @@ describe('MARC -> MARC Authority -> Advanced search', () => {
 
   it(
     'C400623 Search Items using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventoryInstances.clickAdvSearchButton();

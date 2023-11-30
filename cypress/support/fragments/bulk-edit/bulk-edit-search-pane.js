@@ -64,6 +64,15 @@ const buildQueryButton = Button('Build query');
 const buildQueryModal = Modal('Build query');
 const logsActionButton = Button({ icon: 'ellipsis' });
 
+const newCheckbox = Checkbox('New');
+const retrievingRecordsCheckbox = Checkbox('Retrieving records');
+const savingRecordsCheckbox = Checkbox('Saving records');
+const dataModificationCheckbox = Checkbox('Data modification');
+const reviewingChangesCheckbox = Checkbox('Reviewing changes');
+const completedCheckbox = Checkbox('Completed');
+const completedWithErrorsCheckbox = Checkbox('Completed with errors');
+const failedCheckbox = Checkbox('Failed');
+
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
@@ -408,19 +417,15 @@ export default {
     this.verifyBulkEditPaneItems();
   },
 
+  verifySetCriteriaPaneExists() {
+    cy.expect(setCriteriaPane.exists());
+  },
+
   verifyLogsPane() {
+    this.verifyLogsStatusesAccordionExistsAndUnchecked();
     cy.expect([
       logsToggle.has({ default: false }),
       resetAllButton.has({ disabled: true }),
-      logsStatusesAccordion.has({ open: true }),
-      logsStatusesAccordion.find(Checkbox('New')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Retrieving records')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Saving records')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Data modification')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Reviewing changes')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Completed')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Completed with errors')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Failed')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - items')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
@@ -432,8 +437,16 @@ export default {
     ]);
   },
 
-  checkLogsStatus(status) {
-    cy.do(logsStatusesAccordion.find(Checkbox(status)).click());
+  checkLogsCheckbox(status) {
+    cy.do(Checkbox(status).click());
+  },
+
+  resetStatuses() {
+    cy.do(
+      Accordion('Statuses')
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
   },
 
   verifyCsvViewPermission() {
@@ -783,6 +796,30 @@ export default {
     );
   },
 
+  getMultiColumnListCellsValues(cell) {
+    return cy.get('[data-row-index]').then((rows) => {
+      return rows
+        .get()
+        .map((row) => row.querySelector(`[class*="mclCell-"]:nth-child(${cell})`).innerText);
+    });
+  },
+
+  verifyRecordTypesSortedAlphabetically() {
+    cy.get('#entityType [class*="labelText"]').then((checkboxes) => {
+      const textArray = checkboxes.get().map((el) => el.innerText);
+      const sortedArray = [...textArray].sort((a, b) => a - b);
+      expect(sortedArray).to.eql(textArray);
+    });
+  },
+
+  verifyCellsValues(column, status) {
+    this.getMultiColumnListCellsValues(column)
+      .should('have.length.at.least', 1)
+      .each((value) => {
+        expect(value).to.eq(status);
+      });
+  },
+
   verifyResultColumTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
@@ -803,6 +840,10 @@ export default {
     cy.do(recordTypesAccordion.clickHeader());
   },
 
+  clickLogsStatusesAccordion() {
+    cy.do(logsStatusesAccordion.clickHeader());
+  },
+
   verifyRecordTypesAccordionCollapsed() {
     cy.expect([
       recordTypesAccordion.has({ open: false }),
@@ -810,6 +851,68 @@ export default {
       itemsRadio.absent(),
       holdingsRadio.absent(),
     ]);
+  },
+
+  verifyLogsStatusesAccordionCollapsed() {
+    cy.expect([
+      logsStatusesAccordion.has({ open: false }),
+      newCheckbox.absent(),
+      retrievingRecordsCheckbox.absent(),
+      savingRecordsCheckbox.absent(),
+      dataModificationCheckbox.absent(),
+      reviewingChangesCheckbox.absent(),
+      completedCheckbox.absent(),
+      completedWithErrorsCheckbox.absent(),
+      failedCheckbox.absent(),
+    ]);
+  },
+
+  verifyLogsRecordTypesAccordionCollapsed() {
+    cy.expect([
+      recordTypesAccordion.has({ open: false }),
+      usersCheckbox.absent(),
+      holdingsCheckbox.absent(),
+      itemsCheckbox.absent(),
+    ]);
+  },
+
+  verifyLogsStatusesAccordionExistsAndUnchecked() {
+    cy.expect([
+      logsStatusesAccordion.has({ open: true }),
+      newCheckbox.has({ checked: false }),
+      retrievingRecordsCheckbox.has({ checked: false }),
+      savingRecordsCheckbox.has({ checked: false }),
+      dataModificationCheckbox.has({ checked: false }),
+      reviewingChangesCheckbox.has({ checked: false }),
+      completedCheckbox.has({ checked: false }),
+      completedWithErrorsCheckbox.has({ checked: false }),
+      failedCheckbox.has({ checked: false }),
+    ]);
+  },
+
+  verifyLogsRecordTypesAccordionExistsAndUnchecked() {
+    cy.expect([
+      recordTypesAccordion.has({ open: true }),
+      usersCheckbox.has({ checked: false }),
+      holdingsCheckbox.has({ checked: false }),
+      itemsCheckbox.has({ checked: false }),
+    ]);
+  },
+
+  verifyClearSelectedFiltersButtonExists(accordion) {
+    cy.expect(
+      Accordion(accordion)
+        .find(Button({ icon: 'times-circle-solid' }))
+        .exists(),
+    );
+  },
+
+  clickClearSelectedFiltersButton(accordion) {
+    cy.do(
+      Accordion(accordion)
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
   },
 
   clickActionsOnTheRow(row = 0) {
@@ -820,12 +923,24 @@ export default {
     );
   },
 
+  verifyLogStatus(runByUsername, content) {
+    cy.do(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content }))
+        .click(),
+    );
+  },
+
   clickActionsRunBy(runByUsername) {
     cy.do(
       ListRow({ text: including(runByUsername) })
         .find(logsActionButton)
         .click(),
     );
+  },
+
+  verifyActionsRunBy(name) {
+    cy.expect(ListRow({ text: including(`\n${name}\n`) }).exists());
   },
 
   verifyTriggerLogsAction() {
@@ -842,6 +957,15 @@ export default {
       matchingRecordsBtn.exists(),
       previewPorposedChangesBtn.exists(),
       updatedRecordBtn.exists(),
+    ]);
+  },
+
+  verifyLogsRowActionWhenNoChangesApplied() {
+    cy.expect([
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      errorsCommittingBtn.exists(),
     ]);
   },
 
@@ -931,6 +1055,28 @@ export default {
 
   applyEndDateFilters() {
     cy.do(logsEndDateAccordion.find(applyBtn).click());
+  },
+
+  verifyDirection(header, direction = 'descending') {
+    cy.get('[class^="mclHeader"]')
+      .contains(header)
+      .then((mclHeader) => {
+        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
+        expect(sort).to.eq(direction);
+      });
+  },
+
+  verifyNoDirection(header) {
+    cy.get('[class^="mclHeader"]')
+      .contains(header)
+      .then((mclHeader) => {
+        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
+        expect(sort).to.eq('none');
+      });
+  },
+
+  clickLogHeader(header) {
+    cy.do(MultiColumnListHeader(header).click());
   },
 
   noLogResultsFound() {

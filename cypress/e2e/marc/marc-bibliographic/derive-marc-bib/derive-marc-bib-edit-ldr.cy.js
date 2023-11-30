@@ -1,17 +1,15 @@
-import TestTypes from '../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../support/dictionary/devTeams';
-import Permissions from '../../../../support/dictionary/permissions';
-import TopMenu from '../../../../support/fragments/topMenu';
-import Users from '../../../../support/fragments/users/users';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import { randomizeArray } from '../../../../support/utils/arrays';
-import DataImport from '../../../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import Permissions from '../../../../support/dictionary/permissions';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import { randomizeArray } from '../../../../support/utils/arrays';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   const alphabetLowerCase = 'abcdefghijklmnopqrstuvwxyz';
@@ -94,7 +92,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
 
   it(
     'C357566 Verify "LDR" validation rules with valid data for positions 05, 08, 17, 18, 19 when deriving record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       for (let i = 0; i < testData.LDRValues.validLDR18Values.length; i++) {
         cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);

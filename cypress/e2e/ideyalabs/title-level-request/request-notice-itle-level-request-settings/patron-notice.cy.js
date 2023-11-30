@@ -1,6 +1,5 @@
 import titleLevelRequests from '../../../../support/fragments/settings/circulation/titleLevelRequests';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import testTypes from '../../../../support/dictionary/testTypes';
 
 const patronData = {
   notice1: 'Requested item - available',
@@ -13,7 +12,7 @@ describe.skip('Orders: Receiving and Check-in ', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C350428 Patron notice (Vega)', { tags: [testTypes.ideaLabsTests] }, () => {
+  it('C350428 Patron notice (Vega)', { tags: ['ideaLabsTests'] }, () => {
     cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
     titleLevelRequests.selectConfirmationNoticeDropdown({
       notice1: patronData.notice1,

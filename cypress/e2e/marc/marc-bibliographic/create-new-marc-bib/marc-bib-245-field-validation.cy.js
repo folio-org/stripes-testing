@@ -1,9 +1,9 @@
-import TopMenu from '../../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
-import Users from '../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import { Permissions } from '../../../../support/dictionary';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 
 describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   describe('245 field validation', () => {
@@ -27,7 +27,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
     it(
       'C422117 "245" field presence validation when creating a new "MARC bib" record (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstance.newMarcBibRecord();
         QuickMarcEditor.waitLoading();

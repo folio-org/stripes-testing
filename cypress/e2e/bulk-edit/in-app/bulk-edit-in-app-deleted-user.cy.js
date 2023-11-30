@@ -1,18 +1,16 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import testTypes from '../../../support/dictionary/testTypes';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user1;
 let user2;
@@ -52,7 +50,7 @@ describe('bulk-edit', () => {
 
     it(
       'C378102 Verify that items updated by a user account that no longer exists are bulk editing (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.login(user1.username, user1.password, {
           path: TopMenu.inventoryPath,
