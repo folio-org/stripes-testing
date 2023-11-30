@@ -113,7 +113,7 @@ describe('Temporary Location', () => {
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
       InventorySearchAndFilter.selectViewHoldings();
-      HoldingsRecordView.verifyRecordViewingOpen();
+      HoldingsRecordView.waitLoading();
 
       HoldingsRecordView.edit();
       HoldingsRecordEdit.waitLoading();
