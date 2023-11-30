@@ -34,7 +34,7 @@ describe('bulk-edit', () => {
           (res) => {
             const itemData = res;
             res.effectiveCallNumberComponents = {
-              callNumber : `callNumber;-${getRandomPostfix()}`,
+              callNumber: `callNumber;-${getRandomPostfix()}`,
             };
             cy.updateItemViaApi(itemData);
           },
@@ -74,7 +74,7 @@ describe('bulk-edit', () => {
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.verifyTemporaryLoanType(type);
-      }
+      },
     );
   });
 });

@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         // Create three instances with two barcodes each
-        [firstItem, secondItem, thirdItem].forEach(item => {
+        [firstItem, secondItem, thirdItem].forEach((item) => {
           InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         });
 
@@ -68,8 +68,10 @@ describe('bulk-edit', () => {
         }
 
         // Put three item barcodes into file
-        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`,
-          `${newBarcodes[0]}\n${newBarcodes[2]}\n${newBarcodes[4]}`);
+        FileManager.createFile(
+          `cypress/fixtures/${itemBarcodesFileName}`,
+          `${newBarcodes[0]}\n${newBarcodes[2]}\n${newBarcodes[4]}`,
+        );
 
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -121,7 +123,7 @@ describe('bulk-edit', () => {
           ItemRecordView.waitLoading();
           ItemRecordView.verifyPermanentLocation('Online');
         });
-      }
+      },
     );
   });
 });
