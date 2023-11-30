@@ -26,34 +26,38 @@ describe('Bulk Edit - Logs', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C368033 Filters section: Statuses (firebird) (TaaS)', { tags: ['smoke', 'firebird'] }, () => {
-    BulkEditSearchPane.openLogsSearch();
-    BulkEditSearchPane.verifySetCriteriaPaneExists();
-    BulkEditSearchPane.verifyLogsStatusesAccordionExistsAndUnchecked();
-    BulkEditSearchPane.clickLogsStatusesAccordion();
-    BulkEditSearchPane.verifyLogsStatusesAccordionCollapsed();
-    BulkEditSearchPane.clickLogsStatusesAccordion();
-    BulkEditSearchPane.verifyLogsStatusesAccordionExistsAndUnchecked();
-    const statuses = [
-      'New',
-      'Retrieving records',
-      'Saving records',
-      'Data modification',
-      'Reviewing changes',
-      'Completed',
-      'Completed with errors',
-      'Failed',
-    ];
-    statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
-    BulkEditSearchPane.resetAllBtnIsDisabled(false);
-    BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Statuses');
-    BulkEditSearchPane.clickClearSelectedFiltersButton('Statuses');
-    BulkEditSearchPane.verifyLogsPane();
-    BulkEditSearchPane.checkLogsCheckbox('New');
-    BulkEditSearchPane.resetAllBtnIsDisabled(false);
-    BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Statuses');
-    BulkEditSearchPane.verifyCellsValues(2, 'New');
-  });
+  it(
+    'C368033 Filters section: Statuses (firebird) (TaaS)',
+    { tags: ['extended', 'firebird'] },
+    () => {
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifySetCriteriaPaneExists();
+      BulkEditSearchPane.verifyLogsStatusesAccordionExistsAndUnchecked();
+      BulkEditSearchPane.clickLogsStatusesAccordion();
+      BulkEditSearchPane.verifyLogsStatusesAccordionCollapsed();
+      BulkEditSearchPane.clickLogsStatusesAccordion();
+      BulkEditSearchPane.verifyLogsStatusesAccordionExistsAndUnchecked();
+      const statuses = [
+        'New',
+        'Retrieving records',
+        'Saving records',
+        'Data modification',
+        'Reviewing changes',
+        'Completed',
+        'Completed with errors',
+        'Failed',
+      ];
+      statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
+      BulkEditSearchPane.resetAllBtnIsDisabled(false);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Statuses');
+      BulkEditSearchPane.clickClearSelectedFiltersButton('Statuses');
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.checkLogsCheckbox('New');
+      BulkEditSearchPane.resetAllBtnIsDisabled(false);
+      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Statuses');
+      BulkEditSearchPane.verifyCellsValues(2, 'New');
+    },
+  );
 
   it(
     'C368034 Filters section: Record types (firebird) (TaaS)',
