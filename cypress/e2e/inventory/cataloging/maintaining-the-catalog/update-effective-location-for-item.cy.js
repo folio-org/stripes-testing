@@ -17,8 +17,8 @@ describe('inventory', () => {
       instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
       itemBarcode: GenerateItemBarcode(),
     };
-    const anotherPermanentLocation = 'Primary Fiction (me2PFiction)';
-    const anotherPermanentLocationUI = 'Primary Fiction';
+    const anotherPermanentLocation = LOCATION_NAMES.MAIN_LIBRARY;
+    const anotherPermanentLocationUI = LOCATION_NAMES.MAIN_LIBRARY_UI;
     let testInstanceId;
     let instanceHrid;
     let user;

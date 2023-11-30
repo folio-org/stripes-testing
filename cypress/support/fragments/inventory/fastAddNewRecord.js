@@ -20,7 +20,7 @@ const fastAddNewRecordFormDetails = {
   permanentLocationOption: 'Online (E) ',
   permanentLocationValue: LOCATION_NAMES.ONLINE_UI,
   itemBarcode: `${getRandomPostfix()}Barcode`,
-  materialType: 'text',
+  materialType: 'book',
   permanentLoanType: 'Course reserves',
   note: 'note for monograph',
 };
