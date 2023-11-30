@@ -92,8 +92,7 @@ export default {
   },
 
   fillInNoteType: (noteTypeName) => {
-    cy.do(noteTypeInput.fillIn(noteTypeName));
-    cy.wait(1000);
+    cy.do([noteTypeInput.focus(), noteTypeInput.fillIn(noteTypeName)]);
     cy.expect(saveNoteTypeButton.has({ disabled: false }));
   },
 
@@ -112,7 +111,10 @@ export default {
     ConfirmDelete.confirmDelete();
   },
 
-  clickEditNoteType: (noteType) => cy.do(rowWithText(noteType).find(editIcon).click()),
+  clickEditNoteType: (noteType) => {
+    cy.expect(rowWithText(noteType).exists());
+    cy.do(rowWithText(noteType).find(editIcon).click());
+  },
 
   clickDeleteNoteType: (noteType) => cy.do(rowWithText(noteType).find(deleteIcon).click()),
 
