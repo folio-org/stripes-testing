@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { Locations } from '../../support/fragments/settings/tenant/location-setup';
@@ -82,7 +82,7 @@ describe('Check in', () => {
 
   it(
     'C589 Check in items at service points for effective location (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // In FOLIO UI, set user's service point to service point A.
       // Service point displays in upper right corner of screen with service point A display name.

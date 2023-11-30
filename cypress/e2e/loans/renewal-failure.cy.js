@@ -1,25 +1,22 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../support/utils/stringTools';
-import TestType from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
-import Parallelization from '../../support/dictionary/parallelization';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import permissions from '../../support/dictionary/permissions';
-import RenewalActions from '../../support/fragments/loans/renewals';
 import {
   CY_ENV,
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../support/constants';
-import LoanPolicyActions from '../../support/fragments/circulation/loan-policy';
+import permissions from '../../support/dictionary/permissions';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import Users from '../../support/fragments/users/users';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Checkout from '../../support/fragments/checkout/checkout';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LoanPolicyActions from '../../support/fragments/circulation/loan-policy';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import RenewalActions from '../../support/fragments/loans/renewals';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Renewal', () => {
   let materialTypeId;
@@ -179,7 +176,7 @@ describe('Renewal', () => {
 
   it(
     'C568 Renewal: failure because loan is not renewable (vega)',
-    { tags: [TestType.smoke, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['smoke', 'vega', 'nonParallel'] },
     () => {
       cy.login(renewUserData.username, renewUserData.password);
       RenewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);

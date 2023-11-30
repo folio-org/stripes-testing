@@ -1,28 +1,26 @@
 import uuid from 'uuid';
-import devTeams from '../../support/dictionary/devTeams';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
-import getRandomPostfix from '../../support/utils/stringTools';
-import Loans from '../../support/fragments/loans/loansPage';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import ConfirmItemStatusModal from '../../support/fragments/users/loans/confirmItemStatusModal';
 import CheckInClaimedReturnedItemModal from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
 import CheckInDeclareLostItemModal from '../../support/fragments/checkin/modals/checkInDeclareLostItem';
-import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Loans from '../../support/fragments/loans/loansPage';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
+import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
+import ConfirmItemStatusModal from '../../support/fragments/users/loans/confirmItemStatusModal';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 function getClaimedReturnedLoansQuantity(loansArray) {
   let res = 0;
@@ -134,7 +132,7 @@ describe('Loans ', () => {
     );
   });
 
-  it('C10959 Loans: Claim returned (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
+  it('C10959 Loans: Claim returned (vega)', { tags: ['smoke', 'vega'] }, () => {
     const selectedItems = [];
     let claimedReturnedLoansQuantity;
     let selectedItem = folioInstances.find((item) => item.status === ITEM_STATUS_NAMES.CHECKED_OUT);

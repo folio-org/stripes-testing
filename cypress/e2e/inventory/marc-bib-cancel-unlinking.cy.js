@@ -1,18 +1,18 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../support/utils/stringTools';
+import { Permissions } from '../../support/dictionary';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
-import InventoryKeyboardShortcuts from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
-import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
+import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventoryKeyboardShortcuts from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
   const hotKeys = InventoryHotkeys.hotKeys;
@@ -121,7 +121,7 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
 
   it(
     'C365601 Cancel unlinking "MARC Bibliographic" field from "MARC Authority" record and use the "Cancel" button in editing window. (Spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['extendedPath', 'spitfire', 'nonParallel'] },
     () => {
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(linkingTagAndValues.rowIndex);
       QuickMarcEditor.checkButtonsDisabled();
@@ -135,17 +135,13 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
         testData.tag100[6],
         testData.tag100[7],
       );
-      QuickMarcEditor.checkUnlinkTooltipText('100', 'Unlink from MARC Authority record');
+      QuickMarcEditor.checkUnlinkTooltipText(11, 'Unlink from MARC Authority record');
       QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues.rowIndex);
-      QuickMarcEditor.checkUnlinkModal(
-        'By selecting Unlink, then field 100 will be unlinked from the MARC authority record. Are you sure you want to continue?',
-      );
+      QuickMarcEditor.checkUnlinkModal(testData.linkedTag);
       QuickMarcEditor.cancelUnlinkingField();
       QuickMarcEditor.checkDeleteModalClosed();
       QuickMarcEditor.clickUnlinkIconInTagField(linkingTagAndValues.rowIndex);
-      QuickMarcEditor.checkUnlinkModal(
-        'By selecting Unlink, then field 100 will be unlinked from the MARC authority record. Are you sure you want to continue?',
-      );
+      QuickMarcEditor.checkUnlinkModal(testData.linkedTag);
       InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
       QuickMarcEditor.checkDeleteModalClosed();
       QuickMarcEditor.pressCancel();
