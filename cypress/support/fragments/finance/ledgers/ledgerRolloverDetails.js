@@ -72,14 +72,18 @@ export default {
       if (details.rolloverBudget) {
         cy.do([
           Select({ name: `budgetsRollover[${index}].rolloverBudgetValue` }).click(),
-          Select({ name: `budgetsRollover[${index}].rolloverBudgetValue` }).choose(details.rolloverBudget),
+          Select({ name: `budgetsRollover[${index}].rolloverBudgetValue` }).choose(
+            details.rolloverBudget,
+          ),
         ]);
       }
 
       if (details.rolloverValue) {
         cy.do([
           Select({ name: `budgetsRollover[${index}].addAvailableTo` }).click(),
-          Select({ name: `budgetsRollover[${index}].addAvailableTo` }).choose(details.rolloverValue),
+          Select({ name: `budgetsRollover[${index}].addAvailableTo` }).choose(
+            details.rolloverValue,
+          ),
         ]);
       }
     });
