@@ -42,6 +42,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
 import Badge from '../../../../interactors/badge';
+import NewOrderModal from './modals/newOrderModal';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -1049,6 +1050,12 @@ export default {
     cy.do(Button('New request').click());
   },
 
+  newOrder() {
+    cy.do(actionsButton.click());
+    cy.do(Button('New order').click());
+    return NewOrderModal;
+  },
+
   singleOverlaySourceBibRecordModalIsPresented: () => cy.expect(singleRecordImportModal.exists()),
 
   overlayWithOclc: (oclc) => {
@@ -1203,5 +1210,21 @@ export default {
         .find(MultiColumnListCell(including(text)))
         .absent(),
     );
+  },
+
+  verifyOrdersCount(ordersCount) {
+    if (ordersCount === 0) {
+      cy.expect(
+        Accordion({ label: including('Acquisition') })
+          .find(MultiColumnList({ id: 'list-instance-acquisitions' }))
+          .absent(),
+      );
+    } else {
+      cy.expect(
+        Accordion({ label: including('Acquisition') })
+          .find(MultiColumnList({ id: 'list-instance-acquisitions' }))
+          .has({ rowCount: ordersCount }),
+      );
+    }
   },
 };
