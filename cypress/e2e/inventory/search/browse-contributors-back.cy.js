@@ -1,6 +1,7 @@
 import Permissions from '../../../support/dictionary/permissions';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -36,7 +37,17 @@ describe('Inventory -> Contributors Browse', () => {
   });
 
   beforeEach(() => {
-    InventoryInstances.createInstanceViaApi(testData.item.instanceName, testData.item.itemBarcode);
+    cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
+      InventoryInstances.createFolioInstanceViaApi({
+        instance: {
+          instanceTypeId: instanceTypes[0].id,
+          title: testData.item.instanceName,
+        },
+      }).then((instanceIds) => {
+        testData.instanceId = instanceIds.instanceId;
+      });
+    });
+
     cy.loginAsAdmin({
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
@@ -74,7 +85,7 @@ describe('Inventory -> Contributors Browse', () => {
 
   afterEach(() => {
     cy.getAdminToken();
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
+    InventoryInstance.deleteInstanceViaApi(testData.instanceId);
   });
 
   it(
