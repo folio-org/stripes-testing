@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
 import InteractorsTools from '../../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   const testData = {
@@ -40,7 +40,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380644 Create "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // #1 Click on the "Actions" button placed on the second pane >> Select "+New MARC Bib Record" option.
       InventoryInstance.newMarcBibRecord();

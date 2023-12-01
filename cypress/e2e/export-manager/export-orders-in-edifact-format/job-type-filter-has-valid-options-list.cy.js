@@ -1,15 +1,15 @@
 import moment from 'moment';
 
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import {
+  Integrations,
   NewOrganization,
   Organizations,
-  Integrations,
 } from '../../../support/fragments/organizations';
-import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format', () => {
@@ -59,7 +59,7 @@ describe('Export Manager', () => {
 
     it(
       'C378884 "EDIFACT orders export" option is added to job type filter in "Export manager" app (thunderjet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Check default page view
         ExportManagerSearchPane.checkDefaultView();

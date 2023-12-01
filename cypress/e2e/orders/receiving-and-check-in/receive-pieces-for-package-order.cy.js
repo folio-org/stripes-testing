@@ -1,19 +1,17 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import testType from '../../../support/dictionary/testTypes';
-import NewOrder from '../../../support/fragments/orders/newOrder';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../../support/fragments/orders/orderLines';
 import Users from '../../../support/fragments/users/users';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('Orders: Receiving and Check-in', () => {
   const order = {
@@ -87,7 +85,7 @@ describe('Orders: Receiving and Check-in', () => {
 
   it(
     'C343213 Receive pieces for package order (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

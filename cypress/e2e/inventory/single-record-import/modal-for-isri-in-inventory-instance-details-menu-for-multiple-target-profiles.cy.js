@@ -1,20 +1,20 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ReImportModal from '../../../support/fragments/inventory/reImportModal';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Single record import', () => {
@@ -102,7 +102,7 @@ describe('inventory', () => {
 
     it(
       'C375126 Verify the modal window for ISRI In inventory instance details menu for multiple target profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         cy.wait(1000);

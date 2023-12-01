@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -146,7 +146,7 @@ describe('data-import', () => {
 
     it(
       'C368009 Verify that no created SRS is present when job profile does not have create instance action: Case 2: Create holdings and item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['criticalPath', 'folijet+', 'parallel'] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
