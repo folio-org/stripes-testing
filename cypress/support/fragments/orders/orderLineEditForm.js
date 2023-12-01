@@ -10,8 +10,6 @@ import {
   TextField,
   including,
   matching,
-  Modal,
-  HTML,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -26,12 +24,9 @@ const fundDistributionDetailsSection = orderLineEditFormRoot.find(
   Section({ id: 'fundDistributionAccordion' }),
 );
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
-const keepEditingBtn = Button('Keep editing');
-const areYouSureForm = Modal('Are you sure?');
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save & close');
-const saveAndOpenOrderButtom = Button('Save & open order');
-const closeWithoutSavingButton = Button('Close without saving');
+const saveAndOpenOrderButton = Button('Save & open order');
 
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
@@ -60,7 +55,7 @@ const costDetailsFields = {
 const buttons = {
   Cancel: cancelButton,
   'Save & close': saveButton,
-  'Save & open order': saveAndOpenOrderButtom,
+  'Save & open order': saveAndOpenOrderButton,
 };
 
 export default {
@@ -206,8 +201,8 @@ export default {
     cy.wait(2000);
   },
   clickSaveAndOpenOrderButton({ orderOpened = true, orderLineCreated = true } = {}) {
-    cy.expect(saveAndOpenOrderButtom.has({ disabled: false }));
-    cy.do(saveAndOpenOrderButtom.click());
+    cy.expect(saveAndOpenOrderButton.has({ disabled: false }));
+    cy.do(saveAndOpenOrderButton.click());
 
     if (orderOpened) {
       InteractorsTools.checkCalloutMessage(
@@ -223,18 +218,5 @@ export default {
 
     // wait for changes to be applied
     cy.wait(2000);
-  },
-  clickCloseWithoutSavingButton() {
-    cy.do(areYouSureForm.find(closeWithoutSavingButton).click());
-  },
-  checkAreYouSureModalIsClosed() {
-    cy.expect(areYouSureForm.absent());
-  },
-  verifyAreYouSureForm() {
-    cy.expect([
-      areYouSureForm.find(HTML(including('There are unsaved changes'))).exists(),
-      areYouSureForm.find(keepEditingBtn).exists(),
-      areYouSureForm.find(closeWithoutSavingButton).exists(),
-    ]);
   },
 };
