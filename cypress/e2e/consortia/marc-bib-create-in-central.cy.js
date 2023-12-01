@@ -22,7 +22,10 @@ describe('MARC Bibliographic -> Create new MARC bib -> Consortia', () => {
     tag245: '245',
     tag700: '700',
     tag504: '504',
+    tagLDR: 'LDR',
+    validLDRValue: '00000naa\\a2200000uu\\4500',
     instanceTitle: `C405547 Created Shared Instance ${getRandomPostfix()}`,
+    tag700Content: '$a Dante Alighieri C422123 $d 1265-1321 $e Poet, Writer, Philosopher',
   };
 
   let createdInstanceID;
@@ -50,7 +53,7 @@ describe('MARC Bibliographic -> Create new MARC bib -> Consortia', () => {
         ]);
       })
       .then(() => {
-        // cy.resetTenant();
+        cy.resetTenant();
         cy.login(testData.userProperties.username, testData.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
@@ -70,6 +73,24 @@ describe('MARC Bibliographic -> Create new MARC bib -> Consortia', () => {
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.newMarcBibRecord();
+      QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderCreateText);
+      QuickMarcEditor.updateExistingField(testData.tagLDR, testData.validLDRValue);
+      QuickMarcEditor.updateExistingField(testData.tags.tag245, `$a ${testData.instanceTitle}`);
+      QuickMarcEditor.addEmptyFields(4);
+      QuickMarcEditor.checkContent('$a ', 5);
+      QuickMarcEditor.addValuesToExistingField(
+        5,
+        testData.tag700,
+        testData.tag700Content,
+        '0',
+        '2',
+      );
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.checkDetailViewShared();
+      InventoryInstance.checkInstanceTitle(testData.instanceTitle);
+      InventoryInstance.checkExpectedMARCSource();
+      InventoryInstance.verifyContributor();
       cy.wait(5000);
       // InventoryInstance.searchByTitle(createdInstanceID);
       // InventoryInstances.selectInstance();

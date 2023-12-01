@@ -1184,4 +1184,10 @@ export default {
       .find('a')
       .should('include.text', `${userLastName}, ${userFirsttName}`);
   },
+
+  checkDetailViewShared() {
+    cy.expect(
+      instanceDetailsPane.find(PaneHeader()).has({ title: including('Shared instance • ') }),
+    );
+  },
 };
