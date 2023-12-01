@@ -857,7 +857,7 @@ export default {
 
   verifyHoldingsOptions() {
     cy.expect([
-      Option({ value: 'ADMINISTRATIVE_NOTE'}).exists(),
+      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
       OptionGroup('Electronic access').find(Option({ value: 'ELECTRONIC_ACCESS_URI' })).exists(),
       OptionGroup('Electronic access').find(Option({ value: 'ELECTRONIC_ACCESS_URL_RELATIONSHIP' })).exists(),
       OptionGroup('Electronic access').find(Option({ value: 'ELECTRONIC_ACCESS_LINK_TEXT' })).exists(),
@@ -872,7 +872,7 @@ export default {
       OptionGroup('Holdings notes').find(Option({ text: 'Note' })).exists(),
       OptionGroup('Holdings notes').find(Option({ text: 'Provenance' })).exists(),
       OptionGroup('Holdings notes').find(Option({ text: 'Reproduction' })).exists(),
-      Option({ value: 'SUPPRESS_FROM_DISCOVERY'}).exists(),
+      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
     ]);
   },
 };
