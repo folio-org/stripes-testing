@@ -3,7 +3,6 @@ import {
   HTML,
   KeyValue,
   MultiColumnListCell,
-  MultiColumnListRow,
   PaneHeader,
   Section,
   including,
@@ -50,24 +49,17 @@ export default {
 
     return AddBudgetModal;
   },
-  openCurrentBudgetDetails() {
-    cy.do(
-      currentBudgetSection
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .click(),
-    );
-    BudgetDetails.waitLoading();
-
-    return BudgetDetails;
+  openCurrentBudgetDetails(index = 0) {
+    return this.openBudgetDetails({ index, section: currentBudgetSection });
   },
-  openPreviousBudgetDetails() {
-    cy.do(
-      previousBudgetsSection
-        .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .click(),
-    );
+  openPlannedBudgetDetails(index = 0) {
+    return this.openBudgetDetails({ index, section: plannedBudgetSection });
+  },
+  openPreviousBudgetDetails(index = 0) {
+    return this.openBudgetDetails({ index, section: previousBudgetsSection });
+  },
+  openBudgetDetails({ index = 0, section } = {}) {
+    cy.do(section.find(MultiColumnListCell({ row: index, column: 'Name' })).click());
     BudgetDetails.waitLoading();
 
     return BudgetDetails;

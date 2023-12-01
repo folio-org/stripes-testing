@@ -68,24 +68,59 @@ export default {
       if (details.checked) {
         cy.do(Checkbox({ name: `budgetsRollover[${index}].rolloverAllocation` }).click());
       }
+
+      if (details.rolloverBudget) {
+        cy.do([
+          Select({ name: `budgetsRollover[${index}].rolloverBudgetValue` }).click(),
+          Select({ name: `budgetsRollover[${index}].rolloverBudgetValue` }).choose(
+            details.rolloverBudget,
+          ),
+        ]);
+      }
+
+      if (details.rolloverValue) {
+        cy.do([
+          Select({ name: `budgetsRollover[${index}].addAvailableTo` }).click(),
+          Select({ name: `budgetsRollover[${index}].addAvailableTo` }).choose(
+            details.rolloverValue,
+          ),
+        ]);
+      }
     });
   },
   setRolloverEncumbranceFields(rolloverEncumbrance) {
+    if (rolloverEncumbrance.ongoing) {
+      this.setEncumbranceRowFields({
+        label: 'Ongoing encumbrances',
+        encumbrances: rolloverEncumbrance.ongoing,
+      });
+    }
+    if (rolloverEncumbrance.ongoingSubscription) {
+      this.setEncumbranceRowFields({
+        label: 'Ongoing-subscription encumbrances',
+        encumbrances: rolloverEncumbrance.ongoingSubscription,
+      });
+    }
     if (rolloverEncumbrance.oneTime) {
-      const fieldItem = encumbrancesDetailsSection.find(
-        RepeatableFieldItem({ content: including('One-time encumbrances') }),
-      );
-      cy.do(fieldItem.find(Checkbox()).click());
-      cy.wait(300);
+      this.setEncumbranceRowFields({
+        label: 'One-time encumbrances',
+        encumbrances: rolloverEncumbrance.oneTime,
+      });
+    }
+  },
+  setEncumbranceRowFields({ label, encumbrances }) {
+    const fieldItem = encumbrancesDetailsSection.find(
+      RepeatableFieldItem({ content: including(label) }),
+    );
+    cy.do(fieldItem.find(Checkbox()).click());
+    // wait for fields to become enabled
+    cy.wait(300);
 
-      if (rolloverEncumbrance.oneTime.basedOn) {
-        cy.do([
-          fieldItem.find(Select({ label: including('Based on') })).click(),
-          fieldItem
-            .find(Select({ label: including('Based on') }))
-            .choose(rolloverEncumbrance.oneTime.basedOn),
-        ]);
-      }
+    if (encumbrances.basedOn) {
+      cy.do([
+        fieldItem.find(Select({ label: including('Based on') })).click(),
+        fieldItem.find(Select({ label: including('Based on') })).choose(encumbrances.basedOn),
+      ]);
     }
   },
   clickContinueInConfirmationModal() {

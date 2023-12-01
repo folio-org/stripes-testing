@@ -1,22 +1,22 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import Users from '../../../support/fragments/users/users';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -68,7 +68,7 @@ describe('data-import', () => {
 
     it(
       'C404370 Verify the error message when attempting to create new Data Import profiles with existing profile names (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const jobProfileErrorMessage =
           "New record not created: Job profile 'Default - Create instance and SRS MARC Bib' already exists";

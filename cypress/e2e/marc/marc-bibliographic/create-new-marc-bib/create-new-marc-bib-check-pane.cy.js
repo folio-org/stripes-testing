@@ -1,9 +1,9 @@
-import { DevTeams, Permissions, TestTypes } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   const testData = {};
@@ -30,7 +30,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
   it(
     'C380427 A new "MARC bib" record is opened in QuickMARC UI (spitfire) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.spitfire],
+      tags: ['criticalPath', 'spitfire'],
     },
     () => {
       // Open "Inventory" app

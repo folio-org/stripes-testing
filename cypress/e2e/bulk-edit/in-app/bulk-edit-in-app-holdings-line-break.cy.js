@@ -1,18 +1,16 @@
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 const items = [];
@@ -88,7 +86,7 @@ describe('bulk-edit', () => {
 
     it(
       'C399093 Verify Previews for the number of Holdings records if the records have fields with line breaks (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
         BulkEditSearchPane.uploadFile(holdingsHRIDFileName);

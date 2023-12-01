@@ -493,6 +493,10 @@ export default {
     internal: 'ui-receiving.create',
     gui: 'Receiving: View, edit, create',
   },
+  uiReceivingViewEditDelete: {
+    internal: 'ui-receiving.delete',
+    gui: 'Receiving: View, edit, delete',
+  },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
     internal: 'ui-invoice.invoice.delete',
@@ -887,5 +891,17 @@ export default {
   listsAll: {
     internal: 'module.lists.all',
     gui: 'Lists (Admin): All permissions',
+  },
+
+  // Licenses
+  licensesSearchAndView: {
+    internal: 'ui-licenses.licenses.view',
+    gui: 'Licenses: Search & view licenses',
+  },
+
+  // Courses
+  coursesAll: {
+    internal: 'ui-courses.all',
+    gui: 'Courses: All permissions',
   },
 };

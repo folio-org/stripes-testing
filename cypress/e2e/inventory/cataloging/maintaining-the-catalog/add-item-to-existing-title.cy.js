@@ -1,18 +1,18 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
 import {
+  LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
-  LOAN_TYPE_NAMES,
 } from '../../../../support/constants';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import Users from '../../../../support/fragments/users/users';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import { Permissions } from '../../../../support/dictionary';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../../support/fragments/inventory/inventoryNewHoldings';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordNew from '../../../../support/fragments/inventory/item/itemRecordNew';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
 
 describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
@@ -53,7 +53,7 @@ describe('inventory', () => {
 
     it(
       'C3494 Add an item to an existing title. There is already a copy at another library branch. (folijet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter(
