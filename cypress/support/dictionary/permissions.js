@@ -136,6 +136,10 @@ export default {
     internal: 'ui-inventory.single-record-import',
     gui: 'Inventory: Import single bibliographic records',
   },
+  uiInventoryCreateOrderFromInstance: {
+    internal: 'ui-inventory.instance.createOrder',
+    gui: 'Inventory: Create order from instance',
+  },
   uiInventoryMarkItemsWithdrawn: {
     internal: 'ui-inventory.items.mark-items-withdrawn',
     gui: 'Inventory: Mark items withdrawn',
