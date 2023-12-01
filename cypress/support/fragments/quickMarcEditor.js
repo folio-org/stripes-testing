@@ -1671,6 +1671,10 @@ export default {
     });
   },
 
+  updateValueOf008BoxByBoxName(boxName, updatedValue) {
+    cy.do(TextField(`${boxName}`).fillIn(updatedValue));
+  },
+
   checkValuesIn008Boxes(valuesArray) {
     valuesArray.forEach((value, index) => {
       cy.expect(tag008DefaultValues[index].interactor.has({ value }));
