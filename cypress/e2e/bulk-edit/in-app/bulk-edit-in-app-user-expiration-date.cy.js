@@ -60,5 +60,12 @@ describe('bulk-edit', () => {
         UsersCard.verifyExpirationDate(pastDate);
       },
     );
+
+    it(
+      'C380575 Verify that Expiration Date in "Are you sure" form is accurate (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird'] },
+      () => {
+      },
+    );
   });
 });
