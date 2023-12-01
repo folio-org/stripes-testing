@@ -1,4 +1,5 @@
 import { matching } from 'bigtest';
+import { including } from '@interactors/html';
 import { MultiColumnListCell } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -79,6 +80,8 @@ export default {
   },
 
   checkResultsInTheRow(allContentToCheck, rowNumber = 0) {
-    allContentToCheck.forEach((contentToCheck) => cy.expect(MultiColumnListCell({ row: rowNumber, content: contentToCheck }).exists()));
+    allContentToCheck.forEach((contentToCheck) => cy.expect(
+      MultiColumnListCell({ row: rowNumber, content: including(contentToCheck) }).exists(),
+    ));
   },
 };

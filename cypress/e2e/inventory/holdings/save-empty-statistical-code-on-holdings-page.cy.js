@@ -16,7 +16,7 @@ const testData = {
     instanceName: `Inventory Instance ${randomFourDigitNumber()}`,
     itemBarcode: randomFourDigitNumber(),
   },
-  statisticalCode: 'Book, print (books)',
+  statisticalCode: 'Active serial',
   secondStatisticalCode: 'Books, electronic (ebooks)',
   errorMessage: 'Please select to continue',
   calloutMessage: 'has been successfully saved.',
