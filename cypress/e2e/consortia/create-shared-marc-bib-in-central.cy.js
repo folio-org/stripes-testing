@@ -100,7 +100,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () =>
       InventoryInstance.checkPresentedText(testData.fieldContents.tag245Content);
       InventoryInstance.checkExpectedMARCSource();
       InventoryInstance.checkContributor(testData.contributor);
-      
+
       cy.login(users.userBProperties.username, users.userBProperties.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
