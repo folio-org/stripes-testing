@@ -394,9 +394,10 @@ export default {
   },
 
   chooseAuthoritySourceOption: (option) => {
-    cy.do(
+    cy.do([
+      cy.wait(1000), // without wait will immediately close accordion
       MultiSelect({ ariaLabelledby: 'sourceFileId-multiselect-label' }).select([including(option)]),
-    );
+    ]);
   },
 
   verifyEmptyAuthorityField: () => {
@@ -925,5 +926,13 @@ export default {
         .click(),
     );
     cy.expect(typeOfHeadingSelect.has({ selectedCount: 0 }));
+  },
+
+  verifySelectedTextOfAuthoritySourceAndCount: (authoritySource, count = '') => {
+    cy.do(sourceFileAccordion.find(openAuthSourceMenuButton).click());
+    cy.expect([
+      MultiSelect({ selected: including(authoritySource) }).exists(),
+      sourceFileAccordion.find(MultiSelectOption(including(`(${count})`))).exists(),
+    ]);
   },
 };
