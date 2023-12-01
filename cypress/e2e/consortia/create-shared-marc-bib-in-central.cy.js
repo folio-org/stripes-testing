@@ -108,6 +108,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () =>
       ConsortiumManager.switchActiveAffiliation(tenantNames.college);
       InventoryInstance.searchByTitle(testData.fieldContents.tag245Content);
       InventoryInstances.selectInstance();
+      InventoryInstance.verifySharedIcon();
       InventoryInstance.checkPresentedText(testData.fieldContents.tag245Content);
       InventoryInstance.checkExpectedMARCSource();
       InventoryInstance.checkContributor(testData.contributor);

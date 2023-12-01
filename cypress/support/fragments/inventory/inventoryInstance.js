@@ -1177,4 +1177,8 @@ export default {
   verifyItemStatus: (itemStatus) => {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
+
+  verifySharedIcon(row = 0) {
+    cy.expect(paneResultsSection.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).exists());
+  }
 };
