@@ -1713,4 +1713,12 @@ export default {
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
   },
+
+  checkContentByTag(tagName, content) {
+    cy.expect(
+      getRowInteractorByTagName(tagName)
+        .find(TextArea({ name: including('.content') }))
+        .has({ value: content }),
+    );
+  },
 };
