@@ -4,8 +4,8 @@ export default {
   College: 'cs00000int_0001',
 };
 
-export const tenantNames = {
-  central: 'Central Office',
-  college: 'College',
-  university: 'University',
+export const TENANT_NAMES = {
+  CENTRAL: 'Central Office',
+  COLLEGE: 'College',
+  UNIVERSITY: 'University',
 };

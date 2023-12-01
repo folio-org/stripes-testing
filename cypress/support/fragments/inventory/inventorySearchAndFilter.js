@@ -815,4 +815,10 @@ export default {
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
   },
+
+  verifySharedIconForSearchResult(instanceTitle) {
+    cy.expect(
+      MultiColumnListCell({ content: instanceTitle, innerHTML: including('sharedIcon') }).exists(),
+    );
+  },
 };

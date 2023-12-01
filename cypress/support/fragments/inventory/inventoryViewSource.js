@@ -71,4 +71,8 @@ export default {
         });
     }
   },
+
+  checkSharedText() {
+    cy.expect(rootSection.find(HTML({ text: 'Shared MARC bibliographic record' })));
+  },
 };
