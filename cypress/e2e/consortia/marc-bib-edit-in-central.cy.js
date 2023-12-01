@@ -3,8 +3,6 @@ import Affiliations, { TENANT_NAMES } from '../../support/dictionary/affiliation
 import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
