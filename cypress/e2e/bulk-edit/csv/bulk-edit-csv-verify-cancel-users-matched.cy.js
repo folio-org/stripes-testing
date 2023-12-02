@@ -13,7 +13,6 @@ const newFirstName = `testNewFirstName_${getRandomPostfix()}`;
 const userUUIDsFileName = `userUUIds_${getRandomPostfix()}.csv`;
 const matchedRecordsFile = `*Matched-Records-${userUUIDsFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
-const changedRecordsFileName = `*-Changed-Records-${userUUIDsFileName}`;
 
 // TODO enable commented lines when issue is fixed https://issues.folio.org/browse/MODBULKOPS-114
 
