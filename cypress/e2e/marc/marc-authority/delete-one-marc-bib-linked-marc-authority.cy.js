@@ -15,7 +15,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('MARC -> MARC Authority', () => {
   const testData = {
     marcValue:
-      'C350932 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+      'C350932 Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
     markedValue: 'C350932 Beethoven, Ludwig van,',
     searchOption: 'Keyword',
   };
