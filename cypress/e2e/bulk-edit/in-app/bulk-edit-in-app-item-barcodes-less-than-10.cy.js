@@ -78,12 +78,5 @@ describe('bulk-edit', () => {
         );
       },
     );
-
-    it(
-      'C358976 Verify preview after updating less than 10 records (firebird) (TaaS)',
-      { tags: ['extendedPath', 'firebird'] },
-      () => {
-      },
-    );
   });
 });
