@@ -73,7 +73,7 @@ describe('data-import', () => {
           InventoryInstance.verifyResourceIdentifier(
             resourceIdentifier.type,
             resourceIdentifier.value,
-            5,
+            3,
           );
         });
       },
