@@ -3,13 +3,11 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
@@ -53,7 +51,7 @@ describe('bulk-edit', () => {
           });
       });
     });
-  
+
     after('delete test data', () => {
       cy.getAdminToken();
       CheckInActions.checkinItemViaApi({
@@ -73,7 +71,7 @@ describe('bulk-edit', () => {
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-  
+
         BulkEditSearchPane.uploadFile(itemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
