@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
               cy.updateItemViaApi(res);
             },
           );
-        })
+        });
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
