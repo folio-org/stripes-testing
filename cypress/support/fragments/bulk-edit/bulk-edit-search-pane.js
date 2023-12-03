@@ -902,6 +902,22 @@ export default {
     ]);
   },
 
+  verifyLogsStartedAccordionCollapsed() {
+    cy.expect([
+      logsStartDateAccordion.has({ open: false }),
+      logsStartDateAccordion.find(textFieldFrom).absent(),
+      logsStartDateAccordion.find(textFieldTo).absent(),
+    ]);
+  },
+
+  verifyLogsEndedAccordionCollapsed() {
+    cy.expect([
+      logsEndDateAccordion.has({ open: false }),
+      logsEndDateAccordion.find(textFieldFrom).absent(),
+      logsEndDateAccordion.find(textFieldTo).absent(),
+    ]);
+  },
+
   verifyLogsStatusesAccordionExistsAndUnchecked() {
     cy.expect([
       logsStatusesAccordion.has({ open: true }),
@@ -975,13 +991,13 @@ export default {
     cy.expect(Accordion(accordion).find(TextField(fieldName)).has({ value: valueToVerify }));
   },
 
-  verifyClearSelectedFiltersButtonExists(accordion) {
+  verifyClearSelectedFiltersButton(accordion, verification = 'exists') {
+    if (!['exists', 'absent'].includes(verification)) {
+      throw new Error(`${verification} is not supported`);
+    }
     cy.expect(
       Accordion(accordion)
-        .find(
-          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
-        )
-        .exists(),
+        .find(Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }))[verification]()
     );
   },
 
@@ -1116,18 +1132,21 @@ export default {
     this.waitingFileDownload();
   },
 
-  verifyLogsTableHeaders() {
+  verifyLogsTableHeaders(verification = 'exists') {
+    if (!['exists', 'absent'].includes(verification)) {
+      throw new Error(`${verification} is not supported`);
+    }
     cy.expect([
-      MultiColumnListHeader('Record type').exists(),
-      MultiColumnListHeader('Status').exists(),
-      MultiColumnListHeader('Editing').exists(),
-      MultiColumnListHeader('# of records').exists(),
-      MultiColumnListHeader('Processed').exists(),
-      MultiColumnListHeader('Started').exists(),
-      MultiColumnListHeader('Ended').exists(),
-      MultiColumnListHeader('Run by').exists(),
-      MultiColumnListHeader('ID').exists(),
-      MultiColumnListHeader('Actions').exists(),
+      MultiColumnListHeader('Record type')[verification](),
+      MultiColumnListHeader('Status')[verification](),
+      MultiColumnListHeader('Editing')[verification](),
+      MultiColumnListHeader('# of records')[verification](),
+      MultiColumnListHeader('Processed')[verification](),
+      MultiColumnListHeader('Started')[verification](),
+      MultiColumnListHeader('Ended')[verification](),
+      MultiColumnListHeader('Run by')[verification](),
+      MultiColumnListHeader('ID')[verification](),
+      MultiColumnListHeader('Actions')[verification](),
     ]);
   },
 
