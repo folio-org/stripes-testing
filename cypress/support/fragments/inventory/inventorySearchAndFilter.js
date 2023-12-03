@@ -101,7 +101,7 @@ const searchHoldingsByHRID = (hrid) => {
 
 const searchInstanceByTitle = (title) => {
   cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
-  InventoryInstance.waitLoading();
+  InventoryInstance.waitInventoryLoading();
 
   return InventoryInstance;
 };
