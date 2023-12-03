@@ -194,6 +194,6 @@ describe('bulk-edit', () => {
           'No match found'
         ]);
       },
-    )
+    );
   });
 });
