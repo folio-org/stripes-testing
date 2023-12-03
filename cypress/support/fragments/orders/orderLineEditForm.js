@@ -139,8 +139,17 @@ export default {
       });
     });
   },
-  addFundDistribution() {
+  clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
+  },
+  addFundDistribution({ fund, index, amount }) {
+    this.clickAddFundDistributionButton();
+    this.selectFundDistribution(fund, index);
+    this.setFundDistributionValue(amount, index);
+    cy.wait(2000);
+  },
+  updateFundDistribution({ fund, index }) {
+    this.selectFundDistribution(fund, index);
   },
   deleteFundDistribution({ index = 0 } = {}) {
     cy.do(
@@ -151,18 +160,27 @@ export default {
     );
     cy.wait(2000);
   },
-  selectDropDownValue(label, option) {
+  selectDropDownValue(label, option, index = 0) {
     cy.do([
-      Selection(including(label)).open(),
+      RepeatableFieldItem({ index })
+        .find(Selection(including(label)))
+        .open(),
       SelectionList().filter(option),
       SelectionList().select(including(option)),
     ]);
   },
-  selectFundDistribution(fund) {
-    this.selectDropDownValue('Fund ID', fund);
+  selectFundDistribution(fund, index) {
+    this.selectDropDownValue('Fund ID', fund, index);
   },
-  selectExpenseClass(expenseClass) {
-    this.selectDropDownValue('Expense class', expenseClass);
+  selectExpenseClass(expenseClass, index) {
+    this.selectDropDownValue('Expense class', expenseClass, index);
+  },
+  setFundDistributionValue(value, index) {
+    cy.do(
+      RepeatableFieldItem({ index })
+        .find(TextField({ label: including('Value') }))
+        .fillIn(value),
+    );
   },
   checkValidatorError({ locationDetails } = {}) {
     if (locationDetails) {
