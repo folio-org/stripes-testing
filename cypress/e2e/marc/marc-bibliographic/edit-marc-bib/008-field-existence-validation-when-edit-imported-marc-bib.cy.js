@@ -121,6 +121,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       QuickMarcEditor.updateValuesIn008Boxes(testData.tag008BoxValues);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.editMarcBibliographicRecord();
       InventorySteps.verifyHiddenFieldValueIn008(
         testData.createdRecordIDs[0],
         'Entered',
