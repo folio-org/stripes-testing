@@ -89,7 +89,7 @@ export default {
   selectFundDistribution(fund) {
     this.selectDropDownValue('Fund ID', fund);
   },
-  addFundDistribution() {
+  clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
   },
   fillInvoiceLineFields(invoiceLine) {
