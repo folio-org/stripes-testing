@@ -161,6 +161,8 @@ const advSearchItemsOptionsValues = searchItemsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
 
+const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
+
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   method: 'POST',
   path: 'inventory/instances',
@@ -1007,5 +1009,56 @@ export default {
     cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
       cy.expect(!checkbox.checked);
     });
+  },
+
+  checkColumnHeaderSort(headerName, isAscending = true) {
+    const sort = isAscending ? 'ascending' : 'descending';
+    cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort })).exists());
+  },
+
+  getResultsListByColumn(columnIndex) {
+    const cells = [];
+
+    cy.wait(2000);
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        // from each row, choose specific cell
+        cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
+          // extract its text content
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+          });
+      })
+      .then(() => cells);
+  },
+
+  checkResultListSortedByColumn(columnIndex, isAscending = true) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      if (isAscending) {
+        cy.expect(cells).to.deep.equal(cells.sort((a, b) => a - b));
+      } else {
+        cy.expect(cells).to.deep.equal(cells.sort((a, b) => b - a));
+      }
+    });
+  },
+
+  clickActionsButton() {
+    cy.do(actionsButton.click());
+    cy.expect(actionsSortSelect.exists());
+  },
+
+  actionsSortBy(value) {
+    cy.do(actionsSortSelect.choose(value));
+    // need to wait until content will be sorted
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
+    cy.expect(actionsSortSelect.absent());
+  },
+
+  verifyActionsSortedBy(value) {
+    cy.expect(actionsSortSelect.has({ checkedOptionText: value }));
   },
 };

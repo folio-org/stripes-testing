@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-// import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -14,10 +14,20 @@ describe('inventory', () => {
   describe('Call Number Browse', () => {
     const testData = {
       searchQuery: `C422216_autotest_instance_${getRandomPostfix()}`,
-      instanceTag: `inst_tag_${randomFourDigitNumber}`,
-      holdingsTag: `hold_tag_${randomFourDigitNumber}`,
-      itemTag: `item_tag_${randomFourDigitNumber}`,
+      instanceTag: `inst_tag_${randomFourDigitNumber()}`,
+      holdingsTag: `hold_tag_${randomFourDigitNumber()}`,
+      itemTag: `item_tag_${randomFourDigitNumber()}`,
       instanceLanguage: 'eng',
+      titleHeader: 'Title',
+      relevanceSortOption: 'Relevance',
+      instanceAccordions: [
+        'Language',
+        'Resource Type',
+        'Staff suppress',
+        'Suppress from discovery',
+        'Source',
+        'Tags',
+      ],
     };
     const instances = [
       {
@@ -80,7 +90,7 @@ describe('inventory', () => {
                 },
               ],
             }).then((instanceIds) => {
-              instances[0].id = instanceIds.instanceId;
+              instance.id = instanceIds.instanceId;
               ItemRecordNew.createViaApi({
                 holdingsId: instanceIds.holdingIds[0].id,
                 itemBarcode: uuid(),
@@ -106,7 +116,9 @@ describe('inventory', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
-      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instances[0].id);
+      instances.forEach((instance) => {
+        InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(instance.id);
+      });
     });
 
     it(
@@ -114,7 +126,18 @@ describe('inventory', () => {
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstance.searchByTitle(testData.searchQuery);
-        cy.wait(5000);
+        InventorySearchAndFilter.switchToInstance();
+        InventoryInstances.checkColumnHeaderSort(testData.titleHeader);
+        InventoryInstances.checkResultListSortedByColumn(1);
+        InventoryInstances.clickActionsButton();
+        InventoryInstances.actionsSortBy(testData.relevanceSortOption);
+        InventoryInstances.clickActionsButton();
+        InventoryInstances.verifyActionsSortedBy(testData.relevanceSortOption);
+        testData.instanceAccordions.forEach((accordion) => {
+          InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(accordion);
+        });
+
+        // cy.wait(5000);
         // InventorySearchAndFilter.switchToBrowseTab();
         // InventorySearchAndFilter.verifyBrowseOptions();
 

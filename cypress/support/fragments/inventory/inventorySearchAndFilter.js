@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -843,5 +843,11 @@ export default {
       Section({ id: 'acc01' }).find(KeyValue('Source')).has({ value: instanceData.source }),
       Section({ id: 'acc02' }).find(KeyValue('Resource title')).has({ value: instanceData.title }),
     ]);
+  },
+
+  checkOptionsWithCountersExistInAccordion(accordionName) {
+    const accordionToCheck = paneFilterSection.find(Accordion(accordionName));
+    cy.do(accordionToCheck.clickHeader());
+    cy.expect([accordionToCheck.find(Checkbox()).has({ label: matching(/.{1,}\d{1,}/) })]);
   },
 };
