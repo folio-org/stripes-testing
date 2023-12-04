@@ -1212,4 +1212,9 @@ export default {
   verifyBuildQueryModal() {
     cy.expect(buildQueryModal.exists());
   },
+
+  verifyFirstOptionRecordIdentifierDropdown(value) {
+    const selector = '[arial-label="Record identifier"]';
+    cy.get(`${selector} option:first`).should('have.text', value);
+  },
 };
