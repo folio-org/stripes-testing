@@ -254,6 +254,14 @@ const tag008DefaultValues = [
   { interactor: TextField('DtSt'), defaultValue: '\\' },
   { interactor: TextField('Start date'), defaultValue: '\\\\\\\\' },
   { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
+  { interactor: TextField('Ills', { name: including('Ills[0]') }), defaultValue: '\\' },
+  { interactor: TextField('Ills', { name: including('Ills[1]') }), defaultValue: '\\' },
+  { interactor: TextField('Ills', { name: including('Ills[2]') }), defaultValue: '\\' },
+  { interactor: TextField('Ills', { name: including('Ills[3]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[0]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[1]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[2]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[3]') }), defaultValue: '\\' },
 ];
 
 const defaultFieldValues = {
@@ -1668,6 +1676,12 @@ export default {
     });
     valuesArray.forEach((value, index) => {
       cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
+
+  deleteValuesIn008Boxes() {
+    tag008DefaultValues.forEach((index) => {
+      cy.do(index.interactor.fillIn(''));
     });
   },
 
