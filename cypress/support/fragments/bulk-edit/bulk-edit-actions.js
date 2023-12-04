@@ -98,6 +98,11 @@ export default {
   afterAllSelectedActions() {
     cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
   },
+  deleteRow(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click(),
+    );
+  },
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
