@@ -12,6 +12,7 @@ import { Locations } from '../../../support/fragments/settings/tenant';
 import settingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('inventory', () => {
+describe('item', () => {
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
@@ -134,4 +135,5 @@ describe('inventory', () => {
       });
     },
   );
+});
 });
