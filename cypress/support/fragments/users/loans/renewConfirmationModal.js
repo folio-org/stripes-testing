@@ -1,6 +1,6 @@
-import { including } from '@interactors/html';
+import { including, matching } from '@interactors/html';
 
-import { Button, Modal, MultiColumnListCell } from '../../../../../interactors';
+import { Button, Modal, MultiColumnListCell, MultiColumnListRow } from '../../../../../interactors';
 
 const rootModal = Modal({ id: 'bulk-renewal-modal' });
 
@@ -10,16 +10,28 @@ export default {
   },
 
   confirmRenewOverrideItem: () => {
-    cy.do(Modal('Renew Confirmation').find(Button('Override')).click());
+    cy.do(rootModal.find(Button('Override')).click());
   },
 
-  verifyRenewConfirmationModal: (renewalStatus, hasOverridePermission) => {
-    cy.expect([
-      MultiColumnListCell({ column: 'Renewal status' }).has({ content: including(renewalStatus) }),
-      Button('Close').exists(),
-    ]);
+  closeModal: () => {
+    cy.do(rootModal.find(Button('Close')).click());
+    cy.expect(rootModal.absent());
+  },
+
+  verifyRenewConfirmationModal: (loansToCheck, hasOverridePermission = false) => {
+    cy.expect(Button('Close').exists());
+    loansToCheck.forEach((loan) => {
+      cy.expect(
+        rootModal
+          .find(MultiColumnListRow({ text: matching(loan.itemBarcode), isContainer: false }))
+          .find(MultiColumnListCell({ column: 'Renewal status' }))
+          .has({ content: including(loan.status) }),
+      );
+    });
     if (hasOverridePermission) {
       cy.expect(Button('Override').exists());
+    } else {
+      cy.expect(Button('Override').absent());
     }
   },
 };

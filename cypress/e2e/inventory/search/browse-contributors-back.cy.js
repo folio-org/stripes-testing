@@ -1,13 +1,12 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
+import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('Inventory -> Contributors Browse', () => {
   const testData = {
@@ -38,7 +37,17 @@ describe('Inventory -> Contributors Browse', () => {
   });
 
   beforeEach(() => {
-    InventoryInstances.createInstanceViaApi(testData.item.instanceName, testData.item.itemBarcode);
+    cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
+      InventoryInstances.createFolioInstanceViaApi({
+        instance: {
+          instanceTypeId: instanceTypes[0].id,
+          title: testData.item.instanceName,
+        },
+      }).then((instanceIds) => {
+        testData.instanceId = instanceIds.instanceId;
+      });
+    });
+
     cy.loginAsAdmin({
       path: TopMenu.inventoryPath,
       waiter: InventorySearchAndFilter.waitLoading,
@@ -76,12 +85,12 @@ describe('Inventory -> Contributors Browse', () => {
 
   afterEach(() => {
     cy.getAdminToken();
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
+    InventoryInstance.deleteInstanceViaApi(testData.instanceId);
   });
 
   it(
     'C357032 Return back to "Browse inventory" pane via the web-browser "Back" button (not-exact match query) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.waitContentLoading();
       InventorySearchAndFilter.switchToBrowseTab();

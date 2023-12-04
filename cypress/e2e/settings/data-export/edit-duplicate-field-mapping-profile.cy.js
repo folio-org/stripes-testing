@@ -1,17 +1,15 @@
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
-import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
-import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
 import ModalSelectTransformations from '../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 let user;
 const profileNames = [
@@ -64,7 +62,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15826 Editing the existing mapping profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[0]);
       SingleFieldMappingProfilePane.verifyActionOptions();
@@ -90,7 +88,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15827 Duplicate the existing mapping profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[1]);
       SingleFieldMappingProfilePane.verifyActionOptions();

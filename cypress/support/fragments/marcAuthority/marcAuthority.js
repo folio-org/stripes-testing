@@ -293,4 +293,13 @@ export default {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 655 has been linked to a MARC authority record.').exists());
   },
+
+  createAuthoritySource: (body) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'authority-source-files',
+      body,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };

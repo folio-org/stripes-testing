@@ -1,28 +1,26 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
-import TestType from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
-import RenewalActions from '../../support/fragments/loans/renewals';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import permissions from '../../support/dictionary/permissions';
 import {
   CY_ENV,
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../support/constants';
-import getRandomPostfix from '../../support/utils/stringTools';
-import LoanPolicyActions from '../../support/fragments/circulation/loan-policy';
-import CheckoutActions from '../../support/fragments/checkout/checkout';
+import permissions from '../../support/dictionary/permissions';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import users from '../../support/fragments/users/users';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import TopMenu from '../../support/fragments/topMenu';
+import CheckoutActions from '../../support/fragments/checkout/checkout';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LoanPolicyActions from '../../support/fragments/circulation/loan-policy';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import RenewalActions from '../../support/fragments/loans/renewals';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Renewal', () => {
   let materialTypeId;
@@ -190,7 +188,7 @@ describe('Renewal', () => {
 
   it(
     'C567: Renewal: success, from open loans (multiple items) (vega)',
-    { tags: [TestType.smoke, DevTeams.vega] },
+    { tags: ['smoke', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       cy.intercept('GET', '/configurations/entries?*').as('getEntries');

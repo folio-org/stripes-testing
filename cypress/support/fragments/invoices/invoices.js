@@ -74,6 +74,7 @@ const getDefaultInvoice = ({
   vendorName,
   fiscalYearId,
   accountingCode,
+  invoiceStatus = 'Open',
   invoiceDate = moment.utc().format(),
   exportToAccounting = true,
 }) => ({
@@ -82,7 +83,7 @@ const getDefaultInvoice = ({
   source: 'User',
   batchGroupId,
   batchGroupName,
-  status: 'Open',
+  status: invoiceStatus,
   exportToAccounting,
   vendorId,
   vendorName,
@@ -137,6 +138,7 @@ export default {
     accountingCode,
     fiscalYearId,
     batchGroupId,
+    invoiceStatus,
     exportToAccounting,
   }) {
     const create = (invoice) => {
@@ -153,6 +155,7 @@ export default {
       batchGroupId,
       vendorId,
       accountingCode,
+      invoiceStatus,
       exportToAccounting,
     });
 
@@ -212,6 +215,7 @@ export default {
     poLineId,
     fiscalYearId,
     batchGroupId,
+    invoiceStatus,
     fundDistributions,
     accountingCode,
     subTotal,
@@ -223,6 +227,7 @@ export default {
       accountingCode,
       fiscalYearId,
       batchGroupId,
+      invoiceStatus,
       exportToAccounting,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
@@ -323,6 +328,28 @@ export default {
       Checkbox('Export to accounting').click(),
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  createDefaultInvoiceWithoutAddress(invoice) {
+    cy.wait(4000);
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(invoice.vendorName);
+    cy.do([
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('Cash'),
+      Checkbox('Export to accounting').click(),
+    ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
