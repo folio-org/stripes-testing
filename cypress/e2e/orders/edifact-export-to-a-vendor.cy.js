@@ -128,7 +128,7 @@ describe('orders: export', () => {
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
@@ -149,7 +149,7 @@ describe('orders: export', () => {
     { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);

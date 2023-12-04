@@ -101,7 +101,7 @@ describe('Orders: Receiving and Check-in', () => {
     Receiving.unreceiveFromReceivedSection();
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
     OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();

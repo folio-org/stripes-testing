@@ -15,13 +15,16 @@ describe('bulk-edit', () => {
       cy.createTempUser([permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui]).then(
         (userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
         },
       );
+    });
+
+    beforeEach('login', () => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
     });
 
     after('delete test data', () => {
@@ -46,6 +49,27 @@ describe('bulk-edit', () => {
         BulkEditActions.fillExpirationDate(new Date(), 1);
         BulkEditSearchPane.isConfirmButtonDisabled(true);
         BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
+        BulkEditSearchPane.isConfirmButtonDisabled(false);
+      },
+    );
+
+    it(
+      'C360538 Verify that the "Confirm changes" button stays disabled when "Actions" option is empty (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird'] },
+      () => {
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+        BulkEditSearchPane.uploadFile(userUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.selectOption('Patron group');
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.addNewBulkEditFilterString();
+        BulkEditActions.fillExpirationDate(new Date(), 1);
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
+        BulkEditActions.deleteRow();
         BulkEditSearchPane.isConfirmButtonDisabled(false);
       },
     );
