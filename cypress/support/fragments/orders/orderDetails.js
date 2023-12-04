@@ -21,6 +21,7 @@ import CreateInvoiceModal from './modals/createInvoiceModal';
 import OpenConfirmationModal from './modals/openConfirmationModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import ExportDetails from '../exportManager/exportDetails';
+import Receivings from '../receiving/receiving';
 
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
@@ -95,6 +96,13 @@ export default {
       );
     }
   },
+  openReceivingsPage() {
+    this.expandActionsDropdown();
+    cy.do(Button('Receive').click());
+    Receivings.waitLoading();
+
+    return Receivings;
+  },
   createNewInvoice({ confirm = true } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('New invoice').click());
@@ -104,14 +112,6 @@ export default {
     if (confirm) {
       CreateInvoiceModal.confirm();
     }
-  },
-  openReceive() {
-    cy.do([
-      Pane({ id: 'order-details' })
-        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button('Actions')))
-        .click(),
-      Button('Receive').click(),
-    ]);
   },
   openExportJobDetails({ rowIndex = 0, columnIndex = 0 } = {}) {
     cy.do(

@@ -28,6 +28,7 @@ import {
   PaneHeader,
   or,
   PaneContent,
+  matching,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import HoldingsRecordView from './holdingsRecordView';
@@ -421,9 +422,12 @@ export default {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
   },
 
-  checkHoldingTitle(title, absent = false) {
+  checkHoldingTitle({ title, count, absent = false }) {
     if (!absent) {
-      cy.expect(detailsPaneContent.has({ text: including(`Holdings: ${title}`) }));
+      const holdingTitleRegExp = `Holdings: ${title} ${
+        count !== undefined ? '>\\nView holdings\\n' + count : ''
+      }`;
+      cy.expect(detailsPaneContent.has({ text: matching(new RegExp(holdingTitleRegExp)) }));
     } else {
       cy.expect(detailsPaneContent.find(HTML({ text: including(`Holdings: ${title}`) })).absent());
     }
