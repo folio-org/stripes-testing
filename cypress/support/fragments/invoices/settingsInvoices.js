@@ -8,6 +8,7 @@ import {
   SelectionList,
   PaneHeader,
   Checkbox,
+  Modal,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
@@ -93,6 +94,16 @@ export default {
     InteractorsTools.checkCalloutMessage(
       `The batch group ${batchGroup.name} was successfully deleted`,
     );
+  },
+
+  canNotDeleteBatchGroup: (batchGroup) => {
+    cy.do([
+      MultiColumnListCell({ content: batchGroup.name }).perform((element) => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([getEditableListRow(rowNumber).find(trashIconButton).click(), deleteButton.click()]);
+      }),
+      Modal('Cannot delete batch group').find(Button('Okay')).click(),
+    ]);
   },
 
   checkNotDeletingGroup: (batchGroupName) => {
