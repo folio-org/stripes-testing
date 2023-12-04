@@ -14,6 +14,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import LoanTypesSection from '../../../support/fragments/settings/inventory/loanTypes';
 
 describe('inventory', () => {
+  describe('item', () => {
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
@@ -118,4 +119,5 @@ describe('inventory', () => {
       });
     },
   );
+});
 });
