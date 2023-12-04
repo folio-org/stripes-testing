@@ -1,4 +1,3 @@
-import { DevTeams, TestTypes } from '../../support/dictionary';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -30,7 +29,7 @@ describe('Bulk Edits', () => {
 
     it(
       'C374177 Verify default state switching between record types (firebird)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         // #1 Select the "Inventory-items" radio button on the "Record types" accordion
         BulkEditSearchPane.checkItemsRadio();
