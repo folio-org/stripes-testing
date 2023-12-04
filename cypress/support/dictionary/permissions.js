@@ -213,6 +213,10 @@ export default {
     internal: 'ui-inventory.holdings.delete',
     gui: 'Inventory: View, create, edit, delete holdings',
   },
+  inventoryCRUDHoldingsNoteTypes: {
+    internal: 'ui-inventory.settings.holdings-note-types',
+    gui: 'Settings (Inventory): Create, edit, delete holdings note types',
+  },
   inventoryCRUDItemNoteTypes: {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
