@@ -1,18 +1,15 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import { JOB_STATUS_NAMES, REFERENCES_FILTER_CHECKBOXES } from '../../../support/constants';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import Permissions from '../../../../support/dictionary/permissions';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import DataImport from '../../../../support/fragments/data_import/dataImport';
+import Logs from '../../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
+import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
+import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 
 describe('plug-in MARC authority | Search', () => {
   const testData = {
@@ -20,10 +17,16 @@ describe('plug-in MARC authority | Search', () => {
       tag700: '700',
     },
     instanceTitle: 'C380573',
+    authTitles: [
+      'Ouyang, Hui',
+      'Dunning, Mike',
+      'Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
+      'Interborough Rapid Transit Company Powerhouse (New York, N.Y.)',
+    ],
     advancesSearchQuery:
-      'identifiers.value==n  80094057 or personalNameTitle==Dunning, Mike or corporateNameTitle==Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle==Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
+      'identifiers.value exactPhrase n  80094057 or personalNameTitle exactPhrase Dunning, Mike or corporateNameTitle exactPhrase Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle exactPhrase Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
     partialAdvancesSearchQuery:
-      'personalNameTitle==Dunning, Mike or corporateNameTitle==Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle==Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
+      'personalNameTitle exactPhrase Dunning, Mike or corporateNameTitle exactPhrase Interborough Rapid Transit Company Powerhouse (New York, N.Y.) or nameTitle exactPhrase Lovecraft, H. P. (Howard Phillips), 1890-1937. Herbert West, reanimator',
     authRows: {
       interboroughAuth: {
         title: 'Interborough Rapid Transit Company Powerhouse (New York, N.Y.)',
@@ -66,6 +69,18 @@ describe('plug-in MARC authority | Search', () => {
             InventoryInstance.deleteInstanceViaApi(id);
           });
         }
+      });
+      testData.authTitles.forEach((query) => {
+        MarcAuthorities.getMarcAuthoritiesViaApi({
+          limit: 100,
+          query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+        }).then((authorities) => {
+          if (authorities) {
+            authorities.forEach(({ id }) => {
+              MarcAuthority.deleteViaAPI(id);
+            });
+          }
+        });
       });
     });
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
@@ -118,7 +133,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C380573 MARC Authority plug-in | Search using "Advanced search" option (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy('Advanced search', testData.advancesSearchQuery);
       MarcAuthorities.checkRowsCount(4);
