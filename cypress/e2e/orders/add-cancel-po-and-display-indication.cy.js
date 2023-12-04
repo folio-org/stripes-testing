@@ -1,54 +1,110 @@
+import permissions from '../../support/dictionary/permissions';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
-import TopMenu from '../../support/fragments/topMenu';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
-describe('orders: Close Order', () => {
-  const order = { ...NewOrder.defaultOneTimeOrder };
-  const orderLine = { ...BasicOrderLine.defaultOrderLine };
+describe('ui-finance: Fiscal Year Rollover', () => {
+  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
+  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const defaultFund = { ...Funds.defaultUiFund };
+  const defaultOrder = {
+    ...NewOrder.defaultOneTimeOrder,
+    orderType: 'Ongoing',
+    ongoing: { isSubscription: false, manualRenewal: false },
+    approved: true,
+    reEncumber: true,
+  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
+  const allocatedQuantity = '100';
+  let user;
+  let orderNumber;
+  let servicePointId;
+  let location;
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-      order.vendor = response;
-      orderLine.physical.materialSupplier = response;
-      orderLine.eresource.accessProvider = response;
+    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+      firstFiscalYear.id = firstFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+        defaultLedger.id = ledgerResponse.id;
+        defaultFund.ledgerId = defaultLedger.id;
+
+        Funds.createViaApi(defaultFund).then((fundResponse) => {
+          defaultFund.id = fundResponse.fund.id;
+
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+          FinanceHelp.searchByName(defaultFund.name);
+          Funds.selectFund(defaultFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
+      });
     });
-    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` }).then((location) => {
-      orderLine.locations[0].locationId = location.id;
+    ServicePoints.getViaApi().then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+        location = res;
+      });
     });
-    cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
-      orderLine.physical.materialType = materialType.id;
+
+    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+      organization.id = responseOrganizations;
     });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    defaultOrder.vendor = organization.name;
+    cy.visit(TopMenu.ordersPath);
+    Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
+      defaultOrder.id = firstOrderResponse.id;
+      orderNumber = firstOrderResponse.poNumber;
+      Orders.checkCreatedOrder(defaultOrder);
+      OrderLines.addPOLine();
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+        defaultFund,
+        '40',
+        '1',
+        '40',
+        location.institutionId,
+      );
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
+    });
+    cy.createTempUser([
+      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersCancelOrderLines.gui,
+      permissions.uiOrdersCancelPurchaseOrders.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    });
   });
 
   after(() => {
     cy.getAdminToken();
-    Orders.deleteOrderViaApi(order.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it(
     'C353546: Add cancel PO action and display indication that PO is canceled (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', poNumber);
-        Orders.selectFromResultsList(poNumber);
-        Orders.openOrder();
-        Orders.closeOrder('Cancelled');
-        Orders.closeThirdPane();
-        Orders.resetFilters();
-        Orders.selectStatusInSearch('Closed');
-        Orders.checkSearchResultsWithClosedOrder(poNumber);
-      });
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.cancelOrder();
+      Orders.selectClosedStatusFilter();
+      Orders.checkSearchResults(orderNumber);
     },
   );
 });
