@@ -251,7 +251,7 @@ describe('ui-finance: Fiscal Year Rollover', { retries: 3 }, () => {
         );
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', thirdOrderNumber);
-        Orders.selectFromResultsList();
+        Orders.selectFromResultsList(thirdOrderNumber);
         Orders.newInvoiceFromOrder();
         Invoices.createInvoiceFromOrder(invoice, firstFiscalYear.code);
         Invoices.approveInvoice();

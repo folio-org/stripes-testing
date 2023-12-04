@@ -13,6 +13,8 @@ import {
   Select,
   TextArea,
   Selection,
+  Option,
+  OptionGroup,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -79,6 +81,9 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose(actionName),
     );
   },
+  isSelectActionAbsent(rowIndex = 0) {
+    cy.expect(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).absent());
+  },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
@@ -95,6 +100,11 @@ export default {
   },
   afterAllSelectedActions() {
     cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
+  },
+  deleteRow(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click(),
+    );
   },
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
@@ -285,7 +295,13 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
-
+  clickSelectedLocation(currentLocation, newLocation) {
+    cy.do([
+      Button(including(`Select control\n${currentLocation}`)).click(),
+      cy.wait(500),
+      SelectionOption(including(newLocation)).click(),
+    ]);
+  },
   clearPermanentLocation(type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -851,5 +867,54 @@ export default {
 
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
     this.verifyPossibleActions(options);
+  },
+
+  verifyHoldingsOptions() {
+    cy.expect([
+      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_URI' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_RELATIONSHIP' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_LINK_TEXT' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_MATERIALS_SPECIFIED' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_PUBLIC_NOTE' }))
+        .exists(),
+      OptionGroup('Holdings location')
+        .find(Option({ value: 'PERMANENT_HOLDINGS_LOCATION' }))
+        .exists(),
+      OptionGroup('Holdings location')
+        .find(Option({ value: 'TEMPORARY_HOLDINGS_LOCATION' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Action note' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Binding' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Copy note' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Electronic bookplate' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Note' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Provenance' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Reproduction' }))
+        .exists(),
+      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
+    ]);
   },
 };
