@@ -24,7 +24,6 @@ describe('MARC', () => {
         },
       ],
     };
-    const authorityPostfix = '?authRefType=Authorized&heading';
     const createdAuthorityIDs = [];
 
     before('Create test data', () => {
@@ -35,8 +34,7 @@ describe('MARC', () => {
         testData.marcFiles.forEach((marcFile) => {
           cy.visit(TopMenu.dataImportPath);
           DataImport.verifyUploadState();
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
-          JobProfiles.waitFileIsUploaded();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.waitLoadingList();
           JobProfiles.search(testData.jobProfileToRun);
           JobProfiles.runImportFile();
@@ -71,11 +69,10 @@ describe('MARC', () => {
       Users.deleteViaApi(testData.userProperties.userId);
     });
     it(
-      'C380635 "Print" option is located below "Edit" option in "Actions" menu for "MARC authority" record (spitfire) (null)',
+      'C380635 "Print" option is located below "Edit" option in "Actions" menu for "MARC authority" record (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire'] },
       () => {
         MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
-        MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);
         MarcAuthorities.selectFirstRecord();
         MarcAuthority.checkActionDropdownContent();
       },

@@ -10,6 +10,7 @@ import {
   Callout,
   Modal,
   TableRow,
+  DropdownMenu,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -304,22 +305,17 @@ export default {
   },
 
   checkActionDropdownContent() {
-    const content = [];
+    const actualResArray = [];
     const expectedContent = ['Edit', 'Print', 'Delete'];
-    const icons = ['edit', 'print', 'trash'];
-    const buttonSelector = 'section[data-testid="marc-view-pane"] button[class*="dropdownItem"]';
-    const iconSelector =
-      'section[data-testid="marc-view-pane"] button[class*="dropdownItem"] svg[class*="icon-"]';
-    cy.get(buttonSelector)
-      .each((button) => {
-        content.push(button.text().trim());
-      })
-      .then(() => {
-        cy.expect(content).to.deep.equal(expectedContent);
-      });
-    cy.get(iconSelector).each((icon, index) => {
-      const regex = new RegExp(icons[index]);
-      cy.expect(icon).to.have.attr('class').match(regex);
+    cy.do(rootSection.find(Button('Actions')).click());
+    cy.expect([
+      Button('Edit').has({ svgClass: including('edit') }),
+      Button('Print').has({ svgClass: including('print') }),
+      Button('Delete').has({ svgClass: including('trash') }),
+    ]);
+    cy.then(() => DropdownMenu().buttons()).then((buttons) => {
+      buttons.forEach((button) => actualResArray.push(button.innerText));
+      cy.expect(actualResArray).to.deep.equal(expectedContent);
     });
   },
 };
