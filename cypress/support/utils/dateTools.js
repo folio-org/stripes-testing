@@ -260,7 +260,7 @@ export default {
 
   getAfterThreeMonthsDateObj() {
     const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth() + 3, today.getDate());
+    return new Date(today.getFullYear(), today.getMonth() + 3, today.getDate() - 1);
   },
 
   getFormattedEndDateWithTime(date) {

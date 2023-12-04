@@ -16,7 +16,9 @@ Cypress.Commands.add(
     localforage.removeItem('okapiSess');
 
     cy.visit(visitPath.path);
-    cy.wait(15000);
+    if (Cypress.env('diku_login') !== username) {
+      cy.wait(15000);
+    }
     // Todo: find the way to wrap interactor to cy chainable object
     cy.do([
       TextField('Username').fillIn(username),

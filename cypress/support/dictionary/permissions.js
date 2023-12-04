@@ -824,6 +824,10 @@ export default {
     internal: 'okapi.proxy.self.timers.patch',
     gui: 'Okapi - patch timer for current tenant',
   },
+  viewOkapiTimers: {
+    internal: 'ui-developer.settings.okapiTimers',
+    gui: 'Settings (developer): Can view Okapi timers',
+  },
   // Export manager
   exportManagerAll: {
     internal: 'ui-export-manager.export-manager.all',

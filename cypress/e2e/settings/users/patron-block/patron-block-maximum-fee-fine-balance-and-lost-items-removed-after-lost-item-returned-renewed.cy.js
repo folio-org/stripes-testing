@@ -214,6 +214,7 @@ describe('Patron Block: Lost items', () => {
         permissions.checkoutAll.gui,
         permissions.uiUsersView.gui,
         permissions.okapiTimersPatch.gui,
+        permissions.viewOkapiTimers.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
