@@ -16,6 +16,7 @@ import {
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import ItemRecordView from '../inventory/item/itemRecordView';
+import CheckInModal from './checkInModal';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -49,6 +50,7 @@ const actionsButtons = {
   newFeeFine: newFeeFineButton,
   printTransitSlip: printTransitSlipButton,
   printHoldSlip: printHoldSlipButton,
+  checkInNotes: checkInButtonNotes,
 };
 const itemAnumberOfPieces = '2';
 const dateField = TextField('Date returned');
@@ -193,9 +195,12 @@ export default {
     cy.expect(Modal(including('New fee/fine')).exists());
   },
 
-  openCheckInNotes: () => {
+  openCheckInNotes: (notes) => {
     cy.do([availableActionsButton.click(), checkInButtonNotes.click()]);
     cy.expect(Modal(including('Check in notes')).exists());
+    if (notes) {
+      CheckInModal.verifyNotesInfo(notes, true);
+    }
     cy.expect(Button('Close').exists());
     cy.do(Button('Close').click());
   },

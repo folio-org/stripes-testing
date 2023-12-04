@@ -1,14 +1,14 @@
 import uuid from 'uuid';
 import { Button, KeyValue, Modal, Pane } from '../../../interactors';
 import { FULFILMENT_PREFERENCES, ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import EditRequest from '../../support/fragments/requests/edit-request';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import Users from '../../support/fragments/users/users';
-import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Checkout from '../../support/fragments/checkout/checkout';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();

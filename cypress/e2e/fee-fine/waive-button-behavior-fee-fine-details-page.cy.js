@@ -1,17 +1,17 @@
-import uuid from 'uuid';
 import moment from 'moment/moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
+import uuid from 'uuid';
+import { Permissions } from '../../support/dictionary';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
-import UserEdit from '../../support/fragments/users/userEdit';
-import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
+import TopMenu from '../../support/fragments/topMenu';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import WaiveFeeFineModal from '../../support/fragments/users/waiveFeeFineModal';
 
 describe('Waive Fees/Fines', () => {
@@ -90,7 +90,7 @@ describe('Waive Fees/Fines', () => {
 
   it(
     'C464 Verify behavior when "Waive" button pressed from Fee/Fine Details page (Vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // Go to User Information for your test patro
       UsersSearchPane.searchByKeywords(userData.username);

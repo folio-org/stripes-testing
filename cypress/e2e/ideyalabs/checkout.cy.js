@@ -1,8 +1,7 @@
-import users from '../../support/ideyaLabs/users';
-import testTypes from '../../support/dictionary/testTypes';
 import topMenu from '../../support/fragments/topMenu';
 import userLoans from '../../support/fragments/users/loans/userLoans';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
+import users from '../../support/ideyaLabs/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 const testData = {
@@ -37,7 +36,7 @@ describe.skip('Checkout item', () => {
 
   it(
     'C343243 Check out app: Display a pop-up note and Close note',
-    { tags: testTypes.ideaLabsTests },
+    { tags: 'ideaLabsTests' },
     () => {
       cy.visit(topMenu.usersPath);
       usersSearchPane.searchByStatus(testData.status);
@@ -51,7 +50,7 @@ describe.skip('Checkout item', () => {
 
   it(
     'C642 Cannot find the patron and item that meet circulation rule criteria (vega)',
-    { tags: [testTypes.ideaLabsTests] },
+    { tags: ['ideaLabsTests'] },
     () => {
       cy.visit(topMenu.checkOutPath);
       users.enterPatronBarcodeCheckOut(testData.patronBarcodeOne);
@@ -64,7 +63,7 @@ describe.skip('Checkout item', () => {
 
   it(
     'C646 Cannot find the patron and item that meet circulation rule criteria (vega)',
-    { tags: [testTypes.ideaLabsTests] },
+    { tags: ['ideaLabsTests'] },
     () => {
       cy.visit(topMenu.checkOutPath);
       users.enterPatronBarcodeCheckOut(testData.patronBarcodeTwo);
@@ -76,21 +75,17 @@ describe.skip('Checkout item', () => {
     },
   );
 
-  it(
-    'C777 Check out: override non-circulating items (vega)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.checkOutPath);
-      users.enterPatronBarcodeCheckOut(testData.patronBarcode);
-      users.enterItemBarcodeCheckOut(testData.itemBarcode);
-      users.closeButton();
-      users.enterPatronBarcodeCheckOut(testData.patronBarcode);
-      users.enterItemBarcodeCheckOut(testData.itemBarcode);
-      users.patronOverride();
-      users.cancelButton();
-      users.enterPatronBarcodeCheckOut(testData.patronBarcode);
-      users.enterItemBarcodeCheckOut(testData.itemBarcode);
-      users.closeButton();
-    },
-  );
+  it('C777 Check out: override non-circulating items (vega)', { tags: ['ideaLabsTests'] }, () => {
+    cy.visit(topMenu.checkOutPath);
+    users.enterPatronBarcodeCheckOut(testData.patronBarcode);
+    users.enterItemBarcodeCheckOut(testData.itemBarcode);
+    users.closeButton();
+    users.enterPatronBarcodeCheckOut(testData.patronBarcode);
+    users.enterItemBarcodeCheckOut(testData.itemBarcode);
+    users.patronOverride();
+    users.cancelButton();
+    users.enterPatronBarcodeCheckOut(testData.patronBarcode);
+    users.enterItemBarcodeCheckOut(testData.itemBarcode);
+    users.closeButton();
+  });
 });

@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import { Invoices, InvoiceView } from '../../support/fragments/invoices';
-import { Budgets } from '../../support/fragments/finance';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Users from '../../support/fragments/users/users';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import InteractorsTools from '../../support/utils/interactorsTools';
 import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { Budgets } from '../../support/fragments/finance';
+import { InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -83,7 +83,7 @@ describe('Invoices', () => {
 
   it(
     'C387536 "Fiscal year" field is not editable for paid invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

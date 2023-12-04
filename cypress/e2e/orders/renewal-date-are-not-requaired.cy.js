@@ -1,16 +1,14 @@
-import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import testType from '../../support/dictionary/testTypes';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import Orders from '../../support/fragments/orders/orders';
-import TopMenu from '../../support/fragments/topMenu';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Users from '../../support/fragments/users/users';
 import { ORDER_STATUSES } from '../../support/constants';
+import permissions from '../../support/dictionary/permissions';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Orders', () => {
   const order = {
@@ -71,7 +69,7 @@ describe('Orders', () => {
 
   it(
     'C353627 "Renewal date" and "Renewal interval" are not required for opening, unopening, closing, reopening ongoing order (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
