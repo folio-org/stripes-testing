@@ -77,7 +77,7 @@ describe('orders: Edifact export', () => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
@@ -115,7 +115,7 @@ describe('orders: Edifact export', () => {
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.deleteOrderViaActions();
       InteractorsTools.checkCalloutMessage(
         `The purchase order ${orderNumber} was successfully deleted`,
