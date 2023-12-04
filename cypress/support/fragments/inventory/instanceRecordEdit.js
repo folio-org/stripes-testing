@@ -135,7 +135,7 @@ export default {
     cy.do([Selection('Temporary').open(), Selection('Temporary').choose(including(locationName))]);
   },
   chooseInstanceStatusTerm(statusTerm) {
-    cy.do(Select('Instance status term').choose(statusTerm));
+    cy.do(Select('Instance status term').choose(including(statusTerm)));
   },
   saveAndClose: () => {
     cy.wait(1500);

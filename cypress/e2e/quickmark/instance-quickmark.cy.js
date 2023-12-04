@@ -1,26 +1,38 @@
 import TopMenu from '../../support/fragments/topMenu';
-import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
-import { replaceByIndex } from '../../support/utils/stringTools';
+import getRandomPostfix, { replaceByIndex } from '../../support/utils/stringTools';
 import { Callout } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
-import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import DataImport from '../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../support/fragments/data_import/logs/logs';
+import { JOB_STATUS_NAMES } from '../../support/constants';
 
 describe('Manage inventory Bib records with quickMarc editor', () => {
   let userId;
-  const OCLCAuthentication = '100481406/PAOLF';
+  let instanceId;
 
-  before(() => {
-    cy.getAdminToken().then(() => {
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-    });
-  });
+  const marcFile = {
+    marc: 'oneMarcBib.mrc',
+    fileNamePrefix: 'testMarcFileLDR',
+    jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+    ldrValue: '01222nam\\a22002773c\\4500',
+    tag008BytesProperties: [
+      { key: 'srce', value: '|' },
+      { key: 'lang', value: 'mul' },
+      { key: 'form', value: '\\' },
+      { key: 'ctry', value: '|||' },
+      { key: 'dtSt', value: '|' },
+      { key: 'startDate', value: '2016' },
+      { key: 'endDate', value: '||||' },
+    ],
+  };
 
   beforeEach(() => {
     cy.createTempUser([
@@ -31,21 +43,38 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       permissions.uiInventorySingleRecordImport.gui,
       permissions.converterStorageAll.gui,
     ]).then((userProperties) => {
-      // wait for the created user to be available
-      cy.wait(20000);
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventoryInstances.waitContentLoading,
+
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        const fileName = `${marcFile.fileNamePrefix}${getRandomPostfix()}.mrc`;
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, fileName);
+        JobProfiles.waitLoadingList();
+        //  wait for a file to be fully loaded
+        cy.wait(3000);
+        JobProfiles.search(marcFile.jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
+        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        Logs.openFileDetails(fileName);
+        Logs.getCreatedItemsID().then((link) => {
+          instanceId = link.split('/')[5];
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+          InventoryInstance.searchByTitle(instanceId);
+          InventoryInstances.selectInstance();
+        });
       });
-      cy.reload();
-      InventoryActions.import();
     });
   });
 
   afterEach(() => {
     cy.getAdminToken();
+    InventoryInstance.deleteInstanceViaApi(instanceId);
     Users.deleteViaApi(userId);
+    instanceId = '';
   });
 
   it(
@@ -53,7 +82,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] },
     () => {
       const checkLdrErrors = () => {
-        const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
+        const initialLDRValue = marcFile.ldrValue;
         const positions6Error =
           'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
         const position7Error =
@@ -124,7 +153,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
             cy.expect(Callout(changedLDR.errorMessage).absent());
             // eslint-disable-next-line no-unused-expressions
             changedLDR.is008presented
-              ? QuickMarcEditor.checkInitialInstance008Content()
+              ? QuickMarcEditor.check008FieldsContent(marcFile.tag008BytesProperties)
               : QuickMarcEditor.checkEmptyContent('008');
           });
         });
@@ -146,9 +175,9 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     'C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)',
     { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] },
     () => {
-      const initialLDRValue = '01677cam\\a22003974c\\4500';
-      const changesIn06 = ['a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];
-      const changesIn07 = ['a', 'b', 'c', 'd', 'i', 'm', 's'];
+      const initialLDRValue = marcFile.ldrValue;
+      const changesIn06 = ['c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];
+      const changesIn07 = ['a', 'b', 'c', 'd', 'i', 's'];
 
       InventoryInstance.checkExpectedMARCSource();
 
@@ -156,6 +185,8 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
         values.forEach((specialValue) => {
           InventoryInstance.goToEditMARCBiblRecord();
           QuickMarcEditor.waitLoading();
+          // without wait sometimes record cannot be saved - possibly backend is not ready
+          cy.wait(2000);
           QuickMarcEditor.updateExistingField(
             'LDR',
             replaceByIndex(initialLDRValue, subfieldIndex, specialValue),

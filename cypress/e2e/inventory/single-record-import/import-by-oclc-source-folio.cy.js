@@ -85,6 +85,7 @@ describe('inventory', () => {
         InventoryInstance.verifyInstancePublisher(0, 2, oclcRecordData.placeOfPublication);
         InventoryInstance.verifyInstancePublisher(0, 3, oclcRecordData.publicationDate);
         InventoryInstance.verifyInstancePhysicalcyDescription(oclcRecordData.physicalDescription);
+        InventoryInstance.openIdentifiersAccordion();
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 4);
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 5);
         InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);

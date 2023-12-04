@@ -1,39 +1,39 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  FOLIO_RECORD_TYPE,
-  CALL_NUMBER_TYPE_NAMES,
-  LOCATION_NAMES,
-  EXPORT_TRANSFORMATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
-  PROFILE_TYPE_NAMES,
+  CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  EXPORT_TRANSFORMATION_NAMES,
+  FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  PROFILE_TYPE_NAMES,
 } from '../../../support/constants';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import TopMenu from '../../../support/fragments/topMenu';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FileManager from '../../../support/utils/fileManager';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -110,7 +110,7 @@ describe('data-import', () => {
               name: 'permanentLocationId',
               enabled: true,
               path: 'holdings.permanentLocationId',
-              value: `"${LOCATION_NAMES.ANNEX}"`,
+              value: '"Annex (KU/CC/DI/A)"',
             },
           ],
         },
@@ -243,7 +243,7 @@ describe('data-import', () => {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
           name: `autotestMappingHoldings${getRandomPostfix()}`,
           callNumberType: `"${CALL_NUMBER_TYPE_NAMES.LIBRARY_OF_CONGRESS}"`,
-          permanentLocation: `"${LOCATION_NAMES.MAIN_LIBRARY}"`,
+          permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
         },
         actionProfile: {
           typeValue: FOLIO_RECORD_TYPE.HOLDINGS,

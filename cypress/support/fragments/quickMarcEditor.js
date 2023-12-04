@@ -1631,4 +1631,10 @@ export default {
     this.verifyTagField(4, '245', '\\', '\\', '$a ', '');
     this.checkInitialContent(4);
   },
+
+  check008FieldsContent(propertiesArray) {
+    propertiesArray.forEach((property) => cy.expect(
+      validRecord.tag008BytesProperties[property.key].interactor.has({ value: property.value }),
+    ));
+  },
 };
