@@ -1,5 +1,13 @@
-import { HTML } from '@interactors/html';
-import { Button, TextField, Modal, MultiColumnListCell } from '../../../../interactors';
+import { HTML, including, matching } from '@interactors/html';
+import {
+  Button,
+  TextField,
+  Modal,
+  MultiColumnListCell,
+  MultiColumnListRow,
+} from '../../../../interactors';
+
+const changeDueDateModal = Modal('Change due date');
 
 export default {
   fillDate(dateString) {
@@ -11,10 +19,37 @@ export default {
   verifyWarning(textString) {
     cy.expect(HTML(textString).exists());
   },
-  saveAndClose() {
-    cy.do([Modal().find(Button('Save and close')).click(), Modal().find(Button('Close')).click()]);
+  verifyChangeDueDateForm(data) {
+    cy.expect([
+      changeDueDateModal.exists(),
+      changeDueDateModal
+        .find(MultiColumnListCell({ column: 'Title' }))
+        .has({ content: data.title }),
+      changeDueDateModal
+        .find(MultiColumnListCell({ column: 'Item status' }))
+        .has({ content: data.itemStatus }),
+      changeDueDateModal
+        .find(MultiColumnListCell({ column: 'Barcode' }))
+        .has({ content: data.itemBarcode }),
+    ]);
+  },
+  saveAndClose(secondaryClose = true) {
+    cy.do(Modal().find(Button('Save and close')).click());
+    if (secondaryClose) {
+      cy.do(Modal().find(Button('Close')).click());
+    }
   },
   verifyRequestsCount(contentValue) {
     cy.expect(MultiColumnListCell({ content: contentValue }).exists());
+  },
+  verifyLoans(loansToCheck) {
+    loansToCheck.forEach((loan) => {
+      cy.expect(
+        changeDueDateModal
+          .find(MultiColumnListRow({ text: matching(loan.itemBarcode), isContainer: false }))
+          .find(MultiColumnListCell({ column: loan.column }))
+          .has({ content: including(loan.alertDetails) }),
+      );
+    });
   },
 };

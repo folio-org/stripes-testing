@@ -1,17 +1,15 @@
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import getRandomPostfix from '../../support/utils/stringTools';
-import devTeams from '../../support/dictionary/devTeams';
-import Users from '../../support/fragments/users/users';
 import Permissions from '../../support/dictionary/permissions';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import DataExportResults from '../../support/fragments/data-export/dataExportResults';
+import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
-import FileManager from '../../support/utils/fileManager';
 import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import FileManager from '../../support/utils/fileManager';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('data-export: failed using non-existent UUIDs', () => {
   const user = {};
@@ -55,7 +53,7 @@ describe('data-export: failed using non-existent UUIDs', () => {
 
   it(
     'C353209 Export failed when using ".csv" file with non-existent UUIDs (Spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, devTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy('Keyword', 'Peplum films');
       MarcAuthorities.downloadSelectedRecordWithRowIdx();

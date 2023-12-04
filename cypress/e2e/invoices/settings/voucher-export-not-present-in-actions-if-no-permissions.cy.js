@@ -1,15 +1,15 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import {
-  BatchGroups,
-  BatchGroupConfigurations,
-} from '../../../support/fragments/settings/invoices';
+import { INVOICE_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import { Budgets } from '../../../support/fragments/finance';
 import { Invoices } from '../../../support/fragments/invoices';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../../support/fragments/orders';
-import { Organizations, NewOrganization } from '../../../support/fragments/organizations';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import {
+  BatchGroupConfigurations,
+  BatchGroups,
+} from '../../../support/fragments/settings/invoices';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { INVOICE_STATUSES } from '../../../support/constants';
 
 describe('Invoices', () => {
   describe('Settings (Invoices)', () => {
@@ -97,7 +97,7 @@ describe('Invoices', () => {
 
     it(
       'C353222 Negative: Run batch export from full screen view with NO Voucher export permission (thunderjet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Search "Vendor invoice number" from precondition
         Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

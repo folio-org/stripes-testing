@@ -2,8 +2,6 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 
 let firstUser;
 let secondUser;
@@ -52,7 +50,7 @@ describe('bulk-edit', () => {
 
     it(
       'C404389 Verify Bulk edit app without permissions for view Users and Inventory records (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyBulkEditPaneItems();
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');

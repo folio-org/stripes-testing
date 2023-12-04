@@ -1,48 +1,48 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
-  LOCATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
-  ORDER_STATUSES,
-  ITEM_STATUS_NAMES,
-  VENDOR_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  LOCATION_NAMES,
+  ORDER_STATUSES,
+  VENDOR_NAMES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import OrderDetails from '../../../support/fragments/orders/orderDetails';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import Receiving from '../../../support/fragments/receiving/receiving';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import FileManager from '../../../support/utils/fileManager';
-import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderDetails from '../../../support/fragments/orders/orderDetails';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import Receiving from '../../../support/fragments/receiving/receiving';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -266,7 +266,7 @@ describe('data-import', () => {
 
     const openOrder = (number) => {
       Orders.searchByParameter('PO number', number);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(number);
       Orders.openOrder();
     };
 
@@ -282,7 +282,7 @@ describe('data-import', () => {
 
     it(
       'C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         // create the first PO with POL
         Orders.createOrderWithOrderLineViaApi(

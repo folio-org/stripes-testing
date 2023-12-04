@@ -1,21 +1,19 @@
+import { ORDER_STATUSES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderDetails from '../../../support/fragments/orders/orderDetails';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import InventoryInteractionsDefaults from '../../../support/fragments/settings/orders/inventoryInteractionsDefaults';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInteractionsDefaults from '../../../support/fragments/settings/orders/inventoryInteractionsDefaults';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { ORDER_STATUSES } from '../../../support/constants';
-import OrderDetails from '../../../support/fragments/orders/orderDetails';
 
 describe('Orders', () => {
   const firstOrder = {
@@ -122,7 +120,7 @@ describe('Orders', () => {
 
   it(
     'C374113: Instance reference is removed when user confirms changing that will remove the instance UUID from the POL when creating PO line (thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
@@ -137,7 +135,7 @@ describe('Orders', () => {
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
       OrderLines.fillInInvalidDataForPublicationDate();
       OrderLines.removeInstanceConnectionModal();
-      OrderLines.POLineInfoWithReceiptNotRequiredStatus(location.institutionId);
+      OrderLines.POLineInfoWithReceiptNotRequiredStatuswithSelectLocation(location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);

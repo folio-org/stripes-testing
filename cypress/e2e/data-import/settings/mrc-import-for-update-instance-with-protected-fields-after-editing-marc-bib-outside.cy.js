@@ -1,30 +1,30 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import FileManager from '../../../support/utils/fileManager';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import Users from '../../../support/fragments/users/users';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -124,7 +124,7 @@ describe('data-import', () => {
 
     it(
       'C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         MarcFieldProtection.createViaApi(firstProtectedFieldsData);
         MarcFieldProtection.createViaApi(secondProtectedFieldData);

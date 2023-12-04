@@ -143,6 +143,7 @@ export const BATCH_GROUP = {
 
 export const INVOICE_STATUSES = {
   OPEN: 'Open',
+  REVIEWED: 'Reviewed',
   APPROVED: 'Approved',
   CANCELLED: 'Cancelled',
   PAID: 'Paid',
@@ -303,6 +304,12 @@ export const HOLDINGS_TYPE_NAMES = {
   MONOGRAPH: 'Monograph',
 };
 
+export const NOTE_TYPES = {
+  GENERAL: 'General note',
+  NOTE_1516: 'Note type 1516',
+  NOTE_1654: 'Note-type-1654',
+};
+
 export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
   APPROVAL_PLAN: 'Approval Plan',
   DDA: 'Demand Driven Acquisitions (DDA)',
@@ -342,4 +349,9 @@ export const CONDITION_AND_LIMIT_TYPES = {
   MAX_OVERDUE_RECALLS: 'Maximum number of overdue recalls',
   MAX_OUTSTANDING_FEE_FINE_BALANCE: 'Maximum outstanding fee/fine balance',
   MAX_NUMBER_OF_DAYS: 'Recall overdue by maximum number of days',
+};
+
+export const REFERENCES_FILTER_CHECKBOXES = {
+  EXCLUDE_SEE_FROM: 'Exclude see from',
+  EXCLUDE_SEE_FROM_ALSO: 'Exclude see from also',
 };
