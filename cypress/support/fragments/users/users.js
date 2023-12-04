@@ -89,6 +89,7 @@ export default {
         TextField({ id: 'adduser_firstname' }).fillIn(userData.personal.firstName),
         TextField({ id: 'adduser_preferredname' }).fillIn(userData.personal.preferredFirstName),
         Select({ id: 'adduser_group' }).choose(userData.patronGroup),
+        Select({ id: 'type' }).choose(userData.userType),
         TextField({ name: 'barcode' }).fillIn(userData.barcode),
         TextField({ id: 'adduser_username' }).fillIn(userData.username),
         TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),

@@ -1179,8 +1179,12 @@ export default {
   },
 
   verifySharedIcon(row = 0) {
-    cy.expect(paneResultsSection.find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') })).exists());
-  }
+    cy.expect(
+      paneResultsSection
+        .find(MultiColumnListCell({ row, innerHTML: including('sharedIcon') }))
+        .exists(),
+    );
+  },
 
   verifyLastUpdatedSource: (userFirsttName, userLastName) => {
     cy.do(Accordion('Administrative data').click());
