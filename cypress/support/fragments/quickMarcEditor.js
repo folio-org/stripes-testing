@@ -302,7 +302,7 @@ const tag008DefaultValuesHoldings = [
 
 const tagBox = TextField({ name: including('.tag') });
 const firstIndicatorBox = TextField({ name: including('.indicators[0]') });
-const secondIndicatorBox = TextField({ name: including('.indicators[0]') });
+const secondIndicatorBox = TextField({ name: including('.indicators[1]') });
 const fourthBox = TextArea({ name: including('.content') });
 const fourthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.controlled') });
 const fifthBoxInLinkedField = TextArea({ name: including('.subfieldGroups.uncontrolledAlpha') });
