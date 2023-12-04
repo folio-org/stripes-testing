@@ -29,7 +29,7 @@ describe('Bulk Edits', () => {
     });
 
     it(
-      'C374177 Verify default state switching between record types',
+      'C374177 Verify default state switching between record types (firebird)',
       { tags: [TestTypes.extendedPath, DevTeams.firebird] },
       () => {
         // #1 Select the "Inventory-items" radio button on the "Record types" accordion
