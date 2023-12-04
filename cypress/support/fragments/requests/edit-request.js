@@ -53,6 +53,7 @@ export default {
     IN_TRANSIT: 'Open - In transit',
     AWAITING_PICKUP: 'Open - Awaiting pickup',
     AWAITING_DELIVERY: 'Open - Awaiting delivery',
+    CLOSED_CANCELLED: 'Closed - Cancelled',
   },
 
   expirationDates,

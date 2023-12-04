@@ -136,6 +136,10 @@ export default {
     internal: 'ui-inventory.single-record-import',
     gui: 'Inventory: Import single bibliographic records',
   },
+  uiInventoryCreateOrderFromInstance: {
+    internal: 'ui-inventory.instance.createOrder',
+    gui: 'Inventory: Create order from instance',
+  },
   uiInventoryMarkItemsWithdrawn: {
     internal: 'ui-inventory.items.mark-items-withdrawn',
     gui: 'Inventory: Mark items withdrawn',
@@ -208,6 +212,10 @@ export default {
   inventoryCRUDHoldings: {
     internal: 'ui-inventory.holdings.delete',
     gui: 'Inventory: View, create, edit, delete holdings',
+  },
+  inventoryCRUDHoldingsNoteTypes: {
+    internal: 'ui-inventory.settings.holdings-note-types',
+    gui: 'Settings (Inventory): Create, edit, delete holdings note types',
   },
   inventoryCRUDItemNoteTypes: {
     internal: 'ui-inventory.settings.item-note-types',
@@ -492,6 +500,10 @@ export default {
   uiReceivingViewEditCreate: {
     internal: 'ui-receiving.create',
     gui: 'Receiving: View, edit, create',
+  },
+  uiReceivingViewEditDelete: {
+    internal: 'ui-receiving.delete',
+    gui: 'Receiving: View, edit, delete',
   },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
@@ -887,5 +899,17 @@ export default {
   listsAll: {
     internal: 'module.lists.all',
     gui: 'Lists (Admin): All permissions',
+  },
+
+  // Licenses
+  licensesSearchAndView: {
+    internal: 'ui-licenses.licenses.view',
+    gui: 'Licenses: Search & view licenses',
+  },
+
+  // Courses
+  coursesAll: {
+    internal: 'ui-courses.all',
+    gui: 'Courses: All permissions',
   },
 };

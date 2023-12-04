@@ -1,8 +1,7 @@
-import orderFragment from '../../../../support/fragments/orders/orders';
 import orderLines from '../../../../support/fragments/orders/orderLines';
+import orderFragment from '../../../../support/fragments/orders/orders';
 import receiving from '../../../../support/fragments/receiving/receiving';
 import topMenu from '../../../../support/fragments/topMenu';
-import testTypes from '../../../../support/dictionary/testTypes';
 
 const orderDetails = {
   searchByParameter: 'PO line number',
@@ -19,7 +18,7 @@ describe.skip('Orders: Receiving and Check-in ', () => {
 
   it(
     'C378899 Encumbrance releases when receive piece for order with payment status "Payment Not Required" (Thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
+    { tags: ['ideaLabsTests'] },
     () => {
       cy.visit(topMenu.ordersPath);
       orderLines.clickOnOrderLines();

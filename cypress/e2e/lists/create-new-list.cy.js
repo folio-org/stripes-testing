@@ -1,9 +1,7 @@
 import Permissions from '../../support/dictionary/permissions';
-import DevTeams from '../../support/dictionary/devTeams';
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
 import Lists from '../../support/fragments/lists/lists';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Create a new list', () => {
@@ -36,7 +34,7 @@ describe('Create a new list', () => {
 
   it(
     'C411704 Create new lists: Private list (corsair)',
-    { tags: [TestTypes.criticalPath, DevTeams.corsair] },
+    { tags: ['criticalPath', 'corsair'] },
     () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
@@ -51,7 +49,7 @@ describe('Create a new list', () => {
 
       Lists.closeListDetailsPane();
       Lists.verifySuccessCalloutMessage(
-        `${listData.name} was created. Refresh to see changes. Note that list may not appear if filters are applied.`,
+        `List ${listData.name} was created. Reload to see changes. Note: the list may not appear based on filters.`,
       );
       cy.reload();
       Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {

@@ -431,6 +431,10 @@ export default {
       });
   },
 
+  verifyTrashIconInvisibleForUser: () => {
+    cy.get('div[class^="listContainer-"] button[icon="trash').should('have.length', 0);
+  },
+
   verifyCancelImportJobModal: () => {
     const headerModalContent = 'Are you sure that you want to cancel this import job?';
     const modalContent =

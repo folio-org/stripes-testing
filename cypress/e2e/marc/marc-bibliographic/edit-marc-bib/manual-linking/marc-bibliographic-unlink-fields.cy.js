@@ -1,15 +1,15 @@
-import getRandomPostfix from '../../../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../../../support/dictionary';
-import TopMenu from '../../../../../support/fragments/topMenu';
+import { Permissions } from '../../../../../support/dictionary';
 import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import Users from '../../../../../support/fragments/users/users';
 import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
-import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../../../support/fragments/topMenu';
+import Users from '../../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   const testData = {
@@ -118,7 +118,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
 
   it(
     'C365598 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in editing window. (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[2]);
       InventoryInstances.selectInstance();
@@ -150,11 +150,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         linkedField.seventhBox,
       );
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(11);
-      QuickMarcEditor.checkUnlinkTooltipText('100', 'Unlink from MARC Authority record');
+      QuickMarcEditor.checkUnlinkTooltipText(11, 'Unlink from MARC Authority record');
       QuickMarcEditor.clickUnlinkIconInTagField(11);
-      QuickMarcEditor.checkUnlinkModal(
-        'By selecting Unlink, then field 100 will be unlinked from the MARC authority record. Are you sure you want to continue?',
-      );
+      QuickMarcEditor.checkUnlinkModal(testData.tag100);
       QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(
         unlinkedField.rowIndex,
