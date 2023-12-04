@@ -134,6 +134,7 @@ describe('inventory', () => {
         InventoryInstances.clickActionsButton();
         InventoryInstances.verifyActionsSortedBy(testData.relevanceSortOption);
         testData.instanceAccordions.forEach((accordion) => {
+          InventorySearchAndFilter.expandAccordion(accordion);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(accordion);
         });
 

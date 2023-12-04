@@ -845,9 +845,17 @@ export default {
     ]);
   },
 
+  expandAccordion(accordionName) {
+    cy.do(paneFilterSection.find(Accordion(accordionName)).clickHeader());
+    cy.expect(paneFilterSection.find(Accordion(accordionName)).has({ open: true }));
+  },
+
   checkOptionsWithCountersExistInAccordion(accordionName) {
-    const accordionToCheck = paneFilterSection.find(Accordion(accordionName));
-    cy.do(accordionToCheck.clickHeader());
-    cy.expect([accordionToCheck.find(Checkbox()).has({ label: matching(/.{1,}\d{1,}/) })]);
+    cy.expect(
+      paneFilterSection
+        .find(Accordion(accordionName))
+        .find(Checkbox())
+        .has({ label: matching(/.{1,}\d{1,}/) }),
+    );
   },
 };
