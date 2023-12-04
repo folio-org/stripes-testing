@@ -11,6 +11,7 @@ import {
   Link,
 } from '../../../../../interactors';
 import FileDetails from './fileDetails';
+import { getLongDelay } from '../../../utils/cypressTools';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
 const actionsButton = Button('Actions');
@@ -123,5 +124,14 @@ export default {
     cy.get('#job-logs-list [class*="mclCell-"]:nth-child(1) a')
       .eq(0)
       .should('have.css', 'color', visitedLinkColor);
+  },
+
+  waitFileIsImported: (fileName) => {
+    cy.expect(
+      Accordion('Running')
+        .find(HTML(including(fileName)))
+        .absent(),
+      getLongDelay(),
+    );
   },
 };

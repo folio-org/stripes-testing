@@ -157,6 +157,10 @@ export default {
     );
   },
 
+  checkCallout: (text) => {
+    cy.expect(Callout(including(text)).exists());
+  },
+
   checkResultsExistance: (type) => {
     cy.expect([
       rootSection.exists(),
@@ -946,5 +950,11 @@ export default {
       MultiSelect({ selected: including(authoritySource) }).exists(),
       sourceFileAccordion.find(MultiSelectOption(including(`(${count})`))).exists(),
     ]);
+  },
+
+  verifyAllCheckboxesAreUnchecked() {
+    cy.get(checkBoxAllRecords).each((checkbox) => {
+      cy.expect(!checkbox.checked);
+    });
   },
 };

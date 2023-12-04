@@ -216,7 +216,6 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(testData.jobProfileName);
-        JobProfiles.search('test111');
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
