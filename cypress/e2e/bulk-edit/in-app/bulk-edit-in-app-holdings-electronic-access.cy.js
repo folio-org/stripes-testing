@@ -1,19 +1,17 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
-import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import FileManager from '../../../support/utils/fileManager';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import UrlRelationship from '../../../support/fragments/settings/inventory/instance-holdings-item/urlRelationship';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 let holdingsHRID;
@@ -60,7 +58,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367977 Verify Bulk edit Holdings records with non-existent Electronic access Relationship type ID (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         UrlRelationship.createNewRelationship(newRelationshipName);
         UrlRelationship.verifyElectronicAccessNameOnTable(newRelationshipName);

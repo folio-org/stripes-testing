@@ -16,6 +16,6 @@
     "cypress/no-assigning-return-values": "error",
     "cypress/assertion-before-screenshot": "warn",
     "cypress/no-force": "warn",
-    "cypress/no-async-tests": "error"
+    "no-duplicate-imports": "error"
   }
 }

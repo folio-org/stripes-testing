@@ -1,21 +1,19 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import Users from '../../../support/fragments/users/users';
 import {
-  Institutions,
   Campuses,
+  Institutions,
   Libraries,
   Locations,
   ServicePoints,
 } from '../../../support/fragments/settings/tenant';
-import LocationEditForm from '../../../support/fragments/settings/tenant/locations/locationEditForm';
 import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import LocationDetails from '../../../support/fragments/settings/tenant/locations/locationDetails';
+import LocationEditForm from '../../../support/fragments/settings/tenant/locations/locationEditForm';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const testData = {
@@ -55,7 +53,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C410829 Verify "Tenant -> Location setup" settings HTML page title format (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       TopMenuNavigation.navigateToApp('Settings');
       TenantPane.verifyPageTitle('Settings - FOLIO');

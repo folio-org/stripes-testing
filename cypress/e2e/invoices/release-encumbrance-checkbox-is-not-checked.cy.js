@@ -1,14 +1,14 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragments/invoices';
+import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Users from '../../support/fragments/users/users';
+import { InvoiceLineDetails, InvoiceView, Invoices } from '../../support/fragments/invoices';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import { INVOICE_STATUSES } from '../../support/constants';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -68,7 +68,7 @@ describe('Invoices', () => {
 
   it(
     'C389582 "Release encumbrance" checkbox is NOT checked after creating new blank invoice line (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Open invoice by clicking on its "Vendor invoice number" link on "Invoices" pane
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
@@ -105,7 +105,7 @@ describe('Invoices', () => {
 
       // Click "Save & close" button
       InvoiceLineEditForm.clickSaveButton();
-      InvoiceView.checkTableContent([
+      InvoiceView.checkInvoiceLinesTableContent([
         {
           poNumber: testData.order.poNumber,
           description: testData.orderLine.titleOrPackage,

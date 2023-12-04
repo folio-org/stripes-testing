@@ -1,4 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -11,7 +10,7 @@ describe.skip('Settings', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C731 Create new categories (thunderjet)', { tags: [testTypes.ideaLabsTests] }, () => {
+  it('C731 Create new categories (thunderjet)', { tags: ['ideaLabsTests'] }, () => {
     cy.visit(SettingsMenu.organizationsPath);
     Organizations.addNewCategory(categoryName);
     cy.visit(TopMenu.organizationsPath);

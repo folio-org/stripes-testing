@@ -47,6 +47,7 @@ export const RepeatableField = HTML.extend('repeatable field')
 export const RepeatableFieldItem = HTML.extend('repeatable field item')
   .selector('[class^=repeatableFieldItem-]')
   .filters({
+    content: (el) => el.textContent,
     index: (el) => [...el.parentElement.children].indexOf(el),
     singleValue: (el) => el.querySelector('button [class^=singleValue-]').textContent,
   });
