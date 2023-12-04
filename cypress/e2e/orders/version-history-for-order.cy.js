@@ -64,7 +64,7 @@ describe('Orders: orders', () => {
       cy.wait(40000);
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);

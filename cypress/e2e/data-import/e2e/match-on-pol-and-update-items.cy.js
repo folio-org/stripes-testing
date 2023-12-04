@@ -266,7 +266,7 @@ describe('data-import', () => {
 
     const openOrder = (number) => {
       Orders.searchByParameter('PO number', number);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(number);
       Orders.openOrder();
     };
 
