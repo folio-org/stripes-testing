@@ -3,8 +3,6 @@ import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
@@ -15,8 +13,8 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('Invoices', () => {
-  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+describe('ui-finance: Fiscal Year Rollover', () => {
+  const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultOrder = {
@@ -27,8 +25,7 @@ describe('Invoices', () => {
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
-  const allocatedQuantity = '1000';
+  const allocatedQuantity = '100';
   let user;
   let orderNumber;
   let servicePointId;
@@ -36,9 +33,9 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+      firstFiscalYear.id = firstFiscalYearResponse.id;
+      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultFund.ledgerId = defaultLedger.id;
@@ -53,7 +50,6 @@ describe('Invoices', () => {
         });
       });
     });
-
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -63,10 +59,6 @@ describe('Invoices', () => {
 
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-      cy.getBatchGroups().then((batchGroup) => {
-        invoice.batchGroup = batchGroup.name;
-      });
     });
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
@@ -75,21 +67,21 @@ describe('Invoices', () => {
       orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         defaultFund,
-        '100',
+        '40',
         '1',
-        '100',
+        '40',
         location.institutionId,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
     cy.createTempUser([
-      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-      permissions.viewEditCreateInvoiceInvoiceLine.gui,
-      permissions.uiOrdersView.gui,
+      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersCancelOrderLines.gui,
+      permissions.uiOrdersCancelPurchaseOrders.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
@@ -100,27 +92,19 @@ describe('Invoices', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    OrderLines.selectPOLInOrder(0);
-    OrderLines.deleteOrderLine();
-    Orders.deleteOrderViaApi(defaultOrder.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
-    'C357020 Cancelling invoice creation from order (thunderjet)',
+    'C353546: Add cancel PO action and display indication that PO is canceled (thunderjet)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
-      Orders.cancelCreateNewInvoiceFromOrder();
-      Orders.newInvoiceFromOrder();
-      Invoices.cancellcreatingInvoiceFromOrderWithoutFY(invoice);
-      Orders.waitLoading();
+      Orders.cancelOrder();
+      Orders.selectClosedStatusFilter();
+      Orders.checkSearchResults(orderNumber);
     },
   );
 });

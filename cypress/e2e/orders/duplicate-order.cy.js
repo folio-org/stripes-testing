@@ -57,7 +57,7 @@ describe('orders: duplicate', () => {
       orderNumber = response.body.poNumber;
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
@@ -82,7 +82,7 @@ describe('orders: duplicate', () => {
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
@@ -100,7 +100,7 @@ describe('orders: duplicate', () => {
 
   it('C9220: Duplicate purchase order (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.duplicateOrder();
     InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
     Orders.checkDuplicatedOrder(

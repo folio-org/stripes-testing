@@ -75,7 +75,7 @@ describe('orders: Edifact export', () => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
@@ -95,7 +95,7 @@ describe('orders: Edifact export', () => {
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder(orderNumber, true, true);
     cy.wait(6000);
     Orders.deleteOrderViaApi(order.id);
@@ -114,7 +114,7 @@ describe('orders: Edifact export', () => {
     { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.checkAbsentExportDetails();
     },
   );
