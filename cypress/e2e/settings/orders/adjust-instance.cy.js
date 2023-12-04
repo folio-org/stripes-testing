@@ -68,7 +68,7 @@ describe('orders: Settings', () => {
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
           Orders.searchByParameter('PO number', orderNumber);
-          Orders.selectFromResultsList();
+          Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
           OrderLines.POLineInfodorPhysicalMaterialWithLocation(
             orderLineTitle,
@@ -96,7 +96,7 @@ describe('orders: Settings', () => {
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
     OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();
