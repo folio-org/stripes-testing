@@ -81,6 +81,9 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).choose(actionName),
     );
   },
+  isSelectActionAbsent(rowIndex = 0) {
+    cy.expect(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.action).absent());
+  },
   verifyBulkEditForm(rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
@@ -97,6 +100,11 @@ export default {
   },
   afterAllSelectedActions() {
     cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
+  },
+  deleteRow(rowIndex = 0) {
+    cy.do(
+      RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click(),
+    );
   },
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
