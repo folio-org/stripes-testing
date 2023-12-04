@@ -14,7 +14,7 @@ import {
   TextArea,
   Selection,
   Option,
-  OptionGroup
+  OptionGroup,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -295,7 +295,13 @@ export default {
       SelectionOption(including(location)).click(),
     ]);
   },
-
+  clickSelectedLocation(currentLocation, newLocation) {
+    cy.do([
+      Button(including(`Select control\n${currentLocation}`)).click(),
+      cy.wait(500),
+      SelectionOption(including(newLocation)).click(),
+    ]);
+  },
   clearPermanentLocation(type = 'item', rowIndex = 0) {
     cy.do(
       RepeatableFieldItem({ index: rowIndex })
@@ -866,20 +872,48 @@ export default {
   verifyHoldingsOptions() {
     cy.expect([
       Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
-      OptionGroup('Electronic access').find(Option({ value: 'ELECTRONIC_ACCESS_URI' })).exists(),
-      OptionGroup('Electronic access').find(Option({ value: 'ELECTRONIC_ACCESS_URL_RELATIONSHIP' })).exists(),
-      OptionGroup('Electronic access').find(Option({ value: 'ELECTRONIC_ACCESS_LINK_TEXT' })).exists(),
-      OptionGroup('Electronic access').find(Option({ value: 'ELECTRONIC_ACCESS_MATERIALS_SPECIFIED' })).exists(),
-      OptionGroup('Electronic access').find(Option({ value: 'ELECTRONIC_ACCESS_URL_PUBLIC_NOTE' })).exists(),
-      OptionGroup('Holdings location').find(Option({ value: 'PERMANENT_HOLDINGS_LOCATION' })).exists(),
-      OptionGroup('Holdings location').find(Option({ value: 'TEMPORARY_HOLDINGS_LOCATION' })).exists(),
-      OptionGroup('Holdings notes').find(Option({ text: 'Action note' })).exists(),
-      OptionGroup('Holdings notes').find(Option({ text: 'Binding' })).exists(),
-      OptionGroup('Holdings notes').find(Option({ text: 'Copy note' })).exists(),
-      OptionGroup('Holdings notes').find(Option({ text: 'Electronic bookplate' })).exists(),
-      OptionGroup('Holdings notes').find(Option({ text: 'Note' })).exists(),
-      OptionGroup('Holdings notes').find(Option({ text: 'Provenance' })).exists(),
-      OptionGroup('Holdings notes').find(Option({ text: 'Reproduction' })).exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_URI' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_RELATIONSHIP' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_LINK_TEXT' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_MATERIALS_SPECIFIED' }))
+        .exists(),
+      OptionGroup('Electronic access')
+        .find(Option({ value: 'ELECTRONIC_ACCESS_URL_PUBLIC_NOTE' }))
+        .exists(),
+      OptionGroup('Holdings location')
+        .find(Option({ value: 'PERMANENT_HOLDINGS_LOCATION' }))
+        .exists(),
+      OptionGroup('Holdings location')
+        .find(Option({ value: 'TEMPORARY_HOLDINGS_LOCATION' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Action note' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Binding' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Copy note' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Electronic bookplate' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Note' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Provenance' }))
+        .exists(),
+      OptionGroup('Holdings notes')
+        .find(Option({ text: 'Reproduction' }))
+        .exists(),
       Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
     ]);
   },
