@@ -1,4 +1,4 @@
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -9,10 +9,10 @@ describe('Bulk Edits', () => {
   describe('Bulk Edit - Items', () => {
     before('Create test data', () => {
       cy.createTempUser([
-        permissions.bulkEditEdit.gui,
-        permissions.inventoryCRUDHoldings.gui,
-        permissions.uiInventoryViewCreateEditDeleteItems.gui,
-        permissions.bulkEditView.gui,
+        Permissions.bulkEditEdit.gui,
+        Permissions.inventoryCRUDHoldings.gui,
+        Permissions.uiInventoryViewCreateEditDeleteItems.gui,
+        Permissions.bulkEditView.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
@@ -28,7 +28,7 @@ describe('Bulk Edits', () => {
     });
 
     it(
-      'C374177 Verify default state switching between record types (firebird)',
+      'C374177 Verify default state switching between record types (firebird) (Taas)',
       { tags: ['extendedPath', 'firebird'] },
       () => {
         // #1 Select the "Inventory-items" radio button on the "Record types" accordion

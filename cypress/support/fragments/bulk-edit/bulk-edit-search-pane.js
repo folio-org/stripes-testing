@@ -1214,7 +1214,6 @@ export default {
   },
 
   verifyFirstOptionRecordIdentifierDropdown(value) {
-    const selector = '[arial-label="Record identifier"]';
-    cy.get(`${selector} option:first`).should('have.text', value);
+    cy.expect(recordIdentifierDropdown.has({ checkedOptionText: value }));
   },
 };
