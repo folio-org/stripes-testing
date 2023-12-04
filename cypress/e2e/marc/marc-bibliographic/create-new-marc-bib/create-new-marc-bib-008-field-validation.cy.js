@@ -36,7 +36,7 @@ describe('Create new MARC bib', () => {
   });
 
   it(
-    'C387449 "008" field existence validation when create new "MARC bib" (spitfire) (null)',
+    'C387449 "008" field existence validation when create new "MARC bib" (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
