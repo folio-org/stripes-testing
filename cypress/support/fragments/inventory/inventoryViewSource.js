@@ -79,21 +79,21 @@ export default {
     }
   },
 
-  verifyLinkedToAuthorityIcon(rowIndex) {
-    cy.expect(
-      rootSection
-        .find(TableRow({ index: rowIndex }))
-        .find(linkedToMarcAuthorityIcon)
-        .exists(),
-    );
-  },
-
-  verifyLinkedToAuthorityIconAbsence(rowIndex) {
-    cy.expect(
-      rootSection
-        .find(TableRow({ index: rowIndex }))
-        .find(linkedToMarcAuthorityIcon)
-        .absent(),
-    );
+  verifyLinkedToAuthorityIcon(rowIndex, isPresent = true) {
+    if (isPresent) {
+      cy.expect(
+        rootSection
+          .find(TableRow({ index: rowIndex }))
+          .find(linkedToMarcAuthorityIcon)
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        rootSection
+          .find(TableRow({ index: rowIndex }))
+          .find(linkedToMarcAuthorityIcon)
+          .absent(),
+      );
+    }
   },
 };

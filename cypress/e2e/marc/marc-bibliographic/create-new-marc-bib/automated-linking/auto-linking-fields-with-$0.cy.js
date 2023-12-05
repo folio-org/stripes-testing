@@ -202,7 +202,10 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
           );
         }
       });
+      QuickMarcEditor.addNewField('700', '$a smth $0 3052044', 9);
+      QuickMarcEditor.updateExistingField('610', '$0 n93094742');
       QuickMarcEditor.pressSaveAndClose();
+
       QuickMarcEditor.checkAfterSaveAndClose();
       InventoryInstance.getId().then((id) => {
         createdInstanceID = id;
@@ -210,9 +213,9 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
       InventoryInstance.viewSource();
       newFields.forEach((newField) => {
         if (newField.status === 'linked') {
-          InventoryViewSource.verifyLinkedToAuthorityIcon(newField.rowIndex + 1);
+          InventoryViewSource.verifyLinkedToAuthorityIcon(newField.rowIndex + 1, true);
         } else {
-          InventoryViewSource.verifyLinkedToAuthorityIconAbsence(newField.rowIndex + 1);
+          InventoryViewSource.verifyLinkedToAuthorityIcon(newField.rowIndex + 1, false);
         }
       });
       QuickMarcEditor.closeEditorPane();
@@ -231,7 +234,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
             `${newField.boxSixth}`,
             `${newField.boxSeventh}`,
           );
-        } else {
+        } else if (newField.tag !== '610') {
           QuickMarcEditor.verifyTagFieldNotLinked(
             newField.rowIndex + 1,
             newField.tag,
@@ -241,6 +244,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
           );
         }
       });
+      QuickMarcEditor.verifyTagFieldNotLinked(7, '610', '\\', '\\', '$0 n93094742');
+      QuickMarcEditor.verifyTagFieldNotLinked(10, '700', '\\', '\\', '$a smth $0 3052044');
     },
   );
 });
