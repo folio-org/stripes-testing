@@ -1,5 +1,3 @@
-import TestTypes from '../../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../../support/dictionary/devTeams';
 import Permissions from '../../../../../support/dictionary/permissions';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
@@ -125,7 +123,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib ', () => {
 
   it(
     'C366115 Derive a new MARC bib record: Unlink "MARC Bibliographic" fields from "MARC Authority" records using "Remove linking" button in "Remove authority linking" modal (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();

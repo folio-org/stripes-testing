@@ -5,7 +5,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
@@ -283,7 +283,7 @@ describe('data-import', () => {
 
     it(
       'C380519 Cant delete protected and linked fields using update MARC Bib profile (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
