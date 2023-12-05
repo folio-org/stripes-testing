@@ -1,18 +1,16 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TopMenu from '../../../support/fragments/topMenu';
-import Orders from '../../../support/fragments/orders/orders';
-import TestTypes from '../../../support/dictionary/testTypes';
 import NewOrder from '../../../support/fragments/orders/newOrder';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -108,7 +106,7 @@ describe('Export Manager', () => {
         orderNumber = response.body.poNumber;
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         Orders.createPOLineViaActions();
         OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
         OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
@@ -167,10 +165,10 @@ describe('Export Manager', () => {
 
     it(
       'C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet) (TaaS)',
-      { tags: [TestTypes.smoke, devTeams.thunderjet] },
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
         Orders.checkModalDifferentAccountNumbers();
       },

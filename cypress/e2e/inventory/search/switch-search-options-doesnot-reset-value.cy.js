@@ -1,8 +1,8 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Search in Inventory', () => {
   const testData = {
@@ -40,7 +40,7 @@ describe('Search in Inventory', () => {
 
   it(
     'C353942 Verify that switching between search options doesnot reset its value to default (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToInstance();
       InventorySearchAndFilter.verifySpecificTabHighlighted('Instance');

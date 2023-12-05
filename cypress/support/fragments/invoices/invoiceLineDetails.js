@@ -82,28 +82,29 @@ export default {
       if (record.name) {
         cy.expect(
           fundDistributionsSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .find(MultiColumnListCell({ row: index, column: 'Fund' }))
             .has({ content: including(record.name) }),
         );
       }
       if (record.expenseClass) {
         cy.expect(
           fundDistributionsSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .find(MultiColumnListCell({ row: index, column: 'Expense class' }))
             .has({ content: including(record.expenseClass) }),
         );
       }
       if (record.encumbrance) {
         cy.expect(
           fundDistributionsSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 5 }))
+            .find(MultiColumnListCell({ row: index, column: 'Current encumbrance' }))
             .has({ content: including(record.encumbrance) }),
         );
       }
     });
+
+    if (!records.length) {
+      cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
+    }
   },
   openFundDetailsPane(rowIndex = 0) {
     this.clickTheLinkInFundDetailsSection({ rowIndex });
@@ -165,10 +166,6 @@ export default {
     );
   },
   closeInvoiceLineDetailsPane: () => {
-    cy.do(
-      Pane({ id: 'pane-invoiceLineDetails' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    cy.do(invoiceLineDetailsPane.find(Button({ icon: 'times' })).click());
   },
 };

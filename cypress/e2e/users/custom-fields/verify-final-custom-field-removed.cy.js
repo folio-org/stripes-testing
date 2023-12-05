@@ -1,9 +1,9 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Custom Fields', () => {
   let user;
@@ -42,7 +42,7 @@ describe('Custom Fields', () => {
 
   it(
     'C418594 Verify that final custom field can be removed (volaris) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(TopMenu.customFieldsPath);
       CustomFields.addCustomTextField(fieldData);

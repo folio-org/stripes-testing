@@ -1,17 +1,17 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { INVOICE_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import {
-  FiscalYears,
-  FinanceHelper,
-  Ledgers,
-  Funds,
   Budgets,
+  FinanceHelper,
+  FiscalYears,
+  Funds,
+  Ledgers,
 } from '../../../support/fragments/finance';
-import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../../support/fragments/orders';
 import { Invoices } from '../../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { INVOICE_STATUSES } from '../../../support/constants';
 
 describe('Finance', () => {
   describe('Fiscal years', () => {
@@ -122,7 +122,7 @@ describe('Finance', () => {
 
     it(
       'C375283 Available balance at the fiscal year level is calculated correctly if one of the related fund has negative amount (thunderjet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Click on "Fiscal year #1" link on "Fiscal year" pane
         FinanceHelper.searchByName(fiscalYear.name);

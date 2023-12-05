@@ -1,20 +1,18 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import TopMenu from '../../support/fragments/topMenu';
+import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
+import Helper from '../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Invoices from '../../support/fragments/invoices/invoices';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
-import Invoices from '../../support/fragments/invoices/invoices';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
-import Helper from '../../support/fragments/finance/financeHelper';
-import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
 import Organizations from '../../support/fragments/organizations/organizations';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Funds from '../../support/fragments/finance/funds/funds';
 
 describe('ui-invoices: Approve invoice', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -89,32 +87,28 @@ describe('ui-invoices: Approve invoice', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C3453 Pay invoice (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
-    () => {
-      const transactionFactory = new Transaction();
-      const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
-      Invoices.searchByNumber(invoice.invoiceNumber);
-      Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.payInvoice();
-      // check transactions after payment
-      cy.visit(TopMenu.fundPath);
-      Helper.searchByName(defaultFund.name);
-      Funds.selectFund(defaultFund.name);
-      Funds.selectBudgetDetails();
-      Funds.openTransactions();
-      Funds.checkTransaction(
-        1,
-        transactionFactory.create(
-          'credit',
-          valueInTransactionTable,
-          defaultFund.code,
-          '',
-          'Invoice',
-          '',
-        ),
-      );
-    },
-  );
+  it('C3453 Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+    const transactionFactory = new Transaction();
+    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.payInvoice();
+    // check transactions after payment
+    cy.visit(TopMenu.fundPath);
+    Helper.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
+    Funds.selectBudgetDetails();
+    Funds.openTransactions();
+    Funds.checkTransaction(
+      1,
+      transactionFactory.create(
+        'credit',
+        valueInTransactionTable,
+        defaultFund.code,
+        '',
+        'Invoice',
+        '',
+      ),
+    );
+  });
 });

@@ -9,6 +9,8 @@ import {
   including,
   Link,
   Checkbox,
+  Accordion,
+  MultiColumnList,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import OrderLines from './orderLines';
@@ -190,5 +192,20 @@ export default {
     OrderLineEditForm.waitLoading();
 
     return OrderLineEditForm;
+  },
+  verifyPOLCount(ordersCount) {
+    if (ordersCount === 0) {
+      cy.expect(
+        Accordion({ label: including('PO lines') })
+          .find(MultiColumnList({ id: 'POListing' }))
+          .absent(),
+      );
+    } else {
+      cy.expect(
+        Accordion({ label: including('PO lines') })
+          .find(MultiColumnList({ id: 'POListing' }))
+          .has({ rowCount: ordersCount }),
+      );
+    }
   },
 };

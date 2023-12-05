@@ -1,11 +1,9 @@
-import testType from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import devTeams from '../../../support/dictionary/devTeams';
 
 describe('Inventory -> Contributors Browse', () => {
   const testData = {};
@@ -55,7 +53,7 @@ describe('Inventory -> Contributors Browse', () => {
 
   it(
     'C353639 Browse contributors with exact match query (spitfire)',
-    { tags: [testType.smoke, devTeams.spitfire] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       BrowseContributors.clickBrowseBtn();
       InventorySearchAndFilter.verifyKeywordsAsDefault();
