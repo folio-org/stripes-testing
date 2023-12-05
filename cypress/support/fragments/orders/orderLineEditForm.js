@@ -24,10 +24,9 @@ const fundDistributionDetailsSection = orderLineEditFormRoot.find(
   Section({ id: 'fundDistributionAccordion' }),
 );
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
-
-const cancelButtom = Button('Cancel');
-const saveButtom = Button('Save & close');
-const saveAndOpenOrderButtom = Button('Save & open order');
+const cancelButton = Button('Cancel');
+const saveButton = Button('Save & close');
+const saveAndOpenOrderButton = Button('Save & open order');
 
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
@@ -54,14 +53,16 @@ const costDetailsFields = {
 };
 
 const buttons = {
-  Cancel: cancelButtom,
-  'Save & close': saveButtom,
-  'Save & open order': saveAndOpenOrderButtom,
+  Cancel: cancelButton,
+  'Save & close': saveButton,
+  'Save & open order': saveAndOpenOrderButton,
 };
 
 export default {
   waitLoading() {
     cy.expect(orderLineEditFormRoot.exists());
+    cy.expect(cancelButton.exists());
+    cy.expect(saveButton.exists());
   },
   checkButtonsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
@@ -174,13 +175,17 @@ export default {
       );
     }
   },
-  clickCancelButton() {
-    cy.do(cancelButtom.click());
-    cy.expect(orderLineEditFormRoot.absent());
+  clickCancelButton(shouldModalExsist = false) {
+    if (shouldModalExsist) {
+      cy.do(cancelButton.click());
+    } else {
+      cy.do(cancelButton.click());
+      cy.expect(orderLineEditFormRoot.absent());
+    }
   },
   clickSaveButton({ orderLineCreated = false, orderLineUpdated = true } = {}) {
-    cy.expect(saveButtom.has({ disabled: false }));
-    cy.do(saveButtom.click());
+    cy.expect(saveButton.has({ disabled: false }));
+    cy.do(saveButton.click());
 
     if (orderLineCreated) {
       InteractorsTools.checkCalloutMessage(
@@ -196,8 +201,8 @@ export default {
     cy.wait(2000);
   },
   clickSaveAndOpenOrderButton({ orderOpened = true, orderLineCreated = true } = {}) {
-    cy.expect(saveAndOpenOrderButtom.has({ disabled: false }));
-    cy.do(saveAndOpenOrderButtom.click());
+    cy.expect(saveAndOpenOrderButton.has({ disabled: false }));
+    cy.do(saveAndOpenOrderButton.click());
 
     if (orderOpened) {
       InteractorsTools.checkCalloutMessage(

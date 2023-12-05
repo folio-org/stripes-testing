@@ -102,7 +102,7 @@ describe('orders: Settings', () => {
       SettingsOrders.setPurchaseOrderLinesLimit(2);
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
