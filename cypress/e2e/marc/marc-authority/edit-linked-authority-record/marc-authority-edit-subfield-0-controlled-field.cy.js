@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../support/dictionary/devTeams';
 import Permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -111,7 +109,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
 
   it(
     'C374157 Verify that edited "010" value of linked "MARC Authority" record will update "$0" controlled field when "010" = "$0" (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
       MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);

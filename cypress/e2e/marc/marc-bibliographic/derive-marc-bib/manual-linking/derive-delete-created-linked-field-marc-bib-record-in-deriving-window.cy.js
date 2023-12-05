@@ -1,5 +1,3 @@
-import TestTypes from '../../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../../support/dictionary/devTeams';
 import Permissions from '../../../../../support/dictionary/permissions';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
@@ -94,7 +92,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
 
   it(
     'C380760 Derive | Delete created linked field of "MARC Bib" record in deriving window (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.addNewField(testData.tag700, '', 21);
