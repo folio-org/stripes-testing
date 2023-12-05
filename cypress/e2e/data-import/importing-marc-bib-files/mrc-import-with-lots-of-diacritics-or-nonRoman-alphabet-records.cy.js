@@ -97,8 +97,18 @@ describe('data-import', () => {
         InventoryInstance.verifyAlternativeTitle(1, 1, firstRecord.secondAlternativeTitle);
         InventoryInstance.verifyContributor(0, 1, firstRecord.firstContributerName);
         InventoryInstance.verifyContributor(1, 1, firstRecord.secondContributerName);
-        InventoryInstance.verifyInstancePublisher(0, 0, firstRecord.firstPublisher);
-        InventoryInstance.verifyInstancePublisher(1, 0, firstRecord.secondPublisher);
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: firstRecord.firstPublisher,
+          },
+          0,
+        );
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: firstRecord.secondPublisher,
+          },
+          1,
+        );
         InventoryInstance.verifyInstanceLanguage(firstRecord.language);
 
         cy.visit(TopMenu.dataImportPath);
@@ -109,8 +119,18 @@ describe('data-import', () => {
         InventoryInstance.verifyAlternativeTitle(0, 1, secondRecord.firstAlternativeTitle);
         InventoryInstance.verifyAlternativeTitle(1, 1, secondRecord.secondAlternativeTitle);
         InventoryInstance.verifyContributor(0, 1, secondRecord.contributerName);
-        InventoryInstance.verifyInstancePublisher(0, 0, secondRecord.firstPublisher);
-        InventoryInstance.verifyInstancePublisher(1, 0, secondRecord.secondPublisher);
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: secondRecord.firstPublisher,
+          },
+          0,
+        );
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: secondRecord.secondPublisher,
+          },
+          1,
+        );
         InventoryInstance.verifyInstanceLanguage(secondRecord.language);
 
         cy.visit(TopMenu.dataImportPath);
@@ -122,8 +142,18 @@ describe('data-import', () => {
         InventoryInstance.verifyAlternativeTitle(3, 1, thirdRecord.secondAlternativeTitle);
         InventoryInstance.verifyContributor(0, 1, thirdRecord.firstContributerName);
         InventoryInstance.verifyContributor(2, 1, thirdRecord.secondContributerName);
-        InventoryInstance.verifyInstancePublisher(0, 0, thirdRecord.firstPublisher);
-        InventoryInstance.verifyInstancePublisher(1, 0, thirdRecord.secondPublisher);
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: thirdRecord.firstPublisher,
+          },
+          0,
+        );
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: thirdRecord.secondPublisher,
+          },
+          1,
+        );
         InventoryInstance.verifyInstanceLanguage(thirdRecord.language);
 
         cy.visit(TopMenu.dataImportPath);
@@ -134,7 +164,12 @@ describe('data-import', () => {
         InventoryInstance.verifyAlternativeTitle(0, 1, fourthRecord.firstAlternativeTitle);
         InventoryInstance.verifyAlternativeTitle(1, 1, fourthRecord.secondAlternativeTitle);
         InventoryInstance.verifyContributor(0, 1, fourthRecord.contributerName);
-        InventoryInstance.verifyInstancePublisher(0, 0, fourthRecord.publisher);
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: fourthRecord.publisher,
+          },
+          0,
+        );
         InventoryInstance.verifyInstanceLanguage(fourthRecord.language);
       },
     );

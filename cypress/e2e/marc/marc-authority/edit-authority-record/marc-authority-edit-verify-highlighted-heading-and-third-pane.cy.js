@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
@@ -117,7 +117,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C350909 Results List: Display updated and highlighted Heading/reference value at search result list after editing 1XX, 4XX, 5XX fields (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.switchToSearch();
       MarcAuthorities.searchByParameter(
@@ -143,7 +143,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C350911 Results List: Display updated and highlighted Heading/reference value at browse result list after editing 1XX, 4XX, 5XX fields (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorities.searchByParameter(
@@ -167,7 +167,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C350946 Verify that third pane still opened after editing first search result (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.switchToSearch();
       MarcAuthorities.searchByParameter(
