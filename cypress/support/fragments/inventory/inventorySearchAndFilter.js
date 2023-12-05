@@ -18,7 +18,6 @@ import {
   Select,
   TextArea,
   TextField,
-  Modal,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
@@ -82,9 +81,6 @@ const itemStatusSearchField = TextField('itemStatus-field');
 const holdingsToggleButton = Button({ id: 'segment-navigation-holdings' });
 const itemToggleButton = Button({ id: 'segment-navigation-items' });
 const searchTypeDropdown = Select('Search field index');
-const newOrderButton = Button('New order');
-const modalDialog = Modal('Create order');
-const createButton = Button('Create');
 
 const searchInstanceByHRID = (id) => {
   cy.do([
@@ -847,17 +843,5 @@ export default {
       Section({ id: 'acc01' }).find(KeyValue('Source')).has({ value: instanceData.source }),
       Section({ id: 'acc02' }).find(KeyValue('Resource title')).has({ value: instanceData.title }),
     ]);
-  },
-  clickNewOrder() {
-    cy.do([instanceDetailsSection.find(actionsButton).click(), newOrderButton.click()]);
-  },
-  varifyModalDialogExists() {
-    cy.expect(modalDialog.exists());
-  },
-  fullAndCreatePONumber: (poNumber) => {
-    cy.do([TextField({ name: 'poNumber' }).fillIn(poNumber), createButton.click()]);
-  },
-  varifyTextMessageExists(text) {
-    cy.expect(modalDialog.find(HTML(including(text))).exists());
   },
 };

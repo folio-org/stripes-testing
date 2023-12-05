@@ -24,4 +24,8 @@ export default {
   enterOrderNumber: (orderNumber) => {
     cy.do(newOrderModal.find(TextField({ name: 'poNumber' })).fillIn(orderNumber));
   },
+
+  varifyTextMessageExists(text) {
+    cy.expect(TextField({ name: 'poNumber' }).has({ text }));
+  },
 };
