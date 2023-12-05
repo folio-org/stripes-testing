@@ -1593,6 +1593,14 @@ export default {
     cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
   },
 
+  verifyRecordCanNotBeSavedCalloutLDR() {
+    cy.expect(
+      Callout(
+        'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
+      ).exists(),
+    );
+  },
+
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
   },
