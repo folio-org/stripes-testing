@@ -1,4 +1,8 @@
-import { INSTANCE_SOURCE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
+import {
+  INSTANCE_SOURCE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -77,12 +81,12 @@ describe('data-import', () => {
         Logs.openFileDetails(nameMarcFileForCreate);
         rowNumbers.forEach((rowNumber) => {
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.srsMarc,
             rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.instance,
             rowNumber,
           );
@@ -90,7 +94,7 @@ describe('data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
 
-        FileDetails.openInstanceInInventory('Created', rowNumbers[0]);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumbers[0]);
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstance.verifyInstanceTitle(firstRecord.title);
         InventoryInstance.verifyAlternativeTitle(0, 1, firstRecord.firstAlternativeTitle);
@@ -103,7 +107,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[1]);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumbers[1]);
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstance.verifyInstanceTitle(secondRecord.title);
         InventoryInstance.verifyAlternativeTitle(0, 1, secondRecord.firstAlternativeTitle);
@@ -115,7 +119,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[2]);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumbers[2]);
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstance.verifyInstanceTitle(thirdRecord.title);
         InventoryInstance.verifyAlternativeTitle(0, 1, thirdRecord.firstAlternativeTitle);
@@ -128,7 +132,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[3]);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumbers[3]);
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstance.verifyInstanceTitle(fourthRecord.title);
         InventoryInstance.verifyAlternativeTitle(0, 1, fourthRecord.firstAlternativeTitle);
