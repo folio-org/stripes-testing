@@ -1682,7 +1682,7 @@ export default {
   updateValueOf008BoxByBoxName(boxName, updatedValue) {
     cy.do(TextField(`${boxName}`).fillIn(updatedValue));
   },
-  
+
   deleteValuesIn008Boxes() {
     tag008DefaultValues.forEach((index) => {
       cy.do(index.interactor.fillIn(''));
