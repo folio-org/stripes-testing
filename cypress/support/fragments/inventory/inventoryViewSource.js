@@ -5,6 +5,7 @@ const instanceTitle = 'MARC bibliographic record';
 const holdingTitle = 'Holdings record';
 const closeButton = Button({ icon: 'times' });
 const rootSection = Section({ id: 'marc-view-pane' });
+const linkedToMarcAuthorityIcon = Button({ href: including('/marc-authorities/authorities/') });
 
 const close = () => cy.do(closeButton.click());
 const contains = (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists());
@@ -76,5 +77,23 @@ export default {
           expect(text).to.match(regExp);
         });
     }
+  },
+
+  verifyLinkedToAuthorityIcon(rowIndex) {
+    cy.expect(
+      rootSection
+        .find(TableRow({ index: rowIndex }))
+        .find(linkedToMarcAuthorityIcon)
+        .exists(),
+    );
+  },
+
+  verifyLinkedToAuthorityIconAbsence(rowIndex) {
+    cy.expect(
+      rootSection
+        .find(TableRow({ index: rowIndex }))
+        .find(linkedToMarcAuthorityIcon)
+        .absent(),
+    );
   },
 };
