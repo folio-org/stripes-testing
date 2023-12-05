@@ -15,6 +15,7 @@ const testData = {
   searchText1: '(OCoLC)ocn607TST001',
   searchText2: 'Sophisticated title #1',
   instanceTitle: 'Sophisticated title #1',
+  updateLDRText: '00000naa\\a2200000uu\\4500',
 };
 const createdInstanceIDs = [];
 
@@ -44,9 +45,9 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.waitLoading();
       QuickMarcEditor.checkSubfieldsAbsenceInTag008();
-      QuickMarcEditor.updateExistingField('LDR', '00000naa\\a2200000uu\\4500');
+      QuickMarcEditor.updateExistingField('LDR', testData.updateLDRText);
       QuickMarcEditor.check008FieldContent();
-      QuickMarcEditor.updateExistingField('245', 'Sophisticated title #1');
+      QuickMarcEditor.updateExistingField('245', testData.instanceTitle);
       QuickMarcEditor.addNewField('035', '$a (OCoLC)ocn607TST001', 4);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
