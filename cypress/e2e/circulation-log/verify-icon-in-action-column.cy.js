@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -76,7 +76,7 @@ describe('Circulation log', () => {
 
   it(
     'C368490 Verify the icon "..." in "Actions" column (volaris) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       // On the "Loan" accordion on the "Search & filter" pane check the "Checked out" checkbox to retrieve result list with at least 1 circulation action => Click "Apply" button
       SearchPane.setFilterOptionFromAccordion('loan', 'Checked out');

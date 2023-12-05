@@ -1219,4 +1219,8 @@ export default {
   verifyBuildQueryModal() {
     cy.expect(buildQueryModal.exists());
   },
+
+  verifyFirstOptionRecordIdentifierDropdown(value) {
+    cy.expect(recordIdentifierDropdown.has({ checkedOptionText: value }));
+  },
 };
