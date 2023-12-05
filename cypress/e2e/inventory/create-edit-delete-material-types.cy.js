@@ -1,6 +1,5 @@
 import { Permissions } from '../../support/dictionary';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
-import NewMaterialType from '../../support/fragments/settings/inventory/newMaterialType';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -31,7 +30,7 @@ describe('inventory', () => {
       () => {
         cy.visit(SettingsMenu.materialTypePath);
         MaterialTypes.checkAvailableOptions();
-        NewMaterialType.create(materialTypeName);
+        MaterialTypes.createMaterialType(materialTypeName);
         MaterialTypes.isPresented(materialTypeName);
         MaterialTypes.edit(materialTypeName, newMaterialTypeName);
         MaterialTypes.delete(newMaterialTypeName);
