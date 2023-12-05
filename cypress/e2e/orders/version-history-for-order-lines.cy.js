@@ -99,7 +99,7 @@ describe('Orders: orders', () => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.editOrder();
       Orders.approveOrder();
       Orders.createPOLineViaActions();

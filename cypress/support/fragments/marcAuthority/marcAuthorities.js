@@ -182,9 +182,13 @@ export default {
 
   selectTitle: (title) => cy.do(Button(title).click()),
 
-  selectItem: (item) => {
+  selectItem: (item, partName = true) => {
     cy.expect(MultiColumnListCell({ content: item }).exists());
-    cy.do(Button(including(item)).click());
+    if (partName) {
+      cy.do(Button(including(item)).click());
+    } else {
+      cy.do(Button(item).click());
+    }
   },
 
   clickOnNumberOfTitlesLink(columnIndex, linkValue) {
@@ -269,7 +273,7 @@ export default {
   },
 
   closeMarcViewPane() {
-    cy.do(buttonClose.click());
+    cy.do(marcViewSection.find(buttonClose).click());
   },
 
   checkRecordDetailPageMarkedValue(markedValue) {
@@ -346,6 +350,14 @@ export default {
 
   clickLinkButton() {
     cy.do(buttonLink.click());
+  },
+
+  verifyLinkButtonExistOnMarcViewPane(isExist = true) {
+    if (isExist) {
+      cy.expect(marcViewSection.find(buttonLink).exists());
+    } else {
+      cy.expect(marcViewSection.find(buttonLink).absent());
+    }
   },
 
   checkFieldAndContentExistence(tag, value) {
@@ -946,5 +958,38 @@ export default {
       MultiSelect({ selected: including(authoritySource) }).exists(),
       sourceFileAccordion.find(MultiSelectOption(including(`(${count})`))).exists(),
     ]);
+  },
+
+  verifyValueDoesntExistInColumn(column, value) {
+    const actualValues = [];
+    cy.then(() => authoritiesList.rowCount())
+      .then((rowsCount) => {
+        if (rowsCount) {
+          for (let i = 0; i < rowsCount; i++) {
+            cy.then(() => authoritiesList.find(MultiColumnListCell({ column, row: i })).content()).then((content) => {
+              actualValues.push(content);
+            });
+          }
+        }
+      })
+      .then(() => {
+        const valueNotExist = !actualValues.includes(value);
+        expect(valueNotExist).to.equal(true);
+      });
+  },
+
+  verifyEveryRowContainsLinkButton() {
+    cy.then(() => authoritiesList.rowCount()).then((rowsCount) => {
+      if (rowsCount) {
+        for (let i = 0; i < rowsCount; i++) {
+          cy.expect(
+            authoritiesList
+              .find(MultiColumnListCell({ column: 'Link', row: i }))
+              .find(Button({ icon: 'link' }))
+              .exists(),
+          );
+        }
+      }
+    });
   },
 };

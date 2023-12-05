@@ -616,6 +616,13 @@ export default {
     );
   },
 
+  verifyNoChangesPreview() {
+    cy.expect([
+      changesAccordion.absent(),
+      bulkEditPane.find(HTML('0 records have been successfully changed')).exists(),
+    ]);
+  },
+
   verifyLocationChanges(rows, locationValue) {
     for (let i = 0; i < rows; i++) {
       cy.expect(
@@ -1211,5 +1218,9 @@ export default {
 
   verifyBuildQueryModal() {
     cy.expect(buildQueryModal.exists());
+  },
+
+  verifyFirstOptionRecordIdentifierDropdown(value) {
+    cy.expect(recordIdentifierDropdown.has({ checkedOptionText: value }));
   },
 };
