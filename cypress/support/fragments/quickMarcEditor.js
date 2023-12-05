@@ -254,6 +254,14 @@ const tag008DefaultValues = [
   { interactor: TextField('DtSt'), defaultValue: '\\' },
   { interactor: TextField('Start date'), defaultValue: '\\\\\\\\' },
   { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
+  { interactor: TextField('Ills', { name: including('Ills[0]') }), defaultValue: '\\' },
+  { interactor: TextField('Ills', { name: including('Ills[1]') }), defaultValue: '\\' },
+  { interactor: TextField('Ills', { name: including('Ills[2]') }), defaultValue: '\\' },
+  { interactor: TextField('Ills', { name: including('Ills[3]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[0]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[1]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[2]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[3]') }), defaultValue: '\\' },
 ];
 
 const defaultFieldValues = {
@@ -780,6 +788,14 @@ export default {
       });
   },
 
+  checkFieldContentToEqual(selector, fieldContent) {
+    cy.get(selector)
+      .invoke('val')
+      .then((text) => {
+        expect(text).to.equal(fieldContent);
+      });
+  },
+
   checkEmptyContent(tagName) {
     cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).exists());
     cy.expect(
@@ -1242,9 +1258,17 @@ export default {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
 
+  checkLinkButtonDontExist(tag) {
+    cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).absent());
+  },
+
   checkLinkButtonToolTipText(text) {
     cy.do(getRowInteractorByTagName('100').find(linkToMarcRecordButton).hoverMouse());
     cy.expect(Tooltip().has({ text }));
+  },
+  checkLinkButtonToolTipTextByIndex(rowIndex) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).hoverMouse());
+    cy.expect(Tooltip().has({ text: 'Link to MARC Authority record' }));
   },
   checkUnlinkTooltipText(rowIndex, text) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).hoverMouse());
@@ -1530,6 +1554,11 @@ export default {
     ]);
   },
 
+  confirmRemoveAuthorityLinking() {
+    cy.do(removeLinkingModal.find(removeLinkingButton).click());
+    cy.expect([removeLinkingModal.absent(), rootSection.exists()]);
+  },
+
   clickKeepLinkingButton() {
     cy.do(removeLinkingModal.find(keepLinkingButton).click());
   },
@@ -1647,6 +1676,16 @@ export default {
     });
     valuesArray.forEach((value, index) => {
       cy.expect(tag008DefaultValues[index].interactor.has({ value }));
+    });
+  },
+
+  updateValueOf008BoxByBoxName(boxName, updatedValue) {
+    cy.do(TextField(`${boxName}`).fillIn(updatedValue));
+  },
+
+  deleteValuesIn008Boxes() {
+    tag008DefaultValues.forEach((index) => {
+      cy.do(index.interactor.fillIn(''));
     });
   },
 

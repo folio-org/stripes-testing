@@ -20,9 +20,11 @@ export default HTML.extend('text area')
     focused: (el) => el.querySelector('textarea').contains(el.ownerDocument.activeElement),
     warning: (el) => el.querySelector('[class^=feedbackWarning-]').textContent,
     error: (el) => el.querySelector('[class^=feedbackError-]')?.textContent,
+    required: (el) => el.querySelector('textarea').getAttribute('aria-required') === 'true',
     valid: (el) => el.querySelector('textarea').getAttribute('aria-invalid') !== 'true',
     name: (el) => el.querySelector('textarea').getAttribute('name'),
     disabled: (el) => el.querySelector('textarea').disabled,
+    dataTestID: (el) => el.querySelector('textarea').getAttribute('data-testid'),
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),

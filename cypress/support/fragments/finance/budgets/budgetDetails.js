@@ -10,6 +10,7 @@ import {
   including,
 } from '../../../../../interactors';
 import AddTransferModal from '../modals/addTransferModal';
+import Transactions from '../transactions/transactions';
 
 const budgetPane = Section({ id: 'pane-budget' });
 const budgetDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-budget' });
@@ -53,6 +54,9 @@ export default {
   },
   clickViewTransactionsLink() {
     cy.do(informationSection.find(Link('View transactions')).click());
+    Transactions.waitLoading();
+
+    return Transactions;
   },
   closeBudgetDetails() {
     cy.do(budgetDetailsPaneHeader.find(Button({ icon: 'times' })).click());

@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import { Permissions } from '../../../support/dictionary';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import Users from '../../../support/fragments/users/users';
-import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import StatisticalCodes from '../../../support/fragments/settings/inventory/instance-holdings-item/statisticalCodes';
+import InstanceStatusTypes from '../../../support/fragments/settings/inventory/instances/instanceStatusTypes/instanceStatusTypes';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('inventory', () => {
   describe('Instance', () => {
@@ -43,7 +43,7 @@ describe('inventory', () => {
 
     it(
       'C602 In Accordion Administrative Data --> Instance status term --> (Validate matching settings) (folijet)',
-      { tags: [TestTypes.extended, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventoryInstance.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
@@ -59,7 +59,7 @@ describe('inventory', () => {
 
     it(
       'C604 In Accordion Administrative Data --> Go to the Statistical code --> (Validate matching settings) (folijet)',
-      { tags: [TestTypes.extended, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventoryInstance.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();

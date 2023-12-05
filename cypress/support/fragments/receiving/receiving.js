@@ -15,6 +15,7 @@ import {
   PaneContent,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import ReceivingDetails from './receivingDetails';
 
 const rootsection = PaneContent({ id: 'pane-title-details-content' });
 const actionsButton = Button('Actions');
@@ -27,11 +28,6 @@ const unreceiveButton = Button('Unreceive');
 const addPieceModal = Modal({ id: 'add-piece-modal' });
 const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
-const searchByParameter = (parameter, value) => {
-  cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
-  cy.do(TextField({ id: 'input-record-search' }).fillIn(value));
-  cy.do(Button('Search').click());
-};
 
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
@@ -39,9 +35,18 @@ const filterOpenReceiving = () => {
 };
 
 export default {
-  searchByParameter,
+  searchByParameter({ parameter = 'Keyword', value } = {}) {
+    cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
+    cy.do(TextField({ id: 'input-record-search' }).fillIn(value));
+    cy.do(Button('Search').click());
+  },
   filterOpenReceiving,
-  selectFromResultsList: (instanceName) => cy.do(Link(instanceName).click()),
+  selectFromResultsList(instanceName) {
+    cy.do(Link(instanceName).click());
+    ReceivingDetails.waitLoading();
+
+    return ReceivingDetails;
+  },
 
   waitLoading() {
     cy.expect([
@@ -113,6 +118,10 @@ export default {
     cy.do(Accordion({ id: expectedPiecesAccordionId }).find(MultiColumnListCell(caption)).click());
   },
 
+  selectPieceInReceived: (caption) => {
+    cy.do(Accordion({ id: 'received' }).find(MultiColumnListCell(caption)).click());
+  },
+
   selectPieceByIndexInExpected: (indexNumber = 0) => {
     cy.do(
       Accordion({ id: expectedPiecesAccordionId })
@@ -124,6 +133,13 @@ export default {
   quickReceivePiece: (enumeration) => {
     cy.do(addPieceModal.find(Button('Quick receive')).click());
     InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
+  },
+
+  deleteItemPiece: () => {
+    cy.do([
+      addPieceModal.find(Button('Delete')).click(),
+      Modal({ id: 'delete-piece-confirmation' }).find(Button('Delete item')).click(),
+    ]);
   },
 
   receivePieceWithoutBarcode: (rowNumber, caption) => {

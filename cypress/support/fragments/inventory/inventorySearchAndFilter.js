@@ -20,12 +20,12 @@ import {
   TextField,
   Modal,
 } from '../../../../interactors';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
-import InventoryInstances from './inventoryInstances';
 import InventoryInstance from './inventoryInstance';
-import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
+import InventoryInstances from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -105,7 +105,7 @@ const searchHoldingsByHRID = (hrid) => {
 
 const searchInstanceByTitle = (title) => {
   cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
-  InventoryInstance.waitLoading();
+  InventoryInstance.waitInventoryLoading();
 
   return InventoryInstance;
 };

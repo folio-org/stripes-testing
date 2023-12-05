@@ -1,12 +1,12 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import Approvals from '../../support/fragments/settings/invoices/approvals';
 import OpenOrder from '../../support/fragments/settings/orders/openOrder';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
@@ -65,7 +65,7 @@ describe('Orders', () => {
 
   it(
     'C353562 User is able to open purchase order with NOT unique PO line title when "Disable duplicate check" option is enabled (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
     () => {
       // Search for the Order #1 from Preconditions and click on its record
       const OrderDetails = Orders.selectOrderByPONumber(testData.orders[0].poNumber);
