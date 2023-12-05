@@ -644,6 +644,11 @@ export default {
     cy.do(Checkbox(source).click());
   },
 
+  searchBySharedStatus: (sharedStatus) => {
+    cy.do(Button({ id: 'accordion-toggle-button-shared' }).click());
+    cy.do(Checkbox(sharedStatus).click());
+  },
+
   importWithOclc: (oclc) => {
     cy.do(actionsButton.click());
     cy.do(Button({ id: 'dropdown-clickable-import-record' }).click());

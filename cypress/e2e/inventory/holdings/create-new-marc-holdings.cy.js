@@ -117,9 +117,9 @@ describe('Create holding records with MARC source', () => {
   });
 
   beforeEach('Login', () => {
-    cy.login(user.username, user.password, {
-      path: TopMenu.inventoryPath,
-      waiter: InventoryInstances.waitContentLoading,
+    cy.login(user.username, user.password).then(() => {
+      cy.visit(TopMenu.inventoryPath);
+      InventoryInstances.waitContentLoading();
     });
   });
 
@@ -142,7 +142,7 @@ describe('Create holding records with MARC source', () => {
 
   it(
     'C387450 "008" field existence validation when create new "MARC Holdings" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire], retries: 1 },
+    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
       InventoryInstance.searchByTitle(recordIDs[0]);
       InventoryInstances.selectInstance();
@@ -191,6 +191,7 @@ describe('Create holding records with MARC source', () => {
     'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
+      InventoryInstances.searchBySharedStatus('No');
       InventoryInstances.searchBySource('MARC');
       InventoryInstance.searchByTitle(recordIDs[1]);
       InventoryInstance.checkExpectedMARCSource();
@@ -271,6 +272,7 @@ describe('Create holding records with MARC source', () => {
     'C359242 Create MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire)',
     { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
     () => {
+      InventoryInstances.searchBySharedStatus('No');
       InventoryInstances.searchBySource(testData.sourceMARC);
       InventoryInstances.selectInstance();
       InventoryInstance.goToMarcHoldingRecordAdding();
