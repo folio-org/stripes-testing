@@ -62,22 +62,26 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
         path: `${TopMenu.inventoryPath}/view/${createdRecordIDs[0]}`,
         waiter: InventoryInstances.waitContentLoading,
       });
+
       // #4 Click on the "Actions" dropdown button and choose "Derive new MARC bibliographic record" option from the dropdown list.
       InventoryInstance.deriveNewMarcBib();
 
       // #5 Click on the "+" (Add a new field) icon.
       QuickMarcEditor.addEmptyFields(5);
       QuickMarcEditor.checkEmptyFieldAdded(6);
+
       // #6 Fill in the new $a subfield with any values.
       QuickMarcEditor.updateExistingFieldContent(6, `$a ${testData.tag001value}`);
 
       // #7 Fill in the new input field with the "001" MARC tag.
       QuickMarcEditor.updateTagNameToLockedTag(6, '001');
       QuickMarcEditor.checkFourthBoxDisabled(6);
+
       // #8 Click on the "Save & close" button.
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseDerive();
       cy.url().then((url) => createdRecordIDs.push(url.split('/')[5]));
+
       // #9 Click on the "Actions" button in the third pane → Select "Edit MARC bibliographic record" option.
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.checkReadOnlyTags();
