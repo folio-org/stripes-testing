@@ -71,7 +71,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       );
       InventorySearchAndFilter.clickSearch();
       InventorySearchAndFilter.verifyInstanceDisplayed(testData.instanceTitle, true);
-      InventoryInstance.waitInstanceRecordViewOpened();
+      InventoryInstance.waitInstanceRecordViewOpened(testData.instanceTitle);
     },
   );
 });
