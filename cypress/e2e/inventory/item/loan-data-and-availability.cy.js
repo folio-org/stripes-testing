@@ -15,109 +15,109 @@ import LoanTypesSection from '../../../support/fragments/settings/inventory/loan
 
 describe('inventory', () => {
   describe('item', () => {
-  const itemData = {
-    barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
-    loanType: [
-      {
-        title: `loanType_${getRandomPostfix()}`,
-      },
-      {
-        title: `loanType_${getRandomPostfix()}`,
-      },
-      {
-        title: `loanType_${getRandomPostfix()}`,
-      },
-    ],
-  };
-  let location;
-  const service = ServicePoints.getDefaultServicePointWithPickUpLocation();
+    const itemData = {
+      barcode: generateItemBarcode(),
+      instanceTitle: `Instance ${getRandomPostfix()}`,
+      loanType: [
+        {
+          title: `loanType_${getRandomPostfix()}`,
+        },
+        {
+          title: `loanType_${getRandomPostfix()}`,
+        },
+        {
+          title: `loanType_${getRandomPostfix()}`,
+        },
+      ],
+    };
+    let location;
+    const service = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
-  before('Create test data', () => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          itemData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((res) => {
-          itemData.holdingTypeId = res[0].id;
-        });
-        ServicePoints.createViaApi(service);
-        location = Location.getDefaultLocation(service.id);
-        Location.createViaApi(location);
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
-          itemData.materialTypeId = res.id;
-        });
-        [...Array(3)].forEach((_, index) => {
-          cy.createLoanType({
-            name: itemData.loanType[index].title,
-          }).then((loanType) => {
-            itemData.loanType[index].id = loanType.id;
+    before('Create test data', () => {
+      cy.getAdminToken()
+        .then(() => {
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            itemData.instanceTypeId = instanceTypes[0].id;
+          });
+          cy.getHoldingTypes({ limit: 1 }).then((res) => {
+            itemData.holdingTypeId = res[0].id;
+          });
+          ServicePoints.createViaApi(service);
+          location = Location.getDefaultLocation(service.id);
+          Location.createViaApi(location);
+          cy.getMaterialTypes({ limit: 1 }).then((res) => {
+            itemData.materialTypeId = res.id;
+          });
+          [...Array(3)].forEach((_, index) => {
+            cy.createLoanType({
+              name: itemData.loanType[index].title,
+            }).then((loanType) => {
+              itemData.loanType[index].id = loanType.id;
+            });
+          });
+        })
+        .then(() => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: itemData.instanceTypeId,
+              title: itemData.instanceTitle,
+            },
+            holdings: [
+              {
+                holdingsTypeId: itemData.holdingTypeId,
+                permanentLocationId: location.id,
+              },
+            ],
+            items: [
+              {
+                barcode: itemData.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: itemData.loanType[0].id },
+                materialType: { id: itemData.materialTypeId },
+              },
+            ],
           });
         });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: itemData.instanceTypeId,
-            title: itemData.instanceTitle,
-          },
-          holdings: [
-            {
-              holdingsTypeId: itemData.holdingTypeId,
-              permanentLocationId: location.id,
-            },
-          ],
-          items: [
-            {
-              barcode: itemData.barcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: itemData.loanType[0].id },
-              materialType: { id: itemData.materialTypeId },
-            },
-          ],
+
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+    });
+
+    after('Delete  test data', () => {
+      cy.getAdminToken();
+      ServicePoints.deleteViaApi(service.id);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+      Location.deleteViaApi(location.id);
+      [...Array(3)].forEach((_, index) => {
+        cy.deleteLoanType(itemData.loanType[index].id);
+      });
+    });
+
+    it(
+      'C632 - Loan Data and Availability (incl. validate Loan type settings) (Folijet)(TaaS)',
+      {
+        tags: ['extendedPath', 'folijet'],
+      },
+      () => {
+        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+        InventoryInstance.openHoldingsAccordion(location.name);
+        InventoryInstance.openItemByBarcodeAndIndex(itemData.barcode);
+        ItemRecordView.waitLoading();
+
+        InventoryItems.edit();
+        [...Array(3)].forEach((_, index) => {
+          ItemRecordEdit.chooseAndExistsItemPermanentLoanType(itemData.loanType[index].title);
         });
-      });
 
-    cy.loginAsAdmin({
-      path: TopMenu.inventoryPath,
-      waiter: InventoryInstances.waitContentLoading,
-    });
+        cy.visit(SettingsMenu.loantypesPath);
+        LoanTypesSection.verifyLoanTypesOption();
+        LoanTypesSection.waitLoading();
+        [...Array(3)].forEach((_, index) => {
+          LoanTypesSection.verifyLoanTypeExists(itemData.loanType[index].title);
+        });
+      },
+    );
   });
-
-  after('Delete  test data', () => {
-    cy.getAdminToken();
-    ServicePoints.deleteViaApi(service.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
-    Location.deleteViaApi(location.id);
-    [...Array(3)].forEach((_, index) => {
-      cy.deleteLoanType(itemData.loanType[index].id);
-    });
-  });
-
-  it(
-    'C632 - Loan Data and Availability (incl. validate Loan type settings) (Folijet)(TaaS)',
-    {
-      tags: ['extendedPath', 'folijet'],
-    },
-    () => {
-      InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
-      InventoryInstance.openHoldingsAccordion(location.name);
-      InventoryInstance.openItemByBarcodeAndIndex(itemData.barcode);
-      ItemRecordView.waitLoading();
-
-      InventoryItems.edit();
-      [...Array(3)].forEach((_, index) => {
-        ItemRecordEdit.chooseAndExistsItemPermanentLoanType(itemData.loanType[index].title);
-      });
-
-      cy.visit(SettingsMenu.loantypesPath);
-      LoanTypesSection.verifyLoanTypesOption();
-      LoanTypesSection.waitLoading();
-      [...Array(3)].forEach((_, index) => {
-        LoanTypesSection.verifyLoanTypeExists(itemData.loanType[index].title);
-      });
-    },
-  );
-});
 });
