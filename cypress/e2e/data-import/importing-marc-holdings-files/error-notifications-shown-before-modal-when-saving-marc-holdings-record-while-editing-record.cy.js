@@ -1,3 +1,4 @@
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,25 +22,57 @@ describe('data-import', () => {
     const filePathForEdit = 'marcFileForC375187_holdings.mrc';
     const fileName = `C375187 autotestFileName.${getRandomPostfix()}`;
     const editedMarcFileName = `C375187 editedAutotestFileName.${getRandomPostfix()}`;
+    const jobProfileForCreatingHoldings = 'Default - Create Holdings and SRS MARC Holdings';
 
     before('create test data', () => {
-      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      // upload a marc file for creating of the new instance, holding and item
-      DataImport.uploadFile(filePathForUpload, fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileForCreatingInstance);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
-      Logs.openFileDetails(fileName);
-      FileDetails.openInstanceInInventory('Created');
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        instanceHrid = initialInstanceHrId;
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.verifyUploadState();
+        // upload a marc file for creating of the new instance, holding and item
+        DataImport.uploadFile(filePathForUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfileForCreatingInstance);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
+        Logs.openFileDetails(fileName);
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          instanceHrid = initialInstanceHrId;
+          InventoryInstances.searchBySource('MARC');
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyInstancePaneExists();
+          InstanceRecordView.verifyInstanceSource('MARC');
+
+          DataImport.editMarcFile(
+            filePathForEdit,
+            editedMarcFileName,
+            ['in00000000023'],
+            [instanceHrid],
+          );
+
+          // upload a marc file for creating holdings
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadFile(editedMarcFileName);
+          JobProfiles.waitFileIsUploaded();
+          JobProfiles.search(jobProfileForCreatingHoldings);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(editedMarcFileName);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(editedMarcFileName);
+          [
+            FileDetails.columnNameInResultList.srsMarc,
+            FileDetails.columnNameInResultList.holdings,
+          ].forEach((columnName) => {
+            FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          });
+          cy.logout();
+        });
       });
-      cy.logout();
 
       cy.createTempUser([
+        Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
         Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
@@ -54,9 +87,10 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
         (instance) => {
           cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
@@ -73,12 +107,6 @@ describe('data-import', () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.verifyInstanceSource('MARC');
-        DataImport.editMarcFile(
-          filePathForEdit,
-          editedMarcFileName,
-          ['in00000000012'],
-          [instanceHrid],
-        );
 
         // #1 Input query in search input field which will return at least one "Instance" record with assigned "MARC holdings" record.
         // For example: "The Journal of ecclesiastical history."
