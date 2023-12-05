@@ -1024,9 +1024,7 @@ export default {
       .get('div[class^="mclRowContainer--"]')
       .find('[data-row-index]')
       .each(($row) => {
-        // from each row, choose specific cell
         cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
-          // extract its text content
           .invoke('text')
           .then((cellValue) => {
             cells.push(cellValue);
