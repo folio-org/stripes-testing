@@ -1163,4 +1163,8 @@ export default {
   verifyItemStatus: (itemStatus) => {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
+
+  openIdentifiersAccordion() {
+    cy.do(Accordion('Identifiers').click());
+  },
 };

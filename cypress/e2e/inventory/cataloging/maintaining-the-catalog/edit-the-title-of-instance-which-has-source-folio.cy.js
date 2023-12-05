@@ -10,7 +10,6 @@ import Users from '../../../../support/fragments/users/users';
 describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     let user;
-    let instanceHrid;
     const testData = {
       newInstanceTitle: `autotest_instance_title_${getRandomPostfix()}`,
     };
@@ -56,9 +55,6 @@ describe('inventory', () => {
         InstanceRecordEdit.saveAndClose();
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.verifyResourceTitle(testData.newInstanceTitle);
-        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-          instanceHrid = initialInstanceHrId;
-        });
       },
     );
   });

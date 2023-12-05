@@ -77,6 +77,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
           ],
         }).then((specialInstanceIds) => {
           instanceData.instanceId = specialInstanceIds.instanceId;
+          cy.wait(10000);
           cy.getInstance({
             limit: 1,
             expandAll: true,
@@ -114,6 +115,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
+      cy.log(testData.instanceHRID);
       NewRequest.enterHridInfo(testData.instanceHRID);
       NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);

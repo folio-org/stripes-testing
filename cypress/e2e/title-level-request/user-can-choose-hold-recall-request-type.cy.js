@@ -69,6 +69,7 @@ describe('Title Level Request', () => {
           ],
         }).then((specialInstanceIds) => {
           instanceData.instanceId = specialInstanceIds.instanceId;
+          cy.wait(15000);
           cy.getInstance({
             limit: 1,
             expandAll: true,

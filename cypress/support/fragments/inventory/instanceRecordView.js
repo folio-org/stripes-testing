@@ -151,7 +151,7 @@ const verifyElectronicAccessAbsent = (rowNumber = 0) => {
   );
 };
 
-const waitLoading = () => cy.expect(actionsButton.exists());
+const waitLoading = () => cy.expect(rootSection.find(actionsButton).exists());
 const getMultiColumnListCellsValues = (cell) => {
   const cells = [];
 

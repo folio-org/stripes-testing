@@ -51,7 +51,7 @@ describe('data-import', () => {
       { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
       () => {
         Logs.openFileDetails(fileNameToUpload);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileNameToUpload);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,

@@ -20,8 +20,8 @@ module.exports = defineConfig({
   pageLoadTimeout: 120000,
   env: {
     OKAPI_HOST: 'https://okapi-bugfest-poppy-consortium.int.aws.folio.org',
-    OKAPI_TENANT: 'cs00000int_0003',
-    diku_login: 'ecs_0003_admin',
+    OKAPI_TENANT: 'cs00000int_0006',
+    diku_login: 'ecs_0006_admin',
     diku_password: 'admin',
     is_kiwi_release: false,
     downloadTimeout: 1000,
