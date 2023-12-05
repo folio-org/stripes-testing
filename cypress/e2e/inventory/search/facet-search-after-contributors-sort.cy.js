@@ -152,6 +152,7 @@ describe('Inventory', () => {
         InventoryInstances.actionsSortBy(testData.contributorsSortOption);
         InventoryInstances.clickActionsButton();
         InventoryInstances.verifyActionsSortedBy(testData.contributorsSortOption);
+        InventoryInstances.checkColumnHeaderSort(testData.contributorsSortOption);
         InventoryInstances.checkResultListSortedByColumn(2);
         testData.instanceAccordions.forEach((accordion) => {
           InventorySearchAndFilter.expandAccordion(accordion);
@@ -171,6 +172,7 @@ describe('Inventory', () => {
         InventoryInstances.actionsSortBy(testData.contributorsSortOption);
         InventoryInstances.clickActionsButton();
         InventoryInstances.verifyActionsSortedBy(testData.contributorsSortOption);
+        InventoryInstances.checkColumnHeaderSort(testData.contributorsSortOption);
         InventoryInstances.checkResultListSortedByColumn(2);
         testData.holdingsAccordions.forEach((accordion) => {
           InventorySearchAndFilter.expandAccordion(accordion);
@@ -190,6 +192,7 @@ describe('Inventory', () => {
         InventoryInstances.actionsSortBy(testData.contributorsSortOption);
         InventoryInstances.clickActionsButton();
         InventoryInstances.verifyActionsSortedBy(testData.contributorsSortOption);
+        InventoryInstances.checkColumnHeaderSort(testData.contributorsSortOption);
         InventoryInstances.checkResultListSortedByColumn(2);
         testData.itemAccordions.forEach((accordion) => {
           InventorySearchAndFilter.expandAccordion(accordion);
