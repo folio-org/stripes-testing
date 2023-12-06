@@ -135,7 +135,7 @@ describe('plug-in MARC authority | Search', () => {
     'C380573 MARC Authority plug-in | Search using "Advanced search" option (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      MarcAuthorities.searchBy('Advanced search', testData.advancesSearchQuery);
+      MarcAuthorities.searchBy('Advanced search', testData.advancesSearchQuery, true);
       MarcAuthorities.checkRowsCount(4);
       MarcAuthorities.selectItem(testData.authRows.interboroughAuth.title, false);
       MarcAuthorities.checkFieldAndContentExistence(
@@ -144,7 +144,7 @@ describe('plug-in MARC authority | Search', () => {
       );
       MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authRows.interboroughAuth.title);
 
-      MarcAuthorities.searchBy('Advanced search', testData.partialAdvancesSearchQuery);
+      MarcAuthorities.searchBy('Advanced search', testData.partialAdvancesSearchQuery, true);
       MarcAuthorities.verifyMarcViewPaneIsOpened(false);
       MarcAuthorities.checkRowsCount(3);
     },

@@ -254,11 +254,13 @@ export default {
     ]);
   },
 
-  searchBy: (parameter, value) => {
+  searchBy: (parameter, value, isLongValue = false) => {
     cy.do(filtersSection.find(searchInput).selectIndex(parameter));
     cy.do(filtersSection.find(searchInput).fillIn(value));
-    // need to wait until value will be applied in case when value is long
-    cy.wait(1000);
+    if (isLongValue) {
+      // need to wait until value will be applied in case when value is long
+      cy.wait(1000);
+    }
     cy.do(filtersSection.find(searchButton).click());
   },
 
