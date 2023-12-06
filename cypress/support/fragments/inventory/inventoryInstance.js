@@ -1069,9 +1069,11 @@ export default {
     cy.do(Button('New request').click());
   },
 
-  newOrder() {
-    cy.do(actionsButton.click());
-    cy.do(Button('New order').click());
+  openCreateNewOrderModal() {
+    cy.do([actionsButton.click(), Button('New order').click()]);
+    NewOrderModal.waitLoading();
+    NewOrderModal.verifyModalView();
+
     return NewOrderModal;
   },
 

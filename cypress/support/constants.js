@@ -165,7 +165,7 @@ export const RECORD_STATUSES = {
 };
 
 export const ORDER_TYPES = {
-  ONE_TIME: 'One-Time',
+  ONE_TIME: 'One-time',
   ONGOING: 'Ongoing',
 };
 
