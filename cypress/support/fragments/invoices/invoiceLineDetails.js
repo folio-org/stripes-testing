@@ -166,10 +166,6 @@ export default {
     );
   },
   closeInvoiceLineDetailsPane: () => {
-    cy.do(
-      Pane({ id: 'pane-invoiceLineDetails' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    cy.do(invoiceLineDetailsPane.find(Button({ icon: 'times' })).click());
   },
 };
