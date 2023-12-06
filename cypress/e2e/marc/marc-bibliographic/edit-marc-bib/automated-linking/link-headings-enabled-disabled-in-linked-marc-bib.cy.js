@@ -100,7 +100,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         })
         .then(() => {
           cy.visit(TopMenu.inventoryPath);
-          InventoryInstance.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           linkingTagAndValues.forEach((linking) => {
@@ -136,7 +136,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     'C388533 "Link headings" button enabling/disabling when edit "MARC bib" having linked fields (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(createdRecordIDs[0]);
+      InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();

@@ -192,7 +192,7 @@ describe('data-import', () => {
           })
           .then(() => {
             cy.visit(TopMenu.inventoryPath);
-            InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             linkingTagAndValues.forEach((linking) => {
@@ -286,7 +286,7 @@ describe('data-import', () => {
       'C380519 Cant delete protected and linked fields using update MARC Bib profile (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();

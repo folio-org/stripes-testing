@@ -88,11 +88,11 @@ export default {
   selectInstitution(content = 'KU') {
     cy.do(Select('Institution').choose(including(content)));
   },
-  selectCampus() {
-    cy.do(Select('Campus').choose(including('E)')));
+  selectCampus(content = 'E)') {
+    cy.do(Select('Campus').choose(including(content)));
   },
-  selectLibrary() {
-    cy.do(Select('Library').choose(including('E)')));
+  selectLibrary(content = 'E)') {
+    cy.do(Select('Library').choose(including(content)));
   },
   viewLocations(location) {
     TenantPane.selectOptions([
