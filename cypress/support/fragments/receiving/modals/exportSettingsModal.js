@@ -7,7 +7,6 @@ import {
   MultiSelectOption,
   RadioButton,
   including,
-  matching,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import ReceivingStates from '../receivingStates';
@@ -55,12 +54,25 @@ export default {
       exportButton.has({ disabled: false, visible: true }),
     ]);
   },
-  selectTitleFieldsToExport(option) {
+  selectTitleFieldsToExport(options = []) {
     cy.do([
       selectedTitleFieldsRadioButton.click(),
       MultiSelect({ ariaLabelledby: 'selected-title-fields' }).toggle(),
-      MultiSelectMenu().find(MultiSelectOption(option)).click(),
     ]);
+
+    options.forEach((option) => {
+      cy.do(MultiSelectMenu().find(MultiSelectOption(option)).click());
+    });
+  },
+  selectPieceFieldsToExport(options = []) {
+    cy.do([
+      selectedPieceFieldsRadioButton.click(),
+      MultiSelect({ ariaLabelledby: 'selected-piece-fields' }).toggle(),
+    ]);
+
+    options.forEach((option) => {
+      cy.do(MultiSelectMenu().find(MultiSelectOption(option)).click());
+    });
   },
   clickCancelButton() {
     cy.do(cancelButton.click());
@@ -71,9 +83,7 @@ export default {
     cy.expect(exportSettingsModal.absent());
 
     if (exportStarted) {
-      InteractorsTools.checkCalloutMessage(
-        matching(new RegExp(ReceivingStates.exportJobStartedSuccessfully)),
-      );
+      InteractorsTools.checkCalloutMessage(ReceivingStates.exportJobStartedSuccessfully);
     }
   },
 };
