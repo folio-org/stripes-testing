@@ -1787,6 +1787,19 @@ export default {
     cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
   },
 
+  verifyUpdateLinkedBibsKeepEditingModal(linkedRecordsNumber) {
+    cy.expect(updateLinkedBibFieldsModal.exists());
+    cy.expect(
+      updateLinkedBibFieldsModal.has({
+        content: including(
+          `${linkedRecordsNumber} bibliographic record is linked to this authority record and will be updated by clicking the Save button.`,
+        ),
+      }),
+    );
+    cy.expect(saveButton.exists());
+    cy.expect(keepEditingButton.exists());
+  },
+
   confirmUpdateLinkedBibsKeepEditing(linkedRecordsNumber) {
     cy.do(saveButton.click());
     cy.expect([
