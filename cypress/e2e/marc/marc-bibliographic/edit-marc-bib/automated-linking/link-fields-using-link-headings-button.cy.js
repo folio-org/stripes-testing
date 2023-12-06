@@ -201,7 +201,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       });
 
       cy.visit(TopMenu.inventoryPath).then(() => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
 
@@ -243,7 +243,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     'C388536 Some of linkable fields are linked (and some are not) after clicking on the "Link headings" button when edit "MARC bib" except already linked fields (spitfire)',
     { tags: ['smoke', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterLinking(
