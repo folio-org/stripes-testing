@@ -31,10 +31,7 @@ describe('bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        FileManager.createFile(
-          `cypress/fixtures/${userUUIDsFileName}`,
-          user.userId,
-        );
+        FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
         cy.getUsers({ limit: 1, query: `"username"="${user.username}"` }).then((users) => {
           updatedDate = users[0].updatedDate;
         });
@@ -89,10 +86,14 @@ describe('bulk-edit', () => {
           'Enrollment date',
           'Expiration date',
           'Tags',
-          'Custom fields'
+          'Custom fields',
         ];
         ExportFile.verifyFileIncludes(matchedRecordsFileName, ['Date of birth', userColumns]);
-        ExportFile.verifyFileIncludes(matchedRecordsFileName, ['Created date', 'Updated date'], false);
+        ExportFile.verifyFileIncludes(
+          matchedRecordsFileName,
+          ['Created date', 'Updated date'],
+          false,
+        );
         BulkEditActions.prepareValidBulkEditFile(
           matchedRecordsFileName,
           editedFileName,
@@ -109,8 +110,16 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
 
-        ExportFile.verifyFileIncludes(changedRecordsFileName, ['Date Of Birth', userColumns, newName]);
-        ExportFile.verifyFileIncludes(changedRecordsFileName, ['Created date', 'Updated date'], false);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          'Date Of Birth',
+          userColumns,
+          newName,
+        ]);
+        ExportFile.verifyFileIncludes(
+          changedRecordsFileName,
+          ['Created date', 'Updated date'],
+          false,
+        );
 
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifyLogsPane();
@@ -125,10 +134,18 @@ describe('bulk-edit', () => {
         ExportFile.verifyFileIncludes(matchedRecordsFileName, ['Date of birth', userColumns]);
 
         BulkEditSearchPane.downloadFileWithProposedChanges();
-        ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, ['Date of birth', userColumns, newName]);
+        ExportFile.verifyFileIncludes(previewOfProposedChangesFileName, [
+          'Date of birth',
+          userColumns,
+          newName,
+        ]);
 
         BulkEditSearchPane.downloadFileWithUpdatedRecords();
-        ExportFile.verifyFileIncludes(updatedRecordsFileName, ['Date Of Birth', userColumns, newName]);
+        ExportFile.verifyFileIncludes(updatedRecordsFileName, [
+          'Date Of Birth',
+          userColumns,
+          newName,
+        ]);
 
         cy.getUsers({ limit: 1, query: `"username"="${user.username}"` }).then((users) => {
           cy.expect(users[0].updatedDate).to.include(today);
