@@ -1167,4 +1167,8 @@ export default {
   openIdentifiersAccordion() {
     cy.do(Accordion('Identifiers').click());
   },
+
+  checkDetailsViewOpened() {
+    cy.expect(instanceDetailsPane.exists());
+  },
 };

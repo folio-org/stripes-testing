@@ -1,5 +1,4 @@
 import TopMenu from '../../support/fragments/topMenu';
-import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
@@ -9,35 +8,44 @@ import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import Parallelization from '../../support/dictionary/parallelization';
+import getRandomPostfix from '../../support/utils/stringTools';
+import DataImport from '../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../support/fragments/data_import/logs/logs';
 
 describe('MARC -> MARC Bibliographic', () => {
   const testData = {};
-  const OCLCAuthentication = '100481406/PAOLF';
+
+  const marcFile = {
+    marc: 'marcFileOCLC.mrc',
+    fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+    jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+  };
 
   before(() => {
-    cy.getAdminToken().then(() => {
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
-    });
-
     cy.createTempUser([
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.inventoryAll.gui,
-      Permissions.uiInventorySingleRecordImport.gui,
       Permissions.converterStorageAll.gui,
+      Permissions.uiInventoryViewCreateEditInstances.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.inventoryPath,
-        waiter: InventorySearchAndFilter.waitLoading,
-      });
-      InventoryActions.import();
-      InventoryInstance.getId().then((id) => {
-        testData.instanceID = id;
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitLoadingList();
+        JobProfiles.search(marcFile.jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(marcFile.fileName);
+        Logs.getCreatedItemsID().then((link) => {
+          testData.instanceID = link.split('/')[5];
+        });
       });
     });
   });
@@ -148,12 +156,6 @@ describe('MARC -> MARC Bibliographic', () => {
     { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
-
-      InventoryInstance.startOverlaySourceBibRecord();
-      InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);
-      InventoryActions.pressImportInModal();
-
-      InventoryInstance.checkExpectedOCLCPresence();
       InventoryInstance.checkExpectedMARCSource();
 
       InventoryInstance.editInstance();
@@ -189,20 +191,21 @@ describe('MARC -> MARC Bibliographic', () => {
     'C345388 Derive a MARC bib record (spitfire)',
     { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
     () => {
-      InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+      // InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
+      cy.visit(`${TopMenu.inventoryPath}/view/${testData.instanceID}`);
+      InventoryInstance.checkDetailsViewOpened();
 
       InventoryInstance.getAssignedHRID().then((instanceHRID) => {
         InventoryInstance.deriveNewMarcBib();
         const expectedCreatedValue = QuickMarcEditor.addNewField();
 
         QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-          const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
+          const expectedUpdatedValue = QuickMarcEditor.updateExistingField('245');
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.deleteConfirmationPresented();
           QuickMarcEditor.confirmDelete();
           cy.wait(5000);
-          cy.reload();
           InventoryInstance.checkUpdatedHRID(instanceHRID);
           InventoryInstance.checkExpectedMARCSource();
           InventoryInstance.checkPresentedText(expectedUpdatedValue);
