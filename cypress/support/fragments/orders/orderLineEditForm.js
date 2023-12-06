@@ -61,8 +61,6 @@ const buttons = {
 export default {
   waitLoading() {
     cy.expect(orderLineEditFormRoot.exists());
-    cy.expect(cancelButton.exists());
-    cy.expect(saveButton.exists());
   },
   checkButtonsConditions(fields = []) {
     fields.forEach(({ label, conditions }) => {
@@ -176,6 +174,8 @@ export default {
     }
   },
   clickCancelButton(shouldModalExsist = false) {
+    cy.expect(cancelButton.has({ disabled: false }));
+
     if (shouldModalExsist) {
       cy.do(cancelButton.click());
     } else {
