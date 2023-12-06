@@ -27,7 +27,7 @@ const linkTodefaultUpdateInstanceJobProfile =
   '/settings/data-import/job-profiles/view/91f9b8d6-d80e-4727-9783-73fb53e3c786';
 const defaultCreateInstanceJobProfileId = 'd0ebb7b0-2f0f-11eb-adc1-0242ac120002';
 const defaultUpdateInstanceJobProfileId = '91f9b8d6-d80e-4727-9783-73fb53e3c786';
-const defaultCopyCatProfileId = 'cece0354-9305-4a0d-9242-3521c5c3f493';
+const defaultCopyCatProfileId = 'f26df83c-aa25-40b6-876e-96852c3d4fd4';
 
 function edit(profileName) {
   cy.do(Pane(profileName).find(Button('Edit')).click());
