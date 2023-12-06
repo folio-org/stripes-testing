@@ -817,7 +817,7 @@ export default {
   },
 
   verifyRecordTypesSortedAlphabetically() {
-    cy.get('#entityType [class*="labelText"]').then((checkboxes) => {
+    cy.get('[class*="labelText"]').then((checkboxes) => {
       const textArray = checkboxes.get().map((el) => el.innerText);
       const sortedArray = [...textArray].sort((a, b) => a - b);
       expect(sortedArray).to.eql(textArray);
