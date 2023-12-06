@@ -652,8 +652,7 @@ export default {
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(
       HTML(
-        `${fileName}: ${
-          validRecordCount + invalidRecordCount
+        `${fileName}: ${validRecordCount + invalidRecordCount
         } entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`,
       ).exists(),
     );
@@ -664,8 +663,7 @@ export default {
       Accordion('Errors')
         .find(
           HTML(
-            `${fileName}: ${
-              validRecordCount + invalidRecordCount
+            `${fileName}: ${validRecordCount + invalidRecordCount
             } entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`,
           ),
         )
@@ -737,6 +735,11 @@ export default {
         .find(Checkbox({ disabled: false }))
         .absent(),
     );
+  },
+  verifyCheckboxesAbsent(...checkboxes) {
+    checkboxes.forEach((checkbox) => {
+      cy.expect(Checkbox(checkbox).absent());
+    });
   },
   verifyHoldingActionShowColumns() {
     cy.expect([
