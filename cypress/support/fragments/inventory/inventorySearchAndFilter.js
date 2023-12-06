@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -843,5 +843,19 @@ export default {
       Section({ id: 'acc01' }).find(KeyValue('Source')).has({ value: instanceData.source }),
       Section({ id: 'acc02' }).find(KeyValue('Resource title')).has({ value: instanceData.title }),
     ]);
+  },
+
+  expandAccordion(accordionName) {
+    cy.do(paneFilterSection.find(Accordion(accordionName)).clickHeader());
+    cy.expect(paneFilterSection.find(Accordion(accordionName)).has({ open: true }));
+  },
+
+  checkOptionsWithCountersExistInAccordion(accordionName) {
+    cy.expect(
+      paneFilterSection
+        .find(Accordion(accordionName))
+        .find(Checkbox())
+        .has({ label: matching(/.{1,}\d{1,}/) }),
+    );
   },
 };
