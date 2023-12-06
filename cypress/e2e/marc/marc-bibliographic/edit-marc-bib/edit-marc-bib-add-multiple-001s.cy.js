@@ -26,7 +26,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     },
   ];
 
-  const createdAuthorityIDs = [];
+  const createdRecordIDs = [];
 
   before('Create test data', () => {
     cy.createTempUser([
@@ -46,11 +46,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
             JobProfiles.waitFileIsImported(marcFile.fileName);
             Logs.checkStatusOfJobProfile('Completed');
             Logs.openFileDetails(marcFile.fileName);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdAuthorityIDs.push(link.split('/')[5]);
-              });
-            }
+            Logs.getCreatedItemsID().then((link) => {
+              createdRecordIDs.push(link.split('/')[5]);
+            });
           },
         );
       });
@@ -65,7 +63,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
+    InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
   });
 
   it(
