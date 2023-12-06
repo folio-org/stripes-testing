@@ -21,9 +21,9 @@ import {
   Card,
   TextArea,
 } from '../../../../interactors';
-import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectOrganizationModal from './modals/selectOrganizationModal';
 import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
@@ -37,6 +37,7 @@ import selectLocationModal from './modals/selectLocationModal';
 
 const path = require('path');
 
+const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
 const saveAndCloseButton = Button('Save & close');
 const cancelButton = Button('Cancel');
@@ -152,7 +153,7 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(Button('Reset all').click());
+    cy.do(filtersPane.find(Button('Reset all')).click());
   },
 
   checkOrderlineSearchResults: ({ poLineNumber, title } = {}) => {
@@ -1389,13 +1390,8 @@ export default {
   },
 
   selectFilterVendorPOL: (invoice) => {
-    cy.do([
-      buttonFVendorFilter.click(),
-      Button({ id: 'purchaseOrder.vendor-button' }).click(),
-      Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
-      searchButton.click(),
-    ]);
-    SearchHelper.selectFromResultsList();
+    cy.do([buttonFVendorFilter.click(), Button({ id: 'purchaseOrder.vendor-button' }).click()]);
+    SelectOrganizationModal.findOrganization(invoice.vendorName);
     cy.do(buttonFVendorFilter.click());
   },
 
@@ -1704,7 +1700,7 @@ export default {
         throw new Error(`No files found in ${downloadsFolder}`);
       }
       const fileName = path.basename(files[0]);
-      const filePath = `${downloadsFolder}\\${fileName}`;
+      const filePath = `${downloadsFolder}/${fileName}`;
       cy.readFile(filePath).then((fileContent) => {
         const fileRows = fileContent.split('\n');
         expect(fileRows[0].trim()).to.equal(
@@ -1712,10 +1708,6 @@ export default {
         );
       });
     });
-  },
-
-  deleteAllDownloadedFiles() {
-    cy.exec('del cypress\\downloads\\*.csv', { failOnNonZeroExit: false });
   },
 
   checkCreateInventory() {
