@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -40,7 +40,7 @@ describe('data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         instanceHrid = initialInstanceHrId;
       });
@@ -104,9 +104,9 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.holdings,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
-        FileDetails.openHoldingsInInventory('Created');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
         HoldingsRecordView.checkHoldingRecordViewOpened();
         HoldingsRecordView.checkInstanceTitle(instanceTitle);
         HoldingsRecordView.checkLastUpdatedDate(user.username);

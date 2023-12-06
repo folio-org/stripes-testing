@@ -1,4 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -48,7 +49,7 @@ describe('data-import', () => {
       () => {
         DataImport.verifyChooseFileButtonState({ isDisabled: true });
         Logs.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((hrId) => {
           instanceHrid = hrId;
         });
@@ -58,7 +59,7 @@ describe('data-import', () => {
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.searchWithTerm(fileName);
         LogsViewAll.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstances.verifyInstanceDetailsView();
       },
     );

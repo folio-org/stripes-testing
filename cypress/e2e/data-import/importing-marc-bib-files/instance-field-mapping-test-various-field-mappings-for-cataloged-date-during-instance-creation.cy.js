@@ -2,6 +2,7 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -98,7 +99,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstMarcFileName);
         // check the first instance with Cataloged date
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -108,7 +109,7 @@ describe('data-import', () => {
           cy.go('back');
         });
         // check the second instance without Cataloged date
-        FileDetails.openInstanceInInventory('Created', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -135,7 +136,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondMarcFileName);
         // check the first instance with Cataloged date
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -145,7 +146,7 @@ describe('data-import', () => {
           cy.go('back');
         });
         // check the second instance without Cataloged date
-        FileDetails.openInstanceInInventory('Created', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -172,7 +173,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(thirdMarcFileName);
         // check the first instance with Cataloged date
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -182,7 +183,7 @@ describe('data-import', () => {
           cy.go('back');
         });
         // check the second instance without Cataloged date
-        FileDetails.openInstanceInInventory('Created', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -209,7 +210,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(forthMarcFileName);
         // check the first instance with Cataloged date
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -219,7 +220,7 @@ describe('data-import', () => {
           cy.go('back');
         });
         // check the second instance without Cataloged date
-        FileDetails.openInstanceInInventory('Created', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);

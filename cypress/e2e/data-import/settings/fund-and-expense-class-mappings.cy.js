@@ -5,6 +5,7 @@ import {
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -35,7 +36,7 @@ describe('data-import', () => {
     const fundAndExpenseClassData = [
       {
         fund: 'History(HIST)',
-        expenseClass: 'No value set-',
+        expenseClass: RECORD_STATUSES.DASH,
         value: '100%',
         amount: '$19.95',
       },
@@ -163,7 +164,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstMarcFileName);
         // check Fund and Expense class populated in the first POL
-        FileDetails.openOrder('Created');
+        FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -173,7 +174,7 @@ describe('data-import', () => {
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
         cy.go('back');
         // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder('Created', 1);
+        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -199,17 +200,17 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(secondMarcFileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.order,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
           1,
         );
 
         // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder('Created', 1);
+        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -235,16 +236,16 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(thirdMarcFileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
           1,
         );
         // check Fund and Expense class populated in the first POL
-        FileDetails.openOrder('Created');
+        FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -254,7 +255,7 @@ describe('data-import', () => {
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
         cy.go('back');
         // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder('Created', 1);
+        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -280,16 +281,16 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(forthMarcFileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
           1,
         );
         // check Fund and Expense class populated in the first POL
-        FileDetails.openOrder('Created');
+        FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -299,7 +300,7 @@ describe('data-import', () => {
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
         cy.go('back');
         // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder('Created', 1);
+        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');

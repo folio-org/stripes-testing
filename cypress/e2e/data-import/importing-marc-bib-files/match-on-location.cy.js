@@ -6,6 +6,7 @@ import {
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
   PROFILE_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -269,22 +270,22 @@ describe('data-import', () => {
       Logs.openFileDetails(marcFileForCreate);
       rowNumbers.forEach((rowNumber) => {
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.srsMarc,
           rowNumber,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.instance,
           rowNumber,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.holdings,
           rowNumber,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.item,
           rowNumber,
         );
@@ -296,7 +297,7 @@ describe('data-import', () => {
         cy.wait(3000);
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumber);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumber);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrids.push(initialInstanceHrId);
         });
@@ -403,12 +404,12 @@ describe('data-import', () => {
       Logs.openFileDetails(fileNameAfterUpdate);
       rowNumbers.forEach((rowNumber) => {
         FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
+          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.holdings,
           rowNumber,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
+          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.item,
           rowNumber,
         );
