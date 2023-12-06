@@ -187,7 +187,7 @@ describe('data-import', () => {
       'C385673 Add controllable, non-controllable subfields to one of the linked repeatable (multiple repeatable fields with same indicators) and not repeatable fields (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         linkingTagAndValues.forEach((linking) => {
