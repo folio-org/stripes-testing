@@ -101,7 +101,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
   const marcFieldProtectionRules = [];
   const createdAuthorityID = [];
 
-  before('', () => {
+  before('create test data', () => {
     cy.createTempUser([
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -127,14 +127,14 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
     });
   });
 
-  beforeEach('', () => {
+  beforeEach('login', () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, {
       path: TopMenu.marcAuthorities,
       waiter: MarcAuthorities.waitLoading,
     });
   });
 
-  after('', () => {
+  after('delete test data', () => {
     cy.getAdminToken();
     createdAuthorityID.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
