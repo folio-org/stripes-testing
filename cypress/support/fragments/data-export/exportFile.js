@@ -164,8 +164,7 @@ export default {
               // Check for regular element
               expect(actualContent).to.include(element);
             }
-          }
-          else expect(actualContent).to.not.include(element);
+          } else expect(actualContent).to.not.include(element);
         });
       });
     });
