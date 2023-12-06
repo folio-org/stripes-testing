@@ -401,7 +401,10 @@ export default {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveUUIDs.click());
   },
-
+  saveHoldingsUUIDs() {
+    InventoryActions.open();
+    cy.do(InventoryActions.options.saveHoldingsUUIDs.click());
+  },
   saveCQLQuery() {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveCQLQuery.click());
