@@ -109,7 +109,7 @@ describe('MARC -> MARC Holdings', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(testData.createdRecordIDs[0]);
+      InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();
     });
   });

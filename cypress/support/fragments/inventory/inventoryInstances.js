@@ -15,6 +15,7 @@ import {
   TextArea,
   PaneHeader,
   MultiColumnListHeader,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -34,6 +35,7 @@ const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-sele
   Checkbox({ ariaLabel: 'Select instance' }),
 );
 const singleRecordImportModal = Modal('Single record import');
+const filterSection = Section({ id: 'pane-filter' });
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button('Search', { type: 'submit' });
 const paneHeaderSearch = PaneHeader('Inventory');
@@ -254,6 +256,15 @@ export default {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
 
+  searchByTitle(title, result = true) {
+    cy.do([
+      filterSection.find(inventorySearchInput).fillIn(title),
+      filterSection.find(searchButton).click(),
+    ]);
+    if (result) {
+      cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    }
+  },
   searchByTag: (tagName) => {
     cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
     // wait for data to be loaded

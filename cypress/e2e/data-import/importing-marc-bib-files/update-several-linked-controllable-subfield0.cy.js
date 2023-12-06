@@ -128,7 +128,7 @@ describe('data-import', () => {
           })
           .then(() => {
             cy.visit(TopMenu.inventoryPath);
-            InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             linkingTagAndValues.forEach((linking) => {
@@ -199,7 +199,7 @@ describe('data-import', () => {
       'C385667 Update controllable subfield, "$0" in several linked repeatable fields and change field order (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
@@ -246,7 +246,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(
