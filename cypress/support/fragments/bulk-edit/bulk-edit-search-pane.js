@@ -738,6 +738,11 @@ export default {
         .absent(),
     );
   },
+  verifyCheckboxesAbsent(...checkboxes){
+    checkboxes.forEach((checkbox) => {
+      cy.expect(Checkbox(checkbox).absent());
+    });
+  },
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
