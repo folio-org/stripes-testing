@@ -96,9 +96,11 @@ describe('data-import', () => {
         // check instance is updated
         InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);
         InventoryInstance.verifyInstanceLanguage(updatedInstanceData.language);
-        InventoryInstance.verifyInstancePublisher(0, 0, updatedInstanceData.publisher);
-        InventoryInstance.verifyInstancePublisher(0, 2, updatedInstanceData.placeOfPublication);
-        InventoryInstance.verifyInstancePublisher(0, 3, updatedInstanceData.publicationDate);
+        InventoryInstance.verifyInstancePublisher({
+          publisher: updatedInstanceData.publisher,
+          place: updatedInstanceData.placeOfPublication,
+          date: updatedInstanceData.publicationDate,
+        });
         InventoryInstance.verifyInstancePhysicalcyDescription(
           updatedInstanceData.physicalDescription,
         );

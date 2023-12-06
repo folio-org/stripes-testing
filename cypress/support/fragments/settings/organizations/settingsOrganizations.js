@@ -27,6 +27,9 @@ function getEditableListRow(rowNumber) {
 export default {
   defaultCategories,
   defaultTypes,
+  getDefaultOrganizationType() {
+    return { id: uuid(), name: `autotest_type_name_${getRandomPostfix()}`, status: 'Active' };
+  },
   waitLoadingOrganizationSettings: () => {
     cy.expect(organizationsSettingsSection.exists());
   },
@@ -110,5 +113,11 @@ export default {
         body: types,
       })
       .then(({ body }) => body);
+  },
+  deleteOrganizationTypeViaApi(organizationTypeId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `organizations-storage/organization-types/${organizationTypeId}`,
+    });
   },
 };
