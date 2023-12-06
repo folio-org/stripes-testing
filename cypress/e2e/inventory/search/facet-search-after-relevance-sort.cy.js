@@ -1,7 +1,6 @@
 import uuid from 'uuid';
 import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
@@ -129,7 +128,7 @@ describe('Inventory', () => {
       'C422216 Verify that facets options are available after "Relevance" sort was applied to the result list (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstance.searchByTitle(testData.searchQuery);
+        InventoryInstances.searchByTitle(testData.searchQuery);
         InventorySearchAndFilter.switchToInstance();
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);
         InventoryInstances.checkResultListSortedByColumn(1);
@@ -148,7 +147,7 @@ describe('Inventory', () => {
         testData.holdingsAccordions.forEach((accordion) => {
           InventorySearchAndFilter.verifyAccordionByNameExpanded(accordion, false);
         });
-        InventoryInstance.searchByTitle(testData.searchQuery);
+        InventoryInstances.searchByTitle(testData.searchQuery);
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);
         InventoryInstances.checkResultListSortedByColumn(1);
         InventoryInstances.clickActionsButton();
@@ -166,7 +165,7 @@ describe('Inventory', () => {
         testData.itemAccordions.forEach((accordion) => {
           InventorySearchAndFilter.verifyAccordionByNameExpanded(accordion, false);
         });
-        InventoryInstance.searchByTitle(testData.searchQuery);
+        InventoryInstances.searchByTitle(testData.searchQuery);
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);
         InventoryInstances.checkResultListSortedByColumn(1);
         InventoryInstances.clickActionsButton();

@@ -176,7 +176,7 @@ describe('data-import', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon('700');
@@ -223,7 +223,7 @@ describe('data-import', () => {
         MarcAuthority.contains('$a Elizabeth $b II, $c 1926-2022, $q Queen of G. Britain');
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.verifyRecordStatus('Automated linking update');
         InventoryInstance.editMarcBibliographicRecord();
