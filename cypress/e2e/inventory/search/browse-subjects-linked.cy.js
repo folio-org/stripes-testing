@@ -68,7 +68,7 @@ describe('inventory', () => {
 
         cy.visit(TopMenu.inventoryPath).then(() => {
           InventoryInstances.waitContentLoading();
-          InventoryInstance.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tag610);
@@ -114,7 +114,7 @@ describe('inventory', () => {
         BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);
         BrowseSubjects.checkRowValueIsBold(6, testData.subjectName);
         InventorySearchAndFilter.switchToSearchTab();
-        InventoryInstance.searchByTitle(createdRecordIDs[0]);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.clickUnlinkIconInTagField(20);

@@ -116,7 +116,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     'C380753 Link the "600" of "MARC Bib" field (with multiple "$0") with "100" field of "MARC Authority" record. (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(createdRecordIDs[0]);
+      InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib600FieldValues);

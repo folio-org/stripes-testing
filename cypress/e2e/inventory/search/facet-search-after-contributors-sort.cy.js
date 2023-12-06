@@ -8,17 +8,18 @@ import ServicePoints from '../../../support/fragments/settings/tenant/servicePoi
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 
 describe('Inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
-      searchQuery: `C422216_autotest_instance_${getRandomPostfix()}`,
+      searchQuery: `C422218_autotest_instance_${getRandomPostfix()}`,
       instanceTag: `inst_tag_${randomFourDigitNumber()}`,
       holdingsTag: `hold_tag_${randomFourDigitNumber()}`,
       itemTag: `item_tag_${randomFourDigitNumber()}`,
       instanceLanguage: 'eng',
       titleHeader: 'Title',
-      relevanceSortOption: 'Relevance',
+      contributorsSortOption: 'Contributors',
       instanceAccordions: [
         'Language',
         'Resource Type',
@@ -29,19 +30,24 @@ describe('Inventory', () => {
       ],
       holdingsAccordions: ['Holdings type', 'Suppress from discovery', 'Source', 'Tags'],
       itemAccordions: ['Item status', 'Suppress from discovery', 'Material type', 'Tags'],
+      contributorPrefix: `Contributor_C422218_${randomFourDigitNumber()}`,
     };
     const instances = [
       {
         title: `${testData.searchQuery}__1`,
+        contributor: `${testData.contributorPrefix} C`,
       },
       {
         title: `${testData.searchQuery}__2`,
+        contributor: `${testData.contributorPrefix} D`,
       },
       {
         title: `${testData.searchQuery}__3`,
+        contributor: `${testData.contributorPrefix} A`,
       },
       {
         title: `${testData.searchQuery}__4`,
+        contributor: `${testData.contributorPrefix} B`,
       },
     ];
 
@@ -50,6 +56,9 @@ describe('Inventory', () => {
         .then(() => {
           cy.getInstanceTypes({ limit: 2 }).then((instanceTypes) => {
             instances[0].instanceTypeId = instanceTypes[0].id;
+          });
+          BrowseContributors.getContributorNameTypes().then((contributorNameTypes) => {
+            testData.contributorNameType = contributorNameTypes[0].id;
           });
           cy.getHoldingTypes({ limit: 2 }).then((res) => {
             instances[0].holdingTypeId = res[0].id;
@@ -80,6 +89,12 @@ describe('Inventory', () => {
                 tags: {
                   tagList: [testData.instanceTag],
                 },
+                contributors: [
+                  {
+                    name: instance.contributor,
+                    contributorNameTypeId: testData.contributorNameType,
+                  },
+                ],
               },
               holdings: [
                 {
@@ -125,7 +140,7 @@ describe('Inventory', () => {
     });
 
     it(
-      'C422216 Verify that facets options are available after "Relevance" sort was applied to the result list (spitfire)',
+      'C422218 Verify that facets options are available after "Contributors" sort was applied to the result list (spitfire)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventoryInstances.searchByTitle(testData.searchQuery);
@@ -133,9 +148,11 @@ describe('Inventory', () => {
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);
         InventoryInstances.checkResultListSortedByColumn(1);
         InventoryInstances.clickActionsButton();
-        InventoryInstances.actionsSortBy(testData.relevanceSortOption);
+        InventoryInstances.actionsSortBy(testData.contributorsSortOption);
         InventoryInstances.clickActionsButton();
-        InventoryInstances.verifyActionsSortedBy(testData.relevanceSortOption);
+        InventoryInstances.verifyActionsSortedBy(testData.contributorsSortOption);
+        InventoryInstances.checkColumnHeaderSort(testData.contributorsSortOption);
+        InventoryInstances.checkResultListSortedByColumn(2);
         testData.instanceAccordions.forEach((accordion) => {
           InventorySearchAndFilter.expandAccordion(accordion);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(accordion);
@@ -151,9 +168,11 @@ describe('Inventory', () => {
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);
         InventoryInstances.checkResultListSortedByColumn(1);
         InventoryInstances.clickActionsButton();
-        InventoryInstances.actionsSortBy(testData.relevanceSortOption);
+        InventoryInstances.actionsSortBy(testData.contributorsSortOption);
         InventoryInstances.clickActionsButton();
-        InventoryInstances.verifyActionsSortedBy(testData.relevanceSortOption);
+        InventoryInstances.verifyActionsSortedBy(testData.contributorsSortOption);
+        InventoryInstances.checkColumnHeaderSort(testData.contributorsSortOption);
+        InventoryInstances.checkResultListSortedByColumn(2);
         testData.holdingsAccordions.forEach((accordion) => {
           InventorySearchAndFilter.expandAccordion(accordion);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(accordion);
@@ -169,9 +188,11 @@ describe('Inventory', () => {
         InventoryInstances.checkColumnHeaderSort(testData.titleHeader);
         InventoryInstances.checkResultListSortedByColumn(1);
         InventoryInstances.clickActionsButton();
-        InventoryInstances.actionsSortBy(testData.relevanceSortOption);
+        InventoryInstances.actionsSortBy(testData.contributorsSortOption);
         InventoryInstances.clickActionsButton();
-        InventoryInstances.verifyActionsSortedBy(testData.relevanceSortOption);
+        InventoryInstances.verifyActionsSortedBy(testData.contributorsSortOption);
+        InventoryInstances.checkColumnHeaderSort(testData.contributorsSortOption);
+        InventoryInstances.checkResultListSortedByColumn(2);
         testData.itemAccordions.forEach((accordion) => {
           InventorySearchAndFilter.expandAccordion(accordion);
           InventorySearchAndFilter.checkOptionsWithCountersExistInAccordion(accordion);

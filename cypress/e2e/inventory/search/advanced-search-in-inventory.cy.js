@@ -74,7 +74,7 @@ describe('Inventory -> Advanced search', () => {
           cy.visit(TopMenu.dataImportPath);
         });
         cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstance.searchByTitle(createdRecordIDs[3]);
+          InventoryInstances.searchByTitle(createdRecordIDs[3]);
           InventoryInstances.selectInstance();
           InventoryInstance.pressAddHoldingsButton();
           InventoryNewHoldings.fillRequiredFields();
