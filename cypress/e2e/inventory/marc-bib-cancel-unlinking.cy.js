@@ -73,7 +73,7 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
       })
       .then(() => {
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
@@ -104,7 +104,7 @@ describe('MARC › MARC Bibliographic › Edit MARC bib', () => {
         waiter: InventoryInstances.waitContentLoading,
       }).then(() => {
         InventoryInstances.waitContentLoading();
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
       });

@@ -1,12 +1,12 @@
 import {
   Button,
-  Accordion,
   Section,
   KeyValue,
   including,
   MultiColumnListCell,
   Link,
 } from '../../../../interactors';
+import ReceivingsListEditForm from './receivingsListEditForm';
 import ReceivingEditForm from './receivingEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
 
@@ -103,8 +103,10 @@ export default {
 
     return InventoryInstance;
   },
-  addPiece: () => {
-    cy.do(Accordion({ id: 'expected' }).find(Button('Actions')).click());
-    cy.do(Button('Add piece').click());
+  openReceiveListEditForm() {
+    cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);
+    ReceivingsListEditForm.waitLoading();
+
+    return ReceivingsListEditForm;
   },
 };

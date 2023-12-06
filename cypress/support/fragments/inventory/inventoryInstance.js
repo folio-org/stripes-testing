@@ -28,6 +28,7 @@ import {
   PaneHeader,
   or,
   PaneContent,
+  matching,
 } from '../../../../interactors';
 import HoldingsRecordEdit from './holdingsRecordEdit';
 import HoldingsRecordView from './holdingsRecordView';
@@ -128,7 +129,6 @@ const buttonLink = Button('Link');
 const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
-const inputSearchField = TextArea({ id: 'input-inventory-search' });
 const holdingsPane = Pane(including('Holdings'));
 const instancesButton = Button({ id: 'segment-navigation-instances' });
 const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
@@ -421,9 +421,12 @@ export default {
     cy.expect(detailsPaneContent.has({ text: including(title) }));
   },
 
-  checkHoldingTitle(title, absent = false) {
+  checkHoldingTitle({ title, count, absent = false }) {
     if (!absent) {
-      cy.expect(detailsPaneContent.has({ text: including(`Holdings: ${title}`) }));
+      const holdingTitleRegExp = `Holdings: ${title} ${
+        count !== undefined ? '>\\nView holdings\\n' + count : ''
+      }`;
+      cy.expect(detailsPaneContent.has({ text: matching(new RegExp(holdingTitleRegExp)) }));
     } else {
       cy.expect(detailsPaneContent.find(HTML({ text: including(`Holdings: ${title}`) })).absent());
     }
@@ -455,13 +458,6 @@ export default {
     );
     cy.do(importRecordModal.find(importButton).click());
     cy.expect(instanceDetailsSection.exists());
-  },
-
-  searchByTitle(title, result = true) {
-    cy.do([filterPane.find(inputSearchField).fillIn(title), filterPane.find(searchButton).click()]);
-    if (result) {
-      cy.expect(MultiColumnListRow({ index: 0 }).exists());
-    }
   },
 
   clickViewAuthorityIconDisplayedInTagField(tag) {
