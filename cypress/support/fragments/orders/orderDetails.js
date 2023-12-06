@@ -26,6 +26,7 @@ import Receivings from '../receiving/receiving';
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
 
+const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }));
 const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
 
@@ -44,6 +45,21 @@ export default {
   checkOrderStatus(orderStatus) {
     cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
   },
+  checkFieldsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(orderDetailsPane.find(KeyValue(label)).has(conditions));
+    });
+  },
+  checkFieldsHasCopyIcon(fields = []) {
+    fields.forEach(({ label }) => {
+      cy.expect(
+        orderDetailsPane
+          .find(KeyValue(label))
+          .find(Button({ icon: 'clipboard' }))
+          .exists(),
+      );
+    });
+  },
   checkOrderDetails({ summary = [] } = {}) {
     summary.forEach(({ key, value, checkbox }) => {
       if (checkbox) {
@@ -59,6 +75,16 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
         .click(),
     );
+  },
+  copyOrderNumber(poNumber) {
+    cy.do(
+      orderInfoSection
+        .find(KeyValue('PO number'))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
   },
   openOrder({ orderNumber, confirm = true } = {}) {
     this.expandActionsDropdown();
@@ -158,16 +184,14 @@ export default {
       if (record.poLineNumber) {
         cy.expect(
           polListingAccordion
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
             .has({ content: including(record.poLineNumber) }),
         );
       }
       if (record.poLineTitle) {
         cy.expect(
           polListingAccordion
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .find(MultiColumnListCell({ row: index, column: 'Title or package name' }))
             .has({ content: including(record.poLineTitle) }),
         );
       }

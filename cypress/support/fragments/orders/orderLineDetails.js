@@ -14,6 +14,7 @@ import OrderLineEditForm from './orderLineEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
 import TransactionDetails from '../finance/transactions/transactionDetails';
 import ExportDetails from '../exportManager/exportDetails';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
@@ -38,6 +39,21 @@ export default {
   backToOrderDetails() {
     cy.do(backToOrderButton.click());
   },
+  checkFieldsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(orderLineDetailsSection.find(KeyValue(label)).has(conditions));
+    });
+  },
+  checkFieldsHasCopyIcon(fields = []) {
+    fields.forEach(({ label }) => {
+      cy.expect(
+        orderLineDetailsSection
+          .find(KeyValue(label))
+          .find(Button({ icon: 'clipboard' }))
+          .exists(),
+      );
+    });
+  },
   checkOrderLineDetails({
     purchaseOrderLineInformation = [],
     vendorDetails,
@@ -59,6 +75,16 @@ export default {
     if (locationDetails) {
       this.checkLocationsSection(locationDetails);
     }
+  },
+  copyOrderNumber(poNumber) {
+    cy.do(
+      purchaseOrderLineSection
+        .find(KeyValue('POL number'))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
   },
   openInventoryItem() {
     cy.do(itemDetailsSection.find(KeyValue('Title')).find(Link()).click());
