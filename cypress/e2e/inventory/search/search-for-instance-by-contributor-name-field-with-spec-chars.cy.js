@@ -79,7 +79,7 @@ describe('inventory', () => {
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         testData.searchQueries.forEach((query) => {
-          InventoryInstance.searchByTitle(query);
+          InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(8);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
@@ -87,7 +87,7 @@ describe('inventory', () => {
           InventoryInstances.resetAllFilters();
         });
 
-        InventoryInstance.searchByTitle(
+        InventoryInstances.searchByTitle(
           'Arroyo Center 1984 Force Development and Technology Program',
         );
         InventorySearchAndFilter.checkRowsCount(3);
@@ -96,14 +96,14 @@ describe('inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
-        InventoryInstance.searchByTitle(
+        InventoryInstances.searchByTitle(
           'Arroyo Center & 1984 Force Development : Technology / (Program for gov)',
         );
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
-        InventoryInstance.searchByTitle(
+        InventoryInstances.searchByTitle(
           '.Arroyo Center - 1984 Force Development [Technology] Program !',
           false,
         );
