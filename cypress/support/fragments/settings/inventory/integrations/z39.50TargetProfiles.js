@@ -139,10 +139,10 @@ export default {
     });
   },
 
-  changeOclcWorldCatValueViaApi: (value) => {
+  changeOclcWorldCatValueViaApi: (value, profileId = defaultCopyCatProfileId) => {
     cy.okapiRequest({
       method: 'PUT',
-      path: `copycat/profiles/${defaultCopyCatProfileId}`,
+      path: `copycat/profiles/${profileId}`,
       body: {
         name: 'OCLC WorldCat',
         url: 'zcat.oclc.org/OLUCWorldCat',

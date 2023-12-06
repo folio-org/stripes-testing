@@ -3,7 +3,6 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import TestTypes from '../../support/dictionary/testTypes';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import InventorySteps from '../../support/fragments/inventory/inventorySteps';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -17,20 +16,47 @@ import InventoryInstancesMovement from '../../support/fragments/inventory/holdin
 import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import Z3950TargetProfiles from '../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
+import DataImport from '../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../support/fragments/data_import/logs/logs';
 
 describe('ui-inventory: moving items', { retries: 2 }, () => {
   const successCalloutMessage = '1 item has been successfully moved.';
-  const OCLCAuthentication = '100481406/PAOLF';
   let userId;
   let firstHolding = '';
   let secondHolding = '';
   let ITEM_BARCODE;
+  const marcInstanceIDs = [];
+
+  const marcFiles = [
+    {
+      marc: 'marcFileOCLC.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+    },
+    {
+      marc: 'marcFileOCLC.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+    },
+  ];
 
   before(() => {
-    cy.getAdminToken().then(() => {
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
+    marcFiles.forEach((marcFile) => {
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitLoadingList();
+        JobProfiles.search(marcFile.jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(marcFile.fileName);
+        Logs.getCreatedItemsID().then((link) => {
+          marcInstanceIDs.push(link.split('/')[5]);
+        });
+      });
     });
   });
 
@@ -145,10 +171,11 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
     'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
     { tags: [TestTypes.smoke, devTeams.spitfire, Features.eHoldings] },
     () => {
-      InventoryActions.import();
+      InventorySearchAndFilter.searchInstanceByTitle(marcInstanceIDs[0]);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         // additional instance record which will linked with holdings record initially
-        InventoryActions.import();
+        InventorySearchAndFilter.searchInstanceByTitle(marcInstanceIDs[1]);
+        InventoryInstance.checkUpdatedHRID(initialInstanceHrId);
         // TODO: redesign to api step
         InventorySteps.addMarcHoldingRecord();
         HoldingsRecordView.getHoldingsHrId().then((holdingsRecordhrId) => {
@@ -163,6 +190,8 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
           HoldingsRecordView.checkHrId(holdingsRecordhrId);
           // TODO: Delete below two lines of code after Actions -> View source of Holding's view works as expected.
           HoldingsRecordView.close();
+          // wait for holdings data to be updated
+          cy.wait(2000);
           InventoryInstance.openHoldingView();
           HoldingsRecordView.viewSource();
           InventoryViewSource.contains(`004\t${initialInstanceHrId}`);
