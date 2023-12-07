@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -80,7 +80,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
 
   it(
     'C199704 Request: Patron comments field is not editable after request is created (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       NewRequest.openNewRequestPane();

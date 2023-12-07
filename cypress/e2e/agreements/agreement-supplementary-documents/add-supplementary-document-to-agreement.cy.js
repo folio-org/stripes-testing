@@ -3,7 +3,7 @@ import Agreements from '../../../support/fragments/agreements/agreements';
 import TopMenu from '../../../support/fragments/topMenu';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import EditAgreement from '../../../support/fragments/agreements/editAgreement';
-import { TestTypes, DevTeams, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -52,7 +52,7 @@ describe('Agreement Supplementary documents', () => {
 
   it(
     'C1318 Add supplementary document to an agreement (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
 

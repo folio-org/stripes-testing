@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import SettingsOrganizations from '../../../support/fragments/settings/organizations/settingsOrganizations';
@@ -26,7 +24,7 @@ describe('Organizations: Settings (Organizations)', () => {
 
   it(
     'C407766: A user with "Settings (Organizations): View settings" permission can only view appropriate settings (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       SettingsOrganizations.selectCategories();
       SettingsOrganizations.checkButtonNewInCategoriesIsDisabled();

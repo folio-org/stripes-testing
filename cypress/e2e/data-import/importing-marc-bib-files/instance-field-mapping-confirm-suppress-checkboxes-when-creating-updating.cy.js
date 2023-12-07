@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
@@ -92,7 +91,7 @@ describe('data-import', () => {
 
     it(
       'C11087 Instance field mapping: Confirm the "suppress" checkboxes when creating (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const marcFileName = `C11087 autotestFile_${getRandomPostfix()}.mrc`;
 
@@ -131,7 +130,7 @@ describe('data-import', () => {
 
     it(
       'C11088 Instance field mapping: Confirm the "suppress" checkboxes when updating (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const marcFileName = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
         const editedFileName = `C11088 editedAutotestFile_${getRandomPostfix()}.mrc`;

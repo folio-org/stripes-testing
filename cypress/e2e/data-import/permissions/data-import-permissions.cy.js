@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -44,22 +44,18 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it(
-      'C492 Data Import permissions (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
-      () => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.waitLoading();
-        Logs.openFileDetails(marcFileName);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
-          FileDetails.columnNameInResultList.instance,
-        );
-        cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
-        MarcFieldProtection.clickNewButton();
-        MarcFieldProtection.cancel();
-      },
-    );
+    it('C492 Data Import permissions (folijet)', { tags: ['extendedPath', 'folijet'] }, () => {
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(marcFileName);
+      FileDetails.checkStatusInColumn(
+        FileDetails.status.created,
+        FileDetails.columnNameInResultList.instance,
+      );
+      cy.visit(SettingsMenu.marcFieldProtectionPath);
+      MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
+      MarcFieldProtection.clickNewButton();
+      MarcFieldProtection.cancel();
+    });
   });
 });

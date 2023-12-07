@@ -1,4 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import { getNewItem } from '../../../support/fragments/inventory/item';
 import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
@@ -16,7 +15,6 @@ import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import DevTeams from '../../../support/dictionary/devTeams';
 import LoanPolicyActions from '../../../support/fragments/circulation/loan-policy';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
@@ -227,7 +225,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
 
   it(
     'C569: renewal failure because loan has reached maximum renewals (vega)',
-    { tags: [testTypes.smoke, DevTeams.vega] },
+    { tags: ['smoke', 'vega'] },
     () => {
       cy.login(firstUser.username, firstUser.password, {
         path: AppPaths.getOpenLoansPath(firstUser.userId),

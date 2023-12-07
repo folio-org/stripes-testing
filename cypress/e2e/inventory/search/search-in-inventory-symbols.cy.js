@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -133,7 +131,7 @@ describe('Search in Inventory', () => {
 
   it(
     'C369042 Search for "Instance" with "diacritic - Korean" symbol in the "Resource title" field using "Keyword" search option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       testData.searchQueries.forEach((query, index) => {
         InventoryInstance.searchByTitle(query);
@@ -149,7 +147,7 @@ describe('Search in Inventory', () => {
 
   it(
     'C368038 Search for "Instance" by "Alternative title" field with special characters using "Keyword" search option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.waitContentLoading();
       expectedTitlesC368038.forEach((expectedTitlesSet, index) => {

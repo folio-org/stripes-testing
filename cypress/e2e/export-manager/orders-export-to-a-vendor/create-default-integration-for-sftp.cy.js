@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { NewOrder, BasicOrderLine, Orders } from '../../../support/fragments/orders';
 import {
   NewOrganization,
@@ -99,7 +99,7 @@ describe('Export Manager', () => {
 
     it(
       'C402381 Creating default integration for "SFTP" option (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click "Organizations", Select created export method in "Export method" accordion
         ExportManagerSearchPane.selectOrganizationsSearch();

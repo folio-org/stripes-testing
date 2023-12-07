@@ -1,5 +1,3 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -19,7 +17,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Parallelization from '../../../support/dictionary/parallelization';
+
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -170,7 +168,7 @@ describe('Data Import - Update MARC Authority files', () => {
 
   it(
     'C374186 Update "1XX" field value (edit controlling field) of linked "MARC Authority" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,

@@ -1,6 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
@@ -18,7 +16,6 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Parallelization from '../../support/dictionary/parallelization';
 
 describe('ui-invoices: Cancelling approved invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -108,7 +105,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
 
   it(
     'C350728 Cancelling approved invoices voids payments/credits and Unreleases encumbrances (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

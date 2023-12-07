@@ -1,5 +1,4 @@
-import uuid from 'uuid';
-import { Permissions, TestTypes, DevTeams } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -40,7 +39,7 @@ describe('bulk-edit', () => {
     });
     it(
       'C353651 - "New bulk edit" button with invalid data (firebird) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
         BulkEditSearchPane.uploadFile(invalidIdentifiersFileName);

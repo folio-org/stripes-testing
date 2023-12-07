@@ -1,7 +1,5 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -14,7 +12,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
-import Parallelization from '../../../support/dictionary/parallelization';
+
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
 describe('Inventory -> Advanced search', () => {
@@ -87,7 +85,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400613 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(

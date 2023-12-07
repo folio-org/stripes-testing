@@ -2,10 +2,8 @@ import TopMenu from '../../support/fragments/topMenu';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import TestTypes from '../../support/dictionary/testTypes';
 import { calloutTypes } from '../../../interactors';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import DevTeams from '../../support/dictionary/devTeams';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import permissions from '../../support/dictionary/permissions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -77,7 +75,7 @@ describe('MARC -> MARC Holdings', () => {
 
   it(
     'C345390 Add a field to a record using quickMARC (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       QuickMarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
       QuickMarcEditor.checkInitialContent(
@@ -98,7 +96,7 @@ describe('MARC -> MARC Holdings', () => {
     },
   );
 
-  it('C345398 Edit MARC 008 (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C345398 Edit MARC 008 (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
     // Wait until the page to be loaded fully.
     cy.wait(1000);
     QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
@@ -126,7 +124,7 @@ describe('MARC -> MARC Holdings', () => {
 
   it(
     'C345400 Attempt to save a record without a MARC 852 (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       QuickMarcEditor.getRegularTagContent('852').then((initialTagContent) => {
         QuickMarcEditor.deleteTag(5);

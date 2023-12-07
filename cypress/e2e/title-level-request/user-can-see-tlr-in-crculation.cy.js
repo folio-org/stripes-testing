@@ -1,5 +1,3 @@
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -50,7 +48,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C1287 Check that user can see Title level request in Circulation (vega)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
       TitleLevelRequests.waitLoading();

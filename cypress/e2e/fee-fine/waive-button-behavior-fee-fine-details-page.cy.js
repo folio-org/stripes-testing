@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment/moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -90,7 +90,7 @@ describe('Waive Fees/Fines', () => {
 
   it(
     'C464 Verify behavior when "Waive" button pressed from Fee/Fine Details page (Vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // Go to User Information for your test patro
       UsersSearchPane.searchByKeywords(userData.username);

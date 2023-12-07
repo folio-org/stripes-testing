@@ -1,10 +1,8 @@
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../support/fragments/users/userEdit';
-import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -52,7 +50,7 @@ describe('Users', () => {
 
   it(
     'C407705 "Settings (Users): Can view transfer criteria" and  "Settings (Users): Can create, edit and remove transfer criteria" permissions are not present in Settings (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UserEdit.addPermissions([permissions.uiUsersPermissionsView.gui]);

@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
@@ -53,7 +53,7 @@ describe('Manual Fees/Fines', () => {
 
   it(
     'C449 Verify behavior when "Create fee/fine" button pressed within User Information (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // Find active user in FOLIO
       UsersSearchPane.searchByKeywords(testData.user.username);
@@ -75,7 +75,7 @@ describe('Manual Fees/Fines', () => {
 
   it(
     'C450 Verify behavior when "New fee/fine" button pressed within Fee/Fine History (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();

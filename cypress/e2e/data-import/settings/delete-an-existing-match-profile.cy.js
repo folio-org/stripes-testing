@@ -1,6 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -60,7 +60,7 @@ describe('data-import', () => {
 
     it(
       'C2341 Delete an existing match profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         MatchProfiles.search(profile.createMatchProfile);
         MatchProfiles.selectMatchProfileFromList(profile.createMatchProfile);

@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -40,7 +40,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     "C359180 MARC Authority plug-in | Use search query that doesn't return results (spitfire) (TaaS)",
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchByParameter('Keyword', searchValue);
       MarcAuthorities.checkNoResultsMessage(

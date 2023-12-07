@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-
 import TopMenu from '../../support/fragments/topMenu';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
@@ -157,7 +156,7 @@ describe('circulation-log loan period', () => {
 
   it(
     'C645: Test "Days" loan period (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
       // Navigate to checkout page
@@ -174,7 +173,7 @@ describe('circulation-log loan period', () => {
 
   it(
     'C646: Test "Weeks" loan period (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const ITEM_BARCODE = testData.folioInstances[1].barcodes[0];
       // Navigate to checkout page
@@ -191,7 +190,7 @@ describe('circulation-log loan period', () => {
 
   it(
     'C647: Test "Months" loan period (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const ITEM_BARCODE = testData.folioInstances[2].barcodes[0];
       // Navigate to checkout page

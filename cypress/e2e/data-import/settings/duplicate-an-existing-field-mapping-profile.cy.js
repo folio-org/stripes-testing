@@ -1,5 +1,5 @@
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -43,7 +43,7 @@ describe('data-import', () => {
 
     it(
       'C2352 Duplicate an existing field mapping profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfileView.duplicate();
         NewFieldMappingProfile.addFolioRecordType(duplicatedMappingProfile.typeValue);

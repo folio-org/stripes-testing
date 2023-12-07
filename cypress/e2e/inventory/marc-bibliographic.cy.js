@@ -3,12 +3,10 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
-import TestTypes from '../../support/dictionary/testTypes';
 import Permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
-import DevTeams from '../../support/dictionary/devTeams';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import Parallelization from '../../support/dictionary/parallelization';
+
 import getRandomPostfix from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -65,7 +63,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10950 Edit and save a MARC record in quickMARC (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
@@ -92,7 +90,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10924 Add a field to a record using quickMARC (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
@@ -119,7 +117,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10928 Delete a field(s) from a record in quickMARC (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
@@ -141,7 +139,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10957 Attempt to delete a required field (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
@@ -153,7 +151,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
       InventoryInstance.checkExpectedMARCSource();
@@ -189,7 +187,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C345388 Derive a MARC bib record (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       // InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
       cy.visit(`${TopMenu.inventoryPath}/view/${testData.instanceID}`);

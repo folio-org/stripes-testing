@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -30,7 +30,7 @@ describe('settings: data-export', () => {
 
   it(
     'C345410 Search mapping profiles (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.visit(SettingsMenu.exportMappingProfilePath);
       ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();

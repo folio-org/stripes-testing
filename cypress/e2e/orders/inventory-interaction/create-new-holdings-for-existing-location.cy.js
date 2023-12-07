@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -88,7 +88,7 @@ describe('Orders: Inventory interaction', () => {
 
   it(
     'C375232 Create new holdings for already existing location when creating an order line (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Click on "PO number" link on "Orders" pane
       Orders.selectOrderByPONumber(testData.order.poNumber);

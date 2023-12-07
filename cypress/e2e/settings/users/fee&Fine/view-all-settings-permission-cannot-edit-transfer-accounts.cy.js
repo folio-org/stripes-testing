@@ -1,6 +1,4 @@
 import uuid from 'uuid';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
@@ -69,7 +67,7 @@ describe('Settings Users', () => {
 
   it(
     'C407704 User with "Setting (Users): View all settings" permission cannot edit transfer accounts (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.transferAccounts);
       UsersSettingsGeneral.checkEntityInTable({

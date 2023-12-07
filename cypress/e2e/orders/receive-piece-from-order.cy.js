@@ -1,6 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import testType from '../../support/dictionary/testTypes';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Orders from '../../support/fragments/orders/orders';
@@ -64,7 +62,7 @@ describe('orders: Receive piece from Order', () => {
 
   it(
     'C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       const barcode = Helper.getRandomBarcode();
       const caption = 'autotestCaption';

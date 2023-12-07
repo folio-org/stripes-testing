@@ -1,8 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import testTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import Users from '../../support/fragments/users/users';
@@ -122,7 +120,7 @@ describe('export manager', () => {
 
   it(
     'C350727 Verify search filter options Export Manager (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       ExportManagerSearchPane.waitLoading();
       ExportManagerSearchPane.searchBySuccessful();

@@ -1,6 +1,4 @@
 import { getTestEntityValue } from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -42,7 +40,7 @@ describe('settings: data-export', () => {
 
   it(
     'C196758 Create a new mapping profile for MARC bib record with holdings data included - Source record storage (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
       ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [

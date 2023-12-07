@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
@@ -170,7 +170,7 @@ describe('inventory', () => {
 
     it(
       'C396366 Browsing call number types when call number, type specified in "Holdings" or "Item" (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();

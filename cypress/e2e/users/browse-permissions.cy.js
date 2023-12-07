@@ -1,6 +1,4 @@
 /* eslint-disable camelcase */
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -39,7 +37,7 @@ describe('Users', () => {
 
   it(
     'C350673 Verify that a user can assign Subject browse permissions. (firebird)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       UsersSearchPane.searchByUsername(testUser_C350673.username);
       UsersSearchPane.waitLoading();
@@ -53,7 +51,7 @@ describe('Users', () => {
 
   it(
     'C350674 Verify that a user can assign Call number browse: View permissions (firebird)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       UsersSearchPane.searchByUsername(testUser_C350674.username);
       UsersSearchPane.waitLoading();

@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Invoices } from '../../support/fragments/invoices';
 import { Budgets, FinanceHelper } from '../../support/fragments/finance';
 import TopMenu from '../../support/fragments/topMenu';
@@ -74,7 +74,7 @@ describe('Invoices', () => {
 
   it(
     'C387533 "Fiscal year" field is NOT displayed and can NOT be selected by user without "Invoice: Pay invoices in a different fiscal year" permission when creating and editing invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // #1 Click "Actions" button on the second "Invoices" pane -> select "New" option
       const InvoiceEditForm = Invoices.openInvoiceEditForm({ createNew: true });

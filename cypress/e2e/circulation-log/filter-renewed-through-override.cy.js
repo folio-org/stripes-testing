@@ -1,8 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Users from '../../support/fragments/users/users';
@@ -105,7 +103,7 @@ describe('circulation-log', () => {
 
   it(
     'C17137 Filter circulation log by renewed through override (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,

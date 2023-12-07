@@ -1,8 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import Orders from '../../support/fragments/orders/orders';
-import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -79,7 +77,7 @@ describe('orders: export', () => {
 
   it(
     'C196749 Export orders based on orders search (thunderjet)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.selectOpenStatusFilter();
       Orders.exportResoultsCSV();

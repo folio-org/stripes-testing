@@ -1,8 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import TestTypes from '../../support/dictionary/testTypes';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
@@ -119,7 +117,7 @@ describe('Fee/Fine history ', { retries: 1 }, () => {
 
   it(
     'C347919 Check that the user can add "Additional information" on the fee/fine history (vega)',
-    { tags: [TestTypes.smoke, devTeams.vega] },
+    { tags: ['smoke', 'vega'] },
     () => {
       // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
       // eslint-disable-next-line cypress/no-unnecessary-waiting

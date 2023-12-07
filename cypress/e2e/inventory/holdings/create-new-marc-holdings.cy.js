@@ -1,9 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import TestTypes from '../../../support/dictionary/testTypes';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../support/dictionary/devTeams';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -142,7 +140,7 @@ describe('Create holding records with MARC source', () => {
 
   it(
     'C387450 "008" field existence validation when create new "MARC Holdings" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(recordIDs[0]);
       InventoryInstances.selectInstance();
@@ -189,7 +187,7 @@ describe('Create holding records with MARC source', () => {
 
   it(
     'C350646 Create a new MARC Holdings record for existing "Instance" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.searchBySharedStatus('No');
       InventoryInstances.searchBySource('MARC');
@@ -220,7 +218,7 @@ describe('Create holding records with MARC source', () => {
 
   it(
     'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(recordIDs[0]);
       InventoryInstance.goToMarcHoldingRecordAdding();
@@ -270,7 +268,7 @@ describe('Create holding records with MARC source', () => {
 
   it(
     'C359242 Create MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.searchBySharedStatus('No');
       InventoryInstances.searchBySource(testData.sourceMARC);

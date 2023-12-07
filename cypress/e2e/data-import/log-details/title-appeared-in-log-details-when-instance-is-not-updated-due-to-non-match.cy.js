@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DateTools from '../../../support/utils/dateTools';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -82,7 +82,7 @@ describe('data-import', () => {
 
     it(
       'C400665 Verify that title appeared in log details when Instance is not updated due to non-match (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create match profile
         cy.visit(SettingsMenu.matchProfilePath);

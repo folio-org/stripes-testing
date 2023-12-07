@@ -1,6 +1,4 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -81,15 +79,11 @@ describe('Users', () => {
     PatronGroups.deleteViaApi(patronGroup.id);
   });
 
-  it(
-    'C389464 Search by middle name (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
-    () => {
-      UsersSearchPane.searchByKeywords(userData.middleName);
-      Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
-      cy.visit(TopMenu.checkOutPath);
-      Checkout.waitLoading();
-      CheckOutActions.addPatron(userData.middleName);
-    },
-  );
+  it('C389464 Search by middle name (volaris)', { tags: ['criticalPath', 'volaris'] }, () => {
+    UsersSearchPane.searchByKeywords(userData.middleName);
+    Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
+    cy.visit(TopMenu.checkOutPath);
+    Checkout.waitLoading();
+    CheckOutActions.addPatron(userData.middleName);
+  });
 });

@@ -1,6 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import TestTypes from '../../support/dictionary/testTypes';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import InventorySteps from '../../support/fragments/inventory/inventorySteps';
@@ -11,7 +10,6 @@ import Features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -145,7 +143,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
 
   it(
     'C15185 Move multiple items from one holdings to another holdings within an instance (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       cy.wait(3000);
@@ -169,7 +167,7 @@ describe('ui-inventory: moving items', { retries: 2 }, () => {
 
   it(
     'C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)',
-    { tags: [TestTypes.smoke, devTeams.spitfire, Features.eHoldings] },
+    { tags: ['smoke', 'spitfire', Features.eHoldings] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(marcInstanceIDs[0]);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

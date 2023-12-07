@@ -1,6 +1,5 @@
 import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
@@ -9,10 +8,8 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
-import DevTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import Parallelization from '../../support/dictionary/parallelization';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -44,7 +41,7 @@ describe('orders: Unreceive piece from Order', () => {
 
   it(
     'C10925 Unreceive piece (thunderjet)',
-    { tags: [TestType.smoke, DevTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['smoke', 'thunderjet', 'nonParallel'] },
     () => {
       const barcode = Helper.getRandomBarcode();
       const caption = 'autotestCaption';

@@ -1,7 +1,7 @@
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import TopMenu from '../../support/fragments/topMenu';
@@ -94,7 +94,7 @@ describe('Loan date and time', () => {
 
   it(
     'C350710 Check date and time -- loans (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       navigateToCircLogAndSearchItem(ITEM_BARCODE);
       SearchPane.verifyResultCells(true);

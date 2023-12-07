@@ -1,5 +1,5 @@
 /* eslint-disable spaced-comment */
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
@@ -119,7 +119,7 @@ describe('Orders: Inventory interaction', () => {
 
   it(
     'C375238 Create new holdings for already existing location when editing an order line (thunderjet)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.selectOrderByPONumber(testData.orderNumber);
       OrderLines.selectPOLInOrder(0);

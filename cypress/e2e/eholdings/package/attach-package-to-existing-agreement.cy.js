@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -51,7 +51,7 @@ describe('eHoldings', () => {
 
     it(
       'C751 Attach a package to an existing Agreement (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         EHoldingSearch.switchToPackages();
         // wait until package is created via API

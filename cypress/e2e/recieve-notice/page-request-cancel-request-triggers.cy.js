@@ -1,7 +1,5 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -187,7 +185,7 @@ describe('Request notice triggers', () => {
 
   it(
     'C347866 Page request + Cancel request triggers (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);

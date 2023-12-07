@@ -1,8 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
-import parallelization from '../../../../support/dictionary/parallelization';
+
 import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -248,7 +246,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
   });
   it(
     'C350654 Verify automated patron block "Maximum number of overdue items" removed after overdue item renewed (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       findPatron();
       UsersCard.waitLoading();
@@ -267,7 +265,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
 
   it(
     'C350649 Verify automated patron block "Maximum number of overdue items" removed after overdue item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega, parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       findPatron();
       UsersCard.waitLoading();

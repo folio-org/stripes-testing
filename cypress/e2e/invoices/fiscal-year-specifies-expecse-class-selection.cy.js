@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { FiscalYears, Budgets, LedgerRollovers } from '../../support/fragments/finance';
 import { ExpenseClasses } from '../../support/fragments/settings/finance';
 import { Invoices, InvoiceView } from '../../support/fragments/invoices';
@@ -160,7 +160,7 @@ describe('Invoices', () => {
 
   it(
     'C396400 Select Expense class related to Fiscal year specified in invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click "Actions" button on the second "Invoices" pane -> select "New" option
       const InvoiceEditForm = Invoices.openInvoiceEditForm({ createNew: true });

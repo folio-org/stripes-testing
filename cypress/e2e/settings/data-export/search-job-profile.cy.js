@@ -1,5 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
@@ -46,16 +44,12 @@ describe('settings: data-export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C345411 Search job profiles (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
-    () => {
-      ExportJobProfiles.goToJobProfilesTab();
+  it('C345411 Search job profiles (firebird)', { tags: ['criticalPath', 'firebird'] }, () => {
+    ExportJobProfiles.goToJobProfilesTab();
 
-      [newJobProfileName, 'random-string', 'Default', getRandomPostfix()].forEach((element) => {
-        ExportJobProfiles.searchJobProfile(element);
-        ExportJobProfiles.verifyJobProfileSearchResult(element);
-      });
-    },
-  );
+    [newJobProfileName, 'random-string', 'Default', getRandomPostfix()].forEach((element) => {
+      ExportJobProfiles.searchJobProfile(element);
+      ExportJobProfiles.verifyJobProfileSearchResult(element);
+    });
+  });
 });

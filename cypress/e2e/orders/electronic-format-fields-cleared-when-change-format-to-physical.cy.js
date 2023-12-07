@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -93,7 +93,7 @@ describe('Orders', () => {
 
   it(
     'C354281 “Electronic” format specific fields are cleared when changing order format from "P/E Mix" to "Physical Resource" (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Click on the Order record from preconditions
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

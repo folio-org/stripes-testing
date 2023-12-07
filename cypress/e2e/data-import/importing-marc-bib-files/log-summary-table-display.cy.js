@@ -1,4 +1,3 @@
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -30,7 +29,7 @@ describe('data-import', () => {
 
     it(
       'C353624 Check the log summary table display (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const columnNumbers = {
           summary: '1',

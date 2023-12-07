@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions, Features } from '../../../support/dictionary';
+import { Permissions, Features } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -27,7 +27,7 @@ describe('eHoldings', () => {
 
     it(
       'C688 Add all titles in a package to your holdings (spitfire)',
-      { tags: [TestTypes.smoke, DevTeams.spitfire, Features.eHoldings] },
+      { tags: ['smoke', 'spitfire', Features.eHoldings] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -53,7 +53,7 @@ describe('eHoldings', () => {
 
     it(
       'C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)',
-      { tags: [TestTypes.smoke, DevTeams.spitfire, Features.eHoldings, Features.tags] },
+      { tags: ['smoke', 'spitfire', Features.eHoldings, Features.tags] },
       () => {
         // TODO: "Tags: All permissions" doesn't have displayName. It's the reason why there is related permission name in response, see https://issues.folio.org/browse/UITAG-51
         cy.createTempUser([
@@ -81,7 +81,7 @@ describe('eHoldings', () => {
 
     it(
       'C3464 Update package proxy (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Features.eHoldings] },
+      { tags: ['criticalPath', 'spitfire', Features.eHoldings] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -106,7 +106,7 @@ describe('eHoldings', () => {
 
     it(
       'C690 Remove a package from your holdings (spitfire)',
-      { tags: [TestTypes.smoke, DevTeams.spitfire, Features.eHoldings] },
+      { tags: ['smoke', 'spitfire', Features.eHoldings] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -132,7 +132,7 @@ describe('eHoldings', () => {
 
     it(
       'C695 Package Record: Search all titles included in a package (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Features.eHoldings] },
+      { tags: ['criticalPath', 'spitfire', Features.eHoldings] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -154,7 +154,7 @@ describe('eHoldings', () => {
 
     it(
       'C756 Remove a tag from a package record (spitfire)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire, Features.eHoldings, Features.tags] },
+      { tags: ['extendedPath', 'spitfire', Features.eHoldings, Features.tags] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -186,7 +186,7 @@ describe('eHoldings', () => {
 
     it(
       'C699 Add or edit package custom coverage (spitfire)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -217,7 +217,7 @@ describe('eHoldings', () => {
 
     it(
       'C3466 Edit/Add a token to the Gale Academic OneFile (spitfire)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;

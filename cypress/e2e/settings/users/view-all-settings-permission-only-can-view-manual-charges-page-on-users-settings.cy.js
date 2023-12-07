@@ -1,9 +1,7 @@
 import uuid from 'uuid';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../../support/fragments/users/userEdit';
@@ -78,7 +76,7 @@ describe('Settings Users', () => {
 
   it(
     'C407703 User with "Settings (Users): View all settings" permission only can view "Manual Charges" page on "Users > Settings" - when system has at leaset 2 Fee/Fine owners (only one owner has configured "Fee/Fine Manual Charge") (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       ManualCharges.selectOwner(ownerOne);
       ManualCharges.checkDefaultEditButtonIsDisabled();

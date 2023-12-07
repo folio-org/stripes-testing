@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import {
   FiscalYears,
   Funds,
@@ -80,7 +78,7 @@ describe('Finance: Transactions', () => {
 
   it(
     'C375175 Moving allocation is NOT successful if money was moved from fund having NO current budget (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelper.searchByName(toFund.name);
       Funds.selectFund(toFund.name);

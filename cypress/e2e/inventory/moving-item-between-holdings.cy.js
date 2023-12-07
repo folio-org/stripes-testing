@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import { randomFourDigitNumber } from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
@@ -77,7 +77,7 @@ describe('inventory', () => {
 
     it(
       'C15184 Move one item between holdings within an instance (firebird) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         // Find the instance from precondition
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);

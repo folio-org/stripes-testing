@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import EHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
@@ -29,7 +29,7 @@ describe('eHoldings', () => {
 
     it(
       'C694 Search providers for [Gale | Cengage]. Then Search list of packages on Provider detail record for all selected packages (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         EHoldingsProvidersSearch.byProvider('Gale Cengage');
         EHoldingsProviders.viewProvider();
@@ -41,7 +41,7 @@ describe('eHoldings', () => {
 
     it(
       'C682 Search providers for [Sage] (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         const providerTitle = 'SAGE';
         EHoldingsProvidersSearch.byProvider(providerTitle);

@@ -1,5 +1,3 @@
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -126,7 +124,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
 
   it(
     'C347886 Check that user can create Item level request from Request app (vega) (TaaS)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.log(`userServicePoint  : ${testData.userServicePoint.name}`);
       NewRequest.openNewRequestPane();

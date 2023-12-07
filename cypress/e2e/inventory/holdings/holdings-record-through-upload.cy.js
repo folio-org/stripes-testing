@@ -3,13 +3,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import testTypes from '../../../support/dictionary/testTypes';
 import features from '../../../support/dictionary/features';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import DevTeams from '../../../support/dictionary/devTeams';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 
@@ -41,7 +39,7 @@ describe('Manage holding records of instance records created through marc file u
 
   it(
     'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
-    { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord, testTypes.broken] },
+    { tags: ['smoke', 'spitfire', features.holdingsRecord, 'broken'] },
     () => {
       cy.visit(TopMenu.inventoryPath);
       InventoryInstance.searchByTitle(instanceId);

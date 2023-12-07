@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
@@ -84,7 +82,7 @@ describe('Finance: Funds', () => {
 
   it(
     'C374165: Available balance can be a negative number when ledger "Enforce all budget encumbrance limits" option is NOT active (Thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.createApprovedOrderForRollover(firstOrder).then((firstOrderResponse) => {
         firstOrder.id = firstOrderResponse.id;

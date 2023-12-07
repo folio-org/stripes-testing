@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -129,7 +129,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400619 Search Holdings using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       // #1 Select "Holdings" toggle on "Search & filter" pane
       InventorySearchAndFilter.switchToHoldings();

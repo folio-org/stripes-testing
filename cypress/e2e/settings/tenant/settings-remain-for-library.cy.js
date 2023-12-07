@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Inventory from '../../../support/fragments/inventory/inventoryInstances';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import {
   ServicePoints,
@@ -98,7 +98,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C399077 Verify that selected settings remain for "Libraries" (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });

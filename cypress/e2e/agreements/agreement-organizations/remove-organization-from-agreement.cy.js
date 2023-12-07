@@ -4,7 +4,6 @@ import Agreements from '../../../support/fragments/agreements/agreements';
 import TopMenu from '../../../support/fragments/topMenu';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import EditAgreement from '../../../support/fragments/agreements/editAgreement';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
 
 let agreementId;
 let agreement;
@@ -38,7 +37,7 @@ describe('Agreement Organizations', () => {
 
   it(
     'C1329 Remove an Organization record from an Agreement record (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       AgreementViewDetails.agreementListClick(agreement.name);
       AgreementViewDetails.verifyOrganizationsAccordion(true);

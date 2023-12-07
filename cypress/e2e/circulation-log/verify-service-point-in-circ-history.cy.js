@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -77,7 +77,7 @@ describe('Circulation log', () => {
 
   it(
     'C360106 Verify the Service point in the Item Circulation history (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       // Go to the "Inventory" => Select "Item" toggle
       InventorySearchAndFilter.switchToItem();

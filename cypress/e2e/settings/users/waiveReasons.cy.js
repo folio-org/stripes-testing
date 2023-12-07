@@ -1,5 +1,3 @@
-import TestType from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Features from '../../../support/dictionary/features';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons';
@@ -13,7 +11,7 @@ describe('Management of waive reasons', () => {
 
   it(
     'C446 Verify that you can create/edit/delete waive reasons (volaris)',
-    { tags: [TestType.smoke, Features.waiveReasons, DevTeams.volaris] },
+    { tags: ['smoke', Features.waiveReasons, 'volaris'] },
     () => {
       WaiveReasons.startAdding();
       WaiveReasons.checkSaveButtonState({ isDisabled: true });

@@ -3,8 +3,6 @@ import Agreements from '../../../support/fragments/agreements/agreements';
 import TopMenu from '../../../support/fragments/topMenu';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import NewNote from '../../../support/fragments/notes/newNote';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
 
 let agreementId;
@@ -33,7 +31,7 @@ describe('Agreement Notes', () => {
 
   it(
     'C1308 Create a note for an Agreement record (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.openNotesSection();

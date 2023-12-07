@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
@@ -51,7 +51,7 @@ describe('Fund type view', () => {
 
   it(
     'C409416 A user with "Settings (Finance): View settings" permission can only view appropriate settings (Thunderjet)(TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       SettingsFinance.verifyItemInFinancePanel();
       SettingsFinance.verifyItemInDetailPanel();

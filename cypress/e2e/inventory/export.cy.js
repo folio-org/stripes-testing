@@ -3,13 +3,11 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FileManager from '../../support/utils/fileManager';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import testTypes from '../../support/dictionary/testTypes';
 import { Checkbox } from '../../../interactors';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
@@ -93,7 +91,7 @@ describe('ui-inventory: exports', () => {
 
   it(
     'C9284 Export small number of Instance UUIDs (30 or fewer) (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
       InventorySearchAndFilter.saveUUIDs();
@@ -112,7 +110,7 @@ describe('ui-inventory: exports', () => {
     },
   );
 
-  it('C9287 Export CQL query (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C9287 Export CQL query (firebird)', { tags: ['smoke', 'firebird'] }, () => {
     InventorySearchAndFilter.byLanguage();
     InventorySearchAndFilter.searchByParameter(
       'Keyword (title, contributor, identifier, HRID, UUID)',
@@ -131,7 +129,7 @@ describe('ui-inventory: exports', () => {
 
   it(
     'C196757 Export selected records (MARC) (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] },
+    { tags: ['smoke', 'firebird', 'broken'] },
     () => {
       InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
       cy.do(InventorySearchAndFilter.getSearchResult().find(Checkbox()).click());

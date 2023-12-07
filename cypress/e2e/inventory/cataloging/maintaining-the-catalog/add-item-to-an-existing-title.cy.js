@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
 import { MATERIAL_TYPE_NAMES, LOAN_TYPE_NAMES } from '../../../../support/constants';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -58,7 +58,7 @@ describe('inventory', () => {
 
     it(
       'C3493 Add an item to an existing title. There is already a copy at the same library branch. (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // Find the instance from precondition
         InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);

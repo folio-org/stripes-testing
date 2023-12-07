@@ -1,6 +1,5 @@
 import Agreements from '../../../support/fragments/agreements/agreements';
 import TopMenu from '../../../support/fragments/topMenu';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
 import AgreementLines from '../../../support/fragments/agreements/agreementLines';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 
@@ -33,20 +32,14 @@ describe('Agreement Lines', () => {
     Agreements.deleteViaApi(agreementId);
   });
 
-  it(
-    'C761 View an Agreement line (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
-    () => {
-      AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
-      AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
-        Agreements.defaultAgreement.name,
-      );
-      AgreementViewDetails.verifyAgreementLinesCount('1');
+  it('C761 View an Agreement line (erm) (TaaS)', { tags: ['extendedPath', 'erm'] }, () => {
+    AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
+    AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(Agreements.defaultAgreement.name);
+    AgreementViewDetails.verifyAgreementLinesCount('1');
 
-      AgreementViewDetails.openAgreementLineSection();
-      AgreementViewDetails.verifySpecialAgreementLineRow({
-        description: agreementLine.description,
-      });
-    },
-  );
+    AgreementViewDetails.openAgreementLineSection();
+    AgreementViewDetails.verifySpecialAgreementLineRow({
+      description: agreementLine.description,
+    });
+  });
 });

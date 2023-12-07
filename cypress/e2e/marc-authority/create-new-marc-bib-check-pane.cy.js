@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -30,7 +30,7 @@ describe('Create new MARC bib', () => {
   it(
     'C380427 A new "MARC bib" record is opened in QuickMARC UI (spitfire) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.spitfire],
+      tags: ['criticalPath', 'spitfire'],
     },
     () => {
       // Open "Inventory" app

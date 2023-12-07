@@ -1,5 +1,3 @@
-import TestType from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import Permissions from '../../../support/dictionary/permissions';
@@ -45,7 +43,7 @@ describe('ui-users-settings: Owners', () => {
 
     it(
       'C350616 Fee/Fine Owners are not required to have a Service Point (volaris)',
-      { tags: [TestType.smoke, DevTeams.volaris] },
+      { tags: ['smoke', 'volaris'] },
       () => {
         const name = `Automation owner $${getRandomPostfix()}`;
         ownerNames.push(name);
@@ -60,7 +58,7 @@ describe('ui-users-settings: Owners', () => {
 
     it(
       'C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points (volaris)',
-      { tags: [TestType.smoke, Features.sharedOwner, DevTeams.volaris] },
+      { tags: ['smoke', Features.sharedOwner, 'volaris'] },
       () => {
         const name = 'Shared';
         UsersOwners.startNewLineAdding();
@@ -89,7 +87,7 @@ describe('ui-users-settings: Owners', () => {
 
     it(
       'C440 Verify that you can create/edit/delete fee/fine owners (vega) (TaaS)',
-      { tags: [TestType.extendedPath, DevTeams.vega] },
+      { tags: ['extendedPath', 'vega'] },
       () => {
         UsersOwners.startNewLineAdding();
         UsersOwners.trySave();
@@ -130,7 +128,7 @@ describe('ui-users-settings: Owners', () => {
 
     it(
       'C441 Verify that you can create/edit/delete associations between fee/fine owners and service points (vega)',
-      { tags: [TestType.criticalPath, DevTeams.vega] },
+      { tags: ['criticalPath', 'vega'] },
       () => {
         createRegularUser().then((firstUserProperties) => {
           testUsers.push(firstUserProperties);

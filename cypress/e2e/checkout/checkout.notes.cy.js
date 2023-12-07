@@ -8,7 +8,7 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
@@ -81,7 +81,7 @@ describe('Check out - Notes', () => {
   // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
   it(
     'C356781: Verify that all notes assigned to user pop up when user scan patron card (“Delete” option) (Spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.
       CheckOutActions.checkOutUser(testData.barcode);
@@ -108,7 +108,7 @@ describe('Check out - Notes', () => {
   // May be failing because of this bug (https://issues.folio.org/browse/STSMACOM-783)
   it(
     'C380512: Verify that all notes assigned to user pop up when user scan patron card (“Close” option) (Spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const itemBarcode = instanceData.folioInstances[0].barcodes[0];
       // Fill in user barcode number in the input field at "Scan patron card" pane → Click "Enter" button.

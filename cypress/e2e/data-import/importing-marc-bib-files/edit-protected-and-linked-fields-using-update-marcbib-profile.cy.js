@@ -11,7 +11,7 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
@@ -19,7 +19,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import Parallelization from '../../../support/dictionary/parallelization';
+
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
@@ -243,7 +243,7 @@ describe('data-import', () => {
 
     it(
       'C380511 Edit protected and linked fields using update MARC Bib profile (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
         InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();

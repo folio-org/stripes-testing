@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -142,7 +140,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)',
-    { tags: [DevTeams.spitfire, TestTypes.smoke] },
+    { tags: ['spitfire', 'smoke'] },
     () => {
       search(testData.exactSearch);
       BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
@@ -157,7 +155,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C359589 Verify that "Browse call numbers" result list displays all unique call numbers from one “Instance” record (spitfire)',
-    { tags: [DevTeams.spitfire, TestTypes.criticalPath] },
+    { tags: ['spitfire', 'criticalPath'] },
     () => {
       BrowseCallNumber.clickBrowseBtn();
       InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -171,7 +169,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C405529 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)',
-    { tags: [DevTeams.spitfire, TestTypes.criticalPath] },
+    { tags: ['spitfire', 'criticalPath'] },
     () => {
       searchAndOpenInstance(testData.parameter, item.instanceName);
       InventoryInstance.addItem();
@@ -196,7 +194,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C347906 Verify that look and list of available facets change according to search option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.clickResetAllButton();
@@ -212,7 +210,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C347910 Verify that "Actions" menu is displayed when searching by any search option except "Call numbers" (spitfire)',
-    { tags: [DevTeams.spitfire, TestTypes.criticalPath] },
+    { tags: ['spitfire', 'criticalPath'] },
     () => {
       BrowseCallNumber.clickBrowseBtn();
       InventorySearchAndFilter.selectBrowseCallNumbers();
@@ -227,7 +225,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C347909 Verify browse call numbers function and result list (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyBrowseOptions();
@@ -245,7 +243,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C347916 Verify Browse with non-existent call number (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyBrowseOptions();
@@ -259,7 +257,7 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C347918 Verify selecting row from browse result list (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyBrowseOptions();

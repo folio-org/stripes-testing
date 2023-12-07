@@ -6,8 +6,6 @@ import AgreementViewDetails from '../../../support/fragments/agreements/agreemen
 import Notes from '../../../support/fragments/notes/notes';
 import ExistingNoteView from '../../../support/fragments/notes/existingNoteView';
 import ExistingNoteEdit from '../../../support/fragments/notes/existingNoteEdit';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 
 let agreementId;
 let noteTypeId;
@@ -41,7 +39,7 @@ describe('Agreement Notes', () => {
 
   it(
     'C1309 Edit a note on an Agreement record (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       const changedNote = {
         title: `newTilteNote ${randomFourDigitNumber()}`,

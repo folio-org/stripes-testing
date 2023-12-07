@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FastAddNewRecord from '../../support/fragments/inventory/fastAddNewRecord';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
@@ -51,7 +51,7 @@ describe('inventory', () => {
 
     it(
       'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryActions.openNewFastAddRecordForm();

@@ -1,7 +1,6 @@
 import Agreements from '../../../support/fragments/agreements/agreements';
 import AgreementLines from '../../../support/fragments/agreements/agreementLines';
 import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import SearchAndFilterAgreementLines from '../../../support/fragments/agreements/searchAndFilterAgreementLines';
 import AgreementLineInformation from '../../../support/fragments/agreements/agreementLineInformation';
@@ -31,31 +30,25 @@ describe('Agreement Lines', () => {
     Agreements.deleteViaApi(agreementId);
   });
 
-  it(
-    'C405546 Delete Agreement Line (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
-    () => {
-      AgreementViewDetails.openAgreementLineFilter();
-      SearchAndFilterAgreementLines.verifyFilterOptions();
+  it('C405546 Delete Agreement Line (erm) (TaaS)', { tags: ['extendedPath', 'erm'] }, () => {
+    AgreementViewDetails.openAgreementLineFilter();
+    SearchAndFilterAgreementLines.verifyFilterOptions();
 
-      SearchAndFilterAgreementLines.search(agreementLine.description);
-      AgreementLines.verifyAgreementLinesCount(1);
+    SearchAndFilterAgreementLines.search(agreementLine.description);
+    AgreementLines.verifyAgreementLinesCount(1);
 
-      AgreementLines.agreementLinesListClick(agreementLine.description);
-      AgreementLineInformation.waitLoadingWithExistingLine(agreementLine.description);
-      AgreementLineInformation.verifyActionsButtons();
+    AgreementLines.agreementLinesListClick(agreementLine.description);
+    AgreementLineInformation.waitLoadingWithExistingLine(agreementLine.description);
+    AgreementLineInformation.verifyActionsButtons();
 
-      AgreementLineInformation.gotoDelete();
-      DeleteConfirmationModal.waitLoading();
+    AgreementLineInformation.gotoDelete();
+    DeleteConfirmationModal.waitLoading();
 
-      DeleteConfirmationModal.confirmDeleteAgreementLine();
-      AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
-        Agreements.defaultAgreement.name,
-      );
+    DeleteConfirmationModal.confirmDeleteAgreementLine();
+    AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(Agreements.defaultAgreement.name);
 
-      AgreementViewDetails.openAgreementLineFilter();
-      SearchAndFilterAgreementLines.search(agreementLine.description);
-      AgreementLines.verifyAgreementLinesCount(0);
-    },
-  );
+    AgreementViewDetails.openAgreementLineFilter();
+    SearchAndFilterAgreementLines.search(agreementLine.description);
+    AgreementLines.verifyAgreementLinesCount(0);
+  });
 });

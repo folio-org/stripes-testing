@@ -1,7 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
-import TestType from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import RenewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
@@ -190,7 +188,7 @@ describe('Renewal', () => {
 
   it(
     'C567: Renewal: success, from open loans (multiple items) (vega)',
-    { tags: [TestType.smoke, DevTeams.vega] },
+    { tags: ['smoke', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       cy.intercept('GET', '/configurations/entries?*').as('getEntries');

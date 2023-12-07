@@ -1,13 +1,11 @@
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
-import parallelization from '../../support/dictionary/parallelization';
+
 import DataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import ExportFile from '../../support/fragments/data-export/exportFile';
@@ -58,7 +56,7 @@ describe('Data Export - Holdings records export', () => {
 
   it(
     'C376962 Verify that Default mapping profile for holdings maps instance HRID to "004" field (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird, parallelization.nonParallel] },
+    { tags: ['smoke', 'firebird', 'nonParallel'] },
     () => {
       ExportFile.uploadFile(fileName);
       ExportFile.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');

@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -95,7 +95,7 @@ describe('Export Loans ', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C721 Export patron*s loans to CSV (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
+  it('C721 Export patron*s loans to CSV (vega)', { tags: ['smoke', 'vega'] }, () => {
     const fileNameMask = 'export*';
     cy.wait(10000);
     cy.visit(TopMenu.checkInPath);

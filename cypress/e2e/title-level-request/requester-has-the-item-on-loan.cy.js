@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -93,7 +93,7 @@ describe('Create Item or Title level request', () => {
   it(
     'C1286 Check error message when item already checked out (vega) (TaaS)',
     {
-      tags: [TestTypes.extendedPath, DevTeams.vega],
+      tags: ['extendedPath', 'vega'],
     },
     () => {
       // Navigate to new request page

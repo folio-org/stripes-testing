@@ -2,7 +2,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import Invoices from '../../support/fragments/invoices/invoices';
-import TestType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import NewFund from '../../support/fragments/finance/funds/newFund';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -10,7 +9,6 @@ import DateTools from '../../support/utils/dateTools';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
 import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-invoices: Credit Invoice creation', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -43,7 +41,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
 
   it(
     'C343209 Create, approve and pay a credit invoice (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       const transactionFactory = new Transaction();
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);

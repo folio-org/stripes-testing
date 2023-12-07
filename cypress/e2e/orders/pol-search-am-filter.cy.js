@@ -1,8 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import Orders from '../../support/fragments/orders/orders';
-import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -12,7 +10,6 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
-import Parallelization from '../../support/dictionary/parallelization';
 
 Cypress.on('uncaught:exception', () => false);
 
@@ -95,7 +92,7 @@ describe('orders: export', () => {
 
   it(
     'C350603 Searching POL by specifying acquisition method (thunderjet)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['smoke', 'thunderjet', 'nonParallel'] },
     () => {
       cy.logout();
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });

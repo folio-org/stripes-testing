@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import {
   Budgets,
   BudgetDetails,
@@ -166,7 +166,7 @@ describe('Invoices', () => {
 
     it(
       'C388520 Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -375,7 +375,7 @@ describe('Invoices', () => {
 
     it(
       'C388545 Approve and pay invoice created in current FY when related order line was created in previous FY and user does not have "Invoice: Pay invoices in a different fiscal year" permission (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

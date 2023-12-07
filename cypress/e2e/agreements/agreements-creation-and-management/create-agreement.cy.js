@@ -1,5 +1,3 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
 import Agreements from '../../../support/fragments/agreements/agreements';
 import NewAgreement from '../../../support/fragments/agreements/newAgreement';
@@ -27,7 +25,7 @@ describe('Agreements', () => {
       );
     });
 
-    it('C757 Create an Agreement (erm)', { tags: [TestTypes.smoke, DevTeams.erm] }, () => {
+    it('C757 Create an Agreement (erm)', { tags: ['smoke', 'erm'] }, () => {
       Agreements.create(defaultAgreement);
       InteractorsTools.checkCalloutMessage(calloutMessage);
       Agreements.checkAgreementPresented(defaultAgreement.name);

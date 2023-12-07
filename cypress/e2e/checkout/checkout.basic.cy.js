@@ -1,5 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
@@ -9,7 +8,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
-import devTeams from '../../support/dictionary/devTeams';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
@@ -136,7 +134,7 @@ describe('Check Out - Actions ', () => {
 
   it(
     'C356772 An active user with barcode can Check out item (vega)',
-    { tags: [TestTypes.smoke, devTeams.vega] },
+    { tags: ['smoke', 'vega'] },
     () => {
       OtherSettings.selectPatronIdsForCheckoutScanning(['Username'], '3');
       cy.visit(TopMenu.usersPath);
