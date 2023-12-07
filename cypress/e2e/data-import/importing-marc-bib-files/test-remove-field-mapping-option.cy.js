@@ -436,13 +436,10 @@ describe('data-import', () => {
 
             cy.visit(TopMenu.inventoryPath);
             InventorySearchAndFilter.searchInstanceByHRID(initialInstanceHrId);
+            InventoryInstance.openHoldingView();
             HoldingsRecordView.checkTemporaryLocation('-');
             HoldingsRecordView.checkDigitizationPolicy('-');
             HoldingsRecordView.close();
-            InventoryInstance.openHoldingsAccordion(
-              collectionOfMappingAndActionProfilesForCreate[1].mappingProfile
-                .permanentLocationInHoldingsAccordion,
-            );
             InventoryInstance.openItemByBarcode(itemBarcode);
             ItemRecordView.checkAccessionNumber('-');
             ItemRecordView.verifyNumberOfPieces('-');
