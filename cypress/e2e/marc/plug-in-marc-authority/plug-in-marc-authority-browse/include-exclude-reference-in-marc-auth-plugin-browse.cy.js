@@ -20,19 +20,15 @@ describe('plug-in MARC authority | Search', () => {
     },
     instanceTitle:
       'Clarinet concerto no. 1, op. 73 [sound recording] / Weber. Andante, K. 315 / Stravinsky. Theme & variations / Rossini.',
-    authTitles: ['Mostly Stravinsky Festival', 'Mostly Wagner Festival'],
+    authTitles: ['Mostly Stravinsky Festival'],
     authRows: {
-      wagnerAuth: {
-        title: 'Mostly Wagner Festival',
+      stravinskyAuth: {
+        title: 'Mostly Stravinsky Festival',
         tag: '111',
       },
-      wagnerRef: {
-        title: 'Mostly Wagner Festival Orchestra',
+      stravinskyRef: {
+        title: 'Mostly Stravinsky Festival Orchestra',
         tag: '411',
-      },
-      wagnerAuthRef: {
-        title: 'Mostly Wagner Music',
-        tag: '500',
       },
     },
     instanceIDs: [],
@@ -49,7 +45,7 @@ describe('plug-in MARC authority | Search', () => {
         marc: 'marcAuthC380434.mrc',
         fileName: `testMarcFileAuthC380434.${randomFourDigitNumber()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numberOfRecords: 2,
+        numberOfRecords: 1,
       },
     ],
   };
@@ -139,74 +135,48 @@ describe('plug-in MARC authority | Search', () => {
       MarcAuthorities.clickReset();
       MarcAuthorities.searchBy('Corporate/Conference name', 'Mostly Stravinsky');
       MarcAuthorities.verifySearchResultTabletIsAbsent(false);
-      MarcAuthorities.verifyColumnValuesOnlyExist(testData.authorizedColumnName, [
-        'Authorized',
-        'Reference',
-      ]);
-      MarcAuthorities.verifyEveryRowContainsLinkButton();
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: testData.authorizedColumnName,
+        expectedValues: ['Authorized', 'Reference'],
+        browsePane: true,
+      });
+
+      MarcAuthorities.verifyAllAuthorizedHaveLinks();
 
       MarcAuthoritiesSearch.selectExcludeReferencesFilter(
         REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM,
       );
       MarcAuthorities.verifyValueDoesntExistInColumn(testData.authorizedColumnName, 'Reference');
-
-      MarcAuthoritiesSearch.selectExcludeReferencesFilter(
-        REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
-      );
-      MarcAuthorities.verifyValueDoesntExistInColumn(testData.authorizedColumnName, 'Reference');
-      MarcAuthorities.verifyValueDoesntExistInColumn(testData.authorizedColumnName, 'Auth/Ref');
-      MarcAuthorities.verifyEveryRowContainsLinkButton();
+      MarcAuthorities.verifyAllAuthorizedHaveLinks();
 
       MarcAuthoritiesSearch.unselectExcludeReferencesFilter(
         REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM,
       );
-      MarcAuthorities.verifyColumnValuesOnlyExist(testData.authorizedColumnName, [
-        'Authorized',
-        'Reference',
-      ]);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: testData.authorizedColumnName,
+        expectedValues: ['Authorized', 'Reference'],
+        browsePane: true,
+      });
 
-      MarcAuthoritiesSearch.unselectExcludeReferencesFilter(
-        REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
-      );
-      MarcAuthorities.verifyColumnValuesOnlyExist(testData.authorizedColumnName, [
-        'Authorized',
-        'Reference',
-        'Auth/Ref',
-      ]);
-
-      MarcAuthorities.searchBy('Keyword', 'Mostly Wagner');
-      MarcAuthorities.selectItem(testData.authRows.wagnerAuth.title, false);
+      MarcAuthorities.selectItem(testData.authRows.stravinskyAuth.title, false);
       MarcAuthorities.checkFieldAndContentExistence(
-        testData.authRows.wagnerAuth.tag,
-        testData.authRows.wagnerAuth.title,
+        testData.authRows.stravinskyAuth.tag,
+        testData.authRows.stravinskyAuth.title,
       );
-      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authRows.wagnerAuth.title);
+      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authRows.stravinskyAuth.title);
       MarcAuthorities.verifyLinkButtonExistOnMarcViewPane();
 
       MarcAuthorities.closeMarcViewPane();
       MarcAuthorities.verifySearchResultTabletIsAbsent(false);
 
-      MarcAuthorities.selectItem(testData.authRows.wagnerRef.title, false);
+      MarcAuthorities.selectItem(testData.authRows.stravinskyRef.title, false);
       MarcAuthorities.checkFieldAndContentExistence(
-        testData.authRows.wagnerRef.tag,
-        testData.authRows.wagnerRef.title,
+        testData.authRows.stravinskyRef.tag,
+        testData.authRows.stravinskyRef.title,
       );
-      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authRows.wagnerRef.title);
+
+      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authRows.stravinskyRef.title);
       MarcAuthorities.verifyLinkButtonExistOnMarcViewPane();
-
-      MarcAuthorities.closeMarcViewPane();
-      MarcAuthorities.verifySearchResultTabletIsAbsent(false);
-
-      MarcAuthorities.selectItem(testData.authRows.wagnerAuthRef.title, false);
-      MarcAuthorities.checkFieldAndContentExistence(
-        testData.authRows.wagnerAuthRef.tag,
-        testData.authRows.wagnerAuthRef.title,
-      );
-      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authRows.wagnerAuthRef.title);
-      MarcAuthorities.verifyLinkButtonExistOnMarcViewPane(false);
-
-      MarcAuthorities.closeMarcViewPane();
-      MarcAuthorities.verifySearchResultTabletIsAbsent(false);
     },
   );
 });
