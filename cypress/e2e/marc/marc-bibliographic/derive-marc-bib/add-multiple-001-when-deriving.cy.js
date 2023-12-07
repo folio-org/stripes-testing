@@ -45,6 +45,13 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     });
   });
 
+  beforeEach('Login', () => {
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.inventoryPath,
+      waiter: InventoryInstances.waitContentLoading,
+    });
+  });
+
   after('Deleting created user and data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
@@ -58,11 +65,8 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       // #1 - #3 Open the "Instance" record view
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: `${TopMenu.inventoryPath}/view/${createdRecordIDs[0]}`,
-        waiter: InventoryInstances.waitContentLoading,
-      });
-
+      InventoryInstance.searchByTitle(createdRecordIDs[0]);
+      InventoryInstances.selectInstance();
       // #4 Click on the "Actions" dropdown button and choose "Derive new MARC bibliographic record" option from the dropdown list.
       InventoryInstance.deriveNewMarcBib();
 
