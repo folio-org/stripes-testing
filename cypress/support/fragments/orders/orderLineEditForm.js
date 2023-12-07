@@ -27,8 +27,6 @@ const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save & close');
 const saveAndOpenOrderButton = Button('Save & open order');
-
-const title = TextField({ name: 'titleOrPackage' });
 const publicationDate = TextField({ name: 'publicationDate' });
 const publicher = TextField({ name: 'publisher' });
 const edition = TextField({ name: 'edition' });
@@ -63,7 +61,7 @@ const buttons = {
   'Save & open order': saveAndOpenOrderButton,
 };
 const disabledButtons = {
-  Title: title,
+  Title: itemDetailsFields.title,
   'Publication date': publicationDate,
   Publisher: publicher,
   Edition: edition,

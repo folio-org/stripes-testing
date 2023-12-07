@@ -80,8 +80,10 @@ describe('Orders', () => {
         ]);
 
         // Fill all required fields with valid values and click "Add POL" button
-        OrderEditForm.selectVendorByName(testData.organization.name);
-        OrderEditForm.selectOrderType('One-time');
+        OrderEditForm.fillOrderInfoSectionFields({
+          organizationName: testData.organization.name,
+          orderType: 'One-time',
+        });
         OrderEditForm.clickSaveButton();
 
         // Click "Cancel" button

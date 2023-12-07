@@ -7,7 +7,6 @@ import {
   Selection,
   SelectionList,
   TextField,
-  Select,
   including,
   matching,
 } from '../../../../interactors';
@@ -23,7 +22,6 @@ const orderSummarySection = orderEditFormRoot.find(Section({ id: 'poSummary' }))
 const collapseAllButton = Button('Collapse all');
 const cancelButton = Button('Cancel');
 const saveButton = Button({ id: 'clickable-create-new-purchase-order' });
-const orderTypeField = Select('Order type*');
 
 const infoSectionFields = {
   poNumberPrefix: orderInfoSection.find(Select({ name: 'poNumberPrefix' })),
@@ -99,14 +97,11 @@ export default {
     }
 
     if (orderType) {
-      cy.do(orderInfoSection.orderType.choose(orderType));
+      cy.do(infoSectionFields.orderType.choose(orderType));
     }
   },
   selectOrderTemplate(templateName) {
     this.selectDropDownValue('Template name', templateName);
-  },
-  selectOrderType(type) {
-    cy.do(orderTypeField.choose(type));
   },
   selectDropDownValue(label, option) {
     cy.do([
