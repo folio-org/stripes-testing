@@ -10,22 +10,57 @@ import {
   calloutTypes,
   MultiColumnListRow,
   MultiColumnListCell,
+  Modal,
+  Accordion,
 } from '../../../../interactors';
 
+const closeModal = Modal();
 const saveButton = Button('Save');
+const cancelButton = Button('Cancel');
+const closeWithoutSavingButton = Button('Close without saving');
+// const keepEditingButton = Button('Keep editing');
+const keepEditingButton = closeModal.find(Button('Keep editing'));
+const actions = Button('Actions');
+const refreshList = Button('Refresh list');
 
 export default {
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
   },
 
+  actionButton() {
+    cy.do(actions.click());
+    cy.wait(3000);
+  },
+  refreshList() {
+    cy.do(refreshList.click());
+    cy.wait(5000);
+  },
+
   saveList() {
     cy.do(saveButton.click());
+    cy.wait(5000);
+  },
+  cancelList() {
+    cy.do(cancelButton.click());
+    cy.wait(5000);
+  },
+  closeWithoutSaving() {
+    cy.do(closeWithoutSavingButton.click());
+    cy.wait(5000);
+  },
+
+  keepEditing() {
+    cy.do(keepEditingButton.click());
     cy.wait(5000);
   },
 
   openNewListPane() {
     cy.do(Link('New').click());
+  },
+
+  expiredPatronLoan() {
+    cy.do(Link('Inactive patrons with open loans').click());
   },
 
   setName(value) {
@@ -49,11 +84,20 @@ export default {
   },
 
   verifySuccessCalloutMessage(message) {
-    cy.expect(Callout({ type: calloutTypes.success }).is({ textContent: message }));
+    cy.expect(Callout({ type: calloutTypes.info }).is({ textContent: message }));
+  },
+
+  cancelListPopup: () => {
+    cy.expect(Modal({ header: 'Are you sure?' }).exists());
+    cy.expect(Modal({ message: 'There are unsaved changes' }).exists());
   },
 
   closeListDetailsPane() {
     cy.get('button[icon=times]').click({ multiple: true });
+  },
+
+  verifyListIsNotPresent(listName) {
+    return cy.get('*[class^="mclRowContainer"]').contains(listName).should('not.exist');
   },
 
   findResultRowIndexByContent(content) {
