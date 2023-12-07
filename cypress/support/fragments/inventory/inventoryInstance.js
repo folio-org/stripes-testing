@@ -441,6 +441,8 @@ export default {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
     InstanceRecordEdit.waitLoading();
+
+    return InstanceRecordEdit;
   },
 
   editMarcBibliographicRecord: () => {
