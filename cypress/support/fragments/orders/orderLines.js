@@ -1611,7 +1611,7 @@ export default {
   },
 
   checkConnectedInstance: () => {
-    cy.expect(itemDetailsSection.find(Link('Connected')).exists());
+    cy.expect(Link('Connected').exists());
   },
 
   fillInInvalidDataForPublicationDate: () => {
