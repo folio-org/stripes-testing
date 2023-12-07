@@ -1,17 +1,15 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import TopMenu from '../../support/fragments/topMenu';
-import Orders from '../../support/fragments/orders/orders';
-import TestTypes from '../../support/dictionary/testTypes';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import getRandomPostfix from '../../support/utils/stringTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import DateTools from '../../support/utils/dateTools';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import DateTools from '../../support/utils/dateTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders: orders', () => {
   const order = {
@@ -66,7 +64,7 @@ describe('Orders: orders', () => {
       cy.wait(40000);
       cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
@@ -98,7 +96,7 @@ describe('Orders: orders', () => {
 
   it(
     'C369046: "Version history" viewing for Order (thunderjet)',
-    { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

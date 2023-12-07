@@ -1,15 +1,14 @@
 import moment from 'moment';
-
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import {
+  Integrations,
   NewOrganization,
   Organizations,
-  Integrations,
 } from '../../../support/fragments/organizations';
-import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -70,7 +69,7 @@ describe('Export Manager', () => {
 
     it(
       'C377048 Setting "daily" scheduling on 12 PM for new export Integration (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on the "Name" link for Organization
         Organizations.searchByParameters('Name', testData.organization.name);

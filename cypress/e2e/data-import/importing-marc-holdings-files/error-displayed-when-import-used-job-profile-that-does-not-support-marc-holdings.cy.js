@@ -1,15 +1,15 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
-import FileManager from '../../../support/utils/fileManager';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Holdings files', () => {
@@ -17,9 +17,9 @@ describe('data-import', () => {
     let instanceHrid;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathForUpload = 'oneMarcBib.mrc';
-    const fileNameForCreateInstance = `C359245 autotestFileName${getRandomPostfix()}.mrc`;
-    const fileNameForImportForMarcAuthority = `C359245 autotestFileName${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C359245 editedMarcFile${getRandomPostfix()}.mrc`;
+    const fileNameForCreateInstance = `C359245 autotestFileName.${getRandomPostfix()}`;
+    const fileNameForImportForMarcAuthority = `C359245 autotestFileName.${getRandomPostfix()}`;
+    const editedMarcFileName = `C359245 editedMarcFile.${getRandomPostfix()}.mrc`;
     const title = 'Holdings';
     const errorMessageForMarcAuthorityProfile =
       "Chosen job profile 'Default - Create SRS MARC Authority' does not support 'MARC_HOLDING' record type";
@@ -37,7 +37,7 @@ describe('data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForCreateInstance);
       Logs.openFileDetails(fileNameForCreateInstance);
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         instanceHrid = initialInstanceHrId;
       });
@@ -67,7 +67,7 @@ describe('data-import', () => {
 
     it(
       'C359245 Checking the error displayed when the import used a "Job Profile" that does not support the "MARC Holding" record type (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -79,13 +79,13 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForImportForMarcAuthority);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(fileNameForImportForMarcAuthority);
-        FileDetails.verifyLogDetailsPageIsOpened(fileNameForImportForMarcAuthority);
+        FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.error,
+          RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
         FileDetails.openJsonScreen(title);
@@ -102,15 +102,16 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(editedMarcFileName);
-        FileDetails.verifyLogDetailsPageIsOpened(editedMarcFileName);
+        FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.error,
+          RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
+        FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(errorMessageForInstanceProfile);

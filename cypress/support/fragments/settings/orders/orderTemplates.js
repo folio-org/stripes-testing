@@ -1,52 +1,28 @@
-import {
-  Button,
-  DropdownMenu,
-  Modal,
-  NavListItem,
-  Pane,
-  PaneContent,
-  SearchField,
-  Select,
-  SelectionOption,
-  TextField,
-} from '../../../../../interactors';
-import SearchHelper from '../../finance/financeHelper';
+import uuid from 'uuid';
+import { Button, DropdownMenu, NavListItem, Pane, PaneContent } from '../../../../../interactors';
+import OrderTemplateForm from './orderTemplateForm';
+import getRandomPostfix from '../../../utils/stringTools';
 import InteractorsTools from '../../../utils/interactorsTools';
 
-const saveButton = Button({ id: 'save-order-template-button' });
 const actionsButton = Button('Actions');
-const templateNameField = TextField({ name: 'templateName' });
 
 export default {
   waitLoading() {
     cy.expect(Pane({ id: 'order-settings-order-templates-list' }).exists());
   },
 
-  newTemplate() {
+  clickNewOrderTemplateButton() {
     cy.do(Button('New').click());
-  },
+    OrderTemplateForm.waitLoading();
 
+    return OrderTemplateForm;
+  },
   fillTemplateInformationWithAcquisitionMethod(templateName, organizationName, acquisitionMethod) {
-    cy.do([
-      templateNameField.fillIn(templateName),
-      Button('PO information').click(),
-      Button({ id: 'vendor-plugin' }).click(),
-      Modal('Select Organization')
-        .find(SearchField({ id: 'input-record-search' }))
-        .fillIn(organizationName),
-      Button('Search').click(),
-    ]);
-    SearchHelper.selectFromResultsList();
-    cy.do([
-      Button({ id: 'accordion-toggle-button-lineDetails' }).click(),
-      Button({ id: 'acquisition-method' }).click(),
-      SelectionOption(acquisitionMethod).click(),
-      Select({ name: 'orderType' }).choose('One-time'),
-    ]);
-  },
-
-  saveTemplate() {
-    cy.do(saveButton.click());
+    OrderTemplateForm.fillOrderTemplateFields({
+      templateInformation: { templateName },
+      poInformation: { organizationName, orderType: 'One-time' },
+      poLineDetails: { acquisitionMethod },
+    });
   },
 
   checkTemplateCreated(templateName) {
@@ -55,6 +31,10 @@ export default {
         .find(NavListItem(templateName))
         .exists(),
     );
+  },
+
+  saveTemplate() {
+    OrderTemplateForm.clickSaveButton();
   },
 
   deleteTemplate(templateName) {
@@ -79,14 +59,40 @@ export default {
 
   editTemplate(templateName) {
     cy.wait(6000);
-    cy.do([actionsButton.click()]);
+    cy.do([actionsButton.click(), DropdownMenu().find(Button('Edit')).click()]);
     cy.wait(6000);
-    cy.do([
-      DropdownMenu().find(Button('Edit')).click(),
-      templateNameField.fillIn(`${templateName}-edited`),
-    ]);
+
+    OrderTemplateForm.fillOrderTemplateFields({ templateInformation: { templateName } });
     cy.wait(6000);
-    cy.do(saveButton.click());
-    InteractorsTools.checkCalloutMessage('The template was saved');
+
+    OrderTemplateForm.clickSaveButton();
+  },
+  getDefaultOrderTemplate({
+    orderType = 'One-time',
+    renewalNote = `autotest_renewal_note_${getRandomPostfix()}`,
+  } = {}) {
+    return {
+      isPackage: false,
+      templateName: `autotest_template_name_${getRandomPostfix()}`,
+      templateCode: getRandomPostfix(),
+      orderType,
+      renewalNote,
+      id: uuid(),
+    };
+  },
+  createOrderTemplateViaApi(orderTemplate) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'orders/order-templates',
+        body: orderTemplate,
+      })
+      .then(({ body }) => body);
+  },
+  deleteOrderTemplateViaApi(orderTemplateId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `orders/order-templates/${orderTemplateId}`,
+    });
   },
 };

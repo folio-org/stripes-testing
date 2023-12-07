@@ -3,6 +3,7 @@ import {
   Accordion,
   Button,
   Checkbox,
+  HTML,
   ListRow,
   MultiColumnListCell,
   Pane,
@@ -12,6 +13,14 @@ const rootPane = Pane('Lost items requiring actual cost');
 
 export default {
   waitLoading: () => cy.expect(rootPane.exists()),
+
+  verifyUserNotHavePermmissionToAccess() {
+    cy.expect(
+      HTML(
+        'User does not have permission to access "Lost items needing actual cost" processing page',
+      ).exists(),
+    );
+  },
 
   searchByLossType(type) {
     cy.do(Accordion({ id: 'lossTypeFilterAccordion' }).find(Checkbox(type)).click());
@@ -49,6 +58,15 @@ export default {
         .find(Button({ icon: 'ellipsis' }))
         .click(),
       Button('Do not bill').click(),
+    ]);
+  },
+
+  openBillActualCost(instanceTitle) {
+    cy.do([
+      ListRow(including(instanceTitle))
+        .find(Button({ icon: 'ellipsis' }))
+        .click(),
+      Button('Bill actual cost').click(),
     ]);
   },
 

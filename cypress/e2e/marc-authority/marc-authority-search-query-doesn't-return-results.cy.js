@@ -1,10 +1,10 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('MARC -> MARC Bibliographic', () => {
@@ -40,7 +40,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     "C359180 MARC Authority plug-in | Use search query that doesn't return results (spitfire) (TaaS)",
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchByParameter('Keyword', searchValue);
       MarcAuthorities.checkNoResultsMessage(

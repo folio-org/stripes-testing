@@ -268,7 +268,11 @@ export default {
 
   openHoldingView: () => {
     cy.do(Button('View holdings').click());
-    cy.expect(Button('Actions').exists());
+    cy.expect(actionsButton.exists());
+  },
+
+  duplicate: () => {
+    cy.do([rootSection.find(actionsButton).click(), Button({ id: 'copy-instance' }).click()]);
   },
 
   getAssignedHRID: () => cy.then(() => KeyValue('Instance HRID').value()),
@@ -440,22 +444,42 @@ export default {
   verifyPublisher: ({ publisher, role, place, date }, indexRow = 0) => {
     cy.expect([
       publisherList
-        .find(MultiColumnListRow({ index: indexRow }))
-        .find(MultiColumnListCell({ columnIndex: 0 }))
-        .has({ content: publisher }),
+        .find(MultiColumnListCell({ row: indexRow, column: 'Publisher' }))
+        .has({ content: including(publisher) }),
       publisherList
-        .find(MultiColumnListRow({ index: indexRow }))
-        .find(MultiColumnListCell({ columnIndex: 1 }))
-        .has({ content: role }),
+        .find(MultiColumnListCell({ row: indexRow, column: 'Publisher role' }))
+        .has({ content: including(role) }),
       publisherList
-        .find(MultiColumnListRow({ index: indexRow }))
-        .find(MultiColumnListCell({ columnIndex: 2 }))
-        .has({ content: place }),
+        .find(MultiColumnListCell({ row: indexRow, column: 'Place of publication' }))
+        .has({ content: including(place) }),
       publisherList
-        .find(MultiColumnListRow({ index: indexRow }))
-        .find(MultiColumnListCell({ columnIndex: 3 }))
-        .has({ content: date }),
+        .find(MultiColumnListCell({ row: indexRow, column: 'Publication date' }))
+        .has({ content: including(date) }),
     ]);
+  },
+
+  verifyContributorWithMarcAppLink: (indexRow, indexColumn, value) => {
+    cy.expect(
+      Accordion('Contributor')
+        .find(MultiColumnList({ id: 'list-contributors' }))
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(MultiColumnListCell({ columnIndex: indexColumn }))
+        .has({ content: including(value) }),
+    );
+  },
+
+  verifyContributorNameWithMarcAppIcon: (indexRow, indexColumn, value) => {
+    cy.expect(
+      Accordion('Contributor')
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(
+          MultiColumnListCell({
+            columnIndex: indexColumn,
+            content: 'Linked to MARC authority' + value,
+          }),
+        )
+        .exists(),
+    );
   },
 
   scroll: () => {

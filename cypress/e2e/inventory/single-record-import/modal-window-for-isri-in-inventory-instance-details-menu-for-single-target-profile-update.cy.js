@@ -1,21 +1,21 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import Users from '../../../support/fragments/users/users';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ReImportModal from '../../../support/fragments/inventory/reImportModal';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import ViewTargetProfile from '../../../support/fragments/settings/inventory/integrations/viewTargetProfile';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Single record import', () => {
@@ -23,9 +23,7 @@ describe('inventory', () => {
     let instanceHRID;
     const OCLCAuthentication = '100481406/PAOLF';
     const profileForImport = 'Inventory Single Record - Default Update Instance (Default)';
-    const fileName = `C375146 autotestFile${getRandomPostfix()}.mrc`;
-    const filePathToUpload = 'oneMarcBib.mrc';
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
+    const fileName = `C375146autotestFile.${getRandomPostfix()}.mrc`;
     const targetIdentifier = '1234567';
     const targetProfile = {
       name: 'OCLC WorldCat',
@@ -39,18 +37,11 @@ describe('inventory', () => {
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
     before('login', () => {
-      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      DataImport.uploadFile(filePathToUpload, fileName);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
+      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
       JobProfiles.waitFileIsImported(fileName);
-      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(fileName);
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         instanceHRID = initialInstanceHrId;
       });
@@ -92,7 +83,7 @@ describe('inventory', () => {
 
     it(
       'C375146 Verify the modal window for ISRI In inventory instance details menu for single target profile (update) (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         cy.wait(1000);

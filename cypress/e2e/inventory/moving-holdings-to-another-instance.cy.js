@@ -1,15 +1,12 @@
-import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let userId;
 const item = {
@@ -42,12 +39,24 @@ describe('inventory', () => {
         secondItem.instanceName,
         secondItem.barcode,
       );
-
-      cy.getHoldings({ limit: 1, query: `"instanceId"="${item.instanceId}"` }).then((holdings) => {
+      cy.getHoldings({
+        limit: 1,
+        query: `"instanceId"="${item.instanceId}"`,
+      }).then((holdings) => {
         cy.updateHoldingRecord(holdings[0].id, {
           ...holdings[0],
           // Popular Reading Collection
           permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+        });
+      });
+      cy.getHoldings({
+        limit: 1,
+        query: `"instanceId"="${secondItem.instanceId}"`,
+      }).then((holdings) => {
+        cy.updateHoldingRecord(holdings[0].id, {
+          ...holdings[0],
+          // Annex
+          permanentLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
         });
       });
       cy.getHoldings({ limit: 1, query: `"instanceId"="${secondItem.instanceId}"` }).then(
@@ -71,12 +80,11 @@ describe('inventory', () => {
 
   it(
     "C15186 Move one holdings with all it's associated items from one instance to another instance (firebird) (TaaS)",
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
+      InventorySearchAndFilter.byKeywords(item.instanceName);
       InventorySearchAndFilter.selectSearchResultItem();
-      ItemRecordView.closeDetailView();
 
       InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(
         item.firstHoldingName,

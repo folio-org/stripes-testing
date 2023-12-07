@@ -1,11 +1,9 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('permissions: inventory', () => {
   const item = {
@@ -51,7 +49,7 @@ describe('permissions: inventory', () => {
 
   it(
     'C375072 User with "Inventory: View instances, holdings, and items" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
-    { tags: [TestTypes.smoke, DevTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       cy.login(userWithOnlyViewPermissions.username, userWithOnlyViewPermissions.password);
       cy.visit(TopMenu.inventoryPath);
@@ -69,7 +67,7 @@ describe('permissions: inventory', () => {
 
   it(
     'C375077 User with "Inventory: All permissions" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet)',
-    { tags: [TestTypes.smoke, DevTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       cy.login(userWithAllPermissions.username, userWithAllPermissions.password);
       cy.visit(TopMenu.inventoryPath);

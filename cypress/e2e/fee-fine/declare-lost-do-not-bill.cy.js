@@ -1,24 +1,23 @@
 import uuid from 'uuid';
-
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import { Permissions } from '../../support/dictionary';
 import Checkout from '../../support/fragments/checkout/checkout';
-import TopMenu from '../../support/fragments/topMenu';
-import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
+import DoNotBillModal from '../../support/fragments/users/doNotBillModal';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
-import UsersCard from '../../support/fragments/users/usersCard';
+import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
-import LostItemsRequiringActualCostPage from '../../support/fragments/users/lostItemsRequiringActualCostPage';
-import DoNotBillModal from '../../support/fragments/users/doNotBillModal';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Lost items requiring actual cost', () => {
   const testData = {
@@ -167,7 +166,7 @@ describe('Lost items requiring actual cost', () => {
 
   it(
     'C375156 Verify ability do not bill patron for actual cost for item with "Declared to Lost" status (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action

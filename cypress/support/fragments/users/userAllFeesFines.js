@@ -77,9 +77,6 @@ export default {
   clickOnRowByIndex: (rowIndex) => {
     cy.do(feeFinesList.find(MultiColumnListRow({ index: rowIndex })).click());
   },
-  waiveSelectedFeeFines: () => {
-    cy.do(Dropdown('Actions').choose('Waive'));
-  },
   clickRowCheckbox: (rowIndex) => {
     cy.get('#list-accounts-history-view-feesfines')
       .find(`[data-row-index="row-${rowIndex}"]`)

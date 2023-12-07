@@ -1,14 +1,15 @@
 import {
-  Section,
   Button,
-  HTML,
-  including,
-  TextField,
-  QuickMarcEditorRow,
-  TextArea,
-  MultiColumnListHeader,
   Callout,
+  HTML,
   Modal,
+  MultiColumnListHeader,
+  QuickMarcEditorRow,
+  Section,
+  TableRow,
+  TextArea,
+  TextField,
+  including,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -96,6 +97,18 @@ export default {
   },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
   notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
+  checkTagInRow: (rowIndex, tag) => {
+    cy.expect(
+      rootSection
+        .find(
+          TableRow({
+            index: rowIndex,
+            innerText: including(tag),
+          }),
+        )
+        .exists(),
+    );
+  },
   deleteViaAPI: (internalAuthorityId) => {
     cy.okapiRequest({
       method: 'DELETE',
@@ -279,5 +292,14 @@ export default {
   checkLinkingAuthority: () => {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 655 has been linked to a MARC authority record.').exists());
+  },
+
+  createAuthoritySource: (body) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'authority-source-files',
+      body,
+      isDefaultSearchParamsRequired: false,
+    });
   },
 };

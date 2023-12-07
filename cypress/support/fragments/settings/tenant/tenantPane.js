@@ -1,5 +1,3 @@
-import { Addresses, Localization } from './general';
-import { Campuses, Institutions, Libraries, Locations } from './location-setup';
 import { NavListItem, Pane } from '../../../../../interactors';
 
 export const TENANTS = {
@@ -29,14 +27,18 @@ export default {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());
   },
-  verifyLocationSetupItems() {
+  verifyLocationSetupItems(exist = true) {
     [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach(
       (item) => {
-        cy.expect(NavListItem(item).exists());
+        if (exist) {
+          cy.expect(NavListItem(item).exists());
+        } else {
+          cy.expect(NavListItem(item).absent());
+        }
       },
     );
   },
-  verifyNoGeneralItems() {
+  verifyGeneralItems(exist = true) {
     [
       TENANTS.ADDRESSES,
       TENANTS.LANGUAGE_AND_LOCALIZATION,
@@ -44,7 +46,11 @@ export default {
       TENANTS.SSO_SETTINGS,
       TENANTS.SERVICE_POINTS,
     ].forEach((item) => {
-      cy.expect(NavListItem(item).absent());
+      if (exist) {
+        cy.expect(NavListItem(item).exists());
+      } else {
+        cy.expect(NavListItem(item).absent());
+      }
     });
   },
   verifyPageTitle(title) {

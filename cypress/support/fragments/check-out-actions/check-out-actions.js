@@ -11,6 +11,7 @@ import {
   MultiColumnListCell,
   PaneContent,
   Checkbox,
+  RadioButton,
 } from '../../../../interactors';
 import SelectUser from './selectUser';
 
@@ -223,5 +224,9 @@ export default {
   },
   checkNoteModalNotDisplayed: () => {
     cy.expect(noteModal.absent());
+  },
+  chooseActingPatron: (patron) => {
+    cy.expect(Modal('Who are you acting as?').exists());
+    cy.do([RadioButton(including(patron)).click(), Button('Continue').click()]);
   },
 };

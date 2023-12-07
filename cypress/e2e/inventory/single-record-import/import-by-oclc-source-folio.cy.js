@@ -1,13 +1,13 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
+import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 let user;
 let instanceRecord;
@@ -53,15 +53,16 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
-      Users.deleteViaApi(user.userId);
-      Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+      cy.getAdminToken().then(() => {
+        InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
+        Users.deleteViaApi(user.userId);
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+      });
     });
 
     it(
       'C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter(
@@ -81,9 +82,11 @@ describe('inventory', () => {
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstance.verifyInstanceTitle(oclcRecordData.title);
         InventoryInstance.verifyInstanceLanguage(oclcRecordData.language);
-        InventoryInstance.verifyInstancePublisher(0, 0, oclcRecordData.publisher);
-        InventoryInstance.verifyInstancePublisher(0, 2, oclcRecordData.placeOfPublication);
-        InventoryInstance.verifyInstancePublisher(0, 3, oclcRecordData.publicationDate);
+        InventoryInstance.verifyInstancePublisher({
+          publisher: oclcRecordData.publisher,
+          place: oclcRecordData.placeOfPublication,
+          date: oclcRecordData.publicationDate,
+        });
         InventoryInstance.verifyInstancePhysicalcyDescription(oclcRecordData.physicalDescription);
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 4);
         InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 5);
