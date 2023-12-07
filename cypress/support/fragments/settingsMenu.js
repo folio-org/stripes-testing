@@ -19,6 +19,7 @@ export default {
   circulationRequestCancellationReasonsPath: 'settings/circulation/cancellation-reasons',
   circulationRequestPoliciesPath: 'settings/circulation/request-policies',
   circulationTitleLevelRequestsPath: 'settings/circulation/title-level-requests',
+  consortiumManagerPath: 'settings/consortia-settings',
   coursesPath: 'settings/cr',
   dashboardPath: 'settings/dashboard',
   dataExportPath: 'settings/data-export',

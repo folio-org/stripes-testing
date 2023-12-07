@@ -1,7 +1,7 @@
 import Permissions from '../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
 import Users from '../../support/fragments/users/users';
-import TopMenu from '../../support/fragments/topMenu';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
@@ -28,31 +28,20 @@ describe('Users -> Consortia', () => {
   before('Create users, data', () => {
     cy.getAdminToken();
 
-    cy.createTempUser([
-      Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
-      Permissions.uiUsersPermissions.gui,
-      Permissions.uiUsersCreate.gui,
-      Permissions.uiUsersPermissionsView.gui,
-      Permissions.uiUsersView.gui,
-    ])
+    cy.createTempUser([Permissions.consortiaSettingsSettingsMembershipEdit.gui])
       .then((userProperties) => {
         user = userProperties;
       })
       .then(() => {
-        cy.assignAffiliationToUser(Affiliations.College, user.userId);
-        cy.setTenant(Affiliations.College);
+        cy.assignAffiliationToUser(Affiliations.central, user.userId);
+        cy.setTenant(Affiliations.central);
         cy.assignPermissionsToExistingUser(user.userId, [
-          Permissions.consortiaSettingsConsortiaAffiliationsEdit.gui,
-          Permissions.uiUsersPermissions.gui,
-          Permissions.uiUsersCreate.gui,
-          Permissions.uiUsersPermissionsView.gui,
-          Permissions.uiUsersView.gui,
+          Permissions.consortiaSettingsSettingsMembershipEdit.gui,
         ]);
         cy.login(user.username, user.password, {
-          path: TopMenu.usersPath,
+          path: SettingsMenu.consortiumManagerPath,
           waiter: Users.waitLoading,
         });
-        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
       });
   });
 
