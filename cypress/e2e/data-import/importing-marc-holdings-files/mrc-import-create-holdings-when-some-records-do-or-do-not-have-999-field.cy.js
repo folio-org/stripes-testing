@@ -1,14 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Holdings files', () => {
@@ -16,8 +16,8 @@ describe('data-import', () => {
     let instanceHrid;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathForUpload = 'oneMarcBib.mrc';
-    const fileName = `C359209 autotestFileName${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C359209 editedMarcFile${getRandomPostfix()}.mrc`;
+    const fileName = `C359209 autotestFileName.${getRandomPostfix()}`;
+    const editedMarcFileName = `C359209 editedMarcFile.${getRandomPostfix()}.mrc`;
     const errorMessage =
       '{"error":"A new MARC-Holding was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
     const quantityOfItems = {
@@ -37,7 +37,7 @@ describe('data-import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         instanceHrid = initialInstanceHrId;
       });
@@ -60,20 +60,21 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(
       'C359209 Checking the import to Create MARC Holdings records, when some incoming records do or do not have 999 ff fields (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         DataImport.editMarcFile(
           'marcFileForC359209.mrc',
@@ -93,22 +94,22 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(editedMarcFileName);
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
         );
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.holdings,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, 1);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName, 1);
         });
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
           2,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
           3,
         );
@@ -119,9 +120,7 @@ describe('data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.noAction, 2);
         // check Error counter in the Summary table
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems.error, 3);
-        FileDetails.openJsonScreen('Holdings');
-        JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.verifyContentInTab(errorMessage);
+        FileDetails.verifyErrorMessage(errorMessage);
       },
     );
   });

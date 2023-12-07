@@ -52,6 +52,22 @@ const checkOverrideSectionOfMappingProfile = (field, status) => {
     }),
   );
 };
+const getProfileIdViaApi = (profileName) => {
+  // get all mapping profiles
+  return cy
+    .okapiRequest({
+      path: 'data-import-profiles/mappingProfiles',
+      searchParams: {
+        query: '(cql.allRecords=1) sortby name',
+        limit: 1000,
+      },
+    })
+    .then(({ body: { mappingProfiles } }) => {
+      // find profile to delete
+      const profile = mappingProfiles.find((mapProfile) => mapProfile.name === profileName);
+      return profile.id;
+    });
+};
 const deleteViaApi = (profileName) => {
   // get all mapping profiles
   cy.okapiRequest({
@@ -81,6 +97,7 @@ export default {
   checkOverrideSectionOfMappingProfile,
   closeViewMode,
   deleteViaApi,
+  getProfileIdViaApi,
 
   checkCreatedMappingProfile: (
     profileName,
@@ -145,23 +162,12 @@ export default {
         }),
     );
   },
+  closeCannotDeleteModal: () => cy.do(cannotDeleteModal.find(Button('Close')).click()),
 
-  checkCalloutMessage: (profileName) => {
+  checkCalloutMessage: (message) => {
     cy.expect(
       Callout({
-        textContent: including(
-          `The field mapping profile "${profileName}" was successfully updated`,
-        ),
-      }).exists(),
-    );
-  },
-
-  checkCreateProfileCalloutMessage: (profileName) => {
-    cy.expect(
-      Callout({
-        textContent: including(
-          `The field mapping profile "${profileName}" was successfully created`,
-        ),
+        textContent: including(message),
       }).exists(),
     );
   },
@@ -173,5 +179,30 @@ export default {
   verifyCurrency: (value) => cy.expect(KeyValue('Currency').has({ value })),
   verifyMappingProfileTitleName: (profileName) => cy.get('#full-screen-view-content h2').should('have.text', profileName),
   verifyCannotDeleteModalOpened: () => cy.expect(cannotDeleteModal.exists()),
-  closeCannotDeleteModal: () => cy.do(cannotDeleteModal.find(Button('Close')).click()),
+  verifyEnabledIndicatorSetToTrueViaApi: (profileId) => {
+    cy.okapiRequest({
+      path: `data-import-profiles/mappingProfiles/${profileId}`,
+      searchParams: {
+        limit: 1000,
+      },
+    }).then((responce) => {
+      const expectedValues = {
+        enabled: 'true',
+        name: 'batchGroupId',
+        path: 'invoice.batchGroupId',
+        subfields: [],
+        value: '"FOLIO"',
+      };
+
+      const existingValues = {
+        enabled: responce.body.mappingDetails.mappingFields[9].enabled,
+        name: responce.body.mappingDetails.mappingFields[9].name,
+        path: responce.body.mappingDetails.mappingFields[9].path,
+        subfields: responce.body.mappingDetails.mappingFields[9].subfields,
+        value: responce.body.mappingDetails.mappingFields[9].value,
+      };
+
+      expect(existingValues).to.eql(expectedValues);
+    });
+  },
 };

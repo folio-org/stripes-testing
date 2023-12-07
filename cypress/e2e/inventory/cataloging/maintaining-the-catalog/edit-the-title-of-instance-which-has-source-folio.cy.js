@@ -1,15 +1,16 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import { Permissions } from '../../../../support/dictionary';
 import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
     let user;
+    // eslint-disable-next-line no-unused-vars
     let instanceHrid;
     const testData = {
       newInstanceTitle: `autotest_instance_title_${getRandomPostfix()}`,
@@ -46,7 +47,7 @@ describe('inventory', () => {
 
     it(
       'C3495 Edit the title of an instance which has source FOLIO (record which do not have an underlying MARC record stored in SRS) (folijet) (TaaS)',
-      { tags: [TestTypes.extended, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventoryInstance.searchByTitle(testData.instance.instanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

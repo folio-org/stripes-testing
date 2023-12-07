@@ -1,5 +1,5 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 import {
   Accordion,
   Button,
@@ -22,13 +22,13 @@ import {
   SelectionOption,
   TextField,
 } from '../../../../interactors';
+import { INVOICE_STATUSES } from '../../constants';
 import InteractorsTools from '../../utils/interactorsTools';
 import { randomFourDigitNumber } from '../../utils/stringTools';
 import FinanceHelper from '../finance/financeHelper';
 import InvoiceEditForm from './invoiceEditForm';
-import VoucherExportForm from './voucherExportForm';
-import { INVOICE_STATUSES } from '../../constants';
 import InvoiceStates from './invoiceStates';
+import VoucherExportForm from './voucherExportForm';
 
 const invoiceResultsHeaderPane = PaneHeader({ id: 'paneHeaderinvoice-results-pane' });
 const invoiceResultsPane = Pane({ id: 'invoice-results-pane' });
@@ -74,6 +74,7 @@ const getDefaultInvoice = ({
   vendorName,
   fiscalYearId,
   accountingCode,
+  invoiceStatus = 'Open',
   invoiceDate = moment.utc().format(),
   exportToAccounting = true,
 }) => ({
@@ -82,7 +83,7 @@ const getDefaultInvoice = ({
   source: 'User',
   batchGroupId,
   batchGroupName,
-  status: 'Open',
+  status: invoiceStatus,
   exportToAccounting,
   vendorId,
   vendorName,
@@ -100,6 +101,7 @@ const getDefaultInvoiceLine = ({
   poLineId,
   fundDistributions,
   accountingCode,
+  subTotal = 0,
   subscriptionInfo,
   subscriptionStart,
   subscriptionEnd,
@@ -111,7 +113,7 @@ const getDefaultInvoiceLine = ({
   description: `autotest inLine description ${randomFourDigitNumber()}`,
   fundDistributions,
   quantity: 1,
-  subTotal: 0,
+  subTotal,
   subscriptionInfo,
   subscriptionStart,
   subscriptionEnd,
@@ -136,6 +138,7 @@ export default {
     accountingCode,
     fiscalYearId,
     batchGroupId,
+    invoiceStatus,
     exportToAccounting,
   }) {
     const create = (invoice) => {
@@ -152,6 +155,7 @@ export default {
       batchGroupId,
       vendorId,
       accountingCode,
+      invoiceStatus,
       exportToAccounting,
     });
 
@@ -211,8 +215,10 @@ export default {
     poLineId,
     fiscalYearId,
     batchGroupId,
+    invoiceStatus,
     fundDistributions,
     accountingCode,
+    subTotal,
     releaseEncumbrance,
     exportToAccounting,
   }) {
@@ -221,6 +227,7 @@ export default {
       accountingCode,
       fiscalYearId,
       batchGroupId,
+      invoiceStatus,
       exportToAccounting,
     }).then((resp) => {
       cy.wrap(resp).as('invoice');
@@ -230,6 +237,7 @@ export default {
         invoiceLineStatus,
         poLineId,
         fundDistributions,
+        subTotal,
         accountingCode,
         releaseEncumbrance,
       });
@@ -265,6 +273,34 @@ export default {
     cy.wait(4000);
   },
 
+  checkSearchResultsContent({ records = [] } = {}) {
+    records.forEach((record, index) => {
+      if (record.invoiceNumber) {
+        cy.expect(
+          invoiceResultsPane
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .has({ content: including(record.invoiceNumber) }),
+        );
+      }
+      if (record.status) {
+        cy.expect(
+          invoiceResultsPane
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 3 }))
+            .has({ content: including(record.status) }),
+        );
+      }
+      if (record.amount) {
+        cy.expect(
+          invoiceResultsPane
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ columnIndex: 4 }))
+            .has({ content: including(record.amount) }),
+        );
+      }
+    });
+  },
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
@@ -292,6 +328,28 @@ export default {
       Checkbox('Export to accounting').click(),
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  createDefaultInvoiceWithoutAddress(invoice) {
+    cy.wait(4000);
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(invoice.vendorName);
+    cy.do([
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('Cash'),
+      Checkbox('Export to accounting').click(),
+    ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
@@ -779,6 +837,16 @@ export default {
   closeSearchPlugin: () => {
     cy.do(Button('Close').click());
   },
+  expandInvoiceResultsActions() {
+    cy.do(invoiceResultsHeaderPane.find(actionsButton).click());
+  },
+  checkActionPresentInList({ actionName, present = true }) {
+    if (present) {
+      cy.expect(Button(actionName).exists());
+    } else {
+      cy.expect(Button(actionName).absent());
+    }
+  },
   openExportVoucherForm() {
     cy.do([invoiceResultsHeaderPane.find(actionsButton).click(), Button('Voucher export').click()]);
 
@@ -1021,7 +1089,7 @@ export default {
 
   openPageCurrentEncumbrance: (title) => {
     cy.get('#invoiceLineFundDistribution')
-      .find('*[class^="mclCell"]')
+      .find('a')
       .contains(title)
       .invoke('removeAttr', 'target')
       .click();

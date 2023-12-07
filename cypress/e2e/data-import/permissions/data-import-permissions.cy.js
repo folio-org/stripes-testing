@@ -1,21 +1,18 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Permissions', () => {
     let user;
-    const filePathToUpload = 'oneMarcBib.mrc';
-    const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const marcFileName = `C17019 oneMarcBib${getRandomPostfix()}.mrc`;
+    const fileName = `oneMarcBib.mrc${getRandomPostfix()}`;
 
     before('create test data', () => {
       cy.createTempUser([
@@ -24,18 +21,8 @@ describe('data-import', () => {
       ]).then((userProperties) => {
         user = userProperties;
 
-        cy.login(user.username, user.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathToUpload, marcFileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+        cy.login(user.username, user.password);
+        DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
       });
     });
 
@@ -44,22 +31,18 @@ describe('data-import', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it(
-      'C492 Data Import permissions (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
-      () => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.waitLoading();
-        Logs.openFileDetails(marcFileName);
-        FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
-          FileDetails.columnNameInResultList.instance,
-        );
-        cy.visit(SettingsMenu.marcFieldProtectionPath);
-        MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
-        MarcFieldProtection.clickNewButton();
-        MarcFieldProtection.cancel();
-      },
-    );
+    it('C492 Data Import permissions (folijet)', { tags: ['extendedPath', 'folijet'] }, () => {
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.waitLoading();
+      Logs.openFileDetails(fileName);
+      FileDetails.checkStatusInColumn(
+        RECORD_STATUSES.CREATED,
+        FileDetails.columnNameInResultList.instance,
+      );
+      cy.visit(SettingsMenu.marcFieldProtectionPath);
+      MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();
+      MarcFieldProtection.clickNewButton();
+      MarcFieldProtection.cancel();
+    });
   });
 });

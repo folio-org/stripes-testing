@@ -1,19 +1,16 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
-import Parallelization from '../../../support/dictionary/parallelization';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory -> Advanced search', () => {
   const testData = {
@@ -25,21 +22,33 @@ describe('Inventory -> Advanced search', () => {
       'Humans and machines Adv Search 003',
       'Mediterranean conference on medical and biological engineering and computing 2013 Adv Search 003',
     ],
+    expectedFirstSearchResultsC414977: [
+      'Queer comrades : gay identity and Tongzhi activism in postsocialist China / Hongwei Bao.',
+      'Queer festivals : challenging collective identities in a transnational europe / Konstantinos Eleftheriadis.',
+      'Sexuality, iconography, and fiction in French : queering the martyr / Jason James Hartford.',
+    ],
+    expectedSecondSearchResultC414977: 'Reckon / Steve McOrmond.',
   };
   const createdRecordIDs = [];
 
   const marcFiles = [
     {
       marc: 'marcBibFileC400610.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC400610.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 2,
     },
     {
       marc: 'marcBibFileC400616.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFileC400616.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numberOfRecords: 4,
+    },
+    {
+      marc: 'marcBibFileC414977.mrc',
+      fileName: `testMarcFileC414977.${getRandomPostfix()}.mrc`,
+      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      numberOfRecords: 9,
     },
   ];
 
@@ -48,7 +57,8 @@ describe('Inventory -> Advanced search', () => {
       testData.userProperties = createdUserProperties;
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         marcFiles.forEach((marcFile) => {
-          DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+          DataImport.verifyUploadState();
+          DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
           JobProfiles.waitFileIsUploaded();
           JobProfiles.waitLoadingList();
           JobProfiles.search(marcFile.jobProfileToRun);
@@ -64,7 +74,7 @@ describe('Inventory -> Advanced search', () => {
           cy.visit(TopMenu.dataImportPath);
         });
         cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstance.searchByTitle(createdRecordIDs[3]);
+          InventoryInstances.searchByTitle(createdRecordIDs[3]);
           InventoryInstances.selectInstance();
           InventoryInstance.pressAddHoldingsButton();
           InventoryNewHoldings.fillRequiredFields();
@@ -100,7 +110,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400610 Search Instances using advanced search with "AND" operator (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.checkAdvSearchInstancesModalFields(0);
@@ -145,7 +155,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(
@@ -207,6 +217,96 @@ describe('Inventory -> Advanced search', () => {
       InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
       testData.expectedSearchResultsC400616.forEach((expectedResult) => InventorySearchAndFilter.verifySearchResult(expectedResult));
       InventorySearchAndFilter.checkRowsCount(2);
+    },
+  );
+
+  it(
+    'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
+    () => {
+      InventoryInstances.clickAdvSearchButton();
+      InventoryInstances.fillAdvSearchRow(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.clickSearchBtnInAdvSearchModal();
+      InventoryInstances.checkAdvSearchModalAbsence();
+      InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+      testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
+        InventorySearchAndFilter.verifySearchResult(expectedResult);
+      });
+      InventorySearchAndFilter.checkRowsCount(3);
+
+      InventoryInstances.clickAdvSearchButton();
+      InventoryInstances.fillAdvSearchRow(
+        0,
+        'McOrmond, Steven Craig, 1971-',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        0,
+        'McOrmond, Steven Craig, 1971-',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.clickSearchBtnInAdvSearchModal();
+      InventoryInstances.checkAdvSearchModalAbsence();
+      InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+      InventorySearchAndFilter.verifySearchResult(testData.expectedSecondSearchResultC414977);
+      InventorySearchAndFilter.checkRowsCount(1);
+
+      InventorySearchAndFilter.switchToHoldings();
+      InventoryInstances.clickAdvSearchButton();
+      InventoryInstances.fillAdvSearchRow(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.clickSearchBtnInAdvSearchModal();
+      InventoryInstances.checkAdvSearchModalAbsence();
+      InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+      testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
+        InventorySearchAndFilter.verifySearchResult(expectedResult);
+      });
+      InventorySearchAndFilter.checkRowsCount(3);
+
+      InventorySearchAndFilter.switchToItem();
+      InventoryInstances.clickAdvSearchButton();
+      InventoryInstances.fillAdvSearchRow(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.checkAdvSearchModalValues(
+        0,
+        'queering the',
+        'Exact phrase',
+        'Keyword (title, contributor, identifier, HRID, UUID)',
+      );
+      InventoryInstances.clickSearchBtnInAdvSearchModal();
+      InventoryInstances.checkAdvSearchModalAbsence();
+      InventoryInstances.verifySelectedSearchOption(testData.advSearchOption);
+      testData.expectedFirstSearchResultsC414977.forEach((expectedResult) => {
+        InventorySearchAndFilter.verifySearchResult(expectedResult);
+      });
+      InventorySearchAndFilter.checkRowsCount(3);
     },
   );
 });

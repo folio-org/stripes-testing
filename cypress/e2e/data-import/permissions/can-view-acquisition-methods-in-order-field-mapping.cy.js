@@ -1,10 +1,10 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 
 describe('data-import', () => {
   describe('Permissions', () => {
@@ -26,7 +26,7 @@ describe('data-import', () => {
 
     it(
       'C377031 A user can view Acquisition Methods in Order field mapping with "Settings (Data import): Can view, create, edit, and remove" (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.addIncomingRecordType(FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC);

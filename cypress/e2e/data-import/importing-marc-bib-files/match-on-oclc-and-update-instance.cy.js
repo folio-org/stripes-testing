@@ -1,28 +1,28 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import DateTools from '../../../support/utils/dateTools';
-import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -100,38 +100,38 @@ describe('data-import', () => {
     ];
 
     before('login', () => {
-      cy.getAdminToken(() => {
-        InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
-          (instances) => {
-            if (instances) {
-              instances.forEach(({ id }) => {
-                InventoryInstance.deleteInstanceViaApi(id);
-              });
-            }
+      cy.loginAsAdmin();
+      InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
+        (instances) => {
+          if (instances) {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          }
+        },
+      );
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(collectionOfJobProfiles[0].jobProfile.profileName);
+        JobProfiles.deleteJobProfile(collectionOfJobProfiles[1].jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
           },
         );
       });
     });
 
-    after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(collectionOfJobProfiles[0].jobProfile.profileName);
-      JobProfiles.deleteJobProfile(collectionOfJobProfiles[1].jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-    });
-
     it(
       'C11109 Update an instance based on an OCLC number match (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['criticalPath', 'folijet', 'parallel'] },
       () => {
         // create mapping profile for creating instance
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -187,13 +187,13 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
 
         // open Instance for getting hrid
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
@@ -261,7 +261,7 @@ describe('data-import', () => {
             FileDetails.columnNameInResultList.srsMarc,
             FileDetails.columnNameInResultList.instance,
           ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
           });
           FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);

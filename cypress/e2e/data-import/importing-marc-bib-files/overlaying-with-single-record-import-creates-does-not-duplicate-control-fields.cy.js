@@ -1,13 +1,14 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
@@ -17,7 +18,7 @@ describe('data-import', () => {
     const oclcNumber = '42980246';
     const OCLCAuthentication = '100481406/PAOLF';
     const field005 = '20230427101124.9';
-    const field035 = '‡a (OCoLC)ocm42980246';
+    const field035 = '$a (OCoLC)ocm42980246';
     const notDuplicatedFieldsContent = {
       first006field: 'jccnn           n ',
       second006field: 'm     q  h        ',
@@ -55,7 +56,7 @@ describe('data-import', () => {
 
     it(
       'C347618 Overlaying with single record import creates does not duplicate control fields (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         InventoryInstances.importWithOclc(oclcNumber);
         InventoryInstance.checkCalloutMessage(
@@ -66,7 +67,7 @@ describe('data-import', () => {
         LogsViewAll.openUserIdAccordion();
         LogsViewAll.filterJobsByUser(`${user.firstName} ${user.lastName}`);
         Logs.openFileDetails('No file name');
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 

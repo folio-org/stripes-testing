@@ -1,12 +1,11 @@
-import uuid from 'uuid';
-import { Permissions, TestTypes, DevTeams } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const invalidIdentifiersFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -40,7 +39,7 @@ describe('bulk-edit', () => {
     });
     it(
       'C353651 - "New bulk edit" button with invalid data (firebird) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
         BulkEditSearchPane.uploadFile(invalidIdentifiersFileName);

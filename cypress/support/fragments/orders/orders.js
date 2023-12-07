@@ -28,6 +28,8 @@ import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import OrderDetails from './orderDetails';
+import OrderEditForm from './orderEditForm';
+import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderLines from './orderLines';
 
@@ -237,6 +239,13 @@ export default {
     cy.do([Button('Receive').click(), PaneHeader('Receiving').is({ visible: true })]);
   },
 
+  clickCreateNewOrder() {
+    cy.do([actionsButton.click(), newButton.click()]);
+    OrderEditForm.waitLoading();
+
+    return OrderEditForm;
+  },
+
   createOrder(order, isApproved = false, isManual = false) {
     cy.do([actionsButton.click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
@@ -303,7 +312,7 @@ export default {
   },
 
   createApprovedOrderForRollover(order, isApproved = false, reEncumber = false) {
-    cy.do([actionsButton.click(), newButton.click()]);
+    cy.do([Pane({ id: 'orders-results-pane' }).find(actionsButton).click(), newButton.click()]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
     cy.do(Select('Order type*').choose(order.orderType));
@@ -403,6 +412,12 @@ export default {
   checkDeletedErrorMassage: () => {
     InteractorsTools.checkCalloutErrorMessage(
       'This order or order line is linked to Invoice(s) and can not be deleted',
+    );
+  },
+
+  checkOrderIsNotOpened: (fundCode) => {
+    InteractorsTools.checkCalloutErrorMessage(
+      `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`,
     );
   },
 
@@ -670,13 +685,18 @@ export default {
     cy.expect(ordersList.find(HTML(including(orderNumber))).exists());
   },
 
-  exportResoultsCSV: () => {
-    cy.do([
-      actionsButton.click(),
-      Button({ id: 'clickable-export-csv' }).click(),
-      // Modal('Export settings').find(RadioButton({ ariaLabel: 'Export all line fields' })).click(),
-      Button('Export').click(),
-    ]);
+  clickExportResultsToCsvButton() {
+    cy.do([actionsButton.click(), Button('Export results (CSV)').click()]);
+    ExportSettingsModal.verifyModalView();
+
+    return ExportSettingsModal;
+  },
+  exportResultsToCsv({ confirm = true } = {}) {
+    this.clickExportResultsToCsvButton();
+
+    if (confirm) {
+      ExportSettingsModal.clickExportButton();
+    }
   },
 
   verifySaveCSVQueryFileName(actualName) {

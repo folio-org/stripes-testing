@@ -1,12 +1,12 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
+import { Permissions } from '../../support/dictionary';
 import TransferCriteria from '../../support/fragments/settings/users/transferCriteria';
+import UsersSettingsGeneral from '../../support/fragments/settings/users/usersSettingsGeneral';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
-import UserEdit from '../../support/fragments/users/userEdit';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UsersSettingsGeneral from '../../support/fragments/settings/users/usersSettingsGeneral';
 
 describe('Export Manager', () => {
   let user;
@@ -27,7 +27,7 @@ describe('Export Manager', () => {
 
   it(
     'C350638 Verify permissions to manage transfer criteria and other transfer settings (bama) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.bama] },
+    { tags: ['extendedPath', 'bama'] },
     () => {
       // #1 Go to Settings > Users > Fee/fine > Transfer criteria
       // Transfer criteria option is in the list of Fee/fine options

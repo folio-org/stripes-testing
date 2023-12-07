@@ -1,22 +1,22 @@
 /* eslint-disable spaced-comment */
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import TopMenu from '../../../support/fragments/topMenu';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
-import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import { Permissions } from '../../../support/dictionary';
+import Helper from '../../../support/fragments/finance/financeHelper';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordEdit from '../../../support/fragments/inventory/item/itemRecordEdit';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('Orders: Inventory interaction', () => {
   const barcodeForFirstItem = Helper.getRandomBarcode();
@@ -119,7 +119,7 @@ describe('Orders: Inventory interaction', () => {
 
   it(
     'C375238 Create new holdings for already existing location when editing an order line (thunderjet)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.selectOrderByPONumber(testData.orderNumber);
       OrderLines.selectPOLInOrder(0);

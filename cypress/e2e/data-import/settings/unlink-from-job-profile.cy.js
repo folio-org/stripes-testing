@@ -1,18 +1,18 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
-import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
+import { ACCEPTED_DATA_TYPE_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import { ACCEPTED_DATA_TYPE_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -59,17 +59,18 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfActionProfiles.forEach((profile) => ActionProfiles.deleteActionProfile(profile.name));
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfActionProfiles.forEach((profile) => ActionProfiles.deleteActionProfile(profile.name));
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
       'C11116 Unlinking a match or action profile from a job profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // create 3 action profiles
         cy.visit(SettingsMenu.actionProfilePath);

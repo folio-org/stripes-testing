@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -34,7 +35,7 @@ describe('data-import', () => {
 
     it(
       'C359207 Checking the import to Create MARC Authority records, when incoming records do and do not have 999 ff field (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -51,17 +52,17 @@ describe('data-import', () => {
             FileDetails.columnNameInResultList.srsMarc,
             FileDetails.columnNameInResultList.authority,
           ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, rowNumber);
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName, rowNumber);
           });
         });
         cy.wrap([1, 2, 3, 4, 5, 7]).each((rowNumber) => {
           FileDetails.checkStatusInColumn(
-            FileDetails.status.noAction,
+            RECORD_STATUSES.NO_ACTION,
             FileDetails.columnNameInResultList.srsMarc,
             rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.error,
+            RECORD_STATUSES.ERROR,
             FileDetails.columnNameInResultList.error,
             rowNumber,
           );

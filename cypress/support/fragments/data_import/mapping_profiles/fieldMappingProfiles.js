@@ -27,6 +27,8 @@ const mappingProfileForDuplicate = {
   gobi: 'GOBI monograph invoice',
   harrassowitz: 'Default - Harrassowitz serials invoice',
   ebsco: 'Default - EBSCO serials invoice',
+  erasmus: 'Default - Erasmus monograph invoice',
+  hein: 'Default - Hein serials invoice',
 };
 
 const search = (nameForSearch) => {

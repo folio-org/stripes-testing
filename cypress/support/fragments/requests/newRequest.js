@@ -22,6 +22,8 @@ import dateTools from '../../utils/dateTools';
 import InteractorsTools from '../../utils/interactorsTools';
 import SelectUser from './selectUser';
 
+const rootSection = Pane({ title: 'New request' });
+const itemInformationAccordion = Accordion('Item information');
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
 const itemBarcodeInput = TextField({ name: 'item.barcode' });
@@ -30,6 +32,7 @@ const requesterBarcodeInput = TextField({ name: 'requester.barcode' });
 const enterItemBarcodeButton = Button({ id: 'clickable-select-item' });
 const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' });
 const saveAndCloseButton = Button('Save & close');
+const cancelButton = Button('Cancel');
 const selectServicePoint = Select({ name: 'pickupServicePointId' });
 const selectRequestType = Select({ name: 'requestType' });
 const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
@@ -85,7 +88,7 @@ export default {
     cy.do(selectRequestType.choose(newRequest.requestType));
   },
 
-  choosepickupServicePoint(pickupServicePoint) {
+  choosePickupServicePoint(pickupServicePoint) {
     cy.do(selectServicePoint.choose(pickupServicePoint));
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
@@ -96,7 +99,7 @@ export default {
   createNewRequest(newRequest) {
     openNewRequestPane();
     this.fillRequiredFields(newRequest);
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
     this.saveRequestAndClose();
     this.waitLoading();
   },
@@ -122,7 +125,7 @@ export default {
     cy.wait('@getLoans');
     // need to wait until instanceId is uploaded
     cy.wait(2500);
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
     // need to wait for loading dropdown options
     cy.wait(1000);
     this.chooseRequestType(REQUEST_TYPES.PAGE);
@@ -137,17 +140,17 @@ export default {
   },
 
   waitLoadingNewRequestPage(TLR = false) {
-    cy.expect(Pane({ title: 'New request' }).exists());
+    cy.expect(rootSection.exists());
     if (TLR) cy.expect(titleLevelRequest.exists());
     cy.expect([
-      Accordion('Item information').exists(),
+      itemInformationAccordion.exists(),
       Accordion('Request information').exists(),
       Accordion('Requester information').exists(),
     ]);
   },
 
   waitLoadingNewTitleRequestPage(TLR = false) {
-    cy.expect(Pane({ title: 'New request' }).exists());
+    cy.expect(rootSection.exists());
     if (TLR) cy.expect(titleLevelRequest.exists());
     cy.expect([
       Accordion('Title information').exists(),
@@ -175,6 +178,10 @@ export default {
     if (isChecked) {
       cy.expect(titleLevelRequest.has({ checked: true }));
     } else cy.expect(titleLevelRequest.has({ checked: false }));
+  },
+
+  verifyErrorMessageForRequestTypeField: (errorMessage) => {
+    cy.expect(selectRequestType.has({ error: errorMessage }));
   },
 
   verifyItemInformation: (allContentToCheck) => {
@@ -247,7 +254,7 @@ export default {
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
   },
 
   enterRequesterBarcode: (requesterBarcode) => {
@@ -281,9 +288,18 @@ export default {
     this.chooseRequestType(requestType);
     cy.expect(selectServicePoint.exists());
     cy.wait('@getUsers');
-    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.choosePickupServicePoint(newRequest.pickupServicePoint);
   },
-
+  checkPatronblockedModal(reason) {
+    cy.expect(
+      Modal(' Patron blocked from requesting').has({
+        message: including(reason),
+      }),
+    );
+  },
+  openBlockDetails() {
+    cy.do(Button('View block details').click());
+  },
   checkRequestIsNotAllowedModal() {
     cy.expect(
       Modal('Request not allowed').has({
@@ -294,7 +310,7 @@ export default {
   checkRequestIsNotAllowedInstanceModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'This requester already has an open request for this instance',
+        message: 'Not allowed to move title level page request to the same item',
       }),
     );
   },
@@ -315,6 +331,23 @@ export default {
       KeyValue('Title').has({ value: instanceTitle }),
       KeyValue('Effective location').has({ value: location }),
       KeyValue('Item status').has({ value: itemStatus }),
+    ]);
+  },
+  checkTLRRequestsFields(instanceHrid) {
+    cy.expect([
+      rootSection.exists(),
+      TextField({ name: 'instance.hrid' }).has({ value: instanceHrid }),
+      itemInformationAccordion.absent(),
+      cancelButton.has({ disabled: false, visible: true }),
+      saveAndCloseButton.has({ disabled: false, visible: true }),
+    ]);
+  },
+  checkRequestsFields() {
+    cy.expect([
+      rootSection.exists(),
+      itemInformationAccordion.exists(),
+      cancelButton.has({ disabled: false, visible: true }),
+      saveAndCloseButton.has({ disabled: true, visible: true }),
     ]);
   },
 };

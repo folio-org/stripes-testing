@@ -33,6 +33,9 @@ const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
+// Links & documents section
+const linksAndDocumentsSection = Section({ id: 'documents' });
+
 // voucher details
 const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
 const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
@@ -40,6 +43,20 @@ const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher
 export default {
   expandActionsDropdown() {
     cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
+  },
+  verifyLinksDocumentsSection(linkName, externalUrl, documentName) {
+    cy.do(Button('Links & documents').click());
+    cy.expect([
+      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Link name' })).has({
+        content: linkName,
+      }),
+      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'External URL' })).has({
+        content: externalUrl,
+      }),
+      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Document name' })).has({
+        content: documentName,
+      }),
+    ]);
   },
   selectFirstInvoice() {
     cy.do(
@@ -71,13 +88,12 @@ export default {
 
     return InvoiceLineEditForm;
   },
-  checkTableContent(records = []) {
+  checkInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.poNumber) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
             .has({ content: including(record.poNumber) }),
         );
       }
@@ -85,17 +101,23 @@ export default {
       if (record.description) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .find(MultiColumnListCell({ row: index, column: 'Description' }))
             .has({ content: including(record.description) }),
+        );
+      }
+
+      if (record.fundCode) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Fund code' }))
+            .has({ content: including(record.fundCode) }),
         );
       }
 
       if (record.receiptStatus) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 5 }))
+            .find(MultiColumnListCell({ row: index, column: 'Receipt status' }))
             .has({ content: including(record.receiptStatus) }),
         );
       }
@@ -103,8 +125,7 @@ export default {
       if (record.paymentStatus) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 6 }))
+            .find(MultiColumnListCell({ row: index, column: 'Payment status' }))
             .has({ content: including(record.paymentStatus) }),
         );
       }
@@ -139,7 +160,7 @@ export default {
           text: including(`Total number of invoice lines: ${invoiceLines.length}`),
         }),
       );
-      this.checkTableContent(invoiceLines);
+      this.checkInvoiceLinesTableContent(invoiceLines);
     }
   },
   approveInvoice({ isApprovePayEnabled = false } = {}) {
@@ -221,5 +242,14 @@ export default {
 
   verifyStatus: (status) => {
     cy.expect(Pane({ id: 'pane-invoiceDetails' }).find(KeyValue('Status')).has({ value: status }));
+  },
+
+  downloadDocument: () => {
+    cy.do(
+      linksAndDocumentsSection
+        .find(MultiColumnListCell({ column: 'Document name' }))
+        .find(Button({ className: including('invoiceDocumentButton') }))
+        .click(),
+    );
   },
 };

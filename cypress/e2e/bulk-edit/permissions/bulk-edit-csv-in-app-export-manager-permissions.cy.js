@@ -1,14 +1,12 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import Users from '../../../support/fragments/users/users';
-import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 
@@ -74,7 +72,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();

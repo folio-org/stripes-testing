@@ -1,15 +1,13 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 let addressTypeId;
@@ -58,7 +56,7 @@ describe('bulk-edit', () => {
 
     it(
       'C408810 Verify that "addressType" is shown in the Previews _ Locals (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         UsersSearchPane.searchByUsername(user.username);
         UserEdit.openEdit();

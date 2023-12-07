@@ -1,19 +1,17 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../support/fragments/topMenu';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../support/fragments/users/users';
-import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import InvoiceLineDetails from '../../support/fragments/invoices/invoiceLineDetails';
+import Invoices from '../../support/fragments/invoices/invoices';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Invoices', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -32,7 +30,7 @@ describe('Invoices', () => {
   let user;
 
   before(() => {
-    cy.loginAsAdmin();
+    cy.getAdminToken();
     FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
       defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
@@ -43,7 +41,7 @@ describe('Invoices', () => {
         Funds.createViaApi(defaultFund).then((fundResponse) => {
           defaultFund.id = fundResponse.fund.id;
 
-          cy.visit(TopMenu.fundPath);
+          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(defaultFund.name);
           Funds.selectFund(defaultFund.name);
           Funds.addBudget(allocatedQuantity);
@@ -82,7 +80,7 @@ describe('Invoices', () => {
 
   it(
     'C350937: Update accordion labels and logic on Invoice (thunderjet) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

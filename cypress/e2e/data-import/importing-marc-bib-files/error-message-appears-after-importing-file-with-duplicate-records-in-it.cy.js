@@ -1,29 +1,30 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import {
-  JOB_STATUS_NAMES,
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -33,9 +34,9 @@ describe('data-import', () => {
     const title = 'Introductory Solid State Physics with MATLAB Applications';
     const firstFilePathForUpload = 'marcBibFileForC410708_file1.mrc';
     const secondFilePathForUpload = 'marcBibFileForC410708_file2.mrc';
-    const firstFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
-    const secondFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
+    const firstFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
+    const secondFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
+    const editedMarcFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const matchProfile = {
       profileName: `C410708 001 to Instance HRID_${getRandomPostfix()}`,
@@ -97,16 +98,15 @@ describe('data-import', () => {
 
     it(
       'C410708 Verify that clear error message appears after importing a file with duplicate records in it (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         DataImport.uploadFile(firstFilePathForUpload, firstFileName);
-        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(firstFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstFileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
@@ -149,13 +149,12 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, secondFileName);
-        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(secondFileName);
-        FileDetails.openInstanceInInventoryByStatus('Updated');
+        FileDetails.openInstanceInInventoryByStatus(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.editMarcBibliographicRecord();
         InventoryEditMarcRecord.deleteField(18);
@@ -164,7 +163,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileName);
-        FileDetails.openJsonScreenByStatus('No action', title);
+        FileDetails.openJsonScreenByStatus(RECORD_STATUSES.NO_ACTION, title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(errorMessage);
       },

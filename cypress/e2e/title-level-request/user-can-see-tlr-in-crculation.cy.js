@@ -1,13 +1,11 @@
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../support/utils/stringTools';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Create Item or Title level request', () => {
   let userData = {};
@@ -50,7 +48,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C1287 Check that user can see Title level request in Circulation (vega)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
       TitleLevelRequests.waitLoading();

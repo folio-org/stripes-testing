@@ -1,14 +1,12 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import Invoices from '../../support/fragments/invoices/invoices';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import VendorAddress from '../../support/fragments/invoices/vendorAddress';
+import Organizations from '../../support/fragments/organizations/organizations';
+import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import Invoices from '../../support/fragments/invoices/invoices';
-import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 
 describe('ui-invoices: create', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -62,7 +60,7 @@ describe('ui-invoices: create', () => {
 
   it(
     'C163930 Test acquisition unit restrictions for Invoice records (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

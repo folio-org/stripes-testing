@@ -1,8 +1,9 @@
 const { defineConfig } = require('cypress');
 const path = require('path');
 const globby = require('globby');
-const { rmdir, unlink } = require('fs');
+const csvToJson = require('convert-csv-to-json');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
+const { rmdir, unlink } = require('fs');
 const fs = require('fs');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 const { cloudPlugin } = require('cypress-cloud/plugin');
@@ -16,15 +17,15 @@ module.exports = defineConfig({
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
-  defaultCommandTimeout: 101000,
-  pageLoadTimeout: 120000,
+  defaultCommandTimeout: 51000,
+  pageLoadTimeout: 60000,
   env: {
     OKAPI_HOST: 'https://okapi-bugfest-poppy-aqa.int.aws.folio.org',
     OKAPI_TENANT: 'fs09000003',
     diku_login: 'folio-aqa',
     diku_password: 'Folio-aqa1',
     is_kiwi_release: false,
-    downloadTimeout: 1000,
+    downloadTimeout: 2000,
     allure: 'true',
     grepFilterSpecs: true,
     grepOmitFiltered: true,
@@ -35,6 +36,12 @@ module.exports = defineConfig({
       allureWriter(on, config);
 
       on('task', {
+        log(message) {
+          // eslint-disable-next-line no-console
+          console.log(message);
+          return null;
+        },
+
         async findFiles(mask) {
           if (!mask) {
             throw new Error('Missing a file mask to search');
@@ -48,6 +55,11 @@ module.exports = defineConfig({
 
           return list;
         },
+
+        convertCsvToJson(fileName) {
+          return csvToJson.supportQuotedField(true).fieldDelimiter(',').getJsonFromCsv(fileName);
+        },
+
         downloadFile,
 
         deleteFolder(folderName) {
@@ -92,7 +104,10 @@ module.exports = defineConfig({
       const configCloud = await cloudPlugin(on, config);
 
       // eslint-disable-next-line global-require
-      const result = await require('cypress-testrail-simple/src/plugin')(on, configCloud);
+      const result = require('@cypress/grep/src/plugin')(configCloud);
+
+      // eslint-disable-next-line global-require
+      await require('cypress-testrail-simple/src/plugin')(on, config);
 
       return result;
     },

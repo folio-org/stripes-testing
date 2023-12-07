@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -19,12 +19,12 @@ import {
   TextArea,
   TextField,
 } from '../../../../interactors';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
-import InventoryInstances from './inventoryInstances';
 import InventoryInstance from './inventoryInstance';
-import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
+import InventoryInstances from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -42,8 +42,9 @@ const dateCreatedAccordion = Accordion({ id: 'createdDate' });
 const dateUpdatedAccordion = Accordion({ id: 'updatedDate' });
 const instanceStatusAccordion = Accordion({ id: 'instanceStatus' });
 const tagsAccordion = Accordion({ id: 'instancesTags' });
+const keywordInput = TextArea({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
-const inventorySearchAndFilter = TextField({ id: 'input-inventory-search' });
+const inventorySearchAndFilter = TextArea({ id: 'input-inventory-search' });
 const inventorySearchAndFilterInput = Select({
   id: 'input-inventory-search-qindex',
 });
@@ -84,7 +85,7 @@ const searchTypeDropdown = Select('Search field index');
 const searchInstanceByHRID = (id) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
-    inventorySearchAndFilter.fillIn(id),
+    TextArea({ id: 'input-inventory-search' }).fillIn(id),
     searchButton.click(),
   ]);
 };
@@ -92,15 +93,15 @@ const searchInstanceByHRID = (id) => {
 const searchHoldingsByHRID = (hrid) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Holdings HRID'),
-    inventorySearchAndFilter.fillIn(hrid),
+    TextArea({ id: 'input-inventory-search' }).fillIn(hrid),
     searchButton.click(),
   ]);
   InventoryInstances.waitLoading();
 };
 
 const searchInstanceByTitle = (title) => {
-  cy.do([inventorySearchAndFilter.fillIn(title), searchButton.click()]);
-  InventoryInstance.waitLoading();
+  cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
+  InventoryInstance.waitInventoryLoading();
 
   return InventoryInstance;
 };
@@ -329,6 +330,7 @@ export default {
 
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
+    // eslint-disable-next-line no-unused-vars
     Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
       cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
     });
@@ -347,6 +349,10 @@ export default {
 
   switchToBrowseTab() {
     cy.do(Button({ id: 'mode-navigation-browse' }).click());
+  },
+
+  verifySpecificTabHighlighted(tab) {
+    cy.expect(Button(`${tab}`).has({ default: false }));
   },
 
   verifyCallNumberBrowseEmptyPane() {
@@ -429,7 +435,7 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(inventorySearchAndFilter.fillIn(value));
+    cy.do(keywordInput.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },
@@ -497,6 +503,10 @@ export default {
     ]);
   },
 
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
+  },
+
   clickSearch() {
     cy.do(searchButton.click());
   },
@@ -555,6 +565,10 @@ export default {
   verifyTagIsAbsent(tag) {
     this.searchTag(tag);
     cy.expect(HTML('No matching options').exists());
+  },
+
+  verifyResultPaneEmpty() {
+    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
   },
 
   resetAllAndVerifyNoResultsAppear() {
@@ -816,5 +830,32 @@ export default {
     // wait for facet options to reload in all facets
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
+  },
+
+  checkSearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
+  },
+
+  varifyInstanceKeyDetails(instanceData) {
+    cy.wait(4000);
+    cy.expect([
+      Section({ id: 'acc01' }).find(KeyValue('Instance HRID')).has({ value: instanceData.hrid }),
+      Section({ id: 'acc01' }).find(KeyValue('Source')).has({ value: instanceData.source }),
+      Section({ id: 'acc02' }).find(KeyValue('Resource title')).has({ value: instanceData.title }),
+    ]);
+  },
+
+  expandAccordion(accordionName) {
+    cy.do(paneFilterSection.find(Accordion(accordionName)).clickHeader());
+    cy.expect(paneFilterSection.find(Accordion(accordionName)).has({ open: true }));
+  },
+
+  checkOptionsWithCountersExistInAccordion(accordionName) {
+    cy.expect(
+      paneFilterSection
+        .find(Accordion(accordionName))
+        .find(Checkbox())
+        .has({ label: matching(/.{1,}\d{1,}/) }),
+    );
   },
 };

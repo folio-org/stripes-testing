@@ -21,9 +21,9 @@ import {
   Card,
   TextArea,
 } from '../../../../interactors';
-import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectOrganizationModal from './modals/selectOrganizationModal';
 import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
@@ -37,6 +37,7 @@ import selectLocationModal from './modals/selectLocationModal';
 
 const path = require('path');
 
+const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
 const saveAndCloseButton = Button('Save & close');
 const cancelButton = Button('Cancel');
@@ -152,7 +153,7 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(Button('Reset all').click());
+    cy.do(filtersPane.find(Button('Reset all')).click());
   },
 
   checkOrderlineSearchResults: ({ poLineNumber, title } = {}) => {
@@ -224,6 +225,10 @@ export default {
         .find(Button({ icon: 'times' }))
         .click(),
     );
+  },
+
+  closePOLEditForm: () => {
+    cy.do(Button({ icon: 'clickable-close-new-line-dialog' }).click());
   },
 
   getSearchParamsMap(orderNumber, currentDate) {
@@ -380,12 +385,39 @@ export default {
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
-      createNewLocationButton.click(),
     ]);
+    cy.wait(4000);
+    cy.do(createNewLocationButton.click());
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
       selectPermanentLocationModal.find(saveButton).click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
+      Select('Create inventory*').choose('Instance, holdings, item'),
+      saveAndCloseButton.click(),
+    ]);
+  },
+
+  POLineInfoWithReceiptNotRequiredStatuswithSelectLocation: (institutionId) => {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      Select({ name: 'receiptStatus' }).choose(RECEIPT_STATUS_SELECTED.RECEIPT_NOT_REQUIRED),
+    ]);
+    cy.expect(receivingWorkflowSelect.disabled());
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+    ]);
+    cy.wait(4000);
+    cy.do(Button('Location look-up').click());
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      Select('Create inventory*').choose('Instance, holdings, item'),
       saveAndCloseButton.click(),
     ]);
   },
@@ -484,6 +516,45 @@ export default {
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
+  rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
+    fund,
+    expClass,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Button({ id: 'fundDistribution[0].expenseClassId' }).click(),
+      SelectionOption(`${expClass}`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
@@ -845,6 +916,10 @@ export default {
   },
   selectreceivedTitleName: (title) => {
     cy.do(receivedtitleDetails.find(Link(title)).click());
+  },
+
+  openInstanceInPOL: (instanceTitle) => {
+    cy.do(itemDetailsSection.find(Link(instanceTitle)).click());
   },
 
   addFundToPOL(fund, value) {
@@ -1315,13 +1390,8 @@ export default {
   },
 
   selectFilterVendorPOL: (invoice) => {
-    cy.do([
-      buttonFVendorFilter.click(),
-      Button({ id: 'purchaseOrder.vendor-button' }).click(),
-      Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
-      searchButton.click(),
-    ]);
-    SearchHelper.selectFromResultsList();
+    cy.do([buttonFVendorFilter.click(), Button({ id: 'purchaseOrder.vendor-button' }).click()]);
+    SelectOrganizationModal.findOrganization(invoice.vendorName);
     cy.do(buttonFVendorFilter.click());
   },
 
@@ -1369,7 +1439,6 @@ export default {
     this.addCreateInventory(inventory);
     this.addHolding(location, quantity);
     this.addMaterialType(materialType);
-
     if (shouldSave) {
       this.savePol();
     }
@@ -1542,7 +1611,7 @@ export default {
   },
 
   checkConnectedInstance: () => {
-    cy.expect(Section({ id: 'itemDetails' }).find(Link('Connected')).exists());
+    cy.expect(Link('Connected').exists());
   },
 
   fillInInvalidDataForPublicationDate: () => {
@@ -1550,11 +1619,30 @@ export default {
   },
 
   clickNotConnectionInfoButton: () => {
+    cy.do(itemDetailsSection.find(Button({ icon: 'info' })).click());
+  },
+
+  removeInstanceConnectionModal: () => {
     cy.do(
-      Section({ id: 'itemDetails' })
-        .find(Button({ icon: 'info' }))
+      Modal({ id: 'break-instance-connection-confirmation' })
+        .find(Button({ id: 'clickable-break-instance-connection-confirmation-confirm' }))
         .click(),
     );
+    cy.wait(4000);
+  },
+
+  cancelRemoveInstanceConnectionModal: () => {
+    cy.do(
+      Modal({ id: 'break-instance-connection-confirmation' })
+        .find(Button({ id: 'clickable-break-instance-connection-confirmation-cancel' }))
+        .click(),
+    );
+    cy.wait(6000);
+  },
+
+  cancelEditingPOL: () => {
+    cy.do(Button({ id: 'clickable-close-new-line-dialog-footer' }).click());
+    cy.wait(6000);
   },
 
   selectCurrentEncumbrance: (currentEncumbrance) => {
@@ -1562,10 +1650,12 @@ export default {
   },
 
   openPageCurrentEncumbrance: (title) => {
-    cy.get('#FundDistribution')
-      .find('*[class^="mclCell"]')
-      .contains(title)
-      .invoke('removeAttr', 'target')
+    cy.get('#FundDistribution').find('a').contains(title).invoke('removeAttr', 'target')
+      .click();
+  },
+
+  openPageConnectedInstance: () => {
+    cy.get('#itemDetails').find('a').contains('Connected').invoke('removeAttr', 'target')
       .click();
   },
 
@@ -1610,7 +1700,7 @@ export default {
         throw new Error(`No files found in ${downloadsFolder}`);
       }
       const fileName = path.basename(files[0]);
-      const filePath = `${downloadsFolder}\\${fileName}`;
+      const filePath = `${downloadsFolder}/${fileName}`;
       cy.readFile(filePath).then((fileContent) => {
         const fileRows = fileContent.split('\n');
         expect(fileRows[0].trim()).to.equal(
@@ -1618,10 +1708,6 @@ export default {
         );
       });
     });
-  },
-
-  deleteAllDownloadedFiles() {
-    cy.exec('del cypress\\downloads\\*.csv', { failOnNonZeroExit: false });
   },
 
   checkCreateInventory() {

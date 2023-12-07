@@ -1,11 +1,13 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import { Permissions } from '../../../support/dictionary';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
-import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('eHoldings Package + Title', () => {
@@ -20,6 +22,9 @@ describe('eHoldings Package + Title', () => {
       Permissions.uieHoldingsRecordsEdit.gui,
     ]).then((userProperties) => {
       testData.userId = userProperties.userId;
+
+      AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.userId });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.eholdingsPath,
         waiter: EHoldingsTitlesSearch.waitLoading,
@@ -36,7 +41,7 @@ describe('eHoldings Package + Title', () => {
 
   it(
     'C354003 Verify that "Export" button become disabled when user does not choose any fields to export (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       EHoldingsPackagesSearch.byName(testData.packageName);
       EHoldingsPackages.verifyPackageInResults(testData.packageName);
@@ -44,13 +49,13 @@ describe('eHoldings Package + Title', () => {
       EHoldingsPackageView.waitLoading();
 
       EHoldingsPackages.titlesSearchFilter('Title', '', testData.selectedStatus);
-      EHoldingsPackages.clickSearchTitles();
+      EHoldingsPackageView.selectTitleRecord();
 
       eHoldingsResourceView.openExportModal();
       EHoldingsPackageView.clickExportSelectedPackageFields();
       EHoldingsPackageView.clickExportSelectedTitleFields();
-      EHoldingsPackageView.verifyExportButtonInModalDisabled();
-      eHoldingsResourceView.closeExportModalViaCancel();
+      ExportSettingsModal.verifyExportButtonDisabled();
+      ExportSettingsModal.clickCancelButton();
       eHoldingsResourceView.checkHoldingStatus(testData.selectedStatus);
     },
   );

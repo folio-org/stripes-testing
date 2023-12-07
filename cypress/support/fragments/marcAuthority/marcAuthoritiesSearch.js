@@ -1,8 +1,13 @@
-import { Section, Button, SearchField, Checkbox, Accordion } from '../../../../interactors';
+import {
+  Accordion, Button, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, MultiSelect, SearchField, Section, Select,
+  TextArea
+} from '../../../../interactors';
+import { REFERENCES_FILTER_CHECKBOXES } from '../../constants';
 import marcAuthorities from './marcAuthorities';
 
 const rootSection = Section({ id: 'pane-authorities-filters' });
 const referencesFilterAccordion = Accordion('References');
+const authorityList = MultiColumnList({ id: 'authority-result-list' });
 
 export default {
   searchBy: (parameter, value) => {
@@ -14,10 +19,73 @@ export default {
     marcAuthorities.waitLoading();
   },
 
-  selectExcludeReferencesFilter() {
+  selectExcludeReferencesFilter(checkbox = REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM) {
+    cy.then(() => referencesFilterAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(referencesFilterAccordion.clickHeader());
+      }
+    });
+    if (checkbox === REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM) {
+      cy.do([
+        referencesFilterAccordion
+          .find(Checkbox({ label: 'Exclude see from' }))
+          .checkIfNotSelected(),
+      ]);
+      // need to wait until filter will be applied
+      cy.wait(1000);
+    }
+    if (checkbox === REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO) {
+      cy.do([
+        referencesFilterAccordion
+          .find(Checkbox({ label: 'Exclude see from also' }))
+          .checkIfNotSelected(),
+      ]);
+      // need to wait until filter will be applied
+      cy.wait(1000);
+    }
+  },
+
+  unselectExcludeReferencesFilter(checkbox = REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM) {
+    cy.then(() => referencesFilterAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(referencesFilterAccordion.clickHeader());
+      }
+    });
+    if (checkbox === REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM) {
+      cy.do([
+        referencesFilterAccordion.find(Checkbox({ label: 'Exclude see from' })).uncheckIfSelected(),
+      ]);
+      // need to wait until filter will be applied
+      cy.wait(1000);
+    }
+    if (checkbox === REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO) {
+      cy.do([
+        referencesFilterAccordion
+          .find(Checkbox({ label: 'Exclude see from also' }))
+          .uncheckIfSelected(),
+      ]);
+      // need to wait until filter will be applied
+      cy.wait(1000);
+    }
+  },
+
+  selectAuthorityByIndex(rowIndex) {
     cy.do([
-      referencesFilterAccordion.clickHeader(),
-      referencesFilterAccordion.find(Checkbox({ label: 'Exclude see from' })).checkIfNotSelected(),
+      authorityList
+        .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .find(Button())
+        .click(),
+    ]);
+  },
+
+  verifyFiltersState: (selectedFilterValue, searchValue) => {
+    cy.expect([
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ value: selectedFilterValue }),
+      TextArea({ id: 'textarea-authorities-search' }).has({ value: searchValue }),
+      Section({ id: 'sourceFileId' })
+        .find(MultiSelect({ selectedCount: 0 }))
+        .exists(),
     ]);
   },
 };

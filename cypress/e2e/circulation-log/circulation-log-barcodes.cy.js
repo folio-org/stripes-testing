@@ -1,18 +1,18 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Requests from '../../support/fragments/requests/requests';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Requests from '../../support/fragments/requests/requests';
-import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 
 describe('Circulation log', () => {
   const patronGroup = {
@@ -120,7 +120,7 @@ describe('Circulation log', () => {
 
   it(
     'C17094 Verify User barcode appears in Circulation log (volaris) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       const firstItemSearchResultsData = {
         userBarcode: firstUser.barcode,
