@@ -1,4 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -33,7 +34,7 @@ describe('inventory', () => {
         Logs.openFileDetails(fileName);
 
         // open Instance for getting hrid
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
         });

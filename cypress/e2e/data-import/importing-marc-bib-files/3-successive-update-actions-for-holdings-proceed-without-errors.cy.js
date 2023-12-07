@@ -7,6 +7,7 @@ import {
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES,
   HOLDINGS_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -199,15 +200,15 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.instance,
           FileDetails.columnNameInResultList.holdings,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         // get Instance hrid for deleting
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((hrId) => {
           instanceHrid = hrId;
         });
         cy.go('back');
-        FileDetails.openHoldingsInInventory('Created');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
         HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
           const holdingsHrId = initialHrId;
 
@@ -317,10 +318,10 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForUpdate);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
+          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.holdings,
         );
-        FileDetails.openHoldingsInInventory('Updated');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
 
         HoldingsRecordView.checkHoldingsType(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.holdingsType,

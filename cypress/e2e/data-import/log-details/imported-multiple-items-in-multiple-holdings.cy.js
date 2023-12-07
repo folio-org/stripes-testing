@@ -5,6 +5,7 @@ import {
   JOB_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -158,8 +159,8 @@ describe('data-import', () => {
           'Created (KU/CC/DI/M)',
           'Created (KU/CC/DI/A)',
           'Created (E)',
-          'No action',
-          'No action',
+          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.NO_ACTION,
         ];
         const quantityOfCreatedHoldings = 5;
         const quantityOfCreatedItems = 8;
@@ -180,7 +181,7 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.verifyMultipleHoldingsStatus(
           arrayOfHoldingsWithErrorsStatuses,
@@ -189,7 +190,7 @@ describe('data-import', () => {
         FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
         FileDetails.verifyMultipleErrorStatus(quantityOfErrors);
 
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
 
@@ -223,8 +224,8 @@ describe('data-import', () => {
           'Created (KU/CC/DI/M)',
           'Created (KU/CC/DI/A)',
           'Created (E)',
-          'No action',
-          'No action',
+          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.NO_ACTION,
         ];
         const quantityOfCreatedHoldings = 5;
         const quantityOfCreatedItems = 8;
@@ -258,7 +259,7 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.verifyMultipleHoldingsStatus(
           arrayOfHoldingsWithErrorsStatuses,
@@ -266,7 +267,7 @@ describe('data-import', () => {
         );
         FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
         FileDetails.verifyMultipleErrorStatus(quantityOfErrors);
-        FileDetails.verifyInstanceStatusIsHiperlink('Created');
+        FileDetails.verifyInstanceStatusIsHiperlink(RECORD_STATUSES.CREATED);
         // get items hrids for checking json page
         FileDetails.getItemHrids().then((hrids) => {
           const itemHrids = hrids;
@@ -328,7 +329,7 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.verifyMultipleHoldingsStatus(
           arrayOfHoldingsStatuses,
@@ -336,7 +337,7 @@ describe('data-import', () => {
         );
         FileDetails.verifyMultipleItemsStatus(quantityOfCreatedItems);
 
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHRID = initialInstanceHrId;
 
@@ -391,7 +392,7 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.verifyMultipleHoldingsStatus(
           arrayOfHoldingsStatuses,
