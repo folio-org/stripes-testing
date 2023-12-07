@@ -6,6 +6,7 @@ import {
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -209,14 +210,14 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, 1);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName, 1);
         });
         FileDetails.checkItemsQuantityInSummaryTable(0, '2');
 
         // get instance hrids
         rowNumbers.forEach((row) => {
-          FileDetails.openInstanceInInventory('Created', row);
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, row);
           InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrids.push(initialInstanceHrId);
           });
@@ -224,12 +225,12 @@ describe('data-import', () => {
         });
 
         // check item notes in Inventory
-        FileDetails.openItemInInventory('Created');
+        FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
         ItemRecordView.checkItemNote(itemNotes.note, itemNotes.staffOnly);
         ItemRecordView.checkCheckInNote(itemNotes.checkInNoteForFirstItem);
         cy.wait(2000);
         cy.go('back');
-        FileDetails.openItemInInventory('Created', 1);
+        FileDetails.openItemInInventory(RECORD_STATUSES.CREATED, 1);
         ItemRecordView.checkBindingNote(itemNotes.blindingNote);
         ItemRecordView.checkElectronicBookplateNote(itemNotes.electronicBookplate);
         ItemRecordView.checkCheckOutNote(itemNotes.checkOutNote);

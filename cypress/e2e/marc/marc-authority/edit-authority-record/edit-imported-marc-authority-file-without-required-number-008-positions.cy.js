@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import { RECORD_STATUSES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -62,7 +63,7 @@ describe('MARC › MARC Authority › Edit Authority record', () => {
       });
       Logs.verifyInstanceStatus(0, 2);
       Logs.verifyInstanceStatus(1, 2);
-      Logs.clickOnHotLink(0, 6, 'Created');
+      Logs.clickOnHotLink(0, 6, RECORD_STATUSES.CREATED);
       MarcAuthority.edit();
       QuickMarcEditor.check008BoxesCount(19);
       QuickMarcEditor.updateValueOf008BoxByBoxName('Geo Subd', 'b');
@@ -72,7 +73,7 @@ describe('MARC › MARC Authority › Edit Authority record', () => {
       TopMenu.openDataImportApp();
       Logs.verifyInstanceStatus(0, 2);
       Logs.verifyInstanceStatus(1, 2);
-      Logs.clickOnHotLink(1, 6, 'Created');
+      Logs.clickOnHotLink(1, 6, RECORD_STATUSES.CREATED);
       MarcAuthority.edit();
       QuickMarcEditor.check008BoxesCount(19);
       QuickMarcEditor.updateValueOf008BoxByBoxName('Geo Subd', 'a');

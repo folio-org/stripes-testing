@@ -354,6 +354,7 @@ export default {
   addVolume,
   selectFromResultsList,
   fillSummaryInMappingProfile,
+  fillSummaryForMarcAuthInMappingProfile,
   fillSummaryDescription,
   fillInvoiceLineDescription,
   fillFolioRecordType,

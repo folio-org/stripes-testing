@@ -5,6 +5,7 @@ import {
   JOB_STATUS_NAMES,
   LOCATION_NAMES,
   PROFILE_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -195,7 +196,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsImported(marcFileNameForCreate);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileNameForCreate);
-      FileDetails.openHoldingsInInventory('Created');
+      FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
       HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
         holdingsHrId = initialHrId;
       });
@@ -334,19 +335,19 @@ describe('data-import', () => {
             FileDetails.columnNameInResultList.instance,
             FileDetails.columnNameInResultList.holdings,
           ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
           });
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
           FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
           FileDetails.checkHoldingsQuantityInSummaryTable('1', '1');
-          FileDetails.openInstanceInInventory('Updated');
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
           InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrid = initialInstanceHrId;
           });
           cy.visit(TopMenu.dataImportPath);
           Logs.openFileDetails(exportedFileName);
-          FileDetails.openHoldingsInInventory('Updated');
+          FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
           HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
         });
       },
