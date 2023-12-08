@@ -72,7 +72,7 @@ describe('Orders', () => {
 
         const NewOrderModal = InventoryInstance.newOrder();
         NewOrderModal.waitLoading();
-        NewOrderModal.verifyTextMessage(message);
+        NewOrderModal.verifyTextDescriptionExists(message);
 
         NewOrderModal.enterOrderNumber(testData.order.poNumber);
         NewOrderModal.clickCreateButton();

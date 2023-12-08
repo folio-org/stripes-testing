@@ -30,7 +30,7 @@ export default {
     cy.expect(TextField({ name: 'poNumber' }).has({ text }));
   },
 
-  verifyTextMessage: (message) => {
-    cy.expect(newOrderModal.find(HTML(including(message))).exists());
+  verifyTextDescriptionExists: (description) => {
+    cy.expect(newOrderModal.find(HTML(including(description))).exists());
   },
 };
