@@ -5,6 +5,7 @@ import {
   JOB_STATUS_NAMES,
   PAYMENT_METHOD,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -127,7 +128,7 @@ describe('data-import', () => {
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
-        FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);
 
         cy.visit(TopMenu.invoicesPath);

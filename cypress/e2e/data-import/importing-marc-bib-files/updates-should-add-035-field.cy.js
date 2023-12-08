@@ -4,6 +4,7 @@ import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -105,12 +106,12 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrId = initialInstanceHrId;
 
@@ -166,17 +167,17 @@ describe('data-import', () => {
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(firstFileNameAfterUpload);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.srsMarc,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
           );
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
           FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
           // open the first Instance in the Inventory and check 001, 003, 035 fields
-          FileDetails.openInstanceInInventory('Updated');
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
           InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
           InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
           InstanceRecordView.viewSource();
@@ -234,12 +235,12 @@ describe('data-import', () => {
         cy.wrap(fieldsContent).each((row) => {
           cy.wait(1000);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.srsMarc,
             row.rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.instance,
             row.rowNumber,
           );
@@ -253,7 +254,7 @@ describe('data-import', () => {
             cy.visit(TopMenu.dataImportPath);
             DataImport.waitLoading();
             Logs.openFileDetails(secondMarcFileNameForCreate);
-            FileDetails.openInstanceInInventory('Created', row.rowNumber);
+            FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, row.rowNumber);
             cy.wait(8000);
             InventoryInstance.viewSource();
             // changing the second file
@@ -330,12 +331,12 @@ describe('data-import', () => {
         cy.wrap(fieldsContent).each((row) => {
           cy.wait(1000);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.srsMarc,
             row.rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
             row.rowNumber,
           );
@@ -349,7 +350,7 @@ describe('data-import', () => {
           cy.wait(8000);
           cy.visit(TopMenu.dataImportPath);
           Logs.openFileDetails(secondFileNameAfterUpload);
-          FileDetails.openInstanceInInventory('Updated', element.rowNumber);
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED, element.rowNumber);
           cy.wait(8000);
           InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
           InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
