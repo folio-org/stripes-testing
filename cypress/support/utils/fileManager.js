@@ -42,6 +42,14 @@ export default {
     });
   },
 
+  deleteFilesFromDownloadsByMask(...fileNameMasks) {
+    fileNameMasks.forEach((fileNameMask) => {
+      this.findDownloadedFilesByMask(fileNameMask).then((fileNames) => {
+        fileNames?.forEach((fileName) => cy.task('deleteFile', fileName));
+      });
+    });
+  },
+
   convertCsvToJson(readFileName) {
     cy.wait(Cypress.env('downloadTimeout'));
 

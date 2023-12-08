@@ -6,6 +6,7 @@ import {
   EXISTING_RECORDS_NAMES,
   ORDER_STATUSES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -269,21 +270,20 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfilesData.name);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(editedMarcFileName);
-        cy.wait(10000);
+        Logs.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkItemsStatusesInResultList(0, [
-          FileDetails.status.created,
-          FileDetails.status.updated,
-          FileDetails.status.updated,
-          FileDetails.status.updated,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          FileDetails.status.dash,
-          FileDetails.status.noAction,
-          FileDetails.status.noAction,
-          FileDetails.status.noAction,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.NO_ACTION,
         ]);
 
         // verify Instance, Holdings and Item details

@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -61,7 +61,7 @@ describe('data-import', () => {
             modeOfIssuance: 'single unit',
           },
         ]).each((instanceData) => {
-          FileDetails.openInstanceInInventory('Created', instanceData.rowNumber);
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, instanceData.rowNumber);
           InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrids.push(initialInstanceHrId);
           });

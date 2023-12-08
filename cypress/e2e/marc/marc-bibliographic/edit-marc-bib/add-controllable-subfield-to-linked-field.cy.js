@@ -67,7 +67,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.waitContentLoading();
-        InventoryInstance.searchByTitle(createdRecordsIDs[0]);
+        InventoryInstances.searchByTitle(createdRecordsIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.clickLinkIconInTagField(testData.rowIndex);
@@ -98,7 +98,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     'C375954 Add controllable subfield to a linked field in "MARC bib" record (spitfire) (TaaS)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(testData.instanceValue);
+      InventoryInstances.searchByTitle(testData.instanceValue);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.fillEmptyTextAreaOfField(

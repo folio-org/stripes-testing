@@ -1,7 +1,6 @@
 import eHoldingsNewCustomPackage from '../../../support/fragments/eholdings/eHoldingsNewCustomPackage';
 import eHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import newRequest from '../../../support/fragments/requests/newRequest';
 import topMenu from '../../../support/fragments/topMenu';
 import eHolding from './eHolding';
 
@@ -37,22 +36,6 @@ describe.skip('Create a custom package', () => {
     eHoldingsProvidersSearch.byProvider('Fashion');
     eHoldingsProvidersSearch.verifyTitleSearch();
   });
-  it(
-    'C350418 Check that user can create ""Recall""  Item level request (vega)',
-    { tags: ['ideaLabsTests'] },
-    () => {
-      cy.visit(topMenu.requestsPath);
-      newRequest.openNewRequestPane();
-      newRequest.enterItemInfo('1234567890');
-      newRequest.verifyRequestInformation();
-      newRequest.enterRequesterInfo({
-        requesterBarcode: '000000098538',
-        pickupServicePoint: 'API',
-      });
-      newRequest.enterRequestAndPatron('Testing');
-      newRequest.saveRequestAndClose();
-    },
-  );
   it('C343241 Access eholdings app menu (spitfire)', { tags: ['ideaLabsTests'] }, () => {
     cy.visit(topMenu.eholdingsPath);
     eHoldingsNewCustomPackage.clickOneHoldingCarat();
