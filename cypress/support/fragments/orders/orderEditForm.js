@@ -21,7 +21,7 @@ const orderSummarySection = orderEditFormRoot.find(Section({ id: 'poSummary' }))
 
 const collapseAllButton = Button('Collapse all');
 const cancelButton = Button('Cancel');
-const saveButton = Button('Save & close');
+const saveButton = Button({ id: 'clickable-create-new-purchase-order' });
 
 const infoSectionFields = {
   poNumberPrefix: orderInfoSection.find(Select({ name: 'poNumberPrefix' })),
@@ -97,7 +97,7 @@ export default {
     }
 
     if (orderType) {
-      cy.do(orderInfoSection.orderType.choose(orderType));
+      cy.do(infoSectionFields.orderType.choose(orderType));
     }
   },
   selectOrderTemplate(templateName) {
