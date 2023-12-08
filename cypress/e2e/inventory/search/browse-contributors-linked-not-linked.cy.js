@@ -72,7 +72,7 @@ describe('Inventory: Contributors Browse', () => {
         InventoryInstance.searchResults(testData.contributorName);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `$a ${marcFiles[1].naturalId}`,
+          `‡a ${marcFiles[1].naturalId}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);

@@ -81,7 +81,7 @@ describe('Search in Inventory', () => {
         InventoryInstance.searchResults(marcFiles[1].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `$a ${marcFiles[1].authority010FieldValue}`,
+          `‡a ${marcFiles[1].authority010FieldValue}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(22, testData.tag700);
@@ -97,7 +97,7 @@ describe('Search in Inventory', () => {
         InventoryInstance.searchResults(marcFiles[1].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `$a ${marcFiles[1].authority010FieldValue}`,
+          `‡a ${marcFiles[1].authority010FieldValue}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(65, testData.tag700);

@@ -34,7 +34,7 @@ describe('ui-inventory: Keyboard shortcut (NEW)', () => {
   });
 
   it(
-    'C345297 Keyboard Shortcut. Access to drop down menu (folijet)',
+    'C345297 Keyboard Shortcut. Access to drop down menu (thunderjet)',
     { tags: [testTypes.smoke, devTeams.thunderjet] },
     () => {
       InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
@@ -50,7 +50,7 @@ describe('ui-inventory: Keyboard shortcut (NEW)', () => {
 
   it(
     'C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys (thunderjet)',
-    { tags: [testTypes.smoke, devTeams.thunderjet, testTypes.broken] },
+    { tags: [testTypes.smoke, devTeams.thunderjet] },
     () => {
       InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 

@@ -948,6 +948,10 @@ export default {
     cy.wait(6000);
   },
 
+  openSubjectAccordion: () => {
+    cy.do(Accordion('Subject').clickHeader());
+  },
+
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
   },

@@ -31,7 +31,7 @@ describe('MARC -> MARC Holdings', () => {
   const recordIDs = [];
 
   beforeEach('Creating user, data', () => {
-    marcFile.fileName = `testMarcFile.editMarcHoldings.${getRandomPostfix()}.mrc`;
+    marcFile.fileName = `testMarcFileEditMarcHoldings${getRandomPostfix()}.mrc`;
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
