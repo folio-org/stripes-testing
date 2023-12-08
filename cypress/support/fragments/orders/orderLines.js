@@ -1776,6 +1776,10 @@ export default {
     cy.expect(KeyValue('Payment status').has({ value: paymentStatus }));
   },
 
+  verifyOrderFielldFilled: (orderData) => {
+    cy.expect([KeyValue(orderData.name).has({ value: orderData.value })]);
+  },
+
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
     cy.expect([
       KeyValue('Title').has({ value: orderData.title }),

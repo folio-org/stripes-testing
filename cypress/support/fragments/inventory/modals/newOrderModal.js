@@ -1,3 +1,4 @@
+import { HTML, including } from '@interactors/html';
 import { Button, Modal, TextField } from '../../../../../interactors';
 
 const newOrderModal = Modal({ id: 'create-order-from-instance-modal' });
@@ -27,5 +28,9 @@ export default {
 
   verifyTextMessageExists(text) {
     cy.expect(TextField({ name: 'poNumber' }).has({ text }));
+  },
+
+  verifyTextMessage: (message) => {
+    cy.expect(newOrderModal.find(HTML(including(message))).exists());
   },
 };

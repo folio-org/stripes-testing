@@ -249,4 +249,7 @@ export default {
     // wait for changes to be applied
     cy.wait(2000);
   },
+  verifyOrderLineEditFormClosed() {
+    cy.expect(orderLineEditFormRoot.absent());
+  },
 };
