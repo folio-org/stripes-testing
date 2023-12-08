@@ -48,7 +48,7 @@ describe('inventory', () => {
       'C380748 Item Create screen: trashcan is aligned with the corresponding data row (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.item.instanceName);
+        InventoryInstances.searchByTitle(testData.item.instanceName);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);
         InventorySearchAndFilter.checkRowsCount(1);
 

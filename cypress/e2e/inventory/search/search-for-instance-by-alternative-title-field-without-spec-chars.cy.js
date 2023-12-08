@@ -88,7 +88,7 @@ describe('inventory', () => {
       { tags: ['criticalPath', 'spitfire'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
-          InventoryInstance.searchByTitle(query);
+          InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(3);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
@@ -97,12 +97,12 @@ describe('inventory', () => {
         });
 
         testData.negativeSearchQueries.forEach((query) => {
-          InventoryInstance.searchByTitle(query, false);
+          InventoryInstances.searchByTitle(query, false);
           InventorySearchAndFilter.verifyNoRecordsFound();
           InventoryInstances.resetAllFilters();
         });
 
-        InventoryInstance.searchByTitle('A History Of Richard Linklater Dazed And Confused');
+        InventoryInstances.searchByTitle('A History Of Richard Linklater Dazed And Confused');
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[2], true);
       },

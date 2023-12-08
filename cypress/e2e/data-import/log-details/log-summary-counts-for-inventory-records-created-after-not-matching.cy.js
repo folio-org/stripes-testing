@@ -6,6 +6,7 @@ import {
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -222,7 +223,7 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         // check created counter in the Summary table
         FileDetails.checkItemsQuantityInSummaryTable(0, '2');
@@ -233,17 +234,17 @@ describe('data-import', () => {
         // check Error counter in the Summary table
         FileDetails.checkItemsQuantityInSummaryTable(3, '0');
 
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InstanceRecordView.verifyIsInstanceOpened(firstInstanceTitle);
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileName);
-        FileDetails.openHoldingsInInventory('Created');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
         HoldingsRecordView.checkPermanentLocation(
           collectionOfMappingAndActionProfiles[1].mappingProfile.permanentLocationUI,
         );
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileName);
-        FileDetails.openItemInInventory('Created');
+        FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
         ItemRecordView.verifyItemStatus(
           collectionOfMappingAndActionProfiles[2].mappingProfile.status,
         );

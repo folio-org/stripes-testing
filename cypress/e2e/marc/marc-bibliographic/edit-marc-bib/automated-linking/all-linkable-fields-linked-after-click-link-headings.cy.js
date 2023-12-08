@@ -245,7 +245,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(createdRecordsIDs[0]);
+      InventoryInstances.searchByTitle(createdRecordsIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       fields.forEach((matchs) => {
@@ -294,7 +294,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(createdRecordsIDs[1]);
+      InventoryInstances.searchByTitle(createdRecordsIDs[1]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();

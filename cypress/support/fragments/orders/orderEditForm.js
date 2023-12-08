@@ -1,8 +1,12 @@
 import {
   Button,
+  KeyValue,
+  MultiSelect,
   Section,
+  Select,
   Selection,
   SelectionList,
+  TextField,
   including,
   matching,
 } from '../../../../interactors';
@@ -12,8 +16,30 @@ import InteractorsTools from '../../utils/interactorsTools';
 
 const orderEditFormRoot = Section({ id: 'pane-poForm' });
 
+const orderInfoSection = orderEditFormRoot.find(Section({ id: 'purchaseOrder' }));
+const orderSummarySection = orderEditFormRoot.find(Section({ id: 'poSummary' }));
+
+const collapseAllButton = Button('Collapse all');
 const cancelButton = Button('Cancel');
-const saveButton = Button('Save & close');
+const saveButton = Button({ id: 'clickable-create-new-purchase-order' });
+
+const infoSectionFields = {
+  poNumberPrefix: orderInfoSection.find(Select({ name: 'poNumberPrefix' })),
+  poNumberSuffix: orderInfoSection.find(Select({ name: 'poNumberSuffix' })),
+  poNumber: orderInfoSection.find(KeyValue('PO number')),
+  vendor: orderInfoSection.find(TextField({ name: 'vendor', disabled: true })),
+  orderType: orderInfoSection.find(Select({ name: 'orderType' })),
+  acquisitionUnit: orderInfoSection.find(MultiSelect({ id: 'order-acq-units' })),
+  assignedTo: orderInfoSection.find(TextField({ name: 'assignedTo', disabled: true })),
+  billTo: orderInfoSection.find(Selection('Bill to')),
+  shipTo: orderInfoSection.find(Selection('Ship to')),
+  tags: orderInfoSection.find(MultiSelect({ label: 'Tags' })),
+};
+
+const sections = {
+  'Purchase order': orderInfoSection,
+  'PO summary': orderSummarySection,
+};
 
 const buttons = {
   Cancel: cancelButton,
@@ -29,6 +55,51 @@ export default {
       cy.expect(buttons[label].has(conditions));
     });
   },
+  checkSectionsConditions(areas = []) {
+    areas.forEach(({ sectionName, conditions }) => {
+      cy.expect(sections[sectionName].has(conditions));
+    });
+  },
+  checkOrderFormContent() {
+    this.checkInfoSectionFields();
+
+    Object.values(sections).forEach((section) => {
+      cy.expect(section.exists());
+    });
+  },
+  checkInfoSectionFields() {
+    cy.expect([
+      infoSectionFields.poNumberPrefix.has({ required: false }),
+      infoSectionFields.poNumberSuffix.has({ required: false }),
+      infoSectionFields.poNumber.exists(),
+      infoSectionFields.vendor.has({ required: true }),
+      infoSectionFields.orderType.has({ required: true }),
+      infoSectionFields.acquisitionUnit.exists(),
+      infoSectionFields.assignedTo.has({ required: false }),
+      infoSectionFields.billTo.exists(),
+      infoSectionFields.shipTo.exists(),
+      infoSectionFields.tags.exists(),
+    ]);
+  },
+  checkValidationError({ orderType } = {}) {
+    if (orderType) {
+      cy.expect(infoSectionFields.orderType.has({ error: 'Required!' }));
+    }
+  },
+  fillOrderFields({ orderInfo }) {
+    if (orderInfo) {
+      this.fillOrderInfoSectionFields(orderInfo);
+    }
+  },
+  fillOrderInfoSectionFields({ organizationName, orderType }) {
+    if (organizationName) {
+      this.selectVendorByName(organizationName);
+    }
+
+    if (orderType) {
+      cy.do(infoSectionFields.orderType.choose(orderType));
+    }
+  },
   selectOrderTemplate(templateName) {
     this.selectDropDownValue('Template name', templateName);
   },
@@ -40,9 +111,12 @@ export default {
     ]);
   },
   selectVendorByName(organizationName) {
-    cy.do([Button('Organization look-up').click()]);
+    cy.do(orderInfoSection.find(Button('Organization look-up')).click());
     SearchHelper.searchByName(organizationName);
     SearchHelper.selectFromResultsList();
+  },
+  cliskCollapseAllButton() {
+    cy.do(collapseAllButton.click());
   },
   clickCancelButton() {
     cy.do(cancelButton.click());

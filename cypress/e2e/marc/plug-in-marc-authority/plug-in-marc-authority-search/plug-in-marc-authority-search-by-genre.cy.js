@@ -85,7 +85,7 @@ describe('MARC -> plug-in MARC authority | Search', () => {
     'C380572 MARC Authority plug-in | Search using "Genre" option (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       InventoryInstance.verifyAndClickLinkIcon('655');
