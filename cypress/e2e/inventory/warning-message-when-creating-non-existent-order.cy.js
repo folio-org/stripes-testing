@@ -52,7 +52,7 @@ describe('Orders', () => {
         NewOrderModal.waitLoading();
 
         NewOrderModal.enterOrderNumber(wrongPO);
-        NewOrderModal.varifyTextMessageExists(wrongMessage);
+        NewOrderModal.verifyTextMessageExists(wrongMessage);
       },
     );
   });
