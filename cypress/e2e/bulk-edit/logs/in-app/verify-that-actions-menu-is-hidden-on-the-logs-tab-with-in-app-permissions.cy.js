@@ -2,8 +2,7 @@ import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edi
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import permissions from '../../../../support/dictionary/permissions';
-import UserEdit from '../../../../support/fragments/users/userEdit';
-import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
 const barcodesFileName = 'fileForC367996.csv';
@@ -46,17 +45,22 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.uploadFile(barcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.verifyPopulatedPreviewPage();
       BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.searchByUsername(user.username);
-      UsersSearchPane.openUser(user.username);
-      UserEdit.addPermissions([
-        permissions.inventoryAll.gui,
-        permissions.uiUserEdit.gui,
-        permissions.uiUsersPermissions.gui,
-      ]);
+      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.addItemNote('Action note', 'Test note');
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.actionsIsAbsent();
+
+      cy.reload();
+      BulkEditSearchPane.checkItemsCheckbox();
+      BulkEditSearchPane.verifyActionsRunBy(
+        `${user.username}, ${user.firstName} ${Users.defaultUser.personal.middleName}`,
+      );
     },
   );
 });
