@@ -12,6 +12,7 @@ import {
   PaneContent,
   Checkbox,
   RadioButton,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import SelectUser from './selectUser';
 
@@ -20,6 +21,8 @@ const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
 const modalForDeliveryRequest = Modal('Route for delivery request');
 const noteModal = Modal({ id: 'popup-note-modal' });
+const actionsButton = Button({ id: 'available-item-actions-button' });
+const checkOutNotesButton = Button('Check out notes');
 
 function addPatron(userName) {
   cy.do(Button({ id: 'clickable-find-user' }).click());
@@ -133,9 +136,15 @@ export default {
   },
 
   openLoanDetails() {
-    cy.do(Button({ id: 'available-item-actions-button' }).click());
+    cy.do(actionsButton.click());
     cy.do(Button('Loan details').click());
     cy.expect(Pane({ id: 'pane-loandetails' }).exists());
+  },
+
+  openCheckOutNotes() {
+    cy.do(actionsButton.click());
+    cy.expect(checkOutNotesButton.exists());
+    cy.do(checkOutNotesButton.click());
   },
 
   changeDueDateToPast(minutes) {
@@ -228,5 +237,11 @@ export default {
   chooseActingPatron: (patron) => {
     cy.expect(Modal('Who are you acting as?').exists());
     cy.do([RadioButton(including(patron)).click(), Button('Continue').click()]);
+  },
+  checkItemIsNotCheckedOut(itemBarcode) {
+    cy.expect([
+      MultiColumnListRow(including(itemBarcode)).absent(),
+      HTML(including('No items have been entered yet')),
+    ]);
   },
 };
