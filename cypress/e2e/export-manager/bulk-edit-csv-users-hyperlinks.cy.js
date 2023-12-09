@@ -6,10 +6,13 @@ import ExportManagerSearchPane from '../../support/fragments/exportManager/expor
 import getRandomPostfix from '../../support/utils/stringTools';
 import FileManager from '../../support/utils/fileManager';
 import BulkEditFiles from '../../support/fragments/bulk-edit/bulk-edit-files';
+import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
+import ExportDetails from '../../support/fragments/exportManager/exportDetails';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
+const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
 describe('export-manager', () => {
   before('create test data', () => {
@@ -33,6 +36,7 @@ describe('export-manager', () => {
     cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
     FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
   });
 
@@ -44,18 +48,46 @@ describe('export-manager', () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.downloadMatchedResults();
+      const newName = `testName_${getRandomPostfix()}`;
+      BulkEditActions.prepareValidBulkEditFile(
+        matchedRecordsFileName,
+        editedFileName,
+        user.username,
+        newName,
+      );
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditSearchPane.uploadFile(editedFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.clickNext();
+      BulkEditActions.commitChanges();
       cy.visit(TopMenu.exportManagerPath);
       ExportManagerSearchPane.waitLoading();
       ExportManagerSearchPane.searchByBulkEdit();
       ExportManagerSearchPane.selectJob(user.username);
-      ExportManagerSearchPane.clickJobIdInThirdPane();
-
-      BulkEditFiles.verifyMatchedResultFileContent(
-        matchedRecordsFileName,
-        [user.barcode],
-        'userBarcode',
-        true,
-      );
+      cy.intercept('GET', '/data-export-spring/jobs/*').as('getId');
+      cy.wait('@getId', { timeout: 10000 }).then((item) => {
+        console.log(item);
+        const jobID = item.response.body.name;
+        ExportManagerSearchPane.verifyJobDataInResults(['Successful', 'Bulk edit identifiers']);
+        ExportManagerSearchPane.clickJobIdInThirdPane();
+        BulkEditFiles.verifyMatchedResultFileContent(
+          matchedRecordsFileName,
+          [user.barcode],
+          'userBarcode',
+          true,
+        );
+        FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
+        ExportDetails.closeJobDetails();
+        ExportManagerSearchPane.clickJobId(jobID);
+        BulkEditFiles.verifyMatchedResultFileContent(
+          matchedRecordsFileName,
+          [user.barcode],
+          'userBarcode',
+          true,
+        );
+      });
     },
   );
 });
