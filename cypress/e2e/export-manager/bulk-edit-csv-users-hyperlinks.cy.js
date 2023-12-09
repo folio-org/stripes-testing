@@ -68,7 +68,6 @@ describe('export-manager', () => {
       ExportManagerSearchPane.selectJob(user.username);
       cy.intercept('GET', '/data-export-spring/jobs/*').as('getId');
       cy.wait('@getId', { timeout: 10000 }).then((item) => {
-        console.log(item);
         const jobID = item.response.body.name;
         ExportManagerSearchPane.verifyJobDataInResults(['Successful', 'Bulk edit identifiers']);
         ExportManagerSearchPane.clickJobIdInThirdPane();
