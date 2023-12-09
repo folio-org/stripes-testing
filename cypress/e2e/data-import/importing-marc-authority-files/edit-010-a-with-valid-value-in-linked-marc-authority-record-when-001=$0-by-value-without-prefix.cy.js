@@ -42,7 +42,7 @@ describe('data-import', () => {
       marcFileForModify: 'marcBibFileForC374184_1.mrc',
       modifiedMarcFile: `C374184 editedMarcFile${getRandomPostfix()}.mrc`,
       uploadModifiedMarcFile: `C374184 testMarcFile${getRandomPostfix()}.mrc`,
-      updated700Field: [
+      updated630Field: [
         23,
         '630',
         '0',
@@ -250,7 +250,7 @@ describe('data-import', () => {
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
         QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(23);
-        QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated700Field);
+        QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated630Field);
       },
     );
   });
