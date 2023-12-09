@@ -60,7 +60,7 @@ describe('export-manager', () => {
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
-      cy.login(user.username, user.password)
+      cy.login(user.username, user.password);
       cy.visit(TopMenu.exportManagerPath);
       ExportManagerSearchPane.waitLoading();
       ExportManagerSearchPane.searchByBulkEdit();
