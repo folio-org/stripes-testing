@@ -147,7 +147,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking', 
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(testData.fieldContents.tag245Content);
+      InventoryInstances.searchByTitle(testData.fieldContents.tag245Content);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterLinking(

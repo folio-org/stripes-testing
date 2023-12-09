@@ -98,7 +98,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         waiter: InventoryInstances.waitContentLoading,
       });
       InventoryInstances.waitContentLoading();
-      InventoryInstance.searchByTitle(createdInstanceIDs[0]);
+      InventoryInstances.searchByTitle(createdInstanceIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.updateExistingTagValue(20, '');
@@ -150,7 +150,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         waiter: InventoryInstances.waitContentLoading,
       });
       InventoryInstances.searchBySource('MARC');
-      InventoryInstance.searchByTitle(createdInstanceIDs[1]);
+      InventoryInstances.searchByTitle(createdInstanceIDs[1]);
       InventoryInstances.selectInstance();
       InventoryInstance.waitLoading();
       InventoryInstance.editMarcBibliographicRecord();
@@ -229,7 +229,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         waiter: InventoryInstances.waitContentLoading,
       });
 
-      InventoryInstance.searchByTitle(createdInstanceIDs[2]);
+      InventoryInstances.searchByTitle(createdInstanceIDs[2]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.addNewField(

@@ -60,7 +60,7 @@ describe('Orders', () => {
         waiter: Orders.waitLoading,
       });
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
@@ -85,7 +85,7 @@ describe('Orders', () => {
   after(() => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
     // Need to wait until the order is opened before deleting it
     cy.wait(2000);
@@ -103,7 +103,7 @@ describe('Orders', () => {
 
   it('C347860: Check duplicate POL (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.duplicateOrder();
     InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
     Orders.checkDuplicatedOrder(
