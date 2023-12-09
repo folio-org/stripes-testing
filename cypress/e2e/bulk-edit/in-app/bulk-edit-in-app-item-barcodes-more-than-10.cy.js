@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -37,8 +36,8 @@ describe('bulk-edit', () => {
           item.invalidBarcode = `1-${getRandomPostfix()}`;
           item.secondInvalidBarcode = `2-${getRandomPostfix()}`;
           InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-          FileManager.appendFile(`cypress/fixtures/${itemBarcodesFileName}`, 
-          `${item.itemBarcode}\n${item.secondItemBarcode}\n${item.invalidBarcode}\n${item.secondInvalidBarcode}\n`);
+          FileManager.appendFile(`cypress/fixtures/${itemBarcodesFileName}`,
+            `${item.itemBarcode}\n${item.secondItemBarcode}\n${item.invalidBarcode}\n${item.secondInvalidBarcode}\n`);
         });
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
