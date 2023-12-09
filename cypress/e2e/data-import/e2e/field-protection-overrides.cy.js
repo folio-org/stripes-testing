@@ -32,11 +32,11 @@ describe('data-import', () => {
     let instanceHrid = null;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     // unique file name to upload
-    const fileNameForCreatingInstance = `C17018autotestFileCreteInstance.${getRandomPostfix()}.mrc`;
-    const fileNameForProtect = `C17018 marcFileForC17018-Rev1-Protect_${getRandomPostfix()}.mrc`;
-    const fileNameForOverride = `C17018 marcFileForC17018-Rev2-Override_${getRandomPostfix()}.mrc`;
-    const editedFileNameRev1 = `marcFileForC17018-Rev1-Protect_${getRandomPostfix()}.mrc`;
-    const editedFileNameRev2 = `marcFileForC17018-Rev2-Override_${getRandomPostfix()}.mrc`;
+    const fileNameForCreatingInstance = `C17018autotestFileCreteInstance${getRandomPostfix()}.mrc`;
+    const fileNameForProtect = `C17018 marcFileForC17018-Rev1-Protect${getRandomPostfix()}.mrc`;
+    const fileNameForOverride = `C17018 marcFileForC17018-Rev2-Override${getRandomPostfix()}.mrc`;
+    const editedFileNameRev1 = `marcFileForC17018-Rev1-Protect${getRandomPostfix()}.mrc`;
+    const editedFileNameRev2 = `marcFileForC17018-Rev2-Override${getRandomPostfix()}.mrc`;
     const fileForEditRev1 = 'marcFileForC17018-Rev1-Protect.mrc';
     const fileForEditRev2 = 'marcFileForC17018-Rev2-Override.mrc';
 

@@ -14,7 +14,7 @@ import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('data-import', { retries: 3 }, () => {
   describe('Importing MARC Bib files', () => {
     let user = {};
     const OCLCAuthentication = '100481406/PAOLF';

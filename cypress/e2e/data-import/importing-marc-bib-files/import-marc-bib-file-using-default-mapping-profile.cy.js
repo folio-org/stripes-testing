@@ -11,7 +11,7 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     let user;
     const filePath = 'marcBibFileForC2325.mrc';
-    const marcFileName = `C2325 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C2325 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
 
     before('login', () => {

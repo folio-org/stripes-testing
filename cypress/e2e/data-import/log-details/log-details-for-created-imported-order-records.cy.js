@@ -30,7 +30,7 @@ describe('data-import', () => {
     const orderNumbers = [];
     const quantityOfOrders = '7';
     const filePathForCreateOrder = 'marcFileForC376973.mrc';
-    const marcFileName = `C376973 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C376973 autotestFileName${getRandomPostfix()}.mrc`;
     const mappingProfile = {
       name: `C376973 mapping profile ${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,

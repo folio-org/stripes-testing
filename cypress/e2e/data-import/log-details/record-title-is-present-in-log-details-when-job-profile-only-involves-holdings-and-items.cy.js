@@ -55,7 +55,7 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
-      cy.loginAsAdmin()
+      cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
             testData.instanceTypeId = instanceTypes[0].id;
@@ -162,7 +162,7 @@ describe('data-import', () => {
       'C375109 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITH instance match item (folijet)',
       { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
-        const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
+        const marcFileNameForUpdate = `C375109 firstmarcFile${getRandomPostfix()}.mrc`;
         const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
         const quantityOfItems = '1';
         const collectionOfMappingAndActionProfiles = [
@@ -399,8 +399,8 @@ describe('data-import', () => {
       'C422064 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITHOUT instance match item (folijet)',
       { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
-        const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
-        const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
+        const marcFileNameForUpdate = `C422064 firstmarcFile${getRandomPostfix()}.mrc`;
+        const csvFileName = `C422064 firstautotestFile${getRandomPostfix()}.csv`;
         const quantityOfItems = '1';
         const collectionOfMappingAndActionProfiles = [
           {

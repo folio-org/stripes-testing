@@ -87,7 +87,7 @@ describe('inventory', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     Location.deleteViaApi(location.id);
     [...Array(3)].forEach((_, index) => {
-      MaterialTypes.deleteApi(itemData.materialTypes[index].materialType.id);
+      MaterialTypes.deleteMaterialTypeViaApi(itemData.materialTypes[index].materialType.id);
     });
   });
 

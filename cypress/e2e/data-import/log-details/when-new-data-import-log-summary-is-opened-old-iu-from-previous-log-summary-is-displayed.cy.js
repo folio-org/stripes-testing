@@ -13,8 +13,8 @@ describe('data-import', () => {
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const filePathForUpload = ['marcBibFileForC353957_102.mrc', 'marcBibFileForC353957_202.mrc'];
     const fileNames = [
-      `marcBibFileForC353957_102_${getRandomPostfix()}.mrc`,
-      `marcBibFileForC353957_202_${getRandomPostfix()}.mrc`,
+      `marcBibFileForC353957_102${getRandomPostfix()}.mrc`,
+      `marcBibFileForC353957_202${getRandomPostfix()}.mrc`,
     ];
     const numberOfRecords = ['102', '202'];
 

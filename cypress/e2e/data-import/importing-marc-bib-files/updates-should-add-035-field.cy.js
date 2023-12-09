@@ -31,12 +31,12 @@ describe('data-import', () => {
     let user = null;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     // unique file names
-    const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile.${getRandomPostfix()}.mrc`;
-    const firstMarcFileNameForUpdate = `C358998 firstUpdateAutotestFile.${getRandomPostfix()}.mrc`;
-    const firstFileNameAfterUpload = `C358998 firstFileNameAfterUpload.${getRandomPostfix()}.mrc`;
-    const secondMarcFileNameForCreate = `C358998 secondCreateAutotestFile.${getRandomPostfix()}.mrc`;
-    const secondMarcFileNameForUpdate = `C358998 secondUpdateAutotestFile.${getRandomPostfix()}.mrc`;
-    const secondFileNameAfterUpload = `C358998 secondFileNameAfterUpload.${getRandomPostfix()}.mrc`;
+    const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile${getRandomPostfix()}.mrc`;
+    const firstMarcFileNameForUpdate = `C358998 firstUpdateAutotestFile${getRandomPostfix()}.mrc`;
+    const firstFileNameAfterUpload = `C358998 firstFileNameAfterUpload${getRandomPostfix()}.mrc`;
+    const secondMarcFileNameForCreate = `C358998 secondCreateAutotestFile${getRandomPostfix()}.mrc`;
+    const secondMarcFileNameForUpdate = `C358998 secondUpdateAutotestFile${getRandomPostfix()}.mrc`;
+    const secondFileNameAfterUpload = `C358998 secondFileNameAfterUpload${getRandomPostfix()}.mrc`;
 
     const mappingProfile = {
       name: `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`,

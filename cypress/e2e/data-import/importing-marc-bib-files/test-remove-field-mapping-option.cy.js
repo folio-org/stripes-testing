@@ -34,8 +34,8 @@ describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
     const itemBarcode = uuid();
     const quantityOfItems = '1';
-    const marcFileNameForCreate = `C17033 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `marcFileForC317033.${getRandomPostfix()}.mrc`;
+    const marcFileNameForCreate = `C17033 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `marcFileForC317033${getRandomPostfix()}.mrc`;
     // profiles for creating
     const collectionOfMappingAndActionProfilesForCreate = [
       {
@@ -435,6 +435,7 @@ describe('data-import', () => {
 
             cy.visit(TopMenu.inventoryPath);
             InventorySearchAndFilter.searchInstanceByHRID(initialInstanceHrId);
+            InventoryInstance.openHoldingView();
             HoldingsRecordView.checkTemporaryLocation('-');
             HoldingsRecordView.checkDigitizationPolicy('-');
             HoldingsRecordView.close();

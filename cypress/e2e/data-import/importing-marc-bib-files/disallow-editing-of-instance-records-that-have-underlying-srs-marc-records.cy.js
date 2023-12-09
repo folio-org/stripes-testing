@@ -18,7 +18,7 @@ describe('Data Import', () => {
     let user;
     let instanceHrid;
     const filePath = 'marcFileForC2361.mrc';
-    const marcFileName = `C2361 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C2361 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const title = "101 things I wish I'd known when I started";
 
@@ -35,7 +35,7 @@ describe('Data Import', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(jobProfileToRun);
       Logs.openFileDetails(marcFileName);
-      FileDetails.verifyLogDetailsPageIsOpened();
+      FileDetails.verifyLogDetailsPageIsOpened(marcFileName);
       FileDetails.openJsonScreen(title);
       JsonScreenView.verifyJsonScreenIsOpened();
       JsonScreenView.getInstanceHrid().then((hrid) => {

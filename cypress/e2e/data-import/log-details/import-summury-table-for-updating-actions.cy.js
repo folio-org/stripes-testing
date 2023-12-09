@@ -420,7 +420,7 @@ describe('data-import', () => {
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
-          cy.pause();
+
           InventoryInstance.checkIsInstancePresented(
             instanceTitle,
             holdingsPermanentLocation,
