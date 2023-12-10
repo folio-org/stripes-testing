@@ -9,6 +9,7 @@ import {
 import ReceivingsListEditForm from './receivingsListEditForm';
 import ReceivingEditForm from './receivingEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
+import EditPieceModal from './modals/editPieceModal';
 
 const receivingDetailsSection = Section({ id: 'pane-title-details' });
 const instanceDetailsLink = receivingDetailsSection.find(
@@ -90,6 +91,13 @@ export default {
     if (!records.length) {
       cy.expect(receivedSection.has({ text: including('The list contains no items') }));
     }
+  },
+  openEditPieceModal(row = 0) {
+    cy.do(expectedSection.find(MultiColumnListCell({ row, column: 'Caption' })).click());
+    EditPieceModal.waitLoading();
+    EditPieceModal.verifyModalView();
+
+    return EditPieceModal;
   },
   openReceivingEditForm() {
     cy.do(buttons.Edit.click());
