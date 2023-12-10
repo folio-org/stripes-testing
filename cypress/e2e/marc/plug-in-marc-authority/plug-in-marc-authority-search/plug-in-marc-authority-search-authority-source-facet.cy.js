@@ -84,7 +84,7 @@ describe('MARC -> plug-in MARC authority | Search', () => {
       path: TopMenu.inventoryPath,
       waiter: InventoryInstances.waitContentLoading,
     });
-    InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+    InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
     InventoryInstances.selectInstance();
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon('700');

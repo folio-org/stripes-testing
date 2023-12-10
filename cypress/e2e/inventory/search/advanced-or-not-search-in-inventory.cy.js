@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -42,13 +42,13 @@ describe('Inventory -> Advanced search', () => {
     JobProfiles.waitFileIsImported(marcFile.fileName);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(marcFile.fileName);
-    FileDetails.openItemInInventoryByTitle(testData.searchResults[1], 3, 'Created');
+    FileDetails.openItemInInventoryByTitle(testData.searchResults[1], 3, RECORD_STATUSES.CREATED);
     InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
       testData.instanceHrid = initialInstanceHrId;
       testData.instanceHridForSearching = initialInstanceHrId.replace(/[^\d]/g, '');
     });
     cy.go('back');
-    FileDetails.openItemInInventoryByTitle(testData.searchResults[0], 3, 'Created');
+    FileDetails.openItemInInventoryByTitle(testData.searchResults[0], 3, RECORD_STATUSES.CREATED);
     InventoryInstance.pressAddHoldingsButton();
     InventoryNewHoldings.fillRequiredFields();
     HoldingsRecordEdit.fillCallNumber(testData.callNumberValue);

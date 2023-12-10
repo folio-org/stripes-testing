@@ -1,5 +1,3 @@
-import TestTypes from '../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../support/dictionary/devTeams';
 import Permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -89,10 +87,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
 
   it(
     'C380398 Verify "LDR" validation rules with valid data for positions 05, 08, 17, 18, 19 when deriving record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       cy.wrap(LDRvalues).each((LDRvalue) => {
-        InventoryInstance.searchByTitle(testData.instanceID);
+        InventoryInstances.searchByTitle(testData.instanceID);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.deriveNewMarcBibRecord();

@@ -23,12 +23,11 @@ import NoticePolicy, {
   defaultNoticePolicy,
 } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
-import NewMaterialType from '../../../../support/fragments/settings/inventory/newMaterialType';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import Users from '../../../../support/fragments/users/users';
 
 describe('ui-circulation-settings: Edit circulation rules', () => {
-  const defaultMaterialType = NewMaterialType.getDefaultMaterialType();
+  const defaultMaterialType = MaterialTypes.getDefaultMaterialType();
 
   let addedCirculationRule;
   let newUserId;
@@ -40,7 +39,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
         cy.getAdminToken();
 
-        NewMaterialType.createViaApi(defaultMaterialType);
+        MaterialTypes.createMaterialTypeViaApi(defaultMaterialType);
         NoticePolicy.createApi();
         LoanPolicy.createLoanableNotRenewableLoanPolicyApi(defaultLoanPolicy);
         RequestPolicy.createViaApi(defaultRequestPolicy);
@@ -59,7 +58,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
   after(() => {
     cy.getAdminToken();
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    MaterialTypes.deleteApi(defaultMaterialType.id);
+    MaterialTypes.deleteMaterialTypeViaApi(defaultMaterialType.id);
     NoticePolicy.deleteViaApi(defaultNoticePolicy.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);
     RequestPolicy.deleteViaApi(defaultRequestPolicy.id);

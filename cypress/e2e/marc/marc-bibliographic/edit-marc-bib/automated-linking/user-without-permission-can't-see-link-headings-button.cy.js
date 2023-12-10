@@ -76,7 +76,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         waiter: InventoryInstances.waitContentLoading,
       });
 
-      InventoryInstance.searchByTitle(createdRecordsIDs[0]);
+      InventoryInstances.searchByTitle(createdRecordsIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();
@@ -101,7 +101,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         waiter: InventoryInstances.waitContentLoading,
       });
 
-      InventoryInstance.searchByTitle(createdRecordsIDs[0]);
+      InventoryInstances.searchByTitle(createdRecordsIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBibRecord();
       QuickMarcEditor.checkAbsenceOfLinkHeadingsButton();

@@ -141,7 +141,7 @@ describe('Search in Inventory', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle('*');
+      InventoryInstances.searchByTitle('*');
       InventoryInstances.waitLoading();
       InventoryInstances.selectInstance();
       InventorySearchAndFilter.verifyInstanceDetailsView();

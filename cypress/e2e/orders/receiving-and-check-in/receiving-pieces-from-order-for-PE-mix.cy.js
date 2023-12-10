@@ -65,7 +65,7 @@ describe('Orders: Receiving and Check-in', () => {
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
           Orders.searchByParameter('PO number', orderNumber);
-          Orders.selectFromResultsList();
+          Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
           OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
           OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
@@ -99,7 +99,7 @@ describe('Orders: Receiving and Check-in', () => {
     Receiving.unreceiveFromReceivedSection();
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
     OrderLines.selectPOLInOrder(0);
     OrderLines.deleteOrderLine();

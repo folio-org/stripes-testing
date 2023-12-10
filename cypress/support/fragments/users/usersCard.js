@@ -17,6 +17,8 @@ import {
   Badge,
   ListItem,
   Modal,
+  MultiSelect,
+  MultiSelectOption,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import NewNote from '../notes/newNote';
@@ -328,6 +330,41 @@ export default {
   startBlock: () => {
     cy.do(actionsButton.click());
     cy.do(Button('Create block').click());
+  },
+
+  openTagsPane: () => {
+    cy.do(Button({ id: 'clickable-show-tags' }).click());
+    cy.expect(Pane('Tags').exists());
+    cy.wait(2000);
+  },
+
+  addTag: (tag) => {
+    cy.do([
+      MultiSelect({ id: 'input-tag' }).fillIn(tag),
+      MultiSelect({ id: 'input-tag' }).open(),
+      MultiSelectOption(including(tag)).click(),
+    ]);
+  },
+
+  deleteTag: (tag) => {
+    cy.do(
+      MultiSelect({ id: 'input-tag' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(
+      MultiSelect({ id: 'input-tag' })
+        .find(HTML(including(tag)))
+        .absent(),
+    );
+  },
+
+  verifyTagsNumber: (tagsNum) => {
+    cy.expect(
+      Button({ icon: 'tag' })
+        .find(HTML(including(tagsNum)))
+        .exists(),
+    );
   },
 
   hasSaveError(errorMessage) {

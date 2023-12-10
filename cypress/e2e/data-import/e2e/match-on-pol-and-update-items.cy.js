@@ -9,6 +9,7 @@ import {
   LOCATION_NAMES,
   ORDER_STATUSES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
@@ -266,7 +267,7 @@ describe('data-import', () => {
 
     const openOrder = (number) => {
       Orders.searchByParameter('PO number', number);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(number);
       Orders.openOrder();
     };
 
@@ -408,20 +409,20 @@ describe('data-import', () => {
         FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
         FileDetails.checkItemQuantityInSummaryTable('1', 1);
         FileDetails.checkItemsStatusesInResultList(0, [
-          FileDetails.status.created,
-          FileDetails.status.updated,
-          FileDetails.status.updated,
-          FileDetails.status.updated,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          FileDetails.status.dash,
-          FileDetails.status.noAction,
-          FileDetails.status.noAction,
-          FileDetails.status.noAction,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.NO_ACTION,
         ]);
 
         // check is items updated
-        FileDetails.openInstanceInInventory('Updated');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkHoldingsType(HOLDINGS_TYPE_NAMES.MONOGRAPH);

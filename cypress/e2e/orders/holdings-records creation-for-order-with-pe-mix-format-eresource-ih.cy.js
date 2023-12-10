@@ -135,8 +135,8 @@ describe('Orders', () => {
       // Click on "Title" link in "Item details" accordion
       const InventoryInstance = OrderLineDetails.openInventoryItem();
       InventoryInstance.checkInstanceTitle(testData.orderLine.titleOrPackage);
-      InventoryInstance.checkHoldingTitle(testData.locations[0].name);
-      InventoryInstance.checkHoldingTitle(testData.locations[1].name);
+      InventoryInstance.checkHoldingTitle({ title: testData.locations[0].name });
+      InventoryInstance.checkHoldingTitle({ title: testData.locations[1].name });
     },
   );
 });

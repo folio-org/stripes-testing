@@ -134,7 +134,7 @@ describe('Search in Inventory', () => {
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       testData.searchQueries.forEach((query, index) => {
-        InventoryInstance.searchByTitle(query);
+        InventoryInstances.searchByTitle(query);
         // wait for search results to be updated
         cy.wait(1500);
         expectedTitles[index].forEach((expectedTitle) => {
@@ -151,7 +151,7 @@ describe('Search in Inventory', () => {
     () => {
       InventoryInstances.waitContentLoading();
       expectedTitlesC368038.forEach((expectedTitlesSet, index) => {
-        InventoryInstance.searchByTitle(testData.searchQueriesC368038[index]);
+        InventoryInstances.searchByTitle(testData.searchQueriesC368038[index]);
         // wait for search results to be updated
         cy.wait(1500);
         expectedTitlesSet.forEach((expectedTitle) => {
@@ -159,7 +159,7 @@ describe('Search in Inventory', () => {
         });
         InventorySearchAndFilter.checkRowsCount(expectedTitlesSet.length);
       });
-      InventoryInstance.searchByTitle(testData.searchQueriesC368038[8]);
+      InventoryInstances.searchByTitle(testData.searchQueriesC368038[8]);
       // wait for search results to be updated
       cy.wait(1500);
       InventorySearchAndFilter.verifyNoRecordsFound();

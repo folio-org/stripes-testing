@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -47,7 +47,7 @@ describe('MARC -> MARC Holdings', () => {
     JobProfiles.waitFileIsImported(testData.fileNameForCreateInstance);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(testData.fileNameForCreateInstance);
-    FileDetails.openInstanceInInventory('Created');
+    FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
     InstanceRecordView.verifyInstancePaneExists();
     InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
       instanceHrid = initialInstanceHrId;

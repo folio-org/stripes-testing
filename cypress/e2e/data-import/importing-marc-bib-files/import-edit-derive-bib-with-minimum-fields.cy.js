@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -65,7 +65,7 @@ describe('data-import', () => {
         Logs.openFileDetails(testData.marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
           createdRecordIDs.push(link.split('/')[5]);
-          Logs.goToTitleLink('Created');
+          Logs.goToTitleLink(RECORD_STATUSES.CREATED);
           InventoryInstance.checkInstanceTitle(testData.initialTitle);
 
           InventoryInstance.editMarcBibliographicRecord();
