@@ -15,8 +15,9 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
+import InvoiceView from '../../support/fragments/invoices/invoiceView';
 
-describe('ui-orders: Orders', () => {
+describe('Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
@@ -27,15 +28,30 @@ describe('ui-orders: Orders', () => {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
-  const defaultOrder = {
+  const thirdFund = {
+    name: `autotest_fund3_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  };
+  const forthFund = {
+    name: `autotest_fund4_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  };
+  const firstOrder = {
     ...NewOrder.defaultOneTimeOrder,
+    orderType: 'Ongoing',
+    ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true,
-    orderType: 'One-time',
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
-  const allocatedQuantity = '1000';
+  const firstInvoice = { ...NewInvoice.defaultUiInvoice };
+  const allocatedQuantity = '100';
   let user;
   let orderNumber;
   let servicePointId;
@@ -43,15 +59,16 @@ describe('ui-orders: Orders', () => {
 
   before(() => {
     cy.getAdminToken();
-
-    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      defaultFiscalYear.id = response.id;
+    // create first Fiscal Year and prepere 2 Funds for Rollover
+    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+      defaultFiscalYear.id = firstFiscalYearResponse.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
         secondFund.ledgerId = defaultLedger.id;
+        thirdFund.ledgerId = defaultLedger.id;
+        forthFund.ledgerId = defaultLedger.id;
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
@@ -70,6 +87,22 @@ describe('ui-orders: Orders', () => {
           Funds.selectFund(secondFund.name);
           Funds.addBudget(allocatedQuantity);
         });
+        Funds.createViaApi(thirdFund).then((thirdFundResponse) => {
+          thirdFund.id = thirdFundResponse.fund.id;
+
+          cy.visit(TopMenu.fundPath);
+          FinanceHelp.searchByName(thirdFund.name);
+          Funds.selectFund(thirdFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
+        Funds.createViaApi(forthFund).then((forthFundResponse) => {
+          forthFund.id = forthFundResponse.fund.id;
+
+          cy.visit(TopMenu.fundPath);
+          FinanceHelp.searchByName(forthFund.name);
+          Funds.selectFund(forthFund.name);
+          Funds.addBudget(allocatedQuantity);
+        });
       });
     });
 
@@ -82,35 +115,38 @@ describe('ui-orders: Orders', () => {
 
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-      defaultOrder.vendor = organization.name;
+      firstInvoice.accountingCode = organization.erpCode;
     });
-    defaultOrder.vendor = organization.name;
+    firstOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
-      defaultOrder.id = orderResponse.id;
-      orderNumber = orderResponse.poNumber;
-      Orders.checkCreatedOrder(defaultOrder);
+    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
+      firstOrder.id = firstOrderResponse.id;
+      orderNumber = firstOrderResponse.poNumber;
+      Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWith2FundsInPercents(
         firstFund,
-        '50',
+        '10',
         '1',
+        '50',
+        secondFund,
         '50',
         location.institutionId,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.invoicesPath);
-      Invoices.createRolloverInvoice(invoice, organization.name);
+      Invoices.createRolloverInvoice(firstInvoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);
       // Need to wait, while data will be loaded
       cy.wait(4000);
+      Invoices.approveInvoice();
+      Invoices.payInvoice();
     });
     cy.createTempUser([
-      permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
@@ -134,34 +170,72 @@ describe('ui-orders: Orders', () => {
       Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(secondFund, '70', '70');
-      OrderLines.checkFundInPOL(secondFund);
-      cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(secondFund.name);
-      Funds.selectFund(secondFund.name);
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '($70.00)');
-      Funds.selectTransactionInList('Encumbrance');
-      Funds.checkStatusInTransactionDetails('Unreleased');
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.searchByNumber(invoice.invoiceNumber);
-      Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.selectInvoiceLine();
-      Invoices.checkFundInInvoiceLine(secondFund);
-      cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(secondFund.name);
-      Funds.selectFund(secondFund.name);
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkPaymentInTransactionDetails(
-        1,
+      OrderLines.changeFundInPOLWithoutSaveInPercents(0, thirdFund, '30');
+      OrderLines.changeFundInPOLWithoutSaveInPercents(1, secondFund, '30');
+      OrderLines.addFundToPOLWithoutSave(2, forthFund, '40');
+      OrderLines.saveOrderLine();
+      OrderLines.openPageCurrentEncumbranceInFund(
+        `${secondFund.name}(${secondFund.code})`,
+        '$0.00',
+      );
+      Funds.varifyDetailsInTransaction(
         defaultFiscalYear.code,
-        invoice.invoiceNumber,
+        '$0.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
         `${secondFund.name} (${secondFund.code})`,
-        '($70.00)',
+      );
+      Funds.checkStatusInTransactionDetails('Released');
+      Funds.checkExpendedInTransactionDetails('$5.00');
+      Funds.checkInitialEncumbranceDetails('$3.00');
+
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.openPageCurrentEncumbranceInFund(`${thirdFund.name}(${thirdFund.code})`, '$0.00');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '$0.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${thirdFund.name} (${thirdFund.code})`,
+      );
+      Funds.checkStatusInTransactionDetails('Released');
+      Funds.checkExpendedInTransactionDetails('$5.00');
+      Funds.checkInitialEncumbranceDetails('$3.00');
+
+      cy.visit(TopMenu.ordersPath);
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      OrderLines.selectPOLInOrder(0);
+      OrderLines.openPageCurrentEncumbranceInFund(`${forthFund.name}(${forthFund.code})`, '$4.00');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '$4.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${forthFund.name} (${forthFund.code})`,
       );
       Funds.checkStatusInTransactionDetails('Unreleased');
+      Funds.checkExpendedInTransactionDetails('$0.00');
+      Funds.checkInitialEncumbranceDetails('$4.00');
+
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.searchByNumber(firstInvoice.invoiceNumber);
+      Invoices.selectInvoice(firstInvoice.invoiceNumber);
+      InvoiceView.selectInvoiceLine();
+      Invoices.openPageFundInInvoiceLine(`${firstFund.name}(${firstFund.code})`);
+      Funds.selectBudgetDetails();
+      Funds.viewTransactions();
+      Funds.selectTransactionInList('Payment');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '($5.00)',
+        firstInvoice.invoiceNumber,
+        'Payment',
+        `${firstFund.name} (${firstFund.code})`,
+      );
     },
   );
 });
