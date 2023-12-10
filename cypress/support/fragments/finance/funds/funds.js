@@ -327,10 +327,6 @@ export default {
     cy.expect(transactionDetailSection.find(KeyValue('Status')).has({ value: status }));
   },
 
-  checkExpendedInTransactionDetails: (expended) => {
-    cy.expect(transactionDetailSection.find(KeyValue('Expended')).has({ value: expended }));
-  },
-
   checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       transactionList
