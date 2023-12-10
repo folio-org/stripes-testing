@@ -7,6 +7,7 @@ import {
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -257,12 +258,12 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
 
         // check created instance
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.checkIsInstancePresented(
           instanceTitle,
           collectionOfMappingAndActionProfilesForCreate[1].mappingProfile.permanentLocationUI,
@@ -329,7 +330,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForFirstUpdate);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.item,
         );
 
@@ -350,12 +351,12 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileNameForSecondUpdate);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
+          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.item,
         );
 
         // check updated item
-        FileDetails.openItemInInventory('Updated');
+        FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
         ItemRecordView.verifyItemIdentifier(
           collectionOfMappingAndActionProfilesForUpdate[0].mappingProfile.itemIdentifierUI,
         );

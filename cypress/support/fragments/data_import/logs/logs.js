@@ -14,6 +14,7 @@ import FileDetails from './fileDetails';
 import { getLongDelay } from '../../../utils/cypressTools';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
+const runningAccordion = Accordion('Running');
 const actionsButton = Button('Actions');
 const viewAllLogsButton = Button('View all logs');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
@@ -97,11 +98,7 @@ export default {
     .find(Link('Created'))
     .href()),
 
-  checkFileIsRunning: (fileName) => cy.expect(
-    Accordion('Running')
-      .find(HTML(including(fileName)))
-      .exists(),
-  ),
+  checkFileIsRunning: (fileName) => cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
 
@@ -127,11 +124,6 @@ export default {
   },
 
   waitFileIsImported: (fileName) => {
-    cy.expect(
-      Accordion('Running')
-        .find(HTML(including(fileName)))
-        .absent(),
-      getLongDelay(),
-    );
+    cy.expect(runningAccordion.find(HTML(including(fileName))).absent(), getLongDelay());
   },
 };

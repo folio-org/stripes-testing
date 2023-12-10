@@ -1,3 +1,5 @@
+import uuid from 'uuid';
+
 import {
   Button,
   Pane,
@@ -9,6 +11,7 @@ import {
 } from '../../../../../interactors';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const pane = Pane('Material types');
 
@@ -31,11 +34,30 @@ export default {
   isPresented,
   checkIsDeleted,
   verifyMessageOfDeteted,
-
-  deleteApi(id) {
+  getDefaultMaterialType() {
+    return { id: uuid(), name: `autotest_material_type_${getRandomPostfix()}`, source: 'local' };
+  },
+  createMaterialType(materialTypeName) {
+    cy.do(Button('+ New').click());
+    cy.do(TextField({ placeholder: 'name' }).fillIn(materialTypeName));
+    cy.do(Button('Save').click());
+  },
+  createMaterialTypeViaApi(materialTypeProperties) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'material-types',
+        body: materialTypeProperties,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+  deleteMaterialTypeViaApi(materialTypeId) {
     return cy.okapiRequest({
       method: 'DELETE',
-      path: `material-types/${id}`,
+      path: `material-types/${materialTypeId}`,
     });
   },
 

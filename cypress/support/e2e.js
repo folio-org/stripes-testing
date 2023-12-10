@@ -12,6 +12,7 @@ import './api';
 import './login';
 import './checkin';
 import './checkout';
+import './clipboard';
 import './eholdings';
 import './inventory';
 import './users';

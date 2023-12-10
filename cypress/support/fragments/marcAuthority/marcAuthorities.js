@@ -1,3 +1,4 @@
+import { Keyboard } from '@interactors/keyboard';
 import {
   Accordion,
   AdvancedSearchRow,
@@ -186,9 +187,13 @@ export default {
 
   selectTitle: (title) => cy.do(Button(title).click()),
 
-  selectItem: (item) => {
+  selectItem: (item, partName = true) => {
     cy.expect(MultiColumnListCell({ content: item }).exists());
-    cy.do(Button(including(item)).click());
+    if (partName) {
+      cy.do(Button(including(item)).click());
+    } else {
+      cy.do(Button(item).click());
+    }
   },
 
   clickOnNumberOfTitlesLink(columnIndex, linkValue) {
@@ -273,7 +278,7 @@ export default {
   },
 
   closeMarcViewPane() {
-    cy.do(buttonClose.click());
+    cy.do(marcViewSection.find(buttonClose).click());
   },
 
   checkRecordDetailPageMarkedValue(markedValue) {
@@ -352,6 +357,14 @@ export default {
     cy.do(buttonLink.click());
   },
 
+  verifyLinkButtonExistOnMarcViewPane(isExist = true) {
+    if (isExist) {
+      cy.expect(marcViewSection.find(buttonLink).exists());
+    } else {
+      cy.expect(marcViewSection.find(buttonLink).absent());
+    }
+  },
+
   checkFieldAndContentExistence(tag, value) {
     cy.expect([
       marcViewSection.exists(),
@@ -390,6 +403,19 @@ export default {
       // need to wait until filter will be applied
       cy.wait(1000);
     });
+  },
+
+  enterTypeOfHeading: (headingType) => {
+    cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(headingTypeAccordion.clickHeader());
+      }
+    });
+    cy.do([
+      typeOfHeadingSelect.focus(),
+      Keyboard.type(headingType),
+      Keyboard.press({ code: 'Enter' }),
+    ]);
   },
 
   clickAccordionAndCheckResultList(accordion, record) {
@@ -956,5 +982,50 @@ export default {
     cy.get(checkBoxAllRecords).each((checkbox) => {
       cy.expect(!checkbox.checked);
     });
+  },
+
+  verifyValueDoesntExistInColumn(column, value) {
+    const actualValues = [];
+    cy.then(() => authoritiesList.rowCount())
+      .then((rowsCount) => {
+        if (rowsCount) {
+          for (let i = 0; i < rowsCount; i++) {
+            cy.then(() => authoritiesList.find(MultiColumnListCell({ column, row: i })).content()).then((content) => {
+              actualValues.push(content);
+            });
+          }
+        }
+      })
+      .then(() => {
+        const valueNotExist = !actualValues.includes(value);
+        expect(valueNotExist).to.equal(true);
+      });
+  },
+
+  verifyEveryRowContainsLinkButton() {
+    cy.then(() => authoritiesList.rowCount()).then((rowsCount) => {
+      if (rowsCount) {
+        for (let i = 0; i < rowsCount; i++) {
+          cy.expect(
+            authoritiesList
+              .find(MultiColumnListCell({ column: 'Link', row: i }))
+              .find(Button({ icon: 'link' }))
+              .exists(),
+          );
+        }
+      }
+    });
+  },
+
+  verifySelectedTypeOfHeading(option, isExist = true) {
+    if (isExist) {
+      cy.expect(typeOfHeadingSelect.has({ selected: including(option) }));
+    } else {
+      cy.expect(typeOfHeadingSelect.has({ selected: not(including(option)) }));
+    }
+  },
+
+  verifySelectedTypeOfHeadingCount(selectedCount) {
+    cy.expect(typeOfHeadingSelect.has({ selectedCount }));
   },
 };

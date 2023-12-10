@@ -5,7 +5,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
@@ -24,6 +24,7 @@ import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
@@ -191,7 +192,7 @@ describe('data-import', () => {
           })
           .then(() => {
             cy.visit(TopMenu.inventoryPath);
-            InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             linkingTagAndValues.forEach((linking) => {
@@ -283,9 +284,9 @@ describe('data-import', () => {
 
     it(
       'C380519 Cant delete protected and linked fields using update MARC Bib profile (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
@@ -317,7 +318,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
-        Logs.clickOnHotLink(0, 3, 'Updated');
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.updated245Field);
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated100Field);

@@ -181,7 +181,7 @@ describe('Invoices', () => {
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.newInvoiceFromOrder();
       Invoices.createInvoiceFromOrder(invoice, firstFiscalYear.code);
       Invoices.approveInvoice();

@@ -7,10 +7,14 @@ import UsersCard from '../../../support/fragments/users/usersCard';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
+const invalidUserUUID = getRandomPostfix();
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
+const invalidUserUUIDsFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidUserUUIDsFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -23,6 +27,7 @@ describe('bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading,
           });
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
+          FileManager.createFile(`cypress/fixtures/${invalidUserUUIDsFileName}`, invalidUserUUID);
         },
       );
     });
@@ -34,7 +39,11 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${invalidUserUUIDsFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(
+        `*${matchedRecordsFileName}`,
+        errorsFromMatchingFileName,
+      );
       Users.deleteViaApi(user.userId);
     });
 
@@ -169,6 +178,24 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyChangedResults(user.username);
+      },
+    );
+
+    it(
+      'C359211 Verify upload file with invalid identifiers -- " -- Users-in app approach (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird'] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+        BulkEditSearchPane.uploadFile(invalidUserUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
+        BulkEditSearchPane.verifyErrorLabel(invalidUserUUIDsFileName, 0, 1);
+        BulkEditActions.openActions();
+        BulkEditActions.downloadErrors();
+        ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+          invalidUserUUID,
+          'No match found',
+        ]);
       },
     );
   });

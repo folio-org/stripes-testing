@@ -121,7 +121,7 @@ describe('data-import', () => {
           })
           .then(() => {
             cy.visit(TopMenu.inventoryPath);
-            InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
@@ -190,7 +190,7 @@ describe('data-import', () => {
       'C375098 Update controlled and not controlled subfields of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'parallel'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
@@ -227,7 +227,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle('C375098 Paradise of other side (updated title)');
+        InventoryInstances.searchByTitle('C375098 Paradise of other side (updated title)');
         InventoryInstances.selectInstance();
         InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
         InventoryInstance.editMarcBibliographicRecord();

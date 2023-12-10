@@ -74,7 +74,7 @@ describe('orders: Receiving and Check-in', () => {
             cy.createOrderApi(order).then((response) => {
               orderNumber = response.body.poNumber;
               Orders.searchByParameter('PO number', orderNumber);
-              Orders.selectFromResultsList();
+              Orders.selectFromResultsList(orderNumber);
               Orders.createPOLineViaActions();
               OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
               OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
