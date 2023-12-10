@@ -3,14 +3,10 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
 
 let user;
-const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const invalidUserUUID = getRandomPostfix();
-const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
-const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
+const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;\
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
