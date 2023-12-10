@@ -73,7 +73,7 @@ describe('Loans: Anonymization', () => {
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
           testData.folioInstances = InventoryInstances.generateFolioInstances({
-            properties: { permanentLoanType: { id: testData.loanTypeId } },
+            itemsProperties: { permanentLoanType: { id: testData.loanTypeId } },
             itemsCount: 2,
           });
         });
