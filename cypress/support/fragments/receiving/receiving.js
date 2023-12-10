@@ -15,7 +15,10 @@ import {
   PaneContent,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import ReceivingDetails from './receivingDetails';
+import ExportSettingsModal from './modals/exportSettingsModal';
 
+const receivingResultsSection = Section({ id: 'receiving-results-pane' });
 const rootsection = PaneContent({ id: 'pane-title-details-content' });
 const actionsButton = Button('Actions');
 const receivingSuccessful = 'Receiving successful';
@@ -27,11 +30,6 @@ const unreceiveButton = Button('Unreceive');
 const addPieceModal = Modal({ id: 'add-piece-modal' });
 const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
-const searchByParameter = (parameter, value) => {
-  cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
-  cy.do(TextField({ id: 'input-record-search' }).fillIn(value));
-  cy.do(Button('Search').click());
-};
 
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
@@ -39,15 +37,45 @@ const filterOpenReceiving = () => {
 };
 
 export default {
-  searchByParameter,
-  filterOpenReceiving,
-  selectFromResultsList: (instanceName) => cy.do(Link(instanceName).click()),
-
   waitLoading() {
     cy.expect([
       Pane({ id: 'receiving-filters-pane' }).exists(),
       Pane({ id: 'receiving-results-pane' }).exists(),
     ]);
+  },
+  searchByParameter({ parameter = 'Keyword', value } = {}) {
+    cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
+    cy.do(TextField({ id: 'input-record-search' }).fillIn(value));
+    cy.do(Button('Search').click());
+  },
+  filterOpenReceiving,
+  selectFromResultsList(instanceName) {
+    cy.do(Link(instanceName).click());
+    ReceivingDetails.waitLoading();
+
+    return ReceivingDetails;
+  },
+  expandActionsDropdown() {
+    cy.do(receivingResultsSection.find(actionsButton).click());
+  },
+  checkButtonsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(Button(label).has(conditions));
+    });
+  },
+  clickExportResultsToCsvButton() {
+    this.expandActionsDropdown();
+    cy.do(Button('Export results (CSV)').click());
+    ExportSettingsModal.verifyModalView();
+
+    return ExportSettingsModal;
+  },
+  exportResultsToCsv({ confirm = true } = {}) {
+    this.clickExportResultsToCsvButton();
+
+    if (confirm) {
+      ExportSettingsModal.clickExportButton();
+    }
   },
   receivePiece: (rowNumber, caption, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;

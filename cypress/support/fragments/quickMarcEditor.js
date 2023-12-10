@@ -32,7 +32,7 @@ const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const linkToMarcRecordButton = Button({ ariaLabel: 'link' });
 const unlinkIconButton = Button({ ariaLabel: 'unlink' });
-const viewAuthorutyIconButton = Button({ ariaLabel: 'eye-open' });
+const viewAuthorityIconButton = Button({ ariaLabel: 'eye-open' });
 const arrowUpButton = Button({ ariaLabel: 'arrow-up' });
 const saveAndCloseButton = Button({ id: 'quick-marc-record-save' });
 const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
@@ -254,6 +254,14 @@ const tag008DefaultValues = [
   { interactor: TextField('DtSt'), defaultValue: '\\' },
   { interactor: TextField('Start date'), defaultValue: '\\\\\\\\' },
   { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
+  { interactor: TextField('Ills', { name: including('Ills[0]') }), defaultValue: '\\' },
+  { interactor: TextField('Ills', { name: including('Ills[1]') }), defaultValue: '\\' },
+  { interactor: TextField('Ills', { name: including('Ills[2]') }), defaultValue: '\\' },
+  { interactor: TextField('Ills', { name: including('Ills[3]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[0]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[1]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[2]') }), defaultValue: '\\' },
+  { interactor: TextField('Cont', { name: including('Cont[3]') }), defaultValue: '\\' },
 ];
 
 const defaultFieldValues = {
@@ -799,7 +807,7 @@ export default {
     cy.expect([
       Callout(`Field ${tag} has been linked to a MARC authority record.`).exists(),
       QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists(),
-      QuickMarcEditorRow({ tagValue: tag }).find(viewAuthorutyIconButton).exists(),
+      QuickMarcEditorRow({ tagValue: tag }).find(viewAuthorityIconButton).exists(),
     ]);
   },
 
@@ -807,14 +815,14 @@ export default {
     cy.expect([
       Callout(`Field ${tag} has been linked to a MARC authority record.`).exists(),
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
-      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
     ]);
   },
 
   verifyUnlinkAndViewAuthorityButtons(rowIndex) {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
-      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
     ]);
   },
 
@@ -870,6 +878,36 @@ export default {
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ name: `records[${rowIndex}].content` }))
         .has({ value: content }),
+    ]);
+  },
+
+  verifyTagFieldNotLinked(rowIndex, tag, secondBox, thirdBox, content) {
+    cy.expect([
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextField({ name: `records[${rowIndex}].tag` }))
+        .has({ value: tag }),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextField({ name: `records[${rowIndex}].indicators[0]` }))
+        .has({ value: secondBox }),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextField({ name: `records[${rowIndex}].indicators[1]` }))
+        .has({ value: thirdBox }),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .has({ value: including(content) }),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` }))
+        .absent(),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` }))
+        .absent(),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` }))
+        .absent(),
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` }))
+        .absent(),
+      QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
     ]);
   },
 
@@ -1529,7 +1567,7 @@ export default {
     cy.expect([
       Callout(`Field ${tag} has been linked to a MARC authority record.`).exists(),
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
-      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).exists(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
     ]);
   },
 
@@ -1671,6 +1709,16 @@ export default {
     });
   },
 
+  updateValueOf008BoxByBoxName(boxName, updatedValue) {
+    cy.do(TextField(`${boxName}`).fillIn(updatedValue));
+  },
+
+  deleteValuesIn008Boxes() {
+    tag008DefaultValues.forEach((index) => {
+      cy.do(index.interactor.fillIn(''));
+    });
+  },
+
   checkValuesIn008Boxes(valuesArray) {
     valuesArray.forEach((value, index) => {
       cy.expect(tag008DefaultValues[index].interactor.has({ value }));
@@ -1735,7 +1783,7 @@ export default {
   verifyIconsAfterUnlinking(rowIndex) {
     cy.expect([
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
-      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorutyIconButton).absent(),
+      QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).absent(),
       QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
     ]);
   },

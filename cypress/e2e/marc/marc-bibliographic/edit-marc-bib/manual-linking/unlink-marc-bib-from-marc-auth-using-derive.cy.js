@@ -76,7 +76,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
       });
 
       cy.visit(TopMenu.inventoryPath).then(() => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         linkingTagAndValues.forEach((linking) => {
@@ -111,7 +111,7 @@ describe('Manual Unlinking Bib field from Authority 1XX', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBibRecord();
       QuickMarcEditor.verifyRemoveLinkingModal();

@@ -75,7 +75,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     () => {
       // #1-#2 Click on the "Source" accordion button, Check thе "MARC" checkbox.
       InventoryInstances.searchBySource(testData.authority.source);
-      InventoryInstance.searchByTitle(testData.authority.searchInput);
+      InventoryInstances.searchByTitle(testData.authority.searchInput);
       // #3 View an instance record, by clicking on any record at result pane.
       InventoryInstances.selectInstanceById(instanceId);
       // Detail view of the "Instance" record opened at third pane.

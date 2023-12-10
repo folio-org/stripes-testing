@@ -92,7 +92,7 @@ describe('Orders: Receiving and Check-in', () => {
     { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(

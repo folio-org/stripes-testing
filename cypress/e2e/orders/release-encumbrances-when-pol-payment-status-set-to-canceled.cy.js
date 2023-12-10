@@ -125,7 +125,7 @@ describe('Orders', () => {
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
       OrderLines.changePaymentStatus(ORDER_LINE_PAYMENT_STATUS.CANCELLED);

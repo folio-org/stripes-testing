@@ -113,6 +113,7 @@ describe('Orders: Inventory interaction', () => {
 
       // Select permanent location from Preconditions item #1
       SelectLocationModal.selectLocation(testData.location.institutionName);
+      SelectLocationModal.clickSaveButton();
 
       // Fill the following fields & click "Save"
       OrderLines.setPhysicalQuantity('1');

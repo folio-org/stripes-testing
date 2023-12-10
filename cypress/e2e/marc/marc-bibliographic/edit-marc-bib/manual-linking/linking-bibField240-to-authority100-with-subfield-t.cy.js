@@ -92,7 +92,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     'C369092 Link the "240" of "MARC Bib" field with "100" field with a "$t" of "MARC Authority" record. (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
 

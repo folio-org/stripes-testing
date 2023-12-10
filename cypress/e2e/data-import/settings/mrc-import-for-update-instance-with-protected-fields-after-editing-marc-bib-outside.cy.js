@@ -3,6 +3,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -170,11 +171,11 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 0);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 0);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
 
         // in cypress we can't delete fields in the file that's why using already created file
         // need to get instance hrid and uuids for 999 field for changing file
@@ -209,12 +210,12 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
-        FileDetails.openInstanceInInventory('Updated');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource(
           '650\t',

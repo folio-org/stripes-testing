@@ -155,6 +155,15 @@ export const ORDER_STATUSES = {
   CLOSED: 'Closed',
 };
 
+export const RECORD_STATUSES = {
+  CREATED: 'Created',
+  UPDATED: 'Updated',
+  NO_ACTION: 'No action',
+  DASH: 'No value set-',
+  BLANK: 'No value set',
+  ERROR: 'Error',
+};
+
 export const ORDER_TYPES = {
   ONE_TIME: 'One-Time',
   ONGOING: 'Ongoing',
@@ -349,4 +358,9 @@ export const CONDITION_AND_LIMIT_TYPES = {
   MAX_OVERDUE_RECALLS: 'Maximum number of overdue recalls',
   MAX_OUTSTANDING_FEE_FINE_BALANCE: 'Maximum outstanding fee/fine balance',
   MAX_NUMBER_OF_DAYS: 'Recall overdue by maximum number of days',
+};
+
+export const REFERENCES_FILTER_CHECKBOXES = {
+  EXCLUDE_SEE_FROM: 'Exclude see from',
+  EXCLUDE_SEE_FROM_ALSO: 'Exclude see from also',
 };
