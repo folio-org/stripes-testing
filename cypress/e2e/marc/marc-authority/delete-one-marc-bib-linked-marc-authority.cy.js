@@ -14,8 +14,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC -> MARC Authority', () => {
   const testData = {
-    marcValue:
-      'C350932 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+    marcValue: 'C350932 Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
     markedValue: 'C350932 Beethoven, Ludwig van,',
     searchOption: 'Keyword',
   };
@@ -78,7 +77,7 @@ describe('MARC -> MARC Authority', () => {
         })
         .then(() => {
           cy.visit(TopMenu.inventoryPath);
-          InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+          InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
@@ -124,7 +123,7 @@ describe('MARC -> MARC Authority', () => {
       MarcAuthoritiesDelete.verifyDeleteComplete(testData.marcValue);
 
       cy.visit(TopMenu.inventoryPath);
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(

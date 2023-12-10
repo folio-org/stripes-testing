@@ -97,7 +97,7 @@ describe('MARC -> MARC Bibliographic', () => {
       );
 
       cy.visit(TopMenu.inventoryPath);
-      InventoryInstance.searchByTitle(testData.instanceValue);
+      InventoryInstances.searchByTitle(testData.instanceValue);
       InventoryInstances.selectInstance();
 
       InventoryInstance.deriveNewMarcBibRecord();

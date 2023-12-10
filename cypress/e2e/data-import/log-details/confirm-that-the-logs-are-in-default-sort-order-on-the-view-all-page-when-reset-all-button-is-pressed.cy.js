@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
@@ -32,7 +32,7 @@ describe('Data Import', () => {
 
     it(
       'C357984 Confirm that the logs are in default sort order on the View all page when "Reset all" button is pressed (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const jobProfileColumn = 'Job profile';
         Logs.openViewAllLogs();

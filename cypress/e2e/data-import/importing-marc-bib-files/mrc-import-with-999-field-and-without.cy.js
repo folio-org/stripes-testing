@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -56,18 +56,18 @@ describe('data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1');
         FileDetails.checkItemsStatusesInResultList(1, [
-          FileDetails.status.created,
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
         ]);
         // check that "SRS MARC" and "Instance" were not created for record, that contain 999 ff field
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', 2);
         FileDetails.checkErrorQuantityInSummaryTable('1', 3);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.error,
+          RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
         FileDetails.verifyErrorMessage(error);

@@ -93,7 +93,7 @@ describe('orders: export', () => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
       OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);

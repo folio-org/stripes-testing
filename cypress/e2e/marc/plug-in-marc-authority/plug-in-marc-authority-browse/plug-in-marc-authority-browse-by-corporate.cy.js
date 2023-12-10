@@ -89,7 +89,7 @@ describe('MARC -> plug-in MARC authority | Browse', () => {
     'C380552 MARC Authority plug-in | Browse using "Corporate/Conference name" option returns only records with the same "Type of heading" (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       InventoryInstance.verifyAndClickLinkIcon('700');

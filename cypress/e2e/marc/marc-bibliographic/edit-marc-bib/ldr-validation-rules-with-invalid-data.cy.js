@@ -103,7 +103,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     'C357567 Verify "LDR" validation rules with invalid data for editable positions "05", "06", "07", "08", "18", "19" when editing record (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(testData.instanceID);
+      InventoryInstances.searchByTitle(testData.instanceID);
       InventoryInstances.selectInstance();
       InventoryInstance.waitInventoryLoading();
       InventoryInstance.editMarcBibliographicRecord();

@@ -86,7 +86,7 @@ describe('Search in Inventory', () => {
       // linking fields in MARC Bib records
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.waitContentLoading();
-        InventoryInstance.searchByTitle(createdRecordIDs[0]);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         // here and below - wait for detail view to be fully loaded
         cy.wait(1500);
@@ -103,7 +103,7 @@ describe('Search in Inventory', () => {
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag130);
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.checkAfterSaveAndClose();
-        InventoryInstance.searchByTitle(createdRecordIDs[1]);
+        InventoryInstances.searchByTitle(createdRecordIDs[1]);
         InventoryInstances.selectInstance();
         cy.wait(1500);
         InventoryInstance.editMarcBibliographicRecord();

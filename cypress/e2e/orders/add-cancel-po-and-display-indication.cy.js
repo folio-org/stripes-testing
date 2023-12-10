@@ -3,8 +3,6 @@ import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Invoices from '../../support/fragments/invoices/invoices';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Orders from '../../support/fragments/orders/orders';
@@ -15,7 +13,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
-describe('Orders: Export', () => {
+describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -27,10 +25,9 @@ describe('Orders: Export', () => {
     reEncumber: true,
   };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
   const allocatedQuantity = '100';
   let user;
-  let firstOrderNumber;
+  let orderNumber;
   let servicePointId;
   let location;
 
@@ -59,18 +56,18 @@ describe('Orders: Export', () => {
         location = res;
       });
     });
+
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
     });
     defaultOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
     Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
-      firstOrderNumber = firstOrderResponse.poNumber;
+      orderNumber = firstOrderResponse.poNumber;
       Orders.checkCreatedOrder(defaultOrder);
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         defaultFund,
         '40',
@@ -80,24 +77,18 @@ describe('Orders: Export', () => {
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(firstOrderNumber);
-      // Need to wait, while data will be loaded
-      cy.wait(4000);
-      Invoices.approveInvoice();
-      Invoices.payInvoice();
     });
-
-    cy.createTempUser([permissions.uiExportOrders.gui, permissions.uiOrdersView.gui]).then(
-      (userProperties) => {
-        user = userProperties;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.orderLinesPath,
-          waiter: OrderLines.waitLoading,
-        });
-      },
-    );
+    cy.createTempUser([
+      permissions.uiOrdersEdit.gui,
+      permissions.uiOrdersCancelOrderLines.gui,
+      permissions.uiOrdersCancelPurchaseOrders.gui,
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(userProperties.username, userProperties.password, {
+        path: TopMenu.ordersPath,
+        waiter: Orders.waitLoading,
+      });
+    });
   });
 
   after(() => {
@@ -106,18 +97,14 @@ describe('Orders: Export', () => {
   });
 
   it(
-    'C196751 Export orders based on orders lines search (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    'C353546: Add cancel PO action and display indication that PO is canceled (thunderjet)',
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      OrderLines.selectFilterVendorPOL(invoice);
-      Orders.exportResoultsCSV();
-      OrderLines.checkDownloadedFile();
-      OrderLines.resetFilters();
-      cy.reload();
-      OrderLines.selectFilterOngoingPaymentStatus();
-      Orders.exportResoultsCSV();
-      OrderLines.checkDownloadedFile();
-      OrderLines.deleteAllDownloadedFiles();
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.selectFromResultsList(orderNumber);
+      Orders.cancelOrder();
+      Orders.selectClosedStatusFilter();
+      Orders.checkSearchResults(orderNumber);
     },
   );
 });

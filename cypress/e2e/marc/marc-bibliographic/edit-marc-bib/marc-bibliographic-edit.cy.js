@@ -1,4 +1,5 @@
 import { Permissions } from '../../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
@@ -116,7 +117,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       Logs.getCreatedItemsID().then((link) => {
         createdInstanceID = link.split('/')[5];
       });
-      Logs.goToTitleLink('Created');
+      Logs.goToTitleLink(RECORD_STATUSES.CREATED);
     });
   });
 

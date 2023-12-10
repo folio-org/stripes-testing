@@ -96,7 +96,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstances.waitContentLoading();
-      InventoryInstance.searchByTitle(testData.createdRecordIDs[0]);
+      InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
