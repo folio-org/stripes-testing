@@ -1126,6 +1126,14 @@ export default {
     );
   },
 
+  openPageFundInInvoiceLine: (title) => {
+    cy.get('#invoiceLineFundDistribution')
+      .find('a')
+      .contains(title)
+      .invoke('removeAttr', 'target')
+      .click();
+  },
+
   checkAbsentFYOptionInInvoice: (fiscalYear) => {
     cy.do(Selection('Fiscal year*').open());
     cy.get('div[class*=selectionListRoot-]').then(($element) => {
