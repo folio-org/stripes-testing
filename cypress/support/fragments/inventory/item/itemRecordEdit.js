@@ -24,6 +24,7 @@ const adminDataFields = {
 
 const itemDataFields = {
   materialType: itemEditForm.find(Select({ id: 'additem_materialType' })),
+  copyNumber: itemEditForm.find(TextField({ name: 'copyNumber' })),
 };
 
 const loanDataFields = {
@@ -36,7 +37,6 @@ export default {
     cy.expect(cancelBtn.has({ disabled: false }));
     cy.expect(saveAndCloseBtn.has({ disabled: true }));
   },
-
   addBarcode: (barcode) => {
     cy.do(adminDataFields.barcode.fillIn(barcode));
     cy.expect(saveAndCloseBtn.has({ disabled: false }));
@@ -58,13 +58,17 @@ export default {
     }
   },
 
-  fillItemRecordFields({ barcode, materialType, loanType } = {}) {
+  fillItemRecordFields({ barcode, materialType, copyNumber, loanType } = {}) {
     if (barcode) {
       cy.do(adminDataFields.barcode.fillIn(barcode));
     }
 
     if (materialType) {
       cy.do(itemDataFields.materialType.choose(materialType));
+    }
+
+    if (copyNumber) {
+      cy.do(itemDataFields.copyNumber.fillIn(copyNumber));
     }
 
     if (loanType) {
