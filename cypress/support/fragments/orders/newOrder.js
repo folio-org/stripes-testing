@@ -34,6 +34,11 @@ const defaultOneTimeOrder = {
   vendor: '',
   orderType: 'One-Time',
 };
+const defaultOneTimeOrderAPI = {
+  id: uuid(),
+  vendor: '',
+  orderType: 'One-time',
+};
 const defaultOngoingTimeOrder = {
   id: uuid(),
   vendor: '',
@@ -46,6 +51,7 @@ const defaultOngoingTimeOrder = {
 
 export default {
   getDefaultOrder,
+  defaultOneTimeOrderAPI,
   getDefaultOngoingOrder,
   defaultOneTimeOrder,
   defaultOngoingTimeOrder,
