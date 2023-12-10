@@ -6,7 +6,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 
 let user;
-const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;\
+const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
