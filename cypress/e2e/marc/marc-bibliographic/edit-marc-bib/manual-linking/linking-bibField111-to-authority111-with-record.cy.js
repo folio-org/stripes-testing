@@ -13,7 +13,7 @@ import TopMenu from '../../../../../support/fragments/topMenu';
 import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 
-describe('Manual Linking Bib field to Authority 111', () => {
+describe('Manual Linking Bib field to Authority 1XX', () => {
   const testData = {
     tag111: '111',
     authorityMarkedValue: 'Mediterranean Conference on Medical and Biological Engineering',
