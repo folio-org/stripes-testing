@@ -39,6 +39,7 @@ const linksAndDocumentsSection = Section({ id: 'documents' });
 // voucher details
 const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
 const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
+const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
 
 export default {
   expandActionsDropdown() {
@@ -137,6 +138,7 @@ export default {
     invoiceLines,
     voucherExport = [],
     voucherInformation = [],
+    vendorDetailsInformation = [],
   } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
@@ -152,6 +154,10 @@ export default {
 
     voucherInformation.forEach(({ key, value }) => {
       cy.expect(voucherInformationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    vendorDetailsInformation.forEach(({ key, value }) => {
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     if (invoiceLines) {
