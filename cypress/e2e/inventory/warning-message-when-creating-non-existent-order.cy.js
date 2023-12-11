@@ -48,8 +48,7 @@ describe('Orders', () => {
         InventorySearchAndFilter.byKeywords(item.instanceName);
         InventoryInstance.checkInstanceTitle(item.instanceName);
 
-        const NewOrderModal = InventoryInstance.newOrder();
-        NewOrderModal.waitLoading();
+        const NewOrderModal = InventoryInstance.openCreateNewOrderModal();
 
         NewOrderModal.enterOrderNumber(wrongPO);
         NewOrderModal.verifyTextMessageExists(wrongMessage);

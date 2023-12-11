@@ -68,15 +68,14 @@ describe('Orders', () => {
         InventoryInstances.selectInstance();
 
         // Click Actions->New order
-        const NewOrderModal = InventoryInstance.newOrder();
-        NewOrderModal.waitLoading();
+        const NewOrderModal = InventoryInstance.openCreateNewOrderModal();
 
         // Click "Create" button
         NewOrderModal.clickCreateButton();
         OrderEditForm.waitLoading();
         OrderEditForm.checkButtonsConditions([
           { label: 'Cancel', conditions: { disabled: false } },
-          { label: 'Save & close', conditions: { disabled: true } },
+          { label: 'Add POL', conditions: { disabled: true } },
         ]);
 
         // Fill all required fields with valid values and click "Add POL" button
@@ -84,7 +83,7 @@ describe('Orders', () => {
           organizationName: testData.organization.name,
           orderType: 'One-time',
         });
-        OrderEditForm.clickSaveButton();
+        OrderEditForm.clickAddPolButton();
 
         // Click "Cancel" button
         OrderLineEditForm.waitLoading();
