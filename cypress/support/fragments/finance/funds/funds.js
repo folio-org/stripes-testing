@@ -617,6 +617,14 @@ export default {
     cy.expect(resetButton.is({ disabled: true }));
   },
 
+  closeFundDetails: () => {
+    cy.do(
+      Section({ id: 'pane-fund-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
   selectStatusInSearch: (fundStatus) => {
     cy.do(Accordion({ id: 'fundStatus' }).clickHeader());
     switch (fundStatus) {
