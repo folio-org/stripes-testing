@@ -95,7 +95,9 @@ export default {
 
   verifyExceptionMessage: () => cy.expect(
     exeptionModal.has({
-      message: 'This library cannot be deleted, as it is in use by one or more records.',
+      message: including(
+        'This library cannot be deleted, as it is in use by one or more records.',
+      ),
     }),
   ),
 
