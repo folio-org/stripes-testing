@@ -497,6 +497,10 @@ export default {
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
   // Receiving
+  uiReceivingView: {
+    internal: 'ui-receiving.view',
+    gui: 'Receiving: View',
+  },
   uiReceivingViewEditCreate: {
     internal: 'ui-receiving.create',
     gui: 'Receiving: View, edit, create',
@@ -504,6 +508,10 @@ export default {
   uiReceivingViewEditDelete: {
     internal: 'ui-receiving.delete',
     gui: 'Receiving: View, edit, delete',
+  },
+  uiReceivingExportSearchResults: {
+    internal: 'ui-receiving.exportCSV',
+    gui: 'Receiving: Export search results',
   },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
