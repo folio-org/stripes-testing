@@ -121,8 +121,8 @@ describe('MARC Authority -> Edit linked Authority record', () => {
       MarcAuthorities.closeMarcViewPane();
       MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
       MarcAuthorities.checkResultList([marcFiles[1].authorityHeading]);
-      MarcAuthorities.verifyNumberOfTitles(5, '1');
-      MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
+      MarcAuthorities.verifyNumberOfTitles(4, '1');
+      MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
       InventoryInstance.checkInstanceTitle(marcFiles[0].instanceTitle);
       InventoryInstance.verifyRecordAndMarcAuthIcon(
         testData.accordion,
@@ -130,7 +130,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
       );
       InventoryInstance.viewSource();
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t700\t1  \t$a C374157 Roberts, Julia, $d 1967- $e Actor. $0 id.loc.gov/authorities/names/n91074081',
+        'Linked to MARC authority\n\t700\t1  \t‡a C374157 Roberts, Julia, ‡d 1967- ‡e Actor. ‡0 id.loc.gov/authorities/names/n91074081',
       );
     },
   );

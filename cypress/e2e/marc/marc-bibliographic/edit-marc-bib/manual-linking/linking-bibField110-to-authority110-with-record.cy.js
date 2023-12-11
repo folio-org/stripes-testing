@@ -115,7 +115,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       InventoryInstance.selectRecord();
       MarcAuthorities.checkFieldAndContentExistence(
         testData.tag110,
-        `$a ${marcFiles[1].authorityHeading}`,
+        `${marcFiles[1].authorityHeading}`,
       );
       MarcAuthorities.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag110);
