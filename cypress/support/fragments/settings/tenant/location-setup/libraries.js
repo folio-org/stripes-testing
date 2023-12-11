@@ -10,7 +10,7 @@ import {
 } from '../../../../../../interactors';
 
 const deleteModal = Modal({ id: 'delete-controlled-vocab-entry-confirmation' });
-const exeptionModal = Modal('Cannot delete library');
+const exceptionModal = Modal('Cannot delete library');
 
 export default {
   ...TenantPane,
@@ -94,7 +94,7 @@ export default {
   },
 
   verifyExceptionMessage: () => cy.expect(
-    exeptionModal.has({
+    exceptionModal.has({
       message: including(
         'This library cannot be deleted, as it is in use by one or more records.',
       ),
@@ -102,7 +102,7 @@ export default {
   ),
 
   closeExceptionModal: () => {
-    cy.do(exeptionModal.find(Button('Okay')).click());
+    cy.do(exceptionModal.find(Button('Okay')).click());
   },
   checkLibraryAbsent: (record) => {
     cy.expect(MultiColumnListCell(record).absent());
