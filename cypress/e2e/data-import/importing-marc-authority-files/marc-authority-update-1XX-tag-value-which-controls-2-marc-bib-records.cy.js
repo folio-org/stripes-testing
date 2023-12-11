@@ -10,7 +10,6 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -21,12 +20,14 @@ import {
   JOB_STATUS_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 
 describe('data-import', () => {
   describe('Importing MARC Authority files', () => {
@@ -50,8 +51,6 @@ describe('data-import', () => {
     };
     const mappingProfile = {
       name: `C374167 Update MARC authority records by matching 999 ff $s subfield value ${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
-      update: true,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
@@ -72,8 +71,6 @@ describe('data-import', () => {
         in2: 'f',
         subfield: 's',
       },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -118,23 +115,17 @@ describe('data-import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: SettingsMenu.mappingProfilePath,
-        waiter: FieldMappingProfiles.waitLoading,
-      })
+      cy.loginAsAdmin()
         .then(() => {
+          // create Match profile
+          NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
+
           // create Field mapping profile
-          FieldMappingProfiles.createMappingProfileForUpdatesMarcAuthority(mappingProfile);
-          FieldMappingProfileView.closeViewMode(mappingProfile.name);
-          FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+          NewFieldMappingProfile.createMappingProfileViaApiMarc(mappingProfile);
 
           // create Action profile and link it to Field mapping profile
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(actionProfile, mappingProfile.name);
-
-          // create Match profile
-          cy.visit(SettingsMenu.matchProfilePath);
-          MatchProfiles.createMatchProfile(matchProfile);
 
           // create Job profile
           cy.visit(SettingsMenu.jobProfilePath);
@@ -167,7 +158,7 @@ describe('data-import', () => {
           cy.visit(TopMenu.inventoryPath);
           InventoryInstances.waitContentLoading();
           twoMarcBibsToLink.forEach((marcBib) => {
-            InventoryInstance.searchByTitle(marcBib.marcBibRecord);
+            InventoryInstances.searchByTitle(marcBib.marcBibRecord);
             cy.wait(1500);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
@@ -203,44 +194,20 @@ describe('data-import', () => {
       });
     });
 
-    function replace999SubfieldsInPreupdatedFile(
-      exportedFileName,
-      preUpdatedFileName,
-      finalFileName,
-    ) {
-      FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
-        const lines = actualContent.split('');
-        const field999data = lines[lines.length - 2];
-        FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`).then((updatedContent) => {
-          const content = updatedContent.split('\n');
-          let firstString = content[0].slice();
-          firstString = firstString.replace(
-            'ff000000000-0000-0000-0000-000000000000i00000000-0000-0000-0000-000000000000',
-            field999data,
-          );
-          content[0] = firstString;
-          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
-        });
-      });
-    }
-
     after('Delete test data', () => {
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
       cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
       FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(testData.userProperties.userId);
-
-      InventoryInstance.deleteInstanceViaApi(testData.createdAuthorityIDs[0]);
-      InventoryInstance.deleteInstanceViaApi(testData.createdAuthorityIDs[1]);
-      testData.createdAuthorityIDs.forEach((id, index) => {
-        if (index) MarcAuthority.deleteViaAPI(id);
-      });
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
+      Users.deleteViaApi(testData.user.userId);
+      InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+      InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[1]);
+      MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2]);
     });
 
     it(
@@ -265,7 +232,7 @@ describe('data-import', () => {
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         // change exported file
-        replace999SubfieldsInPreupdatedFile(
+        DataImport.replace999SubfieldsInPreupdatedFile(
           testData.exportedMarcFile,
           testData.marcFileForModify,
           testData.modifiedMarcFile,
@@ -278,22 +245,24 @@ describe('data-import', () => {
         Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
-        [
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.srsMarc,
+        );
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.authority,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
-        });
+        );
 
         cy.visit(TopMenu.marcAuthorities);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
-        MarcAuthorities.verifyNumberOfTitles(5, '');
+        MarcAuthorities.verifyEmptyNumberOfTitles();
         MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
         MarcAuthority.contains('110');
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(testData.createdRecordIDs[0]);
+        InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.checkInstanceTitle(twoMarcBibsToLink[0].marcBibRecord);
         InventoryInstance.editMarcBibliographicRecord();
@@ -301,7 +270,7 @@ describe('data-import', () => {
         QuickMarcEditor.verifyIconsAfterUnlinking(65);
         QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.updated700Field);
         QuickMarcEditor.closeEditorPane();
-        InventoryInstance.searchByTitle(testData.createdRecordIDs[1]);
+        InventoryInstances.searchByTitle(testData.createdRecordIDs[1]);
         InventoryInstances.selectInstance();
         InventoryInstance.checkInstanceTitle(twoMarcBibsToLink[1].marcBibRecord);
         InventoryInstance.viewSource();
