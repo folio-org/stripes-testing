@@ -1,6 +1,16 @@
 import uuid from 'uuid';
 import TenantPane, { getDefaultTenant } from '../baseTenantPane';
-import { EditableListRow, MultiColumnListCell, Link } from '../../../../../../interactors';
+import {
+  EditableListRow,
+  MultiColumnListCell,
+  Link,
+  Modal,
+  Button,
+  including,
+} from '../../../../../../interactors';
+
+const deleteModal = Modal({ id: 'delete-controlled-vocab-entry-confirmation' });
+const exeptionModal = Modal('Cannot delete library');
 
 export default {
   ...TenantPane,
@@ -61,5 +71,35 @@ export default {
         .find(Link())
         .click(),
     ]);
+  },
+
+  verifyDeleteModal(libraryName) {
+    cy.expect(deleteModal.exists());
+    cy.expect(
+      deleteModal.has({
+        content: including(`The library ${libraryName} will be deleted.`),
+      }),
+    );
+    cy.expect(deleteModal.find(Button('Delete')).exists());
+    cy.expect(deleteModal.find(Button('Cancel')).exists());
+  },
+
+  cancelDeleteModal: () => {
+    cy.do(deleteModal.find(Button('Cancel')).click());
+    cy.expect(deleteModal.absent());
+  },
+
+  deleteViaUi: (libraryName) => {
+    TenantPane.deleteViaUi({ record: libraryName, modalHeader: 'Delete library' });
+  },
+
+  verifyExceptionMessage: () => cy.expect(
+    exeptionModal.has({
+      message: 'This library cannot be deleted, as it is in use by one or more records.',
+    }),
+  ),
+
+  closeExeptionModal: () => {
+    cy.do(exeptionModal.find(Button('Okay')).click());
   },
 };

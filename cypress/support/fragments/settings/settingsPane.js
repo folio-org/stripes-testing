@@ -47,8 +47,14 @@ export default {
   clickEditBtn({ rowIndex } = {}) {
     clickActionBtn({ rowIndex, locator: { icon: 'edit' } });
   },
-  clickDeleteBtn({ rowIndex } = {}) {
-    clickActionBtn({ rowIndex, locator: { icon: 'trash' } });
+  clickDeleteBtn({ rowIndex, record } = {}) {
+    if (record) {
+      cy.then(() => rootPane.find(MultiColumnListCell(record)).row()).then((index) => {
+        clickActionBtn({ rowIndex: index, locator: { icon: 'trash' } });
+      });
+    } else {
+      clickActionBtn({ rowIndex, locator: { icon: 'trash' } });
+    }
   },
   checkValidatorError({ placeholder, error }) {
     cy.expect(rootPane.find(TextField({ placeholder })).has({ error }));
