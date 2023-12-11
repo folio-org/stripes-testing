@@ -68,6 +68,8 @@ describe('Invoices', () => {
   after('Delete test data', () => {
     cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
+    Invoices.deleteInvoiceViaApi(testData.invoices[0].id);
+    Invoices.deleteInvoiceViaApi(testData.invoices[1].id);
     Users.deleteViaApi(testData.user.userId);
   });
 
