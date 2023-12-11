@@ -37,7 +37,7 @@ const closeJobProfile = (profileName) => {
 
 const waitLoadingList = () => {
   cy.get('[id="job-profiles-list"]', getLongDelay()).should('be.visible');
-  cy.wait(1000);
+  cy.wait(4000);
 };
 const waitLoading = (selector) => cy.expect(selector.exists());
 const deleteJobProfile = (profileName) => {

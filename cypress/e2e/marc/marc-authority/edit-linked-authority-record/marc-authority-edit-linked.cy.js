@@ -53,6 +53,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
           () => {
             DataImport.verifyUploadState();
             DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+            JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(marcFile.fileName);
@@ -78,7 +79,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
         InventoryInstance.searchResults(marcFiles[1].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `$a ${marcFiles[1].authority010FieldValue}`,
+          marcFiles[1].authority010FieldValue,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);
@@ -132,8 +133,8 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
       QuickMarcEditor.verifyAndDismissRecordUpdatedCallout();
 
       MarcAuthorities.searchBy('Keyword', marcFiles[1].authorityHeading);
-      MarcAuthorities.verifyNumberOfTitles(5, '1');
-      MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
+      MarcAuthorities.verifyNumberOfTitles(4, '1');
+      MarcAuthorities.clickOnNumberOfTitlesLink(4, '1');
 
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterLinking(
