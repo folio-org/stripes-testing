@@ -7,7 +7,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 
-describe('vMARC -> plug-in MARC authority | Search', () => {
+describe('MARC -> plug-in MARC authority | Search', () => {
   const user = {};
   const searchValue = `name${getRandomPostfix()}`;
   before(() => {
