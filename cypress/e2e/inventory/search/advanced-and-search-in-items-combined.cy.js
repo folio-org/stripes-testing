@@ -130,11 +130,11 @@ describe('Inventory -> Advanced search', () => {
         'Starts with',
         'Item administrative notes',
       );
-      InventoryInstances.fillAdvSearchRow(1, barcodeBase, 'Contains any', 'Barcode', 'AND');
+      InventoryInstances.fillAdvSearchRow(1, barcodeBase, 'Contains all', 'Barcode', 'AND');
       InventoryInstances.checkAdvSearchModalItemValues(
         1,
         barcodeBase,
-        'Contains any',
+        'Contains all',
         'Barcode',
         'AND',
       );
