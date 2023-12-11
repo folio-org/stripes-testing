@@ -88,7 +88,22 @@ export default {
     ]);
   },
 
-  verifyFiltersState: (selectedFilterValue, searchValue) => {
+  verifyFiltersState: (selectedFilterValue, searchValue, toggle) => {
+    if (toggle === 'Search') {
+      cy.expect([
+        Button({ id: 'segment-navigation-search' }).has({ disabled: false, visible: true }),
+        Button({ id: 'segment-navigation-browse' }).has({ disabled: false }),
+      ]);
+    }
+    if (toggle === 'Browse') {
+      cy.expect([
+        Button({ id: 'segment-navigation-search' }).has({ disabled: false }),
+        Button({ id: 'segment-navigation-browse' }).has({ disabled: false, visible: true }),
+      ]);
+    }
+    cy.get('#textarea-authorities-search-qindex').then((elem) => {
+      expect(elem.text()).to.include('Personal name');
+    });
     cy.expect([
       Select({ id: 'textarea-authorities-search-qindex' }).has({ value: selectedFilterValue }),
       TextArea({ id: 'textarea-authorities-search' }).has({ value: searchValue }),

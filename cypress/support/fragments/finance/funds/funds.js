@@ -331,6 +331,14 @@ export default {
     cy.expect(transactionDetailSection.find(KeyValue('Expended')).has({ value: expended }));
   },
 
+  checkInitialEncumbranceDetails: (initialEncumbrance) => {
+    cy.expect(
+      transactionDetailSection
+        .find(KeyValue('Initial encumbrance'))
+        .has({ value: initialEncumbrance }),
+    );
+  },
+
   checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       transactionList
@@ -607,6 +615,14 @@ export default {
   resetFundFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
+  },
+
+  closeFundDetails: () => {
+    cy.do(
+      Section({ id: 'pane-fund-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
   },
 
   selectStatusInSearch: (fundStatus) => {

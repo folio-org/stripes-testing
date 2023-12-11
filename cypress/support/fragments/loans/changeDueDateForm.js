@@ -1,10 +1,12 @@
-import { HTML, including, matching } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
+
 import {
   Button,
   TextField,
   Modal,
   MultiColumnListCell,
   MultiColumnListRow,
+  matching,
 } from '../../../../interactors';
 
 const changeDueDateModal = Modal('Change due date');
@@ -39,16 +41,32 @@ export default {
       cy.do(Modal().find(Button('Close')).click());
     }
   },
+  clickCloseButton() {
+    cy.do([Modal().find(Button('Close')).click()]);
+  },
+  clickSaveAndCloseButton() {
+    cy.do([Modal().find(Button('Save and close')).click()]);
+  },
   verifyRequestsCount(contentValue) {
     cy.expect(MultiColumnListCell({ content: contentValue }).exists());
   },
-  verifyLoans(loansToCheck) {
-    loansToCheck.forEach((loan) => {
+  verifyLoans(loans) {
+    loans.forEach((loan) => {
       cy.expect(
-        changeDueDateModal
+        Modal()
           .find(MultiColumnListRow({ text: matching(loan.itemBarcode), isContainer: false }))
-          .find(MultiColumnListCell({ column: loan.column }))
-          .has({ content: including(loan.alertDetails) }),
+          .find(MultiColumnListCell({ column: 'Item status' }))
+          .has({ content: loan.status }),
+      );
+    });
+  },
+  verifyDueDateChangedAlerts(loans) {
+    loans.forEach((loan) => {
+      cy.expect(
+        Modal()
+          .find(MultiColumnListRow({ text: matching(loan.itemBarcode), isContainer: false }))
+          .find(MultiColumnListCell({ column: 'Alert details' }))
+          .has({ content: including(loan.alerts) }),
       );
     });
   },
