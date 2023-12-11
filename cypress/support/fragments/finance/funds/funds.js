@@ -331,6 +331,14 @@ export default {
     cy.expect(transactionDetailSection.find(KeyValue('Expended')).has({ value: expended }));
   },
 
+  checkInitialEncumbranceDetails: (initialEncumbrance) => {
+    cy.expect(
+      transactionDetailSection
+        .find(KeyValue('Initial encumbrance'))
+        .has({ value: initialEncumbrance }),
+    );
+  },
+
   checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       transactionList
