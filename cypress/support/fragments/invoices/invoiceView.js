@@ -252,4 +252,25 @@ export default {
         .click(),
     );
   },
+  verifyInvoicesList() {
+    cy.expect(MultiColumnList({ id: 'invoices-list' }).exists());
+  },
+  verifyInvoicesListIncludeLinkExists(linkName) {
+    cy.expect(
+      MultiColumnList({ id: 'invoices-list' })
+        .find(MultiColumnListCell({ content: linkName }))
+        .find(Link())
+        .exists(),
+    );
+  },
+  selectInvoiceLineByName(linkName) {
+    cy.do(
+      MultiColumnList({ id: 'invoices-list' })
+        .find(MultiColumnListCell({ content: linkName }))
+        .find(Link())
+        .click(),
+    );
+
+    return InvoiceLineDetails;
+  },
 };
