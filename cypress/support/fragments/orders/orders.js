@@ -190,6 +190,14 @@ export default {
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
+  reOpenOrder: (orderNumber) => {
+    expandActionsDropdown();
+    cy.do(Button('Reopen').click());
+    InteractorsTools.checkCalloutMessage(
+      `The Purchase order - ${orderNumber} has been successfully reopened`,
+    );
+  },
+
   cancelOrder: () => {
     expandActionsDropdown();
     cy.do([Button('Cancel').click(), submitButton.click()]);
