@@ -19,9 +19,10 @@ const orderEditFormRoot = Section({ id: 'pane-poForm' });
 const orderInfoSection = orderEditFormRoot.find(Section({ id: 'purchaseOrder' }));
 const orderSummarySection = orderEditFormRoot.find(Section({ id: 'poSummary' }));
 
-const collapseAllButton = Button('Collapse all');
-const cancelButton = Button('Cancel');
-const saveButton = Button({ id: 'clickable-create-new-purchase-order' });
+const collapseAllButton = orderEditFormRoot.find(Button('Collapse all'));
+const cancelButton = orderEditFormRoot.find(Button('Cancel'));
+const saveAndCloseButton = orderEditFormRoot.find(Button('Save & close'));
+const addPoLineButton = orderEditFormRoot.find(Button('Add POL'));
 
 const infoSectionFields = {
   poNumberPrefix: orderInfoSection.find(Select({ name: 'poNumberPrefix' })),
@@ -43,7 +44,8 @@ const sections = {
 
 const buttons = {
   Cancel: cancelButton,
-  'Save & close': saveButton,
+  'Save & close': saveAndCloseButton,
+  'Add POL': addPoLineButton,
 };
 
 export default {
@@ -86,6 +88,9 @@ export default {
       cy.expect(infoSectionFields.orderType.has({ error: 'Required!' }));
     }
   },
+  getOrderNumber() {
+    return cy.then(() => infoSectionFields.poNumber.value());
+  },
   fillOrderFields({ orderInfo }) {
     if (orderInfo) {
       this.fillOrderInfoSectionFields(orderInfo);
@@ -122,9 +127,15 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(orderEditFormRoot.absent());
   },
+  clickAddPolButton({ orderSaved = true } = {}) {
+    this.clickCreateOrder({ button: addPoLineButton, orderSaved });
+  },
   clickSaveButton({ orderSaved = true } = {}) {
-    cy.expect(saveButton.has({ disabled: false }));
-    cy.do(saveButton.click());
+    this.clickCreateOrder({ button: saveAndCloseButton, orderSaved });
+  },
+  clickCreateOrder({ button, orderSaved }) {
+    cy.expect(button.has({ disabled: false }));
+    cy.do(button.click());
 
     if (orderSaved) {
       InteractorsTools.checkCalloutMessage(
