@@ -1,3 +1,4 @@
+import { Keyboard } from '@interactors/keyboard';
 import {
   Accordion,
   AdvancedSearchRow,
@@ -155,6 +156,10 @@ export default {
         ),
       ).exists(),
     );
+  },
+
+  checkCallout: (text) => {
+    cy.expect(Callout(including(text)).exists());
   },
 
   checkResultsExistance: (type) => {
@@ -398,6 +403,19 @@ export default {
       // need to wait until filter will be applied
       cy.wait(1000);
     });
+  },
+
+  enterTypeOfHeading: (headingType) => {
+    cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(headingTypeAccordion.clickHeader());
+      }
+    });
+    cy.do([
+      typeOfHeadingSelect.focus(),
+      Keyboard.type(headingType),
+      Keyboard.press({ code: 'Enter' }),
+    ]);
   },
 
   clickAccordionAndCheckResultList(accordion, record) {
@@ -960,6 +978,12 @@ export default {
     ]);
   },
 
+  verifyAllCheckboxesAreUnchecked() {
+    cy.get(checkBoxAllRecords).each((checkbox) => {
+      cy.expect(!checkbox.checked);
+    });
+  },
+
   verifyValueDoesntExistInColumn(column, value) {
     const actualValues = [];
     cy.then(() => authoritiesList.rowCount())
@@ -991,5 +1015,17 @@ export default {
         }
       }
     });
+  },
+
+  verifySelectedTypeOfHeading(option, isExist = true) {
+    if (isExist) {
+      cy.expect(typeOfHeadingSelect.has({ selected: including(option) }));
+    } else {
+      cy.expect(typeOfHeadingSelect.has({ selected: not(including(option)) }));
+    }
+  },
+
+  verifySelectedTypeOfHeadingCount(selectedCount) {
+    cy.expect(typeOfHeadingSelect.has({ selectedCount }));
   },
 };

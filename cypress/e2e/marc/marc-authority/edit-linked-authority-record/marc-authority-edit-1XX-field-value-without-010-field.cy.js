@@ -11,7 +11,6 @@ import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import { JOB_STATUS_NAMES } from '../../../../support/constants';
-import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import InventoryKeyboardShortcuts from '../../../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import InventoryHotkeys from '../../../../support/fragments/inventory/inventoryHotkeys';
 import InventoryViewSource from '../../../../support/fragments/inventory/inventoryViewSource';
@@ -86,7 +85,6 @@ describe('MARC Authority -> Edit linked Authority record', () => {
         MarcAuthorities.switchToSearch();
         InventoryInstance.verifySelectMarcAuthorityModal();
         InventoryInstance.searchResults(linkingTagAndValue.value);
-        MarcAuthoritiesSearch.selectAuthorityByIndex(0);
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingUsingRowIndex(
           linkingTagAndValue.tag,
