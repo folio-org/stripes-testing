@@ -65,6 +65,9 @@ export default {
   startBulkEditAbsent() {
     cy.expect(startBulkEditButton.absent());
   },
+  startBulkEditLocalAbsent() {
+    cy.expect(startBulkEditLocalButton.absent());
+  },
   closeBulkEditInAppForm() {
     cy.do(cancelBtn.click());
     cy.wait(1000);

@@ -592,6 +592,10 @@ export default {
     });
   },
 
+  errorsAccordionIsAbsent() {
+    cy.expect(errorsAccordion.absent());
+  },
+
   matchedAccordionIsAbsent() {
     cy.expect(resultsAccordion.absent());
   },
