@@ -101,7 +101,10 @@ export default {
     }),
   ),
 
-  closeExeptionModal: () => {
+  closeExceptionModal: () => {
     cy.do(exeptionModal.find(Button('Okay')).click());
+  },
+  checkLibraryAbsent: (record) => {
+    cy.expect(MultiColumnListCell(record).absent());
   },
 };

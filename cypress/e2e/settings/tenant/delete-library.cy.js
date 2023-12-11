@@ -108,23 +108,21 @@ describe('Settings: Tenant', () => {
     // #2 Select Campus from Preconditions item #2 in "Campus" dropdown
     Libraries.selectOption('Campus', testData.campuses[0]);
     Libraries.checkResultsTableContent([testData.libraries[0], testData.libraries[1]]);
+
     // #3 Click "Delete" icon for **"Library A"** record
-    Libraries.clickDeleteBtn({ name: testData.libraries[0].name });
-    // "Delete library" modal window is displayed and contains the following elements:
-    // * "The library **"Library A"** will be deleted." text
-    // * "Cancel" button (active)
-    // * "Delete" button (active)
+    Libraries.clickDeleteBtn({ record: testData.libraries[0].name });
     Libraries.verifyDeleteModal(testData.libraries[0].name);
+
     // #4 Click "Cancel" button
     Libraries.cancelDeleteModal();
     Libraries.checkResultsTableContent([testData.libraries[0], testData.libraries[1]]);
 
-    // #5 Click "Delete" icon for **"Library A"** record one more time
+    // #5 - #6 Click "Delete" icon for **"Library A"** record one more time -> Click "Delete" button
     Libraries.deleteViaUi(testData.libraries[0].name);
-    // #6 Click "Delete" button
     Libraries.verifyExceptionMessage();
+
     // #7 Click "Okay" button
-    Libraries.closeExeptionModal();
+    Libraries.closeExceptionModal();
 
     // #8 - #9 Click "Delete" icon for **"Library B"** record -> Click "Delete" button
     Libraries.deleteViaUi(testData.libraries[1].name);
@@ -134,5 +132,7 @@ describe('Settings: Tenant', () => {
       `The library ${testData.libraries[1].name} was successfully deleted`,
     );
     // * **"Library B"** record was deleted and NOT displaying in "Libraries" table
+    Libraries.checkLibraryAbsent(testData.libraries[1].name);
+    testData.libraries.pop();
   });
 });
