@@ -11,13 +11,9 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventorySteps from '../../../../support/fragments/inventory/inventorySteps';
 import DateTools from '../../../../support/utils/dateTools';
 
-describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
+describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
   const testData = {
     createdRecordIDs: [],
-    tag245: '245',
-    tag245content:
-      '$aWicked :$bthe life and times of the wicked witch of the West : a novel /$cGregory Maguire ; illustrations by Douglas Smith. TEST',
-    tag245RowIndex: 12,
     tag008: '008',
     tag008RowIndex: 3,
     tag00: '00',
@@ -41,14 +37,13 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       'Srce',
     ],
     tag008BoxValues: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-    calloutMessage:
-      'This record has successfully saved and is in process. Changes may not appear immediately.',
+    calloutMessage: 'Creating record may take several seconds.',
     errorCalloutMessage: 'Record cannot be saved without 008 field',
     initial008EnteredValue: DateTools.getCurrentDateYYMMDD(),
   };
   const marcFile = {
-    marc: 'marcBibFileForC387451.mrc',
-    fileName: `testMarcFile${getRandomPostfix()}.mrc`,
+    marc: 'marcBibFileForC387452.mrc',
+    fileName: `C387452 testMarcFile${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     numOfRecords: 1,
   };
@@ -57,6 +52,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
       Permissions.moduleDataImportEnabled.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
@@ -92,20 +88,23 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
   });
 
   it(
-    'C387451 "008" field existence validation when edit imported "MARC bib" (spitfire) (TaaS)',
+    'C387452 "008" field existence validation when derive imported "MARC bib" (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstances.waitContentLoading();
-      InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+      InventoryInstance.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();
-      InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
-      QuickMarcEditor.updateExistingFieldContent(testData.tag245RowIndex, testData.tag245content);
-      QuickMarcEditor.checkButtonsEnabled();
+      InventoryInstance.deriveNewMarcBib();
+      QuickMarcEditor.checkFieldAbsense(testData.tag008);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
+      QuickMarcEditor.pressCancel();
+      InventoryInstance.waitInventoryLoading();
+
+      InventoryInstance.deriveNewMarcBibRecord();
+      QuickMarcEditor.waitLoading();
+      QuickMarcEditor.checkFieldAbsense(testData.tag008);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
       QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
-      QuickMarcEditor.closeCallout();
-      QuickMarcEditor.clickSaveAndKeepEditingButton();
       QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
       QuickMarcEditor.closeCallout();
       QuickMarcEditor.addNewField(testData.tag008, '', testData.tag008RowIndex);
@@ -115,18 +114,18 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       QuickMarcEditor.checkContent('', 4);
       QuickMarcEditor.checkDeleteButtonExist(4);
       QuickMarcEditor.updateExistingTagValue(4, testData.tag008);
-      QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
-      QuickMarcEditor.checkEditableQuickMarcFormIsOpened();
-      QuickMarcEditor.check008FieldContent();
-      QuickMarcEditor.updateValuesIn008Boxes(testData.tag008BoxValues);
       QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkAfterSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndCloseDerive();
       InventoryInstance.editMarcBibliographicRecord();
-      InventorySteps.verifyHiddenFieldValueIn008(
-        testData.createdRecordIDs[0],
-        'Entered',
-        testData.initial008EnteredValue,
-      );
+      QuickMarcEditor.checkSubfieldsPresenceInTag008();
+      QuickMarcEditor.saveInstanceIdToArrayInQuickMarc(testData.createdRecordIDs).then(() => {
+        cy.getAdminToken();
+        InventorySteps.verifyHiddenFieldValueIn008(
+          testData.createdRecordIDs[1],
+          'Entered',
+          DateTools.getCurrentDateYYMMDD(),
+        );
+      });
     },
   );
 });
