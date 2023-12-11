@@ -651,8 +651,8 @@ export default {
       marcViewPane.exists(),
       marcViewPane.find(buttonLink).exists(),
       marcViewPane.has({ mark: markedValue }),
-      marcViewPane.find(HTML({ text: including('$') })).exists(),
-      marcViewPane.find(HTML({ text: including('‡') })).absent(),
+      marcViewPane.find(HTML({ text: including('‡') })).exists(),
+      marcViewPane.find(HTML({ text: including('$') })).absent(),
     ]);
   },
 
