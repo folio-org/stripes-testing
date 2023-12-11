@@ -81,27 +81,18 @@ describe('Invoices', () => {
     () => {
       Invoices.selectStatusFilter(INVOICE_STATUSES.OPEN);
       InvoiceView.verifyInvoicesList();
-      InvoiceView.verifyInvoicesListIncludeLinkExists(testData.invoices[0].vendorInvoiceNo);
-      InvoiceView.verifyInvoicesListIncludeLinkExists(testData.invoices[1].vendorInvoiceNo);
+      [...Array(invoicesCount).keys()].forEach((index) => {
+        InvoiceView.verifyInvoicesListIncludeLinkExists(testData.invoices[index].vendorInvoiceNo);
 
-      InvoiceView.selectInvoiceLineByName(testData.invoices[0].vendorInvoiceNo);
-      InvoiceView.checkInvoiceDetails({
-        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
-        vendorDetailsInformation: [
-          { key: 'Vendor invoice number', value: testData.invoices[0].vendorInvoiceNo },
-          { key: 'Vendor name', value: testData.organization.name },
-          { key: 'Accounting code', value: testData.organization.erpCode },
-        ],
-      });
-
-      InvoiceView.selectInvoiceLineByName(testData.invoices[1].vendorInvoiceNo);
-      InvoiceView.checkInvoiceDetails({
-        invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
-        vendorDetailsInformation: [
-          { key: 'Vendor invoice number', value: testData.invoices[1].vendorInvoiceNo },
-          { key: 'Vendor name', value: testData.organization.name },
-          { key: 'Accounting code', value: testData.organization.erpCode },
-        ],
+        InvoiceView.selectInvoiceLineByName(testData.invoices[index].vendorInvoiceNo);
+        InvoiceView.checkInvoiceDetails({
+          invoiceInformation: [{ key: 'Status', value: INVOICE_STATUSES.OPEN }],
+          vendorDetailsInformation: [
+            { key: 'Vendor invoice number', value: testData.invoices[index].vendorInvoiceNo },
+            { key: 'Vendor name', value: testData.organization.name },
+            { key: 'Accounting code', value: testData.organization.erpCode },
+          ],
+        });
       });
     },
   );
