@@ -124,17 +124,11 @@ export default {
 
   verifyMetadataObjectIsVisible: (creator = 'Unknown user') => {
     cy.expect([
-      patronNoticeTemplatePaneContent.find(Accordion({ label: 'General information' })).exists(),
-      patronNoticeTemplatePaneContent
-        .find(Button('General information'))
-        .has({ ariaExpanded: 'true' }),
+      Accordion({ label: 'General information' }).exists(),
+      Button('General information').has({ ariaExpanded: 'true' }),
     ]);
-    cy.do(patronNoticeTemplatePaneContent.find(Button(including('Record last updated'))).click());
-    cy.expect(
-      patronNoticeTemplatePaneContent
-        .find(MetaSection({ updatedByText: including(creator) }))
-        .exists(),
-    );
+    cy.do(Button(including('Record last updated')).click());
+    cy.expect(MetaSection({ updatedByText: including(creator) }).exists());
   },
 
   verifyGeneralInformationForDuplicate: (template) => {
