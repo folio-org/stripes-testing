@@ -64,7 +64,7 @@ describe('Circulation log', () => {
           secondUser.userId = userData.id;
           Requests.createNewRequestViaApi({
             fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-            holdingsRecordId: SECOND_ITEM.holdingId,
+            holdingsRecordId: SECOND_ITEM.holdings[0].id,
             instanceId: SECOND_ITEM.instanceId,
             item: { barcode: testData.itemBarcode },
             itemId: SECOND_ITEM.itemIds[0],

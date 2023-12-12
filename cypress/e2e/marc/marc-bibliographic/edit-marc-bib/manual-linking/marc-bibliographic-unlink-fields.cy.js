@@ -120,7 +120,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     'C365598 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in editing window. (spitfire) (TaaS)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[2]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[2]);
       InventoryInstances.selectInstance();
       // unstable without this waiter
       cy.wait(1000);

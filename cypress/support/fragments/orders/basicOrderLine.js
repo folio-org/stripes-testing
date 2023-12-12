@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
-import NewMaterialType from '../settings/inventory/newMaterialType';
+import MaterialTypes from '../settings/inventory/materialTypes';
 
 export const RECEIVING_WORKFLOWS = {
   SYNCHRONIZED: 'Synchronized order and receipt quantity',
@@ -19,6 +19,8 @@ const getDefaultOrderLine = ({
   purchaseOrderId,
   specialLocationId,
   specialMaterialTypeId,
+  orderFormat,
+  createInventory = 'Instance, Holding, Item',
   acquisitionMethod = '',
   automaticExport = false,
   listUnitPrice = 1,
@@ -28,6 +30,8 @@ const getDefaultOrderLine = ({
   vendorDetail,
   referenceNumbers = [],
   vendorAccount = '1234',
+  paymentStatus = 'Pending',
+  receiptStatus = 'Pending',
 } = {}) => {
   const defaultOrderLine = {
     id: uuid(),
@@ -60,11 +64,11 @@ const getDefaultOrderLine = ({
         },
       ]
       : [],
-    orderFormat: specialLocationId ? 'Physical Resource' : 'Other',
-    paymentStatus: 'Pending',
+    orderFormat: orderFormat || specialLocationId ? 'Physical Resource' : 'Other',
+    paymentStatus,
     physical: specialLocationId
       ? {
-        createInventory: 'Instance, Holding, Item',
+        createInventory,
         materialType: specialMaterialTypeId,
         materialSupplier: null,
         volumes: [],
@@ -80,7 +84,7 @@ const getDefaultOrderLine = ({
       accessProvider: null,
     },
     purchaseOrderId,
-    receiptStatus: 'Pending',
+    receiptStatus,
     reportingCodes: [],
     source: 'User',
     titleOrPackage: title,
@@ -91,9 +95,11 @@ const getDefaultOrderLine = ({
     },
   };
   if (specialLocationId && !specialMaterialTypeId) {
-    NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType()).then((mtypes) => {
-      defaultOrderLine.physical.materialType = mtypes.body.id;
-    });
+    MaterialTypes.createMaterialTypeViaApi(MaterialTypes.getDefaultMaterialType()).then(
+      (mtypes) => {
+        defaultOrderLine.physical.materialType = mtypes.body.id;
+      },
+    );
   }
   return defaultOrderLine;
 };

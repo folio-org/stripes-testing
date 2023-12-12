@@ -18,7 +18,7 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import DateTools from '../../support/utils/dateTools';
 
 const folioInstances = InventoryInstances.generateFolioInstances({
-  properties: { missingPieces: '3', numberOfMissingPieces: '3' },
+  itemsProperties: { missingPieces: '3', numberOfMissingPieces: '3' },
 });
 
 let checkOutUser;

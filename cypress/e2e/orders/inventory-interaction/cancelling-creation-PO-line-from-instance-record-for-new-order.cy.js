@@ -5,6 +5,7 @@ import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import OrderEditForm from '../../../support/fragments/orders/orderEditForm';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import { NewOrder, Orders } from '../../../support/fragments/orders';
@@ -16,7 +17,7 @@ import AreYouSureModal from '../../../support/fragments/orders/modals/areYouSure
 describe('Orders', () => {
   describe('Inventory interactions', () => {
     const instance = {
-      instanceName: `C353993_${getRandomPostfix()}`,
+      instanceName: `C353996_${getRandomPostfix()}`,
       itemBarcode: getRandomPostfix(),
     };
     let userData;
@@ -59,7 +60,7 @@ describe('Orders', () => {
     });
 
     it(
-      'C353993 Cancelling creation PO line from instance record for existing order (thunderjet) (TaaS)',
+      'C353996 Cancelling creation PO line from instance record for new order (thunderjet) (TaaS)',
       { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Navigate to the instance from preconditions
@@ -67,19 +68,35 @@ describe('Orders', () => {
         InventoryInstances.selectInstance();
 
         // Click Actions->New order
-        const NewOrderModal = InventoryInstance.newOrder();
-        NewOrderModal.waitLoading();
+        const NewOrderModal = InventoryInstance.openCreateNewOrderModal();
 
-        // Enter order number from preconditions into "PO number" field and click "Create" button
-        NewOrderModal.enterOrderNumber(testData.order.poNumber);
+        // Click "Create" button
         NewOrderModal.clickCreateButton();
-        OrderLineEditForm.waitLoading();
+        OrderEditForm.waitLoading();
+        OrderEditForm.checkButtonsConditions([
+          { label: 'Cancel', conditions: { disabled: false } },
+          { label: 'Add POL', conditions: { disabled: true } },
+        ]);
+
+        // Fill all required fields with valid values and click "Add POL" button
+        OrderEditForm.fillOrderInfoSectionFields({
+          organizationName: testData.organization.name,
+          orderType: 'One-time',
+        });
+        OrderEditForm.clickAddPolButton();
 
         // Click "Cancel" button
+        OrderLineEditForm.waitLoading();
         OrderLineEditForm.clickCancelButton(true);
-        AreYouSureModal.verifyAreYouSureForm(true);
+        OrderLineEditForm.checkNotAvailableInstanceData([
+          { label: 'Title', conditions: { disabled: true } },
+          { label: 'Publication date', conditions: { disabled: true } },
+          { label: 'Publisher', conditions: { disabled: true } },
+          { label: 'Edition', conditions: { disabled: true } },
+        ]);
 
         // Click "Close without saving" button
+        AreYouSureModal.verifyAreYouSureForm(true);
         AreYouSureModal.clickCloseWithoutSavingButton();
         AreYouSureModal.verifyAreYouSureForm(false);
 

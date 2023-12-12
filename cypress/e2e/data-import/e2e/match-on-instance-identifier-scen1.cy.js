@@ -4,12 +4,12 @@ import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -120,7 +120,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
-        Logs.clickOnHotLink(0, 3, 'Created');
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[0].type,
           resourceIdentifiers[0].value,
@@ -132,7 +132,7 @@ describe('data-import', () => {
           4,
         );
         cy.go('back');
-        Logs.clickOnHotLink(1, 3, 'Created');
+        Logs.clickOnHotLink(1, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[2].type,
           resourceIdentifiers[2].value,
@@ -183,9 +183,9 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
-        Logs.verifyInstanceStatus(0, 3, 'Updated');
-        Logs.verifyInstanceStatus(1, 3, FileDetails.status.noAction);
-        Logs.clickOnHotLink(0, 3, 'Updated');
+        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
+        Logs.verifyInstanceStatus(1, 3, RECORD_STATUSES.NO_ACTION);
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);

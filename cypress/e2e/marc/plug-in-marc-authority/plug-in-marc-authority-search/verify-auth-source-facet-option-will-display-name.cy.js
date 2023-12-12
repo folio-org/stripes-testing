@@ -99,7 +99,7 @@ describe('MARC -> plug-in MARC authority | Search', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventoryInstance.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag);

@@ -11,7 +11,6 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
-import NewMaterialType from '../../../support/fragments/settings/inventory/newMaterialType';
 
 describe('inventory', () => {
   const itemData = {
@@ -48,8 +47,8 @@ describe('inventory', () => {
           itemData.loanTypeId = res[0].id;
         });
         [...Array(3)].forEach((_, index) => {
-          const materialType = NewMaterialType.getDefaultMaterialType();
-          NewMaterialType.createViaApi(materialType);
+          const materialType = MaterialTypes.getDefaultMaterialType();
+          MaterialTypes.createMaterialTypeViaApi(materialType);
           itemData.materialTypes[index].materialType = materialType;
         });
       })

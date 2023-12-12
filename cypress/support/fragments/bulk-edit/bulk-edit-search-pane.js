@@ -82,7 +82,10 @@ export default {
     cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
     cy.expect(HTML(including('Retrieving...')));
   },
-
+  progresBarIsAbsent() {
+    cy.expect(HTML(including('Uploading ... and retrieving relevant data')).absent());
+    cy.expect(HTML(including('Retrieving...')).absent());
+  },
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -592,6 +595,10 @@ export default {
     });
   },
 
+  errorsAccordionIsAbsent() {
+    cy.expect(errorsAccordion.absent());
+  },
+
   matchedAccordionIsAbsent() {
     cy.expect(resultsAccordion.absent());
   },
@@ -737,6 +744,11 @@ export default {
         .find(Checkbox({ disabled: false }))
         .absent(),
     );
+  },
+  verifyCheckboxesAbsent(...checkboxes) {
+    checkboxes.forEach((checkbox) => {
+      cy.expect(Checkbox(checkbox).absent());
+    });
   },
   verifyHoldingActionShowColumns() {
     cy.expect([
