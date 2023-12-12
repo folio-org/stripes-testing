@@ -3,9 +3,21 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import FileManager from '../../../../support/utils/fileManager';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import Checkout from '../../../../support/fragments/checkout/checkout';
+import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 
 let user;
-const barcodesFileName = 'fileForC367996.csv';
+let servicePointId;
+const item = {
+  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  barcode: getRandomPostfix(),
+};
+const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
   before('create user', () => {
@@ -22,11 +34,33 @@ describe('bulk-edit', () => {
         path: TopMenu.bulkEditPath,
         waiter: BulkEditSearchPane.waitLoading,
       });
+      InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+        .then((servicePoints) => {
+          servicePointId = servicePoints[0].id;
+        })
+        .then(() => {
+          UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+          Checkout.checkoutItemViaApi({
+            itemBarcode: item.barcode,
+            servicePointId,
+            userBarcode: user.barcode,
+          });
+          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
+        });
     });
   });
 
   after('delete test data', () => {
+    FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
+
     cy.getAdminToken();
+    CheckInActions.checkinItemViaApi({
+      itemBarcode: item.barcode,
+      servicePointId,
+      checkInDate: new Date().toISOString(),
+    });
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     Users.deleteViaApi(user.userId);
   });
 
@@ -42,7 +76,7 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-      BulkEditSearchPane.uploadFile(barcodesFileName);
+      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
