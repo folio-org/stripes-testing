@@ -75,7 +75,7 @@ describe('ui-invoices: test POL search plugin', () => {
 
   it(
     'C350389 Test purchase order line plugin search (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'system'] },
     () => {
       Invoices.getSearchParamsMap(createdOrderNumber, orderLine);
       Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);

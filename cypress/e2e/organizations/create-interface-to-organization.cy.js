@@ -34,7 +34,7 @@ describe('Organizations', () => {
 
   it(
     'C3467 Create an interface and Assign to an Organization record (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'system'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

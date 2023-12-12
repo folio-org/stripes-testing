@@ -14,7 +14,7 @@ describe('ui-circulation-settings: create patron notice template', () => {
     });
   });
 
-  it('C199656 Create notice template (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C199656 Create notice template (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.checkInitialState();
     NewNoticePolicyTemplate.addToken('item.title');

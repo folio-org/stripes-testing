@@ -149,7 +149,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375281 Verify generated Logs files for Items In app -- valid and invalid records (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'system'] },
     () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item HRIDs');

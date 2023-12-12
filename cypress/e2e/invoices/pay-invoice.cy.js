@@ -87,7 +87,7 @@ describe('ui-invoices: Approve invoice', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C3453 Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+  it('C3453 Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet', 'system'] }, () => {
     const transactionFactory = new Transaction();
     const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
     Invoices.searchByNumber(invoice.invoiceNumber);

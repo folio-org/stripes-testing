@@ -16,7 +16,6 @@ describe('Create holding records with MARC source', () => {
   const testData = {
     tagLDR: 'LDR',
     tag852: '852',
-    existingLocation: QuickMarcEditor.getExistingLocation(),
     LDRValues: {
       validLDR05Values: randomizeArray(['c', 'd', 'n', 'c', 'd', 'n', 'c', 'd', 'n']),
       validLDR06Values: randomizeArray(['u', 'v', 'x', 'y', 'u', 'v', 'x', 'y']),
@@ -78,26 +77,28 @@ describe('Create holding records with MARC source', () => {
     () => {
       InventoryInstance.searchByTitle(instanceID);
       InventoryInstances.selectInstance();
-      for (let i = 0; i < testData.LDRValues.validLDR17Values.length; i++) {
-        InventoryInstance.goToMarcHoldingRecordAdding();
-        QuickMarcEditor.updateExistingField(testData.tag852, testData.existingLocation);
-        QuickMarcEditor.checkContent(testData.existingLocation, 5);
-        QuickMarcEditor.getRegularTagContent(testData.tagLDR).then((content) => {
-          const updatedLDRvalue = `${content.substring(0, 5)}${
-            testData.LDRValues.validLDR05Values[i]
-          }${testData.LDRValues.validLDR06Values[i]}${content.substring(7, 17)}${
-            testData.LDRValues.validLDR17Values[i]
-          }${testData.LDRValues.validLDR18Values[i]}${content.substring(19)}`;
-          QuickMarcEditor.updateExistingField(testData.tagLDR, updatedLDRvalue);
-          QuickMarcEditor.pressSaveAndClose();
-          QuickMarcEditor.checkAfterSaveHoldings();
-          HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
-            holdingsIDs.push(holdingsID);
-            HoldingsRecordView.close();
-            InventoryInstance.waitLoading();
+      QuickMarcEditor.getExistingLocation().then((location) => {
+        for (let i = 0; i < testData.LDRValues.validLDR17Values.length; i++) {
+          InventoryInstance.goToMarcHoldingRecordAdding();
+          QuickMarcEditor.updateExistingField(testData.tag852, location);
+          QuickMarcEditor.checkContent(location, 5);
+          QuickMarcEditor.getRegularTagContent(testData.tagLDR).then((content) => {
+            const updatedLDRvalue = `${content.substring(0, 5)}${
+              testData.LDRValues.validLDR05Values[i]
+            }${testData.LDRValues.validLDR06Values[i]}${content.substring(7, 17)}${
+              testData.LDRValues.validLDR17Values[i]
+            }${testData.LDRValues.validLDR18Values[i]}${content.substring(19)}`;
+            QuickMarcEditor.updateExistingField(testData.tagLDR, updatedLDRvalue);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveHoldings();
+            HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
+              holdingsIDs.push(holdingsID);
+              HoldingsRecordView.close();
+              InventoryInstance.waitLoading();
+            });
           });
-        });
-      }
+        }
+      });
     },
   );
 });

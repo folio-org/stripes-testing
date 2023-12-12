@@ -24,7 +24,7 @@ describe('eHoldings', () => {
 
     it(
       'C16994 Add a title in a package to holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', features.eHoldings] },
+      { tags: ['smoke', 'spitfire', 'system', features.eHoldings] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -59,7 +59,7 @@ describe('eHoldings', () => {
 
     it(
       'C700 Title: Add or Edit custom coverage (spitfire)',
-      { tags: ['smoke', 'spitfire', features.eHoldings] },
+      { tags: ['smoke', 'spitfire', 'system', features.eHoldings] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;

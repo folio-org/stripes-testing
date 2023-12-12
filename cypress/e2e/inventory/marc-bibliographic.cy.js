@@ -90,7 +90,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10924 Add a field to a record using quickMARC (spitfire)',
-    { tags: ['smoke', 'spitfire', 'nonParallel'] },
+    { tags: ['smoke', 'spitfire', 'nonParallel', 'system'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
 
@@ -151,7 +151,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C10951 Add a 5XX field to a marc record in quickMARC (spitfire)',
-    { tags: ['smoke', 'spitfire', 'nonParallel'] },
+    { tags: ['smoke', 'spitfire', 'nonParallel', 'system'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceID);
       InventoryInstance.checkExpectedMARCSource();

@@ -161,7 +161,7 @@ describe('Invoices', () => {
   ].forEach((filter) => {
     it(
       'C6724: Test the invoice filters (thunderjet)',
-      { tags: ['criticalPath', 'thunderjet'] },
+      { tags: ['criticalPath', 'thunderjet', 'system'] },
       () => {
         filter.filterActions();
         Invoices.selectInvoice(invoice.invoiceNumber);

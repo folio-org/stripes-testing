@@ -108,7 +108,7 @@ describe('Data Import - Importing MARC Authority files', () => {
 
   it(
     'C360522 Import of "MARC Authority" record with same valid prefixes in "001" and "010 $a" fields (spitfire)',
-    { tags: ['smoke', Features.authority, 'spitfire'] },
+    { tags: ['smoke', Features.authority, 'spitfire', 'system'] },
     () => {
       DataImport.uploadFile('D_genre(prefixes_in_001_010Sa)sc_03.mrc', fileName);
       JobProfiles.waitFileIsUploaded();

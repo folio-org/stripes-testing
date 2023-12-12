@@ -113,7 +113,7 @@ describe('Orders: Receiving and Check-in', () => {
 
   it(
     'C736 Update Barcode and call number information when receiving (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'system'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

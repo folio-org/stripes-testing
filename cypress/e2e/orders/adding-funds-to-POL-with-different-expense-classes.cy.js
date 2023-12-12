@@ -104,7 +104,7 @@ describe('Orders', () => {
 
   it(
     'C399087 Adding same fund distribution with different expense class in the POL for unopened order (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'system'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
