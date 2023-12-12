@@ -397,6 +397,7 @@ export default {
   },
 
   viewSource: () => {
+    cy.wait(2000);
     cy.do(actionsButton.click());
     cy.wait(2000);
     cy.do(viewSourceButton.click());
