@@ -4,12 +4,9 @@ import Users from '../../../../support/fragments/users/users';
 import permissions from '../../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import UserEdit from '../../../../support/fragments/users/userEdit';
 
 let user;
-let servicePointId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   barcode: getRandomPostfix(),
@@ -33,14 +30,7 @@ describe('bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
-          .then((servicePoints) => {
-            servicePointId = servicePoints[0].id;
-          })
-          .then(() => {
-            UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-            FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
-          });
+        FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.barcode);
       });
     });
 
@@ -73,7 +63,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyLogsPane();
         BulkEditSearchPane.actionsIsAbsent();
 
-        cy.reload();
         BulkEditSearchPane.checkItemsCheckbox();
         BulkEditSearchPane.verifyActionsRunBy(
           `${user.username}, ${user.firstName} ${Users.defaultUser.personal.middleName}`,
