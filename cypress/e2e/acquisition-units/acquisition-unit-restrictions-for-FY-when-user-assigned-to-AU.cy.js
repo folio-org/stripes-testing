@@ -1,6 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import DateTools from '../../support/utils/dateTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -87,7 +85,7 @@ describe('Acquisition Units', () => {
 
   it(
     'C374168 Acquisition unit restrictions for "Fiscal year" records (View, Edit, Create, Delete options are active) when user is assigned to acquisition unit (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByAll(firstFiscalYear.name);
       FiscalYears.selectFisacalYear(firstFiscalYear.name);

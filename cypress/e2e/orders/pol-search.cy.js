@@ -1,13 +1,11 @@
 import uuid from 'uuid';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Test Po line search', () => {
@@ -108,7 +106,7 @@ describe('orders: Test Po line search', () => {
   });
 
   searchers.forEach((searcher) => {
-    it('C6719 Test the POL searches', { tags: [TestType.smoke] }, () => {
+    it('C6719 Test the POL searches', { tags: ['smoke'] }, () => {
       Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
       Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();
@@ -118,7 +116,7 @@ describe('orders: Test Po line search', () => {
   // TODO: add extra TC in testrail about it
   it(
     'C6719 Test the POL searches(Only test POL name search) (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO line number', orderLineNumber);
       Orders.checkOrderlineSearchResults(orderLineNumber);

@@ -1,9 +1,7 @@
 import uuid from 'uuid';
-import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
-import DevTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 
@@ -70,27 +68,23 @@ describe('ui-requests: Filter requests by tags', () => {
     });
   });
 
-  it(
-    'C9320 Filter requests by tags (vega) (TaaS)',
-    { tags: [testType.extended, DevTeams.vega] },
-    () => {
-      cy.visit(TopMenu.requestsPath);
-      instances.forEach((instance, index) => {
-        Requests.findCreatedRequest(instance.instanceTitle);
-        Requests.selectFirstRequest(instance.instanceTitle);
-        Requests.openTagsPane();
-        Requests.addTag(tags[index].label);
-        Requests.closePane('Tags');
-        Requests.closePane('Request Detail');
-        Requests.resetAllFilters();
-        Requests.filterRequestsByTag(tags[index].label);
-        Requests.selectFirstRequest(instance.instanceTitle);
-        Requests.openTagsPane();
-        Requests.verifyAssignedTags(tags[index].label);
-        Requests.closePane('Tags');
-        Requests.closePane('Request Detail');
-        Requests.resetAllFilters();
-      });
-    },
-  );
+  it('C9320 Filter requests by tags (vega) (TaaS)', { tags: ['extendedPath', 'vega'] }, () => {
+    cy.visit(TopMenu.requestsPath);
+    instances.forEach((instance, index) => {
+      Requests.findCreatedRequest(instance.instanceTitle);
+      Requests.selectFirstRequest(instance.instanceTitle);
+      Requests.openTagsPane();
+      Requests.addTag(tags[index].label);
+      Requests.closePane('Tags');
+      Requests.closePane('Request Detail');
+      Requests.resetAllFilters();
+      Requests.filterRequestsByTag(tags[index].label);
+      Requests.selectFirstRequest(instance.instanceTitle);
+      Requests.openTagsPane();
+      Requests.verifyAssignedTags(tags[index].label);
+      Requests.closePane('Tags');
+      Requests.closePane('Request Detail');
+      Requests.resetAllFilters();
+    });
+  });
 });

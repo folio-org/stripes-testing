@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import testType from '../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -124,7 +122,7 @@ describe('orders: Settings', () => {
 
   it(
     'C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       SettingsOrders.selectInstanceStatus(instanceStatus);
       cy.visit(SettingsMenu.ordersInstanceTypePath);

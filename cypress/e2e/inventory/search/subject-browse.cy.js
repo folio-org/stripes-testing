@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TestTypes from '../../../support/dictionary/testTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -10,7 +8,6 @@ import BrowseSubjects from '../../../support/fragments/inventory/search/browseSu
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Inventory > Subject Browse', () => {
   const testData = {
@@ -59,7 +56,7 @@ describe('Inventory > Subject Browse', () => {
 
   it(
     'C350387 Verify the "Browse subjects" result list (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       BrowseSubjects.searchBrowseSubjects(testData.testValue);

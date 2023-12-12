@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -14,7 +12,6 @@ import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthorit
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Search in Inventory', () => {
   const testData = {
@@ -122,7 +119,7 @@ describe('Search in Inventory', () => {
 
   it(
     'C367974 Search for two "Instance" records by "Authority UUID" value of linked "MARC Authority" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.verifyInstanceSearchOptions();
       InventoryInstances.searchInstancesWithOption(

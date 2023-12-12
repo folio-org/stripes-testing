@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
@@ -36,7 +36,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C409487 Settings (tenant): View -- Location setup (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: [testData.institution] });
       // reload is needed because sometimes Location setup section is not displayed

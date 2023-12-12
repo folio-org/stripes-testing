@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { FOLIO_RECORD_TYPE, ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -76,7 +76,7 @@ describe('data-import', () => {
 
     it(
       'C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create protection fields
         MarcFieldProtection.createViaApi({

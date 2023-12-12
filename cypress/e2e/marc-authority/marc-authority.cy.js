@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
@@ -12,7 +10,6 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
-import Parallelization from '../../support/dictionary/parallelization';
 
 describe('Importing MARC Authority files', () => {
   const testData = {
@@ -114,7 +111,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350575 MARC Authority fields LEADER and 008 can not be deleted (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectFirst(testData.authority.title);
@@ -125,7 +122,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350576 Update 008 of Authority record (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectFirst(testData.authority.title);
@@ -136,24 +133,16 @@ describe('Importing MARC Authority files', () => {
     },
   );
 
-  it(
-    'C350578 Browse existing Authorities (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
-    () => {
-      const checkPresentedColumns = [
-        'Authorized/Reference',
-        'Heading/Reference',
-        'Type of heading',
-      ];
+  it('C350578 Browse existing Authorities (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+    const checkPresentedColumns = ['Authorized/Reference', 'Heading/Reference', 'Type of heading'];
 
-      MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-      MarcAuthority.checkPresentedColumns(checkPresentedColumns);
-    },
-  );
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthority.checkPresentedColumns(checkPresentedColumns);
+  });
 
   it(
     'C350513 Browse authority - handling for when there is no exact match (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorityBrowse.checkSearchOptions();
@@ -180,7 +169,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350680 Duplicate records do not return when searching by Identifier (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       const searchOption = 'Identifier (all)';
       const identifier = 'n  42008104';
@@ -193,7 +182,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350641 Search MARC: support exact match searching Library of Congress Control Number - 010 field $a subfield (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.checkSearchOptions();
       MarcAuthorities.searchBy(

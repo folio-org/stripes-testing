@@ -1,7 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import {
   ITEM_STATUS_NAMES,
@@ -15,7 +14,6 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import Requests from '../../support/fragments/requests/requests';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
@@ -208,7 +206,7 @@ describe('Circulation log', () => {
 
   it(
     'C17004 Check the Actions button from filtering Circulation log by recall requested (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       checkActionsButton('Recall requested');
     },

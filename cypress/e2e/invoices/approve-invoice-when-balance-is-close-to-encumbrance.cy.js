@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
 import TopMenu from '../../support/fragments/topMenu';
@@ -82,7 +82,7 @@ describe('Invoices', () => {
 
   it(
     'C399084 Invoice can be approved when balance is close to the encumbrance available balance (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click invoice line record on invoice
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

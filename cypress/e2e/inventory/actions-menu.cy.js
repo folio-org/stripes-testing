@@ -1,8 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -26,7 +24,7 @@ describe('ui-inventory: actions', () => {
 
   it(
     'C196752 verifies action menu options before any search is conducted (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventoryActions.open();
 
@@ -42,7 +40,7 @@ describe('ui-inventory: actions', () => {
 
   it(
     'C196753 Verify Action menu options - search results pane populated (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       InventorySearchAndFilter.byKeywords(item.instanceName);
       InventorySearchAndFilter.selectResultCheckboxes(1);

@@ -8,8 +8,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
@@ -67,7 +65,7 @@ describe('MARC -> MARC Holdings', () => {
 
   it(
     'C358990 Verify user can fill in "852 $b" field by typing text when create new "MARC Holdings" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(user.username, user.password, {
         path: TopMenu.inventoryPath,

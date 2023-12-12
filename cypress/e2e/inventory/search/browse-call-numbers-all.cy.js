@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -116,7 +116,7 @@ describe('inventory', () => {
 
     it(
       'C387477 Browsing call number types when "Call numbers (all)" browse option selected (based on "Item") (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         // #1 Click on browse option dropdown (with default value "Select a browse option")
         // * Dropdown is expanded and includes following browse options:

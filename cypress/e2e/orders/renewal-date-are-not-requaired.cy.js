@@ -1,6 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import testType from '../../support/dictionary/testTypes';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Orders from '../../support/fragments/orders/orders';
@@ -71,7 +69,7 @@ describe('Orders', () => {
 
   it(
     'C353627 "Renewal date" and "Renewal interval" are not required for opening, unopening, closing, reopening ongoing order (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

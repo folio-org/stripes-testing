@@ -1,6 +1,4 @@
 import permissions from '../../../../support/dictionary/permissions';
-import testType from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -135,7 +133,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C357565: Transactions are displaying correctly after rollover when fund name was changed in POL after opening order (Thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

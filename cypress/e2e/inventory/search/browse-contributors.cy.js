@@ -1,5 +1,3 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -67,7 +65,7 @@ describe('Inventory -> Contributors Browse', () => {
 
   it(
     'C353999 Verify that the "Instance" record with same "Contributor name", but different "Name type"and "Relator terms" displayed as 2 rows. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
       InventorySearchAndFilter.selectSearchResultItem();
@@ -123,7 +121,7 @@ describe('Inventory -> Contributors Browse', () => {
 
   it(
     'C353660 Verify that the "Contributor name" from the same "Instance" record", with the same "Name type", but different "Relator terms" counted once at browse result list. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
       InventorySearchAndFilter.selectSearchResultItem();
@@ -168,7 +166,7 @@ describe('Inventory -> Contributors Browse', () => {
 
   it(
     'C356837 Verify that deleted Contributor on instance record with source = Folio does not display on browse result list (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.item.instanceName);
       InventorySearchAndFilter.selectSearchResultItem();
@@ -218,7 +216,7 @@ describe('Inventory -> Contributors Browse', () => {
 
   it(
     "C358148 Verify that switching between browse options doesn't submit a form (spitfire)",
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       BrowseContributors.select();

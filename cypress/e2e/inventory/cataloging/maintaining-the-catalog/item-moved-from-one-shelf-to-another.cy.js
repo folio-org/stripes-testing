@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../../support/fragments/settings/tenant';
 import { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -53,7 +53,7 @@ describe('inventory', () => {
 
     it(
       'C3500 An item is being moved from one shelf to another. Change the call number of the associated holdings record! (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // Find the instance from precondition
         const InventoryInstance = InventorySearchAndFilter.searchInstanceByTitle(

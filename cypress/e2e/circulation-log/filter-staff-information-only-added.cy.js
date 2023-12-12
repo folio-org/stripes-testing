@@ -3,8 +3,6 @@ import moment from 'moment';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
@@ -121,7 +119,7 @@ describe('circulation-log', () => {
 
   it(
     'C17047 Filter circulation log by staff information only added (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const searchResultsData = {
         userBarcode: userData.barcode,
@@ -143,7 +141,7 @@ describe('circulation-log', () => {
 
   it(
     'C17048 Check the Actions button from filtering Circulation log by Staff only information added (volaris)',
-    { tags: [testTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
       SearchPane.setFilterOptionFromAccordion('fee', 'Staff information only added');

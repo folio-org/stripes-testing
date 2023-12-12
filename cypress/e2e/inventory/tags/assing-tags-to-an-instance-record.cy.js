@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -49,7 +48,7 @@ describe('inventory', () => {
 
     it(
       'C196769 Assign tags to an Instance record (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);

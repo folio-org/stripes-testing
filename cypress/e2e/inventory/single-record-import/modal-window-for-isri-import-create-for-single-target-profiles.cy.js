@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -46,7 +46,7 @@ describe('inventory', () => {
 
     it(
       'C375145 Verify the modal window for ISRI Import/Create in inventory main actions menu for single target profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const calloutMessage = `Record ${testIdentifier} created. Results may take a few moments to become visible in Inventory`;
 

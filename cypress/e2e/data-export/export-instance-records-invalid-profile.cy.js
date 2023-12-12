@@ -1,12 +1,10 @@
 import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
 import FileManager from '../../support/utils/fileManager';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -47,7 +45,7 @@ describe('data-export', () => {
 
   it(
     'C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');

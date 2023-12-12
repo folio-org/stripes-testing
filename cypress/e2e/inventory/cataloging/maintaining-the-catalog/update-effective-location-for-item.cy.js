@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
 import HoldingsRecordEdit from '../../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -103,7 +103,7 @@ describe('inventory', () => {
 
     it(
       'C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.waitInstanceRecordViewOpened(itemData.instanceTitle);

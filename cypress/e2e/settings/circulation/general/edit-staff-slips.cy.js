@@ -1,5 +1,3 @@
-import devTeams from '../../../../support/dictionary/devTeams';
-import TestType from '../../../../support/dictionary/testTypes';
 import EditStaffClips from '../../../../support/fragments/circulation/editStaffClips';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 
@@ -10,7 +8,7 @@ describe('ui-circulation-settings: Edit Staff slip settings', () => {
     cy.visit(`${SettingsMenu.circulationStaffSlipsPath}`);
   });
 
-  it('C347901 Staff clips settings (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
+  it('C347901 Staff clips settings (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     EditStaffClips.editHold(editStaffClipsHold);
     EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
     EditStaffClips.editPickslip(editStaffClipsHold);

@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TestType from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
@@ -60,7 +58,7 @@ describe('orders: Settings', () => {
 
   it(
     'C6726 Edit existing order template (thunderjet)',
-    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       OrderTemplate.selectTemplate(orderTemplateName);
       OrderTemplate.editTemplate(orderTemplateName);

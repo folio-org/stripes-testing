@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TestType from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
@@ -46,23 +44,19 @@ describe('orders: Settings', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C6725 Create order template (thunderjet)',
-    { tags: [TestType.criticalPath, devTeams.thunderjet] },
-    () => {
-      OrderTemplate.newTemplate();
-      OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
-        orderTemplateName,
-        organization.name,
-        acquisitionMethod.value,
-      );
-      OrderTemplate.saveTemplate();
-      OrderTemplate.checkTemplateCreated(orderTemplateName);
-      cy.visit(TopMenu.ordersPath);
-      Orders.createOrderByTemplate(orderTemplateName);
-      Orders.checkCreatedOrderFromTemplate(organization.name);
-      cy.visit(SettingsMenu.ordersOrderTemplatesPath);
-      OrderTemplate.deleteTemplate(orderTemplateName);
-    },
-  );
+  it('C6725 Create order template (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+    OrderTemplate.newTemplate();
+    OrderTemplate.fillTemplateInformationWithAcquisitionMethod(
+      orderTemplateName,
+      organization.name,
+      acquisitionMethod.value,
+    );
+    OrderTemplate.saveTemplate();
+    OrderTemplate.checkTemplateCreated(orderTemplateName);
+    cy.visit(TopMenu.ordersPath);
+    Orders.createOrderByTemplate(orderTemplateName);
+    Orders.checkCreatedOrderFromTemplate(organization.name);
+    cy.visit(SettingsMenu.ordersOrderTemplatesPath);
+    OrderTemplate.deleteTemplate(orderTemplateName);
+  });
 });

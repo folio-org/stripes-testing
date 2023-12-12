@@ -1,12 +1,10 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import testTypes from '../../../support/dictionary/testTypes';
 import features from '../../../support/dictionary/features';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
   beforeEach(() => {
@@ -19,7 +17,7 @@ describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
   });
   it(
     'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
-    { tags: ['smoke', 'spitfire', 'system'] },
+    { tags: ['smoke', 'spitfire', 'system', features.holdingsRecord] },
     () => {
       InventoryInstance.createHoldingsRecord('Migration (Migration) ');
       InventoryInstance.openHoldingView();

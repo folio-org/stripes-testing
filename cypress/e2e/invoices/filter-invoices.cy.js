@@ -1,8 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import Orders from '../../support/fragments/orders/orders';
-import TestTypes from '../../support/dictionary/testTypes';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
@@ -163,7 +161,7 @@ describe('Invoices', () => {
   ].forEach((filter) => {
     it(
       'C6724: Test the invoice filters (thunderjet)',
-      { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         filter.filterActions();
         Invoices.selectInvoice(invoice.invoiceNumber);

@@ -1,4 +1,3 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import {
@@ -10,7 +9,6 @@ import {
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import TopMenu from '../../support/fragments/topMenu';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import EditStaffClips from '../../support/fragments/circulation/editStaffClips';
 import Users from '../../support/fragments/users/users';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -132,7 +130,7 @@ describe('Staff slips', () => {
 
   it(
     'C375293 Add "requester.patronGroup" as staff slip token in Settings (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editTransit();
@@ -146,7 +144,7 @@ describe('Staff slips', () => {
 
   it(
     'C387442 Add "Departments" as staff slip token in Settings (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editTransit();
@@ -160,7 +158,7 @@ describe('Staff slips', () => {
 
   it(
     'C388508 Verify that token "currentDateTime" is populated in the pick slip (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editPickslip();

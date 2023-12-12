@@ -1,5 +1,3 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -112,7 +110,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C350932 Delete reference "MARC Authority" record that has one linked field in "MARC Bib" record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
       MarcAuthorities.selectTitle(testData.marcValue);

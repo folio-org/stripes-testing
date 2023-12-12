@@ -1,5 +1,3 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -82,7 +80,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
 
   it(
     'C367956 Verify that CRUD actions with fields from "Derive MARC Bib" window will save in new record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.visit(`${TopMenu.inventoryPath}/view/${instanceId}`);
       InventoryInstance.deriveNewMarcBib();

@@ -1,7 +1,5 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -45,7 +43,7 @@ describe('adding new tokens', () => {
 
   it(
     'C411863 Verify that record meta data is present on staff slips (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editHold();

@@ -1,4 +1,3 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -7,7 +6,6 @@ import ExportFieldMappingProfiles from '../../../support/fragments/data-export/e
 import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
 import ModalSelectTransformations from '../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import { TestTypes } from '../../../support/dictionary';
 
 let user;
 const newTransformationCalloutMessage = '1 transformation has been successfully added';
@@ -33,7 +31,7 @@ describe('settings: data-export', () => {
 
   it(
     'C345342 Hide placeholder attribute once user populates the first row (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
       ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();

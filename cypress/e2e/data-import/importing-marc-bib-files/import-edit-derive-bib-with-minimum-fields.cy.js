@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Users from '../../../support/fragments/users/users';
@@ -53,7 +53,7 @@ describe('data-import', () => {
 
     it(
       'C387435 Import and edit/derive "MARC Bib" record having only required fields (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
         JobProfiles.waitFileIsUploaded();

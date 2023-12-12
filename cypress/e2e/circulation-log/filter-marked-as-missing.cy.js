@@ -2,8 +2,6 @@ import moment from 'moment';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
-import devTeams from '../../support/dictionary/devTeams';
-import testTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -61,7 +59,7 @@ describe('circulation-log', () => {
 
   it(
     'C17001 Filter circulation log by marked as missing (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SearchPane.searchByMarkedAsMissing();
       SearchPane.verifyResultCells();
@@ -91,7 +89,7 @@ describe('circulation-log', () => {
 
   it(
     'C17002 Check the Actions button from filtering Circulation log by marked as missing (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SearchPane.searchByMarkedAsMissing();
       SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);

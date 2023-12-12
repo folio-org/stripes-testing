@@ -1,8 +1,6 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -49,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357053 Negative: Verify enable type ahead in location look-up (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -68,7 +66,7 @@ describe('bulk-edit', () => {
 
     it(
       'C356787 Verify enable type ahead in location look-up (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 

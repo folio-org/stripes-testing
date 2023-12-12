@@ -1,10 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
@@ -46,7 +44,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357579 Bulk edit: In app - Update user records permission enabled - Preview of records matched (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -63,7 +61,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357987 Verify Users Patron group bulk edit -- in app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -86,7 +84,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359213 Verify elements "Are you sure form?" -- Users-in app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -111,7 +109,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359214 Verify expiration date updates in In-app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         const todayDate = new Date();
 
@@ -137,7 +135,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359237 Verify "Expiration date" option in the dropdown (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -152,7 +150,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359585 Verify clicking on the "Commit changes" button (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 

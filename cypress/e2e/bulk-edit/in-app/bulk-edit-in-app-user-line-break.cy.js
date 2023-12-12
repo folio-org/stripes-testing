@@ -1,6 +1,4 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import testTypes from '../../../support/dictionary/testTypes';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
@@ -71,7 +69,7 @@ describe('bulk-edit', () => {
 
     it(
       'C399098 Verify Previews for the number of Users records if the record has field with line break (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

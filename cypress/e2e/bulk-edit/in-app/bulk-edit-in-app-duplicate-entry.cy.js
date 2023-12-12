@@ -1,6 +1,4 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import testTypes from '../../../support/dictionary/testTypes';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -72,7 +70,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350933 Verify Errors accordion with repeated records (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
@@ -93,7 +91,7 @@ describe('bulk-edit', () => {
 
     it(
       'C347883 Error messages in submitted identifiers (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.login(viewUser.username, viewUser.password, {
           path: TopMenu.bulkEditPath,

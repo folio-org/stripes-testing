@@ -1,13 +1,11 @@
 import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import DateTools from '../../support/utils/dateTools';
 import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Test PO filters', () => {
@@ -80,7 +78,7 @@ describe('orders: Test PO filters', () => {
   ].forEach((filter) => {
     it(
       'C350906 Test the PO filters with closed Order [except tags] (thunderjet)',
-      { tags: [TestType.smoke, devTeams.thunderjet] },
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         filter.filterActions();
         Orders.checkSearchResultsWithClosedOrder(orderNumber);

@@ -1,9 +1,7 @@
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import getRandomPostfix from '../../support/utils/stringTools';
-import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import Permissions from '../../support/dictionary/permissions';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -55,7 +53,7 @@ describe('data-export: failed using non-existent UUIDs', () => {
 
   it(
     'C353209 Export failed when using ".csv" file with non-existent UUIDs (Spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, devTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy('Keyword', 'Peplum films');
       MarcAuthorities.downloadSelectedRecordWithRowIdx();

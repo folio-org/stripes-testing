@@ -1,6 +1,4 @@
 import permissions from '../../../../support/dictionary/permissions';
-import testType from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -282,7 +280,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C399059: Test rollovers within 3 FYs when PO line contains two fund distributions related to different ledgers and same fiscal year (Thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(firstLedger.name);
       Ledgers.selectLedger(firstLedger.name);

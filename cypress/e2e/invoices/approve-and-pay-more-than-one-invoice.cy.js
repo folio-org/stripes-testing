@@ -1,7 +1,5 @@
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -149,7 +147,7 @@ describe('Invoices', () => {
 
   it(
     'C366537: Approve & pay more than one invoice (thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(firstInvoice.invoiceNumber);
       Invoices.selectInvoice(firstInvoice.invoiceNumber);

@@ -4,8 +4,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import Notes from '../../../support/fragments/notes/notes';
 import AssignNote from '../../../support/fragments/notes/modal/assign-unassign-notes';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import DateTools from '../../../support/utils/dateTools';
 import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
 
@@ -63,7 +61,7 @@ describe('Agreement Notes', () => {
 
   it(
     'C1311 Unassign a note from an Agreement record (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.openNotesSection();

@@ -6,8 +6,6 @@ import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
-import TestType from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import { getNewItem } from '../../../support/fragments/inventory/item';
 import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
 import Checkout from '../../../support/fragments/checkout/checkout';
@@ -191,7 +189,7 @@ describe('ui-users-loans: Loans', () => {
 
   it(
     'C365133 Verify ACTUAL COST lost items are being billed the "Lost item processing fee" when declared lost',
-    { tags: [TestType.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchPane.searchByKeywords(testData.userId);
       UsersSearchPane.openUser(testData.userId);

@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import testType from '../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
@@ -98,7 +96,7 @@ describe('orders: Settings', () => {
 
   it(
     'C15497 Increase purchase order lines limit (items for receiving includes "Order closed" statuses) (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       SettingsOrders.setPurchaseOrderLinesLimit(5);
       SettingsOrders.setPurchaseOrderLinesLimit(2);

@@ -1,5 +1,5 @@
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -33,7 +33,7 @@ describe('data-import', () => {
 
     it(
       'C2343 Create a new action profile with name longer than 160 symbols (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         ActionProfiles.createWithoutLinkedMappingProfile(actionProfile);
         ActionProfiles.verifyActionProfileOpened(actionProfile.name);

@@ -1,4 +1,3 @@
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 
@@ -48,7 +47,7 @@ describe('data-import', () => {
 
     it(
       'C17016 Create, edit, and delete field protection settings (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.marcFieldProtectionPath);
         MarcFieldProtection.verifyListOfExistingSettingsIsDisplayed();

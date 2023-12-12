@@ -1,5 +1,3 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -238,7 +236,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
 
   it(
     'C347862 Check out + Loan due date change + Check in triggers (volaris)',
-    { tags: [TestTypes.smoke, devTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       noticeTemplates.forEach((template) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template);

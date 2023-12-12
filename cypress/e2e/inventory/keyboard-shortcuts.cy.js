@@ -1,5 +1,4 @@
 import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
 import InventoryKeyboardShortcuts from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -7,7 +6,6 @@ import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecord
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Users from '../../support/fragments/users/users';
 
@@ -34,8 +32,8 @@ describe('ui-inventory: Keyboard shortcut (NEW)', () => {
   });
 
   it(
-    'C345297 Keyboard Shortcut. Access to drop down menu (thunderjet)',
-    { tags: [testTypes.smoke, devTeams.thunderjet] },
+    'C345297 Keyboard Shortcut. Access to drop down menu (folijet)',
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
@@ -50,7 +48,7 @@ describe('ui-inventory: Keyboard shortcut (NEW)', () => {
 
   it(
     'C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys (thunderjet)',
-    { tags: [testTypes.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet', 'broken'] },
     () => {
       InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 

@@ -1,6 +1,4 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -223,7 +221,7 @@ describe('Permissions --> Users', () => {
 
   it(
     'C380503 Verify that user with permission can view fees/fines for payment (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, devTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkOutItem(instanceData.itemBarcode);

@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
@@ -97,7 +97,7 @@ describe('change loan due dates', () => {
   });
   it(
     'C581 Loan Details: Test change due date (Vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       const itemBarcode = folioInstances[0].barcodes[0];
       cy.visit(TopMenu.usersPath);

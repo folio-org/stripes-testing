@@ -1,6 +1,4 @@
 import permissions from '../../../../support/dictionary/permissions';
-import testType from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -150,7 +148,7 @@ describe('Finance: Fiscal Year Rollover', () => {
 
   it(
     'C376609: Execute rollover when "Allocation" option is NOT active and "None" option is selected in "Rollover budget value" dropdown (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

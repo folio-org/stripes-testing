@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
@@ -63,7 +63,7 @@ describe('Settings: Tenant', () => {
   it(
     'C163925 View remote storage details in settings > tenant > location (firebird) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.firebird],
+      tags: ['criticalPath', 'firebird'],
     },
     () => {
       // Navigate to Settings > Tenant > Locations

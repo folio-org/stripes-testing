@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
+import { Permissions } from '../../../../support/dictionary';
 import {
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -53,7 +53,7 @@ describe('inventory', () => {
 
     it(
       'C3494 Add an item to an existing title. There is already a copy at another library branch. (folijet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter(

@@ -2,7 +2,6 @@ import moment from 'moment';
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -12,7 +11,6 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import Checkout from '../../support/fragments/checkout/checkout';
-import devTeams from '../../support/dictionary/devTeams';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
@@ -119,7 +117,7 @@ describe('Check In - Actions ', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
+  it('C347631 Check in: Basic check in (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(10000);
     cy.visit(TopMenu.checkInPath);

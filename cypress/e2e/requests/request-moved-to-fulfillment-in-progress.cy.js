@@ -1,4 +1,4 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import {
   ITEM_STATUS_NAMES,
   REQUEST_TYPES,
@@ -108,7 +108,7 @@ describe('Title Level Request. Request queue. TLR', () => {
 
   it(
     'C350425 Check that request goes to "Fulfillment in progress" if the items status has changed to "In progress" (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       SwitchServicePoint.switchServicePoint(testData.servicePoint2.name);
       SwitchServicePoint.checkIsServicePointSwitched(testData.servicePoint2.name);

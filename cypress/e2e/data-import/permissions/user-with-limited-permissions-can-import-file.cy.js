@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
@@ -92,7 +92,7 @@ describe('data-import', () => {
 
     it(
       'C356841 Confirm a user with limited Data Import permissions can import a file (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         cy.login(firstUser.username, firstUser.password, {
           path: SettingsMenu.mappingProfilePath,

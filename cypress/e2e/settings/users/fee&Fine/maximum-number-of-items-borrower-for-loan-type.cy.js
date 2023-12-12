@@ -1,4 +1,3 @@
-import TestTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import permissions from '../../../../support/dictionary/permissions';
 import Helper from '../../../../support/fragments/finance/financeHelper';
@@ -13,7 +12,6 @@ import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
@@ -200,7 +198,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
 
   it(
     'C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (volaris)',
-    { tags: [TestTypes.smoke, DevTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);

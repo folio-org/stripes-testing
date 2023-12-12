@@ -1,7 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import TestType from '../../support/dictionary/testTypes';
-import Parallelization from '../../support/dictionary/parallelization';
+
 import Features from '../../support/dictionary/features';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
@@ -21,7 +20,6 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import devTeams from '../../support/dictionary/devTeams';
 // eslint-disable-next-line no-unused-vars
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
@@ -126,7 +124,7 @@ describe('Fee/fine management', () => {
 
   it(
     'C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (vega)',
-    { tags: [TestType.smoke, Features.feeFine, devTeams.vega, Parallelization.nonParallel] },
+    { tags: ['smoke', Features.feeFine, 'vega', 'nonParallel'] },
     () => {
       const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
       const itemInfo = [testData.instanceTitle + ' (book)', itemBarcode];

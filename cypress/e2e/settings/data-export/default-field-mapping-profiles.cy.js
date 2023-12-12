@@ -1,5 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -35,7 +33,7 @@ describe('settings: data-export', () => {
 
   it(
     'C10982 "Settings" > "Data export" > "Field mapping profiles" page (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();
       ExportFieldMappingProfiles.verifyDefaultProfiles();
@@ -44,7 +42,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15822 Preventing changes to the default instance mapping profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default instance mapping profile');
       SingleFieldMappingProfilePane.waitLoading('Default instance mapping profile');
@@ -54,7 +52,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15825 Profiles that cannot be edited or deleted (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList('Default holdings mapping profile');
       SingleFieldMappingProfilePane.waitLoading('Default holdings mapping profile');

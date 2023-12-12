@@ -3,8 +3,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
@@ -64,7 +62,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360114 Verify that User can upload file with Holdings UUIDs (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -92,7 +90,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367984 Verify that visual clue on the "Are you sure?" form does not provide 0 records (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         cy.visit(TopMenu.bulkEditPath);
         BulkEditSearchPane.checkHoldingsRadio();

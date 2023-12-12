@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
@@ -160,7 +160,7 @@ describe('Lost items requiring actual cost', () => {
 
   it(
     'C375274 Check that entries are deleted for renewed items (Declared lost items) (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action

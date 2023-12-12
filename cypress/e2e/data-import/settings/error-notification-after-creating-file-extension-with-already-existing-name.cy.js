@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
@@ -27,7 +27,7 @@ describe('data-import', () => {
 
     it(
       'C410707 Verify error notification after creating file extension with already existing name (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.fileExtensionsPath);
         FileExtensions.openNewFileExtensionForm();

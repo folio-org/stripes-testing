@@ -1,6 +1,4 @@
 import uuid from 'uuid';
-import devTeams from '../../../../support/dictionary/devTeams';
-import testTypes from '../../../../support/dictionary/testTypes';
 import OverdueFinePolicies from '../../../../support/fragments/settings/circulation/fee-fine/overdueFinePolicies';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -212,7 +210,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it(
     'C5557: Verify that you can create/edit/delete overdue fine policies (vega)',
-    { tags: [devTeams.vega, 'smoke'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       cy.loginAsAdmin();
       // TODO add check that name is unique
@@ -242,7 +240,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it(
     'C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)',
-    { tags: [devTeams.spitfire, testTypes.smoke, testTypes.broken] },
+    { tags: ['spitfire', 'smoke', 'broken'] },
     () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.checkOutPath,

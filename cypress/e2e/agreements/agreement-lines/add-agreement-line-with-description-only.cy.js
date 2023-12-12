@@ -1,6 +1,5 @@
 import Agreements from '../../../support/fragments/agreements/agreements';
 import TopMenu from '../../../support/fragments/topMenu';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
 import AgreementLines from '../../../support/fragments/agreements/agreementLines';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import NewAgreementLine from '../../../support/fragments/agreements/newAgreementLine';
@@ -32,7 +31,7 @@ describe('Agreement Lines', () => {
 
   it(
     'C15829 Add agreement line with description only (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(

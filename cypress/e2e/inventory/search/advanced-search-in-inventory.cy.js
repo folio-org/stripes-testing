@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -13,7 +11,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
-import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Inventory -> Advanced search', () => {
   const testData = {
@@ -100,7 +97,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400610 Search Instances using advanced search with "AND" operator (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.checkAdvSearchInstancesModalFields(0);
@@ -145,7 +142,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(

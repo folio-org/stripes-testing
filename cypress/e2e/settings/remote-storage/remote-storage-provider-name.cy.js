@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import Users from '../../../support/fragments/users/users';
@@ -24,7 +24,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C365623 Verify that "Provider name" is renamed (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       // #1 Open the "Settings" app
       // #2 Select "Remote storage"

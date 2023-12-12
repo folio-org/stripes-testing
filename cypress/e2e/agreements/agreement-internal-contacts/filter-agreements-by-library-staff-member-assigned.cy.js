@@ -3,7 +3,6 @@ import Agreements from '../../../support/fragments/agreements/agreements';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
 import SearchAndFilterAgreements from '../../../support/fragments/agreements/searchAndFilterAgreements';
 
 let agreement;
@@ -48,7 +47,7 @@ describe('Agreement Internal Contacts', () => {
 
   it(
     'C3460 Filter agreements by library staff member assigned (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       SearchAndFilterAgreements.openInternalContactsFilter();
       SearchAndFilterAgreements.clickSelectInternalContactButton();

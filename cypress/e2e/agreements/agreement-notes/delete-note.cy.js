@@ -6,7 +6,6 @@ import AgreementViewDetails from '../../../support/fragments/agreements/agreemen
 import Notes from '../../../support/fragments/notes/notes';
 import ExistingNoteView from '../../../support/fragments/notes/existingNoteView';
 import DeleteConfirmationModal from '../../../support/fragments/notes/modal/deleteConfirmationModal';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
 
 let agreementId;
 let noteTypeId;
@@ -38,7 +37,7 @@ describe('Agreement Notes', () => {
     Agreements.deleteViaApi(agreementId);
   });
 
-  it('C1312 Delete a note (erm) (TaaS)', { tags: [TestTypes.extendedPath, DevTeams.erm] }, () => {
+  it('C1312 Delete a note (erm) (TaaS)', { tags: ['extendedPath', 'erm'] }, () => {
     AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
     AgreementViewDetails.openNotesSection();
     AgreementViewDetails.verifySpecialNotesRow({

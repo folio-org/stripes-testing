@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
 import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
@@ -81,7 +81,7 @@ describe('Invoices', () => {
 
   it(
     'C380406 Approve and pay invoice with currency different from default when "Export to accounting" option is active (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click "Vendor invoice number" link for Invoice from Preconditions
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

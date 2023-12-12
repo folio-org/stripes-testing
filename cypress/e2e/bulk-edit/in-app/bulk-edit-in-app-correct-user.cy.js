@@ -1,6 +1,4 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import testTypes from '../../../support/dictionary/testTypes';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -63,7 +61,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380393 Verify that bulk edit jobs run by correct user (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         cy.login(user1.username, user1.password, {
           path: TopMenu.bulkEditPath,

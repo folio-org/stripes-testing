@@ -1,6 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import testType from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
@@ -123,7 +121,7 @@ describe('Orders', () => {
 
   it(
     'C375962 Order (line) linked to Invoice can not be deleted (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

@@ -1,13 +1,11 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import TestTypes from '../../../support/dictionary/testTypes';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import QuickmarcEditor from '../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
 
 describe('Manage holding records with MARC source', { retries: 2 }, () => {

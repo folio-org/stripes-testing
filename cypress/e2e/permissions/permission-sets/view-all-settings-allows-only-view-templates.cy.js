@@ -1,8 +1,6 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -57,7 +55,7 @@ describe('Permission Sets', () => {
 
   it(
     'C402779 Verify that "Settings(users):View all settings " allows to only view Templates (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.patronBlockTemplates);
       PatronBlockTemplates.findPatronTemlate(patronBlockTemplate.name);

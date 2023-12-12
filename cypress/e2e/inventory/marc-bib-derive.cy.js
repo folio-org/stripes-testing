@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
@@ -61,7 +61,7 @@ describe('MARC -› MARC Bibliographic -› Derive MARC bib', () => {
 
   it(
     'C396356 "Entered" value in "008" field updated when deriving new "MARC Bib" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.checkSubfieldsPresenceInTag008();

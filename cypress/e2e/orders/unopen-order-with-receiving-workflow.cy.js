@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
@@ -104,7 +104,7 @@ describe('Orders', () => {
 
     it(
       'C377037 Select "Delete Holdings and items" option when unopening an order with receiving workflow of "Synchronized order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -130,7 +130,7 @@ describe('Orders', () => {
 
     it(
       'C377040 Select "Delete items" option when unopening an order with receiving workflow of "Synchronized order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -200,7 +200,7 @@ describe('Orders', () => {
 
     it(
       'C377041 Select "Keep Holdings" option when unopening an order with receiving workflow of "Independent order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -236,7 +236,7 @@ describe('Orders', () => {
 
     it(
       'C377042 Select "Delete Holdings" option when unopening an order with receiving workflow of "Independent order and receipt quantity" (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

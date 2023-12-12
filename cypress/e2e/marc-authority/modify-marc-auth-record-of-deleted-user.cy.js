@@ -1,5 +1,3 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -96,7 +94,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C358994 Verify that user has access to "quickMARC" when user who imported "MARC authority" record has been deleted (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(user.userBProperties.username, user.userBProperties.password, {
         path: TopMenu.usersPath,
@@ -122,7 +120,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C358995 Verify that user has access to "quickMARC" when user who edited MARC record has been deleted (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(user.userCProperties.username, user.userCProperties.password, {
         path: TopMenu.marcAuthorities,

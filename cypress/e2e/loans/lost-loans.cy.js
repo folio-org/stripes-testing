@@ -18,7 +18,7 @@ import PaymentMethods from '../../support/fragments/settings/users/paymentMethod
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 
 const ownerData = {};
 const feeFineType = {};
@@ -194,7 +194,7 @@ describe('Lost loan', () => {
 
   it(
     'C10949: Close declared lost loan (set cost lost item fees) (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       const comment = 'Declare lost';
       // Navigate to open loan "A".

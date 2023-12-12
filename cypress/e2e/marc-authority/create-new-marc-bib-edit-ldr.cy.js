@@ -1,5 +1,3 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -205,7 +203,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380707 Editing LDR 10, 11, 20-23 values when creating a new "MARC bib" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(userData.C380707UserProperties.username, userData.C380707UserProperties.password, {
         path: TopMenu.inventoryPath,
@@ -229,7 +227,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380704 Creating a new "MARC bib" record with valid LDR 06, 07 values. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(userData.C380704UserProperties.username, userData.C380704UserProperties.password, {
         path: TopMenu.inventoryPath,
@@ -275,7 +273,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380711 Add all possible "245" subfields when creating a new "MARC bib" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(userData.C380704UserProperties.username, userData.C380704UserProperties.password, {
         path: TopMenu.inventoryPath,
@@ -300,7 +298,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
 
   it(
     'C380713 "008" field updated when valid LDR 06-07 combinations entered upon creation of "MARC bib" record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(userData.C380704UserProperties.username, userData.C380704UserProperties.password, {
         path: TopMenu.inventoryPath,

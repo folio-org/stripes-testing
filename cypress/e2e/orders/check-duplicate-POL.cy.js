@@ -1,8 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import Orders from '../../support/fragments/orders/orders';
-import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -103,19 +101,15 @@ describe('Orders', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C347860: Check duplicate POL (thunderjet)',
-    { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
-    () => {
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
-      Orders.duplicateOrder();
-      InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
-      Orders.checkDuplicatedOrder(
-        organization.name,
-        `${user.username}, testPermFirst testMiddleName`,
-      );
-      Orders.deleteOrderViaActions();
-    },
-  );
+  it('C347860: Check duplicate POL (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.selectFromResultsList();
+    Orders.duplicateOrder();
+    InteractorsTools.checkCalloutMessage('The purchase order was successfully duplicated');
+    Orders.checkDuplicatedOrder(
+      organization.name,
+      `${user.username}, testPermFirst testMiddleName`,
+    );
+    Orders.deleteOrderViaActions();
+  });
 });

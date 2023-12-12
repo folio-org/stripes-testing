@@ -1,13 +1,11 @@
-import TestTypes from '../../support/dictionary/testTypes';
 import Features from '../../support/dictionary/features';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DataImport from '../../support/fragments/data_import/dataImport';
-import Parallelization from '../../support/dictionary/parallelization';
+
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -53,7 +51,7 @@ describe('MARC Authority management', () => {
 
   it(
     'C350967 quickMARC: View MARC bibliographic record (spitfire)',
-    { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', Features.authority, 'spitfire', 'nonParallel'] },
     () => {
       cy.login(userData.name, userData.password, {
         path: TopMenu.inventoryPath,

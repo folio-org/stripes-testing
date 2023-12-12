@@ -1,5 +1,3 @@
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import {
   FULFILMENT_PREFERENCES,
@@ -145,7 +143,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C350686 Verify that patron cannot place title level request if they already placed an item level request (same instance) (vega) (Taas)',
-    { tags: [testTypes.extendedPath, devTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(true);

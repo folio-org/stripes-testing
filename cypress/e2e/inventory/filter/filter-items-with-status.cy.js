@@ -7,10 +7,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import TestTypes from '../../../support/dictionary/testTypes';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../support/dictionary/devTeams';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;

@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment/moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -90,7 +90,7 @@ describe('Waive Fees/Fines', () => {
 
   it(
     'C462 Verify behavior when "Waive" button pressed from Fee/Fine History page with 1 fee/fine selected (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // Go to User Information for your test patron
       UsersSearchPane.searchByKeywords(userData.username);
@@ -110,7 +110,7 @@ describe('Waive Fees/Fines', () => {
   );
   it(
     'C463 Verify behavior when "Waive" ellipsis option selected from Fee/Fine History page (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();

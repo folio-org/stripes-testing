@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import { REQUEST_TYPES, REQUEST_LEVELS, FULFILMENT_PREFERENCES } from '../../support/constants';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
@@ -158,87 +158,83 @@ describe('Loan Details', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it(
-    'C561 Loan details: test links (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
-    () => {
-      const itemBarcode = testData.folioInstances[0].barcodes[0];
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
+  it('C561 Loan details: test links (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+    const itemBarcode = testData.folioInstances[0].barcodes[0];
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
 
-      // Click linked value for item title
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        title: testData.folioInstances[0].instanceTitle,
-        expectedPage: 'Instance',
-      });
+    // Click linked value for item title
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      title: testData.folioInstances[0].instanceTitle,
+      expectedPage: 'Instance',
+    });
 
-      // Click linked value for barcode
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        title: itemBarcode,
-        expectedPage: 'Item',
-      });
+    // Click linked value for barcode
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      title: itemBarcode,
+      expectedPage: 'Item',
+    });
 
-      // Click linked value for Loan policy
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        href: '/settings/circulation/loan-policies',
-        expectedPage: 'Loan policies',
-      });
+    // Click linked value for Loan policy
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      href: '/settings/circulation/loan-policies',
+      expectedPage: 'Loan policies',
+    });
 
-      // Click on linked value for Fine incurred
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyButtonRedirectsToCorrectPage({
-        title: '100.00',
-        expectedPage: 'Fee/fine details',
-      });
+    // Click on linked value for Fine incurred
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyButtonRedirectsToCorrectPage({
+      title: '100.00',
+      expectedPage: 'Fee/fine details',
+    });
 
-      // Add another fee/fine to loan and click linked value for Fine incurred
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyButtonRedirectsToCorrectPage({
-        title: '200.00',
-        expectedPage: 'Fees/fines',
-      });
+    // Add another fee/fine to loan and click linked value for Fine incurred
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyButtonRedirectsToCorrectPage({
+      title: '200.00',
+      expectedPage: 'Fees/fines',
+    });
 
-      // Pay fee fines
-      UserAllFeesFines.goToOpenFeeFines();
-      UserAllFeesFines.selectAllFeeFines();
-      FeeFinesDetails.openActions().then(() => {
-        FeeFinesDetails.openPayModal();
-      });
-      PayFeeFine.checkAmount(200);
-      PayFeeFine.setPaymentMethod(testData.paymentMethod);
-      PayFeeFine.setAmount(200);
-      PayFeeFine.checkRestOfPay(200);
-      PayFeeFine.submitAndConfirm();
-      PayFeeFine.checkConfirmModalClosed();
+    // Pay fee fines
+    UserAllFeesFines.goToOpenFeeFines();
+    UserAllFeesFines.selectAllFeeFines();
+    FeeFinesDetails.openActions().then(() => {
+      FeeFinesDetails.openPayModal();
+    });
+    PayFeeFine.checkAmount(200);
+    PayFeeFine.setPaymentMethod(testData.paymentMethod);
+    PayFeeFine.setAmount(200);
+    PayFeeFine.checkRestOfPay(200);
+    PayFeeFine.submitAndConfirm();
+    PayFeeFine.checkConfirmModalClosed();
 
-      // Click on linked value for overdue policy
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        href: '/settings/circulation/fine-policies',
-        expectedPage: 'Overdue fine policies',
-      });
+    // Click on linked value for overdue policy
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      href: '/settings/circulation/fine-policies',
+      expectedPage: 'Overdue fine policies',
+    });
 
-      // Click on linked value for lost item policy
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        href: '/settings/circulation/lost-item-fee-policy',
-        expectedPage: 'Lost item fee policies',
-      });
+    // Click on linked value for lost item policy
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      href: '/settings/circulation/lost-item-fee-policy',
+      expectedPage: 'Lost item fee policies',
+    });
 
-      // Click on linked value for Request queue
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({ href: '/requests?', expectedPage: 'Requests' });
-    },
-  );
+    // Click on linked value for Request queue
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({ href: '/requests?', expectedPage: 'Requests' });
+  });
 });

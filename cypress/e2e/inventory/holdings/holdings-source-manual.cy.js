@@ -1,6 +1,6 @@
 import { including } from '@interactors/html';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
@@ -46,7 +46,7 @@ describe('Holdings', () => {
 
   it(
     'C367932 Verify holdings source added holdings manually (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       InventoryInstance.searchByTitle(testData.item.instanceName);
       InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);

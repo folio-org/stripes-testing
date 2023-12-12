@@ -7,7 +7,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportViewAllLogs from '../../support/fragments/data-export/dataExportViewAllLogs';
-import devTeams from '../../support/dictionary/devTeams';
 
 let user;
 const item = {
@@ -59,7 +58,7 @@ describe.skip('Data-export', () => {
 
   it(
     'C404374 Verify "Errors" accordion in the Search & filter pane on the "View all" screen (firebird) (TaaS)',
-    { tags: [devTeams.firebird] },
+    { tags: ['firebird'] },
     () => {
       DataExportViewAllLogs.openAllJobLogs();
 

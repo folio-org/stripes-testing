@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
@@ -133,7 +133,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C360541 Verify that "Link to MARC Authority record" icon displays next to MARC fields when editing Bib record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.editMarcBibliographicRecord();
       tagArray.forEach((tag) => {
@@ -156,7 +156,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C353526 Protection of specified fields when editing "MARC Bibliographic" record (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.editMarcBibliographicRecord();
       MarcAuthority.checkInfoButton('999');

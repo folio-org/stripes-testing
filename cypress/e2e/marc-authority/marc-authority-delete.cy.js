@@ -1,7 +1,5 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
 import Features from '../../support/dictionary/features';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
@@ -48,7 +46,7 @@ describe('MARC Authority Delete', () => {
 
   it(
     'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
-    { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] },
+    { tags: ['criticalPath', Features.authority, 'spitfire'] },
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
       JobProfiles.waitFileIsUploaded();
@@ -75,7 +73,7 @@ describe('MARC Authority Delete', () => {
 
   it(
     'C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName2);
       JobProfiles.waitFileIsUploaded();

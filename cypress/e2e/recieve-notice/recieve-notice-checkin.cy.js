@@ -2,8 +2,6 @@ import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -202,7 +200,7 @@ describe('Receiving notice: Checkout', () => {
 
   it(
     'C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (volaris)',
-    { tags: [testTypes.smoke, devTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();

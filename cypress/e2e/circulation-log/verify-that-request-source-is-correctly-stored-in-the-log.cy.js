@@ -8,7 +8,6 @@ import {
 } from '../../support/constants';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import Requests from '../../support/fragments/requests/requests';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -16,7 +15,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import UserEdit from '../../support/fragments/users/userEdit';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import { DevTeams } from '../../support/dictionary';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 
@@ -138,7 +136,7 @@ describe('Circulation log', () => {
 
   it(
     'C358981 Verify that request source is correctly stored in the log (Volaris) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       Requests.findCreatedRequest(instanceData.itemBarcode);
       Requests.selectFirstRequest(instanceData.itemBarcode);

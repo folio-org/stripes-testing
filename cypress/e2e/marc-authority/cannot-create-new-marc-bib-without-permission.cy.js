@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -26,7 +26,7 @@ describe('Create new MARC bib', () => {
   it(
     'C380428 User cannot create new "MARC bib" record without "quickMARC: Create a new MARC bibliographic record" permission (spitfire) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.spitfire],
+      tags: ['criticalPath', 'spitfire'],
     },
     () => {
       // Open "Inventory" app

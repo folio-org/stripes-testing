@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -86,7 +86,7 @@ describe('Circulation log', () => {
 
   it(
     'C17005 Filter circulation log by renewed (firebird) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const searchResultsData = {
         userBarcode: userData.barcode,

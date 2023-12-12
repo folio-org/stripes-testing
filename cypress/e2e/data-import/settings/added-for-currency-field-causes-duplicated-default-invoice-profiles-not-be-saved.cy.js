@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   BATCH_GROUP,
@@ -49,7 +49,7 @@ describe('data-import', () => {
 
     it(
       'C353959 Validation added for Currency field causes duplicated default invoice profiles not to be saved (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.search(profileForDuplicate);
         FieldMappingProfileView.duplicate();

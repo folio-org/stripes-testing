@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -50,7 +48,7 @@ describe('Search in Inventory', () => {
 
   it(
     'C360548 Verify that operator "=" is used when user search for "Instance" by "Contributor" search option. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const searchQueries = [
         'Henri Sauguet',
@@ -94,7 +92,7 @@ describe('Search in Inventory', () => {
 
   it(
     'C360555 Verify that search for "Instance" records by "Keyword" option with "<ISBN with dashes>" query will only return the records with matched identifier value. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const searchQueries = ['978-92-8000-565-9', '978-92-8011-565-9'];
 
@@ -137,7 +135,7 @@ describe('Search in Inventory', () => {
 
   it(
     'C358938 Verify that "Instance" record will close when user switches to browse (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(testData.userPropertiesC358938.username, testData.userPropertiesC358938.password, {
         path: TopMenu.inventoryPath,

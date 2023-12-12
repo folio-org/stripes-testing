@@ -3,8 +3,6 @@ import permissions from '../../support/dictionary/permissions';
 import topMenu from '../../support/fragments/topMenu';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -209,7 +207,7 @@ describe('Receiving notice: Checkout', () => {
 
   it(
     'C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (volaris)',
-    { tags: [testTypes.smoke, devTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
@@ -260,7 +258,7 @@ describe('Receiving notice: Checkout', () => {
 
   it(
     'C347622 Check that user can receive notice with multiple items after finishing the session "Check out" by setting automatic end (volaris)',
-    { tags: [testTypes.smoke, devTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();

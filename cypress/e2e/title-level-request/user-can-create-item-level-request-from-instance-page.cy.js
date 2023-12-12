@@ -1,4 +1,4 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -125,7 +125,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
   });
   it(
     'C347890 Check that user can create Item level request from instance page (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.log('new request-0');
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);

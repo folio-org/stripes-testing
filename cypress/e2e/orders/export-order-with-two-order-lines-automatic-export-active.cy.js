@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
 import {
   NewOrganization,
@@ -103,7 +103,7 @@ describe('Orders', () => {
 
     it(
       'C350545 "Purchase order" and "PO Line Details" display export details accordion for 2 exported order lines (thunderjet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Search for exported order and click on it
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

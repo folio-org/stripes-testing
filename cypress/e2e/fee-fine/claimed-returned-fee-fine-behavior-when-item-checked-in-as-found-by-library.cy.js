@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -270,7 +270,7 @@ describe('Claimed Returned', () => {
 
   it(
     'C11041 Verify claimed returned fee/fine behavior when item checked in as "found by library" (vega)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       CheckInActions.checkInItemGui(instanceData.item1Barcode);
       CheckInClaimedReturnedItem.checkModalMessage({

@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
@@ -13,7 +11,6 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import { JOB_STATUS_NAMES } from '../../support/constants';
-import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC Authority -> Edit linked Authority record', () => {
   const testData = {
@@ -111,7 +108,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
 
   it(
     'C374159 Edit values in "1XX" and "010" fields of linked "MARC Authority" record when "$0" = "010 $a" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy('Keyword', marcFiles[1].authority555FieldValue);
       MarcAuthorities.selectTitle(marcFiles[1].authority555FieldValue);

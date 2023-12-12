@@ -1,5 +1,3 @@
-import TestType from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
@@ -26,7 +24,7 @@ describe('Settings Users', () => {
 
   it(
     'C11079 Verify that you can enter/edit/remove patron block limits (vega) (TaaS)',
-    { tags: [TestType.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       Limits.selectGroup(patronGroup.name);
       Limits.verifyLimitTypes();

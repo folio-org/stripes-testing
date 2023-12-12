@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
 import Users from '../../../support/fragments/users/users';
@@ -25,7 +25,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C367964 Verify text of success toast when creating remote storage configurations (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       // #1 Go to the "Settings" app
@@ -74,7 +74,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C367965 Verify text of success toast when editing remote storage configurations (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       const editedConfiguration = {

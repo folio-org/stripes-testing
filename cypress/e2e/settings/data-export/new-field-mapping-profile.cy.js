@@ -1,6 +1,4 @@
 import { getTestEntityValue } from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -40,24 +38,20 @@ describe('settings: data-export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C10984 New mapping profile form (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
-    () => {
-      ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
-      ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
-      ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
-      ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
-      ModalSelectTransformations.clickNthCheckbox();
-      ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
+  it('C10984 New mapping profile form (firebird)', { tags: ['criticalPath', 'firebird'] }, () => {
+    ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
+    ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, ['Item']);
+    ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+    ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
+    ModalSelectTransformations.clickNthCheckbox();
+    ModalSelectTransformations.fillInTransformationsTextfields('123', '1', '2', '$a');
 
-      ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
-      InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
+    ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
+    InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
 
-      ExportFieldMappingProfiles.saveMappingProfile();
-      InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
+    ExportFieldMappingProfiles.saveMappingProfile();
+    InteractorsTools.checkCalloutMessage(newFieldMappingProfileCalloutMessage);
 
-      ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
-    },
-  );
+    ExportFieldMappingProfiles.verifyProfileNameOnTheList(fieldMappingProfileName);
+  });
 });

@@ -1,8 +1,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TestType from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
-import Parallelization from '../../support/dictionary/parallelization';
+
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
 import RenewalActions from '../../support/fragments/loans/renewals';
@@ -180,7 +178,7 @@ describe('Renewal', () => {
 
   it(
     'C568 Renewal: failure because loan is not renewable (vega)',
-    { tags: [TestType.smoke, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['smoke', 'vega', 'nonParallel', 'system'] },
     () => {
       cy.log(renewUserData);
       cy.login(renewUserData.username, renewUserData.password);

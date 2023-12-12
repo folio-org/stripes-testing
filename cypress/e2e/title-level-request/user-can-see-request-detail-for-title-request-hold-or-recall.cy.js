@@ -1,7 +1,5 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import {
   FULFILMENT_PREFERENCES,
@@ -231,7 +229,7 @@ describe('Request Detail. TLR', () => {
 
   it(
     'C350516 Check that the user can see "Request Detail" for Title request (Hold or Recall) (vega) (TaaS)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       Requests.selectTitleRequestLevel();
       Requests.findCreatedRequest(itemsData.itemsWithSeparateInstance[0].instanceTitle);

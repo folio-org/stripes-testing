@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -191,7 +191,7 @@ describe('data-import', () => {
 
     it(
       'C385653 Verify that no duplicates of match and actions profiles appear after editing job profile with repeatable profiles (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const linkedProfileNames = [
           collectionOfMatchProfiles[1].matchProfile.profileName,
@@ -267,7 +267,7 @@ describe('data-import', () => {
 
     it(
       'C385629 Verify that no duplicates of match and actions profiles appear after saving job profile with repeatable match/action profiles (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const linkedProfileNames = [
           collectionOfMatchProfiles[1].matchProfile.profileName,
@@ -336,7 +336,7 @@ describe('data-import', () => {
 
     it(
       'C385654 Verify that no duplicates of match and actions profiles appear after duplicating job profile with repeatable profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const jobProfile = {
           ...NewJobProfile.defaultJobProfile,

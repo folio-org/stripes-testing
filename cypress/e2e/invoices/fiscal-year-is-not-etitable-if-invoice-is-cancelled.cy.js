@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import { Invoices, InvoiceView } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
@@ -83,7 +83,7 @@ describe('Invoices', () => {
 
   it(
     'C387537 "Fiscal year" field is not editable for cancelled invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

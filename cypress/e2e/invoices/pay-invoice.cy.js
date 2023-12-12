@@ -1,6 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
@@ -89,32 +87,28 @@ describe('ui-invoices: Approve invoice', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C3453 Pay invoice (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
-    () => {
-      const transactionFactory = new Transaction();
-      const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
-      Invoices.searchByNumber(invoice.invoiceNumber);
-      Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.payInvoice();
-      // check transactions after payment
-      cy.visit(TopMenu.fundPath);
-      Helper.searchByName(defaultFund.name);
-      Funds.selectFund(defaultFund.name);
-      Funds.selectBudgetDetails();
-      Funds.openTransactions();
-      Funds.checkTransaction(
-        1,
-        transactionFactory.create(
-          'credit',
-          valueInTransactionTable,
-          defaultFund.code,
-          '',
-          'Invoice',
-          '',
-        ),
-      );
-    },
-  );
+  it('C3453 Pay invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+    const transactionFactory = new Transaction();
+    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.payInvoice();
+    // check transactions after payment
+    cy.visit(TopMenu.fundPath);
+    Helper.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
+    Funds.selectBudgetDetails();
+    Funds.openTransactions();
+    Funds.checkTransaction(
+      1,
+      transactionFactory.create(
+        'credit',
+        valueInTransactionTable,
+        defaultFund.code,
+        '',
+        'Invoice',
+        '',
+      ),
+    );
+  });
 });

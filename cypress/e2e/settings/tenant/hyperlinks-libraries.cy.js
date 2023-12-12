@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
@@ -124,7 +124,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C399080 Verify that hyperlink  "# of Libraries" navigates to a list of Libraries (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       cy.visit(SettingsMenu.tenantCampusesPath);

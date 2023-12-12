@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
@@ -167,7 +167,7 @@ describe('Lost items requiring actual cost', () => {
 
   it(
     'C375156 Verify ability do not bill patron for actual cost for item with "Declared to Lost" status (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action

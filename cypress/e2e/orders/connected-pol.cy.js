@@ -2,8 +2,6 @@ import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
-import TestType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -39,7 +37,7 @@ describe('orders: create an order', () => {
 
   it(
     'C10926 Populate POL details from Inventory instance (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;

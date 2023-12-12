@@ -1,7 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import { Pane } from '../../../interactors';
-import devTeams from '../../support/dictionary/devTeams';
 
 describe('circulation-log', () => {
   beforeEach('login', () => {
@@ -11,7 +9,7 @@ describe('circulation-log', () => {
   // TODO: think about redesign and moving checking inside another test
   it(
     'C15483 Select and open the Circulation log app (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
 

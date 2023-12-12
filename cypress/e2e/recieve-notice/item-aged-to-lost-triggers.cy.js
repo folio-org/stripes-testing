@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -229,68 +229,64 @@ describe('Loan notice triggers', () => {
     cy.deleteLoanType(testData.loanTypeId);
   });
 
-  it(
-    'C347865: Item aged to lost triggers (volaris)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
-    () => {
-      noticeTemplates.forEach((template, index) => {
-        NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
-        NewNoticePolicyTemplate.checkAfterSaving(template);
+  it('C347865: Item aged to lost triggers (volaris)', { tags: ['criticalPath', 'volaris'] }, () => {
+    noticeTemplates.forEach((template, index) => {
+      NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
+      NewNoticePolicyTemplate.checkAfterSaving(template);
+    });
+
+    cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
+    NewNoticePolicy.waitLoading();
+
+    NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
+    NewNoticePolicy.checkPolicyName(noticePolicy);
+
+    cy.getAdminToken();
+    cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+      testData.noticePolicyId = noticePolicyRes[0].id;
+      CirculationRules.addRuleViaApi(
+        { t: testData.loanTypeId },
+        { n: testData.noticePolicyId, l: loanPolicyBody.id, i: lostItemFeePolicyBody.id },
+      ).then((newRule) => {
+        testData.addedRule = newRule;
       });
+    });
 
-      cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-      NewNoticePolicy.waitLoading();
+    cy.getToken(testData.user.username, testData.user.password);
+    cy.visit(TopMenu.checkOutPath);
+    CheckOutActions.checkOutUserByBarcode({ ...testData.user, patronGroup });
+    CheckOutActions.checkOutItem(instanceData.itemBarcode);
+    Checkout.verifyResultsInTheRow([instanceData.itemBarcode]);
+    CheckOutActions.endCheckOutSession();
+    UserLoans.changeDueDateForAllOpenPatronLoans(testData.user.userId, -1);
 
-      NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
-      NewNoticePolicy.checkPolicyName(noticePolicy);
+    cy.visit(TopMenu.circulationLogPath);
+    // wait to get "Item aged to lost - after - once" and "Item aged to lost - after - recurring" notices
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(250000);
+    cy.reload();
+    noticeTemplates.forEach((template) => {
+      const searchResults = {
+        userBarcode: testData.user.barcode,
+        itemBarcode: instanceData.itemBarcode,
+        object: 'Notice',
+        circAction: 'Send',
+        // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+        servicePoint: testData.userServicePoint.name,
+        source: 'System',
+        desc: `Template: ${template.name}. Triggering event: Aged to lost.`,
+      };
+      SearchPane.checkSearchResultByBarcode({ barcode: testData.user.barcode, searchResults });
+    });
 
-      cy.getAdminToken();
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-        testData.noticePolicyId = noticePolicyRes[0].id;
-        CirculationRules.addRuleViaApi(
-          { t: testData.loanTypeId },
-          { n: testData.noticePolicyId, l: loanPolicyBody.id, i: lostItemFeePolicyBody.id },
-        ).then((newRule) => {
-          testData.addedRule = newRule;
-        });
-      });
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemByBarcode(instanceData.itemBarcode);
 
-      cy.getToken(testData.user.username, testData.user.password);
-      cy.visit(TopMenu.checkOutPath);
-      CheckOutActions.checkOutUserByBarcode({ ...testData.user, patronGroup });
-      CheckOutActions.checkOutItem(instanceData.itemBarcode);
-      Checkout.verifyResultsInTheRow([instanceData.itemBarcode]);
-      CheckOutActions.endCheckOutSession();
-      UserLoans.changeDueDateForAllOpenPatronLoans(testData.user.userId, -1);
-
-      cy.visit(TopMenu.circulationLogPath);
-      // wait to get "Item aged to lost - after - once" and "Item aged to lost - after - recurring" notices
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(250000);
-      cy.reload();
-      noticeTemplates.forEach((template) => {
-        const searchResults = {
-          userBarcode: testData.user.barcode,
-          itemBarcode: instanceData.itemBarcode,
-          object: 'Notice',
-          circAction: 'Send',
-          // TODO: add check for date with format <C6/8/2022, 6:46 AM>
-          servicePoint: testData.userServicePoint.name,
-          source: 'System',
-          desc: `Template: ${template.name}. Triggering event: Aged to lost.`,
-        };
-        SearchPane.checkSearchResultByBarcode({ barcode: testData.user.barcode, searchResults });
-      });
-
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemByBarcode(instanceData.itemBarcode);
-
-      cy.visit(TopMenu.circulationLogPath);
-      // wait to check that we don't get new "Item aged to lost - after - recurring" notice because item was returned
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(100000);
-      SearchPane.searchByUserBarcode(testData.user.barcode);
-      SearchPane.checkResultSearch({ object: 'Loan', circAction: 'Closed loan' }, 0);
-    },
-  );
+    cy.visit(TopMenu.circulationLogPath);
+    // wait to check that we don't get new "Item aged to lost - after - recurring" notice because item was returned
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(100000);
+    SearchPane.searchByUserBarcode(testData.user.barcode);
+    SearchPane.checkResultSearch({ object: 'Loan', circAction: 'Closed loan' }, 0);
+  });
 });

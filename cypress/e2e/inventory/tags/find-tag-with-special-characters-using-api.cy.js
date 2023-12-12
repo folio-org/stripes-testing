@@ -1,7 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -96,7 +95,7 @@ describe('inventory', () => {
 
     it(
       'C380422 Find Tag with special characters using API (volaris)',
-      { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+      { tags: ['extendedPath', 'volaris'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
         InventorySearchAndFilter.selectFoundInstance(instanceData.title);

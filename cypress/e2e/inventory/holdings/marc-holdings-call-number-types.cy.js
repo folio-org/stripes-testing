@@ -1,9 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import TestTypes from '../../../support/dictionary/testTypes';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../support/dictionary/devTeams';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -11,7 +9,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
 import Permissions from '../../../support/dictionary/permissions';
-import Parallelization from '../../../support/dictionary/parallelization';
+
 import FileManager from '../../../support/utils/fileManager';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 
@@ -142,7 +140,7 @@ describe('MARC -> MARC Holdings', () => {
 
   it(
     'C389500 Verify that "Call number type" is correctly mapped after importing and editing. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstance.searchByTitle(recordIDs[0]);
       for (let i = 0; i < holdingsFile.numOfRecords; i++) {

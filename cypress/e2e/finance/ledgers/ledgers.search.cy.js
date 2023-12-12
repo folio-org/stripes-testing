@@ -4,8 +4,6 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 import { MultiColumnList } from '../../../../interactors';
-import TestType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 
@@ -60,7 +58,7 @@ describe('ui-finance: Ledgers', () => {
 
   it(
     'C4061 Test the search and filter options for ledgers (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       FinanceHelp.checkZeroSearchResultsMessage();
 

@@ -1,6 +1,4 @@
 import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -38,7 +36,7 @@ describe('ui-inventory: query search', () => {
 
   it(
     'C375963 Verify "Export instances (JSON)" option is hidden in "Actions" menu of "Inventory" pane (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       InventorySearchAndFilter.verifyNoExportJsonOption();
       InventorySearchAndFilter.searchByParameter('Title (all)', item.instanceName);

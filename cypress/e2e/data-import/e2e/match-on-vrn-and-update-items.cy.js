@@ -1,7 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import MatchOnVRN from '../../../support/fragments/data_import/matchOnVRN';
@@ -170,7 +170,7 @@ describe('data-import', () => {
 
     it(
       'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['smoke', 'folijet', 'parallel'] },
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(

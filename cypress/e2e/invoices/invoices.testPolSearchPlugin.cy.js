@@ -1,14 +1,12 @@
 import TopMenu from '../../support/fragments/topMenu';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
-import testType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import NewOrderLine from '../../support/fragments/orders/enchancedOrderLine';
 import Orders from '../../support/fragments/orders/orders';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('ui-invoices: test POL search plugin', () => {
@@ -77,7 +75,7 @@ describe('ui-invoices: test POL search plugin', () => {
 
   it(
     'C350389 Test purchase order line plugin search (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Invoices.getSearchParamsMap(createdOrderNumber, orderLine);
       Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);

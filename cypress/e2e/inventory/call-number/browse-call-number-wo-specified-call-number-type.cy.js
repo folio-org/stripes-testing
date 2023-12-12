@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -55,7 +55,7 @@ describe('inventory', () => {
 
     it(
       'C407697 Browse for Call number without specified call number type, which match with any call number type format (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         // Click on the "Select a browse option" dropdown and select "Call numbers (all)" browse option.
         InventorySearchAndFilter.selectBrowseCallNumbers();
