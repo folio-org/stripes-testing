@@ -664,6 +664,10 @@ export default {
     cy.expect(saveAndCloseButton.is({ disabled: false }));
   },
 
+  verifySaveAndCloseButtonDisabled() {
+    cy.expect(saveAndCloseButton.is({ disabled: true }));
+  },
+
   deleteFieldWithEnter(rowNumber) {
     cy.get(`button[aria-labelledby="actions-delete-field-${rowNumber}-text"]`)
       .blur()
