@@ -94,7 +94,7 @@ describe('circulation-log loan period', () => {
           testData = {
             folioInstances: InventoryInstances.generateFolioInstances({
               count: 3,
-              properties: materialTypes.map(({ id }) => ({ materialType: { id } })),
+              itemsProperties: materialTypes.map(({ id }) => ({ materialType: { id } })),
             }),
             servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
             requestsId: '',
