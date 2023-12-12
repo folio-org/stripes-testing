@@ -1,10 +1,8 @@
 import Permissions from '../../support/dictionary/permissions';
-import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
+import Affiliations, { TENANT_NAMES } from '../../support/dictionary/affiliations';
 import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
@@ -15,16 +13,30 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
   const testData = {
-    // sharedPaneheaderText: 'Edit shared MARC record',
+    sharedPaneheaderText: 'Edit shared MARC record',
     // tag245: '245',
     // tag500: '500',
     // tag504: '504',
     // tag245UpdatedValue: '$a C405520 Auto Instance Shared Central Updated',
     // tag500UpdatedValue: '$a Proceedings. Updated',
-    // updatedTitle: 'C405520 Auto Instance Shared Central Updated',
+    instanceTitle:
+      'C397343 Murder in Mérida, 1792 : violence, factions, and the law / Mark W. Lentz.',
+  };
+
+  const linkingTagAndValues = {
+    authorityHeading: 'Lentz, Mark C397343',
+    rowIndex: 15,
+    tag: '100',
+    secondBox: '1',
+    thirdBox: '\\',
+    content: '$a Lentz, Mark C397343',
+    eSubfield: '$e author.',
+    zeroSubfield: '$0 id.loc.gov/authorities/names/n2011049161397343',
+    seventhBox: '',
   };
 
   const users = {};
@@ -87,36 +99,57 @@ describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
             JobProfiles.waitFileIsImported(marcFile.fileNameImported);
             Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(marcFile.fileNameImported);
-            for (let i = 0; i < marcFile.numOfRecords; i++) {
-              Logs.getCreatedItemsID(i).then((link) => {
-                createdRecordIDs.push(link.split('/')[5]);
-              });
-            }
+            Logs.getCreatedItemsID().then((link) => {
+              createdRecordIDs.push(link.split('/')[5]);
+            });
           });
         });
 
         cy.login(users.userProperties.username, users.userProperties.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
+        }).then(() => {
+          ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.COLLEGE);
+          InventoryInstances.waitContentLoading();
         });
       });
   });
 
   after('Delete users, data', () => {
-    // cy.resetTenant();
-    // cy.getAdminToken();
-    // MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
-    // InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-    // Users.deleteViaApi(users.userProperties.userId);
+    cy.resetTenant();
+    cy.getAdminToken();
+    MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+    InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
+    Users.deleteViaApi(users.userProperties.userId);
   });
 
   it(
     'C397343 Link Shared MARC bib with Shared MARC authority from Member tenant (consortia)(spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
-      // InventoryInstance.searchByTitle(createdInstanceID);
-      // InventoryInstances.selectInstance();
-      // InventoryInstance.editMarcBibliographicRecord();
+      InventoryInstance.searchByTitle(createdRecordIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);
+      QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
+      MarcAuthorities.switchToSearch();
+      InventoryInstance.verifySelectMarcAuthorityModal();
+      InventoryInstance.searchResults(linkingTagAndValues.value);
+      InventoryInstance.clickLinkButton();
+      QuickMarcEditor.verifyTagFieldAfterLinking(
+        linkingTagAndValues.rowIndex,
+        linkingTagAndValues.tag,
+        linkingTagAndValues.secondBox,
+        linkingTagAndValues.thirdBox,
+        linkingTagAndValues.content,
+        linkingTagAndValues.eSubfield,
+        linkingTagAndValues.zeroSubfield,
+        linkingTagAndValues.seventhBox,
+      );
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.checkInstanceTitle(testData.instanceTitle);
+
       // QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);
       // QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245UpdatedValue);
       // QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
