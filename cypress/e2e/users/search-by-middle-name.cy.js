@@ -79,11 +79,15 @@ describe('Users', () => {
     PatronGroups.deleteViaApi(patronGroup.id);
   });
 
-  it('C389464 Search by middle name (volaris)', { tags: ['criticalPath', 'volaris'] }, () => {
-    UsersSearchPane.searchByKeywords(userData.middleName);
-    Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
-    cy.visit(TopMenu.checkOutPath);
-    Checkout.waitLoading();
-    CheckOutActions.addPatron(userData.middleName);
-  });
+  it(
+    'C389464 Search by middle name (volaris)',
+    { tags: ['criticalPath', 'volaris', 'system'] },
+    () => {
+      UsersSearchPane.searchByKeywords(userData.middleName);
+      Users.verifyMiddleNameOnUserDetailsPane(userData.middleName);
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.waitLoading();
+      CheckOutActions.addPatron(userData.middleName);
+    },
+  );
 });

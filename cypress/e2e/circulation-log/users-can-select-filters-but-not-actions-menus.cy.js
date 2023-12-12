@@ -52,7 +52,7 @@ describe('Circulation log', () => {
 
   it(
     'C365625 Verify that users can select filters, but not the Actions menus with "Circulation log: View permission " (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'system'] },
     () => {
       SearchPane.filterByLastWeek();
       SearchResults.checkTableWithoutLinks();

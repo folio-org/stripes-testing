@@ -22,7 +22,7 @@ describe('ui-users-settings: payments methods in Fee/fine', () => {
 
   it(
     'C445 Verify that you can create/edit/delete payment methods for a fee/fine owner (volaris)',
-    { tags: ['smoke', features.paymentMethod, 'volaris'] },
+    { tags: ['smoke', features.paymentMethod, 'volaris', 'system'] },
     () => {
       // create
       const initialPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };

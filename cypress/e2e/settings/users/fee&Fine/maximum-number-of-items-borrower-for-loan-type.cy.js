@@ -198,7 +198,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
 
   it(
     'C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (volaris)',
-    { tags: ['smoke', 'volaris'] },
+    { tags: ['smoke', 'volaris', 'system'] },
     () => {
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);

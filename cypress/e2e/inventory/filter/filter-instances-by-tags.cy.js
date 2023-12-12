@@ -36,22 +36,26 @@ describe('inventory', () => {
       Users.deleteViaApi(userId);
     });
 
-    it('C343215 Filter instances by tags (volaris)', { tags: ['smoke', 'volaris'] }, () => {
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearchAndFilter.verifyPanesExist();
-      InventorySearchAndFilter.searchInstanceByTitle(instanceRecord.instanceTitle);
-      InventorySearchAndFilter.verifySearchResult(instanceRecord.instanceTitle);
-      InventorySearchAndFilter.selectFoundInstance(instanceRecord.instanceTitle);
-      InventorySearchAndFilter.verifyInstanceDetailsView();
-      InventorySearchAndFilter.openTagsField();
-      InventorySearchAndFilter.verifyTagsView();
-      InventorySearchAndFilter.addTag(testTag);
-      cy.reload();
-      InventorySearchAndFilter.verifyTagCount(tagsCount);
-      InventorySearchAndFilter.closeInstanceDetailPane();
-      InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
-      InventorySearchAndFilter.filterByTag(testTag);
-      InventorySearchAndFilter.verifyIsFilteredByTag(instanceRecord.instanceTitle);
-    });
+    it(
+      'C343215 Filter instances by tags (volaris)',
+      { tags: ['smoke', 'volaris', 'system'] },
+      () => {
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.verifyPanesExist();
+        InventorySearchAndFilter.searchInstanceByTitle(instanceRecord.instanceTitle);
+        InventorySearchAndFilter.verifySearchResult(instanceRecord.instanceTitle);
+        InventorySearchAndFilter.selectFoundInstance(instanceRecord.instanceTitle);
+        InventorySearchAndFilter.verifyInstanceDetailsView();
+        InventorySearchAndFilter.openTagsField();
+        InventorySearchAndFilter.verifyTagsView();
+        InventorySearchAndFilter.addTag(testTag);
+        cy.reload();
+        InventorySearchAndFilter.verifyTagCount(tagsCount);
+        InventorySearchAndFilter.closeInstanceDetailPane();
+        InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+        InventorySearchAndFilter.filterByTag(testTag);
+        InventorySearchAndFilter.verifyIsFilteredByTag(instanceRecord.instanceTitle);
+      },
+    );
   });
 });

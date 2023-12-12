@@ -97,7 +97,7 @@ describe('Permission Sets', () => {
 
   it(
     'C402342 Verify that Creating and Editing options are disabled for users with "Setting (Users): View all settings" permission scenario 1 (volaris)',
-    { tags: ['extendedPath', 'volaris'] },
+    { tags: ['extendedPath', 'volaris', 'system'] },
     () => {
       cy.visit(SettingsMenu.permissionSets);
       PermissionSets.waitLoading();

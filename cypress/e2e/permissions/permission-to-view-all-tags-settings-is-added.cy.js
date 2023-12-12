@@ -59,7 +59,7 @@ describe('Permissions Tags', () => {
 
   it(
     'C396357 Verify that new permission to view all the Tags settings is added (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'system'] },
     () => {
       TagsGeneral.changeEnableTagsStatus('disable');
       cy.visit(TopMenu.usersPath);

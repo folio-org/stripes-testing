@@ -232,7 +232,7 @@ describe('Circulation log', () => {
 
   it(
     'C17064 Check the Actions button from filtering Circulation log by transferred partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'system'] },
     () => {
       createFeeFine().then((feeFineId) => {
         testData.feeFineId = feeFineId;
@@ -247,7 +247,7 @@ describe('Circulation log', () => {
 
   it(
     'C17063 Filter circulation log by transferred partially (volaris)',
-    { tags: ['criticalPath', 'volaris'] },
+    { tags: ['criticalPath', 'volaris', 'system'] },
     () => {
       filterByAction('Transferred partially');
       NewFeeFine.deleteFeeFineAccountViaApi(testData.feeFineId);

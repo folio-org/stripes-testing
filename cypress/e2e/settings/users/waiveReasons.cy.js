@@ -11,7 +11,7 @@ describe('Management of waive reasons', () => {
 
   it(
     'C446 Verify that you can create/edit/delete waive reasons (volaris)',
-    { tags: ['smoke', Features.waiveReasons, 'volaris'] },
+    { tags: ['smoke', Features.waiveReasons, 'volaris', 'system'] },
     () => {
       WaiveReasons.startAdding();
       WaiveReasons.checkSaveButtonState({ isDisabled: true });
