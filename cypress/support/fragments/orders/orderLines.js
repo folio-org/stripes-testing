@@ -911,6 +911,14 @@ export default {
     submitOrderLine();
   },
 
+  changeFundInPOLWithoutSaveInPercents(indexOfPreviusFund, fund, value) {
+    cy.do([
+      Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value),
+    ]);
+  },
+
   selectOrderline: (POlinenumber) => {
     cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
   },
@@ -933,6 +941,15 @@ export default {
     ]);
     cy.wait(6000);
     submitOrderLine();
+  },
+
+  addFundToPOLWithoutSave(indexOfPreviusFund, fund, value) {
+    cy.do([
+      addFundDistributionButton.click(),
+      Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value),
+    ]);
   },
 
   addTwoFundsToPOLinPercent(
@@ -1611,7 +1628,7 @@ export default {
   },
 
   checkConnectedInstance: () => {
-    cy.expect(itemDetailsSection.find(Link('Connected')).exists());
+    cy.expect(Link('Connected').exists());
   },
 
   fillInInvalidDataForPublicationDate: () => {
@@ -1647,6 +1664,16 @@ export default {
 
   selectCurrentEncumbrance: (currentEncumbrance) => {
     cy.do(fundDistributionSection.find(Link(currentEncumbrance)).click());
+  },
+
+  openPageCurrentEncumbranceInFund: (fund, linkText) => {
+    cy.get('#FundDistribution')
+      .contains('div[class^="mclCell-"]', fund)
+      .parent()
+      .find('a')
+      .contains(linkText)
+      .invoke('removeAttr', 'target')
+      .click();
   },
 
   openPageCurrentEncumbrance: (title) => {

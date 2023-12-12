@@ -5,6 +5,7 @@ import {
   LOCATION_NAMES,
   ORDER_FORMAT_NAMES,
   ORDER_STATUSES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -115,7 +116,7 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileName);
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
         FileDetails.checkOrderQuantityInSummaryTable(quantityOfItems);
-        FileDetails.openOrder('Created');
+        FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           orderNumber = initialNumber.replace('-1', '');
