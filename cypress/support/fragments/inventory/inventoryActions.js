@@ -19,6 +19,7 @@ export default {
   options: {
     new: Button('New'),
     saveUUIDs: Button('Save instances UUIDs'),
+    saveHoldingsUUIDs: Button('Save holdings UUIDs'),
     saveCQLQuery: Button('Save instances CQL query'),
     exportMARC: Button('Export instances (MARC)'),
     showSelectedRecords: Button('Show selected records'),
