@@ -210,7 +210,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it(
     'C5557: Verify that you can create/edit/delete overdue fine policies (vega)',
-    { tags: ['vega', 'smoke'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       cy.loginAsAdmin();
       // TODO add check that name is unique
