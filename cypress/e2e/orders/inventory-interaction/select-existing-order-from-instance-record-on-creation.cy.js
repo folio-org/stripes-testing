@@ -66,6 +66,7 @@ describe('Orders', () => {
       { tags: ['extendedPath', 'thunderjet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
+
         InventorySearchAndFilter.byKeywords(testData.instanceName);
         InventoryInstance.checkInstanceTitle(testData.instanceName);
 
