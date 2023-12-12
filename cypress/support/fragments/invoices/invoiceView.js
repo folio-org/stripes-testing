@@ -19,6 +19,7 @@ import PayInvoiceModal from './modal/payInvoiceModal';
 import CancelInvoiceModal from './modal/cancelInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
+import interactorsTools from '../../utils/interactorsTools';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
@@ -32,6 +33,9 @@ const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }
 
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
+
+// vendor details section
+const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
 
 // Links & documents section
 const linksAndDocumentsSection = Section({ id: 'documents' });
@@ -135,6 +139,7 @@ export default {
     title,
     invoiceInformation = [],
     invoiceLines,
+    vendorDetails = [],
     voucherExport = [],
     voucherInformation = [],
   } = {}) {
@@ -144,6 +149,10 @@ export default {
 
     invoiceInformation.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    vendorDetails.forEach(({ key, value }) => {
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     voucherExport.forEach(({ key, value }) => {
@@ -162,6 +171,26 @@ export default {
       );
       this.checkInvoiceLinesTableContent(invoiceLines);
     }
+  },
+  checkFieldsHasCopyIcon(fields = []) {
+    fields.forEach(({ label }) => {
+      cy.expect(
+        invoiceDetailsPane
+          .find(KeyValue(label))
+          .find(Button({ icon: 'clipboard' }))
+          .exists(),
+      );
+    });
+  },
+  copyOrderNumber(vendorInvoiceNo) {
+    cy.do(
+      invoiceDetailsPane
+        .find(KeyValue('Vendor invoice number'))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    interactorsTools.checkCalloutMessage(`Successfully copied "${vendorInvoiceNo}" to clipboard.`);
   },
   approveInvoice({ isApprovePayEnabled = false } = {}) {
     cy.do([

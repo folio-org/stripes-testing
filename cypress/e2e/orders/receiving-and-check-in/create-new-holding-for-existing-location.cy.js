@@ -123,7 +123,9 @@ describe('Orders', () => {
 
         // Click "Save and close" button
         SelectLocationModal.clickSaveButton();
-        ReceivingsListEditForm.checkReceivedLocation({ value: testData.location.name });
+        ReceivingsListEditForm.checkReceivingItemDetails({
+          receivedLocation: testData.location.name,
+        });
 
         // Fill "Barcode" field with valid value, Check the checkbox next to receiving record
         ReceivingsListEditForm.fillReceivingFields({ barcode: testData.barcode });
