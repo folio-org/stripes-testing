@@ -20,22 +20,21 @@ describe('orders: Settings', () => {
 
   before(() => {
     cy.getAdminToken();
-
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-    });
-    order.vendor = organization.name;
-    order.orderType = 'One-time';
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.ordersPrefixes);
-    SettingsOrders.createPreffix(poPreffix);
-    cy.visit(SettingsMenu.ordersSuffixes);
-    SettingsOrders.createSuffix(poSuffix);
-    cy.visit(SettingsMenu.ordersPONumberEditPath);
-    SettingsOrders.userCanEditPONumber();
-
     cy.createTempUser([permissions.uiOrdersCreate.gui]).then((userProperties) => {
       user = userProperties;
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+      });
+      order.vendor = organization.name;
+      order.orderType = 'One-time';
+      cy.loginAsAdmin();
+      cy.visit(SettingsMenu.ordersPrefixes);
+      SettingsOrders.createPreffix(poPreffix);
+      cy.visit(SettingsMenu.ordersSuffixes);
+      SettingsOrders.createSuffix(poSuffix);
+      cy.visit(SettingsMenu.ordersPONumberEditPath);
+      SettingsOrders.userCanEditPONumber();
+
       cy.login(user.username, user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
