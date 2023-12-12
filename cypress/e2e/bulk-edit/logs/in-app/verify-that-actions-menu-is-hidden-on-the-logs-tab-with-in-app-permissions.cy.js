@@ -2,7 +2,6 @@ import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edi
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 import permissions from '../../../../support/dictionary/permissions';
-import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -69,11 +68,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
-
-        BulkEditActions.openInAppStartBulkEditFrom();
-        BulkEditActions.addItemNote('Action note', 'Test note');
-        BulkEditActions.confirmChanges();
-        BulkEditActions.commitChanges();
 
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifyLogsPane();
