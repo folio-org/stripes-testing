@@ -64,48 +64,6 @@ describe('orders: export', () => {
 
   before(() => {
     cy.getAdminToken();
-
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-      organization.id = organizationsResponse;
-      order.vendor = organizationsResponse;
-    });
-    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkSearchResults(organization);
-    Organizations.selectOrganization(organization.name);
-    Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(
-      integrationName1,
-      integartionDescription1,
-      vendorEDICodeFor1Integration,
-      libraryEDICodeFor1Integration,
-      organization.accounts[0].accountNo,
-      'Purchase',
-      UTCTime,
-    );
-    Organizations.addIntegration();
-    cy.wait(2000);
-    Organizations.fillIntegrationInformation(
-      integrationName2,
-      integartionDescription2,
-      vendorEDICodeFor2Integration,
-      libraryEDICodeFor2Integration,
-      organization.accounts[1].accountNo,
-      'Purchase At Vendor System',
-      UTCTime,
-    );
-
-    cy.createOrderApi(order).then((response) => {
-      orderNumber = response.body.poNumber;
-    });
-    // Need to wait while first job will be runing
-    cy.wait(70000);
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
@@ -118,6 +76,48 @@ describe('orders: export', () => {
       permissions.exportManagerDownloadAndResendFiles.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
+      Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+        organization.id = organizationsResponse;
+        order.vendor = organizationsResponse;
+      });
+      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.checkSearchResults(organization);
+      Organizations.selectOrganization(organization.name);
+      Organizations.addIntegration();
+      Organizations.fillIntegrationInformation(
+        integrationName1,
+        integartionDescription1,
+        vendorEDICodeFor1Integration,
+        libraryEDICodeFor1Integration,
+        organization.accounts[0].accountNo,
+        'Purchase',
+        UTCTime,
+      );
+      Organizations.addIntegration();
+      cy.wait(2000);
+      Organizations.fillIntegrationInformation(
+        integrationName2,
+        integartionDescription2,
+        vendorEDICodeFor2Integration,
+        libraryEDICodeFor2Integration,
+        organization.accounts[1].accountNo,
+        'Purchase At Vendor System',
+        UTCTime,
+      );
+
+      cy.createOrderApi(order).then((response) => {
+        orderNumber = response.body.poNumber;
+      });
+      // Need to wait while first job will be runing
+      cy.wait(70000);
+
       cy.login(user.username, user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,

@@ -552,9 +552,10 @@ export default {
   },
 
   exportRollover: (dataFile) => {
+    cy.wait(8000);
     cy.get('#rollover-logs-list')
       .find('div[role="gridcell"]')
-      .contains('a', `${dataFile}-result`)
+      .contains(`${dataFile}-result`)
       .click();
   },
 

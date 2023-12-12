@@ -78,7 +78,7 @@ describe('Acquisition Units', () => {
       path: SettingsMenu.acquisitionUnitsPath,
       waiter: AcquisitionUnits.waitLoading,
     });
-    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+    AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name, user);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
     Users.deleteViaApi(user.userId);
   });

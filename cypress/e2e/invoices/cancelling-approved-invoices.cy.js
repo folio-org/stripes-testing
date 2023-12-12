@@ -33,64 +33,65 @@ describe('ui-invoices: Cancelling approved invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.loginAsAdmin({
-      path: SettingsMenu.invoiceApprovalsPath,
-      waiter: SettingsInvoices.waitApprovalsLoading,
-    });
-    SettingsInvoices.checkApproveAndPayCheckboxIsDisabled();
-
-    FiscalYears.createViaApi(defaultFiscalYear).then((responseFY) => {
-      defaultFiscalYear.id = responseFY.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
-          Helper.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-        });
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganization) => {
-      organization.id = responseOrganization;
-      order.vendor = responseOrganization;
-      invoice.accountingCode = organization.erpCode;
-      invoice.vendorName = organization.name;
-      cy.createOrderApi(order).then((responseOrder) => {
-        orderNumber = responseOrder.body.poNumber;
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        Orders.createPOLineViaActions();
-        OrderLines.POLineInfodorPhysicalMaterialWithFund(orderLineTitle, defaultFund);
-        Orders.backToPO();
-        Orders.openOrder();
-      });
-      cy.getBatchGroups().then((batchGroup) => {
-        invoice.batchGroup = batchGroup.name;
-        invoiceLine.subTotal = -subtotalValue;
-        cy.visit(TopMenu.invoicesPath);
-        Invoices.createSpecialInvoice(invoice);
-        Invoices.createInvoiceLineFromPol(orderNumber);
-        // Need to wait,while Invoice Line will be laoded fully
-        cy.wait(4000);
-        Invoices.approveInvoice();
-      });
-    });
-    cy.wait(10000);
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.viewEditDeleteInvoiceInvoiceLine.gui,
       permissions.uiInvoicesCancelInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      cy.loginAsAdmin({
+        path: SettingsMenu.invoiceApprovalsPath,
+        waiter: SettingsInvoices.waitApprovalsLoading,
+      });
+      SettingsInvoices.checkApproveAndPayCheckboxIsDisabled();
+
+      FiscalYears.createViaApi(defaultFiscalYear).then((responseFY) => {
+        defaultFiscalYear.id = responseFY.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          defaultFund.ledgerId = defaultLedger.id;
+
+          Funds.createViaApi(defaultFund).then((fundResponse) => {
+            defaultFund.id = fundResponse.fund.id;
+
+            cy.visit(TopMenu.fundPath);
+            Helper.searchByName(defaultFund.name);
+            Funds.selectFund(defaultFund.name);
+            Funds.addBudget(allocatedQuantity);
+          });
+        });
+      });
+
+      Organizations.createOrganizationViaApi(organization).then((responseOrganization) => {
+        organization.id = responseOrganization;
+        order.vendor = responseOrganization;
+        invoice.accountingCode = organization.erpCode;
+        invoice.vendorName = organization.name;
+        cy.createOrderApi(order).then((responseOrder) => {
+          orderNumber = responseOrder.body.poNumber;
+          cy.visit(TopMenu.ordersPath);
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          Orders.createPOLineViaActions();
+          OrderLines.POLineInfodorPhysicalMaterialWithFund(orderLineTitle, defaultFund);
+          Orders.backToPO();
+          Orders.openOrder();
+        });
+        cy.getBatchGroups().then((batchGroup) => {
+          invoice.batchGroup = batchGroup.name;
+          invoiceLine.subTotal = -subtotalValue;
+          cy.visit(TopMenu.invoicesPath);
+          Invoices.createSpecialInvoice(invoice);
+          Invoices.createInvoiceLineFromPol(orderNumber);
+          // Need to wait,while Invoice Line will be laoded fully
+          cy.wait(4000);
+          Invoices.approveInvoice();
+        });
+      });
+      cy.wait(10000);
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,

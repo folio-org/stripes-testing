@@ -11,6 +11,7 @@ import NewLocation from '../../../support/fragments/settings/tenant/locations/ne
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('orders: Settings', () => {
   const order = {
@@ -34,7 +35,14 @@ describe('orders: Settings', () => {
       },
     ],
   };
-
+  const item = {
+    instanceName: `testBulkEdit_${getRandomPostfix()}`,
+    itemBarcode: getRandomPostfix(),
+  };
+  const secondItem = {
+    instanceName: `testBulkEdit_2_${getRandomPostfix()}`,
+    itemBarcode: getRandomPostfix(),
+  };
   let orderNumber;
   let user;
   let effectiveLocationServicePoint;
@@ -43,29 +51,31 @@ describe('orders: Settings', () => {
   before(() => {
     cy.getAdminToken();
 
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      effectiveLocationServicePoint = servicePoints[0];
-      NewLocation.createViaApi(
-        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-      ).then((locationResponse) => {
-        location = locationResponse;
-        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-          organization.id = organizationsResponse;
-          order.vendor = organizationsResponse;
-        });
-
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-        cy.createOrderApi(order).then((response) => {
-          orderNumber = response.body.poNumber;
-        });
-      });
-    });
-
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiSettingsOrdersCanViewAndEditAllSettings.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+        effectiveLocationServicePoint = servicePoints[0];
+        NewLocation.createViaApi(
+          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+        ).then((locationResponse) => {
+          location = locationResponse;
+          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+            organization.id = organizationsResponse;
+            order.vendor = organizationsResponse;
+          });
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.itemBarcode);
+
+          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+          cy.createOrderApi(order).then((response) => {
+            orderNumber = response.body.poNumber;
+          });
+        });
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: SettingsMenu.ordersPurchaseOrderLinesLimit,
         waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
@@ -101,7 +111,7 @@ describe('orders: Settings', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
+      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
         'Purchase',
         location.institutionId,
@@ -109,7 +119,7 @@ describe('orders: Settings', () => {
       );
       OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 40);
+      OrderLines.selectRandomInstanceInTitleLookUP(secondItem.instanceName, 0);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
         'Purchase',
         location.institutionId,
