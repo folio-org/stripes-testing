@@ -1,7 +1,5 @@
 import uuid from 'uuid';
 import moment from 'moment';
-
-import Features from '../../support/dictionary/features';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import Users from '../../support/fragments/users/users';
@@ -124,7 +122,7 @@ describe('Fee/fine management', () => {
 
   it(
     'C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (vega)',
-    { tags: ['smoke', Features.feeFine, 'vega', 'nonParallel'] },
+    { tags: ['smoke', 'vega', 'nonParallel'] },
     () => {
       const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
       const itemInfo = [testData.instanceTitle + ' (book)', itemBarcode];

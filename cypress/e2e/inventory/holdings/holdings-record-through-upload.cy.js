@@ -3,7 +3,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import features from '../../../support/dictionary/features';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
@@ -39,7 +38,7 @@ describe('Manage holding records of instance records created through marc file u
 
   it(
     'C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)',
-    { tags: ['smoke', 'spitfire', features.holdingsRecord, 'broken'] },
+    { tags: ['smoke', 'spitfire', 'broken'] },
     () => {
       cy.visit(TopMenu.inventoryPath);
       InventoryInstance.searchByTitle(instanceId);

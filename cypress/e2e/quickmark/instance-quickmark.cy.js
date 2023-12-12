@@ -1,7 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix, { replaceByIndex } from '../../support/utils/stringTools';
 import { Callout } from '../../../interactors';
@@ -77,7 +76,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it(
     'C353612 Verify "LDR" validation rules with invalid data for editable (06, 07) and non-editable positions when editing/deriving record (spitfire)',
-    { tags: ['smoke', 'spitfire', features.quickMarcEditor] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       const checkLdrErrors = () => {
         const initialLDRValue = marcFile.ldrValue;
@@ -171,7 +170,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it(
     'C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)',
-    { tags: ['smoke', 'spitfire', features.quickMarcEditor] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       const initialLDRValue = marcFile.ldrValue;
       const changesIn06 = ['c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];

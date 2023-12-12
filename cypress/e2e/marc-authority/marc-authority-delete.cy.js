@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
@@ -46,7 +45,7 @@ describe('MARC Authority Delete', () => {
 
   it(
     'C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)',
-    { tags: ['criticalPath', Features.authority, 'spitfire'] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
       JobProfiles.waitFileIsUploaded();

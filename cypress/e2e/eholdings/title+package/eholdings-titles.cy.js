@@ -11,7 +11,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import { Pane, Section, Button } from '../../../../interactors';
 import eHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingResourceEdit';
 import dateTools from '../../../support/utils/dateTools';
-import features from '../../../support/dictionary/features';
 import permissions from '../../../support/dictionary/permissions';
 import users from '../../../support/fragments/users/users';
 
@@ -24,7 +23,7 @@ describe('eHoldings', () => {
 
     it(
       'C16994 Add a title in a package to holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', 'system', features.eHoldings] },
+      { tags: ['smoke', 'spitfire', 'system'] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -59,7 +58,7 @@ describe('eHoldings', () => {
 
     it(
       'C700 Title: Add or Edit custom coverage (spitfire)',
-      { tags: ['smoke', 'spitfire', 'system', features.eHoldings] },
+      { tags: ['smoke', 'spitfire', 'system'] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -119,7 +118,7 @@ describe('eHoldings', () => {
 
     it(
       'C691 Remove a title in a package from your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', features.eHoldings] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -146,31 +145,27 @@ describe('eHoldings', () => {
       },
     );
 
-    it(
-      'C693 Create a custom title. (spitfire)',
-      { tags: ['smoke', 'spitfire', features.eHoldings] },
-      () => {
-        cy.createTempUser([
-          permissions.uieHoldingsRecordsEdit.gui,
-          permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
-        ]).then((userProperties) => {
-          userId = userProperties.userId;
-          eHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.eholdingsPath,
-              waiter: eHoldingsTitlesSearch.waitLoading,
-            });
-            eHoldingSearch.switchToTitles();
-            const title = eHoldingsTitles.create(packageName);
-            eHoldingsResourceView.checkNames(packageName, title);
+    it('C693 Create a custom title. (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+      cy.createTempUser([
+        permissions.uieHoldingsRecordsEdit.gui,
+        permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+        eHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: eHoldingsTitlesSearch.waitLoading,
           });
+          eHoldingSearch.switchToTitles();
+          const title = eHoldingsTitles.create(packageName);
+          eHoldingsResourceView.checkNames(packageName, title);
         });
-      },
-    );
+      });
+    });
 
     it(
       'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
-      { tags: ['criticalPath', 'spitfire', features.eHoldings] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -193,7 +188,7 @@ describe('eHoldings', () => {
 
     it(
       'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
-      { tags: ['criticalPath', 'spitfire', features.eHoldings] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;

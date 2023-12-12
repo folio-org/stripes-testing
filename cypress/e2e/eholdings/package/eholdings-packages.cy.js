@@ -1,4 +1,4 @@
-import { Permissions, Features } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -27,7 +27,7 @@ describe('eHoldings', () => {
 
     it(
       'C688 Add all titles in a package to your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', 'system', Features.eHoldings] },
+      { tags: ['smoke', 'spitfire', 'system'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -53,7 +53,7 @@ describe('eHoldings', () => {
 
     it(
       'C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)',
-      { tags: ['smoke', 'spitfire', 'system', Features.eHoldings, Features.tags] },
+      { tags: ['smoke', 'spitfire', 'system'] },
       () => {
         // TODO: "Tags: All permissions" doesn't have displayName. It's the reason why there is related permission name in response, see https://issues.folio.org/browse/UITAG-51
         cy.createTempUser([
@@ -79,34 +79,30 @@ describe('eHoldings', () => {
       },
     );
 
-    it(
-      'C3464 Update package proxy (spitfire)',
-      { tags: ['criticalPath', 'spitfire', Features.eHoldings] },
-      () => {
-        cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
-          userId = userProperties.userId;
-          cy.login(userProperties.username, userProperties.password, {
-            path: TopMenu.eholdingsPath,
-            waiter: EHoldingsPackages.waitLoading,
-          });
-
-          EHoldingSearch.switchToPackages();
-          UHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
-          EHoldingsPackages.openPackage();
-          EHoldingsPackage.editProxyActions();
-          EHoldingsPackages.changePackageRecordProxy().then((newProxy) => {
-            EHoldingsPackage.saveAndClose();
-            // additional delay related with update of proxy information in ebsco services
-            cy.wait(10000);
-            EHoldingsPackages.verifyPackageRecordProxy(newProxy);
-          });
+    it('C3464 Update package proxy (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
+      cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
+        userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.eholdingsPath,
+          waiter: EHoldingsPackages.waitLoading,
         });
-      },
-    );
+
+        EHoldingSearch.switchToPackages();
+        UHoldingsProvidersSearch.byProvider('Edinburgh Scholarship Online');
+        EHoldingsPackages.openPackage();
+        EHoldingsPackage.editProxyActions();
+        EHoldingsPackages.changePackageRecordProxy().then((newProxy) => {
+          EHoldingsPackage.saveAndClose();
+          // additional delay related with update of proxy information in ebsco services
+          cy.wait(10000);
+          EHoldingsPackages.verifyPackageRecordProxy(newProxy);
+        });
+      });
+    });
 
     it(
       'C690 Remove a package from your holdings (spitfire)',
-      { tags: ['smoke', 'spitfire', Features.eHoldings] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,
@@ -132,7 +128,7 @@ describe('eHoldings', () => {
 
     it(
       'C695 Package Record: Search all titles included in a package (spitfire)',
-      { tags: ['criticalPath', 'spitfire', Features.eHoldings] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.createTempUser([Permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -154,7 +150,7 @@ describe('eHoldings', () => {
 
     it(
       'C756 Remove a tag from a package record (spitfire)',
-      { tags: ['extendedPath', 'spitfire', Features.eHoldings, Features.tags] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         cy.createTempUser([
           Permissions.uieHoldingsRecordsEdit.gui,

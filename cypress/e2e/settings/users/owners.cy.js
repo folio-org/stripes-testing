@@ -2,7 +2,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import Permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Features from '../../../support/dictionary/features';
 import users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
@@ -58,7 +57,7 @@ describe('ui-users-settings: Owners', () => {
 
     it(
       'C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points (volaris)',
-      { tags: ['smoke', Features.sharedOwner, 'volaris'] },
+      { tags: ['smoke', 'volaris'] },
       () => {
         const name = 'Shared';
         UsersOwners.startNewLineAdding();

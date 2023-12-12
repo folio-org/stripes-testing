@@ -1,4 +1,3 @@
-import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -51,7 +50,7 @@ describe('MARC Authority management', () => {
 
   it(
     'C350967 quickMARC: View MARC bibliographic record (spitfire)',
-    { tags: ['smoke', Features.authority, 'spitfire', 'nonParallel'] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       cy.login(userData.name, userData.password, {
         path: TopMenu.inventoryPath,

@@ -3,7 +3,7 @@ import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { Permissions, Features } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import EHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import EHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingResourceEdit';
@@ -48,7 +48,7 @@ describe('eHoldings', () => {
 
     it(
       'C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)',
-      { tags: ['smoke', 'spitfire', Features.eHoldings] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.login(testData.C684UserProperties.username, testData.C684UserProperties.password, {
           path: TopMenu.eholdingsPath,

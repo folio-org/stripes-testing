@@ -3,7 +3,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import features from '../../../support/dictionary/features';
 
 describe('ui-users-settings: payments methods in Fee/fine', () => {
   let specialOwnerId;
@@ -22,7 +21,7 @@ describe('ui-users-settings: payments methods in Fee/fine', () => {
 
   it(
     'C445 Verify that you can create/edit/delete payment methods for a fee/fine owner (volaris)',
-    { tags: ['smoke', features.paymentMethod, 'volaris', 'system'] },
+    { tags: ['smoke', 'volaris', 'system'] },
     () => {
       // create
       const initialPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };
