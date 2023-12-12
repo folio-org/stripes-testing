@@ -16,6 +16,7 @@ import {
   Section,
   Heading,
   Spinner,
+  KeyValue,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -29,6 +30,7 @@ import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
+const requestDetailsSection = Pane({ title: 'Request Detail' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 const requestsPane = Pane({ title: 'Requests' });
 const pageCheckbox = Checkbox({ name: 'Page' });
@@ -237,6 +239,7 @@ function waitLoadingTags() {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
+
 function selectSpecifiedRequestLevel(parameter) {
   return cy.do(Checkbox({ name: parameter }).click());
 }
@@ -274,7 +277,7 @@ export default {
 
   cancelRequest() {
     cy.do([
-      Pane({ title: 'Request Detail' }).find(Button('Actions')).click(),
+      requestDetailsSection.find(Button('Actions')).click(),
       Button({ id: 'clickable-cancel-request' }).click(),
       TextArea('Additional information for patron  ').fillIn('test'),
       Button('Confirm').click(),
@@ -350,6 +353,14 @@ export default {
     } else if (requestType === REQUEST_TYPES.RECALL) {
       this.selectRecallsRequestType();
     }
+  },
+
+  checkRequestStatus(requestStatus) {
+    cy.expect(KeyValue('Request status').has({ value: requestStatus }));
+  },
+
+  checkActionDropdownHidden: () => {
+    cy.expect(requestDetailsSection.find(Button('Actions')).absent());
   },
 
   verifyRequestTypeChecked(requestType) {
