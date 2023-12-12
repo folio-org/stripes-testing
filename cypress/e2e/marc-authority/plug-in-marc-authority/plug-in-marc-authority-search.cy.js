@@ -153,7 +153,7 @@ describe('plug-in MARC authority | Search', () => {
 
   it(
     'C380565 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (spitfire)',
-    { tags: ['smoke', 'spitfire', 'nonParallel'] },
+    { tags: ['smoke', 'spitfire', 'nonParallel', 'system'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

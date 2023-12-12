@@ -93,7 +93,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)',
-    { tags: ['smoke', 'spitfire', 'nonParallel'] },
+    { tags: ['smoke', 'spitfire', 'nonParallel', 'system'] },
     () => {
       cy.visit(TopMenu.dataImportPath);
       DataImport.uploadFile('test-auth-file.mrc', updatedfileName);
@@ -156,7 +156,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)',
-    { tags: ['smoke', 'spitfire', 'nonParallel'] },
+    { tags: ['smoke', 'spitfire', 'nonParallel', 'system'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectFirst(testData.authority.title);
@@ -224,7 +224,7 @@ describe('Importing MARC Authority files', () => {
 
   it(
     'C350572 Edit an Authority record (spitfire)',
-    { tags: ['smoke', 'spitfire', 'parallel'] },
+    { tags: ['smoke', 'spitfire', 'parallel', 'system'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.selectFirst(testData.authority.title);

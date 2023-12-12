@@ -43,8 +43,8 @@ describe('ui-inventory: browse call numbers', () => {
   );
 
   it(
-    'C350377 Verify the "Browse subjects" search option on the Instances tab (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    'C350377 Verify the "Browse subjects" search option on the Instances tab (spitfire)',
+    { tags: ['smoke', 'spitfire', 'system'] },
     () => {
       InventorySearchAndFilter.instanceTabIsDefault();
       InventorySearchAndFilter.switchToBrowseTab();

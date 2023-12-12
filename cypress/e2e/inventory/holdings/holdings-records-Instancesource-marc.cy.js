@@ -27,7 +27,7 @@ describe('Manage holding records with MARC source', { retries: 2 }, () => {
 
   it(
     'C345409 MARC instance record + MARC holdings record (spitfire)',
-    { tags: ['smoke', 'spitfire'] },
+    { tags: ['smoke', 'spitfire', 'system'] },
     () => {
       // waiting until page loading
       cy.wait(10000);
