@@ -36,7 +36,7 @@ describe('bulk-edit', () => {
 
   it(
     'C409436 Verify Bulk Edit app landing page with functional permissions (firebird) (TaaS)',
-    { tags: ['criticalPath', 'firebird'] },
+    { tags: ['criticalPath', 'firebird', 'system'] },
     () => {
       BulkEditSearchPane.verifyPanesBeforeImport();
       BulkEditSearchPane.verifyBulkEditPaneItems();

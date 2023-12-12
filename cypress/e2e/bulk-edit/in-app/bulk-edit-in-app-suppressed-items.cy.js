@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380641 Verify "Suppress from discovery" behaviour in Bulk Editing Items (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'system'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');

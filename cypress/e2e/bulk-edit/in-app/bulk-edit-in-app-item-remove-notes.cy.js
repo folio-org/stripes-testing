@@ -84,7 +84,7 @@ describe('bulk-edit', () => {
 
     it(
       'C411645 Verify separating notes in different columns - remove notes (firebird)',
-      { tags: ['criticalPath', 'firebird'] },
+      { tags: ['criticalPath', 'firebird', 'system'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

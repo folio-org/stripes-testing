@@ -49,7 +49,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375217 Verify generated Logs files for Users Local (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'system'] },
     () => {
       BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

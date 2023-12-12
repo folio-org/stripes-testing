@@ -52,7 +52,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375244 Verify generated Logs files for Users In app -- only valid (firebird)',
-    { tags: ['smoke', 'firebird'] },
+    { tags: ['smoke', 'firebird', 'system'] },
     () => {
       BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
       BulkEditSearchPane.uploadFile(validUserBarcodesFileName);
