@@ -16,7 +16,7 @@ describe('plug-in MARC authority | Search', () => {
       searchOptionA: "Children's subject heading",
       searchOptionB: 'Name-title',
       value: 'María de Jesús, de Agreda, sister, 1602-1665',
-      valueInDetailView: '$a María de Jesús, $c de Agreda, sister, $d 1602-1665',
+      valueInDetailView: '‡a María de Jesús, ‡c de Agreda, sister, ‡d 1602-1665',
       markedValue: 'María de Jesús,',
       noResults:
         'No results found for "María de Jesús, de Agreda, sister, 1602-1665". Please check your spelling and filters.',

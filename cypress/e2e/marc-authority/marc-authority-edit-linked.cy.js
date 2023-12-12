@@ -78,7 +78,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
         InventoryInstance.searchResults(marcFiles[1].authorityHeading);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `$a ${marcFiles[1].authority010FieldValue}`,
+          `‡a ${marcFiles[1].authority010FieldValue}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag700);

@@ -961,8 +961,6 @@ export default {
       .then((elem) => {
         elem.parent()[0].querySelector('input[type="checkbox"]').click();
       });
-    // TODO wait until checkbox will be marked
-    cy.wait(2000);
   },
 
   createMappingProfileViaApi: (nameProfile) => {

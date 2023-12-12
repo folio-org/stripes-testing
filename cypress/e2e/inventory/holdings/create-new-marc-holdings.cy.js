@@ -59,17 +59,17 @@ describe('Create holding records with MARC source', () => {
   const marcFiles = [
     {
       marc: 'oneMarcBib.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     },
     {
       marc: 'oneMarcBib.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     },
     {
       marc: 'oneMarcBib.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     },
   ];

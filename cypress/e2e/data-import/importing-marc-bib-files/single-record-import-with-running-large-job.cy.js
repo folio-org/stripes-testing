@@ -84,7 +84,7 @@ describe('data-import', () => {
         InventoryInstances.importWithOclc(oclcForImport);
         InventoryInstance.startOverlaySourceBibRecord();
         InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
-        InventoryInstance.importInstance(oclcForUpdating);
+        InventoryInstance.overlayWithOclc(oclcForUpdating);
         InventoryInstance.checkCalloutMessage(
           `Record ${oclcForUpdating} updated. Results may take a few moments to become visible in Inventory`,
         );
@@ -98,6 +98,7 @@ describe('data-import', () => {
         InventoryInstance.verifyInstancePhysicalcyDescription(
           updatedInstanceData.physicalDescription,
         );
+        InventoryInstance.openSubjectAccordion();
         InventoryInstance.verifyInstanceSubject(0, 0, updatedInstanceData.subject);
         InventoryInstance.checkInstanceNotes(
           updatedInstanceData.notes.noteType,

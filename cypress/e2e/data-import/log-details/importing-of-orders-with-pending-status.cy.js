@@ -29,7 +29,7 @@ describe('data-import', () => {
     const orderNumbers = [];
     const quantityOfOrders = '3';
     const filePathForCreateOrder = 'marcFileForC375178.mrc';
-    const marcFileName = `C375178 autotestFileName ${getRandomPostfix()}`;
+    const marcFileName = `C375178 autotestFileName${getRandomPostfix()}.mrc`;
     const ordersData = [
       { title: 'ROALD DAHL : TELLER OF THE UNEXPECTED : A BIOGRAPHY.', rowNumber: 0 },
       { title: 'CULTURAL HISTORY OF IDEAS', rowNumber: 1 },

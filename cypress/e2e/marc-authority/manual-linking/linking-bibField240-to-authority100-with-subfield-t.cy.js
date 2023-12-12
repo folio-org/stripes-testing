@@ -103,11 +103,11 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       InventoryInstance.searchResults(testData.authority100FieldValue);
       MarcAuthorities.checkFieldAndContentExistence(
         testData.tag010,
-        `$a ${testData.authority010FieldValue}`,
+        `‡a ${testData.authority010FieldValue}`,
       );
       MarcAuthorities.checkFieldAndContentExistence(
         testData.tag100,
-        `$a ${testData.authorityMarkedValue}`,
+        `‡a ${testData.authorityMarkedValue}`,
       );
 
       InventoryInstance.clickLinkButton();

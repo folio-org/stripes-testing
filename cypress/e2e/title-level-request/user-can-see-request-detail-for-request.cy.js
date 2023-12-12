@@ -218,7 +218,7 @@ describe('Title Level Request. Request Detail', () => {
 
       RequestDetail.checkRequestInformation({
         type: REQUEST_TYPES.PAGE,
-        status: 'Open',
+        status: 'Open - Not yet filled',
         level: REQUEST_LEVELS.ITEM,
       });
 
@@ -250,7 +250,7 @@ describe('Title Level Request. Request Detail', () => {
 
       RequestDetail.checkRequestInformation({
         type: REQUEST_TYPES.HOLD,
-        status: 'Open',
+        status: 'Open - Not yet filled',
         level: REQUEST_LEVELS.TITLE,
       });
 
