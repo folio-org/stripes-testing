@@ -17,9 +17,16 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Automated linking', (
     instanceTitle:
       'C388638 Runaway bride/ produced by Robert W. Cort, Ted Field, Scott Kroopf, Tom Rosenberg; written by Josann McGibbon, Sara Parriott; directed by Garry Marshall.',
     createdRecordIDs: [],
-    tags: {
-      tag130: '130',
-    },
+    tag130content: [
+      17,
+      '130',
+      '0',
+      '\\',
+      '$a C388638 Runaway Bride (Motion picture)',
+      '',
+      '$0 id.loc.gov/authorities/names/n2002076264',
+      '',
+    ],
     fieldContents: {
       tag245Content: 'New title',
     },
@@ -139,6 +146,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Automated linking', (
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingAuthority(testData.field130.tag130);
       QuickMarcEditor.pressSaveAndClose();
+      cy.wait(3000);
 
       cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
@@ -174,18 +182,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Automated linking', (
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.field240.rowIndex);
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.field650.rowIndex);
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.field130.rowIndex);
-      QuickMarcEditor.verifyTagFieldAfterLinking(
-        ...[
-          17,
-          '130',
-          '0',
-          '\\',
-          '$a C388638 Runaway Bride (Motion picture)',
-          '',
-          '$0 id.loc.gov/authorities/names/n2002076264',
-          '',
-        ],
-      );
+      QuickMarcEditor.verifyTagFieldAfterLinking(...testData.tag130content);
       QuickMarcEditor.checkCallout(
         'Field 240 and 650 has been linked to MARC authority record(s).',
       );
