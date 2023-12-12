@@ -195,7 +195,7 @@ describe('data-import', () => {
       'C385665 Update controllable subfield, "$0" in one of the linked repeatable fields (multiple repeatable fields with same indicators) (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         linkingTagAndValues.forEach((linking) => {
@@ -244,7 +244,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(

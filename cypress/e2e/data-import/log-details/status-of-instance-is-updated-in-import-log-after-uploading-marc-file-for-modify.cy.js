@@ -3,6 +3,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -114,7 +115,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreate);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
@@ -171,11 +172,11 @@ describe('data-import', () => {
             Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
             Logs.openFileDetails(exportedFileName);
             FileDetails.checkStatusInColumn(
-              FileDetails.status.created,
+              RECORD_STATUSES.CREATED,
               FileDetails.columnNameInResultList.srsMarc,
             );
             FileDetails.checkStatusInColumn(
-              FileDetails.status.updated,
+              RECORD_STATUSES.UPDATED,
               FileDetails.columnNameInResultList.instance,
             );
           });

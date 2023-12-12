@@ -3,6 +3,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -105,7 +106,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(firstFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstFileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
@@ -153,7 +154,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(secondFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(secondFileName);
-        FileDetails.openInstanceInInventoryByStatus('Updated');
+        FileDetails.openInstanceInInventoryByStatus(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyInstanceRecordViewOpened();
         InstanceRecordView.editMarcBibliographicRecord();
         InventoryEditMarcRecord.deleteField(18);
@@ -162,7 +163,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileName);
-        FileDetails.openJsonScreenByStatus('No action', title);
+        FileDetails.openJsonScreenByStatus(RECORD_STATUSES.NO_ACTION, title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(errorMessage);
       },

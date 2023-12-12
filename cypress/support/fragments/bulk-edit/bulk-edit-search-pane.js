@@ -592,6 +592,10 @@ export default {
     });
   },
 
+  errorsAccordionIsAbsent() {
+    cy.expect(errorsAccordion.absent());
+  },
+
   matchedAccordionIsAbsent() {
     cy.expect(resultsAccordion.absent());
   },
@@ -737,6 +741,11 @@ export default {
         .find(Checkbox({ disabled: false }))
         .absent(),
     );
+  },
+  verifyCheckboxesAbsent(...checkboxes) {
+    checkboxes.forEach((checkbox) => {
+      cy.expect(Checkbox(checkbox).absent());
+    });
   },
   verifyHoldingActionShowColumns() {
     cy.expect([

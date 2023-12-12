@@ -142,7 +142,7 @@ describe('MARC -> MARC Holdings', () => {
     'C387450 "008" field existence validation when create new "MARC Holdings" (spitfire)',
     { tags: ['criticalPath', 'spitfire'], retries: 1 },
     () => {
-      InventoryInstance.searchByTitle(recordIDs[0]);
+      InventoryInstances.searchByTitle(recordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
@@ -190,7 +190,7 @@ describe('MARC -> MARC Holdings', () => {
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.searchBySource('MARC');
-      InventoryInstance.searchByTitle(recordIDs[1]);
+      InventoryInstances.searchByTitle(recordIDs[1]);
       InventoryInstance.checkExpectedMARCSource();
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.waitLoading();
@@ -219,7 +219,7 @@ describe('MARC -> MARC Holdings', () => {
     'C350757 MARC fields behavior when creating "MARC Holdings" record (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(recordIDs[0]);
+      InventoryInstances.searchByTitle(recordIDs[0]);
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.waitLoading();
       QuickMarcEditor.checkPaneheaderContains(testData.headerTitle);

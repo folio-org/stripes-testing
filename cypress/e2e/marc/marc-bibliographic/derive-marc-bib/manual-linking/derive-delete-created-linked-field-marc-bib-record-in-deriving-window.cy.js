@@ -78,7 +78,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(testData.createdRecordsIDs[0]);
+      InventoryInstances.searchByTitle(testData.createdRecordsIDs[0]);
       InventoryInstances.selectInstance();
     });
   });

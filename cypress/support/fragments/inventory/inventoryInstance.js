@@ -129,7 +129,6 @@ const buttonLink = Button('Link');
 const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 const filterPane = Section({ id: 'pane-filter' });
-const inputSearchField = TextArea({ id: 'input-inventory-search' });
 const holdingsPane = Pane(including('Holdings'));
 const instancesButton = Button({ id: 'segment-navigation-instances' });
 const newMarcBibButton = Button({ id: 'clickable-newmarcrecord' });
@@ -459,13 +458,6 @@ export default {
     );
     cy.do(importRecordModal.find(importButton).click());
     cy.expect(instanceDetailsSection.exists());
-  },
-
-  searchByTitle(title, result = true) {
-    cy.do([filterPane.find(inputSearchField).fillIn(title), filterPane.find(searchButton).click()]);
-    if (result) {
-      cy.expect(MultiColumnListRow({ index: 0 }).exists());
-    }
   },
 
   clickViewAuthorityIconDisplayedInTagField(tag) {
@@ -1077,9 +1069,11 @@ export default {
     cy.do(Button('New request').click());
   },
 
-  newOrder() {
-    cy.do(actionsButton.click());
-    cy.do(Button('New order').click());
+  openCreateNewOrderModal() {
+    cy.do([actionsButton.click(), Button('New order').click()]);
+    NewOrderModal.waitLoading();
+    NewOrderModal.verifyModalView();
+
     return NewOrderModal;
   },
 

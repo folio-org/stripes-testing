@@ -410,4 +410,11 @@ export default {
   verifyContentOfExportFile(actual, ...expectedArray) {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
   },
+
+  clickJobId(jobId) {
+    cy.get("[data-testid='text-link']")
+      .contains(jobId)
+      .click();
+    waitClick();
+  },
 };

@@ -51,7 +51,7 @@ describe('MARC -> MARC Holdings', () => {
         Logs.getCreatedItemsID().then((link) => {
           recordIDs.push(link.split('/')[5]);
           cy.visit(TopMenu.inventoryPath).then(() => {
-            InventoryInstance.searchByTitle(recordIDs[0]);
+            InventoryInstances.searchByTitle(recordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.goToMarcHoldingRecordAdding();
             QuickMarcEditor.updateExistingField(

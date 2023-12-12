@@ -76,7 +76,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
 
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.waitContentLoading();
-        InventoryInstance.searchByTitle(createdRecordIDs[0]);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIconByIndex(10);
@@ -141,7 +141,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     'C375994 Add controllable subfields to multiple linked fields in "MARC bib" record when deriving record (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
-      InventoryInstance.searchByTitle(createdRecordIDs[0]);
+      InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.fillLinkedFieldBox(10, 5, testData.tag240FifthBoxValue);

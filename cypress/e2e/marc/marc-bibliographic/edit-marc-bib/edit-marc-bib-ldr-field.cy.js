@@ -277,7 +277,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         waiter: InventoryInstances.waitContentLoading,
       });
 
-      InventoryInstance.searchByTitle('C388651 The Journal of ecclesiastical history.');
+      InventoryInstances.searchByTitle('C388651 The Journal of ecclesiastical history.');
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
 
