@@ -5,11 +5,13 @@ import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import { NewOrder, Orders } from '../../../support/fragments/orders';
-import OrderLineEditForm from '../../../support/fragments/orders/orderLineEditForm';
-import OrderDetails from '../../../support/fragments/orders/orderDetails';
+import { NewOrganization, Organizations } from '../../../support/fragments/organizations';
+import {
+  NewOrder,
+  Orders,
+  OrderDetails,
+  OrderLineEditForm,
+} from '../../../support/fragments/orders';
 import { ORDER_STATUSES } from '../../../support/constants';
 import AreYouSureModal from '../../../support/fragments/orders/modals/areYouSureModal';
 
@@ -66,14 +68,12 @@ describe('Orders', () => {
         InventorySearchAndFilter.searchInstanceByTitle(instance.instanceName);
         InventoryInstances.selectInstance();
 
-        // Click Actions->New order
-        const NewOrderModal = InventoryInstance.newOrder();
-        NewOrderModal.waitLoading();
+        // Click Actions-> New order
+        const NewOrderModal = InventoryInstance.openCreateNewOrderModal();
 
         // Enter order number from preconditions into "PO number" field and click "Create" button
         NewOrderModal.enterOrderNumber(testData.order.poNumber);
         NewOrderModal.clickCreateButton();
-        OrderLineEditForm.waitLoading();
 
         // Click "Cancel" button
         OrderLineEditForm.clickCancelButton(true);
@@ -84,7 +84,6 @@ describe('Orders', () => {
         AreYouSureModal.verifyAreYouSureForm(false);
 
         // Navigate to purchase order details pane
-        Orders.waitLoading();
         OrderDetails.checkOrderStatus(ORDER_STATUSES.PENDING);
 
         OrderDetails.verifyPOLCount(0);

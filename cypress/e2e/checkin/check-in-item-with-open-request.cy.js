@@ -96,8 +96,8 @@ describe('Check In - Actions', () => {
           ],
         }).then((specialInstanceIds) => {
           itemData.instanceId = specialInstanceIds.instanceId;
-          itemData.holdingId = specialInstanceIds.holdingIds[0].id;
-          itemData.itemId = specialInstanceIds.holdingIds[0].itemIds;
+          itemData.holdingId = specialInstanceIds.holdings[0].id;
+          itemData.itemId = specialInstanceIds.items[0].id;
         });
       })
       .then(() => {
