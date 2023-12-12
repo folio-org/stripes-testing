@@ -28,11 +28,15 @@ describe('ui-invoices: Invoice Line creation', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C2326 Manually create invoice line (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
-    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-    Invoices.createInvoiceLine(invoiceLine);
-    Invoices.checkInvoiceLine(invoiceLine);
-    Invoices.deleteInvoiceViaActions();
-    Invoices.confirmInvoiceDeletion();
-  });
+  it(
+    'C2326 Manually create invoice line (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'system'] },
+    () => {
+      Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+      Invoices.createInvoiceLine(invoiceLine);
+      Invoices.checkInvoiceLine(invoiceLine);
+      Invoices.deleteInvoiceViaActions();
+      Invoices.confirmInvoiceDeletion();
+    },
+  );
 });

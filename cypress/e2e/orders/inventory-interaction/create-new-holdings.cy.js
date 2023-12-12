@@ -119,7 +119,7 @@ describe('Orders: Inventory interaction', () => {
 
   it(
     'C375238 Create new holdings for already existing location when editing an order line (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'system'] },
     () => {
       Orders.selectOrderByPONumber(testData.orderNumber);
       OrderLines.selectPOLInOrder(0);

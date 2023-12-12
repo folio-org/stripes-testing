@@ -105,7 +105,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
 
   it(
     'C350728 Cancelling approved invoices voids payments/credits and Unreleases encumbrances (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
+    { tags: ['criticalPath', 'thunderjet', 'nonParallel', 'system'] },
     () => {
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);

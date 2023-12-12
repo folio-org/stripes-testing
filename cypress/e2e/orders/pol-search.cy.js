@@ -106,7 +106,7 @@ describe('orders: Test Po line search', () => {
   });
 
   searchers.forEach((searcher) => {
-    it('C6719 Test the POL searches', { tags: ['smoke'] }, () => {
+    it('C6719 Test the POL searches', { tags: ['smoke', 'system'] }, () => {
       Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
       Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();

@@ -41,7 +41,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
 
   it(
     'C343209 Create, approve and pay a credit invoice (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'system'] },
     () => {
       const transactionFactory = new Transaction();
       Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);

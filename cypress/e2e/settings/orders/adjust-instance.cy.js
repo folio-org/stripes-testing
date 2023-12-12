@@ -122,7 +122,7 @@ describe('orders: Settings', () => {
 
   it(
     'C9219 Adjust Instance status, instance type and loan type defaults (items for receiving includes "Order closed" statuses) (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'system'] },
     () => {
       SettingsOrders.selectInstanceStatus(instanceStatus);
       cy.visit(SettingsMenu.ordersInstanceTypePath);

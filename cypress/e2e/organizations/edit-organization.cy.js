@@ -30,7 +30,7 @@ describe('Organizations', () => {
 
   it(
     'C673 Edit existing organization record (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'system'] },
     () => {
       Organizations.searchByParameters('Name', organization.name);
       Organizations.selectOrganization(organization.name);

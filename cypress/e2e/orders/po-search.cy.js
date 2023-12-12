@@ -37,7 +37,7 @@ describe('orders: Test PO search', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C6717 Test the PO searches (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
+  it('C6717 Test the PO searches (thunderjet)', { tags: ['smoke', 'thunderjet', 'system'] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
       orderNumber = poNumber;
       const today = new Date();

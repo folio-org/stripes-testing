@@ -62,7 +62,7 @@ describe('orders: Receive piece from Order', () => {
 
   it(
     'C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'system'] },
     () => {
       const barcode = Helper.getRandomBarcode();
       const caption = 'autotestCaption';

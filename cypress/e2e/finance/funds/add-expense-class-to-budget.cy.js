@@ -64,7 +64,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C15858 Add expense class to budget (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'system'] },
     () => {
       cy.visit(TopMenu.fundPath);
       FinanceHelp.searchByName(defaultfund.name);

@@ -29,7 +29,7 @@ describe('Acquisition Units: Settings (ACQ Units)', () => {
 
   it(
     'C6728 Create acquisitions unit (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'system'] },
     () => {
       cy.login(user.username, user.password, {
         path: SettingsMenu.acquisitionUnitsPath,

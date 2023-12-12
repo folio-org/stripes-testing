@@ -146,7 +146,7 @@ describe('orders: export', () => {
 
   it(
     'C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'system'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
