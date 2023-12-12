@@ -53,49 +53,49 @@ describe('MARC -> plug-in MARC authority | Search', () => {
   const marcFiles = [
     {
       marc: 'oneMarcBib.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numOfRecords: 1,
     },
     {
       marc: 'marcFileForC359015.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 2,
     },
     {
       marc: 'marcFileForC359206.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 2,
     },
     {
       marc: 'marcFileForC359228.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 5,
     },
     {
       marc: 'marcFileForC359229.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 2,
     },
     {
       marc: 'marcFileForC359230_2.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
     },
     {
       marc: 'marcFileForC359230_3.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
     },
     {
       marc: 'marcFileForC359231.mrc',
-      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      fileName: `testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
     },
@@ -169,7 +169,7 @@ describe('MARC -> plug-in MARC authority | Search', () => {
       InventoryInstance.checkSearchResultsTable();
       InventoryInstance.selectRecord();
       InventoryInstance.checkRecordDetailPage('Starr, Lisa');
-      MarcAuthorities.checkFieldAndContentExistence('100', '$a Starr, Lisa');
+      MarcAuthorities.checkFieldAndContentExistence('100', 'Starr, Lisa');
       InventoryInstance.closeDetailsView();
       InventoryInstance.closeFindAuthorityModal();
     },

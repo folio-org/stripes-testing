@@ -50,7 +50,7 @@ describe('inventory', () => {
         InventoryActions.import(oclc);
         InstanceRecordView.waitLoading();
         InventoryInstance.viewSource();
-        InventoryViewSource.contains('999\tf f\t$s');
+        InventoryViewSource.contains('999\tf f\t‡s');
       },
     );
 
@@ -61,7 +61,7 @@ describe('inventory', () => {
         InventorySearchAndFilter.searchByParameter('OCLC number, normalized', oclc);
         InventorySearchAndFilter.selectSearchResultItem();
         InventoryInstance.viewSource();
-        InventoryViewSource.contains('999\tf f\t$s');
+        InventoryViewSource.contains('999\tf f\t‡s');
       },
     );
   });

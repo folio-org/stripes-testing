@@ -38,7 +38,7 @@ import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe.skip('data-import', () => {
+describe('data-import', () => {
   describe('Log details', () => {
     let user;
     let instanceHrids;
@@ -46,11 +46,11 @@ describe.skip('data-import', () => {
     const quantityOfCreatedItems = '1';
     const filePathForCreateInstance = 'marcFileForC356791.mrc';
     const filePathWithUpdatedContent = 'marcFileForC356791_for_update.mrc';
-    const fileNameForCreateInstance = `C356791 autotestFileForCreate.${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C356791autotestCsvFile.${getRandomPostfix()}.csv`;
-    const exportedFileName = `C356791 autotestExportedFile.${getRandomPostfix()}.mrc`;
-    const fileNameWithUpdatedContent = `C356791 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
-    const fileNameForUpdateInstance = `C356791 autotestFileForUpdate.${getRandomPostfix()}.mrc`;
+    const fileNameForCreateInstance = `C356791 autotestFileForCreate${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C356791autotestCsvFile${getRandomPostfix()}.csv`;
+    const exportedFileName = `C356791 autotestExportedFile${getRandomPostfix()}.mrc`;
+    const fileNameWithUpdatedContent = `C356791 autotestFileForUpdate${getRandomPostfix()}.mrc`;
+    const fileNameForUpdateInstance = `C356791 autotestFileForUpdate${getRandomPostfix()}.mrc`;
     const jobProfileNameForExport = `C356791 autotest job profile.${getRandomPostfix()}`;
     const addedInstanceTitle = 'Minakata Kumagusu kinrui saishoku zufu hyakusen.';
 
@@ -160,7 +160,7 @@ describe.skip('data-import', () => {
         mappingProfile: {
           typeValue: FOLIO_RECORD_TYPE.ITEM,
           name: `C356791 autotest item mapping profile.${getRandomPostfix()}`,
-          materialType: `"${MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE}"`,
+          materialType: MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE,
           noteType: '"Electronic bookplate"',
           note: '"Smith Family Foundation"',
           noteUI: 'Smith Family Foundation',
@@ -239,11 +239,11 @@ describe.skip('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+      cy.getAdminToken();
       cy.getAdminToken().then(() => {
         JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
         JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
@@ -413,6 +413,13 @@ describe.skip('data-import', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfProfilesForUpdate[1].mappingProfile,
         );
+        cy.pause();
+        NewFieldMappingProfile.fillCallNumberType(
+          `"${collectionOfProfilesForUpdate[1].mappingProfile.callNumberType}"`,
+        );
+        NewFieldMappingProfile.fillCallNumber(
+          collectionOfProfilesForUpdate[1].mappingProfile.callNumber,
+        );
         NewFieldMappingProfile.fillPermanentLocation(
           collectionOfProfilesForUpdate[1].mappingProfile.permanetLocation,
         );
@@ -427,7 +434,7 @@ describe.skip('data-import', () => {
           collectionOfProfilesForUpdate[2].mappingProfile,
         );
         NewFieldMappingProfile.fillMaterialType(
-          collectionOfProfilesForUpdate[2].mappingProfile.materialType,
+          `"${collectionOfProfilesForUpdate[2].mappingProfile.materialType}"`,
         );
         NewFieldMappingProfile.addItemNotes(
           collectionOfProfilesForUpdate[2].mappingProfile.noteType,
@@ -522,8 +529,10 @@ describe.skip('data-import', () => {
           InstanceRecordView.verifyStatisticalCode(
             collectionOfProfilesForUpdate[0].mappingProfile.statisticalCodeUI,
           );
-          InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => instanceHrids.push(initialInstanceHrId));
-          cy.go('back');
+          // InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => instanceHrids.push(initialInstanceHrId));
+
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(fileNameForUpdateInstance);
           FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED, rowNumber);
           HoldingsRecordView.checkPermanentLocation(
             collectionOfProfilesForUpdate[1].mappingProfile.permanetLocationUI,
@@ -531,8 +540,11 @@ describe.skip('data-import', () => {
           HoldingsRecordView.checkCallNumberType(
             collectionOfProfilesForUpdate[1].mappingProfile.callNumberType,
           );
-          cy.go('back');
+
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(fileNameForUpdateInstance);
           FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED, rowNumber);
+          cy.reload();
           ItemRecordView.verifyMaterialType(
             collectionOfProfilesForUpdate[2].mappingProfile.materialType,
           );
@@ -540,7 +552,8 @@ describe.skip('data-import', () => {
             collectionOfProfilesForUpdate[2].mappingProfile.permanentLoanType,
           );
           ItemRecordView.verifyItemStatus(collectionOfProfilesForUpdate[2].mappingProfile.status);
-          cy.go('back');
+          cy.visit(TopMenu.dataImportPath);
+          Logs.openFileDetails(fileNameForUpdateInstance);
         });
         [
           FileDetails.columnNameInResultList.srsMarc,

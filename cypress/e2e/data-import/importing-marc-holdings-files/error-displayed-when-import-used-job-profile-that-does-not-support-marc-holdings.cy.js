@@ -79,7 +79,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForImportForMarcAuthority);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(fileNameForImportForMarcAuthority);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileNameForImportForMarcAuthority);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
@@ -102,7 +102,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(editedMarcFileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(editedMarcFileName);
         FileDetails.checkStatusInColumn(
           RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
@@ -111,7 +111,7 @@ describe('data-import', () => {
           RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(editedMarcFileName);
         FileDetails.openJsonScreen(title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.verifyContentInTab(errorMessageForInstanceProfile);

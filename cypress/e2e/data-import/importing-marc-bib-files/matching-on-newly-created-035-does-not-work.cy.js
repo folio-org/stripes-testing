@@ -41,10 +41,10 @@ describe('data-import', () => {
     let firstInstanceHrid;
     let secondInstanceHrid;
     // unique file names
-    const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${getRandomPostfix()}.mrc`;
-    const fileForCreateSecondName = `C358138 secondAutotestFileForCreate.${getRandomPostfix()}.mrc`;
-    const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
-    const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${getRandomPostfix()}.mrc`;
+    const fileForCreateFirstName = `C358138 firstAutotestFileForCreate${getRandomPostfix()}.mrc`;
+    const fileForCreateSecondName = `C358138 secondAutotestFileForCreate${getRandomPostfix()}.mrc`;
+    const fileForUpdateFirstName = `C358138 firstAutotestFileForUpdate${getRandomPostfix()}.mrc`;
+    const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate${getRandomPostfix()}.mrc`;
 
     const matchProfile = {
       profileName: `C358138 Match on newly-created 035 ${getRandomPostfix()}`,

@@ -5,7 +5,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe.skip('data-import', () => {
+describe('data-import', () => {
   describe('Log details', () => {
     let user;
 
@@ -44,9 +44,9 @@ describe.skip('data-import', () => {
           'Run by',
           'ID',
         ]).each((columnName) => {
-          cy.wait(2000);
+          cy.wait(8000);
           LogsViewAll.verifyColumnIsSorted(columnName);
-          cy.wait(2000);
+          cy.wait(8000);
           LogsViewAll.verifyColumnIsSorted(columnName, descending);
         });
       },

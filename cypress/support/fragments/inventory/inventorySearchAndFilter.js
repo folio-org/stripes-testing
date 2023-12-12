@@ -16,7 +16,6 @@ import {
   SearchField,
   Section,
   Select,
-  TextArea,
   TextField,
 } from '../../../../interactors';
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
@@ -42,9 +41,9 @@ const dateCreatedAccordion = Accordion({ id: 'createdDate' });
 const dateUpdatedAccordion = Accordion({ id: 'updatedDate' });
 const instanceStatusAccordion = Accordion({ id: 'instanceStatus' });
 const tagsAccordion = Accordion({ id: 'instancesTags' });
-const keywordInput = TextArea({ id: 'input-inventory-search' });
+const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
-const inventorySearchAndFilter = TextArea({ id: 'input-inventory-search' });
+const inventorySearchAndFilter = TextField({ id: 'input-inventory-search' });
 const inventorySearchAndFilterInput = Select({
   id: 'input-inventory-search-qindex',
 });
@@ -85,7 +84,7 @@ const searchTypeDropdown = Select('Search field index');
 const searchInstanceByHRID = (id) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
-    TextArea({ id: 'input-inventory-search' }).fillIn(id),
+    TextField({ id: 'input-inventory-search' }).fillIn(id),
     searchButton.click(),
   ]);
 };
@@ -93,14 +92,14 @@ const searchInstanceByHRID = (id) => {
 const searchHoldingsByHRID = (hrid) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Holdings HRID'),
-    TextArea({ id: 'input-inventory-search' }).fillIn(hrid),
+    TextField({ id: 'input-inventory-search' }).fillIn(hrid),
     searchButton.click(),
   ]);
   InventoryInstances.waitLoading();
 };
 
 const searchInstanceByTitle = (title) => {
-  cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
+  cy.do([TextField({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
   InventoryInstance.waitInventoryLoading();
 
   return InventoryInstance;
@@ -454,7 +453,7 @@ export default {
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
       browseButton.click(),
-      TextArea({ id: 'input-record-search' }).fillIn(searchString),
+      TextField({ id: 'input-record-search' }).fillIn(searchString),
       searchButton.click(),
     ]);
     cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
@@ -659,7 +658,7 @@ export default {
   },
 
   browseSearch(searchValue) {
-    cy.do([TextArea({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
+    cy.do([TextField({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
   },
 
   clickEditInstance() {

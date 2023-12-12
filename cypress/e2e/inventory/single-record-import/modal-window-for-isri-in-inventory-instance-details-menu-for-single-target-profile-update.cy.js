@@ -23,7 +23,7 @@ describe('inventory', () => {
     let instanceHRID;
     const OCLCAuthentication = '100481406/PAOLF';
     const profileForImport = 'Inventory Single Record - Default Update Instance (Default)';
-    const fileName = `C375146autotestFile.${getRandomPostfix()}.mrc`;
+    const fileName = `C375146autotestFile${getRandomPostfix()}.mrc`;
     const targetIdentifier = '1234567';
     const targetProfile = {
       name: 'OCLC WorldCat',
@@ -37,8 +37,14 @@ describe('inventory', () => {
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
     before('login', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
+      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.verifyUploadState();
+      DataImport.uploadFile('oneMarcBib.mrc', fileName);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.search('Default - Create instance and SRS MARC Bib');
+      JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);
       FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);

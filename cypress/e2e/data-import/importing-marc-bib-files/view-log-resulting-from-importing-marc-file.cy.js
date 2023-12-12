@@ -50,7 +50,7 @@ describe('data-import', () => {
       { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         Logs.openFileDetails(fileNameToUpload);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(fileNameToUpload);
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,

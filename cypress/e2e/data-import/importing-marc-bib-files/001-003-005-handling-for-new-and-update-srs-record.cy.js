@@ -41,9 +41,9 @@ describe('data-import', () => {
     const catalogedDate = '###TODAY###';
 
     // unique file names
-    const nameMarcFileForCreate = `C17039 autotestFile.${getRandomPostfix()}.mrc`;
-    const editedMarcFileName = `C17039 fileWith999Field.${getRandomPostfix()}.mrc`;
-    const fileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C17039 autotestFile${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C17039 fileWith999Field${getRandomPostfix()}.mrc`;
+    const fileNameAfterUpload = `C17039 uploadedFile${getRandomPostfix()}.mrc`;
 
     const matchProfile = {
       profileName: `C17039 match profile ${getRandomPostfix()}`,
@@ -250,6 +250,7 @@ describe('data-import', () => {
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
+        cy.getAdminToken();
         ExportFile.getExportedFileNameViaApi().then((name) => {
           exportedFileName = name;
 

@@ -107,7 +107,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        FileDetails.verifyLogDetailsPageIsOpened();
+        FileDetails.verifyLogDetailsPageIsOpened(marcFileName);
         FileDetails.openJsonScreen(instanceTitle);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.getInstanceHrid().then((initialInstanceHrId) => {

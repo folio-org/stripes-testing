@@ -567,7 +567,6 @@ export default {
     cy.expect([
       selectField.has({ content: including('Keyword') }),
       selectField.has({ content: including('Identifier (all)') }),
-      selectField.has({ content: including('LCCN') }),
       selectField.has({ content: including('Personal name') }),
       selectField.has({ content: including('Corporate/Conference name') }),
       selectField.has({ content: including('Geographic name') }),
@@ -651,8 +650,8 @@ export default {
       marcViewPane.exists(),
       marcViewPane.find(buttonLink).exists(),
       marcViewPane.has({ mark: markedValue }),
-      marcViewPane.find(HTML({ text: including('$') })).exists(),
-      marcViewPane.find(HTML({ text: including('‡') })).absent(),
+      marcViewPane.find(HTML({ text: including('‡') })).exists(),
+      marcViewPane.find(HTML({ text: including('$') })).absent(),
     ]);
   },
 

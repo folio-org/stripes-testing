@@ -21,7 +21,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
     tag611: '611',
     tag111: '111',
     updatedValue:
-      '$a C374158 Vatican Council $n (2nd : $d 1962-1966 : $c Basilica di San Pietro in Vaticano)',
+      '‡a C374158 Vatican Council ‡n (2nd : ‡d 1962-1966 : ‡c Basilica di San Pietro in Vaticano)',
     autoUpdateUserName: 'Automated linking update',
     marcAuthIcon: 'Linked to MARC authority',
   };
@@ -131,7 +131,9 @@ describe('MARC Authority -> Edit linked Authority record', () => {
       QuickMarcEditor.confirmUpdateLinkedBibs(1);
       MarcAuthorities.closeMarcViewPane();
       MarcAuthorities.searchBy('Keyword', marcFiles[1].updatedAuthorityHeading);
-      MarcAuthorities.checkResultList([marcFiles[1].updatedAuthorityHeading]);
+      MarcAuthorities.checkResultList([
+        '‡a C374158 Vatican Council ‡n (2nd : ‡d 1962-1966 : ‡c Basilica di San Pietro in Vaticano)',
+      ]);
       MarcAuthorities.verifyNumberOfTitles(5, '1');
       MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
       InventoryInstance.waitInstanceRecordViewOpened(marcFiles[0].instanceTitle);
@@ -139,7 +141,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
       InventoryInstance.viewSource();
       InventoryViewSource.contains(`${testData.marcAuthIcon}\n\t${testData.tag611}\t`);
       InventoryViewSource.contains(
-        '$a C374158 Vatican Council $c Basilica di San Pietro in Vaticano)',
+        '‡a C374158 Vatican Council ‡c Basilica di San Pietro in Vaticano)',
       );
     },
   );

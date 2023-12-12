@@ -34,9 +34,9 @@ describe('data-import', () => {
     const title = 'Introductory Solid State Physics with MATLAB Applications';
     const firstFilePathForUpload = 'marcBibFileForC410708_file1.mrc';
     const secondFilePathForUpload = 'marcBibFileForC410708_file2.mrc';
-    const firstFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
-    const secondFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
-    const editedMarcFileName = `C410708 autotestFileName.${getRandomPostfix()}`;
+    const firstFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
+    const secondFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
+    const editedMarcFileName = `C410708 autotestFileName${getRandomPostfix()}.mrc`;
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
     const matchProfile = {
       profileName: `C410708 001 to Instance HRID_${getRandomPostfix()}`,
