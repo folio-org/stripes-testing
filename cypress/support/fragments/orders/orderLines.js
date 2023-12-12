@@ -1803,7 +1803,7 @@ export default {
     cy.expect(KeyValue('Payment status').has({ value: paymentStatus }));
   },
 
-  verifyOrderFielldFilled: (orderData) => {
+  verifyOrderFieldContent: (orderData) => {
     cy.expect([KeyValue(orderData.name).has({ value: orderData.value })]);
   },
 
