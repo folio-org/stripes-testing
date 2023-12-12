@@ -65,6 +65,9 @@ export default {
   startBulkEditAbsent() {
     cy.expect(startBulkEditButton.absent());
   },
+  startBulkEditLocalAbsent() {
+    cy.expect(startBulkEditLocalButton.absent());
+  },
   closeBulkEditInAppForm() {
     cy.do(cancelBtn.click());
     cy.wait(1000);
@@ -102,9 +105,7 @@ export default {
     cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
   },
   deleteRow(rowIndex = 0) {
-    cy.do(
-      RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click(),
-    );
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
   },
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
