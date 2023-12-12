@@ -120,6 +120,9 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
 
   after('Deleting created users, Instances', () => {
     cy.getAdminToken();
+    linkableFields.forEach((tag) => {
+      QuickMarcEditor.setRulesForField(tag, true);
+    });
     Users.deleteViaApi(userData.userId);
     createdAuthorityIDs.forEach((id) => {
       MarcAuthority.deleteViaAPI(id);
