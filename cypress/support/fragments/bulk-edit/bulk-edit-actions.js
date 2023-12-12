@@ -850,30 +850,6 @@ export default {
     });
   },
 
-  verifyItemOptions(rowIndex = 0) {
-    const options = [
-      'Administrative note',
-      'Check in note',
-      'Check out note',
-      'Action note',
-      'Binding',
-      'Copy note',
-      'Electronic bookplate',
-      'Note',
-      'Provenance',
-      'Reproduction',
-      'Item status',
-      'Permanent loan type',
-      'Temporary loan type',
-      'Permanent item location',
-      'Temporary item location',
-      'Suppress from discovery',
-    ];
-
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
-    this.verifyPossibleActions(options);
-  },
-
   verifyHoldingsOptions() {
     cy.expect([
       Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),

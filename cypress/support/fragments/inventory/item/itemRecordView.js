@@ -396,8 +396,4 @@ export default {
       administrativeDataAccordion.find(HTML(including(`Source: ${userName}`))).exists(),
     ]);
   },
-
-  verifyTextAbsent(text) {
-    cy.expect(HTML(text).absent());
-  }
 };
