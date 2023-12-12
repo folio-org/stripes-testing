@@ -14,7 +14,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import Users from '../../../support/fragments/users/users';
-import generateUniqueItemBarcodeWithShift from '../../../support/utils/generateUniqueItemBarcodeWithShift';
 import UserLoans from '../../../support/fragments/users/loans/userLoans';
 import LoansPage from '../../../support/fragments/loans/loansPage';
 import SearchPane from '../../../support/fragments/circulation-log/searchPane';
@@ -75,10 +74,7 @@ describe('Loans: Anonymization', () => {
           testData.loanTypeId = loanType.id;
           testData.folioInstances = InventoryInstances.generateFolioInstances({
             properties: { permanentLoanType: { id: testData.loanTypeId } },
-            barcodes: [
-              generateUniqueItemBarcodeWithShift(1),
-              generateUniqueItemBarcodeWithShift(2),
-            ],
+            itemsCount: 2,
           });
         });
       })

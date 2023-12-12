@@ -681,7 +681,7 @@ export default {
   },
 
   verifyEmptyNumberOfTitles() {
-    cy.expect(MultiColumnListCell({ columnIndex: 4 }).has({ content: '' }));
+    cy.expect(MultiColumnListCell({ columnIndex: 5 }).has({ content: '' }));
   },
 
   verifyAuthorityPropertiesAfterSearch(expectedProperties) {
