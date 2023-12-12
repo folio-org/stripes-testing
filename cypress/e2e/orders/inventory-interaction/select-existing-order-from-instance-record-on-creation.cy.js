@@ -66,7 +66,6 @@ describe('Orders', () => {
       { tags: ['extendedPath', 'thunderjet'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToInstance();
         InventorySearchAndFilter.byKeywords(testData.instanceName);
         InventoryInstance.checkInstanceTitle(testData.instanceName);
 
@@ -93,16 +92,16 @@ describe('Orders', () => {
         Orders.waitLoading();
 
         OrderDetails.openPolDetails(testData.instanceName);
-        OrderLines.verifyOrderFielldFilled({
+        OrderLines.verifyOrderFieldContent({
           name: 'Acquisition method',
           value: ACQUISITION_METHOD_NAMES_IN_PROFILE.APPROVAL_PLAN,
         });
-        OrderLines.verifyOrderFielldFilled({
+        OrderLines.verifyOrderFieldContent({
           name: 'Order format',
           value: ORDER_FORMAT_NAMES.OTHER,
         });
-        OrderLines.verifyOrderFielldFilled({ name: 'Physical unit price', value: '$10.00' });
-        OrderLines.verifyOrderFielldFilled({ name: 'Quantity physical', value: '1' });
+        OrderLines.verifyOrderFieldContent({ name: 'Physical unit price', value: '$10.00' });
+        OrderLines.verifyOrderFieldContent({ name: 'Quantity physical', value: '1' });
       },
     );
   });
