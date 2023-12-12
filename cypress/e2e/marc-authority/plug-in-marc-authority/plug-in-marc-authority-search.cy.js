@@ -116,7 +116,8 @@ describe('plug-in MARC authority | Search', () => {
       marcFiles.forEach((marcFile) => {
         cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
           () => {
-            DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+            DataImport.verifyUploadState();
+            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
             JobProfiles.waitFileIsUploaded();
             JobProfiles.waitLoadingList();
             JobProfiles.search(marcFile.jobProfileToRun);

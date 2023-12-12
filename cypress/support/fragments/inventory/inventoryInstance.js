@@ -498,7 +498,7 @@ export default {
   },
 
   verifySearchAndFilterDisplay() {
-    cy.get('#textarea-authorities-search-qindex').then((elem) => {
+    cy.get('select#textarea-authorities-search-qindex').then((elem) => {
       expect(elem.text()).to.include('Personal name');
     });
     cy.expect([

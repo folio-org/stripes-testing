@@ -2,6 +2,11 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import Permissions from '../../support/dictionary/permissions';
 import NotesEholdings from '../../support/fragments/notes/notesEholdings';
 import Users from '../../support/fragments/users/users';
+import EHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
+import EHoldingsProviders from '../../support/fragments/eholdings/eHoldingsProviders';
+import EHoldingsProviderView from '../../support/fragments/eholdings/eHoldingsProviderView';
+import EHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Note creation', () => {
   const testData = {};
@@ -35,8 +40,12 @@ describe('Note creation', () => {
       testData.userProperties = createdUserProperties;
 
       cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: urlToEholdings,
-        waiter: NotesEholdings.waitLoading,
+        path: TopMenu.eholdingsPath,
+        waiter: EHoldingsPackages.waitLoading,
+      }).then(() => {
+        EHoldingsProvidersSearch.byProvider('Taylor and Francis');
+        EHoldingsProviders.viewProvider();
+        EHoldingsProviderView.waitLoading();
       });
     });
   });
