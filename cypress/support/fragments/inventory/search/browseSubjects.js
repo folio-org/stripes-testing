@@ -186,7 +186,9 @@ export default {
       MultiColumnListCell({
         columnIndex: 0,
         content: 'Linked to MARC authority' + value,
-      }).find(Button(value).click()),
+      })
+        .find(Button(value))
+        .click(),
     );
   },
 
