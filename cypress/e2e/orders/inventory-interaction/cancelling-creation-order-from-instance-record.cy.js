@@ -46,8 +46,7 @@ describe('Orders', () => {
         InventoryInstances.selectInstance();
 
         // Click Actions->New order
-        const NewOrderModal = InventoryInstance.newOrder();
-        NewOrderModal.waitLoading();
+        const NewOrderModal = InventoryInstance.openCreateNewOrderModal();
 
         // Click "Cancel" button
         NewOrderModal.clickCancel();

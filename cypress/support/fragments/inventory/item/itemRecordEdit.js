@@ -71,4 +71,8 @@ export default {
       cy.do(loanDataFields.loanType.choose(loanType));
     }
   },
+  chooseItemPermanentLoanType: (permanentLoanType) => {
+    cy.do(loanDataFields.loanType.choose(permanentLoanType));
+    cy.expect(loanDataFields.loanType.has({ checkedOptionText: permanentLoanType }));
+  },
 };
