@@ -98,7 +98,7 @@ describe('MARC -> MARC Holdings', () => {
     },
   );
 
-  it('C345398 Edit MARC 008 (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C345398 Edit MARC 008 (spitfire)', { tags: ['smoke', 'spitfire', 'system'] }, () => {
     // Wait until the page to be loaded fully.
     cy.wait(1000);
     QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();

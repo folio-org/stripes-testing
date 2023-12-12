@@ -159,7 +159,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C388565 Link certain fields manually and then use auto-linking when creating new "MARC Bib" record (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire', 'system'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();

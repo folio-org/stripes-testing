@@ -84,7 +84,7 @@ describe('ui-inventory: Search in Inventory', () => {
 
   it(
     'C11081: Verify item status filters retrieve items with that item status (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire', 'system'] },
     () => {
       cy.intercept('GET', '/inventory/items?*').as('getItems');
       cy.intercept('GET', '/search/instances?*').as('getInstances');

@@ -48,14 +48,14 @@ describe('Note creation', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C1296 Create a note (spitfire)', { tags: ['smoke', 'spitfire', 'system'] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteTitle(note.title);
     NotesEholdings.openNoteView(note.title);
     NotesEholdings.deleteNote();
   });
 
-  it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C1299 Edit a note (spitfire)', { tags: ['smoke', 'spitfire', 'system'] }, () => {
     const newNote = {
       title: `Changed Title ${getRandomPostfix()}`,
       details: `Changed details ${getRandomPostfix()}`,

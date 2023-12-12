@@ -19,7 +19,7 @@ describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
   });
   it(
     'C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)',
-    { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord] },
+    { tags: ['smoke', 'spitfire', 'system'] },
     () => {
       InventoryInstance.createHoldingsRecord('Migration (Migration) ');
       InventoryInstance.openHoldingView();
