@@ -111,7 +111,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C2268: Add notice policy to circulation rules (vega)',
-    { tags: ['smoke', 'vega', 'nonParallel'] },
+    { tags: ['smoke', 'vega', 'system', 'nonParallel'] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();
@@ -156,7 +156,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C654: Test behavior for incomplete vs complete circulation rules (i.e., all policy types must be present; else error)',
-    { tags: ['smoke', 'vega', 'nonParallel'] },
+    { tags: ['smoke', 'vega', 'system', 'nonParallel'] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();
@@ -185,7 +185,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   it(
     'C656: Ensure interface alerts user of syntax errors in rules',
-    { tags: ['smoke', 'vega', 'nonParallel'] },
+    { tags: ['smoke', 'vega', 'system', 'nonParallel'] },
     () => {
       CirculationRules.clearCirculationRules();
       CirculationRules.fillInPriority();

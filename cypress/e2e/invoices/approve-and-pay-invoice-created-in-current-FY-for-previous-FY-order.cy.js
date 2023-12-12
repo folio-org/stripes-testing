@@ -212,7 +212,7 @@ describe('Invoices', () => {
 
   it(
     'C388564 Approve and pay invoice created in current FY for previous FY without related order (thunderjet) (TaaS)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'system'] },
     () => {
       Invoices.createRolloverInvoiceWithFY(invoice, organization.name, firstFiscalYear);
       Invoices.createInvoiceLineWithFund(invoiceLine, defaultFund);

@@ -10,14 +10,18 @@ describe('ui-invoices-settings: Batch Group creation', () => {
     cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
   });
 
-  it('C343345 Create and edit Batch groups (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
-    SettingsInvoices.waitBatchGroupsLoading();
-    SettingsInvoices.createNewBatchGroup(batchGroup);
-    SettingsInvoices.checkBatchGroup(batchGroup);
-    newBatchGroup.name += 'updated';
-    newBatchGroup.description += 'updated';
-    SettingsInvoices.editBatchGroup(newBatchGroup, batchGroup.name);
-    SettingsInvoices.checkBatchGroup(newBatchGroup);
-    SettingsInvoices.deleteBatchGroup(newBatchGroup);
-  });
+  it(
+    'C343345 Create and edit Batch groups (thunderjet)',
+    { tags: ['smoke', 'thunderjet', 'system'] },
+    () => {
+      SettingsInvoices.waitBatchGroupsLoading();
+      SettingsInvoices.createNewBatchGroup(batchGroup);
+      SettingsInvoices.checkBatchGroup(batchGroup);
+      newBatchGroup.name += 'updated';
+      newBatchGroup.description += 'updated';
+      SettingsInvoices.editBatchGroup(newBatchGroup, batchGroup.name);
+      SettingsInvoices.checkBatchGroup(newBatchGroup);
+      SettingsInvoices.deleteBatchGroup(newBatchGroup);
+    },
+  );
 });

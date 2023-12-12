@@ -75,7 +75,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
 
   it(
     'C540 Make sure that request type filters are working properly (vega)',
-    { tags: ['smoke', 'vega'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       // Apply filters and test that the appropriate results display

@@ -110,7 +110,7 @@ describe('Invoices', () => {
 
   it(
     'C15859 Pay an invoice with multiple "Expense classes" assigned to it (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet'] },
+    { tags: ['criticalPath', 'thunderjet', 'system'] },
     () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);

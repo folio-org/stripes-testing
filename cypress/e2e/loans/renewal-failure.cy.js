@@ -178,7 +178,7 @@ describe('Renewal', () => {
 
   it(
     'C568 Renewal: failure because loan is not renewable (vega)',
-    { tags: ['smoke', 'vega', 'nonParallel'] },
+    { tags: ['smoke', 'vega', 'nonParallel', 'system'] },
     () => {
       cy.log(renewUserData);
       cy.login(renewUserData.username, renewUserData.password);

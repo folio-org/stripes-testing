@@ -109,7 +109,7 @@ describe('ui-finance: Transactions', () => {
 
   it(
     'C375105 Unrelease encumbrance when cancelling approved invoice related to Ongoing order (thunderjet)',
-    { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
+    { tags: ['criticalPath', 'thunderjet', 'nonParallel', 'system'] },
     () => {
       FinanceHelp.searchByName(defaultFund.name);
       Funds.selectFund(defaultFund.name);

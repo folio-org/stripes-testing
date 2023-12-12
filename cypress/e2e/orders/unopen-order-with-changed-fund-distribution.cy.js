@@ -139,7 +139,7 @@ describe('orders: Unopen order', () => {
 
   it(
     'C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)',
-    { tags: ['smoke', 'thunderjet'] },
+    { tags: ['smoke', 'thunderjet', 'system'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
