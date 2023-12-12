@@ -109,7 +109,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
     'C374111 Link the "240" of "MARC Bib" field with "110" field with a $t of "MARC Authority" record. (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.updateExistingField(testData.tag240, testData.newTag240Content);
@@ -136,7 +136,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authority110FieldValue);
 
       cy.visit(TopMenu.inventoryPath);
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth110);

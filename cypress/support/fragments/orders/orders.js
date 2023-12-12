@@ -29,6 +29,7 @@ import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import OrderDetails from './orderDetails';
 import OrderEditForm from './orderEditForm';
+import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderLines from './orderLines';
 
@@ -186,6 +187,14 @@ export default {
     expandActionsDropdown();
     cy.do([Button('Close order').click(), Select('Reason').choose(reason), submitButton.click()]);
     InteractorsTools.checkCalloutMessage('Order was closed');
+  },
+
+  reOpenOrder: (orderNumber) => {
+    expandActionsDropdown();
+    cy.do(Button('Reopen').click());
+    InteractorsTools.checkCalloutMessage(
+      `The Purchase order - ${orderNumber} has been successfully reopened`,
+    );
   },
 
   cancelOrder: () => {
@@ -684,13 +693,18 @@ export default {
     cy.expect(ordersList.find(HTML(including(orderNumber))).exists());
   },
 
-  exportResoultsCSV: () => {
-    cy.do([
-      actionsButton.click(),
-      Button({ id: 'clickable-export-csv' }).click(),
-      // Modal('Export settings').find(RadioButton({ ariaLabel: 'Export all line fields' })).click(),
-      Button('Export').click(),
-    ]);
+  clickExportResultsToCsvButton() {
+    cy.do([actionsButton.click(), Button('Export results (CSV)').click()]);
+    ExportSettingsModal.verifyModalView();
+
+    return ExportSettingsModal;
+  },
+  exportResultsToCsv({ confirm = true } = {}) {
+    this.clickExportResultsToCsvButton();
+
+    if (confirm) {
+      ExportSettingsModal.clickExportButton();
+    }
   },
 
   verifySaveCSVQueryFileName(actualName) {

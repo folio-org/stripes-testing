@@ -7,6 +7,7 @@ import {
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -293,12 +294,12 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
 
         // check created instance
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           InventoryInstance.openHoldingView();
           HoldingsRecordView.getHoldingsHrId().then((holdingsHrId) => {
@@ -427,7 +428,7 @@ describe('data-import', () => {
               FileDetails.columnNameInResultList.holdings,
               FileDetails.columnNameInResultList.item,
             ].forEach((columnName) => {
-              FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+              FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
             });
             FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 1);
             FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);

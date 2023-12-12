@@ -10,6 +10,7 @@ import {
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -356,7 +357,7 @@ describe.skip('data-import', () => {
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
 
         // create Field mapping profile for export
@@ -508,12 +509,12 @@ describe.skip('data-import', () => {
         // check items is updated in Inventory
         cy.wrap([0, 1]).each((rowNumber) => {
           FileDetails.checkItemsStatusesInResultList(rowNumber, [
-            FileDetails.status.updated,
-            FileDetails.status.updated,
-            FileDetails.status.updated,
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
+            RECORD_STATUSES.UPDATED,
+            RECORD_STATUSES.UPDATED,
+            RECORD_STATUSES.UPDATED,
           ]);
-          FileDetails.openInstanceInInventory('Updated', rowNumber);
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED, rowNumber);
           InstanceRecordView.verifyInstanceStatusTerm(
             collectionOfProfilesForUpdate[0].mappingProfile.statusTerm,
           );
@@ -522,7 +523,7 @@ describe.skip('data-import', () => {
           );
           InstanceRecordView.getAssignedHRID().then((initialInstanceHrId) => instanceHrids.push(initialInstanceHrId));
           cy.go('back');
-          FileDetails.openHoldingsInInventory('Updated', rowNumber);
+          FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED, rowNumber);
           HoldingsRecordView.checkPermanentLocation(
             collectionOfProfilesForUpdate[1].mappingProfile.permanetLocationUI,
           );
@@ -530,7 +531,7 @@ describe.skip('data-import', () => {
             collectionOfProfilesForUpdate[1].mappingProfile.callNumberType,
           );
           cy.go('back');
-          FileDetails.openItemInInventory('Updated', rowNumber);
+          FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED, rowNumber);
           ItemRecordView.verifyMaterialType(
             collectionOfProfilesForUpdate[2].mappingProfile.materialType,
           );
@@ -546,9 +547,9 @@ describe.skip('data-import', () => {
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, 2);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName, 2);
         });
-        FileDetails.openInstanceInInventory('Created', 2);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 2);
         InventoryInstance.checkIsInstancePresented(
           addedInstanceTitle,
           collectionOfProfilesForCreate[2].mappingProfile.pernanentLocationUI,

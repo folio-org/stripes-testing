@@ -14,6 +14,7 @@ import OrderLineEditForm from './orderLineEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
 import TransactionDetails from '../finance/transactions/transactionDetails';
 import ExportDetails from '../exportManager/exportDetails';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
@@ -38,6 +39,21 @@ export default {
   backToOrderDetails() {
     cy.do(backToOrderButton.click());
   },
+  checkFieldsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(orderLineDetailsSection.find(KeyValue(label)).has(conditions));
+    });
+  },
+  checkFieldsHasCopyIcon(fields = []) {
+    fields.forEach(({ label }) => {
+      cy.expect(
+        orderLineDetailsSection
+          .find(KeyValue(label))
+          .find(Button({ icon: 'clipboard' }))
+          .exists(),
+      );
+    });
+  },
   checkOrderLineDetails({
     purchaseOrderLineInformation = [],
     vendorDetails,
@@ -60,6 +76,16 @@ export default {
       this.checkLocationsSection(locationDetails);
     }
   },
+  copyOrderNumber(poNumber) {
+    cy.do(
+      purchaseOrderLineSection
+        .find(KeyValue('POL number'))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
+  },
   openInventoryItem() {
     cy.do(itemDetailsSection.find(KeyValue('Title')).find(Link()).click());
 
@@ -74,18 +100,20 @@ export default {
 
     return OrderLineEditForm;
   },
-  openEncumbrancePane(rowIndex = 0) {
-    this.clickTheLinkInFundDetailsSection({ rowIndex, columnIndex: 5 });
+  openEncumbrancePane(fundName) {
+    this.clickTheLinkInFundDetailsSection({ fundName, columnIndex: 5 });
 
     TransactionDetails.waitLoading();
 
     return TransactionDetails;
   },
-  clickTheLinkInFundDetailsSection({ rowIndex = 0, columnIndex = 0 } = {}) {
-    const link = fundDistributionsSection
-      .find(MultiColumnListRow({ rowIndexInParent: `row-${rowIndex}` }))
-      .find(MultiColumnListCell({ columnIndex }))
-      .find(Link());
+  clickTheLinkInFundDetailsSection({ fundName, columnIndex = 0 } = {}) {
+    const tableRow = fundName
+      ? fundDistributionsSection.find(
+        MultiColumnListRow({ content: including(fundName), isContainer: true }),
+      )
+      : fundDistributionsSection.find(MultiColumnListRow({ rowIndexInParent: 'row-0' }));
+    const link = tableRow.find(MultiColumnListCell({ columnIndex })).find(Link());
 
     cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
   },
@@ -119,17 +147,43 @@ export default {
       if (record.name) {
         cy.expect(
           fundDistributionsSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .find(MultiColumnListCell({ row: index, column: 'Fund' }))
             .has({ content: including(record.name) }),
         );
       }
-      if (record.encumbrance) {
+      if (record.expenseClass) {
         cy.expect(
           fundDistributionsSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 5 }))
-            .has({ content: including(record.encumbrance) }),
+            .find(MultiColumnListCell({ row: index, column: 'Expense class' }))
+            .has({ content: including(record.expenseClass) }),
+        );
+      }
+      if (record.value) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListCell({ row: index, column: 'Value' }))
+            .has({ content: including(record.value) }),
+        );
+      }
+      if (record.amount) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListCell({ row: index, column: 'Amount' }))
+            .has({ content: including(record.amount) }),
+        );
+      }
+      if (record.initialEncumbrance) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListCell({ row: index, column: 'Initial encumbrance' }))
+            .has({ content: including(record.initialEncumbrance) }),
+        );
+      }
+      if (record.currentEncumbrance) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListCell({ row: index, column: 'Current encumbrance' }))
+            .has({ content: including(record.currentEncumbrance) }),
         );
       }
     });
@@ -143,24 +197,21 @@ export default {
       if (record.date) {
         cy.expect(
           exportDetailsSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .find(MultiColumnListCell({ row: index, columnIndex: 1 }))
             .has({ content: including(record.date) }),
         );
       }
       if (record.fileName) {
         cy.expect(
           exportDetailsSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .find(MultiColumnListCell({ row: index, columnIndex: 2 }))
             .has({ content: including(record.fileName) }),
         );
       }
       if (record.configName) {
         cy.expect(
           exportDetailsSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 3 }))
+            .find(MultiColumnListCell({ row: index, columnIndex: 3 }))
             .has({ content: including(record.configName) }),
         );
       }

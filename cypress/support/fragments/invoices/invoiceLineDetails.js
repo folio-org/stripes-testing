@@ -93,11 +93,18 @@ export default {
             .has({ content: including(record.expenseClass) }),
         );
       }
-      if (record.encumbrance) {
+      if (record.initialEncumbrance) {
+        cy.expect(
+          fundDistributionsSection
+            .find(MultiColumnListCell({ row: index, column: 'Initial encumbrance' }))
+            .has({ content: including(record.initialEncumbrance) }),
+        );
+      }
+      if (record.currentEncumbrance) {
         cy.expect(
           fundDistributionsSection
             .find(MultiColumnListCell({ row: index, column: 'Current encumbrance' }))
-            .has({ content: including(record.encumbrance) }),
+            .has({ content: including(record.currentEncumbrance) }),
         );
       }
     });
@@ -106,25 +113,27 @@ export default {
       cy.expect(fundDistributionsSection.has({ text: including('The list contains no items') }));
     }
   },
-  openFundDetailsPane(rowIndex = 0) {
-    this.clickTheLinkInFundDetailsSection({ rowIndex });
+  openFundDetailsPane(fundName) {
+    this.clickTheLinkInFundDetailsSection({ fundName });
 
     FundDetails.waitLoading();
 
     return FundDetails;
   },
-  openEncumbrancePane(rowIndex = 0) {
-    this.clickTheLinkInFundDetailsSection({ rowIndex, columnIndex: 5 });
+  openEncumbrancePane(fundName) {
+    this.clickTheLinkInFundDetailsSection({ fundName, columnIndex: 5 });
 
     TransactionDetails.waitLoading();
 
     return TransactionDetails;
   },
-  clickTheLinkInFundDetailsSection({ rowIndex = 0, columnIndex = 0 } = {}) {
-    const link = fundDistributionsSection
-      .find(MultiColumnListRow({ rowIndexInParent: `row-${rowIndex}` }))
-      .find(MultiColumnListCell({ columnIndex }))
-      .find(Link());
+  clickTheLinkInFundDetailsSection({ fundName, columnIndex = 0 } = {}) {
+    const tableRow = fundName
+      ? fundDistributionsSection.find(
+        MultiColumnListRow({ content: including(fundName), isContainer: true }),
+      )
+      : fundDistributionsSection.find(MultiColumnListRow({ rowIndexInParent: 'row-0' }));
+    const link = tableRow.find(MultiColumnListCell({ columnIndex })).find(Link());
 
     cy.do([link.perform((el) => el.removeAttribute('target')), link.click()]);
   },
@@ -166,10 +175,6 @@ export default {
     );
   },
   closeInvoiceLineDetailsPane: () => {
-    cy.do(
-      Pane({ id: 'pane-invoiceLineDetails' })
-        .find(Button({ icon: 'times' }))
-        .click(),
-    );
+    cy.do(invoiceLineDetailsPane.find(Button({ icon: 'times' })).click());
   },
 };

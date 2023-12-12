@@ -1,4 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -35,7 +36,7 @@ describe('data-import', () => {
       DataImport.waitLoading();
       Logs.openFileDetails(fileName);
       FileDetails.checkStatusInColumn(
-        FileDetails.status.created,
+        RECORD_STATUSES.CREATED,
         FileDetails.columnNameInResultList.instance,
       );
       cy.visit(SettingsMenu.marcFieldProtectionPath);
