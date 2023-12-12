@@ -1,5 +1,4 @@
-import { HTML, including } from '@interactors/html';
-import { Button, Modal, TextField } from '../../../../../interactors';
+import { Button, Modal, TextField, HTML, including } from '../../../../../interactors';
 
 const newOrderModal = Modal({ id: 'create-order-from-instance-modal' });
 const cancelButton = Button('Cancel');
