@@ -15,6 +15,7 @@ import {
   Selection,
   Option,
   OptionGroup,
+  Section,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -38,6 +39,7 @@ const confirmChangesButton = Button('Confirm changes');
 const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
 const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
 const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
+const searchSection = Section({ id: 'sl-container-stripes-selection-41' });
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -97,6 +99,18 @@ export default {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
 
+  verifyOptionsDropdownPresent() {
+    cy.expect(bulkPageSelections.valueType.exists());
+  },
+
+  verifyActionDropdownAbsent() {
+    cy.expect(bulkPageSelections.action.absent());
+  },
+
+  verifySearchSectionAbsent() {
+    cy.expect(searchSection.absent());
+  },
+
   isDisabledRowIcons(isDisabled) {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
     BulkEditSearchPane.isConfirmButtonDisabled(true);
@@ -105,9 +119,7 @@ export default {
     cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
   },
   deleteRow(rowIndex = 0) {
-    cy.do(
-      RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click(),
-    );
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
   },
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
@@ -919,5 +931,10 @@ export default {
         .exists(),
       Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
     ]);
+  },
+
+  fillLocation(location) {
+    cy.do(Button('Select control\nSelect location').click());
+    cy.get('input[aria-label=" options filter"]').type(location).type('{enter}');
   },
 };

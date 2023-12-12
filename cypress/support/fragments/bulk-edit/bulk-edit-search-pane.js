@@ -502,6 +502,10 @@ export default {
     cy.expect(HTML(name).exists());
   },
 
+  verifyInputLabelAbsent(name) {
+    cy.expect(HTML(name).absent());
+  },
+
   checkUsersRadio() {
     cy.do(usersRadio.click());
   },
