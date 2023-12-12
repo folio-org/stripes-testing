@@ -134,7 +134,7 @@ describe('Check Out - Actions ', () => {
 
   it(
     'C356772 An active user with barcode can Check out item (vega)',
-    { tags: ['smoke', 'vega'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       OtherSettings.selectPatronIdsForCheckoutScanning(['Username'], '3');
       cy.visit(TopMenu.usersPath);

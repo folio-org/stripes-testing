@@ -36,25 +36,29 @@ describe('ui-requests: Assign Tags to Request', () => {
     });
   });
 
-  it('C747 Assign Tags to Request (vega)', { tags: ['smoke', 'vega', 'nonParallel'] }, () => {
-    cy.visit(TopMenu.requestsPath);
-    Requests.selectNotYetFilledRequest();
-    Requests.findCreatedRequest(instanceData.instanceTitle);
-    Requests.selectFirstRequest(instanceData.instanceTitle);
-    Requests.openTagsPane();
-    Requests.addTag(tag);
-    Requests.closePane('Tags');
-    Requests.closePane('Request Detail');
-    Requests.findCreatedRequest(instanceData.instanceTitle);
-    Requests.selectFirstRequest(instanceData.instanceTitle);
-    Requests.openTagsPane();
-    Requests.verifyAssignedTags(tag);
-    // cancel request for verifying tags can't be added or removed from a closed request
-    Requests.cancelRequest();
-    Requests.resetAllFilters();
-    Requests.selectClosedCancelledRequest();
-    Requests.findCreatedRequest(instanceData.instanceTitle);
-    Requests.selectFirstRequest(instanceData.instanceTitle);
-    Requests.verifyShowTagsButtonIsDisabled();
-  });
+  it(
+    'C747 Assign Tags to Request (vega)',
+    { tags: ['smoke', 'vega', 'system', 'nonParallel'] },
+    () => {
+      cy.visit(TopMenu.requestsPath);
+      Requests.selectNotYetFilledRequest();
+      Requests.findCreatedRequest(instanceData.instanceTitle);
+      Requests.selectFirstRequest(instanceData.instanceTitle);
+      Requests.openTagsPane();
+      Requests.addTag(tag);
+      Requests.closePane('Tags');
+      Requests.closePane('Request Detail');
+      Requests.findCreatedRequest(instanceData.instanceTitle);
+      Requests.selectFirstRequest(instanceData.instanceTitle);
+      Requests.openTagsPane();
+      Requests.verifyAssignedTags(tag);
+      // cancel request for verifying tags can't be added or removed from a closed request
+      Requests.cancelRequest();
+      Requests.resetAllFilters();
+      Requests.selectClosedCancelledRequest();
+      Requests.findCreatedRequest(instanceData.instanceTitle);
+      Requests.selectFirstRequest(instanceData.instanceTitle);
+      Requests.verifyShowTagsButtonIsDisabled();
+    },
+  );
 });
