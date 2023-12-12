@@ -424,7 +424,7 @@ export default {
   checkHoldingTitle({ title, count, absent = false }) {
     if (!absent) {
       const holdingTitleRegExp = `Holdings: ${title} ${
-        count !== undefined ? '>\\nView holdings\\n' + count : ''
+        count !== undefined ? '>\\nView holdings(?:\\nAdd item)*\\n' + count : ''
       }`;
       cy.expect(detailsPaneContent.has({ text: matching(new RegExp(holdingTitleRegExp)) }));
     } else {
@@ -1002,7 +1002,7 @@ export default {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
 
-  checkHoldingsTableContent({ name, records = [], columnIndex = 0, shouldOpen = true } = {}) {
+  checkHoldingsTableContent({ name, records = [], shouldOpen = true } = {}) {
     const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
 
     if (shouldOpen) {
@@ -1014,7 +1014,7 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex }))
+            .find(MultiColumnListCell({ column: 'Item: barcode' }))
             .has({ content: including(record.barcode) }),
         );
       }
@@ -1023,8 +1023,17 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: columnIndex + 1 }))
+            .find(MultiColumnListCell({ column: 'Status' }))
             .has({ content: including(record.status) }),
+        );
+      }
+
+      if (record.location) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ column: 'Effective location' }))
+            .has({ content: including(record.location) }),
         );
       }
     });

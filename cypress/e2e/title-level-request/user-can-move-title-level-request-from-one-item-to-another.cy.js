@@ -12,7 +12,6 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Title Level Request', () => {
@@ -20,7 +19,7 @@ describe('Title Level Request', () => {
   let requestId;
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({
-      barcodes: [generateUniqueItemBarcodeWithShift(1), generateUniqueItemBarcodeWithShift(2)],
+      itemsCount: 2,
     }),
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
