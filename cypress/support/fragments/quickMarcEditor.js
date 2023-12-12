@@ -1273,6 +1273,21 @@ export default {
     });
   },
 
+  checkAllBoxesInARowAreEditable(tag) {
+    cy.expect([
+      getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: false }),
+    ]);
+  },
+
   checkLDRValue(ldrValue = validRecord.ldrValue) {
     cy.expect(
       getRowInteractorByTagName('LDR')
