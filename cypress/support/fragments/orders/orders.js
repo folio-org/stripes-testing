@@ -842,8 +842,10 @@ export default {
   },
 
   verifyActiveBtnOrdersFilters: (btnName) => {
-    const button = '//div[contains(@class, "buttonGroup")]//button[contains(@class, "primary")]';
-
-    cy.xpath(button).should('be.visible').and('have.text', btnName);
+    cy.expect(
+      ordersPane
+        .find(HTML(including(btnName, { class: including('primary') })))
+        .exists(),
+    );
   },
 };
