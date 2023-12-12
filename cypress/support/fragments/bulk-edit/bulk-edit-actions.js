@@ -40,6 +40,7 @@ const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
 const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
 const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
 const searchSection = Section({ id: 'sl-container-stripes-selection-41' });
+const commitChanges = Button('Commit changes');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -675,9 +676,12 @@ export default {
   verifyMatchingOptionsForLocationFilter(location) {
     cy.expect(HTML(including(location)).exists());
   },
-
+  isCommitButtonDisabled(isDisabled) {
+    cy.expect(commitChanges.has({ disabled: isDisabled }));
+  },
   confirmChanges() {
     cy.do(confirmChangesButton.click());
+    this.isCommitButtonDisabled(true);
     cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
 
