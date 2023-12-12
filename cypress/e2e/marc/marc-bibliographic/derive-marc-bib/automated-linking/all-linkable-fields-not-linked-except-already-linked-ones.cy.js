@@ -280,6 +280,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.verifySaveAndCloseButtonEnabled();
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.verifyAfterDerivedMarcBibSave();
+      cy.wait(3000);
 
       InventoryInstance.viewSource();
       linkingTagAndValues.forEach((field) => {
