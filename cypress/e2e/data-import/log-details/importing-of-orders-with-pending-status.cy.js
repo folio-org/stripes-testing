@@ -6,6 +6,7 @@ import {
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -155,12 +156,12 @@ describe('data-import', () => {
             order.rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.order,
             order.rowNumber,
           );
           FileDetails.verifyStatusHasLinkToOrder(order.rowNumber);
-          FileDetails.openOrder('Created', order.rowNumber);
+          FileDetails.openOrder(RECORD_STATUSES.CREATED, order.rowNumber);
           OrderLines.waitLoading();
           OrderLines.verifyOrderTitle(order.title);
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {

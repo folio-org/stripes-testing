@@ -343,8 +343,8 @@ export default {
           const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
           cy.get('#search-results-list')
-            .eq(rowNumber)
-            .find('*[class^="mclCell"]')
+            .find(`div[data-row-inner="${rowNumber}"]`)
+            .find('a')
             .contains(title)
             .invoke('removeAttr', 'target')
             .click();

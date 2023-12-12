@@ -1,5 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -50,17 +51,17 @@ describe('data-import', () => {
             FileDetails.columnNameInResultList.srsMarc,
             FileDetails.columnNameInResultList.authority,
           ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, rowNumber);
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName, rowNumber);
           });
         });
         cy.wrap([1, 2, 3, 4, 5, 7]).each((rowNumber) => {
           FileDetails.checkStatusInColumn(
-            FileDetails.status.noAction,
+            RECORD_STATUSES.NO_ACTION,
             FileDetails.columnNameInResultList.srsMarc,
             rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.error,
+            RECORD_STATUSES.ERROR,
             FileDetails.columnNameInResultList.error,
             rowNumber,
           );

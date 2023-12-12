@@ -8,7 +8,11 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
+import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 
 describe('data-import', () => {
   describe('Importing MARC Authority files', { retries: 2 }, () => {
@@ -75,7 +79,7 @@ describe('data-import', () => {
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityIDs.push(link.split('/')[5]);
         });
-        Logs.goToTitleLink('Created');
+        Logs.goToTitleLink(RECORD_STATUSES.CREATED);
         MarcAuthority.contains(ACCEPTED_DATA_TYPE_NAMES.MARC);
       },
     );
@@ -95,7 +99,7 @@ describe('data-import', () => {
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityIDs.push(link.split('/')[5]);
         });
-        Logs.goToTitleLink('Created');
+        Logs.goToTitleLink(RECORD_STATUSES.CREATED);
         MarcAuthority.contains(ACCEPTED_DATA_TYPE_NAMES.MARC);
       },
     );

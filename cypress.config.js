@@ -19,6 +19,7 @@ module.exports = defineConfig({
   video: false,
   defaultCommandTimeout: 51000,
   pageLoadTimeout: 60000,
+  downloadsFolder: 'cypress/downloads',
   env: {
     OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     OKAPI_TENANT: 'diku',

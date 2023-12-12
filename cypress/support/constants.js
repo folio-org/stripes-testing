@@ -155,8 +155,17 @@ export const ORDER_STATUSES = {
   CLOSED: 'Closed',
 };
 
+export const RECORD_STATUSES = {
+  CREATED: 'Created',
+  UPDATED: 'Updated',
+  NO_ACTION: 'No action',
+  DASH: 'No value set-',
+  BLANK: 'No value set',
+  ERROR: 'Error',
+};
+
 export const ORDER_TYPES = {
-  ONE_TIME: 'One-Time',
+  ONE_TIME: 'One-time',
   ONGOING: 'Ongoing',
 };
 
