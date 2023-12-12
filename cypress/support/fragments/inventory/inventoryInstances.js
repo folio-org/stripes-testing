@@ -567,22 +567,43 @@ export default {
     itemsCount,
     status = ITEM_STATUS_NAMES.AVAILABLE,
     holdings,
-    properties = {},
+    items,
+    itemsProperties = {},
   } = {}) {
     return [...Array(count).keys()].map((index) => {
-      const barcode = !(holdingsCount || itemsCount) ? uuid() : undefined;
+      const gHoldings =
+        holdings ||
+        [...Array(holdingsCount || 1).keys()].map(() => ({
+          id: uuid(),
+        }));
+      const gItems =
+        items ||
+        gHoldings.reduce((acc, it) => {
+          const holdingItems = [...Array(itemsCount || 1).keys()].map(() => {
+            const properties = Array.isArray(itemsProperties)
+              ? itemsProperties[index]
+              : itemsProperties;
+
+            return {
+              id: uuid(),
+              barcode: uuid(),
+              holdingsRecordId: it.id,
+              status: { name: status },
+              ...properties,
+            };
+          });
+
+          return [...acc, ...holdingItems];
+        }, []);
 
       return {
         instanceId: uuid(),
         instanceTitle: `autotest_instance_${getRandomPostfix()}`,
-        holdings: holdings || [...Array(holdingsCount || 1).keys()].map(() => ({})),
-        items: [...Array(itemsCount || 1).keys()].map(() => ({
-          barcode,
-          status: { name: status },
-        })),
+        holdings: gHoldings,
+        items: gItems,
         // should not be used, left for support of old tests
-        barcodes: barcode ? [barcode] : undefined,
-        properties: Array.isArray(properties) ? properties[index] : properties,
+        barcodes: gItems.map(({ barcode }) => barcode),
+        properties: Array.isArray(itemsProperties) ? itemsProperties[index] : itemsProperties,
       };
     });
   },
@@ -625,11 +646,12 @@ export default {
             })),
             items: instance.items.map((item) => ({
               ...item,
-              permanentLoanType: { id: types.loanTypeId },
-              materialType: {
-                id: types.materialTypeId,
+              permanentLoanType: {
+                id: item.permanentLoanType?.id || types.loanTypeId,
               },
-              ...instance.properties,
+              materialType: {
+                id: item.materialType?.id || types.materialTypeId,
+              },
             })),
           };
         });
@@ -675,13 +697,16 @@ export default {
             };
             InventoryHoldings.createHoldingRecordViaApi(holdingWithIds).then(() => {
               const itemIds = [];
+              const holdingItems = items.filter((item) => {
+                return item.holdingsRecordId ? item.holdingsRecordId === holdingWithIds.id : true;
+              });
+
               cy.wrap(
-                items.forEach((item) => {
+                holdingItems.forEach((item) => {
                   const itemWithIds = {
                     ...item,
                     id: item.id || uuid(),
-                    barcode: item.barcode || uuid(),
-                    holdingsRecordId: holdingWithIds.id,
+                    holdingsRecordId: item.holdingsRecordId || holdingWithIds.id,
                   };
                   itemIds.push(itemWithIds.id);
                   InventoryItems.createItemViaApi(itemWithIds).then(() => {

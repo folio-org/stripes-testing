@@ -1001,7 +1001,24 @@ export default {
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
+  openHoldingItem({ name, barcode, shouldOpen = true }) {
+    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
 
+    if (shouldOpen) {
+      cy.do(holdingsSection.clickHeader());
+    }
+
+    cy.do(
+      holdingsSection
+        .find(MultiColumnListCell({ column: 'Item: barcode' }))
+        .find(Button(barcode))
+        .click(),
+    );
+
+    ItemRecordView.waitLoading();
+
+    return ItemRecordView;
+  },
   checkHoldingsTableContent({ name, records = [], shouldOpen = true } = {}) {
     const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
 
