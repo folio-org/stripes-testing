@@ -33,24 +33,23 @@ describe('Users -> Consortia', () => {
         user = userProperties;
       })
       .then(() => {
-        cy.assignAffiliationToUser(Affiliations.central, user.userId);
-        cy.setTenant(Affiliations.central);
+        cy.setTenant(Affiliations.Consortia);
         cy.assignPermissionsToExistingUser(user.userId, [
           Permissions.consortiaSettingsSettingsMembershipEdit.gui,
         ]);
         cy.login(user.username, user.password, {
           path: SettingsMenu.consortiumManagerPath,
-          waiter: Users.waitLoading,
+          waiter: ConsortiumManager.waitLoading,
         });
       });
   });
 
-  after('Delete users, data', () => {
-    cy.resetTenant();
-    cy.getAdminToken();
-    Users.deleteViaApi(user.userId);
-    Users.deleteViaApi(testUser.id);
-  });
+  // after('Delete users, data', () => {
+  //   cy.resetTenant();
+  //   cy.getAdminToken();
+  //   Users.deleteViaApi(user.userId);
+  //   Users.deleteViaApi(testUser.id);
+  // });
 
   it(
     'C380515: Edit address (tenant) name in "Consortium manager" settings (consortia)(thunderjet)',

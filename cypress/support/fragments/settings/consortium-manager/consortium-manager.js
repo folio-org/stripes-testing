@@ -1,6 +1,24 @@
-import { Button, Modal, SelectionOption, including } from '../../../../../interactors';
+import {
+  Button,
+  Modal,
+  NavListItem,
+  Section,
+  SelectionOption,
+  including,
+} from '../../../../../interactors';
 
 export default {
+  waitLoading() {
+    cy.expect(Section({ id: 'app-settings-nav-pane' }).exists());
+  },
+  waitLoadingForAddresses() {
+    cy.expect(Section({ id: 'app-settings-nav-pane' }).exists());
+  },
+
+  selectMembership() {
+    cy.do(NavListItem('Membership').click());
+  },
+
   switchActiveAffiliation(tenantName) {
     cy.wait(8000);
     cy.do([
