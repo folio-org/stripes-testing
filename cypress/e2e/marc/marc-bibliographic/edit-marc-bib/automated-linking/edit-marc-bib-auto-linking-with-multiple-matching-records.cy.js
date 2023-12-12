@@ -11,7 +11,7 @@ import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 
-describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking', () => {
+describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () => {
   const testData = {
     tags: {
       tag245: '245',
