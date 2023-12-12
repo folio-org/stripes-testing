@@ -2,7 +2,6 @@ import { Permissions } from '../../support/dictionary';
 import AppPaths from '../../support/fragments/app-paths';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Loans from '../../support/fragments/loans/loansPage';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -77,21 +76,14 @@ describe('Export Loans ', () => {
 
   after('Delete New Service point, Item and User', () => {
     cy.getAdminToken();
-    CheckInActions.checkinItemViaApi({
-      servicePointId: testData.servicepointId,
-      itemBarcode: itemsData.itemsWithSeparateInstance[2].barcodes[0],
+    itemsData.itemsWithSeparateInstance.forEach((instance) => {
+      InventoryInstances.deleteInstanceViaApi({
+        instance,
+        servicePoint: { id: testData.servicepointId },
+        shouldCheckIn: true,
+      });
     });
-    CheckInActions.checkinItemViaApi({
-      servicePointId: testData.servicepointId,
-      itemBarcode: itemsData.itemsWithSeparateInstance[3].barcodes[0],
-    });
-    Users.deleteViaApi(userData.userId).then(() => itemsData.itemsWithSeparateInstance.forEach((item, index) => {
-      item.itemIds.forEach((id) => cy.deleteItemViaApi(id));
-      cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
-      InventoryInstance.deleteInstanceViaApi(
-        itemsData.itemsWithSeparateInstance[index].instanceId,
-      );
-    }));
+    Users.deleteViaApi(userData.userId);
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
@@ -114,8 +106,8 @@ describe('Export Loans ', () => {
         itemsData.itemsWithSeparateInstance[3].barcodes[0],
         itemsData.itemsWithSeparateInstance[2].instanceTitle,
         itemsData.itemsWithSeparateInstance[3].instanceTitle,
-        itemsData.itemsWithSeparateInstance[2].holdingId,
-        itemsData.itemsWithSeparateInstance[3].holdingId,
+        itemsData.itemsWithSeparateInstance[2].holdings[0].id,
+        itemsData.itemsWithSeparateInstance[3].holdings[0].id,
       ],
     );
     FileManager.renameFile('export*', 'ExportOpenLoans.csv');
@@ -133,8 +125,8 @@ describe('Export Loans ', () => {
         itemsData.itemsWithSeparateInstance[1].barcodes[0],
         itemsData.itemsWithSeparateInstance[0].instanceTitle,
         itemsData.itemsWithSeparateInstance[1].instanceTitle,
-        itemsData.itemsWithSeparateInstance[0].holdingId,
-        itemsData.itemsWithSeparateInstance[1].holdingId,
+        itemsData.itemsWithSeparateInstance[0].holdings[0].id,
+        itemsData.itemsWithSeparateInstance[1].holdings[0].id,
       ],
     );
   });
