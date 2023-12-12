@@ -1,7 +1,5 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -168,7 +166,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
 
   it(
     'C350647 Verify automated patron block "Maximum number of items charged out" removed after charged item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();

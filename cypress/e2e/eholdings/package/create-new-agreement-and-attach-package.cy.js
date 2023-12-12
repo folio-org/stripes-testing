@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -43,7 +43,7 @@ describe('eHoldings', () => {
 
     it(
       'C1295 Create a new Agreement and attach a package (spitfire)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         EHoldingSearch.switchToPackages();
         cy.wait(10000);

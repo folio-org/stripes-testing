@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import getRandomPostfix from '../../support/utils/stringTools';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
@@ -187,7 +187,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C396373 Save invoice fiscal year after adding adjustment on invoice level if FY was undefined and pay against previous FY (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Invoices.createRolloverInvoiceWithAjustmentAndFund(
         invoice,

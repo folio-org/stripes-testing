@@ -1,11 +1,9 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import Permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
 import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
 import FinancialTransactionDetailReportModal from '../../../support/fragments/users/financialTransactionDetailReportModal';
-import TestTypes from '../../../support/dictionary/testTypes';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import ManualCharges from '../../../support/fragments/settings/users/manualCharges';
 import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons';
@@ -140,7 +138,7 @@ describe('Financial Transactions Detail Report', () => {
 
   it(
     'C343329 Check that the user can create "Financial Transactions Detail Report" for refund (vega)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchResultsPane.openFinancialTransactionDetailReportModal();
       FinancialTransactionDetailReportModal.fillInRequiredFields({

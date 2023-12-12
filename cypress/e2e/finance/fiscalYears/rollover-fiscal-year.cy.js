@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -168,37 +166,33 @@ describe('ui-finance: Fiscal Year Rollover', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C186156 Rollover Fiscal Year (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
-    () => {
-      FinanceHelp.searchByName(defaultLedger.name);
-      Ledgers.selectLedger(defaultLedger.name);
-      Ledgers.rollover();
-      Ledgers.fillInRolloverInfo(secondFiscalYear.code);
-      Ledgers.closeRolloverInfo();
-      Ledgers.selectFundInLedger(firstFund.name);
-      Funds.selectPlannedBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(firstFund.code, '($100.00)');
-      Funds.closeMenu();
-      cy.wait(1000);
-      Funds.closeMenu();
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(firstFund.code, '$0.00');
-      cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(secondFund.name);
-      Funds.selectFund(secondFund.name);
-      Funds.selectPlannedBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
-      Funds.closeMenu();
-      cy.wait(1000);
-      Funds.closeMenu();
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
-    },
-  );
+  it('C186156 Rollover Fiscal Year (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+    FinanceHelp.searchByName(defaultLedger.name);
+    Ledgers.selectLedger(defaultLedger.name);
+    Ledgers.rollover();
+    Ledgers.fillInRolloverInfo(secondFiscalYear.code);
+    Ledgers.closeRolloverInfo();
+    Ledgers.selectFundInLedger(firstFund.name);
+    Funds.selectPlannedBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(firstFund.code, '($100.00)');
+    Funds.closeMenu();
+    cy.wait(1000);
+    Funds.closeMenu();
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(firstFund.code, '$0.00');
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(secondFund.name);
+    Funds.selectFund(secondFund.name);
+    Funds.selectPlannedBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
+    Funds.closeMenu();
+    cy.wait(1000);
+    Funds.closeMenu();
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(secondFund.code, '($200.00)');
+  });
 });

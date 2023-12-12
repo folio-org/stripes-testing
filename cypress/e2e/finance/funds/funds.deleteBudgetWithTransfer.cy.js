@@ -1,12 +1,10 @@
 import Funds from '../../../support/fragments/finance/funds/funds';
 import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
-import TestType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import NewFund from '../../../support/fragments/finance/funds/newFund';
 import { calloutTypes } from '../../../../interactors';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-finance: Funds', () => {
   const fundFrom = { ...NewFund.defaultFund };
@@ -14,7 +12,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C343240 delete budget with transfer transaction (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       // TODO: update test in testrail - it should contain rather business actions than buttons clicks etc.
       const hundredQunatity = 100;

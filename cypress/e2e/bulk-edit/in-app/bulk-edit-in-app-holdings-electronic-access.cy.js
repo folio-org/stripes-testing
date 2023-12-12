@@ -1,5 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -60,7 +58,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367977 Verify Bulk edit Holdings records with non-existent Electronic access Relationship type ID (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         UrlRelationship.createNewRelationship(newRelationshipName);
         UrlRelationship.verifyElectronicAccessNameOnTable(newRelationshipName);

@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -49,7 +49,7 @@ describe('data-import', () => {
 
     it(
       'C11119 Check that the Instance HRID assigned as MARC Bib 001 when Inventory Instance created via Data Import (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // upload a marc file
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691

@@ -2,8 +2,6 @@ import uuid from 'uuid';
 import moment from 'moment';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Users from '../../support/fragments/users/users';
@@ -120,7 +118,7 @@ describe('Fee fine amout link in checkout', () => {
 
   it(
     'C388525 Check that User can not click the fine amount as a link with necessary permissions (vega)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.checkOutPath);

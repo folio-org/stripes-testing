@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Users from '../../support/fragments/users/users';
@@ -118,7 +118,7 @@ describe('MARC -> MARC Bibliographic', () => {
 
   it(
     'C365598 Unlink "MARC Bibliographic" field from "MARC Authority" record and use the "Save & close" button in editing window. (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[2]);
       InventoryInstances.selectInstance();

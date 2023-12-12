@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -49,7 +49,7 @@ describe('inventory', () => {
 
     it(
       'C357577 Verify that not-exact match placeholder displays fully in the "Contributor" column (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         // Select "Browse", Click on the browse option dropdown and select “Contributors” option
         InventorySearchAndFilter.selectBrowseContributors();

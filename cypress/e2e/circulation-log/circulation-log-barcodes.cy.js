@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
@@ -120,7 +120,7 @@ describe('Circulation log', () => {
 
   it(
     'C17094 Verify User barcode appears in Circulation log (volaris) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       const firstItemSearchResultsData = {
         userBarcode: firstUser.barcode,

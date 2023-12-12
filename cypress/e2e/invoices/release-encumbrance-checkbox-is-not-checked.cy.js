@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragments/invoices';
 import { Budgets } from '../../support/fragments/finance';
 import TopMenu from '../../support/fragments/topMenu';
@@ -68,7 +68,7 @@ describe('Invoices', () => {
 
   it(
     'C389582 "Release encumbrance" checkbox is NOT checked after creating new blank invoice line (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Open invoice by clicking on its "Vendor invoice number" link on "Invoices" pane
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

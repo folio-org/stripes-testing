@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -62,7 +62,7 @@ describe('Orders', () => {
 
   it(
     'C380409 Search for order title with special characters (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Enter full title name from Preconditions item #2 in "Search" field on "Search & filter" pane
       // Click "Search" button

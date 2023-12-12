@@ -1,8 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
 import Orders from '../../../support/fragments/orders/orders';
-import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Organizations from '../../../support/fragments/organizations/organizations';
@@ -106,7 +104,7 @@ describe('orders: export', () => {
 
   it(
     'C350395: Verify that Orders can be created for the selected Vendors EDIFACT export (thunderjet)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       cy.visit(TopMenu.ordersPath);
       Orders.createOrder(order, true, false).then((orderId) => {

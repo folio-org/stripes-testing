@@ -8,7 +8,6 @@ import {
   LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
 } from '../../../support/constants';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -111,7 +110,7 @@ describe('data-import', () => {
 
     it(
       'C11107 Action and field mapping: Create an instance, holdings, and item (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // create field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();

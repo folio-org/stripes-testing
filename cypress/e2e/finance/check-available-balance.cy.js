@@ -1,6 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -109,7 +107,7 @@ describe('Finance', () => {
 
   it(
     'C377030 "Available balance" is displayed as a negative number when running a deficit (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultFiscalYear.name);
       FiscalYears.selectFisacalYear(defaultFiscalYear.name);

@@ -1,5 +1,3 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -34,7 +32,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C375134 User with "Export manager: All" permission can view report options for "MARC authority" records (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       MarcAuthorities.clickActionsAndReportsButtons();
     },

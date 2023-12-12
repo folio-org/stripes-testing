@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
   NewOrganization,
   Organizations,
@@ -70,7 +70,7 @@ describe('Export Manager', () => {
 
     it(
       'C377048 Setting "daily" scheduling on 12 PM for new export Integration (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click on the "Name" link for Organization
         Organizations.searchByParameters('Name', testData.organization.name);

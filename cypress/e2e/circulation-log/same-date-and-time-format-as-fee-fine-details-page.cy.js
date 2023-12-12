@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
@@ -94,7 +94,7 @@ describe('circulation-log', () => {
 
   it(
     'C350712 Check date and time --fee/fines (volaris) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.setFilterOptionFromAccordion('fee', 'Billed');

@@ -1,9 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import testTypes from '../../../support/dictionary/testTypes';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import DevTeams from '../../../support/dictionary/devTeams';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
@@ -73,7 +71,7 @@ describe('Holdings', () => {
 
   it(
     'C397327 Verify that no error appears after switch from Holdings Edit screen to another app and back (folijet) (TaaS)',
-    { tags: [testTypes.extendedPath, DevTeams.folijet] },
+    { tags: ['extendedPath', 'folijet'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.instanceTitle);
       InventorySearchAndFilter.selectViewHoldings();

@@ -1,5 +1,5 @@
 import moment from 'moment/moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -87,7 +87,7 @@ describe('Circulation log', () => {
 
   it(
     'C17000 Check the Actions button from filtering Circulation log by closed loan (volaris) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       goToCircLogApp().then((rowIndex) => {
         SearchResults.chooseActionByRow(rowIndex, 'Loan details');

@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import getRandomPostfix, {
   getTestEntityValue,
   randomFourDigitNumber,
@@ -65,7 +65,7 @@ describe('Users', () => {
 
   it(
     'C410760 "User type" field is displayed on create user page (Poppy +) (Thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       usersSearchResultsPane.openNewUser();
       UserEdit.verifySaveAndColseIsDisabled(true);

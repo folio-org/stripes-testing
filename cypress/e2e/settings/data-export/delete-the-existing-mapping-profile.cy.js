@@ -1,5 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -31,7 +29,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15828 Delete the existing mapping profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
       ExportFieldMappingProfiles.verifyFieldMappingProfilesPane();

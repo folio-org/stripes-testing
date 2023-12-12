@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -41,7 +41,7 @@ describe('Notes', () => {
 
   it(
     'C357554 Verify that user cant delete a "Note type" when the "Note" was created (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       const noteType = `Note type ${fourDigits}`;
       const note1 = { title: 'Note 1', details: 'This is Note 1' };

@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment/moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -100,7 +100,7 @@ describe('Pay Fees/Fines', () => {
 
   it(
     'C456 Verify behavior when "Pay" button pressed from Fee/Fine History page with 1 fee/fine selected (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // Go to User Information for your test patron
       UsersSearchPane.searchByKeywords(userData.username);
@@ -125,7 +125,7 @@ describe('Pay Fees/Fines', () => {
 
   it(
     'C457 Verify behavior when "Pay" ellipsis option selected from Fee/Fine History page (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // Go to User Information for your test patron
       cy.visit(TopMenu.usersPath);
@@ -152,7 +152,7 @@ describe('Pay Fees/Fines', () => {
 
   it(
     'C458 Verify behavior when "Pay" button pressed from Fee/Fine Details page (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       //  Go to User Information for your test patron
       cy.visit(TopMenu.usersPath);
@@ -180,7 +180,7 @@ describe('Pay Fees/Fines', () => {
   it(
     'C460 Verify "Pay fee/fine" behavior when comments not required (vega) (TaaS)',
     {
-      tags: [TestTypes.extendedPath, DevTeams.vega],
+      tags: ['extendedPath', 'vega'],
     },
     () => {
       cy.visit(SettingsMenu.commentRequired);
@@ -212,7 +212,7 @@ describe('Pay Fees/Fines', () => {
   it(
     'C461 Verify "Pay fee/fine" behavior when "Require comment when fee/fine fully/partially paid" is set to Yes (vega) (TaaS)',
     {
-      tags: [TestTypes.extendedPath, DevTeams.vega],
+      tags: ['extendedPath', 'vega'],
     },
     () => {
       cy.visit(SettingsMenu.commentRequired);

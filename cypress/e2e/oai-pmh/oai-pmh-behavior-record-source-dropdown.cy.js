@@ -1,5 +1,3 @@
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import permissions from '../../support/dictionary/permissions';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -28,7 +26,7 @@ describe('OAI-PMH', () => {
 
   it(
     'C367985 Verify that "Record Source" dropdown is added to Behavior page (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       OaiPmh.checkSectionListItems();
       OaiPmh.selectSection(SECTIONS.BEHAVIOR);

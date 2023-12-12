@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -296,7 +296,7 @@ describe('Overdue fine', () => {
 
   it(
     'C347875 Overdue fine, renewed triggers (volaris)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       noticeTemplates.forEach((template, index) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

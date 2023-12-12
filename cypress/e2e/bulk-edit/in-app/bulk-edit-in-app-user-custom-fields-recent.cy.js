@@ -1,11 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
-import parallelization from '../../../support/dictionary/parallelization';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
@@ -66,7 +63,7 @@ describe('bulk-edit', () => {
 
     it(
       'C389570 In app | Verify bulk edit Users records with recently updated Custom fields (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird, parallelization.nonParallel] },
+      { tags: ['criticalPath', 'firebird', 'nonParallel'] },
       () => {
         cy.visit(TopMenu.bulkEditPath);
         BulkEditSearchPane.checkUsersRadio();

@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
@@ -89,7 +89,7 @@ describe('data-import', () => {
 
     it(
       'C358998 Data Import Updates should add 035 field from 001/003, if HRID already exists (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -206,7 +206,7 @@ describe('data-import', () => {
 
     it(
       'C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const itemQuantity = '8';
         const arrayOf999Fields = [];

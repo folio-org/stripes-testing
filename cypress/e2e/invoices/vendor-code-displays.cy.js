@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import Invoices from '../../support/fragments/invoices/invoices';
 import { Budgets } from '../../support/fragments/finance';
 import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
@@ -80,7 +80,7 @@ describe('Invoices', () => {
 
   it(
     'C359171: Vendor code displays rather than Vendor name in the invoice UI (thunderjet)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);

@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
@@ -80,7 +80,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C350691 Update 008 field of MARC Authority record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.select(createdAuthorityID[0]);
@@ -93,7 +93,7 @@ describe('Edit Authority record', () => {
 
   it(
     'C350696 Edit the imported MARC Authority record via MARC Authority app multiple times (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.select(createdAuthorityID[0]);

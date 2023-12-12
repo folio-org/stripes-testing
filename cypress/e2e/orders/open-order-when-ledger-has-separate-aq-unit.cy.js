@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import { Budgets } from '../../support/fragments/finance';
 import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
@@ -66,7 +66,7 @@ describe('Orders', () => {
 
   it(
     'C407655 Open order when ledger has separate acquisition unit (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Open Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

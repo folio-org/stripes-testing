@@ -1,6 +1,4 @@
 import { getTestEntityValue } from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -64,7 +62,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15826 Editing the existing mapping profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[0]);
       SingleFieldMappingProfilePane.verifyActionOptions();
@@ -90,7 +88,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15827 Duplicate the existing mapping profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SingleFieldMappingProfilePane.clickProfileNameFromTheList(profileNames[1]);
       SingleFieldMappingProfilePane.verifyActionOptions();

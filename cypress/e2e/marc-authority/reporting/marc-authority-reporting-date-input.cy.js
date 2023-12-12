@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
@@ -35,7 +35,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
 
   it(
     'C375218 Date input via date pickers in "Set date range for MARC authority headings updates (CSV) report" modal (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       MarcAuthorities.clickActionsAndReportsButtons();
       MarcAuthorities.fillReportModal('', tomorrow);
@@ -69,7 +69,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
 
   it(
     'C376606 Manual date input in "Set date range for MARC authority headings updates (CSV) report" modal (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       MarcAuthorities.clickActionsAndReportsButtons();
       MarcAuthorities.fillReportModal(today, '');

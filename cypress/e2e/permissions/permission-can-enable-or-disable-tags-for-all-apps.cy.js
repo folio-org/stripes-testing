@@ -1,9 +1,7 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -56,7 +54,7 @@ describe('Permissions Tags', () => {
 
   it(
     'C397329 Verify that permission: "Settings (Tags): Can enable or disable tags for all apps" works as expected (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       TagsGeneral.changeEnableTagsStatus('disable');
       cy.visit(TopMenu.invoicesPath);

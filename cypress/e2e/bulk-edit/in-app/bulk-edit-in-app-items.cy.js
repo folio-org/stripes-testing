@@ -1,10 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import { calloutTypes } from '../../../../interactors';
-import devTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -73,7 +71,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350905 Negative uploading file with identifiers -- In app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -94,7 +92,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357030 Verify Matched records label cleanup -- In -app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -122,7 +120,7 @@ describe('bulk-edit', () => {
 
     it(
       'C356809 Verify uploading file with Item accession number (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('Item accession number');
 

@@ -1,4 +1,3 @@
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
@@ -35,21 +34,17 @@ describe('eHoldings', () => {
       EHoldingsPackages.deletePackageViaAPI(testData.customPackageName);
     });
 
-    it(
-      'C692 Create a custom package (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
-      () => {
-        EHoldingSearch.switchToPackages();
-        EHoldingsPackages.verifyCustomPackage(testData.customPackageName);
-        EHoldingsPackageView.waitLoading();
-        EHoldingsPackageView.verifyPackageName(testData.customPackageName);
-        EHoldingsPackageView.verifyPackageType('Custom');
-        EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true);
-        EHoldingsPackageView.close();
-        EHoldingSearch.switchToPackages();
-        EHoldingsPackagesSearch.byName(testData.customPackageName);
-        EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
-      },
-    );
+    it('C692 Create a custom package (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
+      EHoldingSearch.switchToPackages();
+      EHoldingsPackages.verifyCustomPackage(testData.customPackageName);
+      EHoldingsPackageView.waitLoading();
+      EHoldingsPackageView.verifyPackageName(testData.customPackageName);
+      EHoldingsPackageView.verifyPackageType('Custom');
+      EHoldingsPackages.verifyPackageExistsViaAPI(testData.customPackageName, true);
+      EHoldingsPackageView.close();
+      EHoldingSearch.switchToPackages();
+      EHoldingsPackagesSearch.byName(testData.customPackageName);
+      EHoldingsPackages.verifyPackageInResults(testData.customPackageName);
+    });
   });
 });

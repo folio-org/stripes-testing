@@ -1,6 +1,4 @@
 import permissions from '../../../../support/dictionary/permissions';
-import testType from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FiscalYears from '../../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -154,7 +152,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   it(
     'C402327: Test rollover is blocked once common rollover has been done for given ledger and FY (Thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);

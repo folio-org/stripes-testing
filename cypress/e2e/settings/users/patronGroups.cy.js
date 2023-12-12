@@ -1,7 +1,5 @@
 import uuid from 'uuid';
 import TopMenu from '../../../support/fragments/topMenu';
-import TestType from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Features from '../../../support/dictionary/features';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -19,7 +17,7 @@ describe('Patron blocks relations with users, conditions', () => {
   const testData = {};
   it(
     "C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron (vega)",
-    { tags: [TestType.smoke, Features.patronBlocks, DevTeams.vega] },
+    { tags: ['smoke', Features.patronBlocks, 'vega'] },
     () => {
       testData.chargeAmount = 100;
 

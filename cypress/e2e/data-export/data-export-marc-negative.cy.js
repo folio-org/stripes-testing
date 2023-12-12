@@ -1,7 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import devTeams from '../../support/dictionary/devTeams';
 
 describe('data-export', () => {
   beforeEach('create test data', () => {
@@ -10,7 +8,7 @@ describe('data-export', () => {
 
   it(
     'C9292 Negative test - invalid file extension (firebird)',
-    { tags: [TestTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       ExportFileHelper.uploadFile('example.json');
       ExportFileHelper.verifyWarningWithInvalidFileExtension();

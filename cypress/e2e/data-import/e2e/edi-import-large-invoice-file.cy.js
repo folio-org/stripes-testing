@@ -1,4 +1,3 @@
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
@@ -57,7 +56,7 @@ describe('data-import', () => {
 
     it(
       'C347615 Import a large EDIFACT invoice file (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);

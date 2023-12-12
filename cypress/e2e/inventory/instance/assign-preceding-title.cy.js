@@ -5,7 +5,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
@@ -63,7 +62,7 @@ describe('inventory', () => {
 
     it(
       'C9215 In Accordion Title --> Test assigning a Preceding title (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
         InventoryInstances.selectInstance();

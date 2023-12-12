@@ -1,4 +1,4 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -137,7 +137,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
 
   it(
     'C1283 Check that "This requester already has an open request for this item" message appears (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // second requester's request for same item
       NewRequest.openNewRequestPane();

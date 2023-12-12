@@ -1,8 +1,6 @@
 import uuid from 'uuid';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -134,7 +132,7 @@ describe('Loans ', () => {
     );
   });
 
-  it('C10959 Loans: Claim returned (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
+  it('C10959 Loans: Claim returned (vega)', { tags: ['smoke', 'vega'] }, () => {
     const selectedItems = [];
     let claimedReturnedLoansQuantity;
     let selectedItem = folioInstances.find((item) => item.status === ITEM_STATUS_NAMES.CHECKED_OUT);

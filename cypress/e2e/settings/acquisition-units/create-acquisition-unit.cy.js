@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import Users from '../../../support/fragments/users/users';
@@ -31,7 +29,7 @@ describe('Acquisition Units: Settings (ACQ Units)', () => {
 
   it(
     'C6728 Create acquisitions unit (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.login(user.username, user.password, {
         path: SettingsMenu.acquisitionUnitsPath,

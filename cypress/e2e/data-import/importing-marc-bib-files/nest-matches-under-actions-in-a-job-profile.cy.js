@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
@@ -246,7 +246,7 @@ describe('data-import', () => {
 
     it(
       'C347894 Nest matches under actions in a job profile, and run the job profile successfully (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.filterHoldingsByPermanentLocation(holdingsPermanentLocation);

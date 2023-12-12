@@ -5,8 +5,6 @@ import TopMenu from '../../../support/fragments/topMenu';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 import Notes from '../../../support/fragments/notes/notes';
 import AssignNote from '../../../support/fragments/notes/modal/assign-unassign-notes';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 
 let agreementId;
 let noteTypeId;
@@ -41,7 +39,7 @@ describe('Agreement Notes', () => {
 
   it(
     'C1310 Assign a note to an Agreement record (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.openNotesSection();

@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -84,7 +84,7 @@ describe('inventory', () => {
 
     it(
       'C368045 Search for "Instance" by "Alternative title" field without special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
           InventoryInstance.searchByTitle(query);

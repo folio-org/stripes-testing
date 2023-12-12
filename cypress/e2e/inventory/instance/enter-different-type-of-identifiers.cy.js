@@ -1,4 +1,3 @@
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -53,7 +52,7 @@ describe('inventory', () => {
     ['ASIN', 'BNB'].forEach((identifier) => {
       it(
         'C609 In Accordion Identifiers --> enter different type of identifiers (folijet)',
-        { tags: [TestTypes.smoke, DevTeams.folijet] },
+        { tags: ['smoke', 'folijet'] },
         () => {
           resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 

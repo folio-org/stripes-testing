@@ -1,5 +1,3 @@
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -11,7 +9,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import getRandomPostfix from '../../../support/utils/stringTools';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('plug-in MARC authority | Browse', () => {
   const testData = {
@@ -89,7 +86,7 @@ describe('plug-in MARC authority | Browse', () => {
 
   it(
     'C380556 MARC Authority plug-in | Browse using "Subject" option returns only records with the same "Type of heading" (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();

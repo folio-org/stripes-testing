@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
@@ -107,7 +107,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C397997 Verify that selected settings remain for "Campuses" (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });

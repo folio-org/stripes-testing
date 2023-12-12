@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import settingsMenu from '../../../support/fragments/settingsMenu';
 import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
 import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
@@ -24,7 +23,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C163922 Flag a location as remote storage (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const locationName = `loc_${getRandomPostfix()}`;
 

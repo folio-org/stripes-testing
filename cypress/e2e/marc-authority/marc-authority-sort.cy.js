@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
@@ -10,7 +8,6 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import Parallelization from '../../support/dictionary/parallelization';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -115,7 +112,7 @@ describe('MARC Authority Sort', () => {
 
   it(
     'C365113 Apply "Authority source" facet to the search result list (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.all);
       MarcAuthorities.checkResultsListRecordsCountGreaterThan(0);
@@ -151,7 +148,7 @@ describe('MARC Authority Sort', () => {
 
   it(
     'C350579 Sorting and displaying results of search authority records by "Actions" dropdown menu (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.parallel] },
+    { tags: ['criticalPath', 'spitfire', 'parallel'] },
     () => {
       MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
       MarcAuthorities.chooseTypeOfHeading(headingTypes);

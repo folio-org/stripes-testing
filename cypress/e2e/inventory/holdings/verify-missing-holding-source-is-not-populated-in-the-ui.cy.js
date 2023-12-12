@@ -1,5 +1,5 @@
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
@@ -65,7 +65,7 @@ describe('Holdings', () => {
 
   it(
     'C367931 Verify that missing holdings source is not populated in the UI with instances source (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.searchHoldingsByHRID(testData.item.holdingHRID);

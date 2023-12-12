@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
@@ -33,7 +33,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C377044 Verify that the interface language is changed if user choose Numbering system has a value (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       // Select "Language and localization" option
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);

@@ -1,5 +1,5 @@
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
 import Users from '../../../support/fragments/users/users';
@@ -29,7 +29,7 @@ describe('Notes', () => {
 
   it(
     'C1205 Settings (Notes): Edit and View General settings (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       NoteTypes.checkNewNoteButtonEnabled();
       NoteTypes.checkNoteTypeIsDisplayed(generalNote);

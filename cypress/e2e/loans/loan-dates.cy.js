@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { REQUEST_TYPES } from '../../support/constants';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
@@ -100,7 +100,7 @@ describe('loan dates', () => {
 
   it(
     'C566 Loan: Change due date warnings and alerts (volaris)',
-    { tags: [TestTypes.smoke, DevTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       cy.visit(TopMenu.usersPath);
       // show open loans

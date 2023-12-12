@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import TopMenu from '../../support/fragments/topMenu';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -96,7 +96,7 @@ describe('Loans: Claim returned', () => {
 
   it(
     'C10960 Loans: Resolve claimed returned item (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       // Navigate to loan details for a loan where the item is claim returned
       UsersSearchPane.openUserCard(testData.user.username);

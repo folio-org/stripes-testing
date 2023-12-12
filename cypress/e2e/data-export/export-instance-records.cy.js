@@ -1,13 +1,11 @@
 import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import FileManager from '../../support/utils/fileManager';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import parallelization from '../../support/dictionary/parallelization';
+
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -46,7 +44,7 @@ describe('data-export', () => {
 
   it(
     'C9288 Export small number of instance records - default instance mapping profile (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird, parallelization.nonParallel] },
+    { tags: ['smoke', 'firebird', 'nonParallel'] },
     () => {
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName);

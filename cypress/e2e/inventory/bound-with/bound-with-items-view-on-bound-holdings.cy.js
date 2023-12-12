@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -145,7 +145,7 @@ describe('inventory', () => {
 
     it(
       'C409512 Verify the Bound-with items view on bound holdings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchByParameter('Title (all)', testData.firstInstanceTitle);
         InstanceRecordView.verifyInstanceRecordViewOpened();

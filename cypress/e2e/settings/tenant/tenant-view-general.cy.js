@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
@@ -49,7 +49,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C410753 Settings (tenant): View -- General (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       // Click on "Addresses" in the General subsection.
       TenantPane.selectTenant(TENANTS.ADDRESSES);

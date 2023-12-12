@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment/moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -89,7 +89,7 @@ describe('Manual Fees/Fines', () => {
 
   it(
     'C451 Verify behavior when "New fee/fine" ellipsis option selected within Open/Closed Loans (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // Find active user in FOLIO
       UsersSearchPane.searchByKeywords(userData.username);

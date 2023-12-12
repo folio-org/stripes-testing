@@ -1,6 +1,4 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -162,7 +160,7 @@ describe('Overdue fine', () => {
 
   it(
     'C347877 Manual fee/fine notices by fee/fine type: charge and action (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       const feeFineCreate = (feeFineName) => {
         cy.visit(TopMenu.usersPath);

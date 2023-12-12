@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
 import {
   RECEIVING_WORKFLOWS,
@@ -107,7 +107,7 @@ describe('Orders', () => {
 
   it(
     'C402384 Holdings records creation when open order with "P/E mix" format PO line and Independent workflow, "Create inventory" in "E-resources details" = Instance (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Open Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

@@ -4,8 +4,6 @@ import {
   REQUEST_LEVELS,
   REQUEST_TYPES,
 } from '../../support/constants';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -152,7 +150,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350523 Check that user can move Item level request (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, devTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.wrap(instanceData.itemBarcodes).each((barcode) => {
         Requests.findCreatedRequest(instanceData.title);

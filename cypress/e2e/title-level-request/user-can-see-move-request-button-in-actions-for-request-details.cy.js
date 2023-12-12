@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import Requests from '../../support/fragments/requests/requests';
@@ -130,7 +130,7 @@ describe('Title Level Request', () => {
 
   it(
     'C353975 Check that user can see Move request action in Action dropdown for request with connected item (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       Requests.waitContentLoading();
       Requests.findCreatedRequest(testData.itemBarcode);

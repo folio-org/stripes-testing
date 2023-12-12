@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import testType from '../../../support/dictionary/testTypes';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import Orders from '../../../support/fragments/orders/orders';
@@ -69,7 +67,7 @@ describe('Orders: Receiving and Check-in', () => {
 
   it(
     'C737 Validate when receiving a piece that the item status is updated from "On order" (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

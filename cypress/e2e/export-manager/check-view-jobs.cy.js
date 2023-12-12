@@ -1,8 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import Orders from '../../support/fragments/orders/orders';
-import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -148,7 +146,7 @@ describe('orders: export', () => {
 
   it(
     'C347885: Check view for jobs on Export Manager page (thunderjet)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

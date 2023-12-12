@@ -1,9 +1,7 @@
 import uuid from 'uuid';
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
 import Orders from '../../../support/fragments/orders/orders';
-import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Organizations from '../../../support/fragments/organizations/organizations';
@@ -173,7 +171,7 @@ describe('orders: export', () => {
 
   it(
     'C377045: Sorting by export method does not reset search results (thunderjet) (TaaS)',
-    { tags: [TestTypes.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       ExportManagerSearchPane.selectOrganizationsSearch();
       ExportManagerSearchPane.searchBySuccessful();

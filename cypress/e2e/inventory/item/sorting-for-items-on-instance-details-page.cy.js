@@ -1,6 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import generateUniqueItemBarcodeWithShift from '../../../support/utils/generateUniqueItemBarcodeWithShift';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -198,7 +198,7 @@ describe('inventory', () => {
 
     it(
       'C409420 Verify the sorting for Items on Instance details page (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(

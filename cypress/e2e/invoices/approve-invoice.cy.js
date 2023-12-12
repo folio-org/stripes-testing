@@ -1,6 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
@@ -70,32 +68,28 @@ describe('ui-invoices: Approve invoice', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it(
-    'C10945 Approve invoice (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
-    () => {
-      const transactionFactory = new Transaction();
-      Invoices.searchByNumber(invoice.invoiceNumber);
-      Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.approveInvoice();
-      // check transactions after approve
-      cy.visit(TopMenu.fundPath);
-      Helper.searchByName(defaultFund.name);
-      Funds.selectFund(defaultFund.name);
-      Funds.openBudgetDetails(defaultFund.code, DateTools.getCurrentFiscalYearCode());
-      Funds.openTransactions();
-      const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
-      Funds.checkTransaction(
-        1,
-        transactionFactory.create(
-          'pending',
-          valueInTransactionTable,
-          defaultFund.code,
-          '',
-          'Invoice',
-          '',
-        ),
-      );
-    },
-  );
+  it('C10945 Approve invoice (thunderjet)', { tags: ['criticalPath', 'thunderjet'] }, () => {
+    const transactionFactory = new Transaction();
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.approveInvoice();
+    // check transactions after approve
+    cy.visit(TopMenu.fundPath);
+    Helper.searchByName(defaultFund.name);
+    Funds.selectFund(defaultFund.name);
+    Funds.openBudgetDetails(defaultFund.code, DateTools.getCurrentFiscalYearCode());
+    Funds.openTransactions();
+    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
+    Funds.checkTransaction(
+      1,
+      transactionFactory.create(
+        'pending',
+        valueInTransactionTable,
+        defaultFund.code,
+        '',
+        'Invoice',
+        '',
+      ),
+    );
+  });
 });

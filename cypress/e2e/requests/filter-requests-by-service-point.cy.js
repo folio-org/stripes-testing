@@ -6,7 +6,6 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import editRequest from '../../support/fragments/requests/edit-request';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
-import { TestTypes, DevTeams } from '../../support/dictionary';
 
 describe('ui-requests: Filter requests by pickup service point', () => {
   let requestData;
@@ -49,7 +48,7 @@ describe('ui-requests: Filter requests by pickup service point', () => {
 
   it(
     'C15178 Filter requests by pickup service point (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.filterRequestsByServicePoints(servicePointName);

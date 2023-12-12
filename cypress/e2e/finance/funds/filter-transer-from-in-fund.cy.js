@@ -1,6 +1,4 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -89,7 +87,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C380708 Filter in "Transfer from" and "Transfer to" fields works correctly when creating a new fund (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Funds.cancelCreatingFundWithTransfers(thirdFund, defaultLedger.name, firstFund, secondFund);
     },

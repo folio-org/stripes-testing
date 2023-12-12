@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -157,7 +157,7 @@ describe('Lost items requiring actual cost', () => {
 
   it(
     'C375279 Check that entries are deleted for returned items (Declared lost items) (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       // Click on "Actions" drop-down => Click "Lost items requiring actual cost" action

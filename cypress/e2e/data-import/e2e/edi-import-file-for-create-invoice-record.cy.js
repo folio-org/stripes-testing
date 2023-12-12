@@ -1,6 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   INVOICE_STATUSES,
@@ -80,7 +79,7 @@ describe('data-import', () => {
 
     it(
       'C343338 EDIFACT file import with creating of new invoice record (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();

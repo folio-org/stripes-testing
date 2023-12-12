@@ -6,8 +6,6 @@ import {
   REQUEST_LEVELS,
   REQUEST_TYPES,
 } from '../../../../support/constants';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import TopMenu from '../../../../support/fragments/topMenu';
@@ -263,7 +261,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
   });
   it(
     'C350650 Verify automated patron block "Maximum number of overdue recalls" removed after overdue recalled item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();

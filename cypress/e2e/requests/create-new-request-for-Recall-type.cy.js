@@ -1,4 +1,4 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES, REQUEST_LEVELS } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
@@ -78,7 +78,7 @@ describe('Request', () => {
 
   it(
     'C547 Create new request for "Recall" type (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       // Create new request with item barcode and requester barcode
       NewRequest.openNewRequestPane();

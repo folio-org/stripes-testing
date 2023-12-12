@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -119,7 +117,7 @@ describe('Inventory: Contributors Browse', () => {
 
   it(
     'C359596 Verify that contributors with the same "Name", "Name type" and different "authorityID" will display in different rows in the response (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire], retries: 1 },
+    { tags: ['criticalPath', 'spitfire'], retries: 1 },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

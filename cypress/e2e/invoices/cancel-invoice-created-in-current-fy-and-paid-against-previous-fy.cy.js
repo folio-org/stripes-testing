@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Budgets, FiscalYears, LedgerRollovers } from '../../support/fragments/finance';
 import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragments/invoices';
 import { Transactions } from '../../support/fragments/finance/transactions';
@@ -170,7 +170,7 @@ describe('Invoices', () => {
 
   it(
     'C388563 Cancel invoice created in current FY and paid against previous FY (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click "Vendor invoice number" link for Invoice from Preconditions
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);

@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import {
   Locations,
@@ -66,7 +66,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C359588 Verify view of services points on the view page (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       Locations.viewLocations(testData.locations[0]);
 

@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import NewMaterialType from '../../support/fragments/settings/inventory/newMaterialType';
@@ -27,7 +27,7 @@ describe('inventory', () => {
 
     it(
       'C505 Settings (Inventory): Create, edit, delete material types (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.materialTypePath);
         MaterialTypes.checkAvailableOptions();

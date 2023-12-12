@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import FileManager from '../../../support/utils/fileManager';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -38,7 +37,7 @@ describe('data-import', () => {
 
     it(
       'C11112 Search the "View all" log screen (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         Logs.openViewAllLogs();
 

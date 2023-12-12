@@ -1,5 +1,5 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
@@ -89,7 +89,7 @@ describe('ui-inventory: location', () => {
 
   it(
     'C163923 Change a location to remote storage (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[0].name;
       const editedLocationName = Cypress.env('locations')[1].name;
@@ -124,7 +124,7 @@ describe('ui-inventory: location', () => {
 
   it(
     'C163924 Change a remote storage location to standard location (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const toBeEditedLocationName = Cypress.env('locations')[1].name;
       const editedLocationName = Cypress.env('locations')[0].name;

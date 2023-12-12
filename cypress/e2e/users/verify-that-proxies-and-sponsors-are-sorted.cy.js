@@ -1,6 +1,4 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -62,7 +60,7 @@ describe('Users', () => {
 
   it(
     'C410869 Verify that proxies and sponsors are sorted (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       UsersSearchPane.searchByKeywords(testData.mainUsername);
       UserEdit.openEdit();

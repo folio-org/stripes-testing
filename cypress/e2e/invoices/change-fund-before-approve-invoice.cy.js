@@ -1,6 +1,4 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
@@ -120,7 +118,7 @@ describe('Invoices', () => {
 
   it(
     'C353596 Invoice payment is successful if order line fund distribution is changed before invoice approval (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.createOrderApi(order).then((response) => {
         orderNumber = response.body.poNumber;

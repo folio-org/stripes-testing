@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   CALL_NUMBER_TYPE_NAMES,
@@ -423,7 +422,7 @@ describe('data-import', () => {
 
     it(
       'C343335 MARC file upload with the update of instance, holding, and items (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

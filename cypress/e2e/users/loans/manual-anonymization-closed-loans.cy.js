@@ -1,6 +1,5 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import testTypes from '../../../support/dictionary/testTypes';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import UserEdit from '../../../support/fragments/users/userEdit';
@@ -18,7 +17,6 @@ import OverdueFinePolicy from '../../../support/fragments/circulation/overdue-fi
 import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
 import NoticePolicy from '../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import DevTeams from '../../../support/dictionary/devTeams';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
@@ -219,17 +217,13 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it(
-    'C9217 Manual anonymization in closed loans (volaris)',
-    { tags: [testTypes.smoke, DevTeams.volaris] },
-    () => {
-      LoanDetails.createFeeFine(newOwnerData.owner, feeFineType);
-      LoanDetails.anonymizeAllLoans();
-      LoanDetails.checkAnonymizeAllLoansModalOpen();
-      LoanDetails.confirmAnonymizeAllLoans();
-      LoanDetails.checkAnonymizeModalOpen();
-      LoanDetails.closeAnonymizeModal();
-      LoanDetails.checkLoanAbsent(newFirstItemData.barcode);
-    },
-  );
+  it('C9217 Manual anonymization in closed loans (volaris)', { tags: ['smoke', 'volaris'] }, () => {
+    LoanDetails.createFeeFine(newOwnerData.owner, feeFineType);
+    LoanDetails.anonymizeAllLoans();
+    LoanDetails.checkAnonymizeAllLoansModalOpen();
+    LoanDetails.confirmAnonymizeAllLoans();
+    LoanDetails.checkAnonymizeModalOpen();
+    LoanDetails.closeAnonymizeModal();
+    LoanDetails.checkLoanAbsent(newFirstItemData.barcode);
+  });
 });

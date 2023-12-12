@@ -1,9 +1,7 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import TestTypes from '../../../support/dictionary/testTypes';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../support/dictionary/devTeams';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -85,7 +83,7 @@ describe('Create holding records with MARC source', () => {
 
   it(
     'C357063 Verify "LDR" validation rules with valid data for positions 05, 06 ,17, 18 when editing record (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       HoldingsRecordView.close();
       InventoryInstance.openHoldingView();

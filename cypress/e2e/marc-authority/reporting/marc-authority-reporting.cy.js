@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -15,7 +13,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import DateTools from '../../../support/utils/dateTools';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import FileManager from '../../../support/utils/fileManager';
-import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('MARC Authority -> Reporting | MARC authority', () => {
   const testData = {
@@ -91,7 +88,7 @@ describe('MARC Authority -> Reporting | MARC authority', () => {
 
   it(
     'C375231 "MARC authority headings updates (CSV)" report includes correct number of linked "MARC bib" records (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['smoke', 'spitfire', 'nonParallel'] },
     () => {
       const dataForC375231 = [
         {

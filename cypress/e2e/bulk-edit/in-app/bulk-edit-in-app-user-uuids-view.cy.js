@@ -1,10 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 
 let user;
@@ -41,7 +39,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357578 Verify "In app - Edit user records" permission (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyUsersUpdatePermission();
         BulkEditSearchPane.verifyRecordIdentifierItems();
@@ -60,7 +58,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359197 Verify that User can change the columns in the "Preview of record matched" (firebird)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
         BulkEditSearchPane.uploadFile(userUUIDsFileName);

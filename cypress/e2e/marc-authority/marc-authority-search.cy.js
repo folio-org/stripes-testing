@@ -1,6 +1,4 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
@@ -115,7 +113,7 @@ describe('MARC -› MARC Authority', () => {
 
   it(
     'C360532 Verify that "sourceFileId" and "naturalId" fields exist in response to search "MARC Authority" records. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.marcAuthorities,
@@ -128,7 +126,7 @@ describe('MARC -› MARC Authority', () => {
 
   it(
     'C409449 Search for "MARC authority" records using "Name-title" search option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(testData.userPropertiesC409449.username, testData.userPropertiesC409449.password, {
         path: TopMenu.marcAuthorities,

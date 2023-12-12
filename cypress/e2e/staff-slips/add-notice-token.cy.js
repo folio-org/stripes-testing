@@ -1,8 +1,6 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
@@ -55,7 +53,7 @@ describe('Patron Notices', () => {
 
   it(
     'C375248 Add "user.preferredFirstName" as staff slip token in Settings (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);
       NewNoticePolicyTemplate.clearBody();
@@ -68,7 +66,7 @@ describe('Patron Notices', () => {
 
   it(
     'C387434 Add "Discovery display name" as notice token in Settings (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.editTemplate(testData.noticeTemplateBody.name);
       NewNoticePolicyTemplate.clearBody();

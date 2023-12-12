@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../../support/dictionary';
 import DateTools from '../../../../support/utils/dateTools';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import RefundReasons from '../../../../support/fragments/settings/users/refundReasons';
@@ -24,7 +23,7 @@ describe('Settings Users', () => {
 
   it(
     'C447 Verify that you can create/edit/delete refund reasons (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       RefundReasons.createViaUi(refundReason);
       RefundReasons.verifyRefundReasonRecord(refundReason);

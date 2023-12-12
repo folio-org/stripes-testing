@@ -1,4 +1,4 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { REQUEST_TYPES, FULFILMENT_PREFERENCES, REQUEST_LEVELS } from '../../support/constants';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -79,7 +79,7 @@ describe('Title Level Request. Request notice. Title level request -Settings', (
 
   it(
     'C1285 Check that "Cannot change -Allow title level requests-" modal appears (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       TitleLevelRequests.clickOnTLRCheckbox();
       TitleLevelRequests.checkCannotChangeTLRModal();

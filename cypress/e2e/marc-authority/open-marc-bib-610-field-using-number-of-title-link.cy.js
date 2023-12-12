@@ -1,5 +1,3 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
@@ -13,7 +11,6 @@ import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import Parallelization from '../../support/dictionary/parallelization';
 
 describe('MARC -> MARC Authority', () => {
   const testData = {
@@ -104,7 +101,7 @@ describe('MARC -> MARC Authority', () => {
 
   it(
     'C375269 "Number of titles" link in "MARC authority" app opens linked "MARC bib" record with controlled "610" field (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       MarcAuthorities.switchToBrowse();
       MarcAuthorities.searchByParameter(testData.searchOption, testData.marcValueForBrowse);

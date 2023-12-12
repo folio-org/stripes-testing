@@ -1,11 +1,9 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 import Checkout from '../../support/fragments/checkout/checkout';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -138,7 +136,7 @@ describe('Circulation log', () => {
 
   it(
     'C407706 Correct Patron name shown in the "Source" field of Circulation log for "Change Due Date" loan type (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       CheckOutActions.checkOutUser(userB.barcode);
       CheckOutActions.checkOutItem(itemData.barcode);

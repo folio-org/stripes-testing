@@ -1,10 +1,8 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -116,7 +114,7 @@ describe('inventory', () => {
 
     it(
       'C196770 Assign tags to a Holdings record (volaris)',
-      { tags: [TestTypes.extendedPath, devTeams.volaris] },
+      { tags: ['extendedPath', 'volaris'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToHoldings();
@@ -141,7 +139,7 @@ describe('inventory', () => {
 
     it(
       'C367961 Verify that user can add more than 1 tag to "Holdings" record with source "Folio" (volaris)',
-      { tags: [TestTypes.extendedPath, devTeams.volaris] },
+      { tags: ['extendedPath', 'volaris'] },
       () => {
         const tags = Array(5)
           .fill('')
@@ -168,7 +166,7 @@ describe('inventory', () => {
 
     it(
       'C196771 Assign tags to an Item record (volaris)',
-      { tags: [TestTypes.extendedPath, devTeams.volaris] },
+      { tags: ['extendedPath', 'volaris'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToItem();

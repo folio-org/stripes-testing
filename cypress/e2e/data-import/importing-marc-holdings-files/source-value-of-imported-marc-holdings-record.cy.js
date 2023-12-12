@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -76,7 +76,7 @@ describe('data-import', () => {
 
     it(
       'C356820 Check the "Source" value of imported "MARC Holdings" record. (spitfire) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         InventoryInstances.searchBySource('MARC');
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);

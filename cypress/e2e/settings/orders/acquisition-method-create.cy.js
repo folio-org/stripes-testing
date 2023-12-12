@@ -1,5 +1,3 @@
-import devTeams from '../../../support/dictionary/devTeams';
-import TestType from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import AcquisitionMethods from '../../../support/fragments/settings/orders/acquisitionMethods';
 
@@ -15,7 +13,7 @@ describe('orders: Settings', () => {
 
   it(
     'C347633 Create Acquisition method (thunderjet)',
-    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       AcquisitionMethods.newAcquisitionMethod();
       AcquisitionMethods.fillAcquisitionMethodName(acquisitionMethod.value);

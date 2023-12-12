@@ -1,4 +1,3 @@
-import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -13,7 +12,6 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../support/dictionary/devTeams';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
 
@@ -145,7 +143,7 @@ describe('Check Out', () => {
     );
   };
 
-  it('C591 Check out: multipiece items (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
+  it('C591 Check out: multipiece items (vega)', { tags: ['smoke', 'vega'] }, () => {
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);

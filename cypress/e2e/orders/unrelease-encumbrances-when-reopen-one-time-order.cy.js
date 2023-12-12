@@ -1,4 +1,4 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
 import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -68,7 +68,7 @@ describe('Orders', () => {
 
   it(
     'C354279 Unrelease encumbrances when reopen one-time order without related invoices and receiving (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

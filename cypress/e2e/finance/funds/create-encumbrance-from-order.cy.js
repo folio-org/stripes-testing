@@ -1,7 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
@@ -14,7 +12,6 @@ import NewOrganization from '../../../support/fragments/organizations/newOrganiz
 import Orders from '../../../support/fragments/orders/orders';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('ui-finance: Transactions', () => {
   const defaultFund = { ...Funds.defaultUiFund };
@@ -93,7 +90,7 @@ describe('ui-finance: Transactions', () => {
 
   it(
     'C6705 Create encumbrance from Order  (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
     () => {
       Orders.createPOLineViaActions();
       OrderLines.fillInPOLineInfoWithFund(defaultFund);

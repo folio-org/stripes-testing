@@ -1,4 +1,4 @@
-import { TestTypes, DevTeams, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -12,7 +12,6 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('Manual Linking Bib field to Authority 110', () => {
   const testData = {
@@ -103,7 +102,7 @@ describe('Manual Linking Bib field to Authority 110', () => {
 
   it(
     'C374194 Link the "110" of "MARC Bib" field with "110" field of "MARC Authority" record (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['extendedPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstance.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();

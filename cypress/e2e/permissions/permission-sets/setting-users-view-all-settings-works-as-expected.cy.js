@@ -1,10 +1,8 @@
 import uuid from 'uuid';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
 import Arrays from '../../../support/utils/arrays';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
 import Users from '../../../support/fragments/users/users';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -99,7 +97,7 @@ describe('Permission Sets', () => {
 
   it(
     'C402342 Verify that Creating and Editing options are disabled for users with "Setting (Users): View all settings" permission scenario 1 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.permissionSets);
       PermissionSets.waitLoading();
@@ -119,7 +117,7 @@ describe('Permission Sets', () => {
 
   it(
     'C402752 Verify that "Settings (Users): View all settings" works as expected Scenario 2 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.usersOwnersPath);
       UsersSettingsGeneral.checkEntityInTable({
@@ -150,7 +148,7 @@ describe('Permission Sets', () => {
 
   it(
     'C404380 Verify that "Settings (Users): View all settings" works as expected Scenario 4 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup('undergrad');
@@ -160,7 +158,7 @@ describe('Permission Sets', () => {
 
   it(
     'C404383 Verify that "Settings (Users): View all settings" works as expected Scenario 5 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
@@ -171,7 +169,7 @@ describe('Permission Sets', () => {
 
   it(
     'C405545 Verify that "Settings (Users): View all settings" works as expected Scenario 6 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.patronGroups);
       UsersSettingsGeneral.checkEntityInTable({

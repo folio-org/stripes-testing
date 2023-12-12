@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -76,7 +76,7 @@ describe('Title Level Request', () => {
 
   it(
     'C411787 Check that user can create TLR Hold for Instance with no Items (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.enterHridInfo(instanceHRID);

@@ -1,6 +1,4 @@
 import uuid from 'uuid';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import {
   FULFILMENT_PREFERENCES,
@@ -198,7 +196,7 @@ describe('Title Level Request. Request Detail', () => {
   });
   it(
     'C350415 Check that the user can see "Request Detail" for Item request (vega)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);
@@ -236,7 +234,7 @@ describe('Title Level Request. Request Detail', () => {
 
   it(
     'C350416 Check that the user can see "Request Detail" for Title request (vega)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       Requests.selectTitleRequestLevel();
       Requests.findCreatedRequest(instanceData.title);
