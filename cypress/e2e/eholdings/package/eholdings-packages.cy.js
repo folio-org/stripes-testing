@@ -20,11 +20,6 @@ describe('eHoldings', () => {
       Users.deleteViaApi(userId);
     });
 
-    after(() => {
-      cy.getAdminToken();
-      EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
-    });
-
     it(
       'C688 Add all titles in a package to your holdings (spitfire)',
       { tags: ['smoke', 'spitfire', 'system'] },
@@ -206,6 +201,9 @@ describe('eHoldings', () => {
             EHoldingsPackages.fillDateCoverage(yesterday, today);
             EHoldingsPackage.saveAndClose();
             EHoldingsPackages.verifyCustomCoverageDates(yesterday, today);
+
+            cy.getAdminToken();
+            EHoldingsPackages.deletePackageViaAPI(defaultPackage.data.attributes.name);
           });
         });
       },
