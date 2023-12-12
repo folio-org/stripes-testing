@@ -99,4 +99,8 @@ export default {
 
     return FundDetails;
   },
+
+  verifyLedgerName: (title) => {
+    cy.expect(ledgerDetailsPane.find(ledgerDetailsPaneHeader).has({ text: including(title) }));
+  },
 };

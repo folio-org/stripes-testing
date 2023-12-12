@@ -110,4 +110,10 @@ export default {
   closeFiscalYearDetails() {
     cy.do(fiscalYearDetailsHeader.find(Button({ icon: 'times' })).click());
   },
+
+  verifyFiscalYearName: (title) => {
+    cy.expect(
+      fiscalYearDetailsSection.find(fiscalYearDetailsHeader).has({ text: including(title) }),
+    );
+  },
 };

@@ -49,6 +49,9 @@ const actionsButton = Button('Actions');
 const exportSettingsModal = Modal('Export settings');
 const expenseClassesSelect = Select({ name: 'expenseClasses' });
 const exportButton = Button('Export');
+const ledgerResultsPaneSection = Section({ id: 'ledger-results-pane' });
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
 
 export default {
   defaultUiLedger: {
@@ -1257,5 +1260,18 @@ export default {
       expect(actualData[9]).to.equal(`"${fund.description}"`);
       expect(actualData[10]).to.equal('"No budget found"');
     });
+  },
+
+  waitLoading() {
+    cy.expect([ledgerResultsPaneSection.exists(), ledgersFiltersSection.exists()]);
+  },
+
+  searchByName: (name) => {
+    cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
+    cy.wait(4000);
+  },
+
+  ledgerLinkExists: (name) => {
+    cy.expect(ledgerResultsPaneSection.find(Link(name)).exists());
   },
 };

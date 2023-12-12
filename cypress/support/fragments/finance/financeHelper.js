@@ -5,6 +5,7 @@ import {
   Link,
   SearchField,
   PaneContent,
+  Pane,
 } from '../../../../interactors';
 
 const searchField = SearchField({ id: 'input-record-search' });
@@ -14,6 +15,12 @@ const fiscalResultsList = PaneContent({ id: 'fiscal-year-results-pane-content' }
 const ledgerResultList = PaneContent({ id: 'ledger-results-pane-content' });
 const FundResultList = PaneContent({ id: 'fund-results-pane-content' });
 const FiscalYearResultList = PaneContent({ id: 'fiscal-year-results-pane-content' });
+const ledgerFiltersPane = Pane({ id: 'ledger-filters-pane' });
+const ledgerResultsPane = Pane({ id: 'ledger-results-pane' });
+const fiscalYearButton = Button('Fiscal year');
+const ledgerButton = Button('Ledger');
+const groupButton = Button('Group');
+const fundButton = Button('Fund');
 
 export default {
   statusActive: 'Active',
@@ -90,5 +97,25 @@ export default {
 
   getRandomInvoiceNumber: () => {
     return Math.floor(100000000 + Math.random() * 900000).toString();
+  },
+
+  waitLoading() {
+    cy.expect([ledgerFiltersPane.exists(), ledgerResultsPane.exists()]);
+  },
+
+  clickFiscalYearButton() {
+    cy.do(fiscalYearButton.click());
+  },
+
+  clickLedgerButton() {
+    cy.do(ledgerButton.click());
+  },
+
+  clickGroupButton() {
+    cy.do(groupButton.click());
+  },
+
+  clickFunButton() {
+    cy.do(fundButton.click());
   },
 };

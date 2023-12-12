@@ -16,12 +16,15 @@ import {
   Link,
   SearchField,
 } from '../../../../../interactors';
+import GroupDetails from './groupDetails';
 
 const newButton = Button('New');
 const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const fundModal = Modal('Select funds');
 const resetButton = Button({ id: 'reset-groups-filters' });
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
 
 export default {
   defaultUiGroup: {
@@ -173,5 +176,16 @@ export default {
 
   checkCreatedInList: (GroupName) => {
     cy.expect(Section({ id: 'group-results-pane' }).find(Link(GroupName)).exists());
+  },
+
+  searchByName: (name) => {
+    cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
+  },
+
+  selectGroupWithDetails: (GroupName) => {
+    cy.do(Section({ id: 'group-results-pane' }).find(Link(GroupName)).click());
+    GroupDetails.waitLoading();
+
+    return GroupDetails;
   },
 };
