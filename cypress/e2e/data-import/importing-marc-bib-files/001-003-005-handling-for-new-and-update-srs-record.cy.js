@@ -120,7 +120,7 @@ describe('data-import', () => {
 
     it(
       'C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel', 'system'] },
       () => {
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);

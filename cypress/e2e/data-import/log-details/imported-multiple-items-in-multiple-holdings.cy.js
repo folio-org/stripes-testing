@@ -298,7 +298,7 @@ describe('data-import', () => {
 
     it(
       'C388505 Check the log result table for imported multiple items in multiple holdings (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet', 'nonParallel', 'system'] },
       () => {
         const arrayOfHoldingsStatuses = [
           'Created (KU/CC/DI/M)',
@@ -359,7 +359,7 @@ describe('data-import', () => {
 
     it(
       'C389587 Check the JSON screen for imported multiple items in multiple holdings (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet', 'nonParallel', 'system'] },
       () => {
         let instanceHrid;
         const arrayOfHoldingsStatuses = [

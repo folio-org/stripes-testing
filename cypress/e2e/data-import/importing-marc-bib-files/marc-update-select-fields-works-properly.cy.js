@@ -95,7 +95,7 @@ describe('data-import', () => {
 
     it(
       'C17019 Check that MARC Update select fields works properly (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel', 'system'] },
       () => {
         DataImport.uploadFile(filePathToUpload, marcFileForCreate);
         JobProfiles.waitFileIsUploaded();

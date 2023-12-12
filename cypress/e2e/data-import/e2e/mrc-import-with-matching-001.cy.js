@@ -89,82 +89,86 @@ describe('data-import', () => {
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     });
 
-    it('C17044: MARC-MARC matching for 001 field (folijet)', { tags: ['smoke', 'folijet'] }, () => {
-      // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.verifyUploadState();
-      // upload a marc file for export
-      DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
-      JobProfiles.waitFileIsUploaded();
-      JobProfiles.search(jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(nameForMarcFile);
-      Logs.openFileDetails(nameForMarcFile);
-      FileDetails.checkStatusInColumn(
-        FileDetails.status.created,
-        FileDetails.columnNameInResultList.instance,
-      );
-
-      // open Instance for getting hrid
-      FileDetails.openInstanceInInventory('Created');
-      InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
-        const instanceHRID = initialInstanceHrId;
-
-        // download .csv file
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
-        InventorySearchAndFilter.saveUUIDs();
-        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-        ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-
-        // create Match profile
-        cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.createMatchProfile(matchProfile);
-
-        // create Field mapping profile
-        cy.visit(SettingsMenu.mappingProfilePath);
-        FieldMappingProfiles.createMappingProfile(mappingProfile);
-
-        // create Action profile and link it to Field mapping profile
-        cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.create(actionProfile, mappingProfile.name);
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
-
-        // create Job profile
-        cy.visit(SettingsMenu.jobProfilePath);
-        JobProfiles.createJobProfileWithLinkingProfiles(
-          jobProfile,
-          actionProfile.name,
-          matchProfile.profileName,
-        );
-        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-
-        // upload the exported marc file with 001 field
-        cy.visit(TopMenu.dataImportPath);
+    it(
+      'C17044: MARC-MARC matching for 001 field (folijet)',
+      { tags: ['smoke', 'folijet', 'system'] },
+      () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadExportedFile(nameForExportedMarcFile);
-        JobProfiles.search(jobProfile.profileName);
+        // upload a marc file for export
+        DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
+        JobProfiles.waitFileIsUploaded();
+        JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameForExportedMarcFile);
-        Logs.openFileDetails(nameForExportedMarcFile);
+        JobProfiles.waitFileIsImported(nameForMarcFile);
+        Logs.openFileDetails(nameForMarcFile);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
+          FileDetails.status.created,
           FileDetails.columnNameInResultList.instance,
         );
 
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+        // open Instance for getting hrid
+        FileDetails.openInstanceInInventory('Created');
+        InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
+          const instanceHRID = initialInstanceHrId;
 
-        // ensure the fields created in Field mapping profile exists in inventory
-        InventorySearchAndFilter.checkInstanceDetails();
-      });
-    });
+          // download .csv file
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+          InventorySearchAndFilter.saveUUIDs();
+          ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+
+          // download exported marc file
+          cy.visit(TopMenu.dataExportPath);
+          ExportFile.uploadFile(nameForCSVFile);
+          ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+          ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+
+          // create Match profile
+          cy.visit(SettingsMenu.matchProfilePath);
+          MatchProfiles.createMatchProfile(matchProfile);
+
+          // create Field mapping profile
+          cy.visit(SettingsMenu.mappingProfilePath);
+          FieldMappingProfiles.createMappingProfile(mappingProfile);
+
+          // create Action profile and link it to Field mapping profile
+          cy.visit(SettingsMenu.actionProfilePath);
+          ActionProfiles.create(actionProfile, mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(actionProfile.name);
+
+          // create Job profile
+          cy.visit(SettingsMenu.jobProfilePath);
+          JobProfiles.createJobProfileWithLinkingProfiles(
+            jobProfile,
+            actionProfile.name,
+            matchProfile.profileName,
+          );
+          JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
+          // upload the exported marc file with 001 field
+          cy.visit(TopMenu.dataImportPath);
+          // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.verifyUploadState();
+          DataImport.uploadExportedFile(nameForExportedMarcFile);
+          JobProfiles.search(jobProfile.profileName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(nameForExportedMarcFile);
+          Logs.openFileDetails(nameForExportedMarcFile);
+          FileDetails.checkStatusInColumn(
+            FileDetails.status.updated,
+            FileDetails.columnNameInResultList.instance,
+          );
+
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
+
+          // ensure the fields created in Field mapping profile exists in inventory
+          InventorySearchAndFilter.checkInstanceDetails();
+        });
+      },
+    );
   });
 });

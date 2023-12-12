@@ -294,7 +294,7 @@ describe('data-import', () => {
 
     it(
       'C11123 Export from Inventory, edit file, and re-import to update items (folijet)',
-      { tags: ['criticalPath', 'folijet'] },
+      { tags: ['criticalPath', 'folijet', 'system'] },
       () => {
         FileDetails.openInstanceInInventory('Created');
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

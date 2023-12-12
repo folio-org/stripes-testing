@@ -150,7 +150,7 @@ describe('data-import', () => {
 
     it(
       'C17017 Check that field protection settings work properly during data import (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet', 'parallel', 'system'] },
       () => {
         // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);

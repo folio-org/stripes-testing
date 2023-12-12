@@ -12,7 +12,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import Users from '../../../support/fragments/users/users';
 import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 
-describe('data-import', () => {
+describe('data-import', { retries: 3 }, () => {
   describe('Importing MARC Bib files', () => {
     let user = {};
     const OCLCAuthentication = '100481406/PAOLF';

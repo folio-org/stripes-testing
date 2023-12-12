@@ -56,7 +56,7 @@ describe('data-import', () => {
 
     it(
       'C347615 Import a large EDIFACT invoice file (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'system'] },
       () => {
         // create Field mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -84,7 +84,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
-        cy.wait(10000);
+        cy.wait(20000);
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();

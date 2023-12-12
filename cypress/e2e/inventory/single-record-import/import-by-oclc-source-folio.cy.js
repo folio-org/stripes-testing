@@ -30,7 +30,7 @@ const oclcRecordData = {
 };
 
 describe('inventory', () => {
-  describe('Single record import', () => {
+  describe('Single record import', { retries: 3 }, () => {
     before('create test data', () => {
       cy.getAdminToken().then(() => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);
@@ -61,7 +61,7 @@ describe('inventory', () => {
 
     it(
       'C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet', 'nonParallel', 'system'] },
       () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchByParameter(

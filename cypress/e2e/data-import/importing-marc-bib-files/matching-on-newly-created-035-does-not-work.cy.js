@@ -134,7 +134,7 @@ describe('data-import', () => {
 
     it(
       'C358138 Matching on newly-created 035 does not work (regression) (folijet)',
-      { tags: ['criticalPath', 'folijet', 'parallel'] },
+      { tags: ['criticalPath', 'folijet', 'parallel', 'system'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

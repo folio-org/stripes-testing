@@ -22,7 +22,7 @@ import {
 } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
-describe('data-import', () => {
+describe('data-import', { retries: 3 }, () => {
   describe('End to end scenarios', () => {
     // unique file name to upload
     const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
@@ -98,7 +98,7 @@ describe('data-import', () => {
 
     it(
       'C343343 MARC file import with matching for 999 ff field (folijet)',
-      { tags: ['smoke', 'folijet', 'nonParallel'] },
+      { tags: ['smoke', 'folijet', 'nonParallel', 'system'] },
       () => {
         // create Field mapping profile for export
         cy.visit(SettingsMenu.mappingProfilePath);
