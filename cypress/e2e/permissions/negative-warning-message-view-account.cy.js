@@ -71,6 +71,8 @@ describe('Permissions', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Organizations.deleteOrganizationViaApi(testData.organization.id);
+      Invoices.deleteInvoiceViaApi(testData.invoice.id);
+      Orders.deleteOrderViaApi(testData.order.id);
       Users.deleteViaApi(userData.userId);
     });
 
