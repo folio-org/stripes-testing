@@ -16,7 +16,7 @@ describe('Patron blocks relations with users, conditions', () => {
   const testData = {};
   it(
     "C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron (vega)",
-    { tags: ['smoke', 'vega'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       testData.chargeAmount = 100;
 

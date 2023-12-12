@@ -225,7 +225,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
 
   it(
     'C569: renewal failure because loan has reached maximum renewals (vega)',
-    { tags: ['smoke', 'vega'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       cy.login(firstUser.username, firstUser.password, {
         path: AppPaths.getOpenLoansPath(firstUser.userId),

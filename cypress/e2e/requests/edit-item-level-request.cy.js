@@ -196,7 +196,7 @@ describe('Edit item level request', () => {
         type: requestData.requestType,
         status: EditRequest.requestStatuses.NOT_YET_FILLED,
         level: requestData.requestLevel,
-        requestExpirationDate: DateTools.getFormattedDate({ date: currentDate }, 'MM/DD/YYYY'),
+        requestExpirationDate: DateTools.getFormattedDate({ date: currentDate }, 'm/d/YYYY'),
         comments: requestData.patronComments,
       });
       RequestDetail.checkRequesterInformation({
