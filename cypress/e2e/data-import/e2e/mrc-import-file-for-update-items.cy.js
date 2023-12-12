@@ -49,7 +49,7 @@ describe('data-import', () => {
     const jobProfileNameCreate = `autotest_job_profile_${getRandomPostfix()}`;
     const recordType = 'MARC_BIBLIOGRAPHIC';
     // file names
-    const nameMarcFileForImportCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForImportCreate = `C343335autotestFile${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
     const nameMarcFileForImportUpdate = `C343335autotestFile${getRandomPostfix()}.mrc`;
     const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;

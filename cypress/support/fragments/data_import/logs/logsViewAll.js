@@ -337,6 +337,7 @@ export default {
   checkByDateAndJobProfile({ from, end }, profileId) {
     waitUIToBeFiltered();
     const queryString = `completedAfter=${from}&completedBefore=${end}&limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED&subordinationTypeNotAny=COMPOSITE_PARENT`;
+
     return this.getNumberOfMatchedJobs(queryString).then((count) => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);

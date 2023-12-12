@@ -200,7 +200,7 @@ describe('data-import', () => {
           orderNumber = order.poNumber;
 
           Orders.checkIsOrderCreated(orderNumber);
-          cy.wait(2000);
+          cy.reload();
           // open the first PO with POL
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
@@ -211,6 +211,7 @@ describe('data-import', () => {
           // check receiving pieces are created
           cy.visit(TopMenu.ordersPath);
           Orders.resetFilters();
+          cy.reload();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           OrderDetails.openPolDetails(item.title);

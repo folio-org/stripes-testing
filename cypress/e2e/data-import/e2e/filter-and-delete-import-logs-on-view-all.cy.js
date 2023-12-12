@@ -19,7 +19,7 @@ describe('data-import', () => {
     // api endpoint expects completedDate increased by 1 day
     completedDate.setDate(completedDate.getDate() + 1);
     const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-    const jobProfileId = '6eefa4c6-bbf7-4845-ad82-de7fc5abd0e3';
+    const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
     const createdAuthorityIDs = [];
 
     before(() => {
