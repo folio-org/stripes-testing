@@ -140,7 +140,6 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
       'Authorized/Reference',
       'Heading/Reference',
       'Type of heading',
-      'Authority source',
       'Number of titles',
     ];
 
