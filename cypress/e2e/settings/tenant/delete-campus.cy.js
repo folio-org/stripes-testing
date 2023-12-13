@@ -6,7 +6,7 @@ import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import interactorsTools from '../../../support/utils/interactorsTools';
+import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -104,7 +104,7 @@ describe('Settings: Tenant', () => {
     Campuses.clickDeleteBtn({ record: testData.campuses[1].name });
     // #8 Click "Delete" button
     Campuses.confirmDelete();
-    interactorsTools.checkCalloutMessage(
+    InteractorsTools.checkCalloutMessage(
       `The campus ${testData.campuses[1].name} was successfully deleted`,
     );
     Campuses.checkResultsTableContent([testData.campuses[0]]);
