@@ -170,7 +170,6 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
 
     cy.createTempUser([
       Permissions.inventoryAll.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
