@@ -57,6 +57,13 @@ export default {
   },
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.copyNumber) {
+        cy.expect(
+          expectedSection
+            .find(MultiColumnListCell({ row: index, column: 'Copy number' }))
+            .has({ content: including(record.copyNumber) }),
+        );
+      }
       if (record.format) {
         cy.expect(
           expectedSection

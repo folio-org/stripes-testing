@@ -15,7 +15,6 @@ describe('Accessibility', () => {
   let userData;
   const checkInNote = 'Check-in';
   let itemBarcode;
-  let materialTypes;
   let testData;
 
   before('Create test data', () => {
@@ -23,11 +22,11 @@ describe('Accessibility', () => {
       userData = userProperties;
       cy.getAdminToken().then(() => {
         InventoryInstances.getMaterialTypes({ limit: 1 })
-          .then((materialTypesRes) => {
-            materialTypes = materialTypesRes;
+          .then((materialTypes) => {
+            const materialType = materialTypes[0];
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
-                properties: materialTypes.map(({ id, name }) => ({ materialType: { id, name } })),
+                itemsProperties: { materialType: { id: materialType.id } },
               }),
               servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
               servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation(),
