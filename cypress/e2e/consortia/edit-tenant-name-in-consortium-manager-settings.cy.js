@@ -55,10 +55,8 @@ describe('Users -> Consortia', () => {
     'C380515: Edit address (tenant) name in "Consortium manager" settings (consortia)(thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
-      Users.createViaUi(testUser).then((id) => {
-        testUser.id = id;
-      });
-      ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+      ConsortiumManager.selectMembership();
+
       UsersSearchPane.searchByUsername(testUser.username);
       Users.verifyUserDetailsPane();
       UsersCard.verifyAffiliationsQuantity('2');
