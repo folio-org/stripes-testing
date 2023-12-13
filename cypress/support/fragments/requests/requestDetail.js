@@ -246,12 +246,20 @@ export default {
     cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
   },
 
-  checkRequestMovedToFulfillmentInProgress(itemBarcode) {
-    cy.expect(
-      fulfillmentInProgressAccordion
-        .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
-        .exists(),
-    );
+  checkRequestMovedToFulfillmentInProgress(itemBarcode, moved = true) {
+    if (moved) {
+      cy.expect(
+        fulfillmentInProgressAccordion
+          .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        fulfillmentInProgressAccordion
+          .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+          .absent(),
+      );
+    }
   },
 
   openItemByBarcode(barcode = '') {
