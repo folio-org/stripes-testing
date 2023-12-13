@@ -11,7 +11,7 @@ import getLongDelay from '../../support/utils/cypressTools';
 
 describe('ui-inventory: MARC', () => {
   beforeEach('navigates to Inventory', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit('/inventory');
     cy.searchMARC('Robert C. Klove papers.');
   });

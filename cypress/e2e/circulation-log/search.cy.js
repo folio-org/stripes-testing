@@ -214,7 +214,7 @@ describe('circulation-log', () => {
     'C16980 Filter circulation log by changed due date (firebird)',
     { tags: ['criticalPath', 'firebird'] },
     () => {
-      cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+      cy.loginAsAdmin();
       cy.visit(TopMenu.usersPath);
 
       UsersSearchPane.searchByStatus('Active');

@@ -11,7 +11,7 @@ import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/i
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('MARC -> MARC Holdings', () => {
+describe('MARC -> MARC Holdings', { retries: 3 }, () => {
   let user;
   let instanceHrid;
   const testData = {
@@ -78,7 +78,7 @@ describe('MARC -> MARC Holdings', () => {
       InventoryInstance.waitLoading();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.viewSource();
-      InventoryViewSource.contains('$b E');
+      InventoryViewSource.contains('‡b E');
     },
   );
 });

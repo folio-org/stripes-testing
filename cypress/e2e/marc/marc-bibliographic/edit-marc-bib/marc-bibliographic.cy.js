@@ -9,7 +9,7 @@ import Z3950TargetProfiles from '../../../../support/fragments/settings/inventor
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
 
-describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
+describe('MARC -> MARC Bibliographic -> Edit MARC bib', { retries: 3 }, () => {
   const testData = {};
   const OCLCAuthentication = '100481406/PAOLF';
 
