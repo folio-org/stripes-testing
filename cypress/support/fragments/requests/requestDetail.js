@@ -9,6 +9,7 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   Pane,
+  PaneContent,
   Section,
   Select,
   TextArea,
@@ -34,6 +35,8 @@ const notYetFilledAccordion = Accordion({
   id: 'not-yet-filled',
 });
 const cancelRequestButton = Button({ id: 'clickable-cancel-request' });
+const fulfilmentInProgressAccordion = Accordion({ id: 'fulfillment-in-progress' });
+const openNotFilledYetAccordion = Accordion({ id: 'not-yet-filled' });
 const confirmButton = Button('Confirm');
 const confirmRequestCancellationModal = Modal('Confirm request cancellation');
 const cancellationReasonSelect = Select({ dataTestID: 'selectCancelationReason' });
@@ -51,6 +54,21 @@ const availableOptions = {
   'Move request': moveRequestButton,
   'Reorder queue': reorderQueueButton,
 };
+
+const notFilledYetRequestColumnHeaders = [
+  'Order',
+  'Item barcode',
+  'Request date',
+  'Pickup/Delivery',
+  'Requester',
+  'Requester barcode',
+  'Patron group',
+  'Type',
+  'Enumeration',
+  'Chronology',
+  'Volume',
+  'Patron comments',
+];
 
 export default {
   waitLoading: (type = 'staff') => {
@@ -190,6 +208,30 @@ export default {
 
   verifyCancelRequestOptionDisplayed() {
     cy.expect(cancelRequestButton.exists());
+  },
+
+  verifyAllRequestOptionsDisplayed() {
+    cy.expect([
+      cancelRequestButton.exists(),
+      moveRequestButton.exists(),
+      duplicateRequestButton.exists(),
+      editRequestButton.exists(),
+      reorderQueueButton.exists(),
+    ]);
+  },
+
+  verifyAllQueueAccordeonsDisplayed() {
+    cy.expect([fulfilmentInProgressAccordion.exists(), openNotFilledYetAccordion.exists()]);
+  },
+
+  verifyNotFilledYetAccordionHeaders() {
+    notFilledYetRequestColumnHeaders.forEach((headerName) => {
+      cy.expect(openNotFilledYetAccordion.find(MultiColumnListHeader(headerName)).exists());
+    });
+  },
+
+  selectReorderOption() {
+    cy.do(reorderQueueButton.click());
   },
 
   openCancelRequest() {
@@ -383,6 +425,15 @@ export default {
         .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
         .find(Link(itemBarcode))
         .click(),
+    );
+  },
+
+  verifyHeaders(instanceTitle) {
+    cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
+    cy.expect(
+      PaneContent({ id: 'request-queue-content' })
+        .find(HTML(including(`Instance: ${instanceTitle} /.`)))
+        .exists(),
     );
   },
 
