@@ -62,69 +62,6 @@ describe('Export Manager', () => {
 
     before(() => {
       cy.getAdminToken();
-      cy.loginAsAdmin({
-        path: SettingsMenu.ordersPurchaseOrderLinesLimit,
-        waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
-      });
-      SettingsOrders.setPurchaseOrderLinesLimit(2);
-
-      ServicePoints.getViaApi().then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
-        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-          location = res;
-        });
-      });
-      Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-        organization.id = organizationsResponse;
-        order.vendor = organizationsResponse;
-      });
-      cy.visit(TopMenu.organizationsPath);
-      Organizations.searchByParameters('Name', organization.name);
-      Organizations.checkSearchResults(organization);
-      Organizations.selectOrganization(organization.name);
-      Organizations.addIntegration();
-      Organizations.fillIntegrationInformationWithoutScheduling(
-        integrationName1,
-        integartionDescription1,
-        vendorEDICodeFor1Integration,
-        libraryEDICodeFor1Integration,
-        organization.accounts[0].accountNo,
-        'Purchase',
-      );
-      Organizations.addIntegration();
-      cy.wait(2000);
-      Organizations.fillIntegrationInformationWithoutScheduling(
-        integrationName2,
-        integartionDescription2,
-        vendorEDICodeFor2Integration,
-        libraryEDICodeFor2Integration,
-        organization.accounts[1].accountNo,
-        'Purchase',
-      );
-
-      cy.createOrderApi(order).then((response) => {
-        orderNumber = response.body.poNumber;
-        cy.visit(TopMenu.ordersPath);
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList();
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
-        OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
-          'Purchase',
-          location.institutionId,
-          `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
-        );
-        OrderLines.backToEditingOrder();
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-        OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
-          'Purchase',
-          location.institutionId,
-          `${organization.accounts[1].name} (${organization.accounts[1].accountNo})`,
-        );
-        OrderLines.backToEditingOrder();
-      });
-
       cy.createTempUser([
         permissions.uiOrdersView.gui,
         permissions.uiOrdersCreate.gui,
@@ -137,6 +74,69 @@ describe('Export Manager', () => {
         permissions.exportManagerDownloadAndResendFiles.gui,
       ]).then((userProperties) => {
         user = userProperties;
+        cy.loginAsAdmin({
+          path: SettingsMenu.ordersPurchaseOrderLinesLimit,
+          waiter: SettingsOrders.waitLoadingPurchaseOrderLinesLimit,
+        });
+        SettingsOrders.setPurchaseOrderLinesLimit(2);
+
+        ServicePoints.getViaApi().then((servicePoint) => {
+          servicePointId = servicePoint[0].id;
+          NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+            location = res;
+          });
+        });
+        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+          organization.id = organizationsResponse;
+          order.vendor = organizationsResponse;
+        });
+        cy.visit(TopMenu.organizationsPath);
+        Organizations.searchByParameters('Name', organization.name);
+        Organizations.checkSearchResults(organization);
+        Organizations.selectOrganization(organization.name);
+        Organizations.addIntegration();
+        Organizations.fillIntegrationInformationWithoutScheduling(
+          integrationName1,
+          integartionDescription1,
+          vendorEDICodeFor1Integration,
+          libraryEDICodeFor1Integration,
+          organization.accounts[0].accountNo,
+          'Purchase',
+        );
+        Organizations.addIntegration();
+        cy.wait(2000);
+        Organizations.fillIntegrationInformationWithoutScheduling(
+          integrationName2,
+          integartionDescription2,
+          vendorEDICodeFor2Integration,
+          libraryEDICodeFor2Integration,
+          organization.accounts[1].accountNo,
+          'Purchase',
+        );
+
+        cy.createOrderApi(order).then((response) => {
+          orderNumber = response.body.poNumber;
+          cy.visit(TopMenu.ordersPath);
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList();
+          Orders.createPOLineViaActions();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
+          OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
+            'Purchase',
+            location.institutionId,
+            `${organization.accounts[0].name} (${organization.accounts[0].accountNo})`,
+          );
+          OrderLines.backToEditingOrder();
+          Orders.createPOLineViaActions();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+          OrderLines.fillInPOLineInfoForExportWithLocationAndAccountNumber(
+            'Purchase',
+            location.institutionId,
+            `${organization.accounts[1].name} (${organization.accounts[1].accountNo})`,
+          );
+          OrderLines.backToEditingOrder();
+        });
+
         cy.login(user.username, user.password, {
           path: TopMenu.ordersPath,
           waiter: Orders.waitLoading,

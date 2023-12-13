@@ -75,78 +75,77 @@ describe('orders: export', () => {
 
   before(() => {
     cy.getAdminToken();
-
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(firstOrganization).then((organizationsResponse) => {
-      firstOrganization.id = organizationsResponse;
-      orderForFirstOrganization.vendor = firstOrganization.name;
-      orderForFirstOrganization.orderType = 'One-time';
-
-      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-      Organizations.searchByParameters('Name', firstOrganization.name);
-      Organizations.checkSearchResults(firstOrganization);
-      Organizations.selectOrganization(firstOrganization.name);
-      Organizations.addIntegration();
-      Organizations.fillIntegrationInformation(
-        integrationNameForFirstOrganization,
-        integartionDescription1,
-        vendorEDICodeFor1Integration,
-        libraryEDICodeFor1Integration,
-        firstOrganization.accounts[0].accountNo,
-        'Purchase',
-        UTCTime,
-      );
-
-      Organizations.createOrganizationViaApi(secondOrganization).then(
-        (secondOrganizationsResponse) => {
-          secondOrganization.id = secondOrganizationsResponse;
-          orderForSecondOrganization.vendor = secondOrganization.name;
-          orderForSecondOrganization.orderType = 'One-time';
-
-          cy.visit(TopMenu.organizationsPath);
-          Organizations.searchByParameters('Name', secondOrganization.name);
-          Organizations.checkSearchResults(secondOrganization);
-          Organizations.selectOrganization(secondOrganization.name);
-          Organizations.addIntegration();
-          Organizations.fillIntegrationInformation(
-            integrationNameForSecondOrganization,
-            integartionDescription2,
-            vendorEDICodeFor2Integration,
-            libraryEDICodeFor2Integration,
-            secondOrganization.accounts[0].accountNo,
-            'Purchase',
-            UTCTimeForSecond,
-          );
-
-          cy.visit(TopMenu.ordersPath);
-          Orders.createOrder(orderForSecondOrganization, true, false).then((secondOrderId) => {
-            orderForSecondOrganization.id = secondOrderId;
-            Orders.createPOLineViaActions();
-            OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
-            OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
-            OrderLines.backToEditingOrder();
-          });
-        },
-      );
-
-      cy.visit(TopMenu.ordersPath);
-      Orders.createOrder(orderForFirstOrganization, true, false).then((firstOrderId) => {
-        orderForFirstOrganization.id = firstOrderId;
-        Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
-        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
-        OrderLines.backToEditingOrder();
-      });
-    });
-
     cy.createTempUser([permissions.exportManagerAll.gui]).then((userProperties) => {
       user = userProperties;
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
+
+      Organizations.createOrganizationViaApi(firstOrganization).then((organizationsResponse) => {
+        firstOrganization.id = organizationsResponse;
+        orderForFirstOrganization.vendor = firstOrganization.name;
+        orderForFirstOrganization.orderType = 'One-time';
+
+        cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+        Organizations.searchByParameters('Name', firstOrganization.name);
+        Organizations.checkSearchResults(firstOrganization);
+        Organizations.selectOrganization(firstOrganization.name);
+        Organizations.addIntegration();
+        Organizations.fillIntegrationInformation(
+          integrationNameForFirstOrganization,
+          integartionDescription1,
+          vendorEDICodeFor1Integration,
+          libraryEDICodeFor1Integration,
+          firstOrganization.accounts[0].accountNo,
+          'Purchase',
+          UTCTime,
+        );
+
+        Organizations.createOrganizationViaApi(secondOrganization).then(
+          (secondOrganizationsResponse) => {
+            secondOrganization.id = secondOrganizationsResponse;
+            orderForSecondOrganization.vendor = secondOrganization.name;
+            orderForSecondOrganization.orderType = 'One-time';
+
+            cy.visit(TopMenu.organizationsPath);
+            Organizations.searchByParameters('Name', secondOrganization.name);
+            Organizations.checkSearchResults(secondOrganization);
+            Organizations.selectOrganization(secondOrganization.name);
+            Organizations.addIntegration();
+            Organizations.fillIntegrationInformation(
+              integrationNameForSecondOrganization,
+              integartionDescription2,
+              vendorEDICodeFor2Integration,
+              libraryEDICodeFor2Integration,
+              secondOrganization.accounts[0].accountNo,
+              'Purchase',
+              UTCTimeForSecond,
+            );
+
+            cy.visit(TopMenu.ordersPath);
+            Orders.createOrder(orderForSecondOrganization, true, false).then((secondOrderId) => {
+              orderForSecondOrganization.id = secondOrderId;
+              Orders.createPOLineViaActions();
+              OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
+              OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+              OrderLines.backToEditingOrder();
+            });
+          },
+        );
+
+        cy.visit(TopMenu.ordersPath);
+        Orders.createOrder(orderForFirstOrganization, true, false).then((firstOrderId) => {
+          orderForFirstOrganization.id = firstOrderId;
+          Orders.createPOLineViaActions();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
+          OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+          OrderLines.backToEditingOrder();
+        });
+      });
+
       cy.login(user.username, user.password, {
         path: TopMenu.exportManagerOrganizationsPath,
         waiter: ExportManagerSearchPane.waitLoading,

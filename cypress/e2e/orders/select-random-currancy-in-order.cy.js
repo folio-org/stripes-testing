@@ -28,37 +28,6 @@ describe('orders: create an order', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-    });
-    order.vendor = organization.name;
-    order.orderType = 'One-time';
-    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      defaultFiscalYear.id = response.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-        });
-      });
-    });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-    SettingsOrders.setPurchaseOrderLinesLimit(2);
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
@@ -66,6 +35,38 @@ describe('orders: create an order', () => {
       permissions.uiOrdersReopenPurchaseOrders.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+      });
+      order.vendor = organization.name;
+      order.orderType = 'One-time';
+      FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+        defaultFiscalYear.id = response.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          defaultFund.ledgerId = defaultLedger.id;
+
+          Funds.createViaApi(defaultFund).then((fundResponse) => {
+            defaultFund.id = fundResponse.fund.id;
+
+            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            FinanceHelp.searchByName(defaultFund.name);
+            Funds.selectFund(defaultFund.name);
+            Funds.addBudget(allocatedQuantity);
+          });
+        });
+      });
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
+      cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+      SettingsOrders.setPurchaseOrderLinesLimit(2);
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
@@ -87,11 +88,11 @@ describe('orders: create an order', () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;
         Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 19);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
         OrderLines.fillPolWithEuroCurrency(defaultFund, '100', '1', location.institutionId);
         OrderLines.backToEditingOrder();
         Orders.createPOLineViaActions();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
         OrderLines.fillPolWithPLNCurrency(defaultFund, '100', '1', location.institutionId);
         OrderLines.backToEditingOrder();
         Orders.openOrder();

@@ -23,6 +23,7 @@ describe('ui-inventory: Keyboard shortcut (NEW)', () => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
     });
+    cy.wait(20000);
     cy.visit(TopMenu.inventoryPath);
   });
 

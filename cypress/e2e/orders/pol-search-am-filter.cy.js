@@ -41,28 +41,6 @@ describe('orders: export', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-      order.vendor = organization.name;
-      order.orderType = 'One-time';
-    });
-    cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
-    Organizations.searchByParameters('Name', organization.name);
-    Organizations.checkSearchResults(organization);
-    Organizations.selectOrganization(organization.name);
-    Organizations.addIntegration();
-    Organizations.fillIntegrationInformationWithoutScheduling(
-      integrationName,
-      integartionDescription,
-      vendorEDICodeFor1Integration,
-      libraryEDICodeFor1Integration,
-      organization.accounts[0].accountNo,
-      'Purchase',
-    );
-    InteractorsTools.checkCalloutMessage('Integration was saved');
-    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-    SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
-    SettingsOrders.setPurchaseOrderLinesLimit(3);
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
@@ -74,6 +52,29 @@ describe('orders: export', () => {
       permissions.exportManagerAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+        order.vendor = organization.name;
+        order.orderType = 'One-time';
+      });
+      cy.loginAsAdmin({ path: TopMenu.organizationsPath, waiter: Organizations.waitLoading });
+      Organizations.searchByParameters('Name', organization.name);
+      Organizations.checkSearchResults(organization);
+      Organizations.selectOrganization(organization.name);
+      Organizations.addIntegration();
+      Organizations.fillIntegrationInformationWithoutScheduling(
+        integrationName,
+        integartionDescription,
+        vendorEDICodeFor1Integration,
+        libraryEDICodeFor1Integration,
+        organization.accounts[0].accountNo,
+        'Purchase',
+      );
+      InteractorsTools.checkCalloutMessage('Integration was saved');
+      cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+      SettingsOrders.waitLoadingPurchaseOrderLinesLimit();
+      SettingsOrders.setPurchaseOrderLinesLimit(3);
+
       cy.login(user.username, user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,

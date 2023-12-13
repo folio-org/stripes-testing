@@ -34,61 +34,6 @@ describe('Invoices', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.expenseClassesPath);
-    SettingsFinance.createNewExpenseClass(firstExpenseClass);
-
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.editBudget();
-          Funds.addExpensesClass(firstExpenseClass.name);
-        });
-      });
-    });
-
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-      firstOrder.orderType = 'One-time';
-      firstOrder.vendor = organization.name;
-      cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
-        firstOrder.id = secondOrderResponse.id;
-        firstOrderNumber = secondOrderResponse.poNumber;
-        Orders.checkCreatedOrder(firstOrder);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-          defaultFund,
-          '40',
-          '1',
-          '40',
-          location.institutionId,
-        );
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
-    });
-
     cy.createTempUser([
       permissions.uiInvoicesApproveInvoices.gui,
       permissions.viewEditCreateInvoiceInvoiceLine.gui,
@@ -96,6 +41,61 @@ describe('Invoices', () => {
       permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      cy.loginAsAdmin();
+      cy.visit(SettingsMenu.expenseClassesPath);
+      SettingsFinance.createNewExpenseClass(firstExpenseClass);
+
+      FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+        firstFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          defaultFund.ledgerId = defaultLedger.id;
+
+          Funds.createViaApi(defaultFund).then((fundResponse) => {
+            defaultFund.id = fundResponse.fund.id;
+
+            cy.visit(TopMenu.fundPath);
+            FinanceHelp.searchByName(defaultFund.name);
+            Funds.selectFund(defaultFund.name);
+            Funds.addBudget(allocatedQuantity);
+            Funds.editBudget();
+            Funds.addExpensesClass(firstExpenseClass.name);
+          });
+        });
+      });
+
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
+
+      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+        organization.id = responseOrganizations;
+        invoice.accountingCode = organization.erpCode;
+        firstOrder.orderType = 'One-time';
+        firstOrder.vendor = organization.name;
+        cy.visit(TopMenu.ordersPath);
+        Orders.createOrderForRollover(firstOrder, true).then((secondOrderResponse) => {
+          firstOrder.id = secondOrderResponse.id;
+          firstOrderNumber = secondOrderResponse.poNumber;
+          Orders.checkCreatedOrder(firstOrder);
+          OrderLines.addPOLine();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+            defaultFund,
+            '40',
+            '1',
+            '40',
+            location.institutionId,
+          );
+          OrderLines.backToEditingOrder();
+          Orders.openOrder();
+        });
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,
