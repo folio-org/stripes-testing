@@ -25,10 +25,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       tagLDRContent: '00000naa\\a2200000uu\\4500',
     },
     naturalIds: {
-      tag100: '0255869',
-      tag240: 'n99036055',
-      tag600: 'n93094742',
-      tag711: 'n79084169',
+      tag100: 'n025586922',
+      tag240: 'n9903605522',
+      tag600: 'n9309474222',
+      tag711: 'n7908416922',
     },
     searchOptions: {
       identifierAll: 'Identifier (all)',
@@ -45,17 +45,17 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     {
       rowIndex: 5,
       tag: '240',
-      content: '$0 n99036088',
+      content: '$0 n9903608822',
     },
     {
       rowIndex: 6,
       tag: '610',
-      content: '$0 n93094742',
+      content: '$0 n9309474222',
     },
     {
       rowIndex: 7,
       tag: '711',
-      content: '$0 n79084169',
+      content: '$0 n7908416922',
     },
     {
       rowIndex: 8,
@@ -157,7 +157,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C388565 Link certain fields manually and then use auto-linking when creating new "MARC Bib" record (spitfire)',
-    { tags: ['smoke', 'spitfire'] },
+    { tags: ['smoke', 'spitfire', 'system'] },
     () => {
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
@@ -189,7 +189,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '\\',
         '$a Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
         '',
-        '$0 3052044',
+        '$0 id.loc.gov/authorities/names/n025586922',
         '',
       );
       QuickMarcEditor.clickLinkIconInTagField(newFields[1].rowIndex + 1);
@@ -208,7 +208,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '\\',
         '$a Hosanna Bible',
         '',
-        '$0 id.loc.gov/authorities/names/n99036055',
+        '$0 id.loc.gov/authorities/names/n9903605522',
         '',
       );
 
@@ -236,7 +236,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '\\',
         '$a Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
         '',
-        '$0 3052044',
+        '$0 id.loc.gov/authorities/names/n025586922',
         '',
       );
       QuickMarcEditor.verifyTagFieldAfterLinking(
@@ -246,7 +246,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
         '\\',
         '$a Hosanna Bible',
         '',
-        '$0 id.loc.gov/authorities/names/n99036055',
+        '$0 id.loc.gov/authorities/names/n9903605522',
         '',
       );
       QuickMarcEditor.pressSaveAndClose();
@@ -323,7 +323,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
       QuickMarcEditor.updateExistingField(
         newFieldsForC388562[1].tag,
-        `${newFieldsForC388562[1].content} $0 n99036055`,
+        `${newFieldsForC388562[1].content} $0 n9903605522`,
       );
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       QuickMarcEditor.updateExistingField(
