@@ -9,6 +9,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import interactorsTools from '../../../support/utils/interactorsTools';
+import ExceptionModal from '../../../support/fragments/settings/tenant/modals/exceptionModal';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -110,29 +111,33 @@ describe('Settings: Tenant', () => {
     Libraries.checkResultsTableContent([testData.libraries[0], testData.libraries[1]]);
 
     // #3 Click "Delete" icon for **"Library A"** record
-    Libraries.clickDeleteBtn({ record: testData.libraries[0].name });
-    Libraries.verifyDeleteModal(testData.libraries[0].name);
+    const DeleteModal = Libraries.clickDeleteBtn({ record: testData.libraries[0].name });
+    DeleteModal.verifyModalView(`The library ${testData.libraries[0].name} will be deleted.`);
 
     // #4 Click "Cancel" button
-    Libraries.cancelDeleteModal();
+    DeleteModal.cancel();
     Libraries.checkResultsTableContent([testData.libraries[0], testData.libraries[1]]);
 
     // #5 - #6 Click "Delete" icon for **"Library A"** record one more time -> Click "Delete" button
-    Libraries.deleteViaUi(testData.libraries[0].name);
-    Libraries.verifyExceptionMessage();
+    Libraries.clickDeleteBtn({ record: testData.libraries[0].name });
+    DeleteModal.confirm();
+    ExceptionModal.verifyExceptionMessage(
+      'This library cannot be deleted, as it is in use by one or more records.',
+    );
 
     // #7 Click "Okay" button
-    Libraries.closeExceptionModal();
+    ExceptionModal.clickOkayButton();
 
     // #8 - #9 Click "Delete" icon for **"Library B"** record -> Click "Delete" button
-    Libraries.deleteViaUi(testData.libraries[1].name);
+    Libraries.clickDeleteBtn({ record: testData.libraries[1].name });
+    DeleteModal.confirm();
 
     // * Toast message "The library **"Library B"** was successfully deleted" appears
     interactorsTools.checkCalloutMessage(
       `The library ${testData.libraries[1].name} was successfully deleted`,
     );
     // * **"Library B"** record was deleted and NOT displaying in "Libraries" table
-    Libraries.checkLibraryAbsent(testData.libraries[1].name);
+    Libraries.checkRecordIsAbsent(testData.libraries[1].name);
     testData.libraries.pop();
   });
 });

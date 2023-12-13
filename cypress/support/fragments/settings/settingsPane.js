@@ -14,6 +14,7 @@ import {
   including,
   or,
 } from '../../../../interactors';
+import deleteModal from './tenant/modals/deleteModal';
 
 export const startRowIndex = 2;
 export const rootPane = Section({ id: 'controlled-vocab-pane' });
@@ -55,6 +56,7 @@ export default {
     } else {
       clickActionBtn({ rowIndex, locator: { icon: 'trash' } });
     }
+    return deleteModal;
   },
   checkValidatorError({ placeholder, error }) {
     cy.expect(rootPane.find(TextField({ placeholder })).has({ error }));
@@ -153,5 +155,9 @@ export default {
       method: REQUEST_METHOD.DELETE,
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  checkRecordIsAbsent: (record) => {
+    cy.expect(MultiColumnListCell(record).absent());
   },
 };
