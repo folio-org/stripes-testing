@@ -94,7 +94,17 @@ describe('orders: Settings', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.loginAsAdmin({
+      path: SettingsMenu.ordersInstanceStatusPath,
+      waiter: SettingsOrders.waitLoadingInstanceStatus,
+    });
+    cy.visit(SettingsMenu.ordersInstanceStatusPath);
+    SettingsOrders.selectInstanceStatus(otherInstanceStatus);
+    cy.visit(SettingsMenu.ordersInstanceTypePath);
+    SettingsOrders.selectInstanceType(otherInstanceType);
+    cy.visit(SettingsMenu.ordersLoanTypePath);
+    SettingsOrders.selectLoanType(selectedLoanType);
+    cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
@@ -111,12 +121,7 @@ describe('orders: Settings', () => {
       location.libraryId,
       location.id,
     );
-    cy.visit(SettingsMenu.ordersInstanceStatusPath);
-    SettingsOrders.selectInstanceStatus(otherInstanceStatus);
-    cy.visit(SettingsMenu.ordersInstanceTypePath);
-    SettingsOrders.selectInstanceType(otherInstanceType);
-    cy.visit(SettingsMenu.ordersLoanTypePath);
-    SettingsOrders.selectLoanType(selectedLoanType);
+
     Users.deleteViaApi(user.userId);
   });
 

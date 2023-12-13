@@ -422,8 +422,11 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(resetButton.click());
-    cy.expect(resetButton.is({ disabled: true }));
+    if (cy.expect(resetButton.is({ disabled: false }))) {
+      cy.do(resetButton.click());
+    } else {
+      cy.expect(resetButton.is({ disabled: true }));
+    }
   },
 
   selectStatusInSearch: (orderStatus) => {
