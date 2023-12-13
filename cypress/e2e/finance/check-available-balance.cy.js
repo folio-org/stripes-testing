@@ -37,55 +37,6 @@ describe('Finance', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-        Groups.createViaApi(defaultGroup).then((firstGroupResponse) => {
-          defaultGroup.id = firstGroupResponse.id;
-        });
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.closeBudgetDetails();
-          Funds.addGroupToFund(defaultGroup.name);
-          InteractorsTools.checkCalloutMessage('Fund has been saved');
-        });
-      });
-    });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-    });
-    defaultOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
-      defaultOrder.id = firstOrderResponse.id;
-      Orders.checkCreatedOrder(defaultOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-        defaultFund,
-        '1100',
-        '1',
-        '1100',
-        location.institutionId,
-      );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
     cy.createTempUser([
       permissions.uiFinanceViewFiscalYear.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
@@ -93,6 +44,56 @@ describe('Finance', () => {
       permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+        defaultFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          defaultFund.ledgerId = defaultLedger.id;
+          Groups.createViaApi(defaultGroup).then((firstGroupResponse) => {
+            defaultGroup.id = firstGroupResponse.id;
+          });
+          Funds.createViaApi(defaultFund).then((fundResponse) => {
+            defaultFund.id = fundResponse.fund.id;
+
+            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            FinanceHelp.searchByName(defaultFund.name);
+            Funds.selectFund(defaultFund.name);
+            Funds.addBudget(allocatedQuantity);
+            Funds.closeBudgetDetails();
+            Funds.addGroupToFund(defaultGroup.name);
+            InteractorsTools.checkCalloutMessage('Fund has been saved');
+          });
+        });
+      });
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
+      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+        organization.id = responseOrganizations;
+        invoice.accountingCode = organization.erpCode;
+      });
+      defaultOrder.vendor = organization.name;
+      cy.visit(TopMenu.ordersPath);
+      Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
+        defaultOrder.id = firstOrderResponse.id;
+        Orders.checkCreatedOrder(defaultOrder);
+        OrderLines.addPOLine();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+          defaultFund,
+          '1100',
+          '1',
+          '1100',
+          location.institutionId,
+        );
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.fiscalYearPath,
         waiter: FiscalYears.waitForFiscalYearDetailsLoading,

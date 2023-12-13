@@ -291,6 +291,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreatingInstance);
+        cy.reload();
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
@@ -328,6 +329,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(fileNameForProtect);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameForProtect);
+          cy.reload();
           [
             FileDetails.columnNameInResultList.srsMarc,
             FileDetails.columnNameInResultList.instance,

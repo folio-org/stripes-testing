@@ -42,29 +42,6 @@ describe('orders: duplicate', () => {
 
   before(() => {
     cy.getAdminToken();
-
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-    Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-      organization.id = organizationsResponse;
-      order.vendor = organizationsResponse;
-    });
-    cy.createOrderApi(order).then((response) => {
-      orderNumber = response.body.poNumber;
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 12);
-      OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
-
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
@@ -72,6 +49,28 @@ describe('orders: duplicate', () => {
       permissions.uiOrdersDelete.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
+      Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+        organization.id = organizationsResponse;
+        order.vendor = organizationsResponse;
+      });
+      cy.createOrderApi(order).then((response) => {
+        orderNumber = response.body.poNumber;
+        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList();
+        Orders.createPOLineViaActions();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 12);
+        OrderLines.fillInPOLineInfoForExportWithLocation('Purchase', location.institutionId);
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+      });
+
       cy.login(user.username, user.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,

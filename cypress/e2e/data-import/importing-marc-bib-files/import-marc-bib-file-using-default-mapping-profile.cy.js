@@ -36,7 +36,7 @@ describe('data-import', () => {
 
     it(
       'C2325 Import a MARC Bib file using the default mapping profile (folijet)',
-      { tags: ['criticalPath', 'folijet', 'nonParallel', 'system'] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);

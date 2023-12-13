@@ -82,7 +82,7 @@ export default {
   assignAdmin: () => {
     cy.do([
       findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn('folio'),
+      userSearchModal.find(searchTextField).fillIn('admin'),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click(),
@@ -100,7 +100,7 @@ export default {
 
   unAssignAdmin: (AUName) => {
     cy.do(auListPane.find(Button(AUName)).click());
-    cy.get('div[class*=mclCell-]:contains("folio-aqa, folio-aqa ")')
+    cy.get('div[class*=mclCell-]:contains("ECSAdmin  ")')
       .parents('div[class*=mclRow-]')
       .eq(0)
       .find('button')

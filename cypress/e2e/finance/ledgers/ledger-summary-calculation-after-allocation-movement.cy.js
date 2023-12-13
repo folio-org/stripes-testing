@@ -24,41 +24,41 @@ describe('Finance: Ledgers', () => {
 
   before(() => {
     cy.getAdminToken();
-    // create first Fiscal Year and prepere 2 Funds for Rollover
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = defaultLedger.id;
-        secondFund.ledgerId = defaultLedger.id;
-
-        Funds.createViaApi(firstFund).then((fundResponse) => {
-          firstFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantityForFirstFund);
-        });
-
-        Funds.createViaApi(secondFund).then((secondFundResponse) => {
-          secondFund.id = secondFundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(secondFund.name);
-          Funds.selectFund(secondFund.name);
-          Funds.addBudget(allocatedQuantityForSecondFund);
-        });
-      });
-    });
-
     cy.createTempUser([
       permissions.uiFinanceCreateAllocations.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      // create first Fiscal Year and prepere 2 Funds for Rollover
+      FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+        defaultFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          firstFund.ledgerId = defaultLedger.id;
+          secondFund.ledgerId = defaultLedger.id;
+
+          Funds.createViaApi(firstFund).then((fundResponse) => {
+            firstFund.id = fundResponse.fund.id;
+
+            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            FinanceHelp.searchByName(firstFund.name);
+            Funds.selectFund(firstFund.name);
+            Funds.addBudget(allocatedQuantityForFirstFund);
+          });
+
+          Funds.createViaApi(secondFund).then((secondFundResponse) => {
+            secondFund.id = secondFundResponse.fund.id;
+
+            cy.visit(TopMenu.fundPath);
+            FinanceHelp.searchByName(secondFund.name);
+            Funds.selectFund(secondFund.name);
+            Funds.addBudget(allocatedQuantityForSecondFund);
+          });
+        });
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,

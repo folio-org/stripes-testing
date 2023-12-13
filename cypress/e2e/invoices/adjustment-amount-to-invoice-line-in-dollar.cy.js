@@ -45,51 +45,6 @@ describe('invoices: add adjustment', () => {
 
   before(() => {
     cy.getAdminToken();
-
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-      order.vendor = organization.id;
-    });
-    invoice.accountingCode = organization.erpCode;
-    invoice.vendorName = organization.name;
-    Object.assign(
-      vendorPrimaryAddress,
-      organization.addresses.find((address) => address.isPrimary === true),
-    );
-    invoice.batchGroup = 'FOLIO';
-
-    FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
-      defaultFiscalYear.id = response.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        firstFund.ledgerId = defaultLedger.id;
-
-        Funds.createViaApi(firstFund).then((fundResponse) => {
-          firstFund.id = fundResponse.fund.id;
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(firstFund.name);
-          Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantityForFistFund);
-        });
-      });
-    });
-
-    cy.createOrderApi(order).then((response) => {
-      orderNumber = response.body.poNumber;
-      cy.visit(TopMenu.ordersPath);
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.addPOLine();
-      OrderLines.fillInPOLineInfoWithFund(firstFund);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-      Invoices.createInvoiceLinePOLLookUp(orderNumber);
-    });
-
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
@@ -97,6 +52,50 @@ describe('invoices: add adjustment', () => {
       permissions.uiInvoicesPayInvoices.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+        order.vendor = organization.id;
+      });
+      invoice.accountingCode = organization.erpCode;
+      invoice.vendorName = organization.name;
+      Object.assign(
+        vendorPrimaryAddress,
+        organization.addresses.find((address) => address.isPrimary === true),
+      );
+      invoice.batchGroup = 'FOLIO';
+
+      FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
+        defaultFiscalYear.id = response.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          firstFund.ledgerId = defaultLedger.id;
+
+          Funds.createViaApi(firstFund).then((fundResponse) => {
+            firstFund.id = fundResponse.fund.id;
+            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            FinanceHelp.searchByName(firstFund.name);
+            Funds.selectFund(firstFund.name);
+            Funds.addBudget(allocatedQuantityForFistFund);
+          });
+        });
+      });
+
+      cy.createOrderApi(order).then((response) => {
+        orderNumber = response.body.poNumber;
+        cy.visit(TopMenu.ordersPath);
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
+        OrderLines.addPOLine();
+        OrderLines.fillInPOLineInfoWithFund(firstFund);
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+        cy.visit(TopMenu.invoicesPath);
+        Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+        Invoices.createInvoiceLinePOLLookUp(orderNumber);
+      });
+
       cy.login(user.username, user.password, {
         path: TopMenu.invoicesPath,
         waiter: Invoices.waitLoading,

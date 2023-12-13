@@ -47,63 +47,65 @@ describe('ui-finance: Fiscal Year Rollover', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-        FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
-          secondFiscalYear.id = secondFiscalYearResponse.id;
-        });
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantityForCurrentBudget);
-          Funds.closeBudgetDetails();
-          Funds.addPlannedBudget(allocatedQuantityForPlannedBudget, secondFiscalYear.code);
-          Funds.closeBudgetDetails();
-        });
-      });
-    });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-    });
-    defaultOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createApprovedOrderForRollover(defaultOrder, true, false).then((firstOrderResponse) => {
-      defaultOrder.id = firstOrderResponse.id;
-      Orders.checkCreatedOrder(defaultOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-        defaultFund,
-        '150',
-        '1',
-        '150',
-        location.institutionId,
-      );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
-
     cy.createTempUser([
       permissions.uiFinanceExecuteFiscalYearRollover.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+        firstFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          defaultFund.ledgerId = defaultLedger.id;
+          FiscalYears.createViaApi(secondFiscalYear).then((secondFiscalYearResponse) => {
+            secondFiscalYear.id = secondFiscalYearResponse.id;
+          });
+          Funds.createViaApi(defaultFund).then((fundResponse) => {
+            defaultFund.id = fundResponse.fund.id;
+
+            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            FinanceHelp.searchByName(defaultFund.name);
+            Funds.selectFund(defaultFund.name);
+            Funds.addBudget(allocatedQuantityForCurrentBudget);
+            Funds.closeBudgetDetails();
+            Funds.addPlannedBudget(allocatedQuantityForPlannedBudget, secondFiscalYear.code);
+            Funds.closeBudgetDetails();
+          });
+        });
+      });
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
+
+      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+        organization.id = responseOrganizations;
+        invoice.accountingCode = organization.erpCode;
+      });
+      defaultOrder.vendor = organization.name;
+      cy.visit(TopMenu.ordersPath);
+      Orders.createApprovedOrderForRollover(defaultOrder, true, false).then(
+        (firstOrderResponse) => {
+          defaultOrder.id = firstOrderResponse.id;
+          Orders.checkCreatedOrder(defaultOrder);
+          OrderLines.addPOLine();
+          OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+          OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+            defaultFund,
+            '150',
+            '1',
+            '150',
+            location.institutionId,
+          );
+          OrderLines.backToEditingOrder();
+          Orders.openOrder();
+        },
+      );
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ledgerPath,
         waiter: Ledgers.waitForLedgerDetailsLoading,
@@ -146,10 +148,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Ledgers.closeOpenedPage();
       Ledgers.selectFundInLedger(defaultFund.name);
       Funds.selectPlannedBudgetDetails();
-      Funds.checkBudgetQuantity1(
-        `$${allocatedQuantityForPlannedBudget}`,
-        `$${allocatedQuantityForPlannedBudget}`,
-      );
+      FiscalYears.checkAvailableBalance('$500.00', '$500.00');
       cy.visit(TopMenu.ledgerPath);
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
@@ -162,7 +161,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Ledgers.closeRolloverInfo();
       Ledgers.selectFundInLedger(defaultFund.name);
       Funds.selectPlannedBudgetDetails();
-      Funds.checkBudgetQuantity1(allocatedQuantityForPlannedBudget, '350');
+      FiscalYears.checkAvailableBalance('$500.00', '$350.00');
     },
   );
 });

@@ -518,7 +518,7 @@ describe('data-import', () => {
 
     it(
       'C397383 Verify the ability to import Holdings and Instance using marc-to-marc submatch: 3 matches (folijet)',
-      { tags: ['smoke', 'folijet'] },
+      { tags: ['smoke', 'folijet', 'system'] },
       () => {
         const fileNameForCreate = `C397383 autotestFileForCreate${getRandomPostfix()}.mrc`;
         const fileNameForUpdate = `C397383 autotestFileForUpdate${getRandomPostfix()}.mrc`;

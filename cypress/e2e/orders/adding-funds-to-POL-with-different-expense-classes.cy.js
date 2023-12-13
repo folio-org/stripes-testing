@@ -33,56 +33,6 @@ describe('Orders', () => {
 
   before(() => {
     cy.getAdminToken();
-
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-          Funds.editBudget();
-          Funds.addTwoExpensesClass('Electronic', 'Print');
-        });
-      });
-    });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-    });
-    firstOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(firstOrder).then((firstOrderResponse) => {
-      firstOrder.id = firstOrderResponse.id;
-      orderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(firstOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
-      OrderLines.fillInPOLineInfoforPhysicalMaterialWithFundAndEC(
-        defaultFund,
-        '20',
-        '1',
-        'Electronic',
-        '20',
-        location.institutionId,
-      );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-    });
-
     cy.createTempUser([
       permissions.uiOrdersUnopenpurchaseorders.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
@@ -90,6 +40,55 @@ describe('Orders', () => {
       permissions.uiFinanceViewFundAndBudget.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+        defaultFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          defaultFund.ledgerId = defaultLedger.id;
+
+          Funds.createViaApi(defaultFund).then((fundResponse) => {
+            defaultFund.id = fundResponse.fund.id;
+
+            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            FinanceHelp.searchByName(defaultFund.name);
+            Funds.selectFund(defaultFund.name);
+            Funds.addBudget(allocatedQuantity);
+            Funds.editBudget();
+            Funds.addTwoExpensesClass('Electronic', 'Print');
+          });
+        });
+      });
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
+
+      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+        organization.id = responseOrganizations;
+      });
+      firstOrder.vendor = organization.name;
+      cy.visit(TopMenu.ordersPath);
+      Orders.createOrderForRollover(firstOrder).then((firstOrderResponse) => {
+        firstOrder.id = firstOrderResponse.id;
+        orderNumber = firstOrderResponse.poNumber;
+        Orders.checkCreatedOrder(firstOrder);
+        OrderLines.addPOLine();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 15);
+        OrderLines.fillInPOLineInfoforPhysicalMaterialWithFundAndEC(
+          defaultFund,
+          '20',
+          '1',
+          'Electronic',
+          '20',
+          location.institutionId,
+        );
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,

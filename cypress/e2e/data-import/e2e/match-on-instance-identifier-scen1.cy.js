@@ -78,10 +78,6 @@ describe('data-import', () => {
         Permissions.invoiceSettingsAll.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading,
-        });
 
         InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
           (instances) => {
@@ -90,6 +86,11 @@ describe('data-import', () => {
             });
           },
         );
+
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading,
+        });
       });
     });
 

@@ -19,17 +19,17 @@ describe('orders: Settings', () => {
 
   before(() => {
     cy.getAdminToken();
-
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-    });
-    AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
     cy.createTempUser([
       permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
       permissions.uiSettingsOrdersCanViewEditDeleteOrderTemplates.gui,
       permissions.uiOrdersCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+      });
+      AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
+
       cy.login(user.username, user.password, {
         path: SettingsMenu.ordersOrderTemplatesPath,
         waiter: OrderTemplate.waitLoading,

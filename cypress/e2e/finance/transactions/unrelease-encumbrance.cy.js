@@ -37,57 +37,6 @@ describe('ui-finance: Transactions', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
-      defaultFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-        });
-      });
-    });
-    ServicePoints.getViaApi().then((servicePoint) => {
-      servicePointId = servicePoint[0].id;
-      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
-        location = res;
-      });
-    });
-
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-    });
-    defaultOrder.vendor = organization.name;
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
-      defaultOrder.id = firstOrderResponse.id;
-      orderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(defaultOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-        defaultFund,
-        '100',
-        '1',
-        '100',
-        location.institutionId,
-      );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(orderNumber);
-      // Need to wait, while data will be loaded
-      cy.wait(4000);
-      Invoices.approveInvoice();
-      Invoices.payInvoice();
-    });
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
@@ -95,6 +44,58 @@ describe('ui-finance: Transactions', () => {
       permissions.uiOrdersView.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      FiscalYears.createViaApi(defaultFiscalYear).then((firstFiscalYearResponse) => {
+        defaultFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          defaultFund.ledgerId = defaultLedger.id;
+          Funds.createViaApi(defaultFund).then((fundResponse) => {
+            defaultFund.id = fundResponse.fund.id;
+            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            FinanceHelp.searchByName(defaultFund.name);
+            Funds.selectFund(defaultFund.name);
+            Funds.addBudget(allocatedQuantity);
+          });
+        });
+      });
+      ServicePoints.getViaApi().then((servicePoint) => {
+        servicePointId = servicePoint[0].id;
+        NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
+          location = res;
+        });
+      });
+
+      Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
+        organization.id = responseOrganizations;
+        invoice.accountingCode = organization.erpCode;
+      });
+      defaultOrder.vendor = organization.name;
+      cy.visit(TopMenu.ordersPath);
+      Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
+        defaultOrder.id = firstOrderResponse.id;
+        orderNumber = firstOrderResponse.poNumber;
+        Orders.checkCreatedOrder(defaultOrder);
+        OrderLines.addPOLine();
+        OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
+        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+          defaultFund,
+          '100',
+          '1',
+          '100',
+          location.institutionId,
+        );
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
+        cy.visit(TopMenu.invoicesPath);
+        Invoices.createRolloverInvoice(invoice, organization.name);
+        Invoices.createInvoiceLineFromPol(orderNumber);
+        // Need to wait, while data will be loaded
+        cy.wait(4000);
+        Invoices.approveInvoice();
+        Invoices.payInvoice();
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.fundPath,
         waiter: Funds.waitLoading,

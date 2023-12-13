@@ -16,6 +16,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryItems from '../../../support/fragments/inventory/item/inventoryItems';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
 import Users from '../../../support/fragments/users/users';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('Orders: Receiving and Check-in', () => {
   const order = {
@@ -42,7 +43,10 @@ describe('Orders: Receiving and Check-in', () => {
   const barcodeForFirstItem = Helper.getRandomBarcode();
   const barcodeForSecondItem = Helper.getRandomBarcode();
   const changedBarcode = Helper.getRandomBarcode();
-
+  const item = {
+    instanceName: `testBulkEdit_${getRandomPostfix()}`,
+    itemBarcode: getRandomPostfix(),
+  };
   let orderNumber;
   let user;
   let effectiveLocationServicePoint;
@@ -50,35 +54,6 @@ describe('Orders: Receiving and Check-in', () => {
 
   before(() => {
     cy.getAdminToken();
-
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      effectiveLocationServicePoint = servicePoints[0];
-      NewLocation.createViaApi(
-        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-      ).then((locationResponse) => {
-        location = locationResponse;
-        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-          organization.id = organizationsResponse;
-          order.vendor = organizationsResponse;
-        });
-
-        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-        cy.createOrderApi(order).then((response) => {
-          orderNumber = response.body.poNumber;
-          Orders.searchByParameter('PO number', orderNumber);
-          Orders.selectFromResultsList(orderNumber);
-          Orders.createPOLineViaActions();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 23);
-          OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
-            'Purchase',
-            locationResponse.institutionId,
-            '2',
-          );
-          OrderLines.backToEditingOrder();
-        });
-      });
-    });
-
     cy.createTempUser([
       permissions.uiInventoryViewInstances.gui,
       permissions.uiOrdersEdit.gui,
@@ -87,6 +62,35 @@ describe('Orders: Receiving and Check-in', () => {
       permissions.uiInventoryViewCreateEditItems.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+        effectiveLocationServicePoint = servicePoints[0];
+        NewLocation.createViaApi(
+          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+        ).then((locationResponse) => {
+          location = locationResponse;
+          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+            organization.id = organizationsResponse;
+            order.vendor = organizationsResponse;
+          });
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+
+          cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+          cy.createOrderApi(order).then((response) => {
+            orderNumber = response.body.poNumber;
+            Orders.searchByParameter('PO number', orderNumber);
+            Orders.selectFromResultsList(orderNumber);
+            Orders.createPOLineViaActions();
+            OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName, 0);
+            OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
+              'Purchase',
+              locationResponse.institutionId,
+              '2',
+            );
+            OrderLines.backToEditingOrder();
+          });
+        });
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,

@@ -82,19 +82,20 @@ describe('data-import', () => {
         Permissions.remoteStorageView.gui,
       ]).then((userProperties) => {
         userId = userProperties.userId;
+
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
+          (instances) => {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          },
+        );
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
       });
-
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-        (instances) => {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        },
-      );
     });
 
     after('delete test data', () => {

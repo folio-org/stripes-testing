@@ -48,53 +48,6 @@ describe('Orders: Receiving and Check-in', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          Helper.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-        });
-      });
-    });
-    ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
-      effectiveLocationServicePoint = servicePoints[0];
-      NewLocation.createViaApi(
-        NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
-      ).then((locationResponse) => {
-        location = locationResponse;
-        Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
-          organization.id = organizationsResponse;
-          order.vendor = organizationsResponse;
-        });
-
-        cy.visit(TopMenu.ordersPath);
-        cy.createOrderApi(order).then((response) => {
-          orderNumber = response.body.poNumber;
-          Orders.searchByParameter('PO number', orderNumber);
-          Orders.selectFromResultsList();
-          Orders.createPOLineViaActions();
-          OrderLines.selectRandomInstanceInTitleLookUP('*', 4);
-          OrderLines.fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
-            defaultFund,
-            '100',
-            '1',
-            '100',
-            location.institutionId,
-          );
-          OrderLines.backToEditingOrder();
-          Orders.openOrder();
-        });
-      });
-    });
-
     cy.createTempUser([
       permissions.uiInventoryViewInstances.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
@@ -102,6 +55,53 @@ describe('Orders: Receiving and Check-in', () => {
       permissions.uiReceivingViewEditCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+        firstFiscalYear.id = firstFiscalYearResponse.id;
+        defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+        Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+          defaultLedger.id = ledgerResponse.id;
+          defaultFund.ledgerId = defaultLedger.id;
+          Funds.createViaApi(defaultFund).then((fundResponse) => {
+            defaultFund.id = fundResponse.fund.id;
+
+            cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+            Helper.searchByName(defaultFund.name);
+            Funds.selectFund(defaultFund.name);
+            Funds.addBudget(allocatedQuantity);
+          });
+        });
+      });
+      ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' }).then((servicePoints) => {
+        effectiveLocationServicePoint = servicePoints[0];
+        NewLocation.createViaApi(
+          NewLocation.getDefaultLocation(effectiveLocationServicePoint.id),
+        ).then((locationResponse) => {
+          location = locationResponse;
+          Organizations.createOrganizationViaApi(organization).then((organizationsResponse) => {
+            organization.id = organizationsResponse;
+            order.vendor = organizationsResponse;
+          });
+
+          cy.visit(TopMenu.ordersPath);
+          cy.createOrderApi(order).then((response) => {
+            orderNumber = response.body.poNumber;
+            Orders.searchByParameter('PO number', orderNumber);
+            Orders.selectFromResultsList();
+            Orders.createPOLineViaActions();
+            OrderLines.selectRandomInstanceInTitleLookUP('*', 4);
+            OrderLines.fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
+              defaultFund,
+              '100',
+              '1',
+              '100',
+              location.institutionId,
+            );
+            OrderLines.backToEditingOrder();
+            Orders.openOrder();
+          });
+        });
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
