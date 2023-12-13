@@ -82,7 +82,7 @@ describe('Invoices', () => {
       Invoices.selectStatusFilter(INVOICE_STATUSES.OPEN);
       InvoiceView.verifyInvoicesList();
       [...Array(invoicesCount).keys()].forEach((index) => {
-        InvoiceView.verifyInvoicesListIncludeLinkExists(testData.invoices[index].vendorInvoiceNo);
+        InvoiceView.verifyInvoiceLinkExists(testData.invoices[index].vendorInvoiceNo);
 
         InvoiceView.selectInvoiceLineByName(testData.invoices[index].vendorInvoiceNo);
         InvoiceView.checkInvoiceDetails({
