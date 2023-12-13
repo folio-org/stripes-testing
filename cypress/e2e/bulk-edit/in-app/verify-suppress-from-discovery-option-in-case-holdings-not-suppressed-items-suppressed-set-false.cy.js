@@ -92,19 +92,18 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.uploadFile(instanceHRIDFileName);
         BulkEditSearchPane.waitFileUploading();
 
+        // Click on "Actions" menu => Check the "Suppress from discovery" checkbox (if not yet checked)
+        BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
+
         // Click "Actions" menu => "Download matched records (CSV)"
         BulkEditActions.downloadMatchedResults();
-        BulkEditSearchPane.waitingFileDownload();
         BulkEditFiles.verifyMatchedResultFileContent(
           matchedRecordsFileName,
           [item.instanceHRID],
           'instanceHrid',
           true,
         );
-
-        // Click on "Actions" menu => Check the "Suppress from discovery" checkbox (if not yet checked)
-        BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
 
         // Click on "Actions" menu => Select the "Start bulk edit" element
         BulkEditActions.openInAppStartBulkEditFrom();
