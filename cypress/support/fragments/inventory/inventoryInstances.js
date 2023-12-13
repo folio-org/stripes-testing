@@ -1132,4 +1132,12 @@ export default {
   verifyActionsSortedBy(value) {
     cy.expect(actionsSortSelect.has({ checkedOptionText: value }));
   },
+
+  clickColumnHeader(headerName) {
+    cy.do([
+      inventoriesList.find(MultiColumnListHeader(headerName)).click(),
+      // wait for sort to apply
+      cy.wait(2000),
+    ]);
+  },
 };
