@@ -24,8 +24,8 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
     tag155: '155',
     tag650: '650',
     tag150RpwIndex: 9,
-    authority150FieldValue: '$a C374144 Oratore',
-    newAuthority150FieldValue: '$a Oratore $t test',
+    authority150FieldValue: '$a C374144 Oratory',
+    newAuthority150FieldValue: '$a Oratory $t test',
     searchOption: 'Keyword',
     authorized: 'Authorized',
     reference: 'Reference',
@@ -41,13 +41,13 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
       marc: 'marcBibFileForC374144.mrc',
       fileName: `testMarcFileC374144.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      instanceTitle: 'Oratore, Primitive',
+      instanceTitle: 'Oratory, Primitive',
     },
     {
       marc: 'marcAuthFileForC374144.mrc',
       fileName: `testMarcFileC374144.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'Oratore',
+      authorityHeading: 'Oratory',
     },
   ];
 
@@ -95,6 +95,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
