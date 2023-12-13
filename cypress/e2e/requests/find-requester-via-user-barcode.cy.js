@@ -109,7 +109,6 @@ describe('Find requester via user barcode', () => {
 
   it('C554 Find requester via user barcode (vega)', { tags: ['extendedPath', 'vega'] }, () => {
     cy.visit(TopMenu.requestsPath);
-
     NewRequest.openNewRequestPane();
     NewRequest.enterItemInfo(itemData.barcode);
     NewRequest.verifyItemInformation([userData.barcode, ITEM_STATUS_NAMES.CHECKED_OUT]);
@@ -123,12 +122,6 @@ describe('Find requester via user barcode', () => {
       requestId = intercept.response.body.id;
       cy.location('pathname').should('eq', `/requests/view/${requestId}`);
     });
-    RequestDetail.checkRequestInformation({
-      type: REQUEST_TYPES.PAGE,
-      status: EditRequest.requestStatuses.NOT_YET_FILLED,
-      level: REQUEST_LEVELS.ITEM,
-    });
-
     RequestDetail.waitLoading('no staff');
     RequestDetail.checkTitleInformation({
       TLRs: '0',

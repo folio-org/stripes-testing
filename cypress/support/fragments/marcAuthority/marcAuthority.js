@@ -10,6 +10,7 @@ import {
   Callout,
   Modal,
   TableRow,
+  DropdownMenu,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -300,6 +301,21 @@ export default {
       path: 'authority-source-files',
       body,
       isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  checkActionDropdownContent() {
+    const actualResArray = [];
+    const expectedContent = ['Edit', 'Print', 'Delete'];
+    cy.do(rootSection.find(Button('Actions')).click());
+    cy.expect([
+      Button('Edit').has({ svgClass: including('edit') }),
+      Button('Print').has({ svgClass: including('print') }),
+      Button('Delete').has({ svgClass: including('trash') }),
+    ]);
+    cy.then(() => DropdownMenu().buttons()).then((buttons) => {
+      buttons.forEach((button) => actualResArray.push(button.innerText));
+      cy.expect(actualResArray).to.deep.equal(expectedContent);
     });
   },
 };

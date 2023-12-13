@@ -31,12 +31,32 @@ export default {
       cy.expect(buttons[label].has(conditions));
     });
   },
-  checkReceivedLocation({ rowIndex = 0, value } = {}) {
+  checkReceivingItemFieldValue({ fieldName, fieldValue, rowIndex = 0, strictMode = true } = {}) {
     cy.expect(
       receivingsListEditForm
-        .find(TextField({ name: `receivedItems[${rowIndex}].locationId` }))
-        .has({ value: including(value) }),
+        .find(TextField({ name: `receivedItems[${rowIndex}].${fieldName}` }))
+        .has({ value: strictMode ? fieldValue : including(fieldValue) }),
     );
+  },
+  checkReceivingItemDetails({ copyNumber, barcode, receivedLocation, rowIndex } = {}) {
+    if (copyNumber) {
+      this.checkReceivingItemFieldValue({
+        fieldName: 'copyNumber',
+        fieldValue: copyNumber,
+        rowIndex,
+      });
+    }
+    if (barcode) {
+      this.checkReceivingItemFieldValue({ fieldName: 'barcode', fieldValue: barcode, rowIndex });
+    }
+    if (receivedLocation) {
+      this.checkReceivingItemFieldValue({
+        fieldName: 'locationId',
+        fieldValue: receivedLocation,
+        rowIndex,
+        strictMode: false,
+      });
+    }
   },
   fillReceivingFields({ barcode, rowIndex = 0, checked = true } = {}) {
     if (barcode) {

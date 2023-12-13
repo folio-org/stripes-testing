@@ -85,9 +85,8 @@ describe('Check In - Actions', () => {
           }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
             itemsData.itemsWithSeparateInstance[index].holdingId =
-              specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId =
-              specialInstanceIds.holdingIds[0].itemIds;
+              specialInstanceIds.holdings[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.items[0].id;
             itemsData.itemsWithSeparateInstance[index].materialType = testData.materialType;
           });
         });

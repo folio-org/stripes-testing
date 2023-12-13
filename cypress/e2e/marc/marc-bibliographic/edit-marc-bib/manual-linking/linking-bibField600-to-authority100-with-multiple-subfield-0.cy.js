@@ -122,7 +122,11 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib600FieldValues);
       QuickMarcEditor.clickLinkIconInTagField(46);
       InventoryInstance.verifySelectMarcAuthorityModal();
-      MarcAuthoritiesSearch.verifyFiltersState(testData.filterState[0], testData.filterState[1]);
+      MarcAuthoritiesSearch.verifyFiltersState(
+        testData.filterState[0],
+        testData.filterState[1],
+        'Search',
+      );
       MarcAuthorities.selectTitle(testData.marcValue);
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag600, 46);

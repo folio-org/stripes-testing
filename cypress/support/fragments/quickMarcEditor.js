@@ -931,6 +931,14 @@ export default {
     ]);
   },
 
+  updateLinkedFifthBox(rowIndex, updatedValue) {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` }))
+        .fillIn(`${updatedValue}`),
+    ]);
+  },
+
   fillAllAvailableValues(fieldContent, tag, initialRowsCount = validRecord.lastRowNumber) {
     const contentTextArea = TextArea({ name: `records[${initialRowsCount + 1}].content` });
     const tagTextField = TextField({ name: `records[${initialRowsCount + 1}].tag` });
@@ -1621,6 +1629,14 @@ export default {
 
   verifyMultipleTagCallout(tagNumber) {
     cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
+  },
+
+  verifyRecordCanNotBeSavedCalloutLDR() {
+    cy.expect(
+      Callout(
+        'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
+      ).exists(),
+    );
   },
 
   verifyMultiple001TagCallout() {
