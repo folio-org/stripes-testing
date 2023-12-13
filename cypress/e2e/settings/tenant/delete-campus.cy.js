@@ -7,6 +7,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import ExceptionModal from '../../../support/fragments/settings/tenant/modals/exceptionModal';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -79,31 +80,31 @@ describe('Settings: Tenant', () => {
     Campuses.selectOption('Institution', testData.institutions[0]);
     Campuses.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
     // #2 Click "Delete" icon for **"Campus A"** record
-    Campuses.clickDeleteBtn({ record: testData.campuses[0].name });
-    Campuses.verifyDeleteModal(`The campus ${testData.campuses[0].name} will be deleted.`);
+    const DeleteModal = Campuses.clickDeleteBtn({ record: testData.campuses[0].name });
+    DeleteModal.verifyModalView(`The campus ${testData.campuses[0].name} will be deleted.`);
 
     // #3 Click "Delete" button
-    Campuses.confirmDelete();
-    Campuses.verifyExceptionMessage(
+    DeleteModal.confirm();
+    ExceptionModal.verifyExceptionMessage(
       'This campus cannot be deleted, as it is in use by one or more records.',
     );
 
     // #4 Click "Okay" button
-    Campuses.closeExceptionModal();
+    ExceptionModal.clickOkayButton();
     Campuses.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
 
     // #5 Click "Delete" icon for **"Campus B"** record
     Campuses.clickDeleteBtn({ record: testData.campuses[1].name });
-    Campuses.verifyDeleteModal(`The campus ${testData.campuses[1].name} will be deleted.`);
+    DeleteModal.verifyModalView(`The campus ${testData.campuses[1].name} will be deleted.`);
 
     // #6 Click "Cancel" button
-    Campuses.cancelDeleteModal();
+    DeleteModal.cancel();
     Campuses.checkResultsTableContent([testData.campuses[0], testData.campuses[1]]);
 
     // #7 Click "Delete" icon for **"Campus B"** record one more time
     Campuses.clickDeleteBtn({ record: testData.campuses[1].name });
     // #8 Click "Delete" button
-    Campuses.confirmDelete();
+    DeleteModal.confirm();
     InteractorsTools.checkCalloutMessage(
       `The campus ${testData.campuses[1].name} was successfully deleted`,
     );

@@ -14,14 +14,13 @@ import {
   including,
   or,
 } from '../../../../interactors';
+import deleteModal from './tenant/modals/deleteModal';
 
 export const startRowIndex = 2;
 export const rootPane = Section({ id: 'controlled-vocab-pane' });
 export const paneContent = HTML({ id: 'controlled-vocab-pane-content' });
 export const addButton = rootPane.find(Button('+ New'));
 export const table = rootPane.find(EditableList());
-const deleteModal = Modal({ id: 'delete-controlled-vocab-entry-confirmation' });
-const exceptionModal = Modal(including('Cannot delete '));
 
 const clickActionBtn = ({ rowIndex = startRowIndex, locator }) => {
   // filter index implemented based on parent-child relations.
@@ -57,6 +56,7 @@ export default {
     } else {
       clickActionBtn({ rowIndex, locator: { icon: 'trash' } });
     }
+    return deleteModal;
   },
   checkValidatorError({ placeholder, error }) {
     cy.expect(rootPane.find(TextField({ placeholder })).has({ error }));
@@ -159,35 +159,5 @@ export default {
 
   checkRecordIsAbsent: (record) => {
     cy.expect(MultiColumnListCell(record).absent());
-  },
-
-  cancelDeleteModal: () => {
-    cy.do(deleteModal.find(Button('Cancel')).click());
-    cy.expect(deleteModal.absent());
-  },
-
-  confirmDelete: () => {
-    cy.do(deleteModal.find(Button('Delete')).click());
-  },
-
-  verifyDeleteModal(message) {
-    cy.expect(deleteModal.exists());
-    cy.expect(
-      deleteModal.has({
-        content: including(message),
-      }),
-    );
-    cy.expect(deleteModal.find(Button('Delete')).exists());
-    cy.expect(deleteModal.find(Button('Cancel')).exists());
-  },
-
-  verifyExceptionMessage: (message) => cy.expect(
-    exceptionModal.has({
-      message: including(message),
-    }),
-  ),
-
-  closeExceptionModal: () => {
-    cy.do(exceptionModal.find(Button('Okay')).click());
   },
 };
