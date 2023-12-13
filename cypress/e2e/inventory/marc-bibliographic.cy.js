@@ -71,20 +71,19 @@ describe('MARC -> MARC Bibliographic', () => {
       QuickMarcEditor.waitLoading();
       cy.reload();
       const expectedInSourceRow = QuickMarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
-      QuickMarcEditor.deletePenaltField().then((deletedTag) => {
-        const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(
-          QuickMarcEditor.getFreeTags()[1],
-        );
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.deleteConfirmationPresented();
-        QuickMarcEditor.confirmDelete();
-        // Wait for the content to be loaded.
-        cy.wait(4000);
-        InventoryInstance.viewSource();
-        InventoryViewSource.contains(expectedInSourceRow);
-        InventoryViewSource.contains(expectedInSourceRowWithSubfield);
-        InventoryViewSource.notContains(deletedTag);
-      });
+      QuickMarcEditor.deleteFieldByTagAndCheck('260');
+      const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(
+        QuickMarcEditor.getFreeTags()[1],
+      );
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.deleteConfirmationPresented();
+      QuickMarcEditor.confirmDelete();
+      // Wait for the content to be loaded.
+      cy.wait(4000);
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains(expectedInSourceRow);
+      InventoryViewSource.contains(expectedInSourceRowWithSubfield);
+      InventoryViewSource.notContains('260\t');
     },
   );
 

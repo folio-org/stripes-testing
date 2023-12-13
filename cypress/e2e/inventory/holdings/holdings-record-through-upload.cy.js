@@ -33,7 +33,7 @@ describe('Manage holding records of instance records created through marc file u
   });
 
   after('Deleting data', () => {
-    // InventoryInstance.deleteInstanceViaApi(instanceId[0]);
+    InventoryInstance.deleteInstanceViaApi(instanceId);
   });
 
   it(
@@ -44,7 +44,7 @@ describe('Manage holding records of instance records created through marc file u
       InventoryInstance.searchByTitle(instanceId);
       InventoryInstances.selectInstance();
       InventoryInstance.waitLoading();
-      InventoryInstance.createHoldingsRecord('Migration (Migration) ');
+      InventoryInstance.createHoldingsRecord();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkSource('FOLIO');
       HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
