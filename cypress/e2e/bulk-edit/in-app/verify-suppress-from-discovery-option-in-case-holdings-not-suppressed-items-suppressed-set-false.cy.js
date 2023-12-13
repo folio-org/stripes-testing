@@ -22,8 +22,8 @@ const item = {
 const matchedRecordsFileName = `*-Matched-Records-${instanceHRIDFileName}`;
 const previewOfProposedChangesFileName = `*-Updates-Preview-${instanceHRIDFileName}`;
 
-describe('Bulk Edits', () => {
-  describe('Bulk Edit - Items', () => {
+describe('bulk-edit', () => {
+  describe('in-app approach', () => {
     before('create test data', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
@@ -94,6 +94,7 @@ describe('Bulk Edits', () => {
 
         // Click "Actions" menu => "Download matched records (CSV)"
         BulkEditActions.downloadMatchedResults();
+        BulkEditSearchPane.waitingFileDownload();
         BulkEditFiles.verifyMatchedResultFileContent(
           matchedRecordsFileName,
           [item.instanceHRID],
