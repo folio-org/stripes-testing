@@ -58,7 +58,7 @@ export default {
     FileDetails.verifyLogDetailsPageIsOpened(fileName);
     FileDetails.verifyResultsListIsVisible();
     // TODO need to wait until page is uploaded
-    cy.wait(3500);
+    cy.wait(4500);
   },
   checkQuantityRecordsInFile: (quantityRecords) => cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
 
