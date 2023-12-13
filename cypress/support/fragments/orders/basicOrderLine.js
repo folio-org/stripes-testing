@@ -20,6 +20,7 @@ const getDefaultOrderLine = ({
   specialLocationId,
   specialMaterialTypeId,
   orderFormat,
+  createInventory = 'Instance, Holding, Item',
   acquisitionMethod = '',
   automaticExport = false,
   listUnitPrice = 1,
@@ -67,7 +68,7 @@ const getDefaultOrderLine = ({
     paymentStatus,
     physical: specialLocationId
       ? {
-        createInventory: 'Instance, Holding, Item',
+        createInventory,
         materialType: specialMaterialTypeId,
         materialSupplier: null,
         volumes: [],

@@ -82,7 +82,10 @@ export default {
     cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
     cy.expect(HTML(including('Retrieving...')));
   },
-
+  progresBarIsAbsent() {
+    cy.expect(HTML(including('Uploading ... and retrieving relevant data')).absent());
+    cy.expect(HTML(including('Retrieving...')).absent());
+  },
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -821,7 +824,7 @@ export default {
   },
 
   verifyRecordTypesSortedAlphabetically() {
-    cy.get('#entityType [class*="labelText"]').then((checkboxes) => {
+    cy.get('[class*="labelText"]').then((checkboxes) => {
       const textArray = checkboxes.get().map((el) => el.innerText);
       const sortedArray = [...textArray].sort((a, b) => a - b);
       expect(sortedArray).to.eql(textArray);
