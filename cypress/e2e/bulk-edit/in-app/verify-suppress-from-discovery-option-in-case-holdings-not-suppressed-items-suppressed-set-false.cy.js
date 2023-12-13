@@ -95,7 +95,7 @@ describe('Bulk Edits', () => {
         // Click "Actions" menu => "Download matched records (CSV)"
         BulkEditActions.downloadMatchedResults();
         BulkEditFiles.verifyMatchedResultFileContent(
-          `*${matchedRecordsFileName}`,
+          matchedRecordsFileName,
           [item.instanceHRID],
           'instanceHrid',
           true,
