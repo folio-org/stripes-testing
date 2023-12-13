@@ -5,6 +5,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import ExceptionModal from '../../../support/fragments/settings/tenant/modals/exceptionModal';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -70,36 +71,36 @@ describe('Settings: Tenant', () => {
       Institutions.checkResultsTableContent([testData.institutions[0], testData.institutions[1]]);
 
       // #2 Click "Delete" icon for **"Institution A"** record
-      Institutions.clickDeleteBtn({ record: testData.institutions[0].name });
-      Institutions.verifyDeleteModal(
+      const DeleteModal = Institutions.clickDeleteBtn({ record: testData.institutions[0].name });
+      DeleteModal.verifyModalView(
         `The institution ${testData.institutions[0].name} will be deleted.`,
       );
 
       // #3 Click "Delete" button
-      Institutions.confirmDelete();
-      Institutions.verifyExceptionMessage(
+      DeleteModal.confirm();
+      ExceptionModal.verifyExceptionMessage(
         'This institution cannot be deleted, as it is in use by one or more records.',
       );
 
       // #4 Click "Okay" button
-      Institutions.closeExceptionModal();
+      ExceptionModal.clickOkayButton();
       Institutions.checkResultsTableContent([testData.institutions[0], testData.institutions[1]]);
 
       // #5 Click "Delete" icon for **"Institution B"** record
       Institutions.clickDeleteBtn({ record: testData.institutions[1].name });
-      Institutions.verifyDeleteModal(
+      DeleteModal.verifyModalView(
         `The institution ${testData.institutions[1].name} will be deleted.`,
       );
 
       // #6 Click keyboard "esc" button
-      Institutions.closeDeleteModalByEsc();
+      DeleteModal.closeModalByEsc();
       Institutions.checkResultsTableContent([testData.institutions[0], testData.institutions[1]]);
 
       // #7 Click "Delete" icon for **"Institution B"** record one more time
       Institutions.clickDeleteBtn({ record: testData.institutions[1].name });
 
       // #8 Click "Delete" button
-      Institutions.confirmDelete();
+      DeleteModal.confirm();
       InteractorsTools.checkCalloutMessage(
         `The institution ${testData.institutions[1].name} was successfully deleted`,
       );
