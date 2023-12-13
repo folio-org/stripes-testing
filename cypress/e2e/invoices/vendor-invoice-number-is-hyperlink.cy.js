@@ -72,6 +72,8 @@ describe('Invoices', () => {
       Invoices.deleteInvoiceViaApi(testData.invoices[index].id);
       Orders.deleteOrderViaApi(testData.orders[index].id);
     });
+    Budgets.deleteBudgetWithFundLedgerAndFYViaApi(testData.budget);
+    BatchGroups.deleteBatchGroupViaApi(testData.batchGroup.id);
     Users.deleteViaApi(testData.user.userId);
   });
 
