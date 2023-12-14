@@ -53,8 +53,8 @@ describe('Bulk Edits', () => {
         BulkEditActions.openActions();
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
-        BulkEditActions.verifyOptionsDropdownPresent();
-        BulkEditActions.verifyActionDropdownAbsent();
+        BulkEditActions.verifyOptionsDropdown();
+        BulkEditActions.verifyActionDropdown(false);
 
         BulkEditActions.selectOption('Temporary item location');
         BulkEditSearchPane.verifyInputLabel('Temporary item location');
@@ -65,7 +65,8 @@ describe('Bulk Edits', () => {
         const newLocation = 'non-existing';
         BulkEditActions.fillLocation(newLocation);
         BulkEditActions.verifySearchSectionClosed();
-        BulkEditSearchPane.verifyInputLabel('Select location');
+        BulkEditActions.verifyLocationValue('Select location');
+        BulkEditActions.verifyModifyLandingPageBeforeModifying();
       },
     );
   });

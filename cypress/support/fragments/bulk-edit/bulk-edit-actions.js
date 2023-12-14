@@ -1,9 +1,6 @@
-import { Keyboard } from '@interactors/keyboard';
 import { HTML, including } from '@interactors/html';
-import { MultiSelect } from 'bigtest';
 import FileManager from '../../utils/fileManager';
-import {
-  Modal,
+import { Modal,
   SelectionOption,
   Button,
   DropdownMenu,
@@ -17,7 +14,7 @@ import {
   Selection,
   Option,
   OptionGroup,
-} from '../../../../interactors';
+  Keyboard } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
 
@@ -41,8 +38,7 @@ const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
 const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
 const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
 const commitChanges = Button('Commit changes');
-const selectLocation = Button({ name: 'locationId' });
-const locationList = MultiSelect({ id: 'sl-container-stripes-selection-44' });
+const locationSelection = Selection({ name: 'locationId' });
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -102,16 +98,28 @@ export default {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
   },
 
-  verifyOptionsDropdownPresent() {
-    cy.expect(bulkPageSelections.valueType.exists());
+  verifyOptionsDropdown(isExist = true) {
+    if (isExist) {
+      cy.expect(bulkPageSelections.valueType.exists());
+    } else {
+      cy.expect(bulkPageSelections.valueType.exists()).absent();
+    }
   },
 
-  verifyActionDropdownAbsent() {
-    cy.expect(bulkPageSelections.action.absent());
+  verifyActionDropdown(isExist = true) {
+    if (isExist) {
+      cy.expect(bulkPageSelections.action.exists());
+    } else {
+      cy.expect(bulkPageSelections.action.absent());
+    }
   },
 
   verifySearchSectionClosed() {
-    cy.expect(selectLocation.has({ ariaExpanded: 'false' }));
+    cy.expect(locationSelection.has({ open: false }));
+  },
+
+  verifyLocationValue(value) {
+    cy.expect(Selection({ singleValue: value }).visible());
   },
 
   isDisabledRowIcons(isDisabled) {
@@ -940,11 +948,12 @@ export default {
   },
 
   fillLocation(location) {
-    cy.do(
-      selectLocation.click(),
-      locationList.focus(),
-      Keyboard.type(location),
-      Keyboard.press({ code: 'Enter' }),
-    );
+    cy.do([
+      locationSelection.open(),
+      locationSelection.filterOptions(location),
+      // need to wait until value will be applied
+      cy.wait(1000),
+      Keyboard.enter(),
+    ]);
   },
 };
