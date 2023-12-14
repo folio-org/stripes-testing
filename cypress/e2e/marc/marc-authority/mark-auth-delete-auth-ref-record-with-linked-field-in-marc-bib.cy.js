@@ -17,12 +17,24 @@ import { JOB_STATUS_NAMES } from '../../../support/constants';
 
 describe('MARC -> MARC Authority', () => {
   const testData = {
-    tag100: '100',
-    tag150: '150',
-    tag650: '650',
     searchOption: 'Keyword',
     marcAuthIcon: 'Linked to MARC authority',
     authorityType: 'Auth/Ref',
+    searchAuthorityQueries: ['Poetry', 'Chin, Staceyann, 1972-'],
+    recordsLinkingData: [
+      {
+        linkingBibFieldTag: '650',
+        authorityTitle: 'Feminist poetry',
+        authorityLinkedFieldTag: '150',
+        authorityFieldValue: 'Feminist poetry',
+      },
+      {
+        linkingBibFieldTag: '100',
+        authorityTitle: 'Chin, Staceyann, 1972-',
+        authorityLinkedFieldTag: '100',
+        authorityFieldValue: '$a Chin, Staceyann, $d 1972-',
+      },
+    ],
     linked100FieldValues: [
       11,
       '100',
@@ -50,31 +62,48 @@ describe('MARC -> MARC Authority', () => {
       fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       instanceTitle: 'Crossfire : a litany for survival.',
-      field650Value: 'The other side of paradise : a memoir / Staceyann Chin.',
     },
     {
       marc: 'marcAuthFileForC374148_01.mrc',
       fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authority100FieldValue: '$a Chin, Staceyann, $d 1972-',
-      authorityTitle: 'Chin, Staceyann, 1972-',
     },
     {
       marc: 'marcAuthFileForC374148_02.mrc',
       fileName: `testMarcFileC374148.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       authorutyTitle: 'Poetry',
-      authority150FieldValue: 'Feminist poetry',
     },
   ];
 
   const createdRecordIDs = [];
 
   before('Create test data', () => {
-    cy.loginAsAdmin({
-      path: TopMenu.dataImportPath,
-      waiter: DataImport.waitLoading,
-    }).then(() => {
+    cy.getAdminToken();
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+      InventoryInstances.getInstancesViaApi({
+        limit: 100,
+        query: `title="${marcFiles[0].instanceTitle}"`,
+      }).then((instances) => {
+        if (instances) {
+          instances.forEach(({ id }) => {
+            InventoryInstance.deleteInstanceViaApi(id);
+          });
+        }
+      });
+      testData.searchAuthorityQueries.forEach((query) => {
+        MarcAuthorities.getMarcAuthoritiesViaApi({
+          limit: 100,
+          query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+        }).then((authorities) => {
+          if (authorities) {
+            authorities.forEach(({ id }) => {
+              MarcAuthority.deleteViaAPI(id);
+            });
+          }
+        });
+      });
+
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -96,29 +125,21 @@ describe('MARC -> MARC Authority', () => {
       InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      InventoryInstance.verifyAndClickLinkIcon(testData.tag650);
-      InventoryInstance.verifySelectMarcAuthorityModal();
-      MarcAuthorities.switchToSearch();
-      InventoryInstance.searchResults(marcFiles[2].authority150FieldValue);
-      MarcAuthorities.checkFieldAndContentExistence(
-        testData.tag150,
-        marcFiles[2].authority150FieldValue,
-      );
-      InventoryInstance.clickLinkButton();
-      QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag650);
-      QuickMarcEditor.closeCallout();
 
-      InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
-      InventoryInstance.verifySelectMarcAuthorityModal();
-      MarcAuthorities.switchToSearch();
-      InventoryInstance.searchResults(marcFiles[1].authorityTitle);
-      MarcAuthorities.checkFieldAndContentExistence(
-        testData.tag100,
-        marcFiles[1].authority100FieldValue,
-      );
-      InventoryInstance.clickLinkButton();
-      QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag100);
-      QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100FieldValues);
+      testData.recordsLinkingData.forEach((authorityField) => {
+        InventoryInstance.verifyAndClickLinkIcon(authorityField.linkingBibFieldTag);
+        InventoryInstance.verifySelectMarcAuthorityModal();
+        MarcAuthorities.switchToSearch();
+        InventoryInstance.searchResults(authorityField.authorityTitle);
+        MarcAuthorities.checkFieldAndContentExistence(
+          authorityField.authorityLinkedFieldTag,
+          authorityField.authorityFieldValue,
+        );
+        InventoryInstance.clickLinkButton();
+        QuickMarcEditor.verifyAfterLinkingAuthority(authorityField.linkingBibFieldTag);
+        QuickMarcEditor.closeCallout();
+      });
+
       QuickMarcEditor.pressSaveAndClose();
 
       cy.createTempUser([
@@ -151,8 +172,7 @@ describe('MARC -> MARC Authority', () => {
     () => {
       MarcAuthorities.searchByParameter(testData.searchOption, marcFiles[2].authorutyTitle);
 
-      MarcAuthorities.selectByTypeAndHeading(marcFiles[2].authorutyTitle, testData.authorityType);
-
+      MarcAuthorities.selectItem(marcFiles[2].authorutyTitle, false);
       MarcAuthoritiesDelete.clickDeleteButton();
       MarcAuthoritiesDelete.checkDeleteModal();
       MarcAuthoritiesDelete.checkDeleteModalMessage(testData.deleteModalMessage);
@@ -169,13 +189,19 @@ describe('MARC -> MARC Authority', () => {
       QuickMarcEditor.verifyTagFieldAfterLinking(...testData.linked100FieldValues);
       QuickMarcEditor.verifyTagFieldNotLinked(...testData.notLinked650FieldValues);
 
-      QuickMarcEditor.checkAllBoxesInARowAreEditable(testData.tag650);
+      QuickMarcEditor.verifyAllBoxesInARowAreEditable(
+        testData.recordsLinkingData[0].linkingBibFieldTag,
+      );
 
       QuickMarcEditor.pressCancel();
 
       InventoryInstance.viewSource();
-      InventoryViewSource.contains(`${testData.marcAuthIcon}\n\t${testData.tag100}\t`);
-      InventoryViewSource.notContains(`${testData.marcAuthIcon}\n\t${testData.tag650}\t`);
+      InventoryViewSource.contains(
+        `${testData.marcAuthIcon}\n\t${testData.recordsLinkingData[1].linkingBibFieldTag}\t`,
+      );
+      InventoryViewSource.notContains(
+        `${testData.marcAuthIcon}\n\t${testData.recordsLinkingData[0].linkingBibFieldTag}\t`,
+      );
     },
   );
 });

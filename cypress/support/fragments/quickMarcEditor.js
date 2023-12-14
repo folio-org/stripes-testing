@@ -1273,7 +1273,7 @@ export default {
     });
   },
 
-  checkAllBoxesInARowAreEditable(tag) {
+  verifyAllBoxesInARowAreEditable(tag) {
     cy.expect([
       getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
       getRowInteractorByTagName(tag)

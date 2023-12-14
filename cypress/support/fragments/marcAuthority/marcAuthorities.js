@@ -780,16 +780,6 @@ export default {
     }
   },
 
-  selectByTypeAndHeading(heading, type) {
-    cy.expect(
-      MultiColumnListRow(including(heading), { isContainer: false })
-        .find(MultiColumnListCell(type))
-        .exists(),
-    );
-    cy.do(Button(heading).click());
-    cy.expect(marcViewSection.exists());
-  },
-
   verifyTextOfPaneHeaderMarcAuthority(text) {
     cy.expect(
       PaneHeader('MARC authority')
