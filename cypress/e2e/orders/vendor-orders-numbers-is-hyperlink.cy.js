@@ -89,7 +89,7 @@ describe('Orders', () => {
       OrderLines.selectStatusInSearchOrderLine(ORDER_STATUSES.PENDING);
       [...Array(ordersCount).keys()].forEach((index) => {
         const title = `${testData.orders[index].poNumber}-1`;
-        OrderLines.verifyPOlineListIncludeLinkExists(title);
+        OrderLines.verifyPOlineListIncludesLink(title);
 
         OrderLines.selectOrderline(title);
         OrderLines.verifyOrderTitlePOL(`PO Line details - ${title}`);
