@@ -19,8 +19,8 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     tag00: '00',
     expected008BoxesSets: [
       'DtSt',
-      'Start date',
-      'End date',
+      'Date 1',
+      'Date 2',
       'Ctry',
       'Ills',
       'Audn',
@@ -91,17 +91,15 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     'C387452 "008" field existence validation when derive imported "MARC bib" (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      InventoryInstances.waitContentLoading();
-      InventoryInstance.searchByTitle(testData.createdRecordIDs[0]);
-      InventoryInstances.selectInstance();
+      cy.visit(`${TopMenu.inventoryPath}/view/${testData.createdRecordIDs[0]}`);
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.checkFieldAbsense(testData.tag008);
-      QuickMarcEditor.checkButtonSaveAndCloseEnable();
       QuickMarcEditor.pressCancel();
       InventoryInstance.waitInventoryLoading();
 
       InventoryInstance.deriveNewMarcBibRecord();
       QuickMarcEditor.waitLoading();
+      QuickMarcEditor.updateExistingField('245', `Derived_C387452_${getRandomPostfix()}`);
       QuickMarcEditor.checkFieldAbsense(testData.tag008);
       QuickMarcEditor.checkButtonSaveAndCloseEnable();
       QuickMarcEditor.pressSaveAndClose();
