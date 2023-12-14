@@ -74,10 +74,16 @@ export default {
   exportJobRecursively({ jobId, timeout = 900000 }) {
     cy.recurse(
       () => {
-        cy.reload();
-        return cy.contains(jobId);
+        return cy.contains('[class^=mclRow-]', jobId);
       },
-      ($el) => $el[0].nodeName === 'A',
+      ($el) => {
+        const isInProgress = $el[0].textContent.includes('In progress');
+
+        if (isInProgress) {
+          cy.reload();
+        }
+        return !isInProgress;
+      },
       {
         delay: 30000,
         limit: timeout / 30000, // max number of iterations
@@ -412,9 +418,7 @@ export default {
   },
 
   clickJobId(jobId) {
-    cy.get("[data-testid='text-link']")
-      .contains(jobId)
-      .click();
+    cy.get("[data-testid='text-link']").contains(jobId).click();
     waitClick();
   },
 };
