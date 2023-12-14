@@ -8,7 +8,9 @@ import {
 } from '../../../../interactors';
 import ReceivingsListEditForm from './receivingsListEditForm';
 import ReceivingEditForm from './receivingEditForm';
+import EditPieceModal from './modals/editPieceModal';
 import InventoryInstance from '../inventory/inventoryInstance';
+import OrderLineDetails from '../orders/orderLineDetails';
 
 const receivingDetailsSection = Section({ id: 'pane-title-details' });
 const instanceDetailsLink = receivingDetailsSection.find(
@@ -56,6 +58,13 @@ export default {
   },
   checkExpectedTableContent(records = []) {
     records.forEach((record, index) => {
+      if (record.copyNumber) {
+        cy.expect(
+          expectedSection
+            .find(MultiColumnListCell({ row: index, column: 'Copy number' }))
+            .has({ content: including(record.copyNumber) }),
+        );
+      }
       if (record.format) {
         cy.expect(
           expectedSection
@@ -91,11 +100,30 @@ export default {
       cy.expect(receivedSection.has({ text: including('The list contains no items') }));
     }
   },
+  openEditPieceModal({ row = 0, section = 'Expected' } = {}) {
+    const isExpected = section === 'Expected';
+    const itemEdit = isExpected
+      ? expectedSection.find(MultiColumnListCell({ row, column: 'Caption' }))
+      : receivedSection.find(MultiColumnListCell({ row, column: 'Barcode' }));
+
+    cy.do(itemEdit.click());
+
+    EditPieceModal.waitLoading();
+    EditPieceModal.verifyModalView({ isExpected });
+
+    return EditPieceModal;
+  },
   openReceivingEditForm() {
     cy.do(buttons.Edit.click());
     ReceivingEditForm.waitLoading();
 
     return ReceivingEditForm;
+  },
+  openReceiveListEditForm() {
+    cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);
+    ReceivingsListEditForm.waitLoading();
+
+    return ReceivingsListEditForm;
   },
   openInstanceDetails() {
     cy.do(instanceDetailsLink.click());
@@ -103,10 +131,10 @@ export default {
 
     return InventoryInstance;
   },
-  openReceiveListEditForm() {
-    cy.do([expectedSection.find(Button('Actions')).click(), Button('Receive').click()]);
-    ReceivingsListEditForm.waitLoading();
+  openOrderLineDetails() {
+    cy.do(orderLineDetailsSection.find(KeyValue('POL number')).find(Link()).click());
+    OrderLineDetails.waitLoading();
 
-    return ReceivingsListEditForm;
+    return OrderLineDetails;
   },
 };

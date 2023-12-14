@@ -205,11 +205,9 @@ export default {
   },
   clickCancelButton(shouldModalExsist = false) {
     cy.expect(cancelButton.has({ disabled: false }));
+    cy.do(cancelButton.click());
 
-    if (shouldModalExsist) {
-      cy.do(cancelButton.click());
-    } else {
-      cy.do(cancelButton.click());
+    if (!shouldModalExsist) {
       cy.expect(orderLineEditFormRoot.absent());
     }
   },
