@@ -304,5 +304,8 @@ export default {
     );
 
     return InvoiceLineDetails;
+},
+  verifyWarningMessage(message) {
+    cy.expect(HTML(including(message)).exists());
   },
 };
