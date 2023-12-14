@@ -38,6 +38,7 @@ const confirmChangesButton = Button('Confirm changes');
 const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
 const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
 const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
+const commitChanges = Button('Commit changes');
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -105,9 +106,7 @@ export default {
     cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
   },
   deleteRow(rowIndex = 0) {
-    cy.do(
-      RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click(),
-    );
+    cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
   },
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
@@ -663,9 +662,12 @@ export default {
   verifyMatchingOptionsForLocationFilter(location) {
     cy.expect(HTML(including(location)).exists());
   },
-
+  isCommitButtonDisabled(isDisabled) {
+    cy.expect(commitChanges.has({ disabled: isDisabled }));
+  },
   confirmChanges() {
     cy.do(confirmChangesButton.click());
+    this.isCommitButtonDisabled(true);
     cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
 
@@ -848,30 +850,6 @@ export default {
     });
   },
 
-  verifyItemOptions(rowIndex = 0) {
-    const options = [
-      'Administrative note',
-      'Check in note',
-      'Check out note',
-      'Action note',
-      'Binding',
-      'Copy note',
-      'Electronic bookplate',
-      'Note',
-      'Provenance',
-      'Reproduction',
-      'Item status',
-      'Permanent loan type',
-      'Temporary loan type',
-      'Permanent item location',
-      'Temporary item location',
-      'Suppress from discovery',
-    ];
-
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
-    this.verifyPossibleActions(options);
-  },
-
   verifyHoldingsOptions() {
     cy.expect([
       Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
@@ -916,6 +894,49 @@ export default {
         .exists(),
       OptionGroup('Holdings notes')
         .find(Option({ text: 'Reproduction' }))
+        .exists(),
+      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
+    ]);
+  },
+
+  verifyItemOptions() {
+    cy.expect([
+      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
+      Option({ value: 'CHECK_IN_NOTE' }).exists(),
+      Option({ value: 'CHECK_OUT_NOTE' }).exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Action note' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Binding' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Copy note' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Electronic bookplate' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Note' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Provenance' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Reproduction' }))
+        .exists(),
+      Option({ value: 'STATUS' }).exists(),
+      OptionGroup('Loan type')
+        .find(Option({ value: 'PERMANENT_LOAN_TYPE' }))
+        .exists(),
+      OptionGroup('Loan type')
+        .find(Option({ value: 'TEMPORARY_LOAN_TYPE' }))
+        .exists(),
+      OptionGroup('Location')
+        .find(Option({ value: 'TEMPORARY_LOCATION' }))
+        .exists(),
+      OptionGroup('Location')
+        .find(Option({ value: 'TEMPORARY_LOCATION' }))
         .exists(),
       Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
     ]);

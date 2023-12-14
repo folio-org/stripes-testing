@@ -20,6 +20,8 @@ import InstanceStates from './instanceStates';
 const closeButton = Button({ icon: 'times' });
 const saveAndCloseButton = Button('Save & close');
 const rootSection = Section({ id: 'instance-form' });
+const classificationSection = Section({ label: 'Classification' });
+const addClassificationButton = classificationSection.find(Button('Add classification'));
 const actionsButton = Button('Actions');
 const identifierAccordion = Accordion('Identifier');
 const contributorAccordion = Accordion('Contributor');
@@ -324,5 +326,12 @@ export default {
         const arrayOfCodes = [...elements].map((el) => el.innerText);
         return arrayOfCodes;
       });
+  },
+  getClassificationOptionsList() {
+    cy.do(addClassificationButton.click());
+
+    return cy.then(() => classificationSection
+      .find(Select({ name: 'classifications[0].classificationTypeId' }))
+      .optionsText());
   },
 };
