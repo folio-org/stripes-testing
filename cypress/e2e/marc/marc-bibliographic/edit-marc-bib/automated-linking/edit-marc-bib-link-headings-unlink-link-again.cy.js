@@ -18,7 +18,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811,
     830,
   ];
-  const linkedFields = [
+  const autoLinkedFields = [
     { rowIndex: 17, tag: '100', aSubfield: '$a Chin, Staceyann.', isUnlinked: true },
     { rowIndex: 28, tag: '600', aSubfield: '$a Chin, Staceyann.', isUnlinked: true },
     { rowIndex: 30, tag: '650', aSubfield: '$a Authors, Jamaican', isUnlinked: false },
@@ -37,6 +37,23 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       isUnlinked: true,
     },
   ];
+  const manuallyUnlinkedFields = [
+    { rowIndex: 17, tag: '100', aSubfield: '$a Chin, Staceyann.' },
+    { rowIndex: 28, tag: '600', aSubfield: '$a Chin, Staceyann.' },
+    {
+      rowIndex: 31,
+      tag: '650',
+      aSubfield: '$a Lesbian authors',
+      newContent: '$a Lesbian authors $z Jamaica $v Biography. $0 sh96007532',
+    },
+    {
+      rowIndex: 32,
+      tag: '650',
+      aSubfield: '$a Lesbian activists',
+      newContent: '$a Lesbian activists $z Jamaica $v Biography.',
+    },
+  ];
+  const notLinkedFieldRow = 4;
   const createdRecordIDs = [];
   const naturalIds = [
     'no2021056177',
@@ -166,28 +183,26 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.checkCallout(
         'Field 100, 600, and 650 has been linked to MARC authority record(s).',
       );
-      linkedFields.forEach((field) => QuickMarcEditor.verifyRowLinked(field.rowIndex, true));
+      autoLinkedFields.forEach((field) => QuickMarcEditor.verifyRowLinked(field.rowIndex, true));
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
       // #4 Unlink 4 automatically linked fields by clicking on "Unlink from MARC authority record" icon.
-      linkedFields.forEach((field) => {
-        if (field.isUnlinked) {
-          QuickMarcEditor.clickUnlinkIconInTagField(field.rowIndex);
-          cy.wait(1000);
-          QuickMarcEditor.confirmUnlinkingField();
-          QuickMarcEditor.verifyRowLinked(field.rowIndex, false);
-        }
+      manuallyUnlinkedFields.forEach((field) => {
+        QuickMarcEditor.clickUnlinkIconInTagField(field.rowIndex);
+        cy.wait(1000);
+        QuickMarcEditor.confirmUnlinkingField();
+        QuickMarcEditor.verifyRowLinked(field.rowIndex, false);
       });
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       // #5 Link first unlinked field to different "MARC authority" record ("$0" value should be changed). For example: link 100 to "n83169267"
-      QuickMarcEditor.clickLinkIconInTagField(linkedFields[0].rowIndex);
+      QuickMarcEditor.clickLinkIconInTagField(manuallyUnlinkedFields[0].rowIndex);
       InventoryInstance.verifySelectMarcAuthorityModal();
       MarcAuthorities.switchToSearch();
       InventoryInstance.searchResults('n83169267');
       MarcAuthoritiesSearch.selectAuthorityByIndex(0);
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyTagFieldAfterLinking(
-        linkedFields[0].rowIndex,
-        linkedFields[0].tag,
+        manuallyUnlinkedFields[0].rowIndex,
+        manuallyUnlinkedFields[0].tag,
         '1',
         '\\',
         '$a Lee, Stan, $d 1922-2018',
@@ -197,26 +212,34 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       );
       // #6 Edit subfield "$0" value of unlinked field to another valid (matched with "naturalId" of existing "MARC authority" record)
       QuickMarcEditor.updateExistingFieldContent(
-        linkedFields[3].rowIndex,
-        linkedFields[3].newContent,
+        manuallyUnlinkedFields[2].rowIndex,
+        manuallyUnlinkedFields[2].newContent,
+      );
+      QuickMarcEditor.checkContent(
+        manuallyUnlinkedFields[2].newContent,
+        manuallyUnlinkedFields[2].rowIndex,
       );
       // #7 Delete subfield "$0" of unlinked field.
       QuickMarcEditor.updateExistingFieldContent(
-        linkedFields[4].rowIndex,
-        linkedFields[4].newContent,
+        manuallyUnlinkedFields[3].rowIndex,
+        manuallyUnlinkedFields[3].newContent,
+      );
+      QuickMarcEditor.checkContent(
+        manuallyUnlinkedFields[3].newContent,
+        manuallyUnlinkedFields[3].rowIndex,
       );
       // #8 Click on the "Link headings" button again.
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout(
         'Field 600 and 650 has been linked to MARC authority record(s).',
       );
-      QuickMarcEditor.verifyRowLinked(linkedFields[0].rowIndex, true);
-      QuickMarcEditor.verifyRowLinked(linkedFields[3].rowIndex, true);
+      QuickMarcEditor.verifyRowLinked(manuallyUnlinkedFields[0].rowIndex, true);
+      QuickMarcEditor.verifyRowLinked(manuallyUnlinkedFields[2].rowIndex, true);
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
       // #9 Click on the "Save & keep editing" button.
       QuickMarcEditor.clickSaveAndKeepEditing();
-      linkedFields.forEach((field, index) => {
-        if (index !== 4) {
+      autoLinkedFields.forEach((field, index) => {
+        if (index !== notLinkedFieldRow) {
           QuickMarcEditor.verifyRowLinked(field.rowIndex, true);
         } else {
           QuickMarcEditor.verifyRowLinked(field.rowIndex, false);
