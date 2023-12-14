@@ -23,7 +23,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
     {
       rowIndex: 4,
       tag: '100',
-      content: '$0 971255',
+      content: '$0 367844',
       status: 'linked',
     },
     {
