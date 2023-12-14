@@ -66,7 +66,7 @@ describe('Bulk Edits', () => {
         BulkEditActions.fillLocation(newLocation);
         BulkEditActions.verifySearchSectionClosed();
         BulkEditActions.verifyLocationValue('Select location');
-        BulkEditActions.verifyModifyLandingPageBeforeModifying();
+        BulkEditActions.isConfirmChangesButtonDisabled(true);
       },
     );
   });

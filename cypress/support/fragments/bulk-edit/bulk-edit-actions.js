@@ -1,6 +1,7 @@
 import { HTML, including } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
-import { Modal,
+import {
+  Modal,
   SelectionOption,
   Button,
   DropdownMenu,
@@ -14,7 +15,8 @@ import { Modal,
   Selection,
   Option,
   OptionGroup,
-  Keyboard } from '../../../../interactors';
+  Keyboard,
+} from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
 
@@ -689,6 +691,11 @@ export default {
   isCommitButtonDisabled(isDisabled) {
     cy.expect(commitChanges.has({ disabled: isDisabled }));
   },
+
+  isConfirmChangesButtonDisabled(isDisabled) {
+    cy.expect(confirmChangesButton.has({ disabled: isDisabled }));
+  },
+
   confirmChanges() {
     cy.do(confirmChangesButton.click());
     this.isCommitButtonDisabled(true);
