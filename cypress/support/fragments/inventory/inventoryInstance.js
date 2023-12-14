@@ -699,7 +699,7 @@ export default {
 
     return HoldingsRecordView;
   },
-  createHoldingsRecord: (permanentLocation) => {
+  createHoldingsRecord: (permanentLocation = 'Annex (KU/CC/DI/A) Remote') => {
     pressAddHoldingsButton();
     InventoryNewHoldings.fillRequiredFields(permanentLocation);
     InventoryNewHoldings.saveAndClose();
