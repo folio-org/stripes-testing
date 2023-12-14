@@ -191,15 +191,24 @@ export default {
     );
   },
   changeInvoiceStatusViaApi({ invoice, status }) {
-    return this.approveInvoiceViaApi({ invoice }).then(() => {
-      if (status !== INVOICE_STATUSES.APPROVED) {
-        this.getInvoiceViaApi({ query: `vendorInvoiceNo="${invoice.vendorInvoiceNo}"` }).then(
-          ({ invoices }) => {
-            this.updateInvoiceViaApi({ ...invoices[0], status });
-          },
-        );
-      }
-    });
+    const changeStatusViaApi = ({ vendorInvoiceNo, newStatus }) => {
+      this.getInvoiceViaApi({ query: `vendorInvoiceNo="${vendorInvoiceNo}"` }).then(
+        ({ invoices }) => {
+          this.updateInvoiceViaApi({ ...invoices[0], status: newStatus });
+        },
+      );
+    };
+
+    const { vendorInvoiceNo } = invoice;
+    if ([INVOICE_STATUSES.APPROVED, INVOICE_STATUSES.PAID].includes(status)) {
+      return this.approveInvoiceViaApi({ invoice }).then(() => {
+        if (status !== INVOICE_STATUSES.APPROVED) {
+          changeStatusViaApi({ vendorInvoiceNo, newStatus: status });
+        }
+      });
+    } else {
+      return changeStatusViaApi({ vendorInvoiceNo, newStatus: status });
+    }
   },
   createInvoiceLineViaApi(invoiceLineProperties) {
     return cy
@@ -328,6 +337,28 @@ export default {
       Checkbox('Export to accounting').click(),
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
+  },
+
+  createDefaultInvoiceWithoutAddress(invoice) {
+    cy.wait(4000);
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      invoiceDateField.fillIn(invoice.invoiceDate),
+      vendorInvoiceNumberField.fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(invoice.vendorName);
+    cy.do([
+      batchGroupSelection.open(),
+      SelectionList().select(invoice.batchGroup),
+      invoicePaymentMethodSelect.choose('Cash'),
+      Checkbox('Export to accounting').click(),
+    ]);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceCreatedMessage);
   },
@@ -1102,6 +1133,14 @@ export default {
         .find(Link(`${fund.name}(${fund.code})`))
         .click(),
     );
+  },
+
+  openPageFundInInvoiceLine: (title) => {
+    cy.get('#invoiceLineFundDistribution')
+      .find('a')
+      .contains(title)
+      .invoke('removeAttr', 'target')
+      .click();
   },
 
   checkAbsentFYOptionInInvoice: (fiscalYear) => {

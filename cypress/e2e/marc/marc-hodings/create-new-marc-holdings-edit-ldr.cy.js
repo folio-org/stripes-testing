@@ -76,7 +76,7 @@ describe('MARC -> MARC Holdings', () => {
     'C357571 Verify "LDR" validation rules with valid data for positions 05, 06 ,17, 18 when creating record (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(instanceID);
+      InventoryInstances.searchByTitle(instanceID);
       InventoryInstances.selectInstance();
       for (let i = 0; i < testData.LDRValues.validLDR17Values.length; i++) {
         InventoryInstance.goToMarcHoldingRecordAdding();

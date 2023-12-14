@@ -211,7 +211,7 @@ describe('Invoices', () => {
       ]);
 
       // Click "Add fund distribution" button, Select "Fund #1"
-      InvoiceLineEditForm.addFundDistribution();
+      InvoiceLineEditForm.clickAddFundDistributionButton();
       InvoiceLineEditForm.selectFundDistribution(testData.fund.name);
       InvoiceLineEditForm.checkFieldsConditions([
         { label: 'Expense class', conditions: { singleValue: '' } },

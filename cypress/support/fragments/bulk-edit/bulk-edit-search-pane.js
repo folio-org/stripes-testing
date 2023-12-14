@@ -82,7 +82,10 @@ export default {
     cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
     cy.expect(HTML(including('Retrieving...')));
   },
-
+  progresBarIsAbsent() {
+    cy.expect(HTML(including('Uploading ... and retrieving relevant data')).absent());
+    cy.expect(HTML(including('Retrieving...')).absent());
+  },
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -592,6 +595,10 @@ export default {
     });
   },
 
+  errorsAccordionIsAbsent() {
+    cy.expect(errorsAccordion.absent());
+  },
+
   matchedAccordionIsAbsent() {
     cy.expect(resultsAccordion.absent());
   },
@@ -614,6 +621,13 @@ export default {
     cy.expect(
       bulkEditPane.find(HTML(`${values.length} records have been successfully changed`)).exists(),
     );
+  },
+
+  verifyNoChangesPreview() {
+    cy.expect([
+      changesAccordion.absent(),
+      bulkEditPane.find(HTML('0 records have been successfully changed')).exists(),
+    ]);
   },
 
   verifyLocationChanges(rows, locationValue) {
@@ -731,6 +745,11 @@ export default {
         .absent(),
     );
   },
+  verifyCheckboxesAbsent(...checkboxes) {
+    checkboxes.forEach((checkbox) => {
+      cy.expect(Checkbox(checkbox).absent());
+    });
+  },
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
@@ -805,7 +824,7 @@ export default {
   },
 
   verifyRecordTypesSortedAlphabetically() {
-    cy.get('#entityType [class*="labelText"]').then((checkboxes) => {
+    cy.get('[class*="labelText"]').then((checkboxes) => {
       const textArray = checkboxes.get().map((el) => el.innerText);
       const sortedArray = [...textArray].sort((a, b) => a - b);
       expect(sortedArray).to.eql(textArray);
@@ -1230,5 +1249,9 @@ export default {
 
   verifyBuildQueryModal() {
     cy.expect(buildQueryModal.exists());
+  },
+
+  verifyFirstOptionRecordIdentifierDropdown(value) {
+    cy.expect(recordIdentifierDropdown.has({ checkedOptionText: value }));
   },
 };

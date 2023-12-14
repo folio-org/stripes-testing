@@ -1,3 +1,4 @@
+import { Keyboard } from '@interactors/keyboard';
 import {
   Accordion,
   AdvancedSearchRow,
@@ -157,6 +158,10 @@ export default {
     );
   },
 
+  checkCallout: (text) => {
+    cy.expect(Callout(including(text)).exists());
+  },
+
   checkResultsExistance: (type) => {
     cy.expect([
       rootSection.exists(),
@@ -182,9 +187,13 @@ export default {
 
   selectTitle: (title) => cy.do(Button(title).click()),
 
-  selectItem: (item) => {
+  selectItem: (item, partName = true) => {
     cy.expect(MultiColumnListCell({ content: item }).exists());
-    cy.do(Button(including(item)).click());
+    if (partName) {
+      cy.do(Button(including(item)).click());
+    } else {
+      cy.do(Button(item).click());
+    }
   },
 
   clickOnNumberOfTitlesLink(columnIndex, linkValue) {
@@ -222,13 +231,18 @@ export default {
 
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
+  checkRowsCount: (expectedRowsCount) => {
+    cy.expect([
+      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
+      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent(),
+    ]);
+  },
+
   checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
     authoritiesList
       .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
       .exists(),
   ),
-
-  checkRowsCount: (expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()),
 
   switchToBrowse: () => cy.do(Button({ id: 'segment-navigation-browse' }).click()),
 
@@ -240,9 +254,13 @@ export default {
     ]);
   },
 
-  searchBy: (parameter, value) => {
+  searchBy: (parameter, value, isLongValue = false) => {
     cy.do(filtersSection.find(searchInput).selectIndex(parameter));
     cy.do(filtersSection.find(searchInput).fillIn(value));
+    if (isLongValue) {
+      // need to wait until value will be applied in case when value is long
+      cy.wait(1000);
+    }
     cy.do(filtersSection.find(searchButton).click());
   },
 
@@ -269,7 +287,7 @@ export default {
   },
 
   closeMarcViewPane() {
-    cy.do(buttonClose.click());
+    cy.do(marcViewSection.find(buttonClose).click());
   },
 
   checkRecordDetailPageMarkedValue(markedValue) {
@@ -348,6 +366,14 @@ export default {
     cy.do(buttonLink.click());
   },
 
+  verifyLinkButtonExistOnMarcViewPane(isExist = true) {
+    if (isExist) {
+      cy.expect(marcViewSection.find(buttonLink).exists());
+    } else {
+      cy.expect(marcViewSection.find(buttonLink).absent());
+    }
+  },
+
   checkFieldAndContentExistence(tag, value) {
     cy.expect([
       marcViewSection.exists(),
@@ -386,6 +412,19 @@ export default {
       // need to wait until filter will be applied
       cy.wait(1000);
     });
+  },
+
+  enterTypeOfHeading: (headingType) => {
+    cy.then(() => headingTypeAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(headingTypeAccordion.clickHeader());
+      }
+    });
+    cy.do([
+      typeOfHeadingSelect.focus(),
+      Keyboard.type(headingType),
+      Keyboard.press({ code: 'Enter' }),
+    ]);
   },
 
   clickAccordionAndCheckResultList(accordion, record) {
@@ -651,7 +690,7 @@ export default {
   },
 
   verifyEmptyNumberOfTitles() {
-    cy.expect(MultiColumnListCell({ columnIndex: 4 }).has({ content: '' }));
+    cy.expect(MultiColumnListCell({ columnIndex: 5 }).has({ content: '' }));
   },
 
   verifyAuthorityPropertiesAfterSearch(expectedProperties) {
@@ -946,5 +985,64 @@ export default {
       MultiSelect({ selected: including(authoritySource) }).exists(),
       sourceFileAccordion.find(MultiSelectOption(including(`(${count})`))).exists(),
     ]);
+  },
+
+  verifyAllCheckboxesAreUnchecked() {
+    cy.get(checkBoxAllRecords).each((checkbox) => {
+      cy.expect(!checkbox.checked);
+    });
+  },
+
+  verifyValueDoesntExistInColumn(column, value) {
+    const actualValues = [];
+    cy.then(() => authoritiesList.rowCount())
+      .then((rowsCount) => {
+        if (rowsCount) {
+          for (let i = 0; i < rowsCount; i++) {
+            cy.then(() => authoritiesList.find(MultiColumnListCell({ column, row: i })).content()).then((content) => {
+              actualValues.push(content);
+            });
+          }
+        }
+      })
+      .then(() => {
+        const valueNotExist = !actualValues.includes(value);
+        expect(valueNotExist).to.equal(true);
+      });
+  },
+
+  verifyEveryRowContainsLinkButton() {
+    cy.then(() => authoritiesList.rowCount()).then((rowsCount) => {
+      if (rowsCount) {
+        for (let i = 0; i < rowsCount; i++) {
+          cy.expect(
+            authoritiesList
+              .find(MultiColumnListCell({ column: 'Link', row: i }))
+              .find(Button({ icon: 'link' }))
+              .exists(),
+          );
+        }
+      }
+    });
+  },
+
+  verifySelectedTypeOfHeading(option, isExist = true) {
+    if (isExist) {
+      cy.expect(typeOfHeadingSelect.has({ selected: including(option) }));
+    } else {
+      cy.expect(typeOfHeadingSelect.has({ selected: not(including(option)) }));
+    }
+  },
+
+  verifySelectedTypeOfHeadingCount(selectedCount) {
+    cy.expect(typeOfHeadingSelect.has({ selectedCount }));
+  },
+
+  verifyMarcViewPaneIsOpened(isOpened = true) {
+    if (isOpened) {
+      marcViewSection.exists();
+    } else {
+      marcViewSection.absent();
+    }
   },
 };

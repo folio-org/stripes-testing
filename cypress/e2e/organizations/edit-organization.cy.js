@@ -37,7 +37,7 @@ describe('Organizations', () => {
       Organizations.editOrganization();
       Organizations.editOrganizationName(organization);
       organization.name = `${organization.name}-edited`;
-      Organizations.checkCreatedOrganization(organization);
+      Organizations.checkOrganizationInfo(organization);
     },
   );
 });

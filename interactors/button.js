@@ -19,6 +19,8 @@ export default HTML.extend('button')
     ariaExpanded: (el) => el.getAttribute('aria-expanded'),
     dataId: (el) => el.getAttribute('data-id'),
     dataType: (el) => el.getAttribute('data-type-button'),
+    dataTestID: (el) => el.getAttribute('data-testid'),
+    svgClass: (el) => el.querySelector('svg').getAttribute('class').toString(),
     disabled: {
       apply: (el) => {
         if (el.disabled !== undefined) return el.disabled;

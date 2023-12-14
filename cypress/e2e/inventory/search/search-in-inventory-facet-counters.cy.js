@@ -71,7 +71,7 @@ describe('Search in Inventory', () => {
     'C415263 Counters in expanded facet accordions updated when another facet is applied (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(testData.searchQuery);
+      InventoryInstances.searchByTitle(testData.searchQuery);
       InventorySearchAndFilter.checkRowsCount(2);
       InventorySearchAndFilter.clickAccordionByName(testData.languageAccordionName);
       InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.languageAccordionName);
