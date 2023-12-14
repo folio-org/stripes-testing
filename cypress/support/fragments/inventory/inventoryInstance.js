@@ -159,8 +159,8 @@ const validOCLC = {
     ctry: { interactor: TextField('Ctry'), defaultValue: 'ru\\' },
     desc: { interactor: TextField('MRec'), defaultValue: 'o' },
     dtSt: { interactor: TextField('DtSt'), defaultValue: 's' },
-    startDate: { interactor: TextField('Start date'), defaultValue: '2007' },
-    endDate: { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
+    startDate: { interactor: TextField('Date 1'), defaultValue: '2007' },
+    endDate: { interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
   },
 };
 

@@ -65,10 +65,12 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstance.newMarcBibRecord();
+      QuickMarcEditor.verifySaveAndCloseButtonEnabled(false);
       QuickMarcEditor.updateExistingField(
         testData.tags.tag245,
         `$a ${testData.fieldContents.tag245Content}`,
       );
+      QuickMarcEditor.verifySaveAndCloseButtonEnabled();
       QuickMarcEditor.updateExistingField(
         testData.tags.tagLDR,
         testData.fieldContents.tagLDRContent,

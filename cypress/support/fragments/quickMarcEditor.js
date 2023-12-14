@@ -252,8 +252,8 @@ const tag008DefaultValues = [
   { interactor: TextField('Indx'), defaultValue: '\\' },
   { interactor: TextField('Fest'), defaultValue: '\\' },
   { interactor: TextField('DtSt'), defaultValue: '\\' },
-  { interactor: TextField('Start date'), defaultValue: '\\\\\\\\' },
-  { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
+  { interactor: TextField('Date 1'), defaultValue: '\\\\\\\\' },
+  { interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
   { interactor: TextField('Ills', { name: including('Ills[0]') }), defaultValue: '\\' },
   { interactor: TextField('Ills', { name: including('Ills[1]') }), defaultValue: '\\' },
   { interactor: TextField('Ills', { name: including('Ills[2]') }), defaultValue: '\\' },
@@ -660,8 +660,8 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
   },
 
-  verifySaveAndCloseButtonEnabled() {
-    cy.expect(saveAndCloseButton.is({ disabled: false }));
+  verifySaveAndCloseButtonEnabled(isEnabled = true) {
+    cy.expect(saveAndCloseButton.is({ disabled: !isEnabled }));
   },
 
   deleteFieldWithEnter(rowNumber) {
