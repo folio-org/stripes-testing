@@ -1,28 +1,17 @@
 import Permissions from '../../support/dictionary/permissions';
-import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
+import Affiliations, {
+  tenantNames,
+  tenantCodes,
+  tenantErrors,
+} from '../../support/dictionary/affiliations';
 import Users from '../../support/fragments/users/users';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
 
 describe('Users -> Consortia', () => {
-  const createUserData = () => ({
-    username: getTestEntityValue('username'),
-    barcode: getRandomPostfix(),
-    personal: {
-      firstName: getTestEntityValue('firstname'),
-      preferredFirstName: getTestEntityValue('prefname'),
-      middleName: getTestEntityValue('midname'),
-      lastName: getTestEntityValue('lastname'),
-      email: 'test@folio.org',
-    },
-    patronGroup: 'undergrad (Undergraduate Student)',
-    userType: 'Staff',
-  });
-  const testUser = createUserData();
-
+  const character151 =
+    'Beyond the horizon, a world of possibilities awaits. Embrace the journey, learn from challenges, and celebrate every small victory along the way.1234567';
   let user;
 
   before('Create users, data', () => {
@@ -44,24 +33,49 @@ describe('Users -> Consortia', () => {
       });
   });
 
-  // after('Delete users, data', () => {
-  //   cy.resetTenant();
-  //   cy.getAdminToken();
-  //   Users.deleteViaApi(user.userId);
-  //   Users.deleteViaApi(testUser.id);
-  // });
+  after('Delete users, data', () => {
+    cy.resetTenant();
+    cy.getAdminToken();
+    Users.deleteViaApi(user.userId);
+  });
 
   it(
     'C380515: Edit address (tenant) name in "Consortium manager" settings (consortia)(thunderjet)',
     { tags: ['smoke', 'thunderjet'] },
     () => {
       ConsortiumManager.selectMembership();
-
-      UsersSearchPane.searchByUsername(testUser.username);
-      Users.verifyUserDetailsPane();
-      UsersCard.verifyAffiliationsQuantity('2');
-      UsersCard.expandAffiliationsAccordion();
-      UsersCard.verifyAffiliationsDetails('College', 2, 'Central Office');
+      ConsortiumManager.editTenant(tenantNames.professional);
+      ConsortiumManager.editTenantInformation(
+        2,
+        `${tenantCodes.professional}E`,
+        `${tenantNames.professional}-Edited`,
+      );
+      ConsortiumManager.saveEditingTenantInformation(2);
+      ConsortiumManager.checkEditedTenantInformation(
+        2,
+        `${tenantCodes.professional}E`,
+        `${tenantNames.professional}-Edited`,
+      );
+      ConsortiumManager.editTenant(tenantNames.professional);
+      ConsortiumManager.editTenantInformation(
+        2,
+        tenantCodes.professional,
+        tenantNames.professional,
+      );
+      ConsortiumManager.saveEditingTenantInformation(2);
+      ConsortiumManager.checkEditedTenantInformation(
+        2,
+        tenantCodes.professional,
+        tenantNames.professional,
+      );
+      ConsortiumManager.editTenant(tenantNames.professional);
+      ConsortiumManager.editTenantInformation(2, `${tenantCodes.professional}-E`, character151);
+      ConsortiumManager.checkErrorsInEditedTenantInformation(
+        2,
+        tenantErrors.code,
+        tenantErrors.name,
+      );
+      ConsortiumManager.cancelEditingTenantInformation(2);
     },
   );
 });
