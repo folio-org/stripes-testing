@@ -1,4 +1,11 @@
-import { Button, KeyValue, Section, PaneHeader, including } from '../../../../../interactors';
+import {
+  Button,
+  KeyValue,
+  Section,
+  PaneHeader,
+  Popover,
+  including,
+} from '../../../../../interactors';
 
 const transactionDetailSection = Section({ id: 'pane-transaction-details' });
 const transactionDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-transaction-details' });
@@ -13,6 +20,15 @@ export default {
     information.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
     });
+  },
+  checkTransactionAmountInfo(content) {
+    cy.do(
+      transactionDetailSection
+        .find(KeyValue('Amount'))
+        .find(Button({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().has({ content }));
   },
   closeTransactionDetails() {
     cy.do(transactionDetailsPaneHeader.find(Button({ icon: 'times' })).click());

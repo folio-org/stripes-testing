@@ -20,6 +20,7 @@ const getDefaultOrderLine = ({
   specialLocationId,
   specialMaterialTypeId,
   orderFormat,
+  createInventory = 'Instance, Holding, Item',
   acquisitionMethod = '',
   automaticExport = false,
   listUnitPrice = 1,
@@ -31,6 +32,7 @@ const getDefaultOrderLine = ({
   vendorAccount = '1234',
   paymentStatus = 'Pending',
   receiptStatus = 'Pending',
+  renewalNote,
 } = {}) => {
   const defaultOrderLine = {
     id: uuid(),
@@ -67,7 +69,7 @@ const getDefaultOrderLine = ({
     paymentStatus,
     physical: specialLocationId
       ? {
-        createInventory: 'Instance, Holding, Item',
+        createInventory,
         materialType: specialMaterialTypeId,
         materialSupplier: null,
         volumes: [],
@@ -85,6 +87,7 @@ const getDefaultOrderLine = ({
     purchaseOrderId,
     receiptStatus,
     reportingCodes: [],
+    renewalNote,
     source: 'User',
     titleOrPackage: title,
     vendorDetail: vendorDetail || {
