@@ -9,6 +9,7 @@ import {
   MultiColumnListHeader,
   Callout,
   Modal,
+  PaneHeader,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -83,6 +84,8 @@ const defaultAuthority = {
   // 24 symbols
   ldrValue: '00846cz\\\\a2200241n\\\\4500',
 };
+
+const detailsPaneHeader = PaneHeader({ id: 'paneHeadermarc-view-pane' });
 
 export default {
   defaultAuthority,
@@ -279,5 +282,9 @@ export default {
   checkLinkingAuthority: () => {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 655 has been linked to a MARC authority record.').exists());
+  },
+
+  verifySharedAuthorityDetailsHeading(heading) {
+    cy.expect(detailsPaneHeader.has({ title: `Shared • ${heading}` }));
   },
 };

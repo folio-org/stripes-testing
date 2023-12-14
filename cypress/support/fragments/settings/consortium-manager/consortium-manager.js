@@ -1,4 +1,4 @@
-import { Button, Modal, SelectionOption, including } from '../../../../../interactors';
+import { Button, Modal, SelectionOption, including, HTML } from '../../../../../interactors';
 
 export default {
   switchActiveAffiliation(tenantName) {
@@ -13,5 +13,13 @@ export default {
       Button({ id: 'save-active-affiliation' }).click(),
     ]);
     cy.wait(8000);
+  },
+
+  checkCurrentTenantInTopMenu(tenantName) {
+    cy.expect(
+      Button({ ariaLabel: 'My profile' })
+        .find(HTML({ text: including(tenantName) }))
+        .exists(),
+    );
   },
 };

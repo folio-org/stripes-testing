@@ -14,26 +14,29 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import BrowseContributors from '../../support/fragments/inventory/search/browseContributors';
 
 describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
   const testData = {
     sharedPaneheaderText: 'Edit shared MARC record',
-    // tag245: '245',
-    // tag500: '500',
-    // tag504: '504',
-    // tag245UpdatedValue: '$a C405520 Auto Instance Shared Central Updated',
-    // tag500UpdatedValue: '$a Proceedings. Updated',
+    authoritySearchOption: 'Keyword',
+    sharedBibSourcePaheheaderText: 'Shared MARC bibliographic record',
+    contributorAccordion: 'Contributor',
+    sharedAuthorityDetailsText: 'Shared MARC authority record',
     instanceTitle:
       'C397343 Murder in Mérida, 1792 : violence, factions, and the law / Mark W. Lentz.',
+    authorityLinkText: 'Linked to MARC authority',
+    sharedLinkText: 'Shared',
   };
 
   const linkingTagAndValues = {
-    authorityHeading: 'Lentz, Mark C397343',
+    authorityHeading: 'Lentz, Mark Auto C397343',
     rowIndex: 15,
     tag: '100',
     secondBox: '1',
     thirdBox: '\\',
-    content: '$a Lentz, Mark C397343',
+    content: '$a Lentz, Mark Auto C397343',
     eSubfield: '$e author.',
     zeroSubfield: '$0 id.loc.gov/authorities/names/n2011049161397343',
     seventhBox: '',
@@ -111,6 +114,7 @@ describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
         }).then(() => {
           ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.COLLEGE);
           InventoryInstances.waitContentLoading();
+          ConsortiumManager.checkCurrentTenantInTopMenu(TENANT_NAMES.COLLEGE);
         });
       });
   });
@@ -134,7 +138,7 @@ describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
       QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);
       MarcAuthorities.switchToSearch();
       InventoryInstance.verifySelectMarcAuthorityModal();
-      InventoryInstance.searchResults(linkingTagAndValues.value);
+      InventoryInstance.searchResults(linkingTagAndValues.authorityHeading);
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyTagFieldAfterLinking(
         linkingTagAndValues.rowIndex,
@@ -150,40 +154,45 @@ describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
       QuickMarcEditor.checkAfterSaveAndClose();
       InventoryInstance.checkInstanceTitle(testData.instanceTitle);
 
-      // QuickMarcEditor.checkPaneheaderContains(testData.sharedPaneheaderText);
-      // QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245UpdatedValue);
-      // QuickMarcEditor.updateExistingField(testData.tag500, testData.tag500UpdatedValue);
-      // QuickMarcEditor.moveFieldUp(17);
-      // QuickMarcEditor.pressSaveAndClose();
-      // QuickMarcEditor.checkAfterSaveAndClose();
-      // InventoryInstance.checkInstanceTitle(testData.updatedTitle);
-      // InventoryInstance.verifyLastUpdatedSource(
-      //   users.userAProperties.firstName,
-      //   users.userAProperties.lastName,
-      // );
-      // cy.login(users.userBProperties.username, users.userBProperties.password, {
-      //   path: TopMenu.inventoryPath,
-      //   waiter: InventoryInstances.waitContentLoading,
-      // });
-      // ConsortiumManager.switchActiveAffiliation(tenantNames.college);
-      // InventoryInstance.searchByTitle(createdInstanceID);
-      // InventoryInstances.selectInstance();
-      // InventoryInstance.checkInstanceTitle(testData.updatedTitle);
-      // // TO DO: fix this check failure - 'Unknown user' is shown, possibly due to the way users are created in test
-      // // InventoryInstance.verifyLastUpdatedSource(users.userAProperties.firstName, users.userAProperties.lastName);
-      // InventoryInstance.viewSource();
-      // InventoryViewSource.verifyFieldInMARCBibSource(testData.tag245, testData.tag245UpdatedValue);
-      // InventoryViewSource.verifyFieldInMARCBibSource(testData.tag500, testData.tag500UpdatedValue);
-      // InventoryViewSource.close();
-      // InventoryInstance.editMarcBibliographicRecord();
-      // QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245UpdatedValue);
-      // QuickMarcEditor.checkContentByTag(testData.tag500, testData.tag500UpdatedValue);
-      // QuickMarcEditor.checkUserNameInHeader(
-      //   users.userAProperties.firstName,
-      //   users.userAProperties.lastName,
-      // );
-      // QuickMarcEditor.verifyTagValue(16, testData.tag504);
-      // QuickMarcEditor.verifyTagValue(17, testData.tag500);
+      ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.CENTRAL);
+      InventoryInstances.waitContentLoading();
+      ConsortiumManager.checkCurrentTenantInTopMenu(TENANT_NAMES.CENTRAL);
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthorities.waitLoading();
+      MarcAuthorities.searchByParameter(
+        testData.authoritySearchOption,
+        linkingTagAndValues.authorityHeading,
+      );
+      MarcAuthorities.checkRow(`${testData.sharedLinkText}${linkingTagAndValues.authorityHeading}`);
+      MarcAuthorities.verifyNumberOfTitles(5, '1');
+      MarcAuthorities.clickOnNumberOfTitlesLink(5, '1');
+      InventorySearchAndFilter.verifySearchResult(testData.instanceTitle);
+      InventoryInstance.checkPresentedText(testData.instanceTitle);
+      InventoryInstance.viewSource();
+      InventoryViewSource.waitLoading();
+      InventoryViewSource.contains(testData.authorityLinkText);
+      InventoryViewSource.contains(linkingTagAndValues.authorityHeading);
+      InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
+
+      ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.UNIVERSITY);
+      InventoryInstances.waitContentLoading();
+      ConsortiumManager.checkCurrentTenantInTopMenu(TENANT_NAMES.UNIVERSITY);
+      InventorySearchAndFilter.switchToBrowseTab();
+      InventorySearchAndFilter.verifyKeywordsAsDefault();
+      BrowseContributors.select();
+      InventorySearchAndFilter.browseSearch(linkingTagAndValues.authorityHeading);
+      BrowseContributors.checkAuthorityIconAndValueDisplayed(linkingTagAndValues.authorityHeading);
+      BrowseContributors.openRecord(linkingTagAndValues.authorityHeading);
+      InventoryInstance.waitLoading();
+      InventoryInstance.checkPresentedText(testData.instanceTitle);
+      InventoryInstance.checkContributor(linkingTagAndValues.authorityHeading);
+      InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(
+        testData.contributorAccordion,
+      );
+      MarcAuthority.waitLoading();
+      MarcAuthority.verifySharedAuthorityDetailsHeading(linkingTagAndValues.authorityHeading);
+      MarcAuthority.contains(testData.sharedAuthorityDetailsText);
+      ConsortiumManager.checkCurrentTenantInTopMenu(TENANT_NAMES.UNIVERSITY);
     },
   );
 });
