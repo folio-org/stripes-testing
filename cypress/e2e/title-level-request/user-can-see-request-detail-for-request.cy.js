@@ -264,4 +264,18 @@ describe('Title Level Request. Request Detail', () => {
       });
     },
   );
+
+  it(
+    'C350414 Check that user can see "Requests" columns (vega)',
+    { tags: ['extended', 'vega'] },
+    () => {
+      Requests.selectItemRequestLevel();
+      Requests.waitUIFilteredByRequestType();
+      Requests.verifyColumnsPresence();
+
+      Requests.selectTitleRequestLevel();
+      Requests.waitUIFilteredByRequestType();
+      Requests.verifyColumnsPresence();
+    },
+  );
 });
