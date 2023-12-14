@@ -64,7 +64,7 @@ describe('Bulk Edits', () => {
 
         const newLocation = 'non-existing';
         BulkEditActions.fillLocation(newLocation);
-        BulkEditActions.verifySearchSectionAbsent();
+        BulkEditActions.verifySearchSectionClosed();
         BulkEditSearchPane.verifyInputLabel('Select location');
       },
     );

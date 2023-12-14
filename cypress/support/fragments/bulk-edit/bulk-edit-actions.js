@@ -1,4 +1,6 @@
+import { Keyboard } from '@interactors/keyboard';
 import { HTML, including } from '@interactors/html';
+import { MultiSelect } from 'bigtest';
 import FileManager from '../../utils/fileManager';
 import {
   Modal,
@@ -15,7 +17,6 @@ import {
   Selection,
   Option,
   OptionGroup,
-  Section,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -39,8 +40,9 @@ const confirmChangesButton = Button('Confirm changes');
 const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
 const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
 const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
-const searchSection = Section({ id: 'sl-container-stripes-selection-41' });
 const commitChanges = Button('Commit changes');
+const selectLocation = Button({ name: 'locationId' });
+const locationList = MultiSelect({ id: 'sl-container-stripes-selection-44' });
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -108,8 +110,8 @@ export default {
     cy.expect(bulkPageSelections.action.absent());
   },
 
-  verifySearchSectionAbsent() {
-    cy.expect(searchSection.absent());
+  verifySearchSectionClosed() {
+    cy.expect(selectLocation.has({ ariaExpanded: 'false' }));
   },
 
   isDisabledRowIcons(isDisabled) {
@@ -938,7 +940,11 @@ export default {
   },
 
   fillLocation(location) {
-    cy.do(Button('Select control\nSelect location').click());
-    cy.get('input[aria-label=" options filter"]').type(location).type('{enter}');
+    cy.do(
+      selectLocation.click(),
+      locationList.focus(),
+      Keyboard.type(location),
+      Keyboard.press({ code: 'Enter' }),
+    );
   },
 };
