@@ -356,6 +356,36 @@ export default {
 
   openSubjectAccordion: () => cy.do(Accordion('Subject').click()),
 
+  checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
+    if (isPresent) {
+      cy.expect(
+        MultiColumnList(sectionId)
+          .find(MultiColumnListCell({ content: `Linked to MARC authority${value}` }))
+          .find(marcAuthorityAppIcon)
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        MultiColumnList(sectionId)
+          .find(MultiColumnListCell({ content: value }))
+          .find(marcAuthorityAppIcon)
+          .absent(),
+      );
+    }
+  },
+
+  checkAuthorityAppIconLink: (sectionId, title, authorityId) => {
+    cy.expect(
+      MultiColumnList(sectionId)
+        .find(MultiColumnListCell({ content: `Linked to MARC authority${title}` }))
+        .find(Button())
+        .has({
+          href: `/marc-authorities/authorities/${authorityId}?authRefType=Authorized&segment=search`,
+          target: '_blank',
+        }),
+    );
+  },
+
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
