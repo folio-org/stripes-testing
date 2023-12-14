@@ -51,7 +51,7 @@ const closeDetailView = () => {
   cy.do(Button({ icon: 'times' }).click());
 };
 const findRowAndClickLink = (enumerationValue) => {
-  cy.get('div[class^="mclRow-"]')
+  cy.get('div[class^="mclRowFormatterContainer-"]')
     .contains('div[class^="mclCell-"]', enumerationValue)
     .then((elem) => {
       elem.parent()[0].querySelector('button').click();

@@ -38,6 +38,7 @@ describe('permissions: inventory', () => {
     cy.createTempUser([Permissions.inventoryAll.gui]).then((userProperties) => {
       userWithAllPermissions = userProperties;
     });
+    cy.wait(20000);
   });
 
   after('Deleting data', () => {

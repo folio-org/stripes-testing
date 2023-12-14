@@ -21,21 +21,23 @@ describe('orders: create an order', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-    });
-    order.vendor = organization.name;
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+      });
+      order.vendor = organization.name;
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
       });
     });
+    cy.wait(20000);
   });
 
   afterEach(() => {

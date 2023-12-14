@@ -428,6 +428,7 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
+    cy.wait(4000);
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
     cy.do(inventorySearchAndFilter.fillIn(value));
     cy.do(searchButton.focus());

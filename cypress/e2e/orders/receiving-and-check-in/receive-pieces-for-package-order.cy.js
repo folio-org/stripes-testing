@@ -49,18 +49,6 @@ describe('Orders: Receiving and Check-in', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization).then((response) => {
-      organization.id = response;
-      order.vendor = response;
-    });
-    cy.createOrderApi(order).then((orderResponse) => {
-      orderNumber = orderResponse.body.poNumber;
-      cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
-      Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList(orderNumber);
-      OrderLines.addPOLine();
-      OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
-    });
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersApprovePurchaseOrders.gui,
@@ -69,6 +57,19 @@ describe('Orders: Receiving and Check-in', () => {
       permissions.uiReceivingViewEditCreate.gui,
     ]).then((userProperties) => {
       user = userProperties;
+      Organizations.createOrganizationViaApi(organization).then((response) => {
+        organization.id = response;
+        order.vendor = response;
+      });
+      cy.createOrderApi(order).then((orderResponse) => {
+        orderNumber = orderResponse.body.poNumber;
+        cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
+        OrderLines.addPOLine();
+        OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
+      });
+
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
         waiter: Orders.waitLoading,
