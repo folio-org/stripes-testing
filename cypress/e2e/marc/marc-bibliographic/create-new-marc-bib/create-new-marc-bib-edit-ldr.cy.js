@@ -79,8 +79,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
     expected008BoxesSets: [
       [
         'DtSt',
-        'Start date',
-        'End date',
+        'Date 1',
+        'Date 2',
         'Ctry',
         'Ills',
         'Audn',
@@ -96,23 +96,11 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
         'MRec',
         'Srce',
       ],
+      ['DtSt', 'Date 1', 'Date 2', 'Ctry', 'Audn', 'Form', 'File', 'GPub', 'Lang', 'MRec', 'Srce'],
       [
         'DtSt',
-        'Start date',
-        'End date',
-        'Ctry',
-        'Audn',
-        'Form',
-        'File',
-        'GPub',
-        'Lang',
-        'MRec',
-        'Srce',
-      ],
-      [
-        'DtSt',
-        'Start date',
-        'End date',
+        'Date 1',
+        'Date 2',
         'Ctry',
         'Comp',
         'FMus',
@@ -128,8 +116,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       ],
       [
         'DtSt',
-        'Start date',
-        'End date',
+        'Date 1',
+        'Date 2',
         'Ctry',
         'Freq',
         'Regl',
@@ -148,8 +136,8 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       ],
       [
         'DtSt',
-        'Start date',
-        'End date',
+        'Date 1',
+        'Date 2',
         'Ctry',
         'Time',
         'Audn',
@@ -161,7 +149,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
         'MRec',
         'Srce',
       ],
-      ['DtSt', 'Start date', 'End date', 'Ctry', 'Form', 'Lang', 'MRec', 'Srce'],
+      ['DtSt', 'Date 1', 'Date 2', 'Ctry', 'Form', 'Lang', 'MRec', 'Srce'],
     ],
   };
 
