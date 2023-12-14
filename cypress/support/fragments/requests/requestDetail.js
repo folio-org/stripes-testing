@@ -36,6 +36,16 @@ const additionalInfoRequiredInput = TextField('Additional information for patron
 
 const additionalInfoForCancellation = TextArea({ dataTestID: 'additionalInfo' });
 const confirmCancellationButton = Button({ dataTestID: 'cancelRequestDialogCancel' });
+const editButton = Button({ id: 'clickable-edit-request' });
+const reorderQueueButton = Button({ id: 'reorder-queue' });
+
+const availableOptions = {
+  Edit: editButton,
+  'Cancel request': cancelRequestButton,
+  Duplicate: duplicateRequestButton,
+  'Move request': moveRequestButton,
+  'Reorder queue': reorderQueueButton,
+};
 
 export default {
   waitLoading: (type = 'staff') => {
@@ -148,6 +158,16 @@ export default {
     cy.do(actionsButton.click());
   },
 
+  verifyActionsAvailableOptions(
+    options = ['Edit', 'Cancel request', 'Duplicate', 'Move request', 'Reorder queue'],
+  ) {
+    cy.do(actionsButton.click());
+    options.forEach((option) => {
+      cy.expect(availableOptions[option].exists());
+    });
+    cy.do(actionsButton.click());
+  },
+
   verifyCancelRequestOptionDisplayed() {
     cy.expect(cancelRequestButton.exists());
   },
@@ -217,7 +237,7 @@ export default {
   },
 
   requestQueueOnInstance(instanceTitle) {
-    cy.do([actionsButton.click(), Button('Reorder queue').click()]);
+    cy.do([actionsButton.click(), reorderQueueButton.click()]);
     cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
   },
 
