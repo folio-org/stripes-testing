@@ -7,7 +7,6 @@ import Affiliations, {
 import Users from '../../support/fragments/users/users';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
-import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Users -> Consortia', () => {
   const character151 =
