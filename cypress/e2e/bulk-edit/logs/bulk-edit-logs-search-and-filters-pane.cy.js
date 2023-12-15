@@ -49,13 +49,13 @@ describe('Bulk Edit - Logs', () => {
       ];
       statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
       BulkEditSearchPane.resetAllBtnIsDisabled(false);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Statuses');
+      BulkEditSearchPane.verifyClearSelectedFiltersButton('Statuses');
       BulkEditSearchPane.clickClearSelectedFiltersButton('Statuses');
       BulkEditSearchPane.verifyLogsPane();
-      BulkEditSearchPane.checkLogsCheckbox('New');
+      BulkEditSearchPane.checkLogsCheckbox('Completed');
       BulkEditSearchPane.resetAllBtnIsDisabled(false);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Statuses');
-      BulkEditSearchPane.verifyCellsValues(2, 'New');
+      BulkEditSearchPane.verifyClearSelectedFiltersButton('Statuses');
+      BulkEditSearchPane.verifyCellsValues(2, 'Completed');
     },
   );
 
@@ -74,12 +74,12 @@ describe('Bulk Edit - Logs', () => {
       const recordTypes = ['Inventory - holdings', 'Inventory - items', 'Users'];
       recordTypes.forEach((recordType) => BulkEditSearchPane.checkLogsCheckbox(recordType));
       BulkEditSearchPane.resetAllBtnIsDisabled(false);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
+      BulkEditSearchPane.verifyClearSelectedFiltersButton('Record types');
       BulkEditSearchPane.clickClearSelectedFiltersButton('Record types');
       BulkEditSearchPane.verifyLogsPane();
       BulkEditSearchPane.checkLogsCheckbox('Users');
       BulkEditSearchPane.resetAllBtnIsDisabled(false);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Record types');
+      BulkEditSearchPane.verifyClearSelectedFiltersButton('Record types');
       BulkEditSearchPane.verifyCellsValues(1, 'Users');
     },
   );
@@ -118,7 +118,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.fillLogsDate('Started', 'From', dayBeforeYesterday);
       BulkEditSearchPane.applyStartDateFilters();
       BulkEditSearchPane.verifyDateCellsValues(6, dayBeforeYesterday, yesterday);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Started');
+      BulkEditSearchPane.verifyClearSelectedFiltersButton('Started');
       BulkEditSearchPane.fillLogsDate('Ended', 'To', dayBeforeYesterday);
       BulkEditSearchPane.verifyClearSelectedDateButtonExists('Ended', 'To');
       BulkEditSearchPane.verifyLogsDateFiledIsEqual('Ended', 'To', dayBeforeYesterday);
@@ -138,13 +138,13 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.fillLogsDate('Ended', 'To', currentDate);
       BulkEditSearchPane.applyEndDateFilters();
       BulkEditSearchPane.verifyDateCellsValues(7, yesterday, currentDate);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Ended');
+      BulkEditSearchPane.verifyClearSelectedFiltersButton('Ended');
       BulkEditSearchPane.fillLogsDate('Ended', 'From', yesterday);
       BulkEditSearchPane.fillLogsDate('Ended', 'To', yesterday);
       BulkEditSearchPane.applyEndDateFilters();
       BulkEditSearchPane.verifyDateCellsValues(6, dayBeforeYesterday, yesterday);
       BulkEditSearchPane.verifyDateCellsValues(7, yesterday, yesterday);
-      BulkEditSearchPane.verifyClearSelectedFiltersButtonExists('Ended');
+      BulkEditSearchPane.verifyClearSelectedFiltersButton('Ended');
       BulkEditSearchPane.clickClearSelectedFiltersButton('Started');
       BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'From', '');
       BulkEditSearchPane.verifyLogsDateFiledIsEqual('Started', 'To', '');
@@ -158,6 +158,30 @@ describe('Bulk Edit - Logs', () => {
       BulkEditSearchPane.clickLogsEndedAccordion();
       BulkEditSearchPane.verifySetCriteriaPaneExists();
       BulkEditSearchPane.verifyLogsPane();
+    },
+  );
+
+  it(
+    'C368037 Verify that after clicking on "Reset all" button, all filters resets (firebird) (TaaS)',
+    { tags: ['extended', 'firebird'] },
+    () => {
+      BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifySetCriteriaPaneExists();
+      BulkEditSearchPane.resetAllBtnIsDisabled(true);
+      BulkEditSearchPane.verifyLogsStatusesAccordionExistsAndUnchecked();
+      BulkEditSearchPane.verifyLogsRecordTypesAccordionExistsAndUnchecked();
+      BulkEditSearchPane.verifyLogsStartedAccordionCollapsed();
+      BulkEditSearchPane.verifyLogsEndedAccordionCollapsed();
+      BulkEditSearchPane.verifyUserAccordionCollapsed();
+      BulkEditSearchPane.checkLogsCheckbox('Completed');
+      BulkEditSearchPane.resetAllBtnIsDisabled(false);
+      BulkEditSearchPane.verifyClearSelectedFiltersButton('Statuses');
+      BulkEditSearchPane.verifyCellsValues(2, 'Completed');
+      BulkEditSearchPane.resetAll();
+      BulkEditSearchPane.resetAllBtnIsDisabled(true);
+      BulkEditSearchPane.verifyLogsStatusesAccordionExistsAndUnchecked();
+      BulkEditSearchPane.verifyClearSelectedFiltersButton('Statuses', 'absent');
+      BulkEditSearchPane.verifyLogsTableHeaders('absent');
     },
   );
 });
