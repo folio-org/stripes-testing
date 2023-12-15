@@ -118,4 +118,8 @@ export default {
       .parent()
       .should('include.text', existingRecordOption);
   },
+
+  verifyExistingDetails: (recordItem) => {
+    cy.get(`[data-id="${recordItem}"]`).should('exist');
+  },
 };

@@ -6,9 +6,11 @@ import {
   Form,
   Select,
   TextField,
+  Option,
 } from '../../../../../interactors';
 
 const selectActionProfile = Select({ name: 'profile.action' });
+const recordTypeselect = Select({ name: 'profile.folioRecord' });
 
 export default {
   unlinkFieldMappingProfile: () => cy.do(Button({ title: 'Unlink this profile' }).click()),
@@ -33,5 +35,9 @@ export default {
   changesNotSaved: () => {
     cy.expect(TextField({ name: 'profile.name' }).exists());
     cy.expect(selectActionProfile.exists());
+  },
+
+  verifyFOLIORecordTypeOptionExists(type) {
+    cy.expect(recordTypeselect.find(Option(type)).exists());
   },
 };

@@ -24,6 +24,7 @@ const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
 const matchCriterionSelect = Select('Match criterion');
 const nameTextField = TextField('Name*');
+const closeButton = Button('Close');
 
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
@@ -575,4 +576,5 @@ export default {
       }),
     ]);
   },
+  clickClose: () => cy.do(closeButton.click()),
 };

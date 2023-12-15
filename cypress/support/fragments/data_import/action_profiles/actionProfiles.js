@@ -56,6 +56,7 @@ const search = (profileName) => {
 };
 
 export default {
+  openNewActionProfileForm,
   deleteActionProfile,
   close,
   search,
