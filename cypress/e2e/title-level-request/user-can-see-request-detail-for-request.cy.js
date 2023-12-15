@@ -264,4 +264,45 @@ describe('Title Level Request. Request Detail', () => {
       });
     },
   );
+
+  it(
+    'C350556 Check that the user can see "Request Detail" for request after it is Closed',
+    { tags: ['extended', 'vega'] },
+    () => {
+      Requests.selectItemRequestLevel();
+      Requests.findCreatedRequest(instanceData.title);
+      Requests.selectFirstRequest(instanceData.title);
+      RequestDetail.waitLoading();
+      Requests.cancelRequest();
+      cy.reload();
+      Requests.selectFirstRequest(instanceData.title);
+      RequestDetail.verifySectionsVisibility();
+      RequestDetail.checkTitleInformation({
+        TLRs: '1',
+        title: instanceData.title,
+      });
+
+      RequestDetail.checkItemInformation({
+        itemBarcode: testData.itemBarcode,
+        title: instanceData.title,
+        effectiveLocation: testData.defaultLocation.name,
+        requestsOnItem: '0',
+      });
+
+      RequestDetail.checkRequestInformation({
+        type: REQUEST_TYPES.PAGE,
+        status: EditRequest.requestStatuses.CLOSED_CANCELLED,
+        level: REQUEST_LEVELS.ITEM,
+        reason: 'INN-Reach',
+      });
+
+      RequestDetail.checkRequesterInformation({
+        lastName: userData.lastName,
+        barcode: userData.barcode,
+        group: 'faculty',
+        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+        pickupSP: testData.userServicePoint.name,
+      });
+    },
+  );
 });
