@@ -98,6 +98,10 @@ const calloutMultiple010Subfields = Callout('010 can only have one $a.');
 const calloutInvalidLDRValue = Callout(
   including('Record cannot be saved. Please enter a valid Leader'),
 );
+
+const calloutThreeCharacterMarcTag = Callout(
+  'Record cannot be saved. A MARC tag must contain three characters.',
+);
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
 const validNewMarBibLDR = '00000naa\\a2200000uu\\4500';
@@ -1654,7 +1658,9 @@ export default {
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
   },
-
+  verifyMarcTagThreeCharacterCallout() {
+    cy.expect(calloutThreeCharacterMarcTag.exists());
+  },
   verifyAndDismissMultiple010TagCallout() {
     cy.expect(calloutMultiple010MarcTags.exists());
     cy.do(calloutMultiple010MarcTags.dismiss());
@@ -1785,6 +1791,19 @@ export default {
   saveAndKeepEditingUpdatedLinkedBibField() {
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+  },
+
+  verifyUpdateLinkedBibsKeepEditingModal(linkedRecordsNumber) {
+    cy.expect(updateLinkedBibFieldsModal.exists());
+    cy.expect(
+      updateLinkedBibFieldsModal.has({
+        content: including(
+          `${linkedRecordsNumber} bibliographic record is linked to this authority record and will be updated by clicking the Save button.`,
+        ),
+      }),
+    );
+    cy.expect(saveButton.exists());
+    cy.expect(keepEditingButton.exists());
   },
 
   confirmUpdateLinkedBibsKeepEditing(linkedRecordsNumber) {
