@@ -194,7 +194,9 @@ describe('MARC -> MARC Holdings', () => {
       InventoryInstance.checkExpectedMARCSource();
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.waitLoading();
+      QuickMarcEditor.verifySaveAndCloseButtonEnabled(false);
       QuickMarcEditor.updateExistingField(testData.tag852, QuickMarcEditor.getExistingLocation());
+      QuickMarcEditor.verifySaveAndCloseButtonEnabled();
       QuickMarcEditor.addEmptyFields(5);
       QuickMarcEditor.updateExistingTagValue(6, testData.tag866);
       QuickMarcEditor.updateExistingField(testData.tag866, testData.tag866Value);
