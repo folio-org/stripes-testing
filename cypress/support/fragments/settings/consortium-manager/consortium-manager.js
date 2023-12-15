@@ -6,6 +6,7 @@ import {
   SelectionOption,
   TextField,
   including,
+  HTML,
 } from '../../../../../interactors';
 
 export default {
@@ -68,5 +69,13 @@ export default {
       Button({ id: 'save-active-affiliation' }).click(),
     ]);
     cy.wait(8000);
+  },
+
+  checkCurrentTenantInTopMenu(tenantName) {
+    cy.expect(
+      Button({ ariaLabel: 'My profile' })
+        .find(HTML({ text: including(tenantName) }))
+        .exists(),
+    );
   },
 };
