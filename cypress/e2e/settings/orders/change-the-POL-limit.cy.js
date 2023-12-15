@@ -98,10 +98,11 @@ describe('orders: Settings', () => {
     () => {
       SettingsOrders.setPurchaseOrderLinesLimit(2);
       cy.visit(TopMenu.ordersPath);
+      Orders.resetFilters();
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
         'Purchase',
         location.institutionId,
@@ -109,7 +110,7 @@ describe('orders: Settings', () => {
       );
       OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 40);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 2);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(
         'Purchase',
         location.institutionId,

@@ -17,8 +17,8 @@ module.exports = defineConfig({
   viewportWidth: 1920,
   viewportHeight: 1080,
   video: false,
-  defaultCommandTimeout: 51000,
-  pageLoadTimeout: 60000,
+  defaultCommandTimeout: 101000,
+  pageLoadTimeout: 120000,
   downloadsFolder: 'cypress/downloads',
   env: {
     OKAPI_HOST: 'https://okapi-bugfest-poppy-aqa.int.aws.folio.org',

@@ -29,6 +29,8 @@ describe('Inventory -> Contributors Browse', () => {
 
     BrowseContributors.createInstanceWithContributorViaApi(instanceA);
     BrowseContributors.createInstanceWithContributorViaApi(instanceZ);
+    // wait for all instances to be created
+    cy.wait(8000);
 
     cy.getInstanceById(instanceA.id).then((res) => {
       testData.instanceAProps = res;
