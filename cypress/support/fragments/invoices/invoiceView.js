@@ -281,4 +281,8 @@ export default {
         .click(),
     );
   },
+
+  verifyWarningMessage(message) {
+    cy.expect(HTML(including(message)).exists());
+  },
 };
