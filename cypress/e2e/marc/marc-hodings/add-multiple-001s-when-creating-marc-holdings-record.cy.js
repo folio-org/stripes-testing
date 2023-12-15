@@ -11,6 +11,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 
 const testData = {
   marc: 'marcBibFileC387462.mrc',
@@ -25,7 +26,6 @@ let instanceId;
 describe('MARC › MARC Holdings', () => {
   before('Create test data', () => {
     cy.createTempUser([
-      Permissions.inventoryAll.gui,
       Permissions.uiInventoryViewInstances.gui,
       Permissions.uiInventoryViewCreateEditHoldings.gui,
       Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
@@ -80,9 +80,7 @@ describe('MARC › MARC Holdings', () => {
       InventoryInstance.selectTopRecord();
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
-      QuickMarcEditor.addRow(5);
-      QuickMarcEditor.fillAllAvailableValues('$a test', '001', 5);
-      QuickMarcEditor.pressSaveAndClose();
+      MarcAuthority.checkAddNew001Tag(5, '$a test');
     },
   );
 });
