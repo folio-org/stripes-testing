@@ -72,6 +72,16 @@ export default {
     cy.expect(requestInfoSection.find(KeyValue('Request status', { value: status })).exists());
   },
 
+  verifySectionsVisibility() {
+    cy.expect([
+      titleInformationSection.visible(),
+      itemInformationSection.visible(),
+      requestInfoSection.visible(),
+      requesterInfoSection.visible(),
+      staffNotesInfoSection.visible(),
+    ]);
+  },
+
   checkRequestsOnItem: (requests) => {
     cy.expect(
       itemInformationSection.find(KeyValue('Requests on item', { value: requests })).exists(),
@@ -123,6 +133,7 @@ export default {
     InteractorsTools.checkKeyValue(requestInfoSection, 'Position in queue', data.position);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Request level', data.level);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
+    InteractorsTools.checkKeyValue(requestInfoSection, 'Cancellation reason', data.reason);
   },
 
   checkItemBarcode: (barcode) => {
