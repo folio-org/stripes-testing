@@ -256,8 +256,8 @@ const tag008DefaultValues = [
   { interactor: TextField('Indx'), defaultValue: '\\' },
   { interactor: TextField('Fest'), defaultValue: '\\' },
   { interactor: TextField('DtSt'), defaultValue: '\\' },
-  { interactor: TextField('Start date'), defaultValue: '\\\\\\\\' },
-  { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
+  { interactor: TextField('Date 1'), defaultValue: '\\\\\\\\' },
+  { interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
   { interactor: TextField('Ills', { name: including('Ills[0]') }), defaultValue: '\\' },
   { interactor: TextField('Ills', { name: including('Ills[1]') }), defaultValue: '\\' },
   { interactor: TextField('Ills', { name: including('Ills[2]') }), defaultValue: '\\' },
@@ -664,8 +664,20 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
   },
 
-  verifySaveAndCloseButtonEnabled() {
-    cy.expect(saveAndCloseButton.is({ disabled: false }));
+  verifySaveAndCloseButtonEnabled(isEnabled = true) {
+    cy.expect(saveAndCloseButton.is({ disabled: !isEnabled }));
+  },
+
+  verifySaveAndCloseButtonDisabled() {
+    cy.expect(saveAndCloseButton.is({ disabled: true }));
+  },
+
+  verifySaveAndKeepEditingButtonEnabled() {
+    cy.expect(saveAndKeepEditingBtn.is({ disabled: false }));
+  },
+
+  verifySaveAndKeepEditingButtonDisabled() {
+    cy.expect(saveAndKeepEditingBtn.is({ disabled: true }));
   },
 
   deleteFieldWithEnter(rowNumber) {
@@ -1635,6 +1647,14 @@ export default {
     cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
   },
 
+  verifyRecordCanNotBeSavedCalloutLDR() {
+    cy.expect(
+      Callout(
+        'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
+      ).exists(),
+    );
+  },
+
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
   },
@@ -1771,6 +1791,19 @@ export default {
   saveAndKeepEditingUpdatedLinkedBibField() {
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+  },
+
+  verifyUpdateLinkedBibsKeepEditingModal(linkedRecordsNumber) {
+    cy.expect(updateLinkedBibFieldsModal.exists());
+    cy.expect(
+      updateLinkedBibFieldsModal.has({
+        content: including(
+          `${linkedRecordsNumber} bibliographic record is linked to this authority record and will be updated by clicking the Save button.`,
+        ),
+      }),
+    );
+    cy.expect(saveButton.exists());
+    cy.expect(keepEditingButton.exists());
   },
 
   confirmUpdateLinkedBibsKeepEditing(linkedRecordsNumber) {
