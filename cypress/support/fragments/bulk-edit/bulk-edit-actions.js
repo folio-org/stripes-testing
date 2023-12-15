@@ -104,7 +104,7 @@ export default {
     if (isExist) {
       cy.expect(bulkPageSelections.valueType.exists());
     } else {
-      cy.expect(bulkPageSelections.valueType.exists()).absent();
+      cy.expect(bulkPageSelections.valueType.absent());
     }
   },
 
