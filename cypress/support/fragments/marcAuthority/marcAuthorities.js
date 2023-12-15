@@ -743,7 +743,11 @@ export default {
       );
     });
   },
-
+  verifyNoHeadingsUpdatesDataViaAPI(startDate, endDate) {
+    cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
+      cy.expect(updatesData.length).to.be.equal(0);
+    });
+  },
   verifyHeadingsUpdateExistsViaAPI(startDate, endDate, newHeading, matchesCounter = 1) {
     cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
       const selectedUpdate = updatesData.filter((update) => update.headingNew === newHeading);
