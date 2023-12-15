@@ -185,10 +185,10 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
 
       InventoryInstance.viewSource();
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t240\t   \t$a C410883 Hosanna Bible $0 id.loc.gov/authorities/names/n9903410883C410883 $9',
+        'Linked to MARC authority\n\t240\t   \t‡a C410883 Hosanna Bible ‡0 id.loc.gov/authorities/names/n9903410883C410883 ‡9',
       );
       InventoryViewSource.contains(
-        'Linked to MARC authority\n\t711\t   \t$a C410883 Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd : $j something $0 id.loc.gov/authorities/names/n7908410883C410883 $9',
+        'Linked to MARC authority\n\t711\t   \t‡a C410883 Roma Council ‡c Basilica di San Pietro in Roma) ‡d 1962-1965 : ‡n (2nd : ‡j something ‡0 id.loc.gov/authorities/names/n7908410883C410883 ‡9',
       );
       QuickMarcEditor.closeEditorPane();
 

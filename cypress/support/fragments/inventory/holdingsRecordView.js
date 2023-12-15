@@ -83,7 +83,7 @@ export default {
     InventoryViewSource.waitHoldingLoading();
   },
   tryToDelete: () => {
-    cy.do([actionsButton.click(), deleteButton.click()]);
+    cy.do([holdingsRecordViewSection.find(actionsButton).click(), deleteButton.click()]);
     cy.expect(deleteConfirmationModal.exists());
     cy.do(deleteConfirmationModal.find(Button('Cancel')).click());
     cy.expect(deleteConfirmationModal.absent());

@@ -29,8 +29,8 @@ const oclcRecordData = {
   },
 };
 
-describe('inventory', { retries: 3 }, () => {
-  describe('Single record import', () => {
+describe('inventory', () => {
+  describe('Single record import', { retries: 3 }, () => {
     before('create test data', () => {
       cy.getAdminToken().then(() => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi(OCLCAuthentication);

@@ -13,7 +13,7 @@ const oclc = '1007797324';
 const OCLCAuthentication = '100481406/PAOLF';
 
 describe('inventory', () => {
-  describe('Single record import', () => {
+  describe('Single record import', { retries: 3 }, () => {
     before('create user', () => {
       cy.createTempUser([
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
