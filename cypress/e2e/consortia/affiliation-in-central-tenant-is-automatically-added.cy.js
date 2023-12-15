@@ -1,5 +1,5 @@
 import Permissions from '../../support/dictionary/permissions';
-import Affiliations, { TENANT_NAMES } from '../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
 import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
@@ -52,7 +52,7 @@ describe('Users -> Consortia', () => {
           path: TopMenu.usersPath,
           waiter: Users.waitLoading,
         });
-        ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.COLLEGE);
+        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
       });
   });
 
@@ -70,7 +70,7 @@ describe('Users -> Consortia', () => {
       Users.createViaUi(testUser).then((id) => {
         testUser.id = id;
       });
-      ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.CENTRAL);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central);
       UsersSearchPane.searchByUsername(testUser.username);
       Users.verifyUserDetailsPane();
       UsersCard.verifyAffiliationsQuantity('2');

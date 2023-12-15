@@ -1,5 +1,5 @@
 import Permissions from '../../support/dictionary/permissions';
-import Affiliations, { TENANT_NAMES } from '../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
 import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -112,9 +112,9 @@ describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         }).then(() => {
-          ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.COLLEGE);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
           InventoryInstances.waitContentLoading();
-          ConsortiumManager.checkCurrentTenantInTopMenu(TENANT_NAMES.COLLEGE);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
         });
       });
   });
@@ -154,9 +154,9 @@ describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
       QuickMarcEditor.checkAfterSaveAndClose();
       InventoryInstance.checkInstanceTitle(testData.instanceTitle);
 
-      ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.CENTRAL);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.central);
       InventoryInstances.waitContentLoading();
-      ConsortiumManager.checkCurrentTenantInTopMenu(TENANT_NAMES.CENTRAL);
+      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.waitLoading();
       MarcAuthorities.searchByParameter(
@@ -174,9 +174,9 @@ describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
       InventoryViewSource.contains(linkingTagAndValues.authorityHeading);
       InventoryViewSource.contains(testData.sharedBibSourcePaheheaderText);
 
-      ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.UNIVERSITY);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.university);
       InventoryInstances.waitContentLoading();
-      ConsortiumManager.checkCurrentTenantInTopMenu(TENANT_NAMES.UNIVERSITY);
+      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();
       BrowseContributors.select();
@@ -192,7 +192,7 @@ describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
       MarcAuthority.waitLoading();
       MarcAuthority.verifySharedAuthorityDetailsHeading(linkingTagAndValues.authorityHeading);
       MarcAuthority.contains(testData.sharedAuthorityDetailsText);
-      ConsortiumManager.checkCurrentTenantInTopMenu(TENANT_NAMES.UNIVERSITY);
+      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
     },
   );
 });
