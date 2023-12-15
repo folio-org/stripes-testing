@@ -1,5 +1,5 @@
 import Permissions from '../../support/dictionary/permissions';
-import Affiliations, { TENANT_NAMES } from '../../support/dictionary/affiliations';
+import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
 import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -105,7 +105,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () =>
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      ConsortiumManager.switchActiveAffiliation(TENANT_NAMES.COLLEGE);
+      ConsortiumManager.switchActiveAffiliation(tenantNames.college);
       InventoryInstance.searchByTitle(testData.fieldContents.tag245Content);
       InventoryInstances.selectInstance();
       InventoryInstance.verifySharedIcon();
