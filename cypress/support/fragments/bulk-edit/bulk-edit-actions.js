@@ -108,14 +108,6 @@ export default {
     }
   },
 
-  verifyActionDropdown(isExist = true) {
-    if (isExist) {
-      cy.expect(bulkPageSelections.action.exists());
-    } else {
-      cy.expect(bulkPageSelections.action.absent());
-    }
-  },
-
   verifySearchSectionClosed() {
     cy.expect(locationSelection.has({ open: false }));
   },
@@ -690,10 +682,6 @@ export default {
   },
   isCommitButtonDisabled(isDisabled) {
     cy.expect(commitChanges.has({ disabled: isDisabled }));
-  },
-
-  isConfirmChangesButtonDisabled(isDisabled) {
-    cy.expect(confirmChangesButton.has({ disabled: isDisabled }));
   },
 
   confirmChanges() {

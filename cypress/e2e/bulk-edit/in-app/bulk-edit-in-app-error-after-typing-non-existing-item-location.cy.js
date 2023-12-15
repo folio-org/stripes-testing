@@ -14,8 +14,8 @@ const item = {
 };
 const itemBarcodesFileName = `itemBarcodes_${getRandomPostfix()}.csv`;
 
-describe('Bulk Edits', () => {
-  describe('Bulk Edit - Items', () => {
+describe('bulk-edit', () => {
+  describe('in-app approach', () => {
     before('Create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditView.gui,
@@ -54,7 +54,7 @@ describe('Bulk Edits', () => {
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyModifyLandingPageBeforeModifying();
         BulkEditActions.verifyOptionsDropdown();
-        BulkEditActions.verifyActionDropdown(false);
+        BulkEditActions.isSelectActionAbsent();
 
         BulkEditActions.selectOption('Temporary item location');
         BulkEditSearchPane.verifyInputLabel('Temporary item location');
@@ -66,7 +66,7 @@ describe('Bulk Edits', () => {
         BulkEditActions.fillLocation(newLocation);
         BulkEditActions.verifySearchSectionClosed();
         BulkEditActions.verifyLocationValue('Select location');
-        BulkEditActions.isConfirmChangesButtonDisabled(true);
+        BulkEditSearchPane.isConfirmButtonDisabled(true);
       },
     );
   });
