@@ -869,30 +869,6 @@ export default {
     });
   },
 
-  verifyItemOptions(rowIndex = 0) {
-    const options = [
-      'Administrative note',
-      'Check in note',
-      'Check out note',
-      'Action note',
-      'Binding',
-      'Copy note',
-      'Electronic bookplate',
-      'Note',
-      'Provenance',
-      'Reproduction',
-      'Item status',
-      'Permanent loan type',
-      'Temporary loan type',
-      'Permanent item location',
-      'Temporary item location',
-      'Suppress from discovery',
-    ];
-
-    cy.do(RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).click());
-    this.verifyPossibleActions(options);
-  },
-
   verifyHoldingsOptions() {
     cy.expect([
       Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
@@ -949,6 +925,49 @@ export default {
       // need to wait until value will be applied
       cy.wait(1000),
       Keyboard.enter(),
+    ]);
+  },
+
+  verifyItemOptions() {
+    cy.expect([
+      Option({ value: 'ADMINISTRATIVE_NOTE' }).exists(),
+      Option({ value: 'CHECK_IN_NOTE' }).exists(),
+      Option({ value: 'CHECK_OUT_NOTE' }).exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Action note' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Binding' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Copy note' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Electronic bookplate' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Note' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Provenance' }))
+        .exists(),
+      OptionGroup('Item notes')
+        .find(Option({ text: 'Reproduction' }))
+        .exists(),
+      Option({ value: 'STATUS' }).exists(),
+      OptionGroup('Loan type')
+        .find(Option({ value: 'PERMANENT_LOAN_TYPE' }))
+        .exists(),
+      OptionGroup('Loan type')
+        .find(Option({ value: 'TEMPORARY_LOAN_TYPE' }))
+        .exists(),
+      OptionGroup('Location')
+        .find(Option({ value: 'TEMPORARY_LOCATION' }))
+        .exists(),
+      OptionGroup('Location')
+        .find(Option({ value: 'TEMPORARY_LOCATION' }))
+        .exists(),
+      Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
     ]);
   },
 };
