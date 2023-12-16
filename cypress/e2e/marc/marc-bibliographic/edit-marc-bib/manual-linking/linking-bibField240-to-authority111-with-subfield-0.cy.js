@@ -4,24 +4,30 @@ import JobProfiles from '../../../../../support/fragments/data_import/job_profil
 import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-// import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
-// import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
-// import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
-// import Users from '../../../../../support/fragments/users/users';
+import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
 describe('Manual Linking Bib field to Authority 1XX', () => {
   const testData = {
     createdRecordIDs: [],
     tag100: '111',
     tag240: '240',
-    // newTag240Content: '$a C374111 Testing $g European Economic Community, $d 1977 Jan. 18',
-    // authority110FieldValue: 'C374111 Egypt.',
-    // authorityIconText: 'Linked to MARC authority',
-    // calloutMessage:
-    //   'This record has successfully saved and is in process. Changes may not appear immediately.',
-    // accordion: 'Title data',
+    tag240content: '$a C380746 Conf on Security & Cooperation in Europe $c H. Finland $0 n88606074',
+    filterStateTag111: [
+      'advancedSearch',
+      'keyword==C380746 Conf on Security & Cooperation in Europe or identifiers.value==n88606074',
+    ],
+    markedValue: 'C380746 Conference on Security and Cooperation in Europe',
+    authority010FieldValue: 'n  88606074',
+    authority111FieldValue: 'C380746 Conference on Security and Cooperation in Europe',
+    authorityIconText: 'Linked to MARC authority',
+    calloutMessage:
+      'This record has successfully saved and is in process. Changes may not appear immediately.',
   };
 
   const marcFiles = [
@@ -30,8 +36,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       fileName: `C380746 testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       numOfRecords: 1,
-      // instanceAlternativeTitle:
-      //   'Treaties, etc. Israel, 1978 September 17 (Framework for Peace in the Middle East)',
+      instanceAlternativeTitle: 'Final Act (1972-1975 : English',
     },
     {
       marc: 'marcAuthFileC380746.mrc',
@@ -40,25 +45,37 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       numOfRecords: 1,
     },
   ];
-  // const bib240AfterLinkingToAuth110 = [
-  //   11,
-  //   testData.tag240,
-  //   '1',
-  //   '0',
-  //   '$a Treaties, etc. $g Israel, $d 1978 September 17 (Framework for Peace in the Middle East)',
-  //   '',
-  //   '$0 id.loc.gov/authorities/names/n91006627',
-  //   '',
-  // ];
-  // const bib240AfterUninkingToAuth110 = [
-  //   11,
-  //   testData.tag240,
-  //   '1',
-  //   '0',
-  //   '$a Treaties, etc. $g Israel, $d 1978 September 17 (Framework for Peace in the Middle East) $0 id.loc.gov/authorities/names/n91006627',
-  // ];
+  const bib240AfterLinkingToAuth111 = [
+    12,
+    testData.tag240,
+    '1',
+    '\\',
+    '$a Final Act $d (1972-1975 : $l English',
+    '$c H. Finland',
+    '$0 id.loc.gov/authorities/names/n88606074',
+    '',
+  ];
+  const bib240AfterUninkingToAuth111 = [
+    12,
+    testData.tag240,
+    '1',
+    '\\',
+    '$a Final Act $d (1972-1975 : $l English $c H. Finland $0 id.loc.gov/authorities/names/n88606074',
+  ];
 
-  before('Creating user', () => {
+  before('Creating test data', () => {
+    // make sure there are no duplicate authority records in the system
+    cy.getAdminToken();
+    MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C380746"' }).then(
+      (records) => {
+        records.forEach((record) => {
+          if (record.authRefType === 'Authorized') {
+            MarcAuthority.deleteViaAPI(record.id);
+          }
+        });
+      },
+    );
+
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -87,22 +104,20 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
         );
       });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
+      cy.login(testData.user.username, testData.user.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
     });
   });
 
-  // after('Deleting created user', () => {
-  //   cy.getAdminToken().then(() => {
-  //     Users.deleteViaApi(testData.userProperties.userId);
-  //     InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
-  //     createdAuthorityIDs.forEach((id, index) => {
-  //       if (index) MarcAuthority.deleteViaAPI(id);
-  //     });
-  //   });
-  // });
+  after('Deleting test data', () => {
+    cy.getAdminToken().then(() => {
+      Users.deleteViaApi(testData.user.userId);
+      MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
+      InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+    });
+  });
 
   it(
     'C380746 Link the "240" of "MARC Bib" field (having $0 without base URL) with "111" field of "MARC Authority" record. (spitfire) (TaaS)',
@@ -111,6 +126,35 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.clickLinkIconInTagField(12);
+      InventoryInstance.verifySelectMarcAuthorityModal();
+      MarcAuthoritiesSearch.verifyFiltersState(
+        testData.filterStateTag111[0],
+        testData.filterStateTag111[1],
+        'Search',
+      );
+      MarcAuthority.contains(testData.authority010FieldValue);
+      MarcAuthority.contains(testData.authority111FieldValue);
+      InventoryInstance.clickLinkButton();
+      QuickMarcEditor.verifyAfterLinkingAuthority(testData.tag240);
+      QuickMarcEditor.verifyTagFieldAfterLinking(...bib240AfterLinkingToAuth111);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.waitInventoryLoading();
+      InventoryInstance.verifyAlternativeTitle(
+        0,
+        1,
+        `${testData.authorityIconText}${marcFiles[0].instanceAlternativeTitle}`,
+      );
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.checkFieldsExist([testData.tag240]);
+      QuickMarcEditor.clickUnlinkIconInTagField(12);
+      QuickMarcEditor.confirmUnlinkingField();
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(...bib240AfterUninkingToAuth111);
+      QuickMarcEditor.verifyIconsAfterUnlinking(12);
+      QuickMarcEditor.pressSaveAndKeepEditing(testData.calloutMessage);
+      // need to wait until the instance will be updated
+      cy.wait(1500);
     },
   );
 });
