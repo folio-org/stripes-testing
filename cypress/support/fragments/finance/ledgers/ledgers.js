@@ -1268,10 +1268,9 @@ export default {
 
   searchByName: (name) => {
     cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
-    cy.wait(4000);
   },
 
-  ledgerLinkExists: (name) => {
+  verifyLedgerLinkExists: (name) => {
     cy.expect(ledgerResultsPaneSection.find(Link(name)).exists());
   },
 };

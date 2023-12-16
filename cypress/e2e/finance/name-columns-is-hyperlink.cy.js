@@ -1,4 +1,4 @@
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Funds from '../../support/fragments/finance/funds/funds';
@@ -35,10 +35,10 @@ describe('Finance', () => {
     });
 
     cy.createTempUser([
-      permissions.uiFinanceViewFiscalYear.gui,
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiFinanceViewGroups.gui,
-      permissions.uiFinanceViewLedger.gui,
+      Permissions.uiFinanceViewFiscalYear.gui,
+      Permissions.uiFinanceViewFundAndBudget.gui,
+      Permissions.uiFinanceViewGroups.gui,
+      Permissions.uiFinanceViewLedger.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
@@ -73,7 +73,7 @@ describe('Finance', () => {
       Ledgers.waitLoading();
 
       Ledgers.searchByName(defaultLedger.name);
-      Ledgers.ledgerLinkExists(defaultLedger.name);
+      Ledgers.verifyLedgerLinkExists(defaultLedger.name);
 
       const LedgerDetails = Ledgers.selectLedger(defaultLedger.name);
       LedgerDetails.verifyLedgerName(defaultLedger.name);
@@ -84,14 +84,14 @@ describe('Finance', () => {
       Groups.searchByName(defaultGroup.name);
       Groups.checkCreatedInList(defaultGroup.name);
 
-      const GroupDetails = Groups.selectGroupWithDetails(defaultGroup.name);
+      const GroupDetails = Groups.selectGroupByName(defaultGroup.name);
       GroupDetails.verifyGroupName(defaultGroup.name);
 
-      FinanceHelp.clickFunButton();
+      FinanceHelp.clickFundButton();
       Funds.waitLoading();
 
       Funds.searchByName(defaultFund.name);
-      Funds.verifyFunLikNameExists(defaultFund.name);
+      Funds.verifyFundLinkNameExists(defaultFund.name);
 
       const FundDetails = Funds.selectFund(defaultFund.name);
       FundDetails.verifyGroupName(defaultFund.name);

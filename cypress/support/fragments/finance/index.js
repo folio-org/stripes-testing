@@ -12,3 +12,4 @@ export { default as Transactions } from './transactions/transactions';
 export { default as TransactionDetails } from './transactions/transactionDetails';
 export { default as Transfers } from './transfer/transfers';
 export { default as FinanceHelper } from './financeHelper';
+export { default as GroupDetails } from './groups/groupDetails';

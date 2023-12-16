@@ -14,9 +14,7 @@ const chooseAFilterMessage = 'Choose a filter or enter a search query to show re
 const fiscalResultsList = PaneContent({ id: 'fiscal-year-results-pane-content' });
 const ledgerResultList = PaneContent({ id: 'ledger-results-pane-content' });
 const FundResultList = PaneContent({ id: 'fund-results-pane-content' });
-const FiscalYearResultList = PaneContent({ id: 'fiscal-year-results-pane-content' });
-const ledgerFiltersPane = Pane({ id: 'ledger-filters-pane' });
-const ledgerResultsPane = Pane({ id: 'ledger-results-pane' });
+const fiscalFiltersPane = Pane({ id: 'fiscal-year-filters-pane-content' });
 const fiscalYearButton = '[data-test-finance-navigation-fiscalyear="true"]';
 const ledgerButton = '[data-test-finance-navigation-ledger="true"]';
 const groupButton = '[data-test-finance-navigation-group="true"]';
@@ -72,7 +70,7 @@ export default {
     cy.do(FundResultList.find(Link(name)).click());
   },
   selectFirstFiscalRecord: (name) => {
-    cy.do(FiscalYearResultList.find(Link(name)).click());
+    cy.do(fiscalResultsList.find(Link(name)).click());
   },
 
   checkZeroSearchResultsMessage: () => {
@@ -100,7 +98,7 @@ export default {
   },
 
   waitLoading() {
-    cy.expect([ledgerFiltersPane.exists(), ledgerResultsPane.exists()]);
+    cy.expect([fiscalFiltersPane.exists(), fiscalResultsList.exists()]);
   },
 
   clickFiscalYearButton() {
@@ -115,7 +113,7 @@ export default {
     cy.get(groupButton).click();
   },
 
-  clickFunButton() {
+  clickFundButton() {
     cy.get(fundButton).click();
   },
 };

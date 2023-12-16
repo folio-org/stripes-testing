@@ -984,7 +984,7 @@ export default {
     cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
   },
 
-  verifyFunLikNameExists: (FundName) => {
+  verifyFundLinkNameExists: (FundName) => {
     cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
   },
 };

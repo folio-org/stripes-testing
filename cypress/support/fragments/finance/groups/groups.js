@@ -182,7 +182,7 @@ export default {
     cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
   },
 
-  selectGroupWithDetails: (GroupName) => {
+  selectGroupByName: (GroupName) => {
     cy.do(Section({ id: 'group-results-pane' }).find(Link(GroupName)).click());
     GroupDetails.waitLoading();
 
