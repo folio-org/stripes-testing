@@ -1,4 +1,4 @@
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import getRandomPostfix from '../../support/utils/stringTools';
 import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
@@ -59,8 +59,8 @@ describe('Orders', () => {
       });
 
       cy.createTempUser([
-        permissions.uiOrdersApprovePurchaseOrders.gui,
-        permissions.uiOrdersEdit.gui,
+        Permissions.uiOrdersApprovePurchaseOrders.gui,
+        Permissions.uiOrdersEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
