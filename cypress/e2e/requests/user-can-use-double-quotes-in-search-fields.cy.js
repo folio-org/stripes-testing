@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -50,7 +50,7 @@ describe('Requests', () => {
   };
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
-  beforeEach(() => {
+  before('Create test data', () => {
     instancesData.forEach((item, index) => {
       item.barcode = generateUniqueItemBarcodeWithShift(index);
     });
@@ -119,8 +119,7 @@ describe('Requests', () => {
     });
     ServicePoints.createViaApi(servicePoint);
 
-    cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then((userProperties) => {
-      cy.log(JSON.stringify(userProperties));
+    cy.createTempUser([Permissions.uiRequestsAll.gui], patronGroup.name).then((userProperties) => {
       userData = userProperties;
       UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
       instancesData.forEach((instance) => {
@@ -146,7 +145,7 @@ describe('Requests', () => {
     });
   });
 
-  afterEach(() => {
+  after('Delete test data', () => {
     cy.getAdminToken();
     cy.wrap(requestIds).each((id) => {
       Requests.deleteRequestViaApi(id);
