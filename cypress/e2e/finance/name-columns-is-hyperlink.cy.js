@@ -43,7 +43,7 @@ describe('Finance', () => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.financePath,
-        waiter: FinanceHelp.waitLoading,
+        waiter: Ledgers.waitLoading,
       });
     });
   });

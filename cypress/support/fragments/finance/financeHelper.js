@@ -6,6 +6,7 @@ import {
   SearchField,
   PaneContent,
   Pane,
+  including,
 } from '../../../../interactors';
 
 const searchField = SearchField({ id: 'input-record-search' });
@@ -14,11 +15,11 @@ const chooseAFilterMessage = 'Choose a filter or enter a search query to show re
 const fiscalResultsList = PaneContent({ id: 'fiscal-year-results-pane-content' });
 const ledgerResultList = PaneContent({ id: 'ledger-results-pane-content' });
 const FundResultList = PaneContent({ id: 'fund-results-pane-content' });
-const fiscalFiltersPane = Pane({ id: 'fiscal-year-filters-pane-content' });
-const fiscalYearButton = '[data-test-finance-navigation-fiscalyear="true"]';
-const ledgerButton = '[data-test-finance-navigation-ledger="true"]';
-const groupButton = '[data-test-finance-navigation-group="true"]';
-const fundButton = '[data-test-finance-navigation-fund="true"]';
+const filtersPane = Pane({ id: including('filters-pane') });
+const fiscalYearButton = filtersPane.find(Button('Fiscal year'));
+const ledgerButton = filtersPane.find(Button('Ledger'));
+const groupButton = filtersPane.find(Button('Group'));
+const fundButton = filtersPane.find(Button('Fund'));
 
 export default {
   statusActive: 'Active',
@@ -97,23 +98,19 @@ export default {
     return Math.floor(100000000 + Math.random() * 900000).toString();
   },
 
-  waitLoading() {
-    cy.expect([fiscalFiltersPane.exists(), fiscalResultsList.exists()]);
-  },
-
   clickFiscalYearButton() {
-    cy.get(fiscalYearButton).click();
+    cy.do(fiscalYearButton.click());
   },
 
   clickLedgerButton() {
-    cy.get(ledgerButton).click();
+    cy.do(ledgerButton.click());
   },
 
   clickGroupButton() {
-    cy.get(groupButton).click();
+    cy.do(groupButton.click());
   },
 
   clickFundButton() {
-    cy.get(fundButton).click();
+    cy.do(fundButton.click());
   },
 };
