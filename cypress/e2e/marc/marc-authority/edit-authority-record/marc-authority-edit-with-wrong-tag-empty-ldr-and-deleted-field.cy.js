@@ -18,10 +18,10 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
     tag380RowIndex: 7,
     ldr: {
       tag: 'LDR',
-      ldrValue23Symbols: '01918cz\\\\a2200325n\\\\450',
-      ldrValue24Symbols: '01918cz\\\\a2200325n\\\\4500',
+      ldrValue23Symbols: '01919cz\\\\a2200325n\\\\450',
+      ldrValue24Symbols: '01919cz\\\\a2200325n\\\\4500',
     },
-    searchInput: 'C375167 Beethoven, Ludwig van, 1770-1827. 14 variations sur un thème original',
+    searchInput: 'C375167 Beethoveen, Ludwig van, 1770-1827. 14 variations sur un thème original',
     searchOption: 'Keyword',
     calloutLDRMessage:
       'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
@@ -43,20 +43,17 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
       path: TopMenu.dataImportPath,
       waiter: DataImport.waitLoading,
     }).then(() => {
-      marcFiles.forEach((marcFile) => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileName);
-        Logs.getCreatedItemsID().then((link) => {
-          createdAuthorityIDs.push(link.split('/')[5]);
-        });
+      DataImport.verifyUploadState();
+      DataImport.uploadFileAndRetry(marcFiles[0].marc, marcFiles[0].fileName);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.waitLoadingList();
+      JobProfiles.search(marcFiles[0].jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFiles[0].fileName);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(marcFiles[0].fileName);
+      Logs.getCreatedItemsID().then((link) => {
+        createdAuthorityIDs.push(link.split('/')[5]);
       });
     });
 
