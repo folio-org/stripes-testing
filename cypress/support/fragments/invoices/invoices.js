@@ -749,6 +749,15 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceApprovedMessage);
   },
 
+  canNotApproveInvoice: (errorMessage) => {
+    cy.do([
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
+      Button('Approve').click(),
+      submitButton.click(),
+    ]);
+    InteractorsTools.checkCalloutErrorMessage(errorMessage);
+  },
+
   searchByNumber: (invoiceNumber) => {
     cy.do([
       SearchField({ id: searchInputId }).selectIndex('Vendor invoice number'),
