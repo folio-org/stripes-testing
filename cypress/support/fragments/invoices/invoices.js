@@ -1004,6 +1004,30 @@ export default {
     cy.do(saveAndClose.click());
   },
 
+  addAdjustmentToInvoiceLine: (
+    descriptionInput,
+    valueInput,
+    percentOrDollar,
+    realtioToTotal,
+    exportToAccounting = false,
+  ) => {
+    cy.do([
+      Button({ id: 'adjustments-add-button' }).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+    ]);
+    if (percentOrDollar === '$') {
+      cy.do(Section({ id: 'invoiceLineForm-adjustments' }).find(Button('$')).click());
+    } else if (percentOrDollar === '%') {
+      cy.do(Section({ id: 'invoiceLineForm-adjustments' }).find(Button('%')).click());
+    }
+    cy.do([Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal)]);
+    if (exportToAccounting === true) {
+      cy.do(Checkbox({ name: 'adjustments[0].exportToAccounting' }).click());
+    }
+    cy.do(saveAndClose.click());
+  },
+
   selectStatusFilter: (status) => {
     cy.do([
       invoiceFiltersSection
