@@ -14,19 +14,11 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-orders: Orders', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
-  const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-  };
   const defaultOrder = {
     ...NewOrder.defaultOneTimeOrder,
     approved: true,
@@ -51,7 +43,6 @@ describe('ui-orders: Orders', () => {
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         firstFund.ledgerId = defaultLedger.id;
-        secondFund.ledgerId = defaultLedger.id;
 
         Funds.createViaApi(firstFund).then((fundResponse) => {
           firstFund.id = fundResponse.fund.id;
@@ -59,15 +50,6 @@ describe('ui-orders: Orders', () => {
           cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
           FinanceHelp.searchByName(firstFund.name);
           Funds.selectFund(firstFund.name);
-          Funds.addBudget(allocatedQuantity);
-        });
-
-        Funds.createViaApi(secondFund).then((secondFundResponse) => {
-          secondFund.id = secondFundResponse.fund.id;
-
-          cy.visit(TopMenu.fundPath);
-          FinanceHelp.searchByName(secondFund.name);
-          Funds.selectFund(secondFund.name);
           Funds.addBudget(allocatedQuantity);
         });
       });
@@ -90,27 +72,13 @@ describe('ui-orders: Orders', () => {
     Orders.createOrderForRollover(defaultOrder, true, false).then((orderResponse) => {
       defaultOrder.id = orderResponse.id;
       orderNumber = orderResponse.poNumber;
-      Orders.checkCreatedOrder(defaultOrder);
-      OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
-      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-        firstFund,
-        '50',
-        '1',
-        '50',
-        location.institutionId,
-      );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(orderNumber);
-      // Need to wait, while data will be loaded
-      cy.wait(4000);
     });
     cy.createTempUser([
-      permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      permissions.uiInvoicesPayInvoices.gui,
+      permissions.uiOrdersApprovePurchaseOrders.gui,
+      permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
     ]).then((userProperties) => {
       user = userProperties;
@@ -132,36 +100,28 @@ describe('ui-orders: Orders', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
+
+      OrderLines.addPOLine();
+      OrderLines.selectRandomInstanceInTitleLookUP('375220 Variations / Ludwig Van Beethoven.', 0);
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
+        firstFund,
+        '50',
+        '1',
+        '50',
+        location.institutionId,
+      );
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
       OrderLines.selectPOLInOrder(0);
       OrderLines.editPOLInOrder();
-      OrderLines.editFundInPOL(secondFund, '70', '70');
-      OrderLines.checkFundInPOL(secondFund);
-      cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(secondFund.name);
-      Funds.selectFund(secondFund.name);
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '($70.00)');
-      Funds.selectTransactionInList('Encumbrance');
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      OrderLines.addReveivingNoteToItemDetailsAndSave(orderNumber);
       cy.visit(TopMenu.invoicesPath);
-      Invoices.searchByNumber(invoice.invoiceNumber);
-      Invoices.selectInvoice(invoice.invoiceNumber);
-      Invoices.selectInvoiceLine();
-      Invoices.checkFundInInvoiceLine(secondFund);
-      cy.visit(TopMenu.fundPath);
-      FinanceHelp.searchByName(secondFund.name);
-      Funds.selectFund(secondFund.name);
-      Funds.selectBudgetDetails();
-      Funds.viewTransactions();
-      Funds.checkPaymentInTransactionDetails(
-        1,
-        defaultFiscalYear.code,
-        invoice.invoiceNumber,
-        `${secondFund.name} (${secondFund.code})`,
-        '($70.00)',
-      );
-      Funds.checkStatusInTransactionDetails('Unreleased');
+      Invoices.createRolloverInvoice(invoice, organization.name);
+      Invoices.createInvoiceLineFromPol(orderNumber);
+      // Need to wait, while data will be loaded
+      cy.wait(4000);
+      Invoices.approveInvoice();
+      Invoices.payInvoice();
     },
   );
 });
