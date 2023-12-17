@@ -839,4 +839,12 @@ export default {
       Button('Cancel').click(),
     ]);
   },
+
+  selectInvoiceInRelatedInvoices: (invoiceNumber) => {
+    cy.get(`div[class*=mclCell-]:contains("${invoiceNumber}")`)
+      .siblings('div[class*=mclCell-]')
+      .eq(0)
+      .find('a')
+      .click();
+  },
 };
