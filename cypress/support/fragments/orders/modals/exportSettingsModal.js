@@ -62,6 +62,13 @@ export default {
       MultiSelectMenu().find(MultiSelectOption(option)).click(),
     ]);
   },
+  selectOrderLineFieldsToExport(option) {
+    cy.do([
+      selectedOrderLineFieldsRadioButton.click(),
+      MultiSelect({ ariaLabelledby: 'selected-pol-fields' }).toggle(),
+      MultiSelectMenu().find(MultiSelectOption(option)).click(),
+    ]);
+  },
   clickCancelButton() {
     cy.do(cancelButton.click());
     cy.expect(exportSettingsModal.absent());

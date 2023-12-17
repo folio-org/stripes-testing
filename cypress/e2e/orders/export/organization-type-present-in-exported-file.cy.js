@@ -86,7 +86,7 @@ describe('Orders', () => {
         // Open downloaded file, Check "Organization type" results are present
         FileManager.convertCsvToJson(testData.fileName).then((data) => {
           data.forEach((order) => {
-            cy.expect(order['"Organizationtype"']).to.equal(testData.organizationTypesNames);
+            cy.expect(order['Organization type']).to.equal(testData.organizationTypesNames);
           });
         });
 
@@ -102,7 +102,7 @@ describe('Orders', () => {
         // Open downloaded file, Check "Organization type" results are present
         FileManager.convertCsvToJson(testData.fileName).then((data) => {
           data.forEach((order) => {
-            cy.expect(order['"Organizationtype"']).to.equal(testData.organizationTypesNames);
+            cy.expect(order['Organization type']).to.equal(testData.organizationTypesNames);
           });
         });
       },
