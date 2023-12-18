@@ -58,6 +58,8 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Automated linking', (
       tag830: '830',
       content: '$a Value830',
     },
+    successCalloutMessage: 'Field 240 and 650 has been linked to MARC authority record(s).',
+    errorCalloutMessage: 'Field 600 and 711 must be set manually by selecting the link icon.',
   };
 
   const linkableFields = [240, 600, 650, 711, 830];
@@ -105,6 +107,18 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Automated linking', (
   before('Create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken().then(() => {
+      // make sure there are no duplicate authority records in the system
+      cy.getAdminToken().then(() => {
+        MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C388638"' }).then(
+          (records) => {
+            records.forEach((record) => {
+              if (record.authRefType === 'Authorized') {
+                MarcAuthority.deleteViaAPI(record.id);
+              }
+            });
+          },
+        );
+      });
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
@@ -183,12 +197,8 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Automated linking', (
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.field650.rowIndex);
       QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(testData.field130.rowIndex);
       QuickMarcEditor.verifyTagFieldAfterLinking(...testData.tag130content);
-      QuickMarcEditor.checkCallout(
-        'Field 240 and 650 has been linked to MARC authority record(s).',
-      );
-      QuickMarcEditor.checkCallout(
-        'Field 600 and 711 must be set manually by selecting the link icon.',
-      );
+      QuickMarcEditor.checkCallout(testData.successCalloutMessage);
+      QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
       QuickMarcEditor.closeCallout();
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       QuickMarcEditor.pressSaveAndClose();
