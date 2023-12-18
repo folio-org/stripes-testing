@@ -32,6 +32,8 @@ const polListingAccordion = Section({ id: 'POListing' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
 
+const invoicesList = MultiColumnList({ id: 'orderInvoices' });
+
 const openPolDetails = (title) => {
   cy.do(polListingAccordion.find(MultiColumnListCell({ content: title })).click());
 
@@ -231,5 +233,11 @@ export default {
           .has({ rowCount: ordersCount }),
       );
     }
+  },
+  verifyAccordionExists(name) {
+    cy.expect(Accordion({ label: including(name) }).exists());
+  },
+  openInvoice(number) {
+    cy.do(invoicesList.find(Link({ href: including(`${number}`) })).click());
   },
 };

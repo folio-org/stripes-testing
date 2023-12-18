@@ -7,3 +7,5 @@ export { default as OrderLineEditForm } from './orderLineEditForm';
 export { default as OrderLines } from './orderLines';
 export { default as Orders } from './orders';
 export { default as OrderHerlper } from './ordersHelper';
+export { default as CheckIn } from './check-in/checkIn';
+export { default as Pieces } from './pieces/pieces';
