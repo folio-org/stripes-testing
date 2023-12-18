@@ -841,11 +841,15 @@ export default {
     ]);
   },
 
+  selectInvoiceInRelatedInvoices: (invoiceNumber) => {
+    cy.get(`div[class*=mclCell-]:contains("${invoiceNumber}")`)
+      .siblings('div[class*=mclCell-]')
+      .eq(0)
+      .find('a')
+      .click();
+  },
+
   verifyActiveBtnOrdersFilters: (btnName) => {
-    cy.expect(
-      ordersPane
-        .find(HTML(including(btnName, { class: including('primary') })))
-        .exists(),
-    );
+    cy.expect(ordersPane.find(HTML(including(btnName, { class: including('primary') }))).exists());
   },
 };
