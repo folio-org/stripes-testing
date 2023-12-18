@@ -23,6 +23,43 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     createdRecordIDs: [],
     errorCalloutMessage: 'Field 700 must be set manually by selecting the link icon.',
     successCalloutMessage: 'Field 700 has been linked to MARC authority record(s).',
+    bib130AfterLinkingToAuth100: [
+      17,
+      '130',
+      '0',
+      '\\',
+      '$a C388561 Runaway Bride (Motion picture)',
+      '',
+      '$0 id.loc.gov/authorities/names/n2002076264',
+      '$0 n91074080',
+    ],
+    bib700AfterLinkingToAuth100: [
+      56,
+      '700',
+      '1',
+      '\\',
+      '$a C388561 Roberts, Julia, $d 1967-',
+      '$e Actor.',
+      '$0 id.loc.gov/authorities/names/n91074080',
+      '',
+    ],
+    bib700_1AfterLinkingToAuth100: [
+      57,
+      '700',
+      '1',
+      '\\',
+      '$a C388561 Gere, Richard, $d 1949-',
+      '$e Actor.',
+      '$0 id.loc.gov/authorities/names/n86041334',
+      '',
+    ],
+    bib700AfterUnlinking: [
+      57,
+      '700',
+      '1',
+      '\\',
+      '$a C388561 Gere, Richard, $d 1949- $e Actor. $0 id.loc.gov/authorities/names/n86041334',
+    ],
   };
 
   const marcFiles = [
@@ -152,39 +189,18 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.checkContent(testData.ta337content, 22);
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
       QuickMarcEditor.fillLinkedFieldBox(17, 7, testData.tag130seventhBoxContent);
-      QuickMarcEditor.verifyTagFieldAfterLinking(
-        17,
-        '130',
-        '0',
-        '\\',
-        '$a C388561 Runaway Bride (Motion picture)',
-        '',
-        '$0 id.loc.gov/authorities/names/n2002076264',
-        '$0 n91074080',
-      );
+      QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib130AfterLinkingToAuth100);
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
 
       QuickMarcEditor.clickUnlinkIconInTagField(57);
       QuickMarcEditor.confirmUnlinkingField();
-      QuickMarcEditor.checkContent(
-        '$a C388561 Gere, Richard, $d 1949- $e Actor. $0 id.loc.gov/authorities/names/n86041334',
-        57,
-      );
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib700AfterUnlinking);
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
 
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout(testData.successCalloutMessage);
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-      QuickMarcEditor.verifyTagFieldAfterLinking(
-        57,
-        '700',
-        '1',
-        '\\',
-        '$a C388561 Gere, Richard, $d 1949-',
-        '$e Actor.',
-        '$0 id.loc.gov/authorities/names/n86041334',
-        '',
-      );
+      QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib700_1AfterLinkingToAuth100);
 
       QuickMarcEditor.updateExistingFieldContent(56, testData.tag700content);
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
@@ -207,16 +223,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       QuickMarcEditor.clickLinkHeadingsButton();
       QuickMarcEditor.checkCallout(testData.successCalloutMessage);
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-      QuickMarcEditor.verifyTagFieldAfterLinking(
-        56,
-        '700',
-        '1',
-        '\\',
-        '$a C388561 Roberts, Julia, $d 1967-',
-        '$e Actor.',
-        '$0 id.loc.gov/authorities/names/n91074080',
-        '',
-      );
+      QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib700AfterLinkingToAuth100);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.verifyAfterDerivedMarcBibSave();
       cy.wait(3000);
