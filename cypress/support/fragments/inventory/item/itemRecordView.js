@@ -10,6 +10,7 @@ import {
   PaneHeader,
   Link,
   MultiColumnListCell,
+  Modal,
 } from '../../../../../interactors';
 import ItemRecordEdit from './itemRecordEdit';
 import dateTools from '../../../utils/dateTools';
@@ -130,6 +131,14 @@ export default {
 
   openRequest() {
     cy.do(loanAccordion.find(Link({ href: including('/requests?filters=requestStatus') })).click());
+  },
+
+  deleteItem() {
+    cy.do([
+      actionsButton.click(),
+      Button('Delete').click(),
+      Modal({ id: 'confirmDeleteItemModal' }).find(Button('Delete')).click(),
+    ]);
   },
 
   openBorrowerPage() {

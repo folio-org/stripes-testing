@@ -42,6 +42,7 @@ const cancelButton = Button({ id: 'expirationDate-modal-cancel-btn' });
 const keepEditingButton = Button({ id: 'clickable-cancel-editing-confirmation-confirm' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const areYouSureModal = Modal('Are you sure?');
+const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
 
 export default {
   errors,
@@ -420,5 +421,9 @@ export default {
 
   openNoteForEdit(noteTitle) {
     cy.do(MultiColumnListCell(including(noteTitle)).find(Button('Edit')).click());
+  },
+
+  selectFeeFines(feeFines) {
+    cy.do([listFeesFines.find(MultiColumnListCell(including(feeFines))).click()]);
   },
 };
