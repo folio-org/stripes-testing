@@ -266,7 +266,7 @@ describe('Title Level Request. Request Detail', () => {
   );
 
   it(
-    'C350414 Check that user can see "Requests" columns (vega)',
+    'C350414 Check that user can see "Requests" columns (vega) (TaaS)',
     { tags: ['extended', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
