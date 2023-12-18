@@ -18,10 +18,10 @@ const previewFileName = `*-Updates-Preview-${userBarcodesFileName}`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui,
-      ], 'staff').then((userProperties) => {
+      cy.createTempUser(
+        [permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui],
+        'staff',
+      ).then((userProperties) => {
         user = userProperties;
         cy.getUsers({ limit: 1, query: `username=${user.username}` }).then((users) => {
           cy.updateUser({
@@ -42,7 +42,11 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, previewFileName, changedRecordsFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        matchedRecordsFileName,
+        previewFileName,
+        changedRecordsFileName,
+      );
     });
 
     it(

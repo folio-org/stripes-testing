@@ -168,6 +168,7 @@ export default {
       MultiSelect({ label: 'Group' }).select([group]),
       saveAndCloseButton.click(),
     ]);
+    cy.wait(4000);
   },
 
   addTransferTo: (fund) => {
@@ -273,6 +274,19 @@ export default {
     cy.do([Button('Save').click()]);
   },
 
+  addPlannedBudgetWithoutFY: (allocatedQuantity) => {
+    cy.do(Accordion('Planned budget').find(newButton).click());
+    cy.expect(Modal('Planned budget').exists());
+    cy.do([
+      Modal('Planned budget')
+        .find(TextField({ name: 'allocated' }))
+        .fillIn(allocatedQuantity.toString()),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
+    cy.do([Button('Save').click()]);
+  },
+
   viewTransactions: () => {
     cy.do(Link('View transactions').click());
   },
@@ -336,6 +350,12 @@ export default {
       transactionDetailSection
         .find(KeyValue('Initial encumbrance'))
         .has({ value: initialEncumbrance }),
+    );
+  },
+
+  checkAwaitingPaymentDetails: (awaitingPayment) => {
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Awaiting payment')).has({ value: awaitingPayment }),
     );
   },
 
@@ -617,6 +637,14 @@ export default {
     cy.expect(resetButton.is({ disabled: true }));
   },
 
+  closeFundDetails: () => {
+    cy.do(
+      Section({ id: 'pane-fund-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
   selectStatusInSearch: (fundStatus) => {
     cy.do(Accordion({ id: 'fundStatus' }).clickHeader());
     switch (fundStatus) {
@@ -851,10 +879,11 @@ export default {
       });
   },
 
-  deleteFundViaApi: (fundId) => cy.okapiRequest({
+  deleteFundViaApi: (fundId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/funds/${fundId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
   createFundWithAU(fund, ledger, AUName) {
     cy.do([

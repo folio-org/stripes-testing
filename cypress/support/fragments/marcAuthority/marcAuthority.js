@@ -10,13 +10,17 @@ import {
   Callout,
   Modal,
   TableRow,
+  DropdownMenu,
+  PaneHeader,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
 const rootSection = Section({ id: 'marc-view-pane' });
+const rootHeader = rootSection.find(PaneHeader());
 
+const buttonClose = rootHeader.find(Button({ icon: 'times' }));
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const infoButton = Button({ ariaLabel: 'info' });
@@ -301,5 +305,28 @@ export default {
       body,
       isDefaultSearchParamsRequired: false,
     });
+  },
+
+  checkActionDropdownContent() {
+    const actualResArray = [];
+    const expectedContent = ['Edit', 'Print', 'Delete'];
+    cy.do(rootSection.find(Button('Actions')).click());
+    cy.expect([
+      Button('Edit').has({ svgClass: including('edit') }),
+      Button('Print').has({ svgClass: including('print') }),
+      Button('Delete').has({ svgClass: including('trash') }),
+    ]);
+    cy.then(() => DropdownMenu().buttons()).then((buttons) => {
+      buttons.forEach((button) => actualResArray.push(button.innerText));
+      cy.expect(actualResArray).to.deep.equal(expectedContent);
+    });
+  },
+
+  verifyHeader(titleValue) {
+    cy.expect([
+      buttonClose.exists(),
+      rootHeader.has({ title: including(titleValue) }),
+      rootHeader.has({ subtitle: including('Last updated') }),
+    ]);
   },
 };

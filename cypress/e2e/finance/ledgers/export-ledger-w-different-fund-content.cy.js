@@ -129,10 +129,8 @@ describe('Finance', () => {
 
         // Open downloaded file, Check "Name (Budget)", "Name(Fund)" columns
         FileManager.convertCsvToJson(testData.fileMasks.first).then((data) => {
-          const budget = data[0];
-
-          cy.expect('No budget found').to.equal(budget['"Name(Budget)"']);
-          cy.expect(funds.first.name).to.equal(budget['"Name(Fund)"']);
+          cy.expect(data[0]['Name (Budget)']).to.equal('No budget found');
+          cy.expect(data[0]['Name (Fund)']).to.equal(funds.first.name);
         });
 
         // Open Ledger #2 from Preconditions details pane
@@ -150,10 +148,8 @@ describe('Finance', () => {
 
         // Open downloaded file, Check "Name (Budget)", "Name(Fund)" columns
         FileManager.convertCsvToJson(testData.fileMasks.second).then((data) => {
-          const budget = data[0];
-
-          cy.expect(budgets.second.name).to.equal(budget['"Name(Budget)"']);
-          cy.expect(funds.second.name).to.equal(budget['"Name(Fund)"']);
+          cy.expect(data[0]['Name (Budget)']).to.equal(budgets.second.name);
+          cy.expect(data[0]['Name (Fund)']).to.equal(funds.second.name);
         });
 
         // Open Ledger #3 from Preconditions details pane
@@ -172,10 +168,10 @@ describe('Finance', () => {
         // Open downloaded file, Check "Name (Budget)", "Name(Fund)", "Name (ExpClass)" columns
         FileManager.convertCsvToJson(testData.fileMasks.third).then((data) => {
           data.forEach((budget) => {
-            cy.expect(funds.third.name).to.equal(budget['"Name(Fund)"']);
-            cy.expect(budgets.third.name).to.equal(budget['"Name(Budget)"']);
+            cy.expect(funds.third.name).to.equal(budget['Name (Fund)']);
+            cy.expect(budgets.third.name).to.equal(budget['Name (Budget)']);
             cy.expect(expenseClasses.map(({ name }) => name)).to.include(
-              budget['"Name(ExpClass)"'],
+              budget['Name (Exp Class)'],
             );
           });
         });
