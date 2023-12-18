@@ -15,9 +15,15 @@ import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/m
 
 describe('MARC Authority -> Edit linked Authority record', () => {
   const testData = {
+    tag100: '100',
+    tag110: '110',
+    tag111: '111',
+    tag121: '121',
     tag130: '130',
+    tag150: '150',
+    tag151: '151',
+    tag155: '155',
     tag130content: '$a C374143 Cornell University Library historical math monographs $t test',
-    tagsForChanging: ['100', '110', '111', '121', '130', '150', '151', '155'],
     createdRecordIDs: [],
     searchOption: 'Keyword',
     marcValue: 'C374143 Cornell University Library historical math monographs',
@@ -47,6 +53,18 @@ describe('MARC Authority -> Edit linked Authority record', () => {
 
   before('Creating user, importing and linking records', () => {
     cy.getAdminToken();
+    // make sure there are no duplicate authority records in the system
+    cy.getAdminToken().then(() => {
+      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374143"' }).then(
+        (records) => {
+          records.forEach((record) => {
+            if (record.authRefType === 'Authorized') {
+              MarcAuthority.deleteViaAPI(record.id);
+            }
+          });
+        },
+      );
+    });
     cy.loginAsAdmin().then(() => {
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
@@ -116,66 +134,42 @@ describe('MARC Authority -> Edit linked Authority record', () => {
       MarcAuthority.edit();
       QuickMarcEditor.checkContent(`$a ${linkingTagAndValue.value}`, 7);
 
-      QuickMarcEditor.updateExistingTagName(
-        testData.tagsForChanging[4],
-        testData.tagsForChanging[0],
-      );
+      QuickMarcEditor.updateExistingTagName(testData.tag130, testData.tag100);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
       QuickMarcEditor.closeCallout();
 
-      QuickMarcEditor.updateExistingTagName(
-        testData.tagsForChanging[0],
-        testData.tagsForChanging[1],
-      );
+      QuickMarcEditor.updateExistingTagName(testData.tag100, testData.tag110);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
       QuickMarcEditor.closeCallout();
 
-      QuickMarcEditor.updateExistingTagName(
-        testData.tagsForChanging[1],
-        testData.tagsForChanging[2],
-      );
+      QuickMarcEditor.updateExistingTagName(testData.tag110, testData.tag111);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
       QuickMarcEditor.closeCallout();
 
-      QuickMarcEditor.updateExistingTagName(
-        testData.tagsForChanging[2],
-        testData.tagsForChanging[5],
-      );
+      QuickMarcEditor.updateExistingTagName(testData.tag111, testData.tag150);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
       QuickMarcEditor.closeCallout();
 
-      QuickMarcEditor.updateExistingTagName(
-        testData.tagsForChanging[5],
-        testData.tagsForChanging[6],
-      );
+      QuickMarcEditor.updateExistingTagName(testData.tag150, testData.tag151);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
       QuickMarcEditor.closeCallout();
 
-      QuickMarcEditor.updateExistingTagName(
-        testData.tagsForChanging[6],
-        testData.tagsForChanging[7],
-      );
+      QuickMarcEditor.updateExistingTagName(testData.tag151, testData.tag155);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.errorMessageAfterChangingTag);
       QuickMarcEditor.closeCallout();
 
-      QuickMarcEditor.updateExistingTagName(
-        testData.tagsForChanging[7],
-        testData.tagsForChanging[3],
-      );
+      QuickMarcEditor.updateExistingTagName(testData.tag155, testData.tag121);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.errorMessageAfterSaving);
       QuickMarcEditor.closeCallout();
 
-      QuickMarcEditor.updateExistingTagName(
-        testData.tagsForChanging[3],
-        testData.tagsForChanging[4],
-      );
+      QuickMarcEditor.updateExistingTagName(testData.tag121, testData.tag130);
       QuickMarcEditor.checkButtonsDisabled();
       QuickMarcEditor.updateExistingField(testData.tag130, testData.tag130content);
       QuickMarcEditor.checkButtonsEnabled();
