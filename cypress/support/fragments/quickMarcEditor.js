@@ -842,6 +842,52 @@ export default {
     ]);
   },
 
+  verifyRowLinked(rowIndex, isLinked = true) {
+    if (isLinked) {
+      cy.expect([
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].content` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
+        QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
+        QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).absent(),
+      ]);
+    } else {
+      cy.expect([
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].content` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
+        QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).absent(),
+        QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
+      ]);
+    }
+  },
+
   verifyTagFieldAfterLinking(
     rowIndex,
     tag,
