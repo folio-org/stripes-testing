@@ -99,6 +99,10 @@ export default {
     cy.do(Button('Edit').click());
     QuickMarcEditorWindow.waitLoading();
   },
+  delete: () => {
+    cy.do(rootSection.find(Button('Actions')).click());
+    cy.do(Button('Delete').click());
+  },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
   notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
   checkTagInRow: (rowIndex, tag) => {
