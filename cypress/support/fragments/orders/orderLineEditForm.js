@@ -12,6 +12,7 @@ import {
   matching,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
+import SelectInstanceModal from './modals/selectInstanceModal';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
@@ -112,6 +113,18 @@ export default {
     if (orderLine.paymentStatus) {
       cy.do(orderLineFields.paymentStatus.choose(orderLine.paymentStatus));
     }
+  },
+  clickTitleLookUpButton() {
+    cy.do(itemDetailsSection.find(Button('Title look-up')).click());
+    SelectInstanceModal.waitLoading();
+    SelectInstanceModal.verifyModalView();
+
+    return SelectInstanceModal;
+  },
+  fillItemDetailsTitle({ instanceTitle }) {
+    this.clickTitleLookUpButton();
+    SelectInstanceModal.searchByName(instanceTitle);
+    SelectInstanceModal.selectInstance(instanceTitle);
   },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
@@ -246,5 +259,8 @@ export default {
 
     // wait for changes to be applied
     cy.wait(2000);
+  },
+  verifyOrderLineEditFormClosed() {
+    cy.expect(orderLineEditFormRoot.absent());
   },
 };
