@@ -11,7 +11,6 @@ import {
   MultiColumnListRow,
   MultiColumnListCell,
   Modal,
-  Accordion,
 } from '../../../../interactors';
 
 const closeModal = Modal();
