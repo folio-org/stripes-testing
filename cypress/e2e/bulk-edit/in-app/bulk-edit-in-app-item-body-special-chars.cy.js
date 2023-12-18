@@ -35,16 +35,15 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-          servicePointId = servicePoints[0].id;
-        }).then(() => {
-          UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-        });
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+          .then((servicePoints) => {
+            servicePointId = servicePoints[0].id;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+          });
 
-        InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.barcode,
-        );
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
             item.hrid = res.hrid;
@@ -72,9 +71,7 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-        item.itemBarcode,
-      );
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
     });
 
