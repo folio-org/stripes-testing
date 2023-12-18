@@ -237,15 +237,6 @@ export default {
     }
   },
 
-  verifyOrderListIncludeLinkExists(linkName) {
-    cy.expect(
-      MultiColumnList({ id: 'invoices-list' })
-        .find(MultiColumnListCell({ content: linkName }))
-        .find(Link())
-        .exists(),
-    );
-  },
-
   verifyOrderTitle(title) {
     cy.expect(headerDetail.has({ text: including(title) }));
   },
