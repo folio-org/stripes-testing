@@ -22,6 +22,7 @@ import OpenConfirmationModal from './modals/openConfirmationModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import ExportDetails from '../exportManager/exportDetails';
 import Receivings from '../receiving/receiving';
+import CloseConfirmationModal from './modals/closeConfirmationModal';
 
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
@@ -31,6 +32,8 @@ const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
+
+const invoicesList = MultiColumnList({ id: 'orderInvoices' });
 
 const openPolDetails = (title) => {
   cy.do(polListingAccordion.find(MultiColumnListCell({ content: title })).click());
@@ -85,6 +88,18 @@ export default {
     );
 
     InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
+  },
+  closeOrder({ orderNumber, confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Cancel').click());
+
+    if (orderNumber) {
+      CloseConfirmationModal.verifyModalView({ orderNumber });
+    }
+
+    if (confirm) {
+      CloseConfirmationModal.clickSubmitButton();
+    }
   },
   openOrder({ orderNumber, confirm = true } = {}) {
     this.expandActionsDropdown();
@@ -231,5 +246,11 @@ export default {
           .has({ rowCount: ordersCount }),
       );
     }
+  },
+  verifyAccordionExists(name) {
+    cy.expect(Accordion({ label: including(name) }).exists());
+  },
+  openInvoice(number) {
+    cy.do(invoicesList.find(Link({ href: including(`${number}`) })).click());
   },
 };
