@@ -238,19 +238,19 @@ export default {
       );
     }
   },
-  
+
   verifyOrderTitle(title) {
     cy.expect(headerDetail.has({ text: including(title) }));
   },
-  
+
   closeOrderDetails: () => {
     cy.do(orderDetailsPane.find(iconTimes).click());
-},
-  
+  },
+
   verifyAccordionExists(name) {
     cy.expect(Accordion({ label: including(name) }).exists());
   },
-  
+
   openInvoice(number) {
     cy.do(invoicesList.find(Link({ href: including(`${number}`) })).click());
   },
