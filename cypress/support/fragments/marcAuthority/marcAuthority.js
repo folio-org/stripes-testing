@@ -11,13 +11,16 @@ import {
   Modal,
   TableRow,
   DropdownMenu,
+  PaneHeader,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
 const rootSection = Section({ id: 'marc-view-pane' });
+const rootHeader = rootSection.find(PaneHeader());
 
+const buttonClose = rootHeader.find(Button({ icon: 'times' }));
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const infoButton = Button({ ariaLabel: 'info' });
@@ -321,5 +324,13 @@ export default {
       buttons.forEach((button) => actualResArray.push(button.innerText));
       cy.expect(actualResArray).to.deep.equal(expectedContent);
     });
+  },
+
+  verifyHeader(titleValue) {
+    cy.expect([
+      buttonClose.exists(),
+      rootHeader.has({ title: including(titleValue) }),
+      rootHeader.has({ subtitle: including('Last updated') }),
+    ]);
   },
 };
