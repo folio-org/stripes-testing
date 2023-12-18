@@ -35,21 +35,25 @@ describe('bulk-edit', () => {
         });
 
         items.forEach((item) => {
-          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.secondItemBarcode}"` }).then(
-            (res) => {
-              // Annex
-              res.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
-              cy.updateItemViaApi(res);
-            },
-          );
+          cy.getItems({
+            limit: 1,
+            expandAll: true,
+            query: `"barcode"=="${item.secondItemBarcode}"`,
+          }).then((res) => {
+            // Annex
+            res.temporaryLocation = { id: '53cf956f-c1df-410b-8bea-27f712cca7c0' };
+            cy.updateItemViaApi(res);
+          });
 
-          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.itemBarcode}"` }).then(
-            (res) => {
-              // Online
-              res.temporaryLocation = { id: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5' };
-              cy.updateItemViaApi(res);
-            },
-          );
+          cy.getItems({
+            limit: 1,
+            expandAll: true,
+            query: `"barcode"=="${item.itemBarcode}"`,
+          }).then((res) => {
+            // Online
+            res.temporaryLocation = { id: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5' };
+            cy.updateItemViaApi(res);
+          });
         });
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, fileContent);
         cy.login(user.username, user.password, {

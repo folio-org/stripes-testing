@@ -353,6 +353,12 @@ export default {
     );
   },
 
+  checkAwaitingPaymentDetails: (awaitingPayment) => {
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Awaiting payment')).has({ value: awaitingPayment }),
+    );
+  },
+
   checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       transactionList
