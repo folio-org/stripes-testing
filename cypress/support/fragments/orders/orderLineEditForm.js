@@ -12,6 +12,7 @@ import {
   matching,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
+import SelectInstanceModal from './modals/selectInstanceModal';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
@@ -113,6 +114,18 @@ export default {
       cy.do(orderLineFields.paymentStatus.choose(orderLine.paymentStatus));
     }
   },
+  clickTitleLookUpButton() {
+    cy.do(itemDetailsSection.find(Button('Title look-up')).click());
+    SelectInstanceModal.waitLoading();
+    SelectInstanceModal.verifyModalView();
+
+    return SelectInstanceModal;
+  },
+  fillItemDetailsTitle({ instanceTitle }) {
+    this.clickTitleLookUpButton();
+    SelectInstanceModal.searchByName(instanceTitle);
+    SelectInstanceModal.selectInstance(instanceTitle);
+  },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
       cy.do(itemDetailsFields[key].fillIn(value));
@@ -205,11 +218,9 @@ export default {
   },
   clickCancelButton(shouldModalExsist = false) {
     cy.expect(cancelButton.has({ disabled: false }));
+    cy.do(cancelButton.click());
 
-    if (shouldModalExsist) {
-      cy.do(cancelButton.click());
-    } else {
-      cy.do(cancelButton.click());
+    if (!shouldModalExsist) {
       cy.expect(orderLineEditFormRoot.absent());
     }
   },
@@ -248,5 +259,8 @@ export default {
 
     // wait for changes to be applied
     cy.wait(2000);
+  },
+  verifyOrderLineEditFormClosed() {
+    cy.expect(orderLineEditFormRoot.absent());
   },
 };

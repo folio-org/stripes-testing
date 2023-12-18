@@ -27,6 +27,7 @@ import {
   ValueChipRoot,
   including,
   not,
+  or,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -41,6 +42,7 @@ const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const editorSection = Section({ id: 'quick-marc-editor-pane' });
 const typeOfHeadingSelect = MultiSelect({ ariaLabelledby: 'headingType-multiselect-label' });
+const findAuthorityModal = Modal({ id: 'find-authority-modal' });
 
 // actions dropdown window
 const authorityActionsDropDown = DropdownMenu();
@@ -59,6 +61,7 @@ const resetButton = Button('Reset all');
 const selectField = Select({ id: 'textarea-authorities-search-qindex' });
 const headingTypeAccordion = Accordion('Type of heading');
 const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
+const previousButton = Button({ id: 'authority-result-list-prev-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
 const buttonAdvancedSearch = Button('Advanced search');
@@ -231,13 +234,18 @@ export default {
 
   checkRow: (expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),
 
+  checkRowsCount: (expectedRowsCount) => {
+    cy.expect([
+      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount - 1 })).exists(),
+      authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent(),
+    ]);
+  },
+
   checkRowUpdatedAndHighlighted: (expectedHeadingReference) => cy.expect(
     authoritiesList
       .find(MultiColumnListCell({ selected: true }, including(expectedHeadingReference)))
       .exists(),
   ),
-
-  checkRowsCount: (expectedRowsCount) => cy.expect(authoritiesList.find(MultiColumnListRow({ index: expectedRowsCount })).absent()),
 
   switchToBrowse: () => cy.do(Button({ id: 'segment-navigation-browse' }).click()),
 
@@ -249,9 +257,13 @@ export default {
     ]);
   },
 
-  searchBy: (parameter, value) => {
+  searchBy: (parameter, value, isLongValue = false) => {
     cy.do(filtersSection.find(searchInput).selectIndex(parameter));
     cy.do(filtersSection.find(searchInput).fillIn(value));
+    if (isLongValue) {
+      // need to wait until value will be applied in case when value is long
+      cy.wait(1000);
+    }
     cy.do(filtersSection.find(searchButton).click());
   },
 
@@ -681,7 +693,7 @@ export default {
   },
 
   verifyEmptyNumberOfTitles() {
-    cy.expect(MultiColumnListCell({ columnIndex: 4 }).has({ content: '' }));
+    cy.expect(MultiColumnListCell({ columnIndex: 5 }).has({ content: '' }));
   },
 
   verifyAuthorityPropertiesAfterSearch(expectedProperties) {
@@ -933,8 +945,9 @@ export default {
     cy.expect(sourceFileAccordion.find(MultiSelectOption(including(option))).has({ totalRecords }));
   },
 
-  verifyColumnValuesOnlyExist(column, expectedValues = []) {
+  verifyColumnValuesOnlyExist({ column, expectedValues, browsePane = false } = {}) {
     const actualValues = [];
+    let browsePaneValues = [];
     cy.then(() => authoritiesList.rowCount())
       .then((rowsCount) => {
         for (let i = 0; i < rowsCount; i++) {
@@ -944,7 +957,12 @@ export default {
         }
       })
       .then(() => {
-        const isOnlyValuesExist = actualValues.every((value) => expectedValues.includes(value));
+        if (browsePane && actualValues.includes('')) {
+          browsePaneValues = actualValues
+            .slice(0, actualValues.indexOf(''))
+            .concat(actualValues.slice(actualValues.indexOf('') + 1));
+        }
+        const isOnlyValuesExist = browsePaneValues.every((value) => expectedValues.includes(value));
         expect(isOnlyValuesExist).to.equal(true);
       });
   },
@@ -1027,5 +1045,90 @@ export default {
 
   verifySelectedTypeOfHeadingCount(selectedCount) {
     cy.expect(typeOfHeadingSelect.has({ selectedCount }));
+  },
+
+  verifyMarcViewPaneIsOpened(isOpened = true) {
+    if (isOpened) {
+      marcViewSection.exists();
+    } else {
+      marcViewSection.absent();
+    }
+  },
+
+  verifyAllAuthorizedAreBold() {
+    const actualValues = [];
+
+    cy.then(() => authoritiesList.rowCount())
+      .then((rowsCount) => {
+        for (let i = 0; i < rowsCount; i++) {
+          actualValues[i] = {};
+
+          cy.wrap(i).then((index) => {
+            const cellContent = MultiColumnListCell({ column: 'Authorized/Reference', row: index });
+
+            cy.wrap(authoritiesList.find(cellContent).content()).then((content) => {
+              actualValues[index].content = content;
+            });
+
+            cy.wrap(authoritiesList.find(cellContent).boldText()).then((bold) => {
+              actualValues[index].bold = bold;
+            });
+          });
+        }
+      })
+      .then(() => {
+        const isValuesBold = actualValues
+          .filter((obj) => obj.content === 'Authorized')
+          .every((obj) => obj.bold === 'Authorized');
+        expect(isValuesBold).to.equal(true);
+      });
+  },
+
+  verifyAllAuthorizedHaveLinks() {
+    const actualValues = [];
+
+    cy.then(() => authoritiesList.rowCount())
+      .then((rowsCount) => {
+        Array.from({ length: rowsCount }).forEach((_, index) => {
+          actualValues[index] = {};
+
+          const cellAuthorizedContent = MultiColumnListCell({
+            column: 'Authorized/Reference',
+            row: index,
+          });
+          const cellLinkContent = MultiColumnListCell({ column: 'Link', row: index });
+
+          cy.wrap(authoritiesList.find(cellAuthorizedContent).content()).then((content) => {
+            actualValues[index].content = content;
+          });
+
+          cy.wrap(authoritiesList.find(cellLinkContent).innerHTML()).then((text) => {
+            actualValues[index].hasLink = text.includes('button');
+          });
+        });
+      })
+      .then(() => {
+        const hasLinkForAuthorized = actualValues
+          .filter((obj) => obj.content === 'Authorized')
+          .every((obj) => obj.hasLink);
+
+        const hasNoLinkForOthers = actualValues
+          .filter((obj) => obj.content !== 'Authorized')
+          .every((obj) => !obj.hasLink);
+
+        expect(hasLinkForAuthorized).to.equal(true);
+        expect(hasNoLinkForOthers).to.equal(true);
+      });
+  },
+
+  verifyPagination() {
+    cy.expect([previousButton.exists(), nextButton.has({ disabled: or(true, false) })]);
+    cy.then(() => authoritiesList.rowCount()).then((rowsCount) => {
+      expect(rowsCount).to.lessThan(101);
+    });
+  },
+
+  closeFindAuthorityModal() {
+    cy.do(findAuthorityModal.find(buttonClose).click());
   },
 };

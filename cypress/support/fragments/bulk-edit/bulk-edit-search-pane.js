@@ -82,7 +82,10 @@ export default {
     cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
     cy.expect(HTML(including('Retrieving...')));
   },
-
+  progresBarIsAbsent() {
+    cy.expect(HTML(including('Uploading ... and retrieving relevant data')).absent());
+    cy.expect(HTML(including('Retrieving...')).absent());
+  },
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -592,6 +595,10 @@ export default {
     });
   },
 
+  errorsAccordionIsAbsent() {
+    cy.expect(errorsAccordion.absent());
+  },
+
   matchedAccordionIsAbsent() {
     cy.expect(resultsAccordion.absent());
   },
@@ -987,15 +994,15 @@ export default {
     cy.expect(Accordion(accordion).find(TextField(fieldName)).has({ value: valueToVerify }));
   },
 
-  verifyClearSelectedFiltersButtonExists(accordion) {
-    cy.expect(
-      Accordion(accordion)
-        .find(
-          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
-        )
-        .exists(),
-    );
-  },
+  // verifyClearSelectedFiltersButton(accordion, verification = 'exists') {
+  //   if (!['exists', 'absent'].includes(verification)) {
+  //     throw new Error(`${verification} is not supported`);
+  //   }
+  //   cy.expect(
+  //     Accordion(accordion)
+  //       .find(Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }))[verification]()
+  //   );
+  // },
 
   verifyClearSelectedDateButtonExists(accordion, textField) {
     cy.expect(
