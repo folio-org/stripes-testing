@@ -24,6 +24,7 @@ const staffNotesInfoSection = Section({ id: 'staff-notes' });
 const actionsButton = requestDetailsSection.find(Button('Actions'));
 const moveRequestButton = Button('Move request');
 const duplicateRequestButton = Button('Duplicate');
+const reorderQueueButton = Button('Reorder queue');
 const fulfillmentInProgressAccordion = Accordion({
   id: 'fulfillment-in-progress',
 });
@@ -212,6 +213,10 @@ export default {
     cy.do(duplicateRequestButton.click());
   },
 
+  clickReorderQueue() {
+    cy.do(reorderQueueButton.click());
+  },
+
   verifyMoveRequestButtonExists() {
     cy.expect(moveRequestButton.exists());
   },
@@ -226,6 +231,16 @@ export default {
       fulfillmentInProgressAccordion
         .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
         .exists(),
+    );
+  },
+
+  clickBarcodeTitle(itemBarcode) {
+    cy.do(
+      fulfillmentInProgressAccordion
+        // .find(MultiColumnListCell({ column: 'Item barcode', content: itemBarcode }))
+        .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
+        .find(Link(itemBarcode))
+        .click(),
     );
   },
 
