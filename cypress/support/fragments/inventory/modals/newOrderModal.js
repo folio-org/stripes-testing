@@ -1,4 +1,4 @@
-import { Button, Modal, TextField, including } from '../../../../../interactors';
+import { Button, Modal, TextField, HTML, including } from '../../../../../interactors';
 
 const newOrderModal = Modal({ id: 'create-order-from-instance-modal' });
 
@@ -46,5 +46,9 @@ export default {
     cy.do(createButton.click());
 
     cy.wait(3000);
+  },
+
+  verifyTextDescriptionExists: (description) => {
+    cy.expect(newOrderModal.find(HTML(including(description))).exists());
   },
 };
