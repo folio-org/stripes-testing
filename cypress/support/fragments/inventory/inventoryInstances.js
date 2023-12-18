@@ -573,13 +573,13 @@ export default {
     return [...Array(count).keys()].map((index) => {
       const gHoldings =
         holdings ||
-        [...Array(holdingsCount || 1).keys()].map(() => ({
+        [...Array(holdingsCount ?? 1).keys()].map(() => ({
           id: uuid(),
         }));
       const gItems =
         items ||
         gHoldings.reduce((acc, it) => {
-          const holdingItems = [...Array(itemsCount || 1).keys()].map(() => {
+          const holdingItems = [...Array(itemsCount ?? 1).keys()].map(() => {
             const properties = Array.isArray(itemsProperties)
               ? itemsProperties[index]
               : itemsProperties;
