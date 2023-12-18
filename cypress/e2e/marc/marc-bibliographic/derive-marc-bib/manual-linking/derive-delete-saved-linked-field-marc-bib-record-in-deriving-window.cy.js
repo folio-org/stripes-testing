@@ -153,7 +153,6 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
       InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBibRecord();
-      // QuickMarcEditor.checkButtonSaveAndCloseEnable();
       QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib100AfterLinkingToAuth100);
       QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib700AfterLinkingToAuth100);
       QuickMarcEditor.deleteField(76);
