@@ -1,8 +1,6 @@
 import Permissions from '../../../support/dictionary/permissions';
-import DevTeams from '../../../support/dictionary/devTeams';
-import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
 import Lists from '../../../support/fragments/lists/lists';
+import TopMenu from '../../../support/fragments/topMenu';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Cancel list creation process', () => {
@@ -21,8 +19,8 @@ describe('Cancel list creation process', () => {
   });
 
   it(
-    'C411709    Verify that the button "Cancel", cancels new list creation process.',
-    { tags: [TestTypes.criticalPath, DevTeams.corsair] },
+    'C411709 Verify that the button "Cancel", cancels new list creation process.',
+    { tags: ['criticalPath', 'corsair'] },
     () => {
       cy.login(userData.username, userData.password);
       cy.visit(TopMenu.listsPath);
