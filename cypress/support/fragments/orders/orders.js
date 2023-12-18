@@ -58,6 +58,7 @@ const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
 const resetButton = Button('Reset all');
 const submitButton = Button('Submit');
+const ordersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const expandActionsDropdown = () => {
   cy.do(
     orderDetailsPane
@@ -582,7 +583,7 @@ export default {
     cy.do(Button('Order lines').click());
   },
   selectOrders: () => {
-    cy.do(Button('Orders').click());
+    cy.do(ordersPane.find(Button('Orders')).click());
   },
   createPOLineViaActions: () => {
     cy.wait(4000);
@@ -846,5 +847,9 @@ export default {
       .eq(0)
       .find('a')
       .click();
+  },
+
+  verifyActiveBtnOrdersFilters: (btnName) => {
+    cy.expect(ordersPane.find(HTML(including(btnName, { class: including('primary') }))).exists());
   },
 };

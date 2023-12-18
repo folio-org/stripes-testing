@@ -97,7 +97,7 @@ const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
 const note = 'Edited by AQA team';
-
+const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
 
 // Edit form
@@ -519,6 +519,51 @@ export default {
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
+  POLWithDifferntCurrency(
+    fund,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+    currency,
+    currencyLogo,
+    exchangeRate,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      currencyButton.click(),
+      SelectionOption(currency).click(),
+      Checkbox({ id: 'use-set-exhange-rate' }).click(),
+      TextField({ name: 'cost.exchangeRate' }).fillIn(exchangeRate),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button(currencyLogo)).click(),
+      fundDistributionField.fillIn(value),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
@@ -1073,7 +1118,7 @@ export default {
       ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      Button({ id: 'currency' }).click(),
+      currencyButton.click(),
       SelectionOption('Euro (EUR)').click(),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
@@ -1106,7 +1151,7 @@ export default {
       ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      Button({ id: 'currency' }).click(),
+      currencyButton.click(),
       SelectionOption('Polish Zloty (PLN)').click(),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
