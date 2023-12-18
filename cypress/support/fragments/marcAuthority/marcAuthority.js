@@ -9,6 +9,8 @@ import {
   MultiColumnListHeader,
   Callout,
   Modal,
+  TableRow,
+  DropdownMenu,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
@@ -96,6 +98,18 @@ export default {
   },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
   notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
+  checkTagInRow: (rowIndex, tag) => {
+    cy.expect(
+      rootSection
+        .find(
+          TableRow({
+            index: rowIndex,
+            innerText: including(tag),
+          }),
+        )
+        .exists(),
+    );
+  },
   deleteViaAPI: (internalAuthorityId) => {
     cy.okapiRequest({
       method: 'DELETE',
@@ -279,5 +293,29 @@ export default {
   checkLinkingAuthority: () => {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 655 has been linked to a MARC authority record.').exists());
+  },
+
+  createAuthoritySource: (body) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'authority-source-files',
+      body,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  checkActionDropdownContent() {
+    const actualResArray = [];
+    const expectedContent = ['Edit', 'Print', 'Delete'];
+    cy.do(rootSection.find(Button('Actions')).click());
+    cy.expect([
+      Button('Edit').has({ svgClass: including('edit') }),
+      Button('Print').has({ svgClass: including('print') }),
+      Button('Delete').has({ svgClass: including('trash') }),
+    ]);
+    cy.then(() => DropdownMenu().buttons()).then((buttons) => {
+      buttons.forEach((button) => actualResArray.push(button.innerText));
+      cy.expect(actualResArray).to.deep.equal(expectedContent);
+    });
   },
 };

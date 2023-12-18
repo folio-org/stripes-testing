@@ -1,27 +1,27 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -94,18 +94,19 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(userId);
-      // delete profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(userId);
+        // delete profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      });
     });
 
     it(
       'C347828 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 1 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -119,7 +120,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
-        Logs.clickOnHotLink(0, 3, 'Created');
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[0].type,
           resourceIdentifiers[0].value,
@@ -131,7 +132,7 @@ describe('data-import', () => {
           4,
         );
         cy.go('back');
-        Logs.clickOnHotLink(1, 3, 'Created');
+        Logs.clickOnHotLink(1, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[2].type,
           resourceIdentifiers[2].value,
@@ -182,9 +183,9 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
-        Logs.verifyInstanceStatus(0, 3, 'Updated');
-        Logs.verifyInstanceStatus(1, 3, FileDetails.status.noAction);
-        Logs.clickOnHotLink(0, 3, 'Updated');
+        Logs.verifyInstanceStatus(0, 3, RECORD_STATUSES.UPDATED);
+        Logs.verifyInstanceStatus(1, 3, RECORD_STATUSES.NO_ACTION);
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);

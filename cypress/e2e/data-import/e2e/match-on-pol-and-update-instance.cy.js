@@ -1,41 +1,42 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  FOLIO_RECORD_TYPE,
-  CALL_NUMBER_TYPE_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
-  ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES_IN_PROFILE,
-  VENDOR_NAMES,
-  LOCATION_NAMES,
+  CALL_NUMBER_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  ORDER_FORMAT_NAMES,
+  VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
-import Orders from '../../../support/fragments/orders/orders';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import Orders from '../../../support/fragments/orders/orders';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -142,28 +143,29 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+          (instance) => {
+            if (instance) {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            }
+          },
+        );
       });
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-        Orders.deleteOrderViaApi(orderId[0].id);
-      });
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
-        (instance) => {
-          if (instance) {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          }
-        },
-      );
     });
 
     const createInstanceMappingProfile = (instanceMappingProfile) => {
@@ -200,7 +202,7 @@ describe('data-import', () => {
 
     it(
       'C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -252,12 +254,12 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
         Logs.openFileDetails(nameMarcFileForCreate);
         FileDetails.checkItemsStatusesInResultList(0, [
-          FileDetails.status.created,
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          FileDetails.status.created,
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
         ]);
 
         // create PO with POL
@@ -301,17 +303,17 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(marcFileName);
         FileDetails.checkItemsStatusesInResultList(0, [
-          FileDetails.status.updated,
-          FileDetails.status.updated,
-          FileDetails.status.created,
-          FileDetails.status.created,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          FileDetails.status.dash,
-          FileDetails.status.noAction,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
         ]);
 
-        FileDetails.openInstanceInInventory('Updated');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.checkIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);

@@ -320,12 +320,17 @@ export default {
     );
   },
 
+  openInvoiceLine: (itemStatus, rowNumber = 0) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 8 }))
+        .find(Link(itemStatus))
+        .click(),
+    );
+  },
+
   openJsonScreen: (title) => {
-    cy.get('#search-results-list').find('*[class^="mclCell"]').contains(title).focus();
-    cy.get('#search-results-list')
-      .find('*[class^="mclCell"]')
-      .contains(title)
-      .invoke('removeAttr', 'target')
+    cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target')
       .click();
     cy.wait(2000);
   },
@@ -338,8 +343,8 @@ export default {
           const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
           cy.get('#search-results-list')
-            .eq(rowNumber)
-            .find('*[class^="mclCell"]')
+            .find(`div[data-row-inner="${rowNumber}"]`)
+            .find('a')
             .contains(title)
             .invoke('removeAttr', 'target')
             .click();

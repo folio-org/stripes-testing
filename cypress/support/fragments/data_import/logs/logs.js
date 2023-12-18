@@ -11,13 +11,16 @@ import {
   Link,
 } from '../../../../../interactors';
 import FileDetails from './fileDetails';
+import { getLongDelay } from '../../../utils/cypressTools';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
+const runningAccordion = Accordion('Running');
 const actionsButton = Button('Actions');
 const viewAllLogsButton = Button('View all logs');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const searchResultList = MultiColumnList({ id: 'search-results-list' });
 const deleteSelectedLogsButton = Button('Delete selected logs');
+const visitedLinkColor = 'rgb(47, 96, 159)';
 
 const quantityRecordsInInvoice = {
   firstQuantity: '18',
@@ -95,11 +98,32 @@ export default {
     .find(Link('Created'))
     .href()),
 
-  checkFileIsRunning: (fileName) => cy.expect(
-    Accordion('Running')
-      .find(HTML(including(fileName)))
-      .exists(),
-  ),
+  checkFileIsRunning: (fileName) => cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
+
+  verifyFirstFileNameStyle: () => {
+    cy.get('#job-logs-list [class*="mclCell-"]:nth-child(1) a')
+      .eq(0)
+      .should('have.css', 'text-decoration')
+      .and('include', 'underline');
+  },
+
+  clickFirstFileNameCell: () => {
+    cy.do(
+      MultiColumnList({ id: 'job-logs-list' })
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+        .hrefClick(),
+    );
+  },
+
+  verifyVisitedLinkColor: () => {
+    cy.get('#job-logs-list [class*="mclCell-"]:nth-child(1) a')
+      .eq(0)
+      .should('have.css', 'color', visitedLinkColor);
+  },
+
+  waitFileIsImported: (fileName) => {
+    cy.expect(runningAccordion.find(HTML(including(fileName))).absent(), getLongDelay());
+  },
 };

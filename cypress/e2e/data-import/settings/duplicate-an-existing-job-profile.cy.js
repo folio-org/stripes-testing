@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -35,15 +35,16 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      JobProfiles.deleteJobProfile(jobProfileName);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        JobProfiles.deleteJobProfile(jobProfileName);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
       'C2333 Duplicate an existing job profile (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfileView.duplicate();

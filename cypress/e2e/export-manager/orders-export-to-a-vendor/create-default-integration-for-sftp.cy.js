@@ -1,17 +1,17 @@
 import moment from 'moment';
 
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { NewOrder, BasicOrderLine, Orders } from '../../../support/fragments/orders';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
+import { BasicOrderLine, NewOrder, Orders } from '../../../support/fragments/orders';
 import {
+  Integrations,
   NewOrganization,
   Organizations,
-  Integrations,
 } from '../../../support/fragments/organizations';
-import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../../support/constants';
 
 describe('Export Manager', () => {
   describe('Export Orders in EDIFACT format: Orders Export to a Vendor', () => {
@@ -99,7 +99,7 @@ describe('Export Manager', () => {
 
     it(
       'C402381 Creating default integration for "SFTP" option (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         // Click "Organizations", Select created export method in "Export method" accordion
         ExportManagerSearchPane.selectOrganizationsSearch();

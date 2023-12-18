@@ -1,29 +1,27 @@
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import DateTools from '../../../support/utils/dateTools';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const today = DateTools.getFormattedDate(
-  { date: new Date() },
-  'YYYY-MM-DD',
-);
+const today = DateTools.getFormattedDate({ date: new Date() }, 'YYYY-MM-DD');
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditLogsView.gui,
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui,
-      ], 'staff').then((userProperties) => {
+      cy.createTempUser(
+        [
+          permissions.bulkEditLogsView.gui,
+          permissions.bulkEditUpdateRecords.gui,
+          permissions.uiUserEdit.gui,
+        ],
+        'staff',
+      ).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -41,7 +39,7 @@ describe('bulk-edit', () => {
 
     it(
       'C388541 Verify preview of records switching between toggles (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
@@ -59,9 +57,9 @@ describe('bulk-edit', () => {
           'Reviewing changes',
           'Completed',
           'Completed with errors',
-          'Failed'
+          'Failed',
         ];
-        statuses.forEach((status) => BulkEditSearchPane.checkLogsStatus(status));
+        statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
 
         BulkEditSearchPane.checkHoldingsCheckbox();
         BulkEditSearchPane.checkUsersCheckbox();
@@ -89,7 +87,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 0, 1);
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifyLogsPane();
-        statuses.forEach((status) => BulkEditSearchPane.checkLogsStatus(status));
+        statuses.forEach((status) => BulkEditSearchPane.checkLogsCheckbox(status));
         BulkEditSearchPane.checkHoldingsCheckbox();
         BulkEditSearchPane.checkUsersCheckbox();
         BulkEditSearchPane.checkItemsCheckbox();

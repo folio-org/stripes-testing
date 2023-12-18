@@ -8,20 +8,25 @@ import {
   Modal,
   RadioButton,
   Accordion,
+  MultiColumnListRow,
   MultiColumnListCell,
-  Label,
   MultiSelect,
   MultiSelectOption,
   Callout,
   TextField,
+  FieldSet,
+  ListItem,
 } from '../../../../interactors';
-import eHoldingsPackages from './eHoldingsPackages';
+import EHoldingsPackages from './eHoldingsPackages';
+import EHoldingsResourceView from './eHoldingsResourceView';
+import ExportSettingsModal from './modals/exportSettingsModal';
+import FilterTitlesModal from './modals/filterTitlesModal';
+import NoteEditForm from '../notes/existingNoteEdit';
 
 const actionsButton = Button('Actions');
 const exportButton = Button('Export package (CSV)');
-const exportModal = Modal('Export settings');
-const exportButtonInModal = exportModal.find(Button('Export'));
-const cancelButtonInModal = exportModal.find(Button('Cancel'));
+
+const packageTitlesSection = Section({ id: 'packageShowTitles' });
 const selectedPackageFieldsRadioButton = RadioButton({
   name: 'packageFields',
   ariaLabel: 'Export selected fields',
@@ -50,23 +55,35 @@ const searchAgreementButton = findAgreementModal.find(
 const titleFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-title-fields' });
 const packageFieldsSelect = MultiSelect({ ariaLabelledby: 'selected-package-fields' });
 const openDropdownMenu = Button({ ariaLabel: 'open menu' });
+const patronRadioButton = FieldSet('Show titles in package to patrons');
+
+const packageInformationSection = Section({ id: 'packageShowInformation' });
+const notesSection = Section({ id: 'packageShowNotes' });
+const titlesSection = Section({ id: 'packageShowTitles' });
 
 export default {
   getCalloutMessageText,
   close() {
     cy.do(Button({ icon: 'times' }).click());
-    eHoldingsPackages.waitLoading();
+    EHoldingsPackages.waitLoading();
   },
 
   waitLoading() {
-    cy.expect([Section({ id: 'packageShowInformation' }).exists(), Button('Actions').exists()]);
+    cy.expect([packageInformationSection.exists(), Button('Actions').exists()]);
   },
 
-  openExportModal() {
+  openExportModal({ exportDisabled = false } = {}) {
     cy.do([actionsButton.click(), exportButton.click()]);
-    cy.expect(exportModal.exists());
-  },
+    ExportSettingsModal.verifyModalView({ exportDisabled });
 
+    return ExportSettingsModal;
+  },
+  openFilterTitlesModal() {
+    cy.do(packageTitlesSection.find(Button({ icon: 'search' })).click());
+    FilterTitlesModal.verifyModalView();
+
+    return FilterTitlesModal;
+  },
   clickExportSelectedPackageFields() {
     cy.do(selectedPackageFieldsRadioButton.click());
   },
@@ -77,12 +94,6 @@ export default {
 
   clickExportSelectedTitleFields() {
     cy.do(selectedTitleFieldsRadioButton.click());
-  },
-
-  closeExportModalViaCancel() {
-    cy.do(cancelButtonInModal.click());
-    cy.expect(exportModal.absent());
-    this.waitLoading();
   },
 
   createNewAgreement() {
@@ -110,14 +121,6 @@ export default {
     );
   },
 
-  export() {
-    cy.do(exportButtonInModal.click());
-  },
-
-  verifyExportButtonInModalDisabled(isDisabled = true) {
-    cy.expect(exportButtonInModal.has({ disabled: isDisabled }));
-  },
-
   verifyPackageName(packageName) {
     cy.expect([
       Pane({ title: packageName }).exists(),
@@ -140,9 +143,7 @@ export default {
   verifyPackageDetailViewIsOpened: (name, titlesNumber, status) => {
     cy.expect([
       Pane(name).exists(),
-      Accordion({ id: 'packageShowTitles' })
-        .find(KeyValue('Records found'))
-        .has({ value: titlesNumber }),
+      packageInformationSection.find(KeyValue('Total titles')).has({ floatValue: titlesNumber }),
       Accordion('Holding status').has({ content: including(status) }),
     ]);
   },
@@ -154,19 +155,6 @@ export default {
     ]);
   },
 
-  verifyExportModal: (exportDisabled = false) => {
-    const modalContent =
-      'This export may take several minutes to complete. When finished, it will be available in the Export manager app. NOTE: Maximum number of titles in a package you can export is 10000. Filter your search within titles list to not exceed the limit or only choose to export package details only. This export does not include information available under Usage & analysis accordion (only available to Usage Consolidation subscribers). Please use the Export titles option available under that accordion.';
-
-    cy.expect(exportModal.find(HTML(including(modalContent))).exists());
-    cy.expect(exportModal.find(Label('Package fields to export')).exists());
-    cy.expect(exportModal.find(Label('Title fields to export')).exists());
-    cy.expect(exportModal.find(selectedPackageFieldsRadioButton).exists());
-    cy.expect(exportModal.find(selectedTitleFieldsRadioButton).exists());
-    cy.expect(cancelButtonInModal.has({ disabled: false }));
-    cy.expect(exportButtonInModal.has({ disabled: exportDisabled }));
-  },
-
   verifyCalloutMessage: (message) => {
     cy.expect(
       Callout({
@@ -175,6 +163,14 @@ export default {
     );
   },
 
+  getTotalTitlesCount() {
+    return cy.then(() => packageInformationSection.find(KeyValue('Total titles')).floatValue());
+  },
+  getFilteredTitlesCount() {
+    return cy
+      .then(() => packageTitlesSection.find(KeyValue('Records found')).value())
+      .then((count) => parseFloat(count.replace(/,/g, '')));
+  },
   getJobIDFromCalloutMessage: () => {
     const regex = /(\d+)/;
 
@@ -305,5 +301,57 @@ export default {
       .invoke('text')
       .then((text) => parseFloat(text.replace(/,/g, '')))
       .should('be.lessThan', number);
+  },
+
+  patronRadioButton: (yesOrNo) => {
+    cy.expect(patronRadioButton.exists());
+    cy.do(patronRadioButton.find(RadioButton(including(yesOrNo))).click());
+  },
+
+  verifyAlternativeRadio(yesOrNo) {
+    cy.expect(KeyValue('Show titles in package to patrons').has({ value: including(yesOrNo) }));
+  },
+  checkNotesSectionContent(notes = []) {
+    // wait for section to load
+    cy.wait(900);
+
+    notes.forEach((note, index) => {
+      cy.expect([
+        notesSection
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(`Title: ${note.title}`) }),
+        notesSection
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(`Details: ${note.details.slice(0, 255)}`) }),
+        notesSection
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: note.type }),
+      ]);
+    });
+
+    if (!notes.length) {
+      cy.expect(notesSection.find(HTML('No notes found')).exists());
+    }
+  },
+  openAddNewNoteForm() {
+    cy.do(notesSection.find(Button('New')).click());
+    NoteEditForm.waitLoading();
+
+    return NoteEditForm;
+  },
+  selectTitleRecord(rowNumber = 0) {
+    cy.do(
+      titlesSection
+        .find(ListItem({ className: including('list-item-'), index: rowNumber }))
+        .find(Button())
+        .click(),
+    );
+
+    EHoldingsResourceView.waitLoading();
+
+    return EHoldingsResourceView;
   },
 };

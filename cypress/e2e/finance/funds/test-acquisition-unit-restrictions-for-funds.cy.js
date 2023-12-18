@@ -1,14 +1,12 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../../support/fragments/users/users';
-import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-finance: Funds', () => {
   const defaultfund = { ...Funds.defaultUiFund };
@@ -76,7 +74,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C163928 Test acquisition unit restrictions for Fund records (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

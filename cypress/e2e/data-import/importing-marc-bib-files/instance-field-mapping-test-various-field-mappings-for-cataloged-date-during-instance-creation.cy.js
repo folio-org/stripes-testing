@@ -1,25 +1,25 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
+  FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
-import DateTools from '../../../support/utils/dateTools';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -52,22 +52,23 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.wrap(instanceHrids).each((hrid) => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.wrap(instanceHrids).each((hrid) => {
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
+            (instance) => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+        });
       });
     });
 
     it(
       'C11089 Instance field mapping: Test various field mappings for the "Cataloged date" during Instance creation (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
@@ -98,7 +99,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstMarcFileName);
         // check the first instance with Cataloged date
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -108,7 +109,7 @@ describe('data-import', () => {
           cy.go('back');
         });
         // check the second instance without Cataloged date
-        FileDetails.openInstanceInInventory('Created', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -135,7 +136,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondMarcFileName);
         // check the first instance with Cataloged date
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -145,7 +146,7 @@ describe('data-import', () => {
           cy.go('back');
         });
         // check the second instance without Cataloged date
-        FileDetails.openInstanceInInventory('Created', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -172,7 +173,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(thirdMarcFileName);
         // check the first instance with Cataloged date
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -182,7 +183,7 @@ describe('data-import', () => {
           cy.go('back');
         });
         // check the second instance without Cataloged date
-        FileDetails.openInstanceInInventory('Created', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -209,7 +210,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(forthMarcFileName);
         // check the first instance with Cataloged date
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);
@@ -219,7 +220,7 @@ describe('data-import', () => {
           cy.go('back');
         });
         // check the second instance without Cataloged date
-        FileDetails.openInstanceInInventory('Created', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, 1);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
           instanceHrids.push(instanceHrid);

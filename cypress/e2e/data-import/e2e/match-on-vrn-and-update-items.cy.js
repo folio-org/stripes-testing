@@ -1,35 +1,36 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import MatchOnVRN from '../../../support/fragments/data_import/matchOnVRN';
-import FileManager from '../../../support/utils/fileManager';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Orders from '../../../support/fragments/orders/orders';
-import Users from '../../../support/fragments/users/users';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import OrderDetails from '../../../support/fragments/orders/orderDetails';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Receiving from '../../../support/fragments/receiving/receiving';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
+  ACQUISITION_METHOD_NAMES_IN_PROFILE,
   EXISTING_RECORDS_NAMES,
   ORDER_STATUSES,
   VENDOR_NAMES,
-  ACQUISITION_METHOD_NAMES_IN_PROFILE,
+  RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import MatchOnVRN from '../../../support/fragments/data_import/matchOnVRN';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import OrderDetails from '../../../support/fragments/orders/orderDetails';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import Receiving from '../../../support/fragments/receiving/receiving';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -148,29 +149,30 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
-        Orders.deleteOrderViaApi(order[0].id);
+      cy.getAdminToken().then(() => {
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((order) => {
+          Orders.deleteOrderViaApi(order[0].id);
+        });
+        Users.deleteViaApi(user.userId);
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(jobProfilesData.name);
+        MatchProfiles.deleteMatchProfile(instanceMatchProfileName);
+        MatchProfiles.deleteMatchProfile(holdingsMatchProfileName);
+        MatchProfiles.deleteMatchProfile(itemMatchProfileName);
+        ActionProfiles.deleteActionProfile(instanceActionProfileName);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileName);
+        ActionProfiles.deleteActionProfile(itemActionProfileName);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileName);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileName);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileName);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
       });
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfilesData.name);
-      MatchProfiles.deleteMatchProfile(instanceMatchProfileName);
-      MatchProfiles.deleteMatchProfile(holdingsMatchProfileName);
-      MatchProfiles.deleteMatchProfile(itemMatchProfileName);
-      ActionProfiles.deleteActionProfile(instanceActionProfileName);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileName);
-      ActionProfiles.deleteActionProfile(itemActionProfileName);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileName);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileName);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileName);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     });
 
     it(
       'C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['smoke', 'folijet', 'parallel'] },
       () => {
         // create order with POL
         Orders.createOrderWithOrderLineViaApi(
@@ -268,21 +270,20 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfilesData.name);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(editedMarcFileName);
-        cy.wait(10000);
+        Logs.waitFileIsImported(editedMarcFileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.checkItemsStatusesInResultList(0, [
-          FileDetails.status.created,
-          FileDetails.status.updated,
-          FileDetails.status.updated,
-          FileDetails.status.updated,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          FileDetails.status.dash,
-          FileDetails.status.noAction,
-          FileDetails.status.noAction,
-          FileDetails.status.noAction,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.NO_ACTION,
         ]);
 
         // verify Instance, Holdings and Item details

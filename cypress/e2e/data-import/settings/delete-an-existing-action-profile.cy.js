@@ -1,18 +1,18 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import ConfirmDelete from '../../../support/fragments/data_import/action_profiles/modals/confirmDelete';
 import ExceptionDelete from '../../../support/fragments/data_import/action_profiles/modals/exceptionDelete';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomStringCode from '../../../support/utils/genereteTextCode';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -56,16 +56,17 @@ describe('data-import', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(profile.createJobProfile);
-      ActionProfiles.deleteActionProfile(profile.createActionProfile);
-      FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(profile.createJobProfile);
+        ActionProfiles.deleteActionProfile(profile.createActionProfile);
+        FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
       'C2346 Delete an existing action profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         ActionProfiles.search(profile.createActionProfile);
         ActionProfiles.selectActionProfileFromList(profile.createActionProfile);

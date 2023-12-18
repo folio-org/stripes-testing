@@ -1,23 +1,21 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import testType from '../../support/dictionary/testTypes';
-import getRandomPostfix from '../../support/utils/stringTools';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import OrderDetails from '../../support/fragments/orders/orderDetails';
-import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import Funds from '../../support/fragments/finance/funds/funds';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderDetails from '../../support/fragments/orders/orderDetails';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Orders', () => {
   const order = {
@@ -84,7 +82,7 @@ describe('Orders', () => {
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
           Orders.searchByParameter('PO number', orderNumber);
-          Orders.selectFromResultsList();
+          Orders.selectFromResultsList(orderNumber);
           Orders.createPOLineViaActions();
           OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
           OrderLines.fillInPOLineInfoForPhysicalResourceWithPaymentNotRequired(
@@ -129,7 +127,7 @@ describe('Orders', () => {
 
   it(
     'C358539 Unrelease encumbrances when reopen unreceived ongoing order with related paid invoice (Release encumbrance =true) (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);

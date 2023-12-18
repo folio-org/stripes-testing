@@ -1,5 +1,6 @@
 import { including } from '@interactors/html';
 import {
+  HTML,
   Accordion,
   Button,
   Checkbox,
@@ -13,8 +14,19 @@ const rootPane = Pane('Lost items requiring actual cost');
 export default {
   waitLoading: () => cy.expect(rootPane.exists()),
 
+  verifyUserNotHavePermmissionToAccess() {
+    cy.expect(
+      HTML(
+        'User does not have permission to access "Lost items needing actual cost" processing page',
+      ).exists(),
+    );
+  },
+
   searchByLossType(type) {
     cy.do(Accordion({ id: 'lossTypeFilterAccordion' }).find(Checkbox(type)).click());
+    cy.expect(
+      Accordion({ id: 'lossTypeFilterAccordion' }).find(Checkbox(type)).has({ checked: true }),
+    );
   },
 
   filterByStatus(status) {
@@ -26,6 +38,14 @@ export default {
       ListRow(including(instanceTitle))
         .find(MultiColumnListCell({ column: 'Loss type' }))
         .has({ content: type }),
+    );
+  },
+
+  checkResultsPatronColumn(instanceTitle, patron) {
+    cy.expect(
+      ListRow(including(instanceTitle))
+        .find(MultiColumnListCell({ column: 'Patron' }))
+        .has({ content: including(patron) }),
     );
   },
 
@@ -49,6 +69,15 @@ export default {
         .find(Button({ icon: 'ellipsis' }))
         .click(),
       Button('Do not bill').click(),
+    ]);
+  },
+
+  openBillActualCost(instanceTitle) {
+    cy.do([
+      ListRow(including(instanceTitle))
+        .find(Button({ icon: 'ellipsis' }))
+        .click(),
+      Button('Bill actual cost').click(),
     ]);
   },
 

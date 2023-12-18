@@ -126,12 +126,6 @@ export default {
     ]);
   },
 
-  checkCreatedOrganization: (organization) => {
-    OrganizationDetails.waitLoading();
-    cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
-    cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
-  },
-
   organizationTagDetails: () => {
     cy.do([tagButton.click()]);
   },
@@ -323,7 +317,7 @@ export default {
     cy.get('#organizations-list').should('have.css', 'background-color', blueColor);
   },
 
-  checkOpenOrganizationInfo: (organization) => {
+  checkOrganizationInfo: (organization) => {
     OrganizationDetails.waitLoading();
     cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
     cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());

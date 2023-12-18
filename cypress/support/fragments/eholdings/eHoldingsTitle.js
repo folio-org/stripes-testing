@@ -10,6 +10,7 @@ import {
   Pane,
   MultiSelect,
   TextField,
+  KeyValue,
 } from '../../../../interactors';
 import eHoldingsResourceView from './eHoldingsResourceView';
 
@@ -17,6 +18,7 @@ const packagesSection = Section({ id: 'titleShowPackages' });
 const packageFilterModal = Modal({ id: 'package-filter-modal' });
 const titleSearchField = TextField({ id: 'eholdings-search' });
 const titleSearchButton = Button('Search');
+const titleInformationSection = Section({ id: 'titleShowTitleInformation' });
 
 const filterStatuses = {
   all: 'All',
@@ -94,5 +96,9 @@ export default {
       packagesSection.find(ListItem({ text: including(filterStatuses.notSelected) })).absent(),
       packagesSection.find(ListItem({ text: including(filterStatuses.all) })).absent(),
     ]);
+  },
+
+  checkTitleInformationField(fieldName, expectedValue) {
+    cy.expect(titleInformationSection.find(KeyValue(fieldName)).has({ value: expectedValue }));
   },
 };

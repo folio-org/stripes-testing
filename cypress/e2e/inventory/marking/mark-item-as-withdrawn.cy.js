@@ -1,14 +1,14 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
-import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
-import Requests from '../../../support/fragments/requests/requests';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { Permissions } from '../../../support/dictionary';
+import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
+import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
+import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
+import Requests from '../../../support/fragments/requests/requests';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
 
 describe('inventory', () => {
   describe('Item', () => {
@@ -74,76 +74,73 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      cy.getAdminToken();
-      createdItems.forEach((item) => {
-        cy.deleteItemViaApi(item.itemId);
+      cy.getAdminToken().then(() => {
+        createdItems.forEach((item) => {
+          cy.deleteItemViaApi(item.itemId);
+        });
+        cy.deleteHoldingRecordViaApi(instanceData.holdingId);
+        InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
+        createdRequestsIds.forEach((id) => {
+          Requests.deleteRequestViaApi(id);
+        });
+        Users.deleteViaApi(user.userId);
+        requesterIds.forEach((id) => Users.deleteViaApi(id));
       });
-      cy.deleteHoldingRecordViaApi(instanceData.holdingId);
-      InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
-      createdRequestsIds.forEach((id) => {
-        Requests.deleteRequestViaApi(id);
-      });
-      Users.deleteViaApi(user.userId);
-      requesterIds.forEach((id) => Users.deleteViaApi(id));
     });
 
-    it(
-      'C10930: Mark items as withdrawn (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
-      () => {
-        cy.visit(TopMenu.inventoryPath);
-        markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
-        markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
-        markItemAsMissing.getItemsToMarkAsMissing
-          .call(markItemAsWithdrawn, createdItems)
-          .forEach((item) => {
-            markItemAsMissing.openItem(item.barcode);
-            markItemAsWithdrawn.checkActionButtonExists({
-              isExist: true,
-              button: markItemAsWithdrawn.withdrawItemButton,
-            });
-            markItemAsWithdrawn.clickMarkAsWithdrawn();
-            markItemAsWithdrawn.checkIsconfirmItemWithdrawnModalExist(
-              instanceData.instanceTitle,
-              item.barcode,
-              materialType,
-            );
-            markItemAsWithdrawn.cancelModal();
-            markItemAsMissing.verifyItemStatus(item.status.name);
-            markItemAsWithdrawn.clickMarkAsWithdrawn();
-            markItemAsWithdrawn.confirmModal();
-            markItemAsMissing.verifyItemStatus('Withdrawn');
-            markItemAsMissing.verifyItemStatusUpdatedDate();
-            ItemRecordView.closeDetailView();
+    it('C10930: Mark items as withdrawn (folijet)', { tags: ['smoke', 'folijet'] }, () => {
+      cy.visit(TopMenu.inventoryPath);
+      markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+      markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+      markItemAsMissing.getItemsToMarkAsMissing
+        .call(markItemAsWithdrawn, createdItems)
+        .forEach((item) => {
+          markItemAsMissing.openItem(item.barcode);
+          markItemAsWithdrawn.checkActionButtonExists({
+            isExist: true,
+            button: markItemAsWithdrawn.withdrawItemButton,
           });
-
-        cy.visit(TopMenu.requestsPath);
-        markItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
-          Requests.findCreatedRequest(item.barcode);
-          Requests.selectFirstRequest(item.barcode);
-          markItemAsMissing.verifyRequestStatus('Open - Not yet filled');
+          markItemAsWithdrawn.clickMarkAsWithdrawn();
+          markItemAsWithdrawn.checkIsconfirmItemWithdrawnModalExist(
+            instanceData.instanceTitle,
+            item.barcode,
+            materialType,
+          );
+          markItemAsWithdrawn.cancelModal();
+          markItemAsMissing.verifyItemStatus(item.status.name);
+          markItemAsWithdrawn.clickMarkAsWithdrawn();
+          markItemAsWithdrawn.confirmModal();
+          markItemAsMissing.verifyItemStatus('Withdrawn');
+          markItemAsMissing.verifyItemStatusUpdatedDate();
+          ItemRecordView.closeDetailView();
         });
 
-        cy.visit(TopMenu.inventoryPath);
-        markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
-        markItemAsMissing.getItemsNotToMarkAsMissing
-          .call(markItemAsWithdrawn, createdItems)
-          .forEach((item) => {
-            markItemAsMissing.openItem(item.barcode);
-            markItemAsWithdrawn.checkActionButtonExists({
-              isExist: false,
-              button: markItemAsWithdrawn.withdrawItemButton,
-            });
-            ItemRecordView.closeDetailView();
-          });
+      cy.visit(TopMenu.requestsPath);
+      markItemAsMissing.getItemsToCreateRequests(createdItems).forEach((item) => {
+        Requests.findCreatedRequest(item.barcode);
+        Requests.selectFirstRequest(item.barcode);
+        markItemAsMissing.verifyRequestStatus('Open - Not yet filled');
+      });
 
-        markItemAsMissing.openItem(markItemAsWithdrawn.getWithdrawnItem(createdItems).barcode);
-        markItemAsWithdrawn.checkActionButtonExists({
-          isExist: false,
-          button: markItemAsWithdrawn.newRequestButton,
+      cy.visit(TopMenu.inventoryPath);
+      markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+      markItemAsMissing.getItemsNotToMarkAsMissing
+        .call(markItemAsWithdrawn, createdItems)
+        .forEach((item) => {
+          markItemAsMissing.openItem(item.barcode);
+          markItemAsWithdrawn.checkActionButtonExists({
+            isExist: false,
+            button: markItemAsWithdrawn.withdrawItemButton,
+          });
+          ItemRecordView.closeDetailView();
         });
-        ItemRecordView.closeDetailView();
-      },
-    );
+
+      markItemAsMissing.openItem(markItemAsWithdrawn.getWithdrawnItem(createdItems).barcode);
+      markItemAsWithdrawn.checkActionButtonExists({
+        isExist: false,
+        button: markItemAsWithdrawn.newRequestButton,
+      });
+      ItemRecordView.closeDetailView();
+    });
   });
 });

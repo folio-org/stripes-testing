@@ -1,34 +1,34 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
-  ACCEPTED_DATA_TYPE_NAMES,
-  PROFILE_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
   LOCATION_NAMES,
+  PROFILE_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import FileManager from '../../../support/utils/fileManager';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import FileManager from '../../../support/utils/fileManager';
+import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -262,40 +262,41 @@ describe('data-import', () => {
         FileDetails.columnNameInResultList.holdings,
         FileDetails.columnNameInResultList.item,
       ].forEach((columnName) => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
       });
       FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (initialInstance) => {
+            cy.deleteItemViaApi(initialInstance.items[0].id);
+            cy.deleteHoldingRecordViaApi(initialInstance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(initialInstance.id);
+          },
+        );
+      });
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (initialInstance) => {
-          cy.deleteItemViaApi(initialInstance.items[0].id);
-          cy.deleteHoldingRecordViaApi(initialInstance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(initialInstance.id);
-        },
-      );
     });
 
     it(
       'C11123 Export from Inventory, edit file, and re-import to update items (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
@@ -368,7 +369,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
           Logs.openFileDetails(nameMarcFileForUpdate);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.item,
           );
           FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);

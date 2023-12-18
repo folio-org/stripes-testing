@@ -1,8 +1,6 @@
-import devTeams from '../../../../support/dictionary/devTeams';
-import TestType from '../../../../support/dictionary/testTypes';
 import NewNoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import { NOTICE_CATEGORIES } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
 
 describe('ui-circulation-settings: create patron notice template', () => {
   const patronNoticeTemplate = {
@@ -16,7 +14,7 @@ describe('ui-circulation-settings: create patron notice template', () => {
     });
   });
 
-  it('C199656 Create notice template (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
+  it('C199656 Create notice template (vega)', { tags: ['smoke', 'vega'] }, () => {
     NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.checkInitialState();
     NewNoticePolicyTemplate.addToken('item.title');

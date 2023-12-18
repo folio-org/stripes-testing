@@ -1,35 +1,36 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
-  TARGET_PROFILE_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
+  TARGET_PROFILE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import InventoryEditMarcRecord from '../../../support/fragments/inventory/inventoryEditMarcRecord';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import FileManager from '../../../support/utils/fileManager';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -101,33 +102,34 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      MarcFieldProtection.getListViaApi({
-        query: `"data"=="${firstProtectedFieldsData.data}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
+      cy.getAdminToken().then(() => {
+        MarcFieldProtection.getListViaApi({
+          query: `"data"=="${firstProtectedFieldsData.data}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${secondProtectedFieldData.field}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(user.userId);
       });
-      MarcFieldProtection.getListViaApi({
-        query: `"field"=="${secondProtectedFieldData.field}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(user.userId);
     });
 
     it(
       'C356829 Test field protections when importing to update instance, after editing the MARC Bib in quickMARC (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
@@ -219,11 +221,11 @@ describe('data-import', () => {
             FileDetails.columnNameInResultList.srsMarc,
             FileDetails.columnNameInResultList.instance,
           ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
           });
           FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
           FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
-          FileDetails.openInstanceInInventory('Updated');
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         });
 
         InventoryInstance.checkIsInstanceUpdated();

@@ -1,15 +1,13 @@
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../../../support/utils/stringTools';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import Users from '../../../../support/fragments/users/users';
-import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../../../support/fragments/users/userEdit';
 import NewNoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import NoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import { NOTICE_CATEGORIES } from '../../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplate from '../../../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import Users from '../../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../../support/utils/stringTools';
 
 describe('Patron Notices', () => {
   let userData;
@@ -53,7 +51,7 @@ describe('Patron Notices', () => {
 
   it(
     'C387439 Add metadata info to view of Patron Notice Templates scenario 1,4,5 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.openToSide({ name: testData.noticeTemplateBody.name });
       NewNoticePolicyTemplate.checkAfterSaving({

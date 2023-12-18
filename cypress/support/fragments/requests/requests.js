@@ -3,6 +3,7 @@ import { HTML, including } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiColumnListHeader,
   MultiSelect,
   Pane,
@@ -15,6 +16,7 @@ import {
   Section,
   Heading,
   Spinner,
+  KeyValue,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -28,6 +30,7 @@ import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
+const requestDetailsSection = Pane({ title: 'Request Detail' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 const requestsPane = Pane({ title: 'Requests' });
 const pageCheckbox = Checkbox({ name: 'Page' });
@@ -35,14 +38,13 @@ const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
-const resultsPane = Pane({ id: 'pane-results' });
-const actionsButtonInResultsPane = resultsPane.find(Button('Actions'));
+const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
   cy.expect(
-    resultsPane
+    requestsResultsSection
       .find(HTML(including('Choose a filter or enter a search query to show results.')))
       .exists(),
   );
@@ -237,6 +239,7 @@ function waitLoadingTags() {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
+
 function selectSpecifiedRequestLevel(parameter) {
   return cy.do(Checkbox({ name: parameter }).click());
 }
@@ -274,7 +277,7 @@ export default {
 
   cancelRequest() {
     cy.do([
-      Pane({ title: 'Request Detail' }).find(Button('Actions')).click(),
+      requestDetailsSection.find(Button('Actions')).click(),
       Button({ id: 'clickable-cancel-request' }).click(),
       TextArea('Additional information for patron  ').fillIn('test'),
       Button('Confirm').click(),
@@ -350,6 +353,14 @@ export default {
     } else if (requestType === REQUEST_TYPES.RECALL) {
       this.selectRecallsRequestType();
     }
+  },
+
+  checkRequestStatus(requestStatus) {
+    cy.expect(KeyValue('Request status').has({ value: requestStatus }));
+  },
+
+  checkActionDropdownHidden: () => {
+    cy.expect(requestDetailsSection.find(Button('Actions')).absent());
   },
 
   verifyRequestTypeChecked(requestType) {
@@ -550,6 +561,10 @@ export default {
       MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).focus(),
       MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).select(servicePoint),
     ]);
+  },
+
+  selectTheFirstRequest() {
+    cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
   },
 
   exportRequestToCsv: () => {

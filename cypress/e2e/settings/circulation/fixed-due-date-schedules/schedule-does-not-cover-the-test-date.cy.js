@@ -1,29 +1,27 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import devTeams from '../../../../support/dictionary/devTeams';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
-import getRandomPostfix from '../../../../support/utils/stringTools';
 import {
   CY_ENV,
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
+  ITEM_STATUS_NAMES,
   LIBRARY_DUE_DATE_MANAGMENT,
   LOAN_PROFILE,
-  ITEM_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  MATERIAL_TYPE_NAMES,
 } from '../../../../support/constants';
-import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
-import Checkout from '../../../../support/fragments/checkout/checkout';
-import Loans from '../../../../support/fragments/loans/loansPage';
-import TopMenu from '../../../../support/fragments/topMenu';
 import CheckinActions from '../../../../support/fragments/check-in-actions/checkInActions';
-import Users from '../../../../support/fragments/users/users';
-import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import Checkout from '../../../../support/fragments/checkout/checkout';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
+import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
 import loanPolicy from '../../../../support/fragments/circulation/loan-policy';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import Loans from '../../../../support/fragments/loans/loansPage';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 let userData = {};
 let materialTypeId;
@@ -171,7 +169,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
 
   it(
     'C641: Test renewing item using a fixed due date loan profile where the fixed due date schedule date range does not cover the test date (vega)',
-    { tags: [TestTypes.smoke, devTeams.vega] },
+    { tags: ['smoke', 'vega'] },
     () => {
       cy.visit(SettingsMenu.circulationFixedDueDateSchedulesPath);
       FixedDueDateSchedules.editSchedule(mySchedule.name, {

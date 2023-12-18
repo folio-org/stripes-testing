@@ -1,25 +1,26 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  BATCH_GROUP,
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
-  BATCH_GROUP,
-  ACCEPTED_DATA_TYPE_NAMES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Users from '../../../support/fragments/users/users';
-import InvoiceView from '../../../support/fragments/invoices/invoiceView';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import InvoiceView from '../../../support/fragments/invoices/invoiceView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing EDIFACT files', () => {
@@ -81,7 +82,7 @@ describe('data-import', () => {
 
     it(
       'C347926 Check EDIFACT invoice import when Invoice line description is incorrectly constructed (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();
@@ -113,11 +114,11 @@ describe('data-import', () => {
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(fileName);
-        FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         cy.wait(2000);
         FileDetails.verifyEachInvoiceTitleInColunm();
         FileDetails.clickNextPaginationButton();
-        FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         cy.wait(2000);
         FileDetails.verifyEachInvoiceTitleInColunm();
         Logs.checkQuantityRecordsInFile(quantityOfInvoices);

@@ -1,19 +1,19 @@
 import uuid from 'uuid';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import Inventory from '../../../support/fragments/inventory/inventoryInstances';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import {
-  ServicePoints,
-  Institutions,
   Campuses,
+  Institutions,
   Libraries,
   Locations,
+  ServicePoints,
 } from '../../../support/fragments/settings/tenant';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -79,7 +79,7 @@ describe('Settings: Tenant', () => {
     ]).then((userProperties) => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password);
-      cy.wait(1000);
+      cy.wait(2000);
       TopMenuNavigation.navigateToApp('Settings');
     });
   });
@@ -98,7 +98,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C399077 Verify that selected settings remain for "Libraries" (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });

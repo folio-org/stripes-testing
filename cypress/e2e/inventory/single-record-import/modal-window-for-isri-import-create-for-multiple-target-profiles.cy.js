@@ -1,20 +1,20 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import Users from '../../../support/fragments/users/users';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import SingleRecordImportModal from '../../../support/fragments/inventory/singleRecordImportModal';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Single record import', () => {
@@ -72,22 +72,23 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(profile.createJobProfile);
-      ActionProfiles.deleteActionProfile(profile.createActionProfile);
-      FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
-      Users.deleteViaApi(user.userId);
-      Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(profile.createJobProfile);
+        ActionProfiles.deleteActionProfile(profile.createActionProfile);
+        FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
+        Users.deleteViaApi(user.userId);
+        Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(
       'C375122 Verify the modal window for ISRI Import/Create in inventory main actions menu for multiple target profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const calloutMessage = `Record ${testIdentifier} created. Results may take a few moments to become visible in Inventory`;
 

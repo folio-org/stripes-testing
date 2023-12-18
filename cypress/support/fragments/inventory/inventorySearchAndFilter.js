@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -19,12 +19,12 @@ import {
   TextArea,
   TextField,
 } from '../../../../interactors';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
 import DateTools from '../../utils/dateTools';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import InventoryActions from './inventoryActions';
-import InventoryInstances from './inventoryInstances';
 import InventoryInstance from './inventoryInstance';
-import { BROWSE_CALL_NUMBER_OPTIONS } from '../../constants';
+import InventoryInstances from './inventoryInstances';
 
 const ONE_SECOND = 1000;
 const searchAndFilterSection = Pane({ id: 'browse-inventory-filters-pane' });
@@ -101,7 +101,7 @@ const searchHoldingsByHRID = (hrid) => {
 
 const searchInstanceByTitle = (title) => {
   cy.do([TextArea({ id: 'input-inventory-search' }).fillIn(title), searchButton.click()]);
-  InventoryInstance.waitLoading();
+  InventoryInstance.waitInventoryLoading();
 
   return InventoryInstance;
 };
@@ -330,6 +330,7 @@ export default {
 
   verifyBrowseOptions() {
     cy.do(browseSearchAndFilterInput.click());
+    // eslint-disable-next-line no-unused-vars
     Object.entries(BROWSE_CALL_NUMBER_OPTIONS).forEach(([key, value]) => {
       cy.expect(browseSearchAndFilterInput.has({ content: including(value) }));
     });
@@ -348,6 +349,10 @@ export default {
 
   switchToBrowseTab() {
     cy.do(Button({ id: 'mode-navigation-browse' }).click());
+  },
+
+  verifySpecificTabHighlighted(tab) {
+    cy.expect(Button(`${tab}`).has({ default: false }));
   },
 
   verifyCallNumberBrowseEmptyPane() {
@@ -396,7 +401,10 @@ export default {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveUUIDs.click());
   },
-
+  saveHoldingsUUIDs() {
+    InventoryActions.open();
+    cy.do(InventoryActions.options.saveHoldingsUUIDs.click());
+  },
   saveCQLQuery() {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveCQLQuery.click());
@@ -434,8 +442,8 @@ export default {
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },
-  switchToItem: () => cy.do(Button({ id: 'segment-navigation-items' }).click()),
-  switchToHoldings: () => cy.do(Button({ id: 'segment-navigation-holdings' }).click()),
+  switchToItem: () => cy.do(itemToggleButton.click()),
+  switchToHoldings: () => cy.do(holdingsToggleButton.click()),
   switchToInstance: () => cy.do(navigationInstancesButton.click()),
 
   instanceTabIsDefault() {
@@ -492,7 +500,14 @@ export default {
   },
 
   selectSearchOptions(searchOption, text) {
-    cy.do([inventorySearchAndFilterInput.choose(searchOption), keywordInput.fillIn(text)]);
+    cy.do([
+      inventorySearchAndFilterInput.choose(searchOption),
+      inventorySearchAndFilter.fillIn(text),
+    ]);
+  },
+
+  verifySelectedSearchOption(option) {
+    cy.expect(inventorySearchAndFilterInput.has({ value: option }));
   },
 
   clickSearch() {
@@ -553,6 +568,18 @@ export default {
   verifyTagIsAbsent(tag) {
     this.searchTag(tag);
     cy.expect(HTML('No matching options').exists());
+  },
+
+  verifyResultPaneEmpty({ noResultsFound = false, searchQuery = '(?:\\S+)' } = {}) {
+    const message = noResultsFound
+      ? `No results found for "${searchQuery}". Please check your spelling and filters.`
+      : emptyResultsMessage;
+
+    cy.expect(
+      paneResultsSection
+        .find(HTML({ className: including('noResultsMessage-') }))
+        .has({ text: matching(message) }),
+    );
   },
 
   resetAllAndVerifyNoResultsAppear() {
@@ -814,5 +841,32 @@ export default {
     // wait for facet options to reload in all facets
     cy.wait(ONE_SECOND);
     cy.expect(checkbox.has({ checked: selected }));
+  },
+
+  checkSearchButtonEnabled() {
+    cy.expect(searchButton.has({ disabled: false }));
+  },
+
+  varifyInstanceKeyDetails(instanceData) {
+    cy.wait(4000);
+    cy.expect([
+      Section({ id: 'acc01' }).find(KeyValue('Instance HRID')).has({ value: instanceData.hrid }),
+      Section({ id: 'acc01' }).find(KeyValue('Source')).has({ value: instanceData.source }),
+      Section({ id: 'acc02' }).find(KeyValue('Resource title')).has({ value: instanceData.title }),
+    ]);
+  },
+
+  expandAccordion(accordionName) {
+    cy.do(paneFilterSection.find(Accordion(accordionName)).clickHeader());
+    cy.expect(paneFilterSection.find(Accordion(accordionName)).has({ open: true }));
+  },
+
+  checkOptionsWithCountersExistInAccordion(accordionName) {
+    cy.expect(
+      paneFilterSection
+        .find(Accordion(accordionName))
+        .find(Checkbox())
+        .has({ label: matching(/.{1,}\d{1,}/) }),
+    );
   },
 };

@@ -1,13 +1,13 @@
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../../support/dictionary';
-import TopMenu from '../../../../support/fragments/topMenu';
+import { Permissions } from '../../../../support/dictionary';
+import Helper from '../../../../support/fragments/finance/financeHelper';
+import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
-import Helper from '../../../../support/fragments/finance/financeHelper';
-import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Cataloging -> Maintaining the catalog', () => {
@@ -40,7 +40,7 @@ describe('inventory', () => {
 
     it(
       'C3497 Edit the title of an instance which has Source FOLIO (no underlying MARC record in SRS) (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
         InstanceRecordView.verifyInstancePaneExists();

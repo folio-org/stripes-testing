@@ -32,6 +32,8 @@ const statisticalCodeFieldSet = FieldSet('Statistical code');
 const addStatisticalCodeButton = Button('Add statistical code');
 const callNumberType = rootForm.find(Select('Call number type'));
 const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
+const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
+const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
@@ -168,5 +170,12 @@ export default {
   },
   chooseCallNumberType(type) {
     cy.do(callNumberType.choose(type));
+  },
+  openTemporaryLocation() {
+    cy.do(temporaryLocationDropdown.click());
+  },
+  verifyTemporaryLocationItemExists: (temporarylocation) => {
+    cy.expect(temporaryLocationList.exists());
+    cy.expect(temporaryLocationList.find(HTML(including(temporarylocation))).exists());
   },
 };

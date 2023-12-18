@@ -1,25 +1,26 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  LOCATION_NAMES,
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
+  FOLIO_RECORD_TYPE,
+  ITEM_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -107,19 +108,20 @@ describe('data-import', () => {
     };
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(specialJobProfile.profileName);
-      collectionOfProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        // delete generated profiles
+        JobProfiles.deleteJobProfile(specialJobProfile.profileName);
+        collectionOfProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
       });
     });
 
     it(
       'C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -161,14 +163,14 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile();
         Logs.checkImportFile(specialJobProfile.profileName);
         Logs.openFileDetails(fileName);
-
+        cy.reload();
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.checkItemsQuantityInSummaryTable(0, '1');
       },
