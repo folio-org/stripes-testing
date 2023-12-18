@@ -32,9 +32,7 @@ const vendorDetailsSection = orderLineDetailsSection.find(Section({ id: 'Vendor'
 const costDetailsSection = orderLineDetailsSection.find(Section({ id: 'CostDetails' }));
 const locationDetailsSection = orderLineDetailsSection.find(Section({ id: 'location' }));
 const exportDetailsSection = orderLineDetailsSection.find(Section({ id: 'exportDetails' }));
-const headerLinesDetail = orderLineDetailsSection.find(
-  PaneHeader({ id: 'paneHeaderorder-lines-details' }),
-);
+const headerLinesDetail = PaneHeader({ id: 'paneHeaderorder-lines-details' });
 const versionHistoryButton = Button({ id: 'version-history-btn' });
 
 export default {
@@ -249,7 +247,7 @@ export default {
     });
   },
   verifyLinesDetailTitle(title) {
-    cy.expect(headerLinesDetail.has({ text: including(title) }));
+    cy.expect(orderLineDetailsSection.find(headerLinesDetail).has({ text: including(title) }));
   },
   openVersionHistory() {
     cy.do(versionHistoryButton.click());
