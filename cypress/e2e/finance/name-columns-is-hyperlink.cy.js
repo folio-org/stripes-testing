@@ -1,9 +1,13 @@
 import Permissions from '../../support/dictionary/permissions';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import FiscalYearDetails from '../../support/fragments/finance/fiscalYears/fiscalYearDetails';
 import Funds from '../../support/fragments/finance/funds/funds';
+import FundDetails from '../../support/fragments/finance/funds/fundDetails';
 import Groups from '../../support/fragments/finance/groups/groups';
+import GroupDetails from '../../support/fragments/finance/groups/groupDetails';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import LedgerDetails from '../../support/fragments/finance/ledgers/ledgerDetails';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 
@@ -66,7 +70,7 @@ describe('Finance', () => {
       FiscalYears.searchByName(defaultFiscalYear.name);
       FiscalYears.expextFY(defaultFiscalYear.name);
 
-      const FiscalYearDetails = FiscalYears.selectFisacalYear(defaultFiscalYear.name);
+      FiscalYears.selectFisacalYear(defaultFiscalYear.name);
       FiscalYearDetails.verifyFiscalYearName(defaultFiscalYear.name);
 
       FinanceHelp.clickLedgerButton();
@@ -75,7 +79,7 @@ describe('Finance', () => {
       Ledgers.searchByName(defaultLedger.name);
       Ledgers.verifyLedgerLinkExists(defaultLedger.name);
 
-      const LedgerDetails = Ledgers.selectLedger(defaultLedger.name);
+      Ledgers.selectLedger(defaultLedger.name);
       LedgerDetails.verifyLedgerName(defaultLedger.name);
 
       FinanceHelp.clickGroupButton();
@@ -84,7 +88,7 @@ describe('Finance', () => {
       Groups.searchByName(defaultGroup.name);
       Groups.checkCreatedInList(defaultGroup.name);
 
-      const GroupDetails = Groups.selectGroupByName(defaultGroup.name);
+      Groups.selectGroupByName(defaultGroup.name);
       GroupDetails.verifyGroupName(defaultGroup.name);
 
       FinanceHelp.clickFundButton();
@@ -93,7 +97,7 @@ describe('Finance', () => {
       Funds.searchByName(defaultFund.name);
       Funds.verifyFundLinkNameExists(defaultFund.name);
 
-      const FundDetails = Funds.selectFund(defaultFund.name);
+      Funds.selectFund(defaultFund.name);
       FundDetails.verifyGroupName(defaultFund.name);
     },
   );
