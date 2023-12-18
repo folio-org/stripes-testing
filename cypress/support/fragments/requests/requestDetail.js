@@ -154,6 +154,11 @@ export default {
     InteractorsTools.checkKeyValue(requesterInfoSection, 'Pickup service point', data.pickupSP);
   },
 
+  checkCreatedDate(date) {
+    cy.do(Button(including('Record last updated')).click());
+    cy.expect(requestInfoSection.find(HTML(including(`Record created: ${date}`))).exists());
+  },
+
   openActions() {
     cy.do(actionsButton.click());
   },
