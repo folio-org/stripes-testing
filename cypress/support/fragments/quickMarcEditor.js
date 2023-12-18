@@ -1,3 +1,4 @@
+import { matching } from '@interactors/html';
 import {
   QuickMarcEditor,
   QuickMarcEditorRow,
@@ -1762,11 +1763,19 @@ export default {
   },
 
   checkUserNameInHeader(firstName, lastName) {
-    cy.expect(
-      PaneHeader()
-        .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
-        .exists(),
-    );
+    if (!firstName) {
+      cy.expect(
+        PaneHeader()
+          .find(HTML(matching(new RegExp(`Source: ${lastName}$`))))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        PaneHeader()
+          .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
+          .exists(),
+      );
+    }
   },
 
   updateIndicatorValue(tag, newValue, indicatorIndex = 0) {

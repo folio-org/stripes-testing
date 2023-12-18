@@ -55,10 +55,7 @@ export default {
     ]);
   },
   editItemNotes: (newType, newText) => {
-    cy.do([
-      Select('Note type*').choose(newType),
-      TextArea({ ariaLabel: 'Note' }).fillIn(newText),
-    ]);
+    cy.do([Select('Note type*').choose(newType), TextArea({ ariaLabel: 'Note' }).fillIn(newText)]);
   },
   saveAndClose({ itemSaved = false } = {}) {
     cy.do(saveAndCloseBtn.click());
