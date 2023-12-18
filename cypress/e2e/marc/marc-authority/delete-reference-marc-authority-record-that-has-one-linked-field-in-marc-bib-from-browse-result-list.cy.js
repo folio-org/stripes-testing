@@ -22,6 +22,13 @@ describe('MARC -> MARC Authority', () => {
     searchOption: 'Name-title',
     authorized: 'Authorized',
     reference: 'Reference',
+    bib240UnlinkedFieldValue: [
+      18,
+      '240',
+      '1',
+      '0',
+      '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 id.loc.gov/authorities/names/n83130832423379',
+    ],
   };
   const marcFiles = [
     {
@@ -134,13 +141,7 @@ describe('MARC -> MARC Authority', () => {
       InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.verifyTagFieldAfterUnlinking(
-        linkingTagAndValues.rowIndex,
-        '240',
-        '1',
-        '0',
-        '$a Variations, $m piano, violin, cello, $n op. 44, $r E♭ major $0 id.loc.gov/authorities/names/n83130832423379',
-      );
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(testData.bib240UnlinkedFieldValue);
       QuickMarcEditor.verifyIconsAfterUnlinking(linkingTagAndValues.rowIndex);
       QuickMarcEditor.pressCancel();
       InventoryInstance.waitInventoryLoading();
