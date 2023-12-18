@@ -16,10 +16,10 @@ const fiscalResultsList = PaneContent({ id: 'fiscal-year-results-pane-content' }
 const ledgerResultList = PaneContent({ id: 'ledger-results-pane-content' });
 const FundResultList = PaneContent({ id: 'fund-results-pane-content' });
 const filtersPane = Pane({ id: including('filters-pane') });
-const fiscalYearButton = filtersPane.find(Button('Fiscal year'));
-const ledgerButton = filtersPane.find(Button('Ledger'));
-const groupButton = filtersPane.find(Button('Group'));
-const fundButton = filtersPane.find(Button('Fund'));
+const fiscalYearButton = Button('Fiscal year');
+const ledgerButton = Button('Ledger');
+const groupButton = Button('Group');
+const fundButton = Button('Fund');
 
 export default {
   statusActive: 'Active',
@@ -99,18 +99,18 @@ export default {
   },
 
   clickFiscalYearButton() {
-    cy.do(fiscalYearButton.click());
+    cy.do(filtersPane.find(fiscalYearButton).click());
   },
 
   clickLedgerButton() {
-    cy.do(ledgerButton.click());
+    cy.do(filtersPane.find(ledgerButton).click());
   },
 
   clickGroupButton() {
-    cy.do(groupButton.click());
+    cy.do(filtersPane.find(groupButton).click());
   },
 
   clickFundButton() {
-    cy.do(fundButton.click());
+    cy.do(filtersPane.find(fundButton).click());
   },
 };
