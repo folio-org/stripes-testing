@@ -6,10 +6,11 @@ import InventoryInstance from '../../../../../support/fragments/inventory/invent
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
-// import Users from '../../../../../support/fragments/users/users';
+import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 
 describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking', () => {
   const testData = {
@@ -19,11 +20,36 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
       tagLDR: 'LDR',
     },
     fieldContents: {
-      tag245Content: `C422151 New title ${getRandomPostfix()} $9 TEST`,
+      tag245Content: `$a C422151 New title ${getRandomPostfix()} $9 TEST`,
       tagLDRContent: '00000naa\\a2200000uu\\4500',
     },
+    bib100AfterLinkingToAuth100: [
+      5,
+      '100',
+      '\\',
+      '\\',
+      '$a C422151 Jackson, Peter, $c Inspector Banks series ; $d 1950-2022',
+      '',
+      '$0 3052044',
+      '',
+    ],
+    bib240AfterLinkingToAuth100: [
+      6,
+      '240',
+      '\\',
+      '\\',
+      '$a Hosanna Bible',
+      '',
+      '$0 id.loc.gov/authorities/names/n99036055',
+      '',
+    ],
+    successCalloutMessage: 'Field 100 and 240 has been linked to MARC authority record(s).',
+    errorCalloutMessage: 'Field 610 and 711 must be set manually by selecting the link icon.',
   };
-  const linkableFields = [100, 240, 610, 711];
+  const linkableFields = [
+    100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811,
+    830,
+  ];
   const newFields = [
     {
       rowIndex: 4,
@@ -35,26 +61,20 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
       rowIndex: 5,
       tag: '240',
       content: '$0 n99036055 $9 test',
-      // boxFourth: '$a Hosanna Bible',
-      // boxFifth: '',
-      // boxSixth: '$0 id.loc.gov/authorities/names/n99036055',
-      // boxSeventh: '',
       status: 'linked',
     },
     {
       rowIndex: 6,
       tag: '610',
       content: '$a smth $0 y000111 $9 812ef396-4451-48b3-b99c-6e59df6330e0',
+      contentWithout$9: '$a smth $0 y000111',
       status: 'not linked',
     },
     {
       rowIndex: 7,
       tag: '711',
       content: '$a smth2 $0 y000222 $9 testing',
-      // boxFourth: '$a Roma Council $c Basilica di San Pietro in Roma) $d 1962-1965 : $n (2nd :',
-      // boxFifth: '$j something',
-      // boxSixth: '$0 id.loc.gov/authorities/names/n79084169C388560',
-      // boxSeventh: '$2 fast',
+      contentWithout$9: '$a smth2 $0 y000222',
       status: 'not linked',
     },
   ];
@@ -73,7 +93,20 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
     },
   ];
 
-  before(() => {
+  before('Creating test data', () => {
+    // make sure there are no duplicate authority records in the system
+    cy.getAdminToken().then(() => {
+      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C422151"' }).then(
+        (records) => {
+          records.forEach((record) => {
+            if (record.authRefType === 'Authorized') {
+              MarcAuthority.deleteViaAPI(record.id);
+            }
+          });
+        },
+      );
+    });
+
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
@@ -113,6 +146,15 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
     });
   });
 
+  after('Deleting test data', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(testData.user.userId);
+    testData.createdRecordIDs.forEach((id) => {
+      MarcAuthority.deleteViaAPI(id);
+    });
+    InventoryInstance.deleteInstanceViaApi(testData.createdInstanceID);
+  });
+
   it(
     'C422151 Auto-link fields having "$9" when creating new "MARC Bib" record (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
@@ -120,7 +162,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
       InventoryInstance.newMarcBibRecord();
       QuickMarcEditor.updateExistingField(
         testData.tags.tag245,
-        `$a ${testData.fieldContents.tag245Content}`,
+        testData.fieldContents.tag245Content,
       );
       QuickMarcEditor.updateExistingField(
         testData.tags.tagLDR,
@@ -130,19 +172,16 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Automated linking
         MarcAuthority.addNewField(newField.rowIndex, newField.tag, newField.content);
       });
       QuickMarcEditor.clickLinkHeadingsButton();
-      QuickMarcEditor.checkLinkButtonExist('100');
-      QuickMarcEditor.checkLinkButtonExist('240');
-      QuickMarcEditor.checkCallout(
-        'Field 100 and 240 has been linked to MARC authority record(s).',
-      );
-      QuickMarcEditor.checkCallout(
-        'Field 610 and 711 must be set manually by selecting the link icon.',
-      );
-      QuickMarcEditor.checkContent('$0 3052044', 4);
-      QuickMarcEditor.checkContent('$0 n99036055', 5);
-      QuickMarcEditor.checkContent('$a smth $0 y000111', 6);
-      QuickMarcEditor.checkContent('$a smth2 $0 y000222', 7);
-      QuickMarcEditor.checkContent('$a C422151 New title 372.0589783648469219 $9 TEST', 4);
+      QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(5);
+      QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(6);
+      QuickMarcEditor.checkCallout(testData.successCalloutMessage);
+      QuickMarcEditor.checkCallout(testData.errorCalloutMessage);
+      QuickMarcEditor.closeCallout();
+      QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib100AfterLinkingToAuth100);
+      QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib240AfterLinkingToAuth100);
+      QuickMarcEditor.checkContent(newFields[2].contentWithout$9, 7);
+      QuickMarcEditor.checkContent(newFields[3].contentWithout$9, 8);
+      QuickMarcEditor.checkContent(testData.fieldContents.tag245Content, 4);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
       InventoryInstance.getId().then((id) => {
