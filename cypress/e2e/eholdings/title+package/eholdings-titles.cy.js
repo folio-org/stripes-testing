@@ -2,7 +2,6 @@
 
 import { Button, Pane, Section } from '../../../../interactors';
 import permissions from '../../../support/dictionary/permissions';
-import eHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import eHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
 import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
@@ -10,6 +9,7 @@ import eHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch
 import eHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
 import eHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
 import eHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 import TopMenu from '../../../support/fragments/topMenu';
 import users from '../../../support/fragments/users/users';
 import dateTools from '../../../support/utils/dateTools';
@@ -38,15 +38,15 @@ describe('eHoldings', () => {
           eHoldingSearch.switchToTitles();
           eHoldingsTitlesSearch.bySubject('chemical engineering');
           eHoldingsTitlesSearch.byPublicationType('Journal');
-          eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.notSelected);
+          eHoldingsTitlesSearch.bySelectionStatus(FILTER_STATUSES.NOT_SELECTED);
           eHoldingsTitles.openTitle(1);
           eHoldingsTitle.waitPackagesLoading();
           eHoldingsTitle.filterPackages();
           eHoldingsTitle.waitPackagesLoading();
-          eHoldingsTitle.checkPackagesSelectionStatus(eHoldingsTitle.filterStatuses.notSelected);
+          eHoldingsTitle.checkPackagesSelectionStatus(FILTER_STATUSES.NOT_SELECTED);
           eHoldingsTitle.openResource();
           eHoldingsResourceView.addToHoldings();
-          eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
+          eHoldingsResourceView.checkHoldingStatus(FILTER_STATUSES.SELECTED);
           cy.then(() => Pane().id()).then((resourceId) => {
             cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
             cy.expect(Button('Edit').exists());
@@ -77,13 +77,10 @@ describe('eHoldings', () => {
           };
           eHoldingsTitlesSearch.byTitle(selectedResource.title);
           eHoldingsTitlesSearch.byPublicationType(selectedResource.publicationType);
-          eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.selected);
+          eHoldingsTitlesSearch.bySelectionStatus(FILTER_STATUSES.SELECTED);
           eHoldingsTitles.openTitle(0);
           eHoldingsTitle.waitPackagesLoading();
-          eHoldingsTitle.filterPackages(
-            eHoldingsPackage.filterStatuses.selected,
-            selectedResource.package,
-          );
+          eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED, selectedResource.package);
           eHoldingsTitle.waitPackagesLoading();
           eHoldingsTitle.openResource();
           eHoldingsResourceView.goToEdit();
@@ -133,13 +130,13 @@ describe('eHoldings', () => {
               waiter: () => eHoldingsTitle.waitLoading(specialTitle.name),
             });
             eHoldingsTitle.waitPackagesLoading();
-            eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected);
+            eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED);
             eHoldingsTitle.waitPackagesLoading();
-            eHoldingsTitle.checkPackagesSelectionStatus(eHoldingsPackage.filterStatuses.selected);
+            eHoldingsTitle.checkPackagesSelectionStatus(FILTER_STATUSES.SELECTED);
             eHoldingsTitle.openResource();
-            eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
+            eHoldingsResourceView.checkHoldingStatus(FILTER_STATUSES.SELECTED);
             eHoldingsResourceView.removeTitleFromHolding();
-            eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
+            eHoldingsResourceView.checkHoldingStatus(FILTER_STATUSES.NOT_SELECTED);
           });
         });
       },
@@ -179,7 +176,7 @@ describe('eHoldings', () => {
           eHoldingsTitle.searchTitle(title);
           eHoldingsTitlesSearch.openTitle(title);
           eHoldingsTitle.waitPackagesLoading();
-          eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected);
+          eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED);
           eHoldingsTitle.waitPackagesLoading();
           eHoldingsTitle.checkOnlySelectedPackagesInResults();
         });
@@ -205,10 +202,7 @@ describe('eHoldings', () => {
           eHoldingsTitle.searchTitle(selectedResource.title);
           eHoldingsTitlesSearch.openTitle(selectedResource.title);
           eHoldingsTitle.waitPackagesLoading();
-          eHoldingsTitle.filterPackages(
-            eHoldingsPackage.filterStatuses.all,
-            selectedResource.package,
-          );
+          eHoldingsTitle.filterPackages(FILTER_STATUSES.ALL, selectedResource.package);
         });
       },
     );
