@@ -23,7 +23,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Title Level Request. Request Detail', () => {
+describe('Title Level Request. Request Detail Closed', () => {
   let userData = {};
   let userForTLR = {};
   const requestIds = [];
@@ -195,15 +195,19 @@ describe('Title Level Request. Request Detail', () => {
     );
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
+
   it(
-    'C350415 Check that the user can see "Request Detail" for Item request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    'C350556 Check that the user can see "Request Detail" for request after it is Closed (vega) (TaaS)',
+    { tags: ['extended', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);
       Requests.selectFirstRequest(instanceData.title);
       RequestDetail.waitLoading();
-
+      Requests.cancelRequest();
+      cy.reload();
+      Requests.selectFirstRequest(instanceData.title);
+      RequestDetail.verifySectionsVisibility();
       RequestDetail.checkTitleInformation({
         TLRs: '1',
         title: instanceData.title,
@@ -213,51 +217,19 @@ describe('Title Level Request. Request Detail', () => {
         itemBarcode: testData.itemBarcode,
         title: instanceData.title,
         effectiveLocation: testData.defaultLocation.name,
-        itemStatus: ITEM_STATUS_NAMES.PAGED,
-        requestsOnItem: '1',
+        requestsOnItem: '0',
       });
 
       RequestDetail.checkRequestInformation({
         type: REQUEST_TYPES.PAGE,
-        status: EditRequest.requestStatuses.NOT_YET_FILLED,
+        status: EditRequest.requestStatuses.CLOSED_CANCELLED,
         level: REQUEST_LEVELS.ITEM,
+        reason: 'INN-Reach',
       });
 
       RequestDetail.checkRequesterInformation({
         lastName: userData.lastName,
         barcode: userData.barcode,
-        group: patronGroup.name,
-        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        pickupSP: testData.userServicePoint.name,
-      });
-    },
-  );
-
-  it(
-    'C350416 Check that the user can see "Request Detail" for Title request (vega)',
-    { tags: ['criticalPath', 'vega'] },
-    () => {
-      Requests.selectTitleRequestLevel();
-      Requests.findCreatedRequest(instanceData.title);
-      Requests.selectFirstRequest(instanceData.title);
-      RequestDetail.waitLoading();
-
-      RequestDetail.checkTitleInformation({
-        TLRs: '1',
-        title: instanceData.title,
-      });
-
-      RequestDetail.checkItemInformation();
-
-      RequestDetail.checkRequestInformation({
-        type: REQUEST_TYPES.HOLD,
-        status: EditRequest.requestStatuses.NOT_YET_FILLED,
-        level: REQUEST_LEVELS.TITLE,
-      });
-
-      RequestDetail.checkRequesterInformation({
-        lastName: userForTLR.lastName,
-        barcode: userForTLR.barcode,
         group: patronGroup.name,
         preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         pickupSP: testData.userServicePoint.name,
