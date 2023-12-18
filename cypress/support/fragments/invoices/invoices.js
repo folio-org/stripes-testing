@@ -720,6 +720,13 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
+  changeFundInfoInLineWithoutSave: (index, value, type) => {
+    cy.do([
+      TextField({ name: `fundDistributions[${index}].value` }).fillIn(value),
+      Section({ id: 'invoiceLineForm-fundDistribution' }).find(Button(type)).click(),
+    ]);
+  },
+
   addFundToLine: (fund) => {
     cy.do([
       Button({ id: 'fundDistributions-add-button' }).click(),
@@ -727,6 +734,20 @@ export default {
       SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
       saveAndClose.click(),
     ]);
+    InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+  },
+
+  addFundToLineWithoutSaveInPercentage: (index, fund, value) => {
+    cy.do([
+      Button({ id: 'fundDistributions-add-button' }).click(),
+      Button({ id: `fundDistributions[${index}].fundId` }).click(),
+      SelectionList().select(fund.name.concat(' ', '(', fund.code, ')')),
+      TextField({ name: `fundDistributions[${index}].value` }).fillIn(value),
+    ]);
+  },
+
+  saveLine: () => {
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
   },
 
@@ -738,6 +759,14 @@ export default {
       saveAndClose.click(),
     ]);
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
+  },
+
+  deleteFundInInvoiceLineWithoutSave: () => {
+    cy.do([
+      Section({ id: 'invoiceLineForm-fundDistribution' })
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    ]);
   },
 
   approveInvoice: () => {
@@ -1149,5 +1178,13 @@ export default {
       const text = $element.text();
       expect(text).to.not.include(`${fiscalYear}`);
     });
+  },
+
+  differentCurrencyConfirmation: () => {
+    cy.do(
+      Modal({ id: 'invoice-line-currency-confirmation' })
+        .find(Button({ id: 'clickable-invoice-line-currency-confirmation-confirm' }))
+        .click(),
+    );
   },
 };
