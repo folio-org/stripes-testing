@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { Permissions } from '../../../support/dictionary';
 import {
   EXISTING_RECORDS_NAMES,
@@ -15,13 +16,13 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-// import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -32,6 +33,8 @@ describe('data-import', () => {
       filePathForUpdate: 'marcBibFileForC415266.mrc',
       editedFileName: `C415266 marcFileName${getRandomPostfix()}.mrc`,
       fileNameForUpdate: `C415266 marcFileName${getRandomPostfix()}.mrc`,
+      tag005: '005',
+      todayDate: moment(new Date()).format('YYYYMMDD'),
     };
     const mappingProfile = {
       name: `C415266 Field mapping profile 3 - MODSOURCE-642 -MARC ${getRandomPostfix()}`,
@@ -95,6 +98,7 @@ describe('data-import', () => {
       FileManager.deleteFile(`cypress/fixtures/${testData.editedFileName}`);
     });
 
+    // https://issues.folio.org/browse/MODSOURMAN-1106
     it(
       'C415266 Update MARC Bib via Data Import/incoming bib does not have an 005 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
@@ -144,7 +148,7 @@ describe('data-import', () => {
           DataImport.editMarcFile(
             testData.filePathForUpdate,
             testData.editedFileName,
-            ['ocn962073841'],
+            ['ocn962073864'],
             [initialInstanceHrId],
           );
 
@@ -164,6 +168,9 @@ describe('data-import', () => {
             FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
           });
           FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains(`${testData.tag005}\t`);
+          InventoryViewSource.contains(testData.todayDate);
         });
       },
     );
