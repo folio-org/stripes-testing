@@ -52,6 +52,19 @@ describe('MARC Authority -> Edit linked Authority record', () => {
   };
 
   before('Creating user, importing and linking records', () => {
+    cy.getAdminToken();
+    // make sure there are no duplicate authority records in the system
+    cy.getAdminToken().then(() => {
+      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374141"' }).then(
+        (records) => {
+          records.forEach((record) => {
+            if (record.authRefType === 'Authorized') {
+              MarcAuthority.deleteViaAPI(record.id);
+            }
+          });
+        },
+      );
+    });
     cy.createTempUser([
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
