@@ -1,4 +1,12 @@
-import { Button, matching, Modal, Select, TextField, including } from '../../../../interactors';
+import {
+  Button,
+  Modal,
+  Select,
+  TextField,
+  Callout,
+  matching,
+  including,
+} from '../../../../interactors';
 
 const rootModal = Modal({ id: 'refund-modal' });
 const confirmationModal = Modal(including('Confirm fee/fine'));
@@ -18,6 +26,7 @@ export default {
         .click(),
     );
   },
+  verifyRefundSuccess: (successMsg) => cy.expect(Callout(including(successMsg)).exists()),
   refundFeeFineViaApi: (apiBody, feeFineId) => cy.okapiRequest({
     method: 'POST',
     path: `accounts/${feeFineId}/refund`,

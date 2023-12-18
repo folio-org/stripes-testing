@@ -186,7 +186,7 @@ describe('Finance', () => {
           const rolloverError = data[0];
           const expectedError = `[WARNING] Part of the encumbrances belong to the ledger, which has not been rollovered. Ledgers to rollover: ${ledgers.second.name} (id=${ledgers.second.id})`;
 
-          cy.expect(rolloverError['"Errormessage"']).to.equal(expectedError);
+          cy.expect(rolloverError['Error message']).to.equal(expectedError);
         });
 
         // Go back to "Ledger name" pane

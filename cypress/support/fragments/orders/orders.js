@@ -58,6 +58,7 @@ const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
 const resetButton = Button('Reset all');
 const submitButton = Button('Submit');
+const ordersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const expandActionsDropdown = () => {
   cy.do(
     orderDetailsPane
@@ -187,6 +188,14 @@ export default {
     expandActionsDropdown();
     cy.do([Button('Close order').click(), Select('Reason').choose(reason), submitButton.click()]);
     InteractorsTools.checkCalloutMessage('Order was closed');
+  },
+
+  reOpenOrder: (orderNumber) => {
+    expandActionsDropdown();
+    cy.do(Button('Reopen').click());
+    InteractorsTools.checkCalloutMessage(
+      `The Purchase order - ${orderNumber} has been successfully reopened`,
+    );
   },
 
   cancelOrder: () => {
@@ -574,7 +583,7 @@ export default {
     cy.do(Button('Order lines').click());
   },
   selectOrders: () => {
-    cy.do(Button('Orders').click());
+    cy.do(ordersPane.find(Button('Orders')).click());
   },
   createPOLineViaActions: () => {
     cy.wait(4000);
@@ -830,5 +839,13 @@ export default {
       Button('New invoice').click(),
       Button('Cancel').click(),
     ]);
+  },
+
+  verifyActiveBtnOrdersFilters: (btnName) => {
+    cy.expect(
+      ordersPane
+        .find(HTML(including(btnName, { class: including('primary') })))
+        .exists(),
+    );
   },
 };
