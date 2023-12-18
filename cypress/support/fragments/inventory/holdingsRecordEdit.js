@@ -138,10 +138,7 @@ export default {
     ]);
   },
   editHoldingsNotes: (newType, newText) => {
-    cy.do([
-      Select('Note type*').choose(newType),
-      TextArea({ ariaLabel: 'Note' }).fillIn(newText),
-    ]);
+    cy.do([Select('Note type*').choose(newType), TextArea({ ariaLabel: 'Note' }).fillIn(newText)]);
   },
   fillCallNumber(callNumberValue) {
     cy.do(callNumberField.fillIn(callNumberValue));
