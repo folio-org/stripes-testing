@@ -23,8 +23,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     tag00: '00',
     expected008BoxesSets: [
       'DtSt',
-      'Start date',
-      'End date',
+      'Date 1',
+      'Date 2',
       'Ctry',
       'Ills',
       'Audn',
@@ -121,6 +121,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       QuickMarcEditor.updateValuesIn008Boxes(testData.tag008BoxValues);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
+      InventoryInstance.editMarcBibliographicRecord();
       InventorySteps.verifyHiddenFieldValueIn008(
         testData.createdRecordIDs[0],
         'Entered',

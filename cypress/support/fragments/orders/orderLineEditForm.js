@@ -12,6 +12,7 @@ import {
   matching,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
+import SelectInstanceModal from './modals/selectInstanceModal';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
@@ -27,6 +28,9 @@ const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
 const cancelButton = Button('Cancel');
 const saveButton = Button('Save & close');
 const saveAndOpenOrderButton = Button('Save & open order');
+const publicationDate = TextField({ name: 'publicationDate' });
+const publicher = TextField({ name: 'publisher' });
+const edition = TextField({ name: 'edition' });
 
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
@@ -57,6 +61,12 @@ const buttons = {
   'Save & close': saveButton,
   'Save & open order': saveAndOpenOrderButton,
 };
+const disabledButtons = {
+  Title: itemDetailsFields.title,
+  'Publication date': publicationDate,
+  Publisher: publicher,
+  Edition: edition,
+};
 
 export default {
   waitLoading() {
@@ -74,6 +84,9 @@ export default {
   },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
+  },
+  checkNotAvailableInstanceData(fields = []) {
+    this.checkFieldsConditions({ fields, section: disabledButtons });
   },
   fillOrderLineFields(orderLine) {
     if (orderLine.itemDetails) {
@@ -100,6 +113,18 @@ export default {
     if (orderLine.paymentStatus) {
       cy.do(orderLineFields.paymentStatus.choose(orderLine.paymentStatus));
     }
+  },
+  clickTitleLookUpButton() {
+    cy.do(itemDetailsSection.find(Button('Title look-up')).click());
+    SelectInstanceModal.waitLoading();
+    SelectInstanceModal.verifyModalView();
+
+    return SelectInstanceModal;
+  },
+  fillItemDetailsTitle({ instanceTitle }) {
+    this.clickTitleLookUpButton();
+    SelectInstanceModal.searchByName(instanceTitle);
+    SelectInstanceModal.selectInstance(instanceTitle);
   },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
@@ -193,11 +218,9 @@ export default {
   },
   clickCancelButton(shouldModalExsist = false) {
     cy.expect(cancelButton.has({ disabled: false }));
+    cy.do(cancelButton.click());
 
-    if (shouldModalExsist) {
-      cy.do(cancelButton.click());
-    } else {
-      cy.do(cancelButton.click());
+    if (!shouldModalExsist) {
       cy.expect(orderLineEditFormRoot.absent());
     }
   },

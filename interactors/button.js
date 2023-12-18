@@ -10,6 +10,7 @@ export default HTML.extend('button')
     name: (el) => el.getAttribute('name'),
     type: (el) => el.getAttribute('type'),
     icon: (el) => el.getAttribute('icon'),
+    target: (el) => el.getAttribute('target'),
     button: (el) => el.tagName === 'BUTTON',
     anchor: (el) => el.tagName === 'A',
     default: (el) => el.classList.contains('default'),
@@ -20,6 +21,7 @@ export default HTML.extend('button')
     dataId: (el) => el.getAttribute('data-id'),
     dataType: (el) => el.getAttribute('data-type-button'),
     dataTestID: (el) => el.getAttribute('data-testid'),
+    svgClass: (el) => el.querySelector('svg').getAttribute('class').toString(),
     disabled: {
       apply: (el) => {
         if (el.disabled !== undefined) return el.disabled;
