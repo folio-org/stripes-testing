@@ -91,4 +91,20 @@ export default {
   getRandomInvoiceNumber: () => {
     return Math.floor(100000000 + Math.random() * 900000).toString();
   },
+
+  selectFiscalYearsNavigation: () => {
+    cy.get('[data-test-finance-navigation-fiscalyear="true"]').click();
+  },
+
+  selectLedgersNavigation: () => {
+    cy.get('[data-test-finance-navigation-ledger="true"]').click();
+  },
+
+  selectGroupsNavigation: () => {
+    cy.get('[data-test-finance-navigation-group="true"]').click();
+  },
+
+  selectFundsNavigation: () => {
+    cy.get('[data-test-finance-navigation-fund="true"]').click();
+  },
 };
