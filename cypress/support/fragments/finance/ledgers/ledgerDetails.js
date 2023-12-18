@@ -3,6 +3,7 @@ import {
   HTML,
   KeyValue,
   MultiColumnListCell,
+  MultiColumnListRow,
   PaneHeader,
   Section,
   including,
@@ -18,6 +19,7 @@ const ledgerDetailsPane = Section({ id: 'pane-ledger-details' });
 const ledgerDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-ledger-details' });
 const actionsButton = Button('Actions');
 
+const summarySection = Section({ id: 'financial-summary' });
 const fundsSection = Section({ id: 'fund' });
 
 export default {
@@ -48,9 +50,18 @@ export default {
 
     return LedgerRollovers;
   },
-  checkLedgeDetails({ information = [], funds } = {}) {
+  checkLedgeDetails({ information = [], summary = [], funds } = {}) {
     information.forEach(({ key, value }) => {
       cy.expect(ledgerDetailsPane.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    summary.forEach(({ key, value }) => {
+      cy.expect(
+        summarySection
+          .find(MultiColumnListRow({ isContainer: true, content: including(key) }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(value) }),
+      );
     });
 
     if (funds) {
