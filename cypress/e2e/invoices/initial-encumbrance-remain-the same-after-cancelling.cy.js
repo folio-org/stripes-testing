@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
-import { Invoices, InvoiceView } from '../../support/fragments/invoices';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
-import { Organizations, NewOrganization } from '../../support/fragments/organizations';
+import { InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
   const testData = {
@@ -84,7 +84,7 @@ describe('Invoices', () => {
 
   it(
     'C399092 Initial encumbrance amount remains the same as it was before payment after cancelling related paid invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Open invoice from precondition
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
@@ -96,7 +96,7 @@ describe('Invoices', () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '110.00' },
+        { name: testData.fund.name, currentEncumbrance: '110.00' },
       ]);
 
       // Click "Actions" button, Select "Edit" option
@@ -125,7 +125,7 @@ describe('Invoices', () => {
       // Click invoice line record on invoice
       InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '100.00' },
+        { name: testData.fund.name, currentEncumbrance: '100.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
@@ -158,7 +158,7 @@ describe('Invoices', () => {
       // Click invoice line record on invoice
       InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '110.00' },
+        { name: testData.fund.name, currentEncumbrance: '110.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion

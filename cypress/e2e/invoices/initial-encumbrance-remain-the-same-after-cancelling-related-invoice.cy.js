@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
-import { Invoices, InvoiceView } from '../../support/fragments/invoices';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
-import { Organizations, NewOrganization } from '../../support/fragments/organizations';
+import { InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', { retries: 3 }, () => {
   const testData = {
@@ -100,7 +100,7 @@ describe('Invoices', { retries: 3 }, () => {
 
   it(
     'C400612 Initial encumbrance amount remains the same as it was before payment after cancelling one of related paid invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.changeInvoiceStatusViaApi({
         invoice: testData.invoices[1],
@@ -123,7 +123,7 @@ describe('Invoices', { retries: 3 }, () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '80.00' },
+        { name: testData.fund.name, currentEncumbrance: '80.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
@@ -146,7 +146,7 @@ describe('Invoices', { retries: 3 }, () => {
 
   it(
     'C400614 Initial encumbrance amount remains the same as it was before payment after cancelling related paid invoice (another related approved invoice exists) (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Search invoice in the table
       Invoices.searchByNumber(testData.invoices[0].vendorInvoiceNo);
@@ -164,7 +164,7 @@ describe('Invoices', { retries: 3 }, () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '80.00' },
+        { name: testData.fund.name, currentEncumbrance: '80.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
@@ -187,7 +187,7 @@ describe('Invoices', { retries: 3 }, () => {
 
   it(
     'C400615 Initial encumbrance amount remains the same as it was before payment after cancelling related approved invoice (another related paid invoice exists) (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Search invoice in the table
       Invoices.searchByNumber(testData.invoices[1].vendorInvoiceNo);
@@ -205,7 +205,7 @@ describe('Invoices', { retries: 3 }, () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '100.00' },
+        { name: testData.fund.name, currentEncumbrance: '100.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
@@ -228,7 +228,7 @@ describe('Invoices', { retries: 3 }, () => {
 
   it(
     'C400618 Initial encumbrance amount remains the same as it was before payment after cancelling related paid credit invoice (another related paid invoice exists) (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.changeInvoiceStatusViaApi({
         invoice: testData.invoices[1],
@@ -251,7 +251,7 @@ describe('Invoices', { retries: 3 }, () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '100.00' },
+        { name: testData.fund.name, currentEncumbrance: '100.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion

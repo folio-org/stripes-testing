@@ -19,6 +19,7 @@ export default HTML.extend('button')
     ariaExpanded: (el) => el.getAttribute('aria-expanded'),
     dataId: (el) => el.getAttribute('data-id'),
     dataType: (el) => el.getAttribute('data-type-button'),
+    dataTestID: (el) => el.getAttribute('data-testid'),
     disabled: {
       apply: (el) => {
         if (el.disabled !== undefined) return el.disabled;
@@ -29,4 +30,5 @@ export default HTML.extend('button')
   })
   .actions({
     hoverMouse: ({ perform }) => perform((el) => el.dispatchEvent(new Event('mouseover'))),
+    triggerClick: ({ perform }) => perform((el) => cy.wrap(el).trigger('click')),
   });

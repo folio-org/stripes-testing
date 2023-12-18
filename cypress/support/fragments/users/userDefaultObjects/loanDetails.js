@@ -45,6 +45,11 @@ export default {
   checkDeclareLostButtonActive() {
     checkDeclareLostButtonActivity(false);
   },
+  checkButtonsState(buttonsToCheck) {
+    buttonsToCheck.forEach((button) => {
+      cy.expect(Button(button.value).has({ disabled: button.disabled }));
+    });
+  },
   startDeclareLost() {
     cy.do(DeclareLostButton.click());
   },

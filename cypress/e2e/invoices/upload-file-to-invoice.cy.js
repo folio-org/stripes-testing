@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import { Invoices, InvoiceView } from '../../support/fragments/invoices';
+import { Permissions } from '../../support/dictionary';
+import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
-import DateTools from '../../support/utils/dateTools';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import DateTools from '../../support/utils/dateTools';
 import FileManager from '../../support/utils/fileManager';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Invoices', () => {
   const testData = {
@@ -51,7 +51,7 @@ describe('Invoices', () => {
   it(
     'C15856 Upload file to invoice (thunderjet) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.thunderjet],
+      tags: ['criticalPath', 'thunderjet'],
     },
     () => {
       // Create an invoice

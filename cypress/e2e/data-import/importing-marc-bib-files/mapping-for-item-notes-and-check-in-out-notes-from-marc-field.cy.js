@@ -1,28 +1,29 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  LOCATION_NAMES,
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
+  FOLIO_RECORD_TYPE,
+  ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -126,7 +127,7 @@ describe('data-import', () => {
 
     it(
       'C368005 Verify the mapping for item record notes and check in/out notes from MARC field (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['criticalPath', 'folijet', 'parallel'] },
       () => {
         // create Field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -209,14 +210,14 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, 1);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName, 1);
         });
         FileDetails.checkItemsQuantityInSummaryTable(0, '2');
 
         // get instance hrids
         rowNumbers.forEach((row) => {
-          FileDetails.openInstanceInInventory('Created', row);
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, row);
           InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrids.push(initialInstanceHrId);
           });
@@ -224,12 +225,12 @@ describe('data-import', () => {
         });
 
         // check item notes in Inventory
-        FileDetails.openItemInInventory('Created');
+        FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
         ItemRecordView.checkItemNote(itemNotes.note, itemNotes.staffOnly);
         ItemRecordView.checkCheckInNote(itemNotes.checkInNoteForFirstItem);
         cy.wait(2000);
         cy.go('back');
-        FileDetails.openItemInInventory('Created', 1);
+        FileDetails.openItemInInventory(RECORD_STATUSES.CREATED, 1);
         ItemRecordView.checkBindingNote(itemNotes.blindingNote);
         ItemRecordView.checkElectronicBookplateNote(itemNotes.electronicBookplate);
         ItemRecordView.checkCheckOutNote(itemNotes.checkOutNote);

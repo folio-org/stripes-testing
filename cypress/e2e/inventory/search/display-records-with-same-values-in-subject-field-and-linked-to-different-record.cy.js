@@ -1,20 +1,20 @@
 import { including } from '@interactors/html';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
+import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},
@@ -100,7 +100,7 @@ describe('inventory', () => {
       });
       cy.visit(TopMenu.inventoryPath);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
-        InventoryInstance.searchByTitle(testData.instanceRecords[i]);
+        InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tags[0]);
@@ -135,7 +135,7 @@ describe('inventory', () => {
 
     it(
       'C375224 Browse | Display records with same values in "Subject" field and linked to different "MARC authority" records (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,

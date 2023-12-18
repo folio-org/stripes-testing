@@ -14,6 +14,8 @@ import {
   TextInput,
   TextArea,
   PaneHeader,
+  MultiColumnListHeader,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -29,7 +31,11 @@ import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advan
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
+const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
+  Checkbox({ ariaLabel: 'Select instance' }),
+);
 const singleRecordImportModal = Modal('Single record import');
+const filterSection = Section({ id: 'pane-filter' });
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button('Search', { type: 'submit' });
 const paneHeaderSearch = PaneHeader('Inventory');
@@ -157,6 +163,8 @@ const advSearchItemsOptionsValues = searchItemsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
 
+const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
+
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   method: 'POST',
   path: 'inventory/instances',
@@ -235,6 +243,8 @@ export default {
     cy.do(inventoriesList.click({ row: rowNumber }));
   },
 
+  selectInstanceById: (specialInternalId) => cy.do(inventoriesList.find(Button({ href: including(specialInternalId) })).click()),
+
   addNewInventory() {
     cy.do([actionsButton.click(), Button('New').click()]);
 
@@ -246,6 +256,15 @@ export default {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
 
+  searchByTitle(title, result = true) {
+    cy.do([
+      filterSection.find(inventorySearchInput).fillIn(title),
+      filterSection.find(searchButton).click(),
+    ]);
+    if (result) {
+      cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    }
+  },
   searchByTag: (tagName) => {
     cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
     // wait for data to be loaded
@@ -982,5 +1001,73 @@ export default {
     } else {
       cy.expect([inventoriesList.exists, inventoriesList.has({ rowCount: 1 })]);
     }
+  },
+
+  clickSelectAllInstancesCheckbox() {
+    cy.do(selectAllInstancesCheckbox.click());
+    cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
+      cy.expect(checkbox.checked);
+    });
+  },
+
+  verifyInventoryLabelText(textLabel) {
+    cy.wrap(Pane({ id: 'pane-results' }).subtitle()).then((element) => {
+      cy.expect(element).contains(textLabel);
+    });
+  },
+
+  verifyAllCheckboxesAreUnchecked() {
+    cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
+      cy.expect(!checkbox.checked);
+    });
+  },
+
+  checkColumnHeaderSort(headerName, isAscending = true) {
+    const sort = isAscending ? 'ascending' : 'descending';
+    cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort })).exists());
+  },
+
+  getResultsListByColumn(columnIndex) {
+    const cells = [];
+
+    cy.wait(2000);
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+          });
+      })
+      .then(() => cells);
+  },
+
+  checkResultListSortedByColumn(columnIndex, isAscending = true) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      if (isAscending) {
+        cy.expect(cells).to.deep.equal(cells.sort((a, b) => a - b));
+      } else {
+        cy.expect(cells).to.deep.equal(cells.sort((a, b) => b - a));
+      }
+    });
+  },
+
+  clickActionsButton() {
+    cy.do(actionsButton.click());
+    cy.expect(actionsSortSelect.exists());
+  },
+
+  actionsSortBy(value) {
+    cy.do(actionsSortSelect.choose(value));
+    // need to wait until content will be sorted
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
+    cy.expect(actionsSortSelect.absent());
+  },
+
+  verifyActionsSortedBy(value) {
+    cy.expect(actionsSortSelect.has({ checkedOptionText: value }));
   },
 };

@@ -1,14 +1,14 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},
@@ -76,10 +76,10 @@ describe('inventory', () => {
 
     it(
       'C368027 Search for "Instance" by "Title" field with special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         testData.searchQueries.forEach((query) => {
-          InventoryInstance.searchByTitle(query);
+          InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(8);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
@@ -87,21 +87,21 @@ describe('inventory', () => {
           InventoryInstances.resetAllFilters();
         });
 
-        InventoryInstance.searchByTitle('Harry Potter and the cursed child Parts one, two');
+        InventoryInstances.searchByTitle('Harry Potter and the cursed child Parts one, two');
         InventorySearchAndFilter.checkRowsCount(3);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[0], true);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[1], true);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
-        InventoryInstance.searchByTitle(
+        InventoryInstances.searchByTitle(
           'Harry Potter & the cursed child : Parts one / two, (a new play by writer Jack Thorne).',
         );
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
-        InventoryInstance.searchByTitle('Harry Potter - the cursed child Parts one, two', false);
+        InventoryInstances.searchByTitle('Harry Potter - the cursed child Parts one, two', false);
         InventorySearchAndFilter.verifyNoRecordsFound();
       },
     );

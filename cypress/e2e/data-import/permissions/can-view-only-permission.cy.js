@@ -1,13 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
+import { RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Permissions', () => {
@@ -44,11 +45,11 @@ describe('data-import', () => {
 
     it(
       'C356780 A user can view logs but can not import files with "Data import: Can view only" permission (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         DataImport.verifyChooseFileButtonState({ isDisabled: true });
         Logs.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((hrId) => {
           instanceHrid = hrId;
         });
@@ -58,7 +59,7 @@ describe('data-import', () => {
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.searchWithTerm(fileName);
         LogsViewAll.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstances.verifyInstanceDetailsView();
       },
     );

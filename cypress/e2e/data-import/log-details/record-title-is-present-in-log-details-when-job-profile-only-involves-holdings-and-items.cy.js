@@ -1,37 +1,38 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import {
-  FOLIO_RECORD_TYPE,
-  LOCATION_NAMES,
-  ITEM_STATUS_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  ITEM_STATUS_NAMES,
+  LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import Users from '../../../support/fragments/users/users';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import FileManager from '../../../support/utils/fileManager';
+import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
+import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -159,7 +160,7 @@ describe('data-import', () => {
 
     it(
       'C375109 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITH instance match item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
         const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
@@ -340,26 +341,26 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.dash, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.DASH, columnName);
         });
         [
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.verifyTitle(
           testData.firstInstanceTitle,
           FileDetails.columnNameInResultList.title,
         );
 
-        FileDetails.openHoldingsInInventory('Updated');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.checkAdministrativeNote(
           collectionOfMappingAndActionProfiles[0].mappingProfile.adminNote,
         );
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileNameForUpdate);
-        FileDetails.openItemInInventory('Updated');
+        FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
         ItemRecordView.checkItemNote(
           collectionOfMappingAndActionProfiles[1].mappingProfile.note,
           'No',
@@ -396,7 +397,7 @@ describe('data-import', () => {
 
     it(
       'C422064 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITHOUT instance match item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
         const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
@@ -560,26 +561,26 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.dash, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.DASH, columnName);
         });
         [
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.verifyTitle(
           testData.secondInstanceTitle,
           FileDetails.columnNameInResultList.title,
         );
 
-        FileDetails.openHoldingsInInventory('Updated');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.checkAdministrativeNote(
           collectionOfMappingAndActionProfiles[0].mappingProfile.adminNote,
         );
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileNameForUpdate);
-        FileDetails.openItemInInventory('Updated');
+        FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
         ItemRecordView.checkItemNote(
           collectionOfMappingAndActionProfiles[1].mappingProfile.note,
           'No',

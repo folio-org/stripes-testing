@@ -11,19 +11,19 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import Parallelization from '../../../support/dictionary/parallelization';
 import {
   LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
@@ -186,9 +186,9 @@ describe('data-import', () => {
 
     it(
       'C385673 Add controllable, non-controllable subfields to one of the linked repeatable (multiple repeatable fields with same indicators) and not repeatable fields (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         linkingTagAndValues.forEach((linking) => {
@@ -232,7 +232,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
-        Logs.clickOnHotLink(0, 3, 'Updated');
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
           33,

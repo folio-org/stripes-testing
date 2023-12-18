@@ -1,17 +1,17 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import {
+  EHoldingsPackages,
+  EHoldingsResourceView,
+  EHoldingsSearch,
+  EHoldingsTitles,
+} from '../../../support/fragments/eholdings';
+import TemporarySessionLocale from '../../../support/fragments/settings/developer/session-locale/temporarySessionLocale';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
+import { Localization } from '../../../support/fragments/settings/tenant/general';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import { Localization } from '../../../support/fragments/settings/tenant/general';
-import TemporarySessionLocale from '../../../support/fragments/settings/developer/session-locale/temporarySessionLocale';
-import {
-  EHoldingsSearch,
-  EHoldingsPackages,
-  EHoldingsTitles,
-  EHoldingsResourceView,
-} from '../../../support/fragments/eholdings';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('eHoldings', () => {
@@ -55,7 +55,7 @@ describe('eHoldings', () => {
 
   it(
     'C402349 Create custom title when session locale is not "English" (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);
       Localization.clickChangeSessionLocalLanguage();

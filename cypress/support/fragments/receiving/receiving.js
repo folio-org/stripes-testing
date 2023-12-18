@@ -1,3 +1,4 @@
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   Accordion,
@@ -14,7 +15,9 @@ import {
   PaneContent,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import ReceivingDetails from './receivingDetails';
 
+const rootsection = PaneContent({ id: 'pane-title-details-content' });
 const actionsButton = Button('Actions');
 const receivingSuccessful = 'Receiving successful';
 const unreceivingSuccessful = 'Unreceiving successful';
@@ -23,11 +26,8 @@ const receivedPiecesAccordionId = 'received';
 const receiveButton = Button('Receive');
 const unreceiveButton = Button('Unreceive');
 const addPieceModal = Modal({ id: 'add-piece-modal' });
-const searchByParameter = (parameter, value) => {
-  cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
-  cy.do(TextField({ id: 'input-record-search' }).fillIn(value));
-  cy.do(Button('Search').click());
-};
+const addPieceButton = Button('Add piece');
+const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
 
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
@@ -35,9 +35,18 @@ const filterOpenReceiving = () => {
 };
 
 export default {
-  searchByParameter,
+  searchByParameter({ parameter = 'Keyword', value } = {}) {
+    cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
+    cy.do(TextField({ id: 'input-record-search' }).fillIn(value));
+    cy.do(Button('Search').click());
+  },
   filterOpenReceiving,
-  selectFromResultsList: (instanceName) => cy.do(Link(instanceName).click()),
+  selectFromResultsList(instanceName) {
+    cy.do(Link(instanceName).click());
+    ReceivingDetails.waitLoading();
+
+    return ReceivingDetails;
+  },
 
   waitLoading() {
     cy.expect([
@@ -59,11 +68,24 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
+  receivePieceWithOnlyCopyNumber: (rowNumber, copyNumber) => {
+    const recievingFieldName = `receivedItems[${rowNumber}]`;
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      receiveButton.click(),
+      Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
+      TextField({ name: `${recievingFieldName}.copyNumber` }).fillIn(copyNumber),
+      receiveButton.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
   addPiece: (caption, copyNumber, enumeration, chronology) => {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
-      Button('Add piece').click(),
+      addPieceButton.click(),
       addPieceModal.find(TextField('Caption')).fillIn(caption),
       addPieceModal.find(TextField('Copy number')).fillIn(copyNumber),
       addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
@@ -78,9 +100,17 @@ export default {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
-      Button('Add piece').click(),
+      addPieceButton.click(),
       addPieceModal.find(TextField('Caption')).fillIn(caption),
       addPieceModal.find(TextField('Enumeration')).fillIn(enumeration),
+    ]);
+  },
+
+  addPieceInActions: () => {
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      addPieceButton.click(),
     ]);
   },
 
@@ -88,9 +118,28 @@ export default {
     cy.do(Accordion({ id: expectedPiecesAccordionId }).find(MultiColumnListCell(caption)).click());
   },
 
+  selectPieceInReceived: (caption) => {
+    cy.do(Accordion({ id: 'received' }).find(MultiColumnListCell(caption)).click());
+  },
+
+  selectPieceByIndexInExpected: (indexNumber = 0) => {
+    cy.do(
+      Accordion({ id: expectedPiecesAccordionId })
+        .find(MultiColumnListRow({ index: indexNumber }))
+        .click(),
+    );
+  },
+
   quickReceivePiece: (enumeration) => {
     cy.do(addPieceModal.find(Button('Quick receive')).click());
     InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
+  },
+
+  deleteItemPiece: () => {
+    cy.do([
+      addPieceModal.find(Button('Delete')).click(),
+      Modal({ id: 'delete-piece-confirmation' }).find(Button('Delete item')).click(),
+    ]);
   },
 
   receivePieceWithoutBarcode: (rowNumber, caption) => {
@@ -103,6 +152,26 @@ export default {
       TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
       receiveButton.click(),
     ]);
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
+  receivePieceWithBarcode: (rowNumber, caption) => {
+    const recievingFieldName = `receivedItems[${rowNumber}]`;
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      receiveButton.click(),
+    ]);
+    cy.expect([
+      Button('Cancel').has({ disabled: false, visible: true }),
+      receiveButton.has({ disabled: true, visible: true }),
+    ]);
+    cy.do([
+      Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
+      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+    ]);
+    cy.expect(receiveButton.has({ disabled: false, visible: true }));
+    cy.do(receiveButton.click());
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
@@ -150,6 +219,9 @@ export default {
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: caption }))
         .exists(),
+      Accordion({ id: expectedPiecesAccordionId })
+        .find(MultiColumnListCell({ content: barcode }))
+        .absent(),
     ]);
   },
 
@@ -188,12 +260,20 @@ export default {
     );
   },
 
-  selectReceivingItem: (indexRow = 0) => {
-    cy.do(MultiColumnListCell({ row: indexRow, columnIndex: 0 }).click());
+  selectReceivingItem: () => {
+    cy.do(
+      Section({ id: 'receiving-results-pane' })
+        .find(Button({ href: including('/receiving') }))
+        .click(),
+    );
   },
 
   selectInstanceInReceive: (instanceName) => {
     cy.do(Section({ id: 'pane-title-details' }).find(Link(instanceName)).click());
+  },
+
+  selectInstanceLinkInReceive: () => {
+    cy.do(Section({ id: 'pane-title-details' }).find(Link()).click());
   },
 
   selectPOLInReceive: (POLName) => {
@@ -230,18 +310,19 @@ export default {
   },
 
   clickOnInstance: () => {
-    cy.do([
-      Button('Collapse all').click(),
-      PaneContent({ id: 'pane-title-details-content' }).find(Link()).click(),
-    ]);
+    cy.do([Button('Collapse all').click(), rootsection.find(Link()).click()]);
   },
 
   clickOnPOLnumber: (PolNumber) => {
-    cy.do([PaneContent({ id: 'pane-title-details-content' }).find(Link(PolNumber)).click()]);
+    cy.do([rootsection.find(Link(PolNumber)).click()]);
   },
 
   quickReceivePieceAdd: () => {
     cy.do(addPieceModal.find(Button('Quick receive')).click());
+  },
+
+  fillInCopyNumberInAddPieceModal: (copynumber) => {
+    cy.do(addPieceModal.find(TextField({ name: 'copyNumber' })).fillIn(copynumber));
   },
 
   receiveAllPhysicalItemsWithBarcodes: (firstBarcode, secondBarcode) => {
@@ -253,5 +334,32 @@ export default {
       receiveButton.click(),
     ]);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
+  verifyDetailsOpened: () => {
+    cy.expect([rootsection.exists(), Accordion({ id: expectedPiecesAccordionId }).exists()]);
+  },
+
+  verifyRequestIsCreated: () => {
+    cy.expect(
+      Accordion({ id: expectedPiecesAccordionId })
+        .find(MultiColumnListCell({ columnIndex: 7, content: 'Yes' }))
+        .exists(),
+    );
+  },
+
+  verifyOpenedRequestsModal: (inctanceTitle, itemBarcode) => {
+    cy.expect([
+      openedRequestModal.exists(),
+      openedRequestModal.find(HTML(including('The following item has an open request'))).exists(),
+      openedRequestModal.find(HTML(including(`${inctanceTitle}:`))).exists(),
+      openedRequestModal.find(HTML(including(`Barcode (${itemBarcode})`))).exists(),
+      openedRequestModal.find(Button('Close')).has({ disabled: false, visible: true }),
+    ]);
+  },
+
+  closeOpenedRequestModal: () => {
+    cy.do(openedRequestModal.find(Button('Close')).click());
+    cy.expect(openedRequestModal.absent());
   },
 };

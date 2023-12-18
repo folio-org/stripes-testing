@@ -29,6 +29,7 @@ import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import OrderDetails from './orderDetails';
 import OrderEditForm from './orderEditForm';
+import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderLines from './orderLines';
 
@@ -414,6 +415,12 @@ export default {
     );
   },
 
+  checkOrderIsNotOpened: (fundCode) => {
+    InteractorsTools.checkCalloutErrorMessage(
+      `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`,
+    );
+  },
+
   resetFilters: () => {
     cy.do(resetButton.click());
     cy.expect(resetButton.is({ disabled: true }));
@@ -678,13 +685,18 @@ export default {
     cy.expect(ordersList.find(HTML(including(orderNumber))).exists());
   },
 
-  exportResoultsCSV: () => {
-    cy.do([
-      actionsButton.click(),
-      Button({ id: 'clickable-export-csv' }).click(),
-      // Modal('Export settings').find(RadioButton({ ariaLabel: 'Export all line fields' })).click(),
-      Button('Export').click(),
-    ]);
+  clickExportResultsToCsvButton() {
+    cy.do([actionsButton.click(), Button('Export results (CSV)').click()]);
+    ExportSettingsModal.verifyModalView();
+
+    return ExportSettingsModal;
+  },
+  exportResultsToCsv({ confirm = true } = {}) {
+    this.clickExportResultsToCsvButton();
+
+    if (confirm) {
+      ExportSettingsModal.clickExportButton();
+    }
   },
 
   verifySaveCSVQueryFileName(actualName) {

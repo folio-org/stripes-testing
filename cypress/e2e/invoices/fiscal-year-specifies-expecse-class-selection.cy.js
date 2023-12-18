@@ -1,14 +1,14 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { FiscalYears, Budgets, LedgerRollovers } from '../../support/fragments/finance';
-import { ExpenseClasses } from '../../support/fragments/settings/finance';
-import { Invoices, InvoiceView } from '../../support/fragments/invoices';
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Users from '../../support/fragments/users/users';
+import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { Budgets, FiscalYears, LedgerRollovers } from '../../support/fragments/finance';
+import { InvoiceView, Invoices } from '../../support/fragments/invoices';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import { DateTools, StringTools, CodeTools } from '../../support/utils';
-import { INVOICE_STATUSES } from '../../support/constants';
+import Organizations from '../../support/fragments/organizations/organizations';
+import { ExpenseClasses } from '../../support/fragments/settings/finance';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import { CodeTools, DateTools, StringTools } from '../../support/utils';
 
 describe('Invoices', () => {
   const date = new Date();
@@ -160,7 +160,7 @@ describe('Invoices', () => {
 
   it(
     'C396400 Select Expense class related to Fiscal year specified in invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click "Actions" button on the second "Invoices" pane -> select "New" option
       const InvoiceEditForm = Invoices.openInvoiceEditForm({ createNew: true });
@@ -211,7 +211,7 @@ describe('Invoices', () => {
       ]);
 
       // Click "Add fund distribution" button, Select "Fund #1"
-      InvoiceLineEditForm.addFundDistribution();
+      InvoiceLineEditForm.clickAddFundDistributionButton();
       InvoiceLineEditForm.selectFundDistribution(testData.fund.name);
       InvoiceLineEditForm.checkFieldsConditions([
         { label: 'Expense class', conditions: { singleValue: '' } },
@@ -226,7 +226,7 @@ describe('Invoices', () => {
 
       // Click "Save & close" button in "Create vendor invoice line" form
       InvoiceLineEditForm.clickSaveButton();
-      InvoiceView.checkTableContent([{ poNumber: '', description }]);
+      InvoiceView.checkInvoiceLinesTableContent([{ poNumber: '', description }]);
 
       // Click "Actions" menu button, Select "Edit" option
       InvoiceView.openInvoiceEditForm();

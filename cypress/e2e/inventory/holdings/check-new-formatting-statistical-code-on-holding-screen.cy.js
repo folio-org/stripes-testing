@@ -1,14 +1,14 @@
 import { including } from '@interactors/html';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import TopMenu from '../../../support/fragments/topMenu';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import { LOCATION_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},
@@ -69,9 +69,9 @@ describe('inventory', () => {
 
     it(
       'C400653 Check the new formatting of Statistical codes field on Holdings create/edit screen (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.item.instanceName);
+        InventoryInstances.searchByTitle(testData.item.instanceName);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);
         InventorySearchAndFilter.checkRowsCount(1);
         InventoryInstances.selectInstance();

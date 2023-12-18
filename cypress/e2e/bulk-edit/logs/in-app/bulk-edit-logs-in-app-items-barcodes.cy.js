@@ -1,8 +1,6 @@
 import TopMenu from '../../../../support/fragments/topMenu';
-import testTypes from '../../../../support/dictionary/testTypes';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import Users from '../../../../support/fragments/users/users';
@@ -40,7 +38,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375284 Verify generated Logs files for Items In app -- only invalid records (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');

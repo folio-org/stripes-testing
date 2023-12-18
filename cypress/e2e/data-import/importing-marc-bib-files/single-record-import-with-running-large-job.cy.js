@@ -1,18 +1,18 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
+import { calloutTypes } from '../../../../interactors';
+import { TARGET_PROFILE_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { TARGET_PROFILE_NAMES } from '../../../support/constants';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import { calloutTypes } from '../../../../interactors';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -62,7 +62,7 @@ describe('data-import', () => {
 
     it(
       'C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.openTargetProfile();
@@ -96,9 +96,11 @@ describe('data-import', () => {
         // check instance is updated
         InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);
         InventoryInstance.verifyInstanceLanguage(updatedInstanceData.language);
-        InventoryInstance.verifyInstancePublisher(0, 0, updatedInstanceData.publisher);
-        InventoryInstance.verifyInstancePublisher(0, 2, updatedInstanceData.placeOfPublication);
-        InventoryInstance.verifyInstancePublisher(0, 3, updatedInstanceData.publicationDate);
+        InventoryInstance.verifyInstancePublisher({
+          publisher: updatedInstanceData.publisher,
+          place: updatedInstanceData.placeOfPublication,
+          date: updatedInstanceData.publicationDate,
+        });
         InventoryInstance.verifyInstancePhysicalcyDescription(
           updatedInstanceData.physicalDescription,
         );

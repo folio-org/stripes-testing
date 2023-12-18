@@ -1,21 +1,18 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
-import Parallelization from '../../../support/dictionary/parallelization';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory -> Advanced search', () => {
   let user;
@@ -45,13 +42,13 @@ describe('Inventory -> Advanced search', () => {
     JobProfiles.waitFileIsImported(marcFile.fileName);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(marcFile.fileName);
-    FileDetails.openItemInInventoryByTitle(testData.searchResults[1], 3, 'Created');
+    FileDetails.openItemInInventoryByTitle(testData.searchResults[1], 3, RECORD_STATUSES.CREATED);
     InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
       testData.instanceHrid = initialInstanceHrId;
       testData.instanceHridForSearching = initialInstanceHrId.replace(/[^\d]/g, '');
     });
     cy.go('back');
-    FileDetails.openItemInInventoryByTitle(testData.searchResults[0], 3, 'Created');
+    FileDetails.openItemInInventoryByTitle(testData.searchResults[0], 3, RECORD_STATUSES.CREATED);
     InventoryInstance.pressAddHoldingsButton();
     InventoryNewHoldings.fillRequiredFields();
     HoldingsRecordEdit.fillCallNumber(testData.callNumberValue);
@@ -88,7 +85,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400613 Search Instances using advanced search with "OR", "NOT" operators (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(

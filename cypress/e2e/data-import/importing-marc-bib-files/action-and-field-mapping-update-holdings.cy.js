@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
@@ -7,6 +6,7 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
   EXISTING_RECORDS_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -195,7 +195,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsImported(marcFileName);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(marcFileName);
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         instanceHrid = initialInstanceHrId;
 
@@ -229,7 +229,7 @@ describe('data-import', () => {
 
     it(
       'C11106 Action and field mapping: Update a holdings (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // change file for adding random barcode and holdings hrid
         DataImport.editMarcFile(

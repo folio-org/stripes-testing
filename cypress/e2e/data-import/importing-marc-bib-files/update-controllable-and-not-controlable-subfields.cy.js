@@ -1,30 +1,29 @@
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  LOCATION_NAMES,
+} from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import Parallelization from '../../../support/dictionary/parallelization';
-import {
-  LOCATION_NAMES,
-  FOLIO_RECORD_TYPE,
-  ACCEPTED_DATA_TYPE_NAMES,
-  EXISTING_RECORDS_NAMES,
-} from '../../../support/constants';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -161,9 +160,9 @@ describe('data-import', () => {
 
     it(
       'C385671 Update controllable, non-controllable subfields in one of the not linked repeatable fields with "$0" (multiple repeatable fields with same indicators) (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
@@ -210,7 +209,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(

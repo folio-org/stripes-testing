@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
+import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import DataExportLogs from '../../../support/fragments/data-export/dataExportLogs';
+import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -34,7 +34,7 @@ describe('data-import', () => {
 
     it(
       'C357057 Check that "Search/Filter" panel on the  "View all" page is saved collapsed state after returning from another application. (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // #1 Go to the "Data import" app
         // The "Data import" page is displayed

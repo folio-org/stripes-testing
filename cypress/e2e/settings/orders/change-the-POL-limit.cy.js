@@ -1,18 +1,16 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import testType from '../../../support/dictionary/testTypes';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import NewOrder from '../../../support/fragments/orders/newOrder';
-import Orders from '../../../support/fragments/orders/orders';
-import TopMenu from '../../../support/fragments/topMenu';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
+import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('orders: Settings', () => {
   const order = {
@@ -96,12 +94,12 @@ describe('orders: Settings', () => {
 
   it(
     'C668 Change the purchase order lines limit, then create POs with PO Lines of (PO Line limit + 1), to see how the order app behaves (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       SettingsOrders.setPurchaseOrderLinesLimit(2);
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 20);
       OrderLines.fillInPOLineInfoForExportWithLocationForPhysicalResource(

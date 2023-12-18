@@ -1,5 +1,6 @@
 import {
   Button,
+  RepeatableFieldItem,
   Section,
   Select,
   Selection,
@@ -19,11 +20,13 @@ const orderLineDetailsSection = orderLineEditFormRoot.find(Section({ id: 'lineDe
 const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: 'vendor' }));
 const ongoingOrderSection = orderLineEditFormRoot.find(Section({ id: 'ongoingOrder' }));
 const costDetailsSection = orderLineEditFormRoot.find(Section({ id: 'costDetails' }));
+const fundDistributionDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: 'fundDistributionAccordion' }),
+);
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
-
-const cancelButtom = Button('Cancel');
-const saveButtom = Button('Save & close');
-const saveAndOpenOrderButtom = Button('Save & open order');
+const cancelButton = Button('Cancel');
+const saveButton = Button('Save & close');
+const saveAndOpenOrderButton = Button('Save & open order');
 
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
@@ -50,9 +53,9 @@ const costDetailsFields = {
 };
 
 const buttons = {
-  Cancel: cancelButtom,
-  'Save & close': saveButtom,
-  'Save & open order': saveAndOpenOrderButtom,
+  Cancel: cancelButton,
+  'Save & close': saveButton,
+  'Save & open order': saveAndOpenOrderButton,
 };
 
 export default {
@@ -78,6 +81,9 @@ export default {
     }
     if (orderLine.poLineDetails) {
       this.fillPoLineDetails(orderLine.poLineDetails);
+    }
+    if (orderLine.ongoingOrder) {
+      this.fillOngoingOrderInformation(orderLine.ongoingOrder);
     }
     if (orderLine.vendorDetails) {
       this.fillVendorDetails(orderLine.vendorDetails);
@@ -109,6 +115,11 @@ export default {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
     }
   },
+  fillOngoingOrderInformation({ renewalNote }) {
+    if (renewalNote) {
+      cy.do(ongoingInformationFields['Renewal note'].fillIn(renewalNote));
+    }
+  },
   fillVendorDetails(vendorDetails) {
     if (vendorDetails.accountNumber) {
       cy.do(vendorDetailsFields.accountNumber.choose(including(vendorDetails.accountNumber)));
@@ -128,21 +139,48 @@ export default {
       });
     });
   },
-  addFundDistribution() {
+  clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
   },
-  selectDropDownValue(label, option) {
+  addFundDistribution({ fund, index, amount }) {
+    this.clickAddFundDistributionButton();
+    this.selectFundDistribution(fund, index);
+    this.setFundDistributionValue(amount, index);
+    cy.wait(2000);
+  },
+  updateFundDistribution({ fund, index }) {
+    this.selectFundDistribution(fund, index);
+  },
+  deleteFundDistribution({ index = 0 } = {}) {
+    cy.do(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+    cy.wait(2000);
+  },
+  selectDropDownValue(label, option, index = 0) {
     cy.do([
-      Selection(including(label)).open(),
+      RepeatableFieldItem({ index })
+        .find(Selection(including(label)))
+        .open(),
       SelectionList().filter(option),
       SelectionList().select(including(option)),
     ]);
   },
-  selectFundDistribution(fund) {
-    this.selectDropDownValue('Fund ID', fund);
+  selectFundDistribution(fund, index) {
+    this.selectDropDownValue('Fund ID', fund, index);
   },
-  selectExpenseClass(expenseClass) {
-    this.selectDropDownValue('Expense class', expenseClass);
+  selectExpenseClass(expenseClass, index) {
+    this.selectDropDownValue('Expense class', expenseClass, index);
+  },
+  setFundDistributionValue(value, index) {
+    cy.do(
+      RepeatableFieldItem({ index })
+        .find(TextField({ label: including('Value') }))
+        .fillIn(value),
+    );
   },
   checkValidatorError({ locationDetails } = {}) {
     if (locationDetails) {
@@ -153,13 +191,19 @@ export default {
       );
     }
   },
-  clickCancelButton() {
-    cy.do(cancelButtom.click());
-    cy.expect(orderLineEditFormRoot.absent());
+  clickCancelButton(shouldModalExsist = false) {
+    cy.expect(cancelButton.has({ disabled: false }));
+
+    if (shouldModalExsist) {
+      cy.do(cancelButton.click());
+    } else {
+      cy.do(cancelButton.click());
+      cy.expect(orderLineEditFormRoot.absent());
+    }
   },
   clickSaveButton({ orderLineCreated = false, orderLineUpdated = true } = {}) {
-    cy.expect(saveButtom.has({ disabled: false }));
-    cy.do(saveButtom.click());
+    cy.expect(saveButton.has({ disabled: false }));
+    cy.do(saveButton.click());
 
     if (orderLineCreated) {
       InteractorsTools.checkCalloutMessage(
@@ -175,8 +219,8 @@ export default {
     cy.wait(2000);
   },
   clickSaveAndOpenOrderButton({ orderOpened = true, orderLineCreated = true } = {}) {
-    cy.expect(saveAndOpenOrderButtom.has({ disabled: false }));
-    cy.do(saveAndOpenOrderButtom.click());
+    cy.expect(saveAndOpenOrderButton.has({ disabled: false }));
+    cy.do(saveAndOpenOrderButton.click());
 
     if (orderOpened) {
       InteractorsTools.checkCalloutMessage(

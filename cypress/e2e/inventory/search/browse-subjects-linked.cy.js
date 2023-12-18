@@ -1,21 +1,18 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import Parallelization from '../../../support/dictionary/parallelization';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Subject Browse', () => {
@@ -71,7 +68,7 @@ describe('inventory', () => {
 
         cy.visit(TopMenu.inventoryPath).then(() => {
           InventoryInstances.waitContentLoading();
-          InventoryInstance.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tag610);
@@ -106,7 +103,7 @@ describe('inventory', () => {
 
     it(
       'C375163 Browse | Separate entries for "Subjects" from linked and unlinked "6XX" fields of "MARC bib" record (same subject names) (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -117,7 +114,7 @@ describe('inventory', () => {
         BrowseSubjects.checkRowValueIsBold(5, testData.subjectName);
         BrowseSubjects.checkRowValueIsBold(6, testData.subjectName);
         InventorySearchAndFilter.switchToSearchTab();
-        InventoryInstance.searchByTitle(createdRecordIDs[0]);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.clickUnlinkIconInTagField(20);

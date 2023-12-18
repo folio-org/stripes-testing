@@ -26,6 +26,7 @@ export default HTML.extend('text field')
     endControl: (el) => el.querySelector('[class^=endControls]').textContent,
     error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).textContent,
     warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).textContent,
+    required: (el) => el.querySelector('input').getAttribute('aria-required') === 'true',
     valid: (el) => el.querySelector('input').getAttribute('aria-invalid') !== 'true',
     name: (el) => el.querySelector('input').name,
     placeholder: (el) => el.querySelector('input').placeholder,
@@ -36,6 +37,10 @@ export default HTML.extend('text field')
       return clearBtn.length === 1;
     },
     maxLength: (el) => el.querySelector('input').getAttribute('maxLength'),
+    errorBorder: (el) => getComputedStyle(el.querySelector('[class*=formControl]')).getPropertyValue(
+      'border-color',
+    ) === 'rgb(153, 0, 0)',
+    errorIcon: (el) => !!el.querySelector('[class*="errorIcon-"]'),
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),
