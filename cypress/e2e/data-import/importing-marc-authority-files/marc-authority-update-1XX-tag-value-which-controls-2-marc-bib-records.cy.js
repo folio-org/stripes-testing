@@ -32,6 +32,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 describe('data-import', () => {
   describe('Importing MARC Authority files', () => {
     const testData = {
+      tag110: '110',
       createdRecordIDs: [],
       marcValue: 'C374167 DiCaprio',
       markedValue: 'C374167 DiCaprio, Leonardo',
@@ -115,6 +116,16 @@ describe('data-import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374167"' }).then(
+        (records) => {
+          records.forEach((record) => {
+            if (record.authRefType === 'Authorized') {
+              MarcAuthority.deleteViaAPI(record.id);
+            }
+          });
+        },
+      );
       cy.loginAsAdmin()
         .then(() => {
           // create Match profile
@@ -245,21 +256,19 @@ describe('data-import', () => {
         Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.UPDATED,
+        [
           FileDetails.columnNameInResultList.srsMarc,
-        );
-        FileDetails.checkStatusInColumn(
-          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.authority,
-        );
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
+        });
 
         cy.visit(TopMenu.marcAuthorities);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
-        MarcAuthorities.verifyEmptyNumberOfTitles();
+        MarcAuthorities.verifyNumberOfTitles(5, '');
         MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
-        MarcAuthority.contains('110');
+        MarcAuthority.contains(testData.tag110);
 
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
