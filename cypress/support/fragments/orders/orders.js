@@ -842,10 +842,6 @@ export default {
   },
 
   verifyActiveBtnOrdersFilters: (btnName) => {
-    cy.expect(
-      ordersPane
-        .find(HTML(including(btnName, { class: including('primary') })))
-        .exists(),
-    );
+    cy.expect(ordersPane.find(HTML(including(btnName, { class: including('primary') }))).exists());
   },
 };
