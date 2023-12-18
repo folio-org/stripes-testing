@@ -5,6 +5,7 @@ import { Button, Pane, Accordion } from '../../../../../interactors';
 
 const viewPane = Pane({ id: 'view-match-profile-pane' });
 const actionsButton = Button('Actions');
+const accordionProfileDetails = Accordion({ id: 'view-match-profile-details' });
 
 export default {
   edit: () => {
@@ -120,6 +121,6 @@ export default {
   },
 
   verifyExistingDetails: (recordItem) => {
-    cy.get(`[data-id="${recordItem}"]`).should('exist');
+    cy.expect(accordionProfileDetails.find(Button({ dataId: recordItem })).exists());
   },
 };
