@@ -72,7 +72,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tagForLinking);
         MarcAuthorities.switchToSearch();
-        cy.wait(1000); // need to wait until switch to search
+        cy.wait(1000); // need to wait for choose Type of Heading
         MarcAuthorities.chooseTypeOfHeading('Conference Name');
         InventoryInstance.searchResults(testData.marcAuthTitle);
         InventoryInstance.selectRecord();
