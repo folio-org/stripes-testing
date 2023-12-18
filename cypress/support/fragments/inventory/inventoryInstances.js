@@ -23,10 +23,9 @@ import InventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import InventoryItems from './item/inventoryItems';
 import Arrays from '../../utils/arrays';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
-import { REQUEST_METHOD } from '../../constants';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
