@@ -181,6 +181,17 @@ export default {
     );
   },
 
+  selectInstanceWithAuthorityIcon(value) {
+    cy.do(
+      MultiColumnListCell({
+        columnIndex: 0,
+        content: 'Linked to MARC authority' + value,
+      })
+        .find(Button(value))
+        .click(),
+    );
+  },
+
   verifyNumberOfTitlesForRowWithValueAndAuthorityIcon(value, itemCount) {
     cy.expect(
       MultiColumnListRow({
