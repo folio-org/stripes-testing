@@ -439,6 +439,7 @@ export default {
   },
 
   clickSaveAndCloseThenCheck(records) {
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
     cy.expect([
       confirmationModal.exists(),
