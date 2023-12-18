@@ -23,6 +23,7 @@ import {
   PaneHeader,
   Select,
 } from '../../../../../interactors';
+import FundDetails from './fundDetails';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
@@ -326,6 +327,18 @@ export default {
     cy.expect(transactionDetailSection.find(KeyValue('Status')).has({ value: status }));
   },
 
+  checkExpendedInTransactionDetails: (expended) => {
+    cy.expect(transactionDetailSection.find(KeyValue('Expended')).has({ value: expended }));
+  },
+
+  checkInitialEncumbranceDetails: (initialEncumbrance) => {
+    cy.expect(
+      transactionDetailSection
+        .find(KeyValue('Initial encumbrance'))
+        .has({ value: initialEncumbrance }),
+    );
+  },
+
   checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       transactionList
@@ -604,6 +617,14 @@ export default {
     cy.expect(resetButton.is({ disabled: true }));
   },
 
+  closeFundDetails: () => {
+    cy.do(
+      Section({ id: 'pane-fund-details' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+  },
+
   selectStatusInSearch: (fundStatus) => {
     cy.do(Accordion({ id: 'fundStatus' }).clickHeader());
     switch (fundStatus) {
@@ -805,6 +826,15 @@ export default {
     cy.wait(2000);
   },
 
+  changeStatusOfExpClass: (rowNumber, statusName) => {
+    cy.do(Select({ name: `statusExpenseClasses[${rowNumber}].status` }).choose(statusName));
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+  },
+
   deleteExpensesClass: () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -892,7 +922,9 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
-    cy.expect(fundDetailsPane.visible());
+    FundDetails.waitLoading();
+
+    return FundDetails;
   },
 
   closeMenu: () => {
@@ -946,5 +978,9 @@ export default {
       transactionDetailSection.find(KeyValue('Type')).has({ value: type }),
       transactionDetailSection.find(KeyValue('From')).has({ value: fund }),
     );
+  },
+
+  varifyCanNotCreatePlannedBudget: () => {
+    cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
   },
 };

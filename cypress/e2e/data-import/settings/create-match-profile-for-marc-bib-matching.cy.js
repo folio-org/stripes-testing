@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
-import DateTools from '../../../support/utils/dateTools';
+import { Permissions } from '../../../support/dictionary';
+import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -27,7 +27,7 @@ describe('data-import', () => {
 
     it(
       'C9321 Create match profile for MARC Bib matching to a FOLIO record type (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9321 001 to Instance HRID ${getRandomPostfix()}`,
@@ -53,13 +53,15 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithFolioRecordValue(matchProfile, incomingRecordType);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
     it(
       'C9322 Create match profile for MARC Bib matching to a MARC record type (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9322 autotest match profile_${getRandomPostfix()}`,
@@ -98,13 +100,15 @@ describe('data-import', () => {
           incomingRecordType,
         );
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
     it(
       'C9323 Create match profile for Static value TEXT match (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9323 autotest match profile_${getRandomPostfix()}`,
@@ -132,13 +136,15 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
     it(
       'C9324 Create match profile for Static value NUMBER match (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9324 autotest match profile_${getRandomPostfix()}`,
@@ -165,13 +171,15 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
     it(
       'C9325 Create match profile for Static value DATE match (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9324 autotest match profile_${getRandomPostfix()}`,
@@ -198,13 +206,15 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
 
     it(
       'C9326 Create match profile for Static value DATE RANGE match (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const matchProfile = {
           profileName: `C9325 autotest match profile_${getRandomPostfix()}`,
@@ -231,7 +241,9 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        cy.getAdminToken().then(() => {
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        });
       },
     );
   });

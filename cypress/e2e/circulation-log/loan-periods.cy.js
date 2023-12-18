@@ -1,20 +1,20 @@
 import uuid from 'uuid';
 
-import TopMenu from '../../support/fragments/topMenu';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../support/constants';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import DateTools from '../../support/utils/dateTools';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import LoanPolicy from '../../support/fragments/circulation/loan-policy';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import { Parallelization, TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LoanPolicy from '../../support/fragments/circulation/loan-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Locations from '../../support/fragments/settings/tenant/location-setup/locations';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import DateTools from '../../support/utils/dateTools';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 let materialTypes;
 let testData;
@@ -94,7 +94,7 @@ describe('circulation-log loan period', () => {
           testData = {
             folioInstances: InventoryInstances.generateFolioInstances({
               count: 3,
-              properties: materialTypes.map(({ id }) => ({ materialType: { id } })),
+              itemsProperties: materialTypes.map(({ id }) => ({ materialType: { id } })),
             }),
             servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
             requestsId: '',
@@ -157,7 +157,7 @@ describe('circulation-log loan period', () => {
 
   it(
     'C645: Test "Days" loan period (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const ITEM_BARCODE = testData.folioInstances[0].barcodes[0];
       // Navigate to checkout page
@@ -174,7 +174,7 @@ describe('circulation-log loan period', () => {
 
   it(
     'C646: Test "Weeks" loan period (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const ITEM_BARCODE = testData.folioInstances[1].barcodes[0];
       // Navigate to checkout page
@@ -191,7 +191,7 @@ describe('circulation-log loan period', () => {
 
   it(
     'C647: Test "Months" loan period (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'vega', 'nonParallel'] },
     () => {
       const ITEM_BARCODE = testData.folioInstances[2].barcodes[0];
       // Navigate to checkout page

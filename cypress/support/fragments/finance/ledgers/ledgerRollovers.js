@@ -1,6 +1,69 @@
 import uuid from 'uuid';
+import { HTML, MultiColumnListCell, Section, including } from '../../../../../interactors';
+import InteractorsTools from '../../../utils/interactorsTools';
+import States from '../states';
+
+const ledgerRolloversResultsSection = Section({ id: 'rollover-logs-results-pane' });
+const ledgerRolloversTableRoot = ledgerRolloversResultsSection.find(
+  HTML({ id: 'rollover-logs-list' }),
+);
 
 export default {
+  waitLoading() {
+    cy.expect(ledgerRolloversResultsSection.exists());
+  },
+  checkTableContent({ records = [] } = {}) {
+    records.forEach((record, index) => {
+      if (record.status) {
+        cy.expect(
+          ledgerRolloversTableRoot
+            .find(MultiColumnListCell({ row: index, column: 'Status' }))
+            .has({ content: including(record.status) }),
+        );
+      }
+
+      if (record.errors) {
+        cy.expect(
+          ledgerRolloversTableRoot
+            .find(MultiColumnListCell({ row: index, column: 'Errors' }))
+            .has({ content: including(record.errors) }),
+        );
+      }
+
+      if (record.results) {
+        cy.expect(
+          ledgerRolloversTableRoot
+            .find(MultiColumnListCell({ row: index, column: 'Results' }))
+            .has({ content: including(record.results) }),
+        );
+      }
+
+      if (record.settings) {
+        cy.expect(
+          ledgerRolloversTableRoot
+            .find(MultiColumnListCell({ row: index, column: 'Settings' }))
+            .has({ content: including(record.settings) }),
+        );
+      }
+
+      if (record.source) {
+        cy.expect(
+          ledgerRolloversTableRoot
+            .find(MultiColumnListCell({ row: index, column: 'Source' }))
+            .has({ content: including(record.source) }),
+        );
+      }
+    });
+  },
+  exportRolloverResult({ row = 0, exportStarted = true } = {}) {
+    cy.do(
+      ledgerRolloversTableRoot.find(MultiColumnListCell({ column: 'Results', row })).hrefClick(),
+    );
+
+    if (exportStarted) {
+      InteractorsTools.checkCalloutMessage(States.rolloverExportStartedSuccessfully);
+    }
+  },
   generateLedgerRollover({
     ledger,
     fromFiscalYear,
@@ -22,6 +85,16 @@ export default {
       rolloverType: 'Commit',
       id: uuid(),
     };
+  },
+  getLedgerRolloverViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'finance/ledger-rollovers',
+        method: 'GET',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.ledgerFiscalYearRollovers);
   },
   createLedgerRolloverViaApi(ledgersProperties) {
     return cy

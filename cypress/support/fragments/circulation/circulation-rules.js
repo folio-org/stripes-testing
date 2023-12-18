@@ -2,7 +2,6 @@
 import { kebabCase } from 'lodash';
 import { HTML, Button, CodeMirror, CodeMirrorHint } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
-import { REQUEST_METHOD } from '../../constants';
 
 const calloutMessages = {
   CIRCULATION_RULES_UPDATE_SUCCESS: 'Rules were successfully updated.',

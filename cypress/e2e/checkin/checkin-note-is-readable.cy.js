@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Users from '../../support/fragments/users/users';
@@ -15,7 +15,6 @@ describe('Accessibility', () => {
   let userData;
   const checkInNote = 'Check-in';
   let itemBarcode;
-  let materialTypes;
   let testData;
 
   before('Create test data', () => {
@@ -23,11 +22,11 @@ describe('Accessibility', () => {
       userData = userProperties;
       cy.getAdminToken().then(() => {
         InventoryInstances.getMaterialTypes({ limit: 1 })
-          .then((materialTypesRes) => {
-            materialTypes = materialTypesRes;
+          .then((materialTypes) => {
+            const materialType = materialTypes[0];
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
-                properties: materialTypes.map(({ id, name }) => ({ materialType: { id, name } })),
+                itemsProperties: { materialType: { id: materialType.id } },
               }),
               servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
               servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -100,7 +99,7 @@ describe('Accessibility', () => {
   it(
     'C8358 Verify checkin note is readable with screenreader (vega) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.vega],
+      tags: ['criticalPath', 'vega'],
     },
     () => {
       // Checkin item

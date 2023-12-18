@@ -268,7 +268,8 @@ export default {
     return momentObj.format('M/D/YYYY, h:mm A');
   },
 
-  getFormattedDateWithTime(date) {
+  getFormattedDateWithTime(date, withoutComma = false) {
+    if (withoutComma) return moment.utc(date).format('M/D/YYYYh:mm A');
     return moment.utc(date).format('M/D/YYYY, h:mm A');
   },
 

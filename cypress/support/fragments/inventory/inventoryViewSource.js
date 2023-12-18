@@ -5,6 +5,7 @@ const instanceTitle = 'MARC bibliographic record';
 const holdingTitle = 'Holdings record';
 const closeButton = Button({ icon: 'times' });
 const rootSection = Section({ id: 'marc-view-pane' });
+const linkedToMarcAuthorityIcon = Button({ href: including('/marc-authorities/authorities/') });
 
 const close = () => cy.do(closeButton.click());
 const contains = (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists());
@@ -48,6 +49,12 @@ export default {
     cy.expect(rootSection.find(HTML(including(expectedText))).absent());
   },
 
+  verifyAbsenceOfValueInRow(expectedText, rowIndex) {
+    cy.expect(
+      rootSection.find(TableRow({ index: rowIndex, innerText: including(expectedText) })).absent(),
+    );
+  },
+
   verifyRecordNotContainsDuplicatedContent: (value) => {
     cy.get(`td:contains("${value}")`).then((elements) => elements.length === 1);
   },
@@ -69,6 +76,24 @@ export default {
         .then((text) => {
           expect(text).to.match(regExp);
         });
+    }
+  },
+
+  verifyLinkedToAuthorityIcon(rowIndex, isPresent = true) {
+    if (isPresent) {
+      cy.expect(
+        rootSection
+          .find(TableRow({ index: rowIndex }))
+          .find(linkedToMarcAuthorityIcon)
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        rootSection
+          .find(TableRow({ index: rowIndex }))
+          .find(linkedToMarcAuthorityIcon)
+          .absent(),
+      );
     }
   },
 };

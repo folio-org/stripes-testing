@@ -1,44 +1,44 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import {
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
-  LOCATION_NAMES,
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
-  CALL_NUMBER_TYPE_NAMES,
-  EXPORT_TRANSFORMATION_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
-  PROFILE_TYPE_NAMES,
+  CALL_NUMBER_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
-  JOB_STATUS_NAMES,
+  EXPORT_TRANSFORMATION_NAMES,
+  FOLIO_RECORD_TYPE,
   HOLDINGS_TYPE_NAMES,
+  INSTANCE_STATUS_TERM_NAMES,
+  ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  PROFILE_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import DateTools from '../../../support/utils/dateTools';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import FileManager from '../../../support/utils/fileManager';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import DateTools from '../../../support/utils/dateTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -352,39 +352,40 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-      JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-      JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
+        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        ActionProfiles.deleteActionProfile(marcBibActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
+        ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(marcBibMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+        FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      ActionProfiles.deleteActionProfile(marcBibActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-      ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(marcBibMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-      FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
       'C356802 Check import summary table with "Updated" actions for instance, holding and item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['criticalPath', 'folijet', 'parallel'] },
       () => {
         // create profiles via API
         testData.jobProfileForCreate = jobProfileForCreate;
@@ -416,7 +417,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameMarcFileForImportCreate);
 
         // check the instance is created
-        FileDetails.openInstanceInInventory(FileDetails.status.created);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
@@ -567,7 +568,7 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         // check Created counter in the Summary table
         FileDetails.checkItemsQuantityInSummaryTable(0, '0');
@@ -579,7 +580,7 @@ describe('data-import', () => {
         FileDetails.checkItemsQuantityInSummaryTable(3, '0');
 
         // check instance, holdings, item are updated
-        FileDetails.openInstanceInInventory(FileDetails.status.updated);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyCatalogedDate(
           collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDateUi,
         );
@@ -591,7 +592,7 @@ describe('data-import', () => {
         );
         cy.wait(2000);
         cy.go('back');
-        FileDetails.openHoldingsInInventory(FileDetails.status.updated);
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.checkHoldingsType(
           collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType,
         );
@@ -609,7 +610,7 @@ describe('data-import', () => {
         );
         cy.wait(2000);
         cy.go('back');
-        FileDetails.openItemInInventory(FileDetails.status.updated);
+        FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
         ItemRecordView.verifyMaterialType(
           collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,
         );

@@ -1,10 +1,12 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
-import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
-import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import { Permissions } from '../../../support/dictionary';
 import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
+import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
+import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import ExportSettingsModal from '../../../support/fragments/eholdings/modals/exportSettingsModal';
+import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('eHoldings', () => {
@@ -19,6 +21,9 @@ describe('eHoldings', () => {
         Permissions.exportManagerAll.gui,
       ]).then((userProperties) => {
         testData.userId = userProperties.userId;
+
+        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.userId });
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.eholdingsPath,
           waiter: EHoldingsTitlesSearch.waitLoading,
@@ -35,7 +40,7 @@ describe('eHoldings', () => {
 
     it(
       'C354002 Verify that "Export" button become disabled when user doesn\'t choose any fields to export (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         EHoldingsPackagesSearch.byName(testData.packageName);
         EHoldingsPackages.verifyPackageInResults(testData.packageName);
@@ -44,8 +49,8 @@ describe('eHoldings', () => {
         EHoldingsPackageView.openExportModal();
         EHoldingsPackageView.clickExportSelectedPackageFields();
         EHoldingsPackageView.clickExportSelectedTitleFields();
-        EHoldingsPackageView.verifyExportButtonInModalDisabled();
-        EHoldingsPackageView.closeExportModalViaCancel();
+        ExportSettingsModal.verifyExportButtonDisabled();
+        ExportSettingsModal.clickCancelButton();
       },
     );
   });

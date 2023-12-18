@@ -5,8 +5,8 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -89,38 +89,39 @@ describe('data-import', () => {
       Logs.openFileDetails(fileName);
 
       // open Instance for getting hrid
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         instanceHridForReimport = initialInstanceHrId;
       });
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      // delete created files in fixtures
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"hrid"=="${instanceHridForReimport}"`,
+        }).then((instance) => {
           InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"hrid"=="${instanceHridForReimport}"`,
-      }).then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
       });
     });
 
     it(
       'C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
@@ -137,13 +138,13 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1');
 
         // open Instance for getting hrid
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
           // check fields are absent in the view source
@@ -217,11 +218,11 @@ describe('data-import', () => {
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(fileNameAfterUpload);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.srsMarc,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
           );
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
@@ -267,7 +268,7 @@ describe('data-import', () => {
             FileDetails.columnNameInResultList.srsMarc,
             FileDetails.columnNameInResultList.instance,
           ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
           });
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
           FileDetails.checkInstanceQuantityInSummaryTable('1', '1');

@@ -1,24 +1,22 @@
-import permissions from '../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../support/utils/stringTools';
 import {
   FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  ITEM_STATUS_NAMES,
 } from '../../support/constants';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
-import Requests from '../../support/fragments/requests/requests';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UserEdit from '../../support/fragments/users/userEdit';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import { DevTeams } from '../../support/dictionary';
-import EditRequest from '../../support/fragments/requests/edit-request';
+import permissions from '../../support/dictionary/permissions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import EditRequest from '../../support/fragments/requests/edit-request';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
   let userData;
@@ -138,12 +136,12 @@ describe('Circulation log', () => {
 
   it(
     'C358981 Verify that request source is correctly stored in the log (Volaris) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       Requests.findCreatedRequest(instanceData.itemBarcode);
       Requests.selectFirstRequest(instanceData.itemBarcode);
       EditRequest.openRequestEditForm();
-      NewRequest.choosepickupServicePoint('Circ Desk 1');
+      NewRequest.choosePickupServicePoint('Circ Desk 1');
       EditRequest.saveAndClose();
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.waitLoading();

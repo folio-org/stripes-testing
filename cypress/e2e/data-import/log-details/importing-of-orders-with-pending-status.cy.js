@@ -1,27 +1,28 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import {
+  ACQUISITION_METHOD_NAMES,
   FOLIO_RECORD_TYPE,
-  ORDER_STATUSES,
+  JOB_STATUS_NAMES,
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES_IN_PROFILE,
-  ACQUISITION_METHOD_NAMES,
-  JOB_STATUS_NAMES,
+  ORDER_STATUSES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Users from '../../../support/fragments/users/users';
-import Orders from '../../../support/fragments/orders/orders';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import OrderLines from '../../../support/fragments/orders/orderLines';
+import Orders from '../../../support/fragments/orders/orders';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -120,21 +121,22 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.wrap(orderNumbers).each((number) => {
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
-          Orders.deleteOrderViaApi(orderId[0].id);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.wrap(orderNumbers).each((number) => {
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
+            Orders.deleteOrderViaApi(orderId[0].id);
+          });
         });
       });
     });
 
     it(
       'C375178 Verify the log details for created imported order records (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
@@ -154,12 +156,12 @@ describe('data-import', () => {
             order.rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.order,
             order.rowNumber,
           );
           FileDetails.verifyStatusHasLinkToOrder(order.rowNumber);
-          FileDetails.openOrder('Created', order.rowNumber);
+          FileDetails.openOrder(RECORD_STATUSES.CREATED, order.rowNumber);
           OrderLines.waitLoading();
           OrderLines.verifyOrderTitle(order.title);
           OrderLines.getAssignedPOLNumber().then((initialNumber) => {

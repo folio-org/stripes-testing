@@ -1,23 +1,23 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
 import CheckInPane from '../../../support/fragments/check-in-actions/checkInPane';
+import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
 import CheckOutActions from '../../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../../support/fragments/checkout/checkout';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Item', () => {
@@ -93,21 +93,22 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      CheckInActions.checkinItemViaApi({
-        itemBarcode: itemData.barcode,
-        servicePointId: servicePoint.id,
-        checkInDate: new Date().toISOString(),
+      cy.getAdminToken().then(() => {
+        CheckInActions.checkinItemViaApi({
+          itemBarcode: itemData.barcode,
+          servicePointId: servicePoint.id,
+          checkInDate: new Date().toISOString(),
+        });
+        UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]);
+        ServicePoints.deleteViaApi(servicePoint.id);
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
       });
-      UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]);
-      ServicePoints.deleteViaApi(servicePoint.id);
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     });
 
     it(
       'C397325 Verify that no data in circulation is populated on duplicated Item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();

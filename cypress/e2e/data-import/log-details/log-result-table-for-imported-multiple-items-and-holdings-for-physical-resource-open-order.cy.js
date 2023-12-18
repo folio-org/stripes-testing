@@ -1,33 +1,34 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import {
-  FOLIO_RECORD_TYPE,
-  LOCATION_NAMES,
-  LOAN_TYPE_NAMES,
-  ITEM_STATUS_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
+  ACQUISITION_METHOD_NAMES,
+  FOLIO_RECORD_TYPE,
+  ITEM_STATUS_NAMES,
   JOB_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   VENDOR_NAMES,
-  ACQUISITION_METHOD_NAMES,
-  ORDER_FORMAT_NAMES_IN_PROFILE,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import Users from '../../../support/fragments/users/users';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -114,28 +115,29 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        (instance) => {
-          instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
-          instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-        Orders.deleteOrderViaApi(orderId[0].id);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
+          (instance) => {
+            instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
+            instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
       });
     });
 
     it(
       'C388570 Check the log result table for imported multiple items and holdings for Physical resource open order (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profiles
         FieldMappingProfiles.createOrderMappingProfile(
@@ -213,7 +215,7 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.instance,
           FileDetails.columnNameInResultList.order,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.verifyMultipleHoldingsStatus(
           arrayOfHoldingsStatuses,
@@ -225,7 +227,7 @@ describe('data-import', () => {
         FileDetails.checkItemQuantityInSummaryTable('6');
         FileDetails.checkOrderQuantityInSummaryTable('1');
         FileDetails.verifyMultipleItemsStatus(Number(quantityOfCreatedItems));
-        FileDetails.openOrder('Created');
+        FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const polNumber = initialNumber;
@@ -236,7 +238,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHRID = initialInstanceHrId;
         });

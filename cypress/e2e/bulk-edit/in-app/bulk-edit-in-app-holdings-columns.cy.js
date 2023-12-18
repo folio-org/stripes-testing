@@ -1,13 +1,11 @@
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
 
 let user;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
@@ -53,7 +51,7 @@ describe('bulk-edit', () => {
 
     it(
       'C389577 Verify that previews contains renamed "Instance (Title, Publisher, Publication date)" column (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
@@ -76,8 +74,13 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Tags');
         BulkEditSearchPane.changeShowColumnCheckbox('Tags');
         BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Tags');
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Instance (Title, Publisher, Publication date)');
-        BulkEditSearchPane.verifyChangesUnderColumns('Instance (Title, Publisher, Publication date)', item.instanceName);
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Instance (Title, Publisher, Publication date)',
+        );
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Instance (Title, Publisher, Publication date)',
+          item.instanceName,
+        );
 
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.clearTemporaryLocation('holdings');

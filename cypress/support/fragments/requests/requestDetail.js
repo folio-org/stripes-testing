@@ -1,17 +1,19 @@
-import { HTML, including, Select, TextField } from '@interactors/html';
-import ItemRecordView from '../inventory/item/itemRecordView';
-import InteractorsTools from '../../utils/interactorsTools';
+import { HTML, including, TextField } from '@interactors/html';
 import {
-  Pane,
-  Section,
+  Accordion,
+  Button,
   Heading,
   KeyValue,
-  Button,
-  Accordion,
-  MultiColumnListCell,
   Link,
   Modal,
+  MultiColumnListCell,
+  Pane,
+  Section,
+  Select,
+  TextArea,
 } from '../../../../interactors';
+import InteractorsTools from '../../utils/interactorsTools';
+import ItemRecordView from '../inventory/item/itemRecordView';
 
 const requestDetailsSection = Pane({ id: 'instance-details' });
 const titleInformationSection = Section({ id: 'title-info' });
@@ -21,26 +23,32 @@ const requesterInfoSection = Section({ id: 'requester-info' });
 const staffNotesInfoSection = Section({ id: 'staff-notes' });
 const actionsButton = requestDetailsSection.find(Button('Actions'));
 const moveRequestButton = Button('Move request');
+const duplicateRequestButton = Button('Duplicate');
 const fulfillmentInProgressAccordion = Accordion({
   id: 'fulfillment-in-progress',
 });
 const cancelRequestButton = Button({ id: 'clickable-cancel-request' });
 const confirmButton = Button('Confirm');
 const confirmRequestCancellationModal = Modal('Confirm request cancellation');
-const reasonDropdown = Select('Reason for cancellation');
+const cancellationReasonSelect = Select({ dataTestID: 'selectCancelationReason' });
 const additionalInfoOptionalInput = TextField('Additional information for patron');
 const additionalInfoRequiredInput = TextField('Additional information for patron *');
 
+const additionalInfoForCancellation = TextArea({ dataTestID: 'additionalInfo' });
+const confirmCancellationButton = Button({ dataTestID: 'cancelRequestDialogCancel' });
+
 export default {
-  waitLoading: () => {
+  waitLoading: (type = 'staff') => {
     cy.expect([
       Pane({ id: 'instance-details', title: 'Request Detail' }).exists(),
       requestDetailsSection.find(titleInformationSection).exists(),
       requestDetailsSection.find(itemInformationSection).exists(),
       requestDetailsSection.find(requestInfoSection).exists(),
       requestDetailsSection.find(requesterInfoSection).exists(),
-      requestDetailsSection.find(staffNotesInfoSection).exists(),
     ]);
+    if (type === 'title') {
+      cy.expect([requestDetailsSection.find(staffNotesInfoSection).exists()]);
+    }
   },
 
   checkTitleInformation: (data) => {
@@ -117,6 +125,14 @@ export default {
     InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
   },
 
+  checkItemBarcode: (barcode) => {
+    requesterInfoSection.find(KeyValue('Item barcode')).has({ value: barcode });
+  },
+
+  checkRequestsCount: (count) => {
+    requesterInfoSection.find(KeyValue('Requests on item')).has({ value: count });
+  },
+
   checkRequesterInformation: (data) => {
     cy.expect([
       requesterInfoSection.find(Heading('Requester')).exists(),
@@ -140,6 +156,10 @@ export default {
     cy.do(cancelRequestButton.click());
   },
 
+  openCancelRequestForm() {
+    cy.do([actionsButton.click(), cancelRequestButton.click()]);
+  },
+
   verifyCancelRequestModalDisplayed() {
     cy.expect(confirmRequestCancellationModal.exists());
   },
@@ -150,20 +170,32 @@ export default {
   },
 
   checkRequestCancellationModalInfo() {
-    cy.do(reasonDropdown.choose('INN-Reach'));
+    cy.do(cancellationReasonSelect.choose('INN-Reach'));
     cy.expect(additionalInfoOptionalInput.exists());
-    cy.do(reasonDropdown.choose('Item Not Available'));
+    cy.do(cancellationReasonSelect.choose('Item Not Available'));
     cy.expect(additionalInfoOptionalInput.exists());
-    cy.do(reasonDropdown.choose('Needed For Course Reserves'));
+    cy.do(cancellationReasonSelect.choose('Needed For Course Reserves'));
     cy.expect(additionalInfoOptionalInput.exists());
-    cy.do(reasonDropdown.choose('Patron Cancelled'));
+    cy.do(cancellationReasonSelect.choose('Patron Cancelled'));
     cy.expect(additionalInfoOptionalInput.exists());
-    cy.do(reasonDropdown.choose('Other'));
+    cy.do(cancellationReasonSelect.choose('Other'));
     cy.expect([additionalInfoRequiredInput.exists(), confirmButton.has({ disabled: true })]);
   },
 
   confirmRequestCancellation() {
-    cy.do([reasonDropdown.choose('INN-Reach'), confirmButton.click()]);
+    cy.do([cancellationReasonSelect.choose('INN-Reach'), confirmButton.click()]);
+  },
+
+  selectCancellationReason(reason) {
+    cy.do(cancellationReasonSelect.choose(reason));
+  },
+
+  provideAdditionalInformationForCancelation(info) {
+    cy.do(additionalInfoForCancellation.fillIn(info));
+  },
+
+  cancelRequest() {
+    cy.do(confirmCancellationButton.click());
   },
 
   verifyEditButtonAbsent() {
@@ -174,6 +206,10 @@ export default {
 
   openMoveRequest() {
     cy.do(moveRequestButton.click());
+  },
+
+  openDuplicateRequest() {
+    cy.do(duplicateRequestButton.click());
   },
 
   verifyMoveRequestButtonExists() {
@@ -193,8 +229,8 @@ export default {
     );
   },
 
-  openItemByBarcode() {
-    cy.do(itemInformationSection.find(Link({ href: including('/inventory/view/') })).click());
+  openItemByBarcode(barcode = '') {
+    cy.do(itemInformationSection.find(Link(including(barcode))).click());
     ItemRecordView.waitLoading();
   },
 

@@ -42,9 +42,7 @@ export default {
   },
 
   toggleAccordionItemsButton(holdingId) {
-    for (let i = 0; i < 2; i++) {
-      cy.do(Button({ id: `accordion-toggle-button-${holdingId}` }).click());
-    }
+    cy.do(Button({ id: `accordion-toggle-button-${holdingId}` }).click());
   },
 
   verifyItemWithStatusExists(holdingId, status) {
