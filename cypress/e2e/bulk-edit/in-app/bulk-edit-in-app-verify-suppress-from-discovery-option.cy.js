@@ -42,13 +42,6 @@ describe('bulk-edit', () => {
           item.itemId = inventoryItem.id;
           InventoryItems.editItemViaApi(inventoryItem);
         });
-        cy.getHoldings({
-          limit: 1,
-          expandAll: true,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          item.holdingsHRID = holdings[0].hrid;
-        });
         cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(
           (instance) => {
             item.instanceHRID = instance.hrid;
