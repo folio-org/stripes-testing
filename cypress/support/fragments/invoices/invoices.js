@@ -778,6 +778,15 @@ export default {
     InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceApprovedMessage);
   },
 
+  canNotApproveInvoice: (errorMessage) => {
+    cy.do([
+      invoiceDetailsPaneHeader.find(actionsButton).click(),
+      Button('Approve').click(),
+      submitButton.click(),
+    ]);
+    InteractorsTools.checkCalloutErrorMessage(errorMessage);
+  },
+
   searchByNumber: (invoiceNumber) => {
     cy.do([
       SearchField({ id: searchInputId }).selectIndex('Vendor invoice number'),
@@ -1036,6 +1045,30 @@ export default {
       Select({ name: 'adjustments[0].prorate' }).choose(proRate),
       Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
     ]);
+    if (exportToAccounting === true) {
+      cy.do(Checkbox({ name: 'adjustments[0].exportToAccounting' }).click());
+    }
+    cy.do(saveAndClose.click());
+  },
+
+  addAdjustmentToInvoiceLine: (
+    descriptionInput,
+    valueInput,
+    percentOrDollar,
+    realtioToTotal,
+    exportToAccounting = false,
+  ) => {
+    cy.do([
+      Button({ id: 'adjustments-add-button' }).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+    ]);
+    if (percentOrDollar === '$') {
+      cy.do(Section({ id: 'invoiceLineForm-adjustments' }).find(Button('$')).click());
+    } else if (percentOrDollar === '%') {
+      cy.do(Section({ id: 'invoiceLineForm-adjustments' }).find(Button('%')).click());
+    }
+    cy.do([Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal)]);
     if (exportToAccounting === true) {
       cy.do(Checkbox({ name: 'adjustments[0].exportToAccounting' }).click());
     }

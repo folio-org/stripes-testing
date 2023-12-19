@@ -532,15 +532,12 @@ export default {
     submitOrderLine();
   },
 
-  POLWithDifferntCurrency(
+  rolloverPOLineInfoforPhysicalMaterialWithFundInPercents(
     fund,
     unitPrice,
     quantity,
     value,
     institutionId,
-    currency,
-    currencyLogo,
-    exchangeRate,
   ) {
     cy.do([
       orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
@@ -554,16 +551,12 @@ export default {
       ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
-      currencyButton.click(),
-      SelectionOption(currency).click(),
-      Checkbox({ id: 'use-set-exhange-rate' }).click(),
-      TextField({ name: 'cost.exchangeRate' }).fillIn(exchangeRate),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      Section({ id: 'fundDistributionAccordion' }).find(Button(currencyLogo)).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
       fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
       createNewLocationButton.click(),
     ]);
@@ -1848,6 +1841,9 @@ export default {
     cy.expect(KeyValue('Payment status').has({ value: paymentStatus }));
   },
 
+  verifyOrderFieldContent: (orderData) => {
+    cy.expect([KeyValue(orderData.name).has({ value: orderData.value })]);
+  },
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
     cy.expect([
       KeyValue('Title').has({ value: orderData.title }),

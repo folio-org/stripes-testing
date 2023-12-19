@@ -168,6 +168,7 @@ export default {
       MultiSelect({ label: 'Group' }).select([group]),
       saveAndCloseButton.click(),
     ]);
+    cy.wait(4000);
   },
 
   addTransferTo: (fund) => {
@@ -264,6 +265,19 @@ export default {
     cy.expect(Modal('Planned budget').exists());
     cy.do([
       Select({ name: 'fiscalYearId' }).choose(fiscalYear),
+      Modal('Planned budget')
+        .find(TextField({ name: 'allocated' }))
+        .fillIn(allocatedQuantity.toString()),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
+    cy.do([Button('Save').click()]);
+  },
+
+  addPlannedBudgetWithoutFY: (allocatedQuantity) => {
+    cy.do(Accordion('Planned budget').find(newButton).click());
+    cy.expect(Modal('Planned budget').exists());
+    cy.do([
       Modal('Planned budget')
         .find(TextField({ name: 'allocated' }))
         .fillIn(allocatedQuantity.toString()),
@@ -865,10 +879,11 @@ export default {
       });
   },
 
-  deleteFundViaApi: (fundId) => cy.okapiRequest({
+  deleteFundViaApi: (fundId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/funds/${fundId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
   createFundWithAU(fund, ledger, AUName) {
     cy.do([
