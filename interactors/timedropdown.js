@@ -55,8 +55,6 @@ export default HTML.extend('time dropdown')
       await minuteTextField.fillIn(minuteFieldValue.toString());
       minuteTextField.blur();
 
-
-      console.log(meridian);
       await interactor.find(Select({ id: matching(/-period-toggle$/) })).choose(meridian);
 
       await interactor.find(Button('Set time')).click();
