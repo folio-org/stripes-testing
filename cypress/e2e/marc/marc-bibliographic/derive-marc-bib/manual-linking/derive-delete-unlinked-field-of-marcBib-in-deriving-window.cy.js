@@ -8,35 +8,32 @@ import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marc
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
-// import Users from '../../../../../support/fragments/users/users';
+import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () => {
   const testData = {
-    // tag700: '700',
+    tag100: '100',
     createdRecordIDs: [],
-    // contributor: 'Coates, Ta-Nehisi',
-    // bib100AfterLinkingToAuth100: [
-    //   33,
-    //   '100',
-    //   '1',
-    //   '\\',
-    //   '$a C366574 Coates, Ta-Nehisi',
-    //   '$e author.',
-    //   '$0 id.loc.gov/authorities/names/n2008001084',
-    //   '',
-    // ],
-    // bib700AfterLinkingToAuth100: [
-    //   76,
-    //   '700',
-    //   '1',
-    //   '\\',
-    //   '$a C366574 Sprouse, Chris',
-    //   '$e artist.',
-    //   '$0 id.loc.gov/authorities/names/nb98017694',
-    //   '',
-    // ],
-    // marcAuthIcon: 'Linked to MARC authority',
+    bib100AfterLinkingToAuth100: [
+      11,
+      '100',
+      '1',
+      '\\',
+      '$a C366579 Chin, Staceyann, $d 1972-',
+      '$e Author $e Narrator',
+      '$0 id.loc.gov/authorities/names/n2008052404',
+      '$1 http://viaf.org/viaf/24074052',
+    ],
+    bib700AfterUnlinking: [
+      11,
+      '100',
+      '1',
+      '\\',
+      '$a C366579 Chin, Staceyann, $d 1972- $e Author $e Narrator $0 id.loc.gov/authorities/names/n2008052404 $1 http://viaf.org/viaf/24074052',
+    ],
+    marcAuthIcon: 'Linked to MARC authority',
   };
 
   const marcFiles = [
@@ -51,31 +48,29 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
       fileName: `C366579 testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
-      // contributorName: 'C366574 Sprouse, Chris',
+      contributorName: 'C366579 Woodson, Jacqueline',
     },
     {
       marc: 'marcAuthFileC366579_1.mrc',
       fileName: `C366579 testMarcFile${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
-      // contributorName: 'C366574 Coates, Ta-Nehisi',
     },
   ];
   const linkingTagAndValues = [
     {
       tag: '100',
-      rowIndex: 33,
-      value: 'C366579 Coates, Ta-Nehisi',
+      rowIndex: 11,
+      value: 'C366579 Chin, Staceyann, 1972-',
     },
     {
       tag: '700',
-      rowIndex: 76,
-      value: 'C366579 Sprouse, Chris',
+      rowIndex: 21,
+      value: 'C366579 Woodson, Jacqueline',
     },
   ];
 
   before('Creating test data', () => {
-    cy.loginAsAdmin();
     // make sure there are no duplicate authority records in the system
     cy.getAdminToken().then(() => {
       MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C366579"' }).then(
@@ -87,6 +82,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
           });
         },
       );
+      cy.loginAsAdmin();
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -111,6 +107,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
 
@@ -138,17 +135,38 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
     });
   });
 
-  // after('Deleting created user and data', () => {
-  //   cy.getAdminToken();
-  //   Users.deleteViaApi(testData.user.userId);
-  //   InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
-  //   MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
-  //   MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2]);
-  // });
+  after('Deleting created user and data', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(testData.user.userId);
+    InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+    MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
+  });
 
   it(
     'C366579 Derive | Delete unlinked field of "MARC Bib" record in deriving window (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
-    () => {},
+    () => {
+      InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
+      InventoryInstances.selectInstance();
+      InventoryInstance.deriveNewMarcBibRecord();
+      QuickMarcEditor.clickKeepLinkingButton();
+      QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib100AfterLinkingToAuth100);
+      QuickMarcEditor.clickUnlinkIconInTagField(11);
+      QuickMarcEditor.confirmUnlinkingField();
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.bib700AfterUnlinking);
+      QuickMarcEditor.checkLinkButtonExist(testData.tag100);
+      QuickMarcEditor.deleteField(11);
+      QuickMarcEditor.afterDeleteNotification(testData.tag100);
+      QuickMarcEditor.clickSaveAndCloseThenCheck('1');
+      QuickMarcEditor.confirmDeletingFields();
+      QuickMarcEditor.verifyAfterDerivedMarcBibSave();
+      InstanceRecordView.verifyInstancePaneExists();
+      InventoryInstance.verifyContributorAbsent();
+      InventoryInstance.verifyContributor(
+        0,
+        1,
+        `${testData.marcAuthIcon}${marcFiles[1].contributorName}`,
+      );
+    },
   );
 });
