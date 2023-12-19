@@ -409,7 +409,8 @@ export default {
         timeParts[1]
       );
     }
-  }
+  },
+
   getCurrentUTCTime() {
     const currentDate = new Date();
     const options = {
