@@ -26,9 +26,9 @@ const cancelButton = addTransferModal.find(Button('Cancel'));
 const confirmButton = addTransferModal.find(Button('Confirm'));
 
 export default {
-  verifyModalView() {
+  verifyModalView({ header = 'Transfer' } = {}) {
     cy.expect([
-      addTransferModal.has({ header: 'Transfer' }),
+      addTransferModal.has({ header }),
       fromSelection.exists(),
       toSelection.exists(),
       amountTextField.exists(),
@@ -66,7 +66,7 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(addTransferModal.absent());
   },
-  clickConfirmButton({ transferCreated = true, confirmNegative } = {}) {
+  clickConfirmButton({ transferCreated = true, ammountAllocated = false, confirmNegative } = {}) {
     cy.do(confirmButton.click());
 
     if (confirmNegative) {
@@ -86,6 +86,12 @@ export default {
     if (transferCreated) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(States.transferCreatedSuccessfully)),
+      );
+    }
+
+    if (ammountAllocated) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(States.amountAllocatedSuccessfully)),
       );
     }
   },

@@ -15,6 +15,7 @@ import {
   Accordion,
   RadioButton,
 } from '../../../../interactors';
+import { FILTER_STATUSES } from './eholdingsConstants';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomPackage from './eHoldingsNewCustomPackage';
 import eHoldingsPackage from './eHoldingsPackage';
@@ -270,12 +271,8 @@ export default {
 
   verifyOnlySelectedPackagesInResults() {
     cy.expect([
-      resultSection
-        .find(ListItem({ text: including(eHoldingsPackage.filterStatuses.selected) }))
-        .exists(),
-      resultSection
-        .find(ListItem({ text: including(eHoldingsPackage.filterStatuses.notSelected) }))
-        .absent(),
+      resultSection.find(ListItem({ text: including(FILTER_STATUSES.SELECTED) })).exists(),
+      resultSection.find(ListItem({ text: including(FILTER_STATUSES.NOT_SELECTED) })).absent(),
     ]);
   },
 

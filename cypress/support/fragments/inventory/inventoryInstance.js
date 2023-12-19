@@ -159,8 +159,8 @@ const validOCLC = {
     ctry: { interactor: TextField('Ctry'), defaultValue: 'ru\\' },
     desc: { interactor: TextField('MRec'), defaultValue: 'o' },
     dtSt: { interactor: TextField('DtSt'), defaultValue: 's' },
-    startDate: { interactor: TextField('Start date'), defaultValue: '2007' },
-    endDate: { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
+    startDate: { interactor: TextField('Date 1'), defaultValue: '2007' },
+    endDate: { interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
   },
 };
 
@@ -356,6 +356,36 @@ export default {
 
   openSubjectAccordion: () => cy.do(Accordion('Subject').click()),
 
+  checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
+    if (isPresent) {
+      cy.expect(
+        MultiColumnList(sectionId)
+          .find(MultiColumnListCell({ content: `Linked to MARC authority${value}` }))
+          .find(marcAuthorityAppIcon)
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        MultiColumnList(sectionId)
+          .find(MultiColumnListCell({ content: value }))
+          .find(marcAuthorityAppIcon)
+          .absent(),
+      );
+    }
+  },
+
+  checkAuthorityAppIconLink: (sectionId, title, authorityId) => {
+    cy.expect(
+      MultiColumnList(sectionId)
+        .find(MultiColumnListCell({ content: `Linked to MARC authority${title}` }))
+        .find(Button())
+        .has({
+          href: `/marc-authorities/authorities/${authorityId}?authRefType=Authorized&segment=search`,
+          target: '_blank',
+        }),
+    );
+  },
+
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -397,6 +427,7 @@ export default {
   },
 
   viewSource: () => {
+    cy.wait(2000);
     cy.do(actionsButton.click());
     cy.wait(2000);
     cy.do(viewSourceButton.click());
@@ -424,7 +455,7 @@ export default {
   checkHoldingTitle({ title, count, absent = false }) {
     if (!absent) {
       const holdingTitleRegExp = `Holdings: ${title} ${
-        count !== undefined ? '>\\nView holdings\\n' + count : ''
+        count !== undefined ? '>\\nView holdings(?:\\nAdd item)*\\n' + count : ''
       }`;
       cy.expect(detailsPaneContent.has({ text: matching(new RegExp(holdingTitleRegExp)) }));
     } else {
@@ -441,6 +472,8 @@ export default {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
     InstanceRecordEdit.waitLoading();
+
+    return InstanceRecordEdit;
   },
 
   editMarcBibliographicRecord: () => {
@@ -999,8 +1032,25 @@ export default {
   verifyHoldingLocation(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
+  openHoldingItem({ name, barcode, shouldOpen = true }) {
+    const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
 
-  checkHoldingsTableContent({ name, records = [], columnIndex = 0, shouldOpen = true } = {}) {
+    if (shouldOpen) {
+      cy.do(holdingsSection.clickHeader());
+    }
+
+    cy.do(
+      holdingsSection
+        .find(MultiColumnListCell({ column: 'Item: barcode' }))
+        .find(Button(barcode))
+        .click(),
+    );
+
+    ItemRecordView.waitLoading();
+
+    return ItemRecordView;
+  },
+  checkHoldingsTableContent({ name, records = [], shouldOpen = true } = {}) {
     const holdingsSection = Accordion({ label: including(`Holdings: ${name}`) });
 
     if (shouldOpen) {
@@ -1012,7 +1062,7 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex }))
+            .find(MultiColumnListCell({ column: 'Item: barcode' }))
             .has({ content: including(record.barcode) }),
         );
       }
@@ -1021,8 +1071,17 @@ export default {
         cy.expect(
           holdingsSection
             .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: columnIndex + 1 }))
+            .find(MultiColumnListCell({ column: 'Status' }))
             .has({ content: including(record.status) }),
+        );
+      }
+
+      if (record.location) {
+        cy.expect(
+          holdingsSection
+            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+            .find(MultiColumnListCell({ column: 'Effective location' }))
+            .has({ content: including(record.location) }),
         );
       }
     });

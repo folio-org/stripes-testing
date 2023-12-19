@@ -122,9 +122,7 @@ describe('Receiving', () => {
 
           data.forEach((receive) => {
             cy.expect(Object.keys(receive).length).to.equal(fields.length);
-            fields.forEach(
-              (field) => cy.expect(receive[`"${field.replace(/\s/g, '')}"`]).to.not.be.undefined,
-            );
+            fields.forEach((field) => cy.expect(receive[field]).to.not.be.undefined);
           });
         });
       },
@@ -176,9 +174,7 @@ describe('Receiving', () => {
 
           data.forEach((receive) => {
             cy.expect(Object.keys(receive).length).to.equal(fields.length);
-            fields.forEach(
-              (field) => cy.expect(receive[`"${field.replace(/\s/g, '')}"`]).to.not.be.undefined,
-            );
+            fields.forEach((field) => cy.expect(receive[field]).to.not.be.undefined);
           });
         });
       },
