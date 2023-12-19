@@ -38,6 +38,7 @@ export default {
   urlRelationshipPath: 'settings/inventory/URLrelationship',
   instanceStatusTypesPath: 'settings/inventory/instanceStatusTypes',
   statisticalCodesPath: 'settings/inventory/StatisticalCodeSettings',
+  hridHandlingPath: 'settings/inventory/hridHandling',
   loantypesPath: 'settings/inventory/loantypes',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',

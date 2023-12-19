@@ -853,6 +853,10 @@ export default {
     internal: 'ui-inventory.settings.statistical-codes',
     gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
+  uiSettingsHRIDHandlingCreateEditDelete: {
+    internal: 'ui-inventory.settings.hridHandling',
+    gui: 'Settings (Inventory): Create, edit and delete HRID handling',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingsEHoldingsViewAccessStatusTypes: {
