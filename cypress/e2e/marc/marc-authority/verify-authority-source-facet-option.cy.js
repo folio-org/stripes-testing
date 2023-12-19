@@ -12,7 +12,7 @@ import { JOB_STATUS_NAMES } from '../../../support/constants';
 describe('MARC -> MARC Authority', () => {
   const testData = {
     searchOption: 'Personal name',
-    searchValue: 'France',
+    searchValue: `t!)-${getRandomPostfix()}`,
     authorityOption: 'LC Subject Headings (LCSH)',
   };
 
@@ -32,22 +32,17 @@ describe('MARC -> MARC Authority', () => {
       path: TopMenu.dataImportPath,
       waiter: DataImport.waitLoading,
     }).then(() => {
-      marcFiles.forEach((marcFile) => {
-        cy.visit(TopMenu.dataImportPath);
-        DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(marcFile.jobProfileToRun);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFile.fileName);
-        for (let i = 0; i < marcFile.numOfRecords; i++) {
-          Logs.getCreatedItemsID(i).then((link) => {
-            createdRecordIDs.push(link.split('/')[5]);
-          });
-        }
+      DataImport.verifyUploadState();
+      DataImport.uploadFileAndRetry(marcFiles[0].marc, marcFiles[0].fileName);
+      JobProfiles.waitFileIsUploaded();
+      JobProfiles.waitLoadingList();
+      JobProfiles.search(marcFiles[0].jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFiles[0].fileName);
+      Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+      Logs.openFileDetails(marcFiles[0].fileName);
+      Logs.getCreatedItemsID().then((link) => {
+        createdRecordIDs.push(link.split('/')[5]);
       });
     });
 
@@ -82,6 +77,7 @@ describe('MARC -> MARC Authority', () => {
         `No results found for "${testData.searchValue}". Please check your spelling and filters.`,
       );
       MarcAuthorities.checkSelectedAuthoritySource(testData.authorityOption);
+      MarcAuthorities.verifySelectedTextOfAuthoritySourceAndCount(testData.authorityOption, 0);
     },
   );
 });
