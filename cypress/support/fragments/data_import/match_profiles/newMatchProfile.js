@@ -539,6 +539,9 @@ export default {
       cy.get('#panel-existing-edit [data-id=MARC_AUTHORITY]').should('exist'),
     ]);
   },
+  clickOnExistingRecordByName: (name) => {
+    cy.do(matchProfileDetailsAccordion.find(Button({ text: name })).click());
+  },
   verifyExistingRecordTypeIsSelected: (existingRecordType) => {
     cy.get(`[data-test-compare-record=${existingRecordType}]`).should(
       'contain',
@@ -552,12 +555,11 @@ export default {
       expect(content).to.not.include(value);
     });
   },
-  verifyIncomingRecordsDropdown: () => {
+  verifyIncomingRecordsDropdown: (...names) => {
     cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
-    cy.expect([
-      DropdownMenu({ visible: true }).find(HTML('MARC Bibliographic')).exists(),
-      DropdownMenu({ visible: true }).find(HTML('Static value (submatch only)')).exists(),
-    ]);
+    names.forEach((name) => {
+      cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
+    });
   },
   verifyNewMatchProfileFormIsOpened: () => {
     cy.expect(Pane('New match profile').exists());
