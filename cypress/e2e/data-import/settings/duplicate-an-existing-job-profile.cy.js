@@ -19,7 +19,7 @@ describe('data-import', () => {
     const description = `Description for job profile.${getRandomPostfix()}`;
     const jobProfileName = `C2333 newJobProfileName.${getRandomPostfix()}`;
     const failCalloutMessage = `Job profile '${jobProfile.profileName}' already exists`;
-    const succsessCalloutMessage = `The job profile "${jobProfileName}" was successfully created`;
+    const successCalloutMessage = `The job profile "${jobProfileName}" was successfully created`;
 
     before('create test data', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
@@ -53,7 +53,7 @@ describe('data-import', () => {
         NewJobProfile.checkCalloutMessage(failCalloutMessage);
         NewJobProfile.fillProfileName(jobProfileName);
         NewJobProfile.saveAndClose();
-        NewJobProfile.checkCalloutMessage(succsessCalloutMessage);
+        NewJobProfile.checkCalloutMessage(successCalloutMessage);
         JobProfileView.verifyJobProfileOpened();
       },
     );

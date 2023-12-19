@@ -42,14 +42,24 @@ export default {
     });
   },
 
+  deleteFilesFromDownloadsByMask(...fileNameMasks) {
+    fileNameMasks.forEach((fileNameMask) => {
+      this.findDownloadedFilesByMask(fileNameMask).then((fileNames) => {
+        fileNames?.forEach((fileName) => cy.task('deleteFile', fileName));
+      });
+    });
+  },
+
   convertCsvToJson(readFileName) {
     cy.wait(Cypress.env('downloadTimeout'));
 
     this.findDownloadedFilesByMask(readFileName).then((downloadedFileNames) => {
       const lastDownloadedFileName = downloadedFileNames.sort()[downloadedFileNames.length - 1];
 
-      cy.task('convertCsvToJson', lastDownloadedFileName).then((data) => {
-        cy.wrap(data).as('jsonData');
+      this.readFile(lastDownloadedFileName).then((content) => {
+        cy.task('convertCsvToJson', content).then((data) => {
+          cy.wrap(data).as('jsonData');
+        });
       });
     });
 

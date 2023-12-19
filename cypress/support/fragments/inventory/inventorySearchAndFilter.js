@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, matching } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -401,7 +401,10 @@ export default {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveUUIDs.click());
   },
-
+  saveHoldingsUUIDs() {
+    InventoryActions.open();
+    cy.do(InventoryActions.options.saveHoldingsUUIDs.click());
+  },
   saveCQLQuery() {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveCQLQuery.click());
@@ -439,8 +442,8 @@ export default {
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },
-  switchToItem: () => cy.do(Button({ id: 'segment-navigation-items' }).click()),
-  switchToHoldings: () => cy.do(Button({ id: 'segment-navigation-holdings' }).click()),
+  switchToItem: () => cy.do(itemToggleButton.click()),
+  switchToHoldings: () => cy.do(holdingsToggleButton.click()),
   switchToInstance: () => cy.do(navigationInstancesButton.click()),
 
   instanceTabIsDefault() {
@@ -567,8 +570,16 @@ export default {
     cy.expect(HTML('No matching options').exists());
   },
 
-  verifyResultPaneEmpty() {
-    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
+  verifyResultPaneEmpty({ noResultsFound = false, searchQuery = '(?:\\S+)' } = {}) {
+    const message = noResultsFound
+      ? `No results found for "${searchQuery}". Please check your spelling and filters.`
+      : emptyResultsMessage;
+
+    cy.expect(
+      paneResultsSection
+        .find(HTML({ className: including('noResultsMessage-') }))
+        .has({ text: matching(message) }),
+    );
   },
 
   resetAllAndVerifyNoResultsAppear() {
@@ -843,5 +854,19 @@ export default {
       Section({ id: 'acc01' }).find(KeyValue('Source')).has({ value: instanceData.source }),
       Section({ id: 'acc02' }).find(KeyValue('Resource title')).has({ value: instanceData.title }),
     ]);
+  },
+
+  expandAccordion(accordionName) {
+    cy.do(paneFilterSection.find(Accordion(accordionName)).clickHeader());
+    cy.expect(paneFilterSection.find(Accordion(accordionName)).has({ open: true }));
+  },
+
+  checkOptionsWithCountersExistInAccordion(accordionName) {
+    cy.expect(
+      paneFilterSection
+        .find(Accordion(accordionName))
+        .find(Checkbox())
+        .has({ label: matching(/.{1,}\d{1,}/) }),
+    );
   },
 };

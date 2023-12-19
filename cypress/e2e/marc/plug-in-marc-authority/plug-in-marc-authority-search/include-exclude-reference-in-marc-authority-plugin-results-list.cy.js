@@ -114,7 +114,7 @@ describe('plug-in MARC authority | Search', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventoryInstance.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
       });
   });
@@ -155,19 +155,18 @@ describe('plug-in MARC authority | Search', () => {
       MarcAuthoritiesSearch.unselectExcludeReferencesFilter(
         REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM,
       );
-      MarcAuthorities.verifyColumnValuesOnlyExist(testData.authorizedColumnName, [
-        'Authorized',
-        'Reference',
-      ]);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: testData.authorizedColumnName,
+        expectedValues: ['Authorized', 'Reference'],
+      });
 
       MarcAuthoritiesSearch.unselectExcludeReferencesFilter(
         REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM_ALSO,
       );
-      MarcAuthorities.verifyColumnValuesOnlyExist(testData.authorizedColumnName, [
-        'Authorized',
-        'Reference',
-        'Auth/Ref',
-      ]);
+      MarcAuthorities.verifyColumnValuesOnlyExist({
+        column: testData.authorizedColumnName,
+        expectedValues: ['Authorized', 'Reference', 'Auth/Ref'],
+      });
 
       MarcAuthorities.searchBy('Keyword', 'Mostly Wagner');
       MarcAuthorities.selectItem(testData.authRows.wagnerAuth.title, false);

@@ -110,7 +110,7 @@ describe('Loan Details', () => {
             }).then((checkoutResponse) => {
               Requests.createNewRequestViaApi({
                 fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-                holdingsRecordId: testData.folioInstances[0].holdingId,
+                holdingsRecordId: testData.folioInstances[0].holdings[0].id,
                 instanceId: testData.folioInstances[0].instanceId,
                 item: { barcode: testData.folioInstances[0].barcodes[0] },
                 itemId: checkoutResponse.itemId,

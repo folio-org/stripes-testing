@@ -21,9 +21,9 @@ import {
   Card,
   TextArea,
 } from '../../../../interactors';
-import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectOrganizationModal from './modals/selectOrganizationModal';
 import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
@@ -37,6 +37,7 @@ import selectLocationModal from './modals/selectLocationModal';
 
 const path = require('path');
 
+const filtersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const receivedtitleDetails = PaneContent({ id: 'receiving-results-pane-content' });
 const saveAndCloseButton = Button('Save & close');
 const cancelButton = Button('Cancel');
@@ -96,7 +97,7 @@ const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
 const note = 'Edited by AQA team';
-
+const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
 
 // Edit form
@@ -152,7 +153,7 @@ export default {
   },
 
   resetFilters: () => {
-    cy.do(Button('Reset all').click());
+    cy.do(filtersPane.find(Button('Reset all')).click());
   },
 
   checkOrderlineSearchResults: ({ poLineNumber, title } = {}) => {
@@ -516,6 +517,44 @@ export default {
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
       Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
+  rolloverPOLineInfoforPhysicalMaterialWithFundInPercents(
+    fund,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
       fundDistributionField.fillIn(value),
       materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
       addLocationButton.click(),
@@ -910,6 +949,14 @@ export default {
     submitOrderLine();
   },
 
+  changeFundInPOLWithoutSaveInPercents(indexOfPreviusFund, fund, value) {
+    cy.do([
+      Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value),
+    ]);
+  },
+
   selectOrderline: (POlinenumber) => {
     cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
   },
@@ -932,6 +979,15 @@ export default {
     ]);
     cy.wait(6000);
     submitOrderLine();
+  },
+
+  addFundToPOLWithoutSave(indexOfPreviusFund, fund, value) {
+    cy.do([
+      addFundDistributionButton.click(),
+      Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value),
+    ]);
   },
 
   addTwoFundsToPOLinPercent(
@@ -1055,7 +1111,7 @@ export default {
       ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      Button({ id: 'currency' }).click(),
+      currencyButton.click(),
       SelectionOption('Euro (EUR)').click(),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
@@ -1088,7 +1144,7 @@ export default {
       ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      Button({ id: 'currency' }).click(),
+      currencyButton.click(),
       SelectionOption('Polish Zloty (PLN)').click(),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
@@ -1389,13 +1445,8 @@ export default {
   },
 
   selectFilterVendorPOL: (invoice) => {
-    cy.do([
-      buttonFVendorFilter.click(),
-      Button({ id: 'purchaseOrder.vendor-button' }).click(),
-      Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
-      searchButton.click(),
-    ]);
-    SearchHelper.selectFromResultsList();
+    cy.do([buttonFVendorFilter.click(), Button({ id: 'purchaseOrder.vendor-button' }).click()]);
+    SelectOrganizationModal.findOrganization(invoice.vendorName);
     cy.do(buttonFVendorFilter.click());
   },
 
@@ -1615,7 +1666,7 @@ export default {
   },
 
   checkConnectedInstance: () => {
-    cy.expect(itemDetailsSection.find(Link('Connected')).exists());
+    cy.expect(Link('Connected').exists());
   },
 
   fillInInvalidDataForPublicationDate: () => {
@@ -1651,6 +1702,16 @@ export default {
 
   selectCurrentEncumbrance: (currentEncumbrance) => {
     cy.do(fundDistributionSection.find(Link(currentEncumbrance)).click());
+  },
+
+  openPageCurrentEncumbranceInFund: (fund, linkText) => {
+    cy.get('#FundDistribution')
+      .contains('div[class^="mclCell-"]', fund)
+      .parent()
+      .find('a')
+      .contains(linkText)
+      .invoke('removeAttr', 'target')
+      .click();
   },
 
   openPageCurrentEncumbrance: (title) => {
@@ -1704,7 +1765,7 @@ export default {
         throw new Error(`No files found in ${downloadsFolder}`);
       }
       const fileName = path.basename(files[0]);
-      const filePath = `${downloadsFolder}\\${fileName}`;
+      const filePath = `${downloadsFolder}/${fileName}`;
       cy.readFile(filePath).then((fileContent) => {
         const fileRows = fileContent.split('\n');
         expect(fileRows[0].trim()).to.equal(
@@ -1712,10 +1773,6 @@ export default {
         );
       });
     });
-  },
-
-  deleteAllDownloadedFiles() {
-    cy.exec('del cypress\\downloads\\*.csv', { failOnNonZeroExit: false });
   },
 
   checkCreateInventory() {
@@ -1784,6 +1841,9 @@ export default {
     cy.expect(KeyValue('Payment status').has({ value: paymentStatus }));
   },
 
+  verifyOrderFieldContent: (orderData) => {
+    cy.expect([KeyValue(orderData.name).has({ value: orderData.value })]);
+  },
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
     cy.expect([
       KeyValue('Title').has({ value: orderData.title }),

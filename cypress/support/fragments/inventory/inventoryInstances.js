@@ -15,6 +15,7 @@ import {
   TextArea,
   PaneHeader,
   MultiColumnListHeader,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -22,9 +23,8 @@ import InventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import InventoryItems from './item/inventoryItems';
 import Arrays from '../../utils/arrays';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
-import generateUniqueItemBarcodeWithShift from '../../utils/generateUniqueItemBarcodeWithShift';
 import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
 
 const rootSection = Section({ id: 'pane-results' });
@@ -34,6 +34,7 @@ const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-sele
   Checkbox({ ariaLabel: 'Select instance' }),
 );
 const singleRecordImportModal = Modal('Single record import');
+const filterSection = Section({ id: 'pane-filter' });
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
 const searchButton = Button('Search', { type: 'submit' });
 const paneHeaderSearch = PaneHeader('Inventory');
@@ -161,11 +162,15 @@ const advSearchItemsOptionsValues = searchItemsOptionsValues
   .map((option, index) => (index ? option : 'keyword'))
   .filter((option, index) => index <= 14);
 
-const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
-  method: 'POST',
-  path: 'inventory/instances',
-  body: instanceWithSpecifiedNewId,
-});
+const actionsSortSelect = Select({ dataTestID: 'sort-by-selection' });
+
+const createInstanceViaAPI = (instanceWithSpecifiedNewId) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'inventory/instances',
+    body: instanceWithSpecifiedNewId,
+  });
+};
 
 const waitContentLoading = () => {
   cy.expect(
@@ -175,47 +180,79 @@ const waitContentLoading = () => {
   );
 };
 
-const getCallNumberTypes = (searchParams) => cy
-  .okapiRequest({
-    path: 'call-number-types',
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-  })
-  .then((response) => {
-    return response.body.callNumberTypes;
-  });
+const getCallNumberTypes = (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'call-number-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body.callNumberTypes;
+    });
+};
 
-const getHoldingsNotesTypes = (searchParams) => cy
-  .okapiRequest({
-    path: 'holdings-note-types',
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-  })
-  .then((response) => {
-    return response.body.holdingsNoteTypes;
-  });
+const createHoldingsNoteTypeViaApi = (noteTypeName) => {
+  return cy
+    .okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: 'holdings-note-types',
+      body: {
+        id: uuid(),
+        name: noteTypeName,
+        source: 'folio',
+      },
+    })
+    .then((response) => response.body.id);
+};
 
-const getItemNoteTypes = (searchParams) => cy
-  .okapiRequest({
-    path: 'item-note-types',
-    searchParams,
+const deleteHoldingsNoteTypeViaApi = (noteTypeId) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.DELETE,
+    path: `holdings-note-types/${noteTypeId}`,
     isDefaultSearchParamsRequired: false,
-  })
-  .then((response) => {
-    return response.body.itemNoteTypes;
   });
+};
 
-const getIdentifierTypes = (searchParams) => cy
-  .okapiRequest({
-    path: 'identifier-types',
-    searchParams,
-    isDefaultSearchParamsRequired: false,
-  })
-  .then((response) => {
-    return response.body.identifierTypes[0];
-  });
+const getHoldingsNotesTypes = (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'holdings-note-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body.holdingsNoteTypes;
+    });
+};
+
+const getItemNoteTypes = (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'item-note-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body.itemNoteTypes;
+    });
+};
+
+const getIdentifierTypes = (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'identifier-types',
+      searchParams,
+      isDefaultSearchParamsRequired: false,
+    })
+    .then((response) => {
+      return response.body.identifierTypes[0];
+    });
+};
 
 export default {
+  createHoldingsNoteTypeViaApi,
+  deleteHoldingsNoteTypeViaApi,
   getHoldingsNotesTypes,
   getCallNumberTypes,
   getIdentifierTypes,
@@ -235,11 +272,15 @@ export default {
   },
 
   selectInstance: (rowNumber = 0) => {
-    cy.do(inventoriesList.focus({ row: rowNumber }));
-    cy.do(inventoriesList.click({ row: rowNumber }));
+    cy.do([inventoriesList.focus({ row: rowNumber }), inventoriesList.click({ row: rowNumber })]);
+    InventoryInstance.waitInventoryLoading();
+
+    return InventoryInstance;
   },
 
-  selectInstanceById: (specialInternalId) => cy.do(inventoriesList.find(Button({ href: including(specialInternalId) })).click()),
+  selectInstanceById(specialInternalId) {
+    cy.do(inventoriesList.find(Button({ href: including(specialInternalId) })).click());
+  },
 
   addNewInventory() {
     cy.do([actionsButton.click(), Button('New').click()]);
@@ -252,6 +293,15 @@ export default {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
 
+  searchByTitle(title, result = true) {
+    cy.do([
+      filterSection.find(inventorySearchInput).fillIn(title),
+      filterSection.find(searchButton).click(),
+    ]);
+    if (result) {
+      cy.expect(MultiColumnListRow({ index: 0 }).exists());
+    }
+  },
   searchByTag: (tagName) => {
     cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
     // wait for data to be loaded
@@ -537,19 +587,49 @@ export default {
   },
   generateFolioInstances({
     count = 1,
-    barcodes,
+    holdingsCount,
+    itemsCount,
     status = ITEM_STATUS_NAMES.AVAILABLE,
-    properties = {},
-    callNumbers = [],
+    holdings,
+    items,
+    itemsProperties = {},
   } = {}) {
-    return [...Array(count).keys()].map((index) => ({
-      instanceId: uuid(),
-      instanceTitle: `Instance-${getRandomPostfix()}`,
-      barcodes: barcodes || [generateUniqueItemBarcodeWithShift(index)],
-      status,
-      properties: Array.isArray(properties) ? properties[index] : properties,
-      callNumbers,
-    }));
+    return [...Array(count).keys()].map((index) => {
+      const gHoldings =
+        holdings ||
+        [...Array(holdingsCount ?? 1).keys()].map(() => ({
+          id: uuid(),
+        }));
+      const gItems =
+        items ||
+        gHoldings.reduce((acc, it) => {
+          const holdingItems = [...Array(itemsCount ?? 1).keys()].map(() => {
+            const properties = Array.isArray(itemsProperties)
+              ? itemsProperties[index]
+              : itemsProperties;
+
+            return {
+              id: uuid(),
+              barcode: uuid(),
+              holdingsRecordId: it.id,
+              status: { name: status },
+              ...properties,
+            };
+          });
+
+          return [...acc, ...holdingItems];
+        }, []);
+
+      return {
+        instanceId: uuid(),
+        instanceTitle: `autotest_instance_${getRandomPostfix()}`,
+        holdings: gHoldings,
+        items: gItems,
+        // should not be used, left for support of old tests
+        barcodes: gItems.map(({ barcode }) => barcode),
+        properties: Array.isArray(itemsProperties) ? itemsProperties[index] : itemsProperties,
+      };
+    });
   },
   createFolioInstancesViaApi({ folioInstances = [], location = {}, sourceId } = {}) {
     const types = {
@@ -559,65 +639,76 @@ export default {
       materialTypeId: '',
     };
 
-    cy.then(() => {
-      this.getInstanceTypes().then((instanceTypes) => {
-        types.instanceTypeId = instanceTypes[0].id;
-      });
-      this.getHoldingTypes().then((holdingTypes) => {
-        types.holdingTypeId = holdingTypes[0].id;
-      });
-      this.getLoanTypes().then((loanTypes) => {
-        types.loanTypeId = loanTypes[0].id;
-      });
-      this.getMaterialTypes().then((materialTypes) => {
-        types.materialTypeId = materialTypes[0].id;
-      });
-    }).then(() => {
-      folioInstances.forEach((item, index) => {
-        const instance = {
-          instance: {
-            instanceTypeId: types.instanceTypeId,
-            title: item.instanceTitle,
-            id: item.instanceId,
-          },
-          holdings: [
-            {
+    return cy
+      .then(() => {
+        this.getInstanceTypes().then((instanceTypes) => {
+          types.instanceTypeId = instanceTypes[0].id;
+        });
+        this.getHoldingTypes().then((holdingTypes) => {
+          types.holdingTypeId = holdingTypes[0].id;
+        });
+        this.getLoanTypes().then((loanTypes) => {
+          types.loanTypeId = loanTypes[0].id;
+        });
+        this.getMaterialTypes().then((materialTypes) => {
+          types.materialTypeId = materialTypes[0].id;
+        });
+      })
+      .then(() => {
+        const instances = folioInstances.map((instance) => {
+          return {
+            instance: {
+              instanceTypeId: types.instanceTypeId,
+              title: instance.instanceTitle,
+              id: instance.instanceId,
+            },
+            holdings: instance.holdings.map((holding) => ({
+              ...holding,
               holdingsTypeId: types.holdingTypeId,
-              permanentLocationId: location.id,
+              permanentLocationId: holding.permanentLocationId || location.id,
               sourceId,
-              callNumber: item.callNumbers[index],
-            },
-          ],
-          items: item.barcodes.map((barcode) => ({
-            barcode,
-            status: { name: item.status },
-            permanentLoanType: { id: types.loanTypeId },
-            materialType: {
-              id: types.materialTypeId,
-            },
-            ...item.properties,
-          })),
-        };
+            })),
+            items: instance.items.map((item) => ({
+              ...item,
+              permanentLoanType: {
+                id: item.permanentLoanType?.id || types.loanTypeId,
+              },
+              materialType: {
+                id: item.materialType?.id || types.materialTypeId,
+              },
+            })),
+          };
+        });
 
-        this.createFolioInstanceViaApi(instance).then(({ instanceId, holdingIds }) => {
-          folioInstances[index].instanceId = instanceId;
-          folioInstances[index].holdingId = holdingIds[0].id;
-          folioInstances[index].itemIds = holdingIds[0].itemIds;
+        instances.forEach((instance, index) => {
+          this.createFolioInstanceViaApi(instance).then(
+            ({ instanceId, holdingIds, holdings, items }) => {
+              folioInstances[index].instanceId = instanceId;
+              folioInstances[index].holdings = holdings;
+              folioInstances[index].items = items;
+
+              // should not be used, left for support of old tests
+              folioInstances[index].holdingId = holdingIds[0].id;
+              folioInstances[index].itemIds = holdingIds[0].itemIds;
+              folioInstances[index].barcodes = items.map(({ barcode }) => barcode);
+            },
+          );
         });
       });
-    });
   },
-  createFolioInstanceViaApi: ({ instance, holdings = [], items = [] }) => {
+  createFolioInstanceViaApi({ instance, holdings = [], items = [] }) {
     InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
       const instanceWithSpecifiedNewId = {
         ...instance,
         id: instance.id || uuid(),
-        title: instance.title || `Instance-${getRandomPostfix()}`,
+        title: instance.title || `autotest_instance_${getRandomPostfix()}`,
         source: folioSource.name,
       };
-      const ids = {
+      const instanceData = {
         instanceId: instanceWithSpecifiedNewId.id,
         holdingIds: [],
+        holdings: [],
+        items: [],
       };
       createInstanceViaAPI(instanceWithSpecifiedNewId).then(() => {
         cy.wrap(
@@ -630,27 +721,34 @@ export default {
             };
             InventoryHoldings.createHoldingRecordViaApi(holdingWithIds).then(() => {
               const itemIds = [];
+              const holdingItems = items.filter((item) => {
+                return item.holdingsRecordId ? item.holdingsRecordId === holdingWithIds.id : true;
+              });
+
               cy.wrap(
-                items.forEach((item) => {
+                holdingItems.forEach((item) => {
                   const itemWithIds = {
                     ...item,
                     id: item.id || uuid(),
-                    holdingsRecordId: holdingWithIds.id,
+                    holdingsRecordId: item.holdingsRecordId || holdingWithIds.id,
                   };
                   itemIds.push(itemWithIds.id);
-                  InventoryItems.createItemViaApi(itemWithIds);
+                  InventoryItems.createItemViaApi(itemWithIds).then(() => {
+                    instanceData.items.push(itemWithIds);
+                  });
                 }),
               ).then(() => {
-                ids.holdingIds.push({ id: holdingWithIds.id, itemIds });
+                instanceData.holdingIds.push({ id: holdingWithIds.id, itemIds });
+                instanceData.holdings.push(holdingWithIds);
               });
             });
           }),
         ).then(() => {
-          cy.wrap(ids).as('ids');
+          cy.wrap(instanceData).as('instanceData');
         });
       });
     });
-    return cy.get('@ids');
+    return cy.get('@instanceData');
   },
   getInstanceIdApi: (searchParams) => {
     return cy
@@ -676,20 +774,19 @@ export default {
   },
 
   deleteInstanceViaApi({ instance, servicePoint, shouldCheckIn = false }) {
-    if (shouldCheckIn) {
-      instance.barcodes.forEach((barcode) => {
+    instance.items.forEach(({ id: itemId, barcode }) => {
+      if (shouldCheckIn) {
         CheckinActions.checkinItemViaApi({
           itemBarcode: barcode,
           claimedReturnedResolution: 'Returned by patron',
           servicePointId: servicePoint.id,
         });
-      });
-    }
-
-    instance.itemIds.forEach((id) => {
-      cy.deleteItemViaApi(id);
+      }
+      InventoryItems.deleteItemViaApi(itemId);
     });
-    cy.deleteHoldingRecordViaApi(instance.holdingId);
+    instance.holdings.forEach(({ id: holdingId }) => {
+      InventoryHoldings.deleteHoldingRecordViaApi(holdingId);
+    });
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
 
@@ -709,10 +806,12 @@ export default {
       });
   },
 
-  deleteLocalCallNumberTypeViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `call-number-types/${id}`,
-  }),
+  deleteLocalCallNumberTypeViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `call-number-types/${id}`,
+    });
+  },
 
   searchBySource: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-source' }).click());
@@ -1007,5 +1106,62 @@ export default {
     cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
       cy.expect(!checkbox.checked);
     });
+  },
+
+  checkColumnHeaderSort(headerName, isAscending = true) {
+    const sort = isAscending ? 'ascending' : 'descending';
+    cy.expect(inventoriesList.find(MultiColumnListHeader(headerName, { sort })).exists());
+  },
+
+  getResultsListByColumn(columnIndex) {
+    const cells = [];
+
+    cy.wait(2000);
+    return cy
+      .get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get(`[class*="mclCell-"]:nth-child(${columnIndex + 1})`, { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+          });
+      })
+      .then(() => cells);
+  },
+
+  checkResultListSortedByColumn(columnIndex, isAscending = true) {
+    this.getResultsListByColumn(columnIndex).then((cells) => {
+      if (isAscending) {
+        cy.expect(cells).to.deep.equal(cells.sort((a, b) => a - b));
+      } else {
+        cy.expect(cells).to.deep.equal(cells.sort((a, b) => b - a));
+      }
+    });
+  },
+
+  clickActionsButton() {
+    cy.do(actionsButton.click());
+    cy.expect(actionsSortSelect.exists());
+  },
+
+  actionsSortBy(value) {
+    cy.do(actionsSortSelect.choose(value));
+    // need to wait until content will be sorted
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
+    cy.expect(actionsSortSelect.absent());
+  },
+
+  verifyActionsSortedBy(value) {
+    cy.expect(actionsSortSelect.has({ checkedOptionText: value }));
+  },
+
+  clickColumnHeader(headerName) {
+    cy.do([
+      inventoriesList.find(MultiColumnListHeader(headerName)).click(),
+      // wait for sort to apply
+      cy.wait(2000),
+    ]);
   },
 };

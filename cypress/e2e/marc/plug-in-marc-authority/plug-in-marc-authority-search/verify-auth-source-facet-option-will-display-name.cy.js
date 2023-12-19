@@ -99,7 +99,7 @@ describe('MARC -> plug-in MARC authority | Search', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventoryInstance.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag);
@@ -120,7 +120,7 @@ describe('MARC -> plug-in MARC authority | Search', () => {
   });
 
   it(
-    'C60551 MARC Authority plug-in | Search: Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
+    'C360551 MARC Authority plug-in | Search: Verify that the "Authority source" facet option will display the name of facet option when zero results are returned (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.checkAuthoritySourceOptions();

@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -51,11 +51,11 @@ describe('data-import', () => {
         Logs.openFileDetails(nameMarcFileForImportCreate);
         FileDetails.verifyTitle('No content', FileDetails.columnNameInResultList.title);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.error,
+          RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
         FileDetails.verifyErrorMessage(error);
