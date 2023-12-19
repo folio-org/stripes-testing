@@ -561,6 +561,9 @@ export default {
       cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
     });
   },
+  verifyIncomingRecordsItemDoesNotExist(name) {
+    cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).absent()]);
+  },
   verifyNewMatchProfileFormIsOpened: () => {
     cy.expect(Pane('New match profile').exists());
   },

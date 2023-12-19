@@ -50,6 +50,7 @@ describe('data-import', () => {
           'MARC Authority',
           'Static value (submatch only)',
         );
+        NewMatchProfile.verifyIncomingRecordsItemDoesNotExist('MARC Bibliographic');
       },
     );
   });
