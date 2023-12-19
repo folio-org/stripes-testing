@@ -1,13 +1,11 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Permissions Tags', () => {
   let userData;
@@ -43,13 +41,14 @@ describe('Permissions Tags', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });
 
   it(
     'C398021 Verify that user is able to edit user records without error messages (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       UsersSearchPane.searchByUsername(userData.username);
       UserEdit.openEdit();
@@ -61,7 +60,7 @@ describe('Permissions Tags', () => {
 
   it(
     'C407662 "User search results" pane results remain after canceling user\'s profile editing (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       userData.middleName = newMiddleName;
       UsersSearchPane.searchByUsername(userData.username);

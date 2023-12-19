@@ -1,10 +1,10 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import getRandomStringCode from '../../../support/utils/genereteTextCode';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -30,20 +30,22 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      });
     });
 
     it(
       'C2337 Create a new match profile with a long name (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
+        MatchProfiles.checkCalloutMessage(calloutMessage);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
         MatchProfileView.verifyMatchProfileOpened();
         MatchProfileView.verifyMatchProfileTitleName(matchProfile.profileName);
-        MatchProfiles.checkCalloutMessage(calloutMessage);
       },
     );
   });

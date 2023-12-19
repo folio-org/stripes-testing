@@ -1,21 +1,19 @@
-import devTeams from '../../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
-import TopMenu from '../../../support/fragments/topMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import Users from '../../../support/fragments/users/users';
-import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import permissions from '../../../support/dictionary/permissions';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Tags', () => {
@@ -100,6 +98,7 @@ describe('inventory', () => {
     });
 
     after('Deleting created entities', () => {
+      cy.getAdminToken();
       UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
       ServicePoints.deleteViaApi(testData.userServicePoint.id);
       Users.deleteViaApi(userData.userId);
@@ -115,7 +114,7 @@ describe('inventory', () => {
 
     it(
       'C196770 Assign tags to a Holdings record (volaris)',
-      { tags: [TestTypes.extendedPath, devTeams.volaris] },
+      { tags: ['extendedPath', 'volaris'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToHoldings();
@@ -140,7 +139,7 @@ describe('inventory', () => {
 
     it(
       'C367961 Verify that user can add more than 1 tag to "Holdings" record with source "Folio" (volaris)',
-      { tags: [TestTypes.extendedPath, devTeams.volaris] },
+      { tags: ['extendedPath', 'volaris'] },
       () => {
         const tags = Array(5)
           .fill('')
@@ -167,7 +166,7 @@ describe('inventory', () => {
 
     it(
       'C196771 Assign tags to an Item record (volaris)',
-      { tags: [TestTypes.extendedPath, devTeams.volaris] },
+      { tags: ['extendedPath', 'volaris'] },
       () => {
         const tagName = `tag${getRandomStringCode(5)}`.toLowerCase();
         InventorySearchAndFilter.switchToItem();

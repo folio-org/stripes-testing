@@ -74,8 +74,11 @@ const createJobProfile = (jobProfile) => {
 const search = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
-  cy.do(paneResults.find(searchField).fillIn(jobProfileTitle));
-  cy.do(searchButton.click());
+  cy.do([
+    paneResults.find(searchField).focus(),
+    paneResults.find(searchField).fillIn(jobProfileTitle),
+    searchButton.click(),
+  ]);
 };
 
 export default {
@@ -94,6 +97,9 @@ export default {
     cy.do(searchField.focus());
     cy.do(Button({ id: 'input-job-profiles-search-field-clear-button' }).click());
   },
+  waitFileIsUploaded: () => {
+    cy.get('#pane-upload', getLongDelay()).find('div[class^="progressInfo-"]').should('not.exist');
+  },
 
   checkJobProfilePresented: (jobProfileTitle) => {
     search(jobProfileTitle);
@@ -105,15 +111,14 @@ export default {
     cy.wait(1000);
     cy.expect(paneResults.find(MultiColumnListRow({ index: 0 })).exists());
     cy.do(paneResults.find(MultiColumnListRow({ index: 0 })).click());
+    cy.expect(waitSelector.exists());
   },
 
   runImportFile: () => {
-    waitLoading(waitSelector);
-    cy.do([
-      actionsButton.click(),
-      runButton.click(),
-      Modal('Are you sure you want to run this job?').find(runButton).click(),
-    ]);
+    cy.wait(1000);
+    cy.do([actionsButton.click(), runButton.click()]);
+    cy.expect(Modal('Are you sure you want to run this job?').find(runButton).exists());
+    cy.do(Modal('Are you sure you want to run this job?').find(runButton).click());
   },
 
   waitFileIsImported: (fileName) => {

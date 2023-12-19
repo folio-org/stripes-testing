@@ -64,6 +64,14 @@ export const ITEM_STATUS_NAMES = {
   ORDER_CLOSED: 'Order closed',
 };
 
+export const BUDGET_STATUSES = {
+  ACTIVE: 'Active',
+  CLOZED: 'Clozed',
+  FROZEN: 'Frozed',
+  INACTIVE: 'Inactive',
+  PLANNED: 'Planned',
+};
+
 export const CY_ENV = {
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
@@ -135,6 +143,7 @@ export const BATCH_GROUP = {
 
 export const INVOICE_STATUSES = {
   OPEN: 'Open',
+  REVIEWED: 'Reviewed',
   APPROVED: 'Approved',
   CANCELLED: 'Cancelled',
   PAID: 'Paid',
@@ -146,8 +155,17 @@ export const ORDER_STATUSES = {
   CLOSED: 'Closed',
 };
 
+export const RECORD_STATUSES = {
+  CREATED: 'Created',
+  UPDATED: 'Updated',
+  NO_ACTION: 'No action',
+  DASH: 'No value set-',
+  BLANK: 'No value set',
+  ERROR: 'Error',
+};
+
 export const ORDER_TYPES = {
-  ONE_TIME: 'One-Time',
+  ONE_TIME: 'One-time',
   ONGOING: 'Ongoing',
 };
 
@@ -163,6 +181,14 @@ export const ORDER_FORMAT_NAMES = {
 
 export const ORDER_PAYMENT_STATUS = {
   PENDING: 'Pending',
+  PAYMENT_NOT_REQUIRED: 'Payment not required',
+};
+
+export const ORDER_LINE_PAYMENT_STATUS = {
+  AWAITING_PAYMENT: 'Awaiting payment',
+  CANCELLED: 'Cancelled',
+  FULLY_PAID: 'Fully paid',
+  PARTIALLY_PAID: 'Partially paid',
   PAYMENT_NOT_REQUIRED: 'Payment not required',
 };
 
@@ -233,6 +259,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   LIBRARY_OF_CONGRESS: 'Library of Congress classification',
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
   DEWAY_DECIMAL: 'Dewey Decimal classification',
+  SUDOC: 'Superintendent of Documents classification',
 };
 
 export const EXPORT_TRANSFORMATION_NAMES = {
@@ -286,6 +313,12 @@ export const HOLDINGS_TYPE_NAMES = {
   MONOGRAPH: 'Monograph',
 };
 
+export const NOTE_TYPES = {
+  GENERAL: 'General note',
+  NOTE_1516: 'Note type 1516',
+  NOTE_1654: 'Note-type-1654',
+};
+
 export const ACQUISITION_METHOD_NAMES_IN_MAPPING_PROFILES = {
   APPROVAL_PLAN: 'Approval Plan',
   DDA: 'Demand Driven Acquisitions (DDA)',
@@ -325,4 +358,9 @@ export const CONDITION_AND_LIMIT_TYPES = {
   MAX_OVERDUE_RECALLS: 'Maximum number of overdue recalls',
   MAX_OUTSTANDING_FEE_FINE_BALANCE: 'Maximum outstanding fee/fine balance',
   MAX_NUMBER_OF_DAYS: 'Recall overdue by maximum number of days',
+};
+
+export const REFERENCES_FILTER_CHECKBOXES = {
+  EXCLUDE_SEE_FROM: 'Exclude see from',
+  EXCLUDE_SEE_FROM_ALSO: 'Exclude see from also',
 };

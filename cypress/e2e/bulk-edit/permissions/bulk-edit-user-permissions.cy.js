@@ -1,10 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import UsersCard from '../../../support/fragments/users/usersCard';
-import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
@@ -25,12 +23,13 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       users.deleteViaApi(userWthViewEditPermissions.userId);
     });
 
     it(
       'C350765 Verify BULK EDIT permissions list (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         const permissionsToVerify = [
           permissions.bulkEditCsvView.gui,

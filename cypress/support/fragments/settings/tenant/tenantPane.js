@@ -30,6 +30,7 @@ export default {
     cy.expect(Pane(section).exists());
   },
   selectTenant(section) {
+    cy.wait(2000);
     cy.do(NavListItem(section).click());
     cy.expect(Pane(section).exists());
     // need to wait to prevent application error
@@ -41,5 +42,34 @@ export default {
   goToTenantTab() {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());
+  },
+  verifyLocationSetupItems(exist = true) {
+    [TENANTS.INSTITUTIONS, TENANTS.CAMPUSES, TENANTS.LIBRARIES, TENANTS.LOCATIONS].forEach(
+      (item) => {
+        if (exist) {
+          cy.expect(NavListItem(item).exists());
+        } else {
+          cy.expect(NavListItem(item).absent());
+        }
+      },
+    );
+  },
+  verifyGeneralItems(exist = true) {
+    [
+      TENANTS.ADDRESSES,
+      TENANTS.LANGUAGE_AND_LOCALIZATION,
+      TENANTS.PREFERRED_PLUGINS,
+      TENANTS.SSO_SETTINGS,
+      TENANTS.SERVICE_POINTS,
+    ].forEach((item) => {
+      if (exist) {
+        cy.expect(NavListItem(item).exists());
+      } else {
+        cy.expect(NavListItem(item).absent());
+      }
+    });
+  },
+  verifyPageTitle(title) {
+    cy.title().should('eq', title);
   },
 };

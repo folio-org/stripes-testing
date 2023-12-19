@@ -1,12 +1,11 @@
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import TopMenu from '../../../support/fragments/topMenu';
 import { INSTANCE_SOURCE_NAMES } from '../../../support/constants';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Instance', () => {
@@ -16,7 +15,6 @@ describe('inventory', () => {
 
     beforeEach('navigate to inventory', () => {
       instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
-      cy.loginAsAdmin();
       cy.getAdminToken()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 });
@@ -33,9 +31,11 @@ describe('inventory', () => {
             instanceId = specialInstanceId;
           });
         });
+      cy.loginAsAdmin();
     });
 
     afterEach(() => {
+      cy.getAdminToken();
       InventoryInstance.deleteInstanceViaApi(instanceId);
     });
 
@@ -47,8 +47,8 @@ describe('inventory', () => {
 
     ['ASIN', 'BNB'].forEach((identifier) => {
       it(
-        'C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
-        { tags: [TestTypes.smoke, DevTeams.folijet] },
+        'C609 In Accordion Identifiers --> enter different type of identifiers (folijet)',
+        { tags: ['smoke', 'folijet'] },
         () => {
           resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 

@@ -1,18 +1,18 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import uuid from 'uuid';
+import { Permissions } from '../../support/dictionary';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import SearchResults from '../../support/fragments/circulation-log/searchResults';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import TopMenu from '../../support/fragments/topMenu';
-import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import SearchResults from '../../support/fragments/circulation-log/searchResults';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('circulation-log', () => {
   const userData = {};
@@ -83,6 +83,7 @@ describe('circulation-log', () => {
   });
 
   after('Delete owner, transfer account, feeFineType, paymentMethod, user', () => {
+    cy.getAdminToken();
     TransferAccounts.deleteViaApi(transferAccount.id);
     ManualCharges.deleteViaApi(feeFineType.id);
     PaymentMethods.deleteViaApi(PaymentMethods.id);
@@ -93,7 +94,7 @@ describe('circulation-log', () => {
 
   it(
     'C350712 Check date and time --fee/fines (volaris) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.setFilterOptionFromAccordion('fee', 'Billed');

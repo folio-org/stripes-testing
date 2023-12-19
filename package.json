@@ -36,8 +36,8 @@
     "@interactors/html": "^1.0.0-rc1.4",
     "@interactors/keyboard": "^1.0.0-rc1.5",
     "axe-core": "4.3.3",
-    "cypress": "12.14.0",
-    "cypress-cloud": "^1.9.3",
+    "cypress": "12.0.0",
+    "cypress-cloud": "^1.9.6",
     "cypress-testrail-simple": "^3.1.0",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
@@ -55,6 +55,7 @@
     "bigtest": "^0.14.0",
     "cypress-downloadfile": "^1.2.1",
     "cypress-file-upload": "^5.0.8",
+    "cypress-plugin-tab": "^1.0.5",
     "cypress-recurse": "^1.13.1",
     "cypress-xpath": "^1.6.2",
     "eslint": "^7.32.0",
@@ -63,18 +64,19 @@
     "fs-extra": "7.0.1",
     "globby": "^11.1.0",
     "husky": "^8.0.3",
+    "json-2-csv": "^5.0.1",
     "lint-staged": "^14.0.1",
     "localforage": "^1.9.0",
     "prettier": "^3.0.2",
     "uuid": "^3.4.0"
   },
   "resolutions": {
-    "cypress": "12.14.0",
-    "chromedriver": "116.0.0"
+    "cypress": "12.0.0",
+    "chromedriver": "107.0.0"
   },
   "overrides": {
     "bigtest": {
-      "chromedriver": "116.0.0"
+      "chromedriver": "107.0.0"
     }
   }
 }

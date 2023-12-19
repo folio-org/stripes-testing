@@ -1,13 +1,11 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -26,13 +24,11 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-
         FileManager.createFile(
           `cypress/fixtures/${invalidItemBarcodesFileName}`,
           `${item.itemBarcode}\r\n${invalidBarcode}`,
@@ -51,6 +47,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
@@ -59,7 +56,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353232 Verify error accordion during matching (In app approach) (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -75,7 +72,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350941 Verify uploading file with identifiers -- In app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
         BulkEditSearchPane.uploadFile(validItemBarcodeFileName);
@@ -106,7 +103,7 @@ describe('bulk-edit', () => {
 
     it(
       'C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyItemIdentifiers();
 
@@ -140,7 +137,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357035 Verify elements of the bulk edit app -- In app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.clickToBulkEditMainButton();
         BulkEditSearchPane.verifyDefaultFilterState();

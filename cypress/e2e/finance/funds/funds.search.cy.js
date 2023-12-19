@@ -1,12 +1,10 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import Funds from '../../../support/fragments/finance/funds/funds';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Funds', () => {
   let aUnit;
@@ -54,6 +52,7 @@ describe('ui-finance: Funds', () => {
   });
 
   beforeEach(() => {
+    cy.getAdminToken();
     cy.createFundApi({
       ...fund,
       acqUnitIds: [aUnit.id],
@@ -65,13 +64,14 @@ describe('ui-finance: Funds', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     cy.deleteFundApi(fund.id);
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C4059 Test the search and filter options for funds (thunderjet)',
-    { tags: [testType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       FinanceHelp.checkZeroSearchResultsMessage();
 

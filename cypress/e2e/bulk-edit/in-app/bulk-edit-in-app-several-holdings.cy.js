@@ -1,30 +1,23 @@
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
 
 let user;
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  hrid: '',
-  locationName: '',
-  holdingId: '',
+  locationName: 'Popular Reading Collection',
 };
 
 const item2 = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
-  hrid: '',
-  locationName: '',
-  holdingId: '',
 };
 
 describe('bulk-edit', () => {
@@ -36,10 +29,6 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditHoldings.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -51,11 +40,11 @@ describe('bulk-edit', () => {
         }).then((holdings) => {
           item.hrid = holdings[0].hrid;
           item.holdingId = holdings[0].id;
-          cy.getLocations({ limit: 1, query: `(id="${holdings[0].temporaryLocationId}")` }).then(
-            (locations) => {
-              item.locationName = locations.name;
-            },
-          );
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            // Popular Reading Collection
+            temporaryLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+          });
         });
 
         const instanceId2 = InventoryInstances.createInstanceViaApi(
@@ -68,20 +57,25 @@ describe('bulk-edit', () => {
         }).then((holdings) => {
           item2.hrid = holdings[0].hrid;
           item2.holdingId = holdings[0].id;
-          cy.getLocations({ limit: 1, query: `(id="${holdings[0].temporaryLocationId}")` }).then(
-            (locations) => {
-              item2.locationName = locations.name;
-            },
-          );
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            // Annex
+            temporaryLocationId: '53cf956f-c1df-410b-8bea-27f712cca7c0',
+          });
           FileManager.createFile(
             `cypress/fixtures/${validHoldingUUIDsFileName}`,
             `${item.holdingId}\r\n${item2.holdingId}`,
           );
         });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item2.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
@@ -90,7 +84,7 @@ describe('bulk-edit', () => {
 
     it(
       'C365126 Verify confirmation page after bulk editing holdings locations (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');

@@ -1,9 +1,7 @@
-import devTeams from '../../support/dictionary/devTeams';
-import testTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
-import Users from '../../support/fragments/users/users';
+import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import Users from '../../support/fragments/users/users';
 
 let user;
 
@@ -16,12 +14,13 @@ describe('export manager', () => {
   });
 
   after('delete user', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C350764 Verify that user without Export Manager permissions: cannot view Export Manager (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       TopMenuNavigation.isAbsent();
       cy.visit(TopMenu.exportManagerPath);

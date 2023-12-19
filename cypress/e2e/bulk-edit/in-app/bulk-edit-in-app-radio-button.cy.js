@@ -1,7 +1,7 @@
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { TestTypes, DevTeams, Permissions } from '../../../support/dictionary';
 
 let user;
 
@@ -24,12 +24,13 @@ describe('bulk-edit', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C350670 Verify radio buttons on the Record types accordion (Firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
       BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs', 'Query');

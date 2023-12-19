@@ -1,9 +1,9 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Permissions } from '../../../support/dictionary';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
+import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
 
 let user;
 const name = `AutotestConfigurationName${getRandomPostfix()}`;
@@ -18,12 +18,13 @@ describe('remote-storage-configuration', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C365623 Verify that "Provider name" is renamed (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       // #1 Open the "Settings" app
       // #2 Select "Remote storage"

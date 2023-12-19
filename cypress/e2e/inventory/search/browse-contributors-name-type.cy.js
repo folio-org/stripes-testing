@@ -1,11 +1,9 @@
-import testType from '../../../support/dictionary/testTypes';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import devTeams from '../../../support/dictionary/devTeams';
 
 describe('Inventory: Contributors Browse', () => {
   let instances = [];
@@ -33,13 +31,14 @@ describe('Inventory: Contributors Browse', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(currentUser.userId);
     instances.forEach((instance) => InventoryInstance.deleteInstanceViaApi(instance.id));
   });
 
   it(
     'C353644 Apply "Name Type" filter to the browse result list (spitfire) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       BrowseContributors.clickBrowseBtn();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

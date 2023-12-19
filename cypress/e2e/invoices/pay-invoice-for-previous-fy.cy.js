@@ -1,29 +1,29 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
+import { INVOICE_STATUSES, ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import {
-  Budgets,
   BudgetDetails,
-  FundDetails,
+  Budgets,
   FiscalYears,
+  FundDetails,
   LedgerRollovers,
 } from '../../support/fragments/finance';
-import { ExpenseClasses } from '../../support/fragments/settings/finance';
-import {
-  Invoices,
-  InvoiceView,
-  InvoiceLineDetails,
-  InvoiceEditForm,
-} from '../../support/fragments/invoices';
 import { Transactions } from '../../support/fragments/finance/transactions';
-import { Approvals } from '../../support/fragments/settings/invoices';
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Users from '../../support/fragments/users/users';
+import {
+  InvoiceEditForm,
+  InvoiceLineDetails,
+  InvoiceView,
+  Invoices,
+} from '../../support/fragments/invoices';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import { DateTools, StringTools, CodeTools } from '../../support/utils';
-import { INVOICE_STATUSES, ORDER_STATUSES } from '../../support/constants';
+import Organizations from '../../support/fragments/organizations/organizations';
+import { ExpenseClasses } from '../../support/fragments/settings/finance';
+import { Approvals } from '../../support/fragments/settings/invoices';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import { CodeTools, DateTools, StringTools } from '../../support/utils';
 
 describe('Invoices', () => {
   const isApprovePayEnabled = true;
@@ -166,7 +166,7 @@ describe('Invoices', () => {
 
     it(
       'C388520 Approve and pay invoice created in current FY for previous FY when related order line was created in previous FY (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -239,7 +239,7 @@ describe('Invoices', () => {
         InvoiceLineDetails.checkFundDistibutionTableContent([
           {
             name: testData.fund.name,
-            encumbrance: '0.00',
+            currentEncumbrance: '0.00',
           },
         ]);
 
@@ -368,13 +368,14 @@ describe('Invoices', () => {
     });
 
     afterEach('Delete test data', () => {
+      cy.getAdminToken();
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Users.deleteViaApi(testData.user.userId);
     });
 
     it(
       'C388545 Approve and pay invoice created in current FY when related order line was created in previous FY and user does not have "Invoice: Pay invoices in a different fiscal year" permission (thunderjet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'thunderjet', 'nonParallel'] },
       () => {
         // Click on "PO number" link on "Orders" pane
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -446,7 +447,7 @@ describe('Invoices', () => {
         InvoiceLineDetails.checkFundDistibutionTableContent([
           {
             name: testData.fund.name,
-            encumbrance: '0.00',
+            currentEncumbrance: '0.00',
           },
         ]);
 

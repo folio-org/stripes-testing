@@ -20,6 +20,7 @@ import {
 } from '../../../../../../interactors';
 
 const pane = Pane('Locations');
+const actionsButton = Button('Actions');
 
 const getDefaultLocation = ({
   servicePointId,
@@ -84,14 +85,14 @@ export default {
     LocationDetails.waitLoading();
     LocationDetails.checkActionButtonAbsent();
   },
-  selectInstitution() {
-    cy.do(Select('Institution').choose(including('KU')));
+  selectInstitution(content = 'KU') {
+    cy.do(Select('Institution').choose(including(content)));
   },
-  selectCampus() {
-    cy.do(Select('Campus').choose(including('E)')));
+  selectCampus(content = 'E)') {
+    cy.do(Select('Campus').choose(including(content)));
   },
-  selectLibrary() {
-    cy.do(Select('Library').choose(including('E)')));
+  selectLibrary(content = 'E)') {
+    cy.do(Select('Library').choose(including(content)));
   },
   viewLocations(location) {
     TenantPane.selectOptions([
@@ -127,7 +128,7 @@ export default {
       Pane('Locations')
         .find(MultiColumnListCell({ content: name }))
         .click(),
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('Delete').click(),
       Button({ id: 'clickable-deletelocation-confirmation-confirm' }).click(),
     ]);
@@ -215,5 +216,8 @@ export default {
     cy.expect(Pane('Tenant').exists());
     cy.do(NavListItem('Locations').click());
     cy.expect(Pane('Locations').exists());
+  },
+  duplicate() {
+    cy.do([actionsButton.click(), Button('Duplicate').click()]);
   },
 };

@@ -1,21 +1,18 @@
 /// <reference types="cypress" />
 
+import { Button, Pane, Section } from '../../../../interactors';
+import permissions from '../../../support/dictionary/permissions';
+import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
+import eHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingsResourceEdit';
+import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import eHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import eHoldingsTitle from '../../../support/fragments/eholdings/eHoldingsTitle';
-import eHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
 import eHoldingsTitles from '../../../support/fragments/eholdings/eHoldingsTitles';
-import eHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import eHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
-import eHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
+import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 import TopMenu from '../../../support/fragments/topMenu';
-import { Pane, Section, Button } from '../../../../interactors';
-import eHoldingsResourceEdit from '../../../support/fragments/eholdings/eHoldingResourceEdit';
-import dateTools from '../../../support/utils/dateTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import features from '../../../support/dictionary/features';
-import permissions from '../../../support/dictionary/permissions';
 import users from '../../../support/fragments/users/users';
-import devTeams from '../../../support/dictionary/devTeams';
+import dateTools from '../../../support/utils/dateTools';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -26,7 +23,7 @@ describe('eHoldings', () => {
 
     it(
       'C16994 Add a title in a package to holdings (spitfire)',
-      { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -41,15 +38,15 @@ describe('eHoldings', () => {
           eHoldingSearch.switchToTitles();
           eHoldingsTitlesSearch.bySubject('chemical engineering');
           eHoldingsTitlesSearch.byPublicationType('Journal');
-          eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.notSelected);
+          eHoldingsTitlesSearch.bySelectionStatus(FILTER_STATUSES.NOT_SELECTED);
           eHoldingsTitles.openTitle(1);
           eHoldingsTitle.waitPackagesLoading();
           eHoldingsTitle.filterPackages();
           eHoldingsTitle.waitPackagesLoading();
-          eHoldingsTitle.checkPackagesSelectionStatus(eHoldingsTitle.filterStatuses.notSelected);
+          eHoldingsTitle.checkPackagesSelectionStatus(FILTER_STATUSES.NOT_SELECTED);
           eHoldingsTitle.openResource();
           eHoldingsResourceView.addToHoldings();
-          eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
+          eHoldingsResourceView.checkHoldingStatus(FILTER_STATUSES.SELECTED);
           cy.then(() => Pane().id()).then((resourceId) => {
             cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
             cy.expect(Button('Edit').exists());
@@ -61,7 +58,7 @@ describe('eHoldings', () => {
 
     it(
       'C700 Title: Add or Edit custom coverage (spitfire)',
-      { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -80,13 +77,10 @@ describe('eHoldings', () => {
           };
           eHoldingsTitlesSearch.byTitle(selectedResource.title);
           eHoldingsTitlesSearch.byPublicationType(selectedResource.publicationType);
-          eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.selected);
+          eHoldingsTitlesSearch.bySelectionStatus(FILTER_STATUSES.SELECTED);
           eHoldingsTitles.openTitle(0);
           eHoldingsTitle.waitPackagesLoading();
-          eHoldingsTitle.filterPackages(
-            eHoldingsPackage.filterStatuses.selected,
-            selectedResource.package,
-          );
+          eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED, selectedResource.package);
           eHoldingsTitle.waitPackagesLoading();
           eHoldingsTitle.openResource();
           eHoldingsResourceView.goToEdit();
@@ -121,7 +115,7 @@ describe('eHoldings', () => {
 
     it(
       'C691 Remove a title in a package from your holdings (spitfire)',
-      { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] },
+      { tags: ['smoke', 'spitfire'] },
       () => {
         cy.createTempUser([
           permissions.uieHoldingsRecordsEdit.gui,
@@ -136,43 +130,39 @@ describe('eHoldings', () => {
               waiter: () => eHoldingsTitle.waitLoading(specialTitle.name),
             });
             eHoldingsTitle.waitPackagesLoading();
-            eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected);
+            eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED);
             eHoldingsTitle.waitPackagesLoading();
-            eHoldingsTitle.checkPackagesSelectionStatus(eHoldingsPackage.filterStatuses.selected);
+            eHoldingsTitle.checkPackagesSelectionStatus(FILTER_STATUSES.SELECTED);
             eHoldingsTitle.openResource();
-            eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
+            eHoldingsResourceView.checkHoldingStatus(FILTER_STATUSES.SELECTED);
             eHoldingsResourceView.removeTitleFromHolding();
-            eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
+            eHoldingsResourceView.checkHoldingStatus(FILTER_STATUSES.NOT_SELECTED);
           });
         });
       },
     );
 
-    it(
-      'C693 Create a custom title. (spitfire)',
-      { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] },
-      () => {
-        cy.createTempUser([
-          permissions.uieHoldingsRecordsEdit.gui,
-          permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
-        ]).then((userProperties) => {
-          userId = userProperties.userId;
-          eHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
-            cy.login(userProperties.username, userProperties.password, {
-              path: TopMenu.eholdingsPath,
-              waiter: eHoldingsTitlesSearch.waitLoading,
-            });
-            eHoldingSearch.switchToTitles();
-            const title = eHoldingsTitles.create(packageName);
-            eHoldingsResourceView.checkNames(packageName, title);
+    it('C693 Create a custom title. (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
+      cy.createTempUser([
+        permissions.uieHoldingsRecordsEdit.gui,
+        permissions.uieHoldingsTitlesPackagesCreateDelete.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+        eHoldingsPackages.getCustomPackageViaApi().then((packageName) => {
+          cy.login(userProperties.username, userProperties.password, {
+            path: TopMenu.eholdingsPath,
+            waiter: eHoldingsTitlesSearch.waitLoading,
           });
+          eHoldingSearch.switchToTitles();
+          const title = eHoldingsTitles.create(packageName);
+          eHoldingsResourceView.checkNames(packageName, title);
         });
-      },
-    );
+      });
+    });
 
     it(
       'C157916 Title - Packages accordion - Filter by Holding Status (spitfire)',
-      { tags: [testTypes.criticalPath, devTeams.spitfire, features.eHoldings] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -186,7 +176,7 @@ describe('eHoldings', () => {
           eHoldingsTitle.searchTitle(title);
           eHoldingsTitlesSearch.openTitle(title);
           eHoldingsTitle.waitPackagesLoading();
-          eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected);
+          eHoldingsTitle.filterPackages(FILTER_STATUSES.SELECTED);
           eHoldingsTitle.waitPackagesLoading();
           eHoldingsTitle.checkOnlySelectedPackagesInResults();
         });
@@ -195,7 +185,7 @@ describe('eHoldings', () => {
 
     it(
       'C17090 Title Record - Packages accordion - Filter packages list (spitfire)',
-      { tags: [testTypes.criticalPath, devTeams.spitfire, features.eHoldings] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then((userProperties) => {
           userId = userProperties.userId;
@@ -212,15 +202,13 @@ describe('eHoldings', () => {
           eHoldingsTitle.searchTitle(selectedResource.title);
           eHoldingsTitlesSearch.openTitle(selectedResource.title);
           eHoldingsTitle.waitPackagesLoading();
-          eHoldingsTitle.filterPackages(
-            eHoldingsPackage.filterStatuses.all,
-            selectedResource.package,
-          );
+          eHoldingsTitle.filterPackages(FILTER_STATUSES.ALL, selectedResource.package);
         });
       },
     );
 
     afterEach(() => {
+      cy.getAdminToken();
       users.deleteViaApi(userId);
     });
   });

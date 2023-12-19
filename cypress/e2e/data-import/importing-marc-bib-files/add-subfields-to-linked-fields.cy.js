@@ -1,4 +1,3 @@
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -11,21 +10,22 @@ import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import Parallelization from '../../../support/dictionary/parallelization';
 import {
-  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -35,18 +35,16 @@ describe('data-import', () => {
     const nameForExportedMarcFile = `C385673autotestFile${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C385673autotestFile${getRandomPostfix()}.csv`;
     const mappingProfile = {
-      name: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      name: `C385673 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      update: true,
-      permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      name: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      name: `C385673 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const matchProfile = {
-      profileName: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      profileName: `C385673 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -59,12 +57,11 @@ describe('data-import', () => {
         in2: 'f',
         subfield: 's',
       },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+      recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      profileName: `C385673 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const marcFiles = [
@@ -107,7 +104,7 @@ describe('data-import', () => {
         Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
         Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
         Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        Permissions.uiCanLinkUnlinkAuthorityRecordsToBibRecords.gui,
+        Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
         Permissions.dataExportEnableApp.gui,
       ]).then((createdUserProperties) => {
@@ -116,7 +113,8 @@ describe('data-import', () => {
         marcFiles.forEach((marcFile) => {
           cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
             () => {
-              DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+              DataImport.verifyUploadState();
+              DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
               JobProfiles.waitLoadingList();
               JobProfiles.search(marcFile.jobProfileToRun);
               JobProfiles.runImportFile();
@@ -134,13 +132,9 @@ describe('data-import', () => {
 
         cy.loginAsAdmin().then(() => {
           // create Match profile
-          cy.visit(SettingsMenu.matchProfilePath);
-          MatchProfiles.createMatchProfile(matchProfile);
+          NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
           // create Field mapping profile
-          cy.visit(SettingsMenu.mappingProfilePath);
-          FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
-          FieldMappingProfileView.closeViewMode(mappingProfile.name);
-          FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+          NewFieldMappingProfile.createMappingProfileForUpdateMarcBibViaApi(mappingProfile);
           // create Action profile and link it to Field mapping profile
           cy.visit(SettingsMenu.actionProfilePath);
           ActionProfiles.create(actionProfile, mappingProfile.name);
@@ -150,7 +144,7 @@ describe('data-import', () => {
           JobProfiles.openNewJobProfileForm();
           NewJobProfile.fillJobProfile(jobProfile);
           NewJobProfile.linkMatchProfile(matchProfile.profileName);
-          NewJobProfile.linkActionProfileByName(actionProfile.name);
+          NewJobProfile.linkActionProfileForMatches(actionProfile.name);
           // waiter needed for the action profile to be linked
           cy.wait(1000);
           NewJobProfile.saveAndClose();
@@ -166,6 +160,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
       InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {
@@ -184,9 +179,9 @@ describe('data-import', () => {
 
     it(
       'C385673 Add controllable, non-controllable subfields to one of the linked repeatable (multiple repeatable fields with same indicators) and not repeatable fields (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         linkingTagAndValues.forEach((linking) => {
@@ -222,14 +217,15 @@ describe('data-import', () => {
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
+        DataImport.verifyUploadState();
+        DataImport.uploadFileAndRetry(nameForUpdatedMarcFile, nameForUpdatedMarcFile);
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
-        Logs.clickOnHotLink(0, 3, 'Updated');
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
           33,
@@ -267,8 +263,8 @@ describe('data-import', () => {
         cy.wait(4000);
         InventoryInstance.viewSource();
         InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
-        MarcAuthorities.checkFieldAndContentExistence('100', '‡9');
-        MarcAuthorities.checkFieldAndContentExistence('700', '‡9');
+        MarcAuthorities.checkFieldAndContentExistence('100', '$9');
+        MarcAuthorities.checkFieldAndContentExistence('700', '$9');
       },
     );
   });

@@ -9,23 +9,31 @@ import {
   including,
   Link,
   Checkbox,
+  Accordion,
+  MultiColumnList,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import OrderLines from './orderLines';
 import OrderLineDetails from './orderLineDetails';
+import OrderLineEditForm from './orderLineEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
 import CreateInvoiceModal from './modals/createInvoiceModal';
 import OpenConfirmationModal from './modals/openConfirmationModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import ExportDetails from '../exportManager/exportDetails';
+import Receivings from '../receiving/receiving';
+import CloseConfirmationModal from './modals/closeConfirmationModal';
 
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
 
+const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }));
 const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
+
+const invoicesList = MultiColumnList({ id: 'orderInvoices' });
 
 const openPolDetails = (title) => {
   cy.do(polListingAccordion.find(MultiColumnListCell({ content: title })).click());
@@ -39,6 +47,21 @@ export default {
   openPolDetails,
   checkOrderStatus(orderStatus) {
     cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
+  },
+  checkFieldsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(orderDetailsPane.find(KeyValue(label)).has(conditions));
+    });
+  },
+  checkFieldsHasCopyIcon(fields = []) {
+    fields.forEach(({ label }) => {
+      cy.expect(
+        orderDetailsPane
+          .find(KeyValue(label))
+          .find(Button({ icon: 'clipboard' }))
+          .exists(),
+      );
+    });
   },
   checkOrderDetails({ summary = [] } = {}) {
     summary.forEach(({ key, value, checkbox }) => {
@@ -56,6 +79,28 @@ export default {
         .click(),
     );
   },
+  copyOrderNumber(poNumber) {
+    cy.do(
+      orderInfoSection
+        .find(KeyValue('PO number'))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
+  },
+  closeOrder({ orderNumber, confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Cancel').click());
+
+    if (orderNumber) {
+      CloseConfirmationModal.verifyModalView({ orderNumber });
+    }
+
+    if (confirm) {
+      CloseConfirmationModal.clickSubmitButton();
+    }
+  },
   openOrder({ orderNumber, confirm = true } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('Open').click());
@@ -68,7 +113,7 @@ export default {
       OpenConfirmationModal.confirm();
     }
   },
-  unOpenOrder({ orderNumber, checkinItems = false, confirm = true } = {}) {
+  unOpenOrder({ orderNumber, checkinItems = false, confirm = true, submit = false } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('Unopen').click());
 
@@ -77,8 +122,10 @@ export default {
     }
 
     if (confirm) {
-      UnopenConfirmationModal.confirm();
+      UnopenConfirmationModal.confirm({ submit });
     }
+
+    // The Purchase order - <order number> has been successfully unopened
   },
   reOpenOrder({ orderNumber, checkMessage = true } = {}) {
     this.expandActionsDropdown();
@@ -90,6 +137,13 @@ export default {
       );
     }
   },
+  openReceivingsPage() {
+    this.expandActionsDropdown();
+    cy.do(Button('Receive').click());
+    Receivings.waitLoading();
+
+    return Receivings;
+  },
   createNewInvoice({ confirm = true } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('New invoice').click());
@@ -99,14 +153,6 @@ export default {
     if (confirm) {
       CreateInvoiceModal.confirm();
     }
-  },
-  openReceive() {
-    cy.do([
-      Pane({ id: 'order-details' })
-        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button('Actions')))
-        .click(),
-      Button('Receive').click(),
-    ]);
   },
   openExportJobDetails({ rowIndex = 0, columnIndex = 0 } = {}) {
     cy.do(
@@ -148,9 +194,63 @@ export default {
       }
     });
   },
+  checkOrderLinesTableContent(records = []) {
+    records.forEach((record, index) => {
+      if (record.poLineNumber) {
+        cy.expect(
+          polListingAccordion
+            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
+            .has({ content: including(record.poLineNumber) }),
+        );
+      }
+      if (record.poLineTitle) {
+        cy.expect(
+          polListingAccordion
+            .find(MultiColumnListCell({ row: index, column: 'Title or package name' }))
+            .has({ content: including(record.poLineTitle) }),
+        );
+      }
+    });
+
+    if (!records.length) {
+      cy.expect(polListingAccordion.has({ text: including('The list contains no items') }));
+    }
+  },
   checkIsItemsInInventoryCreated(title, location) {
     openPolDetails(title);
     OrderLines.openInstance();
     InventoryInstance.checkIsInstancePresented(title, location);
+  },
+  selectAddPOLine() {
+    cy.do([
+      polListingAccordion.find(actionsButton).focus(),
+      polListingAccordion.find(actionsButton).click(),
+      Button('Add PO line').click(),
+    ]);
+
+    OrderLineEditForm.waitLoading();
+
+    return OrderLineEditForm;
+  },
+  verifyPOLCount(ordersCount) {
+    if (ordersCount === 0) {
+      cy.expect(
+        Accordion({ label: including('PO lines') })
+          .find(MultiColumnList({ id: 'POListing' }))
+          .absent(),
+      );
+    } else {
+      cy.expect(
+        Accordion({ label: including('PO lines') })
+          .find(MultiColumnList({ id: 'POListing' }))
+          .has({ rowCount: ordersCount }),
+      );
+    }
+  },
+  verifyAccordionExists(name) {
+    cy.expect(Accordion({ label: including(name) }).exists());
+  },
+  openInvoice(number) {
+    cy.do(invoicesList.find(Link({ href: including(`${number}`) })).click());
   },
 };

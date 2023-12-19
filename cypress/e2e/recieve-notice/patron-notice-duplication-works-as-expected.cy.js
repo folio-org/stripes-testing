@@ -1,14 +1,13 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import { NOTICE_CATEGORIES } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Patron Notices', () => {
   let userData;
@@ -44,6 +43,7 @@ describe('Patron Notices', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     NoticePolicyTemplate.deleteViaApi(testData.noticeTemplateBody.id);
@@ -56,7 +56,7 @@ describe('Patron Notices', () => {
 
   it(
     'C396392 Verify that patron notice duplication works as expected (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.openToSide({ name: testData.noticeTemplateBody.name });
       NewNoticePolicyTemplate.duplicateTemplate();
@@ -68,7 +68,7 @@ describe('Patron Notices', () => {
       NewNoticePolicyTemplate.checkAfterSaving({
         name: newNoticeTemplateName,
         description: testData.noticeTemplateBody.description,
-        category: testData.noticeTemplateBody.category,
+        category: NOTICE_CATEGORIES.loan,
         subject: 'Email subject: Loan',
         body: 'Email body {{item.title}}',
       });

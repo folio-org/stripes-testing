@@ -1,14 +1,14 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import { CALL_NUMBER_TYPE_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory -> Call Number Browse', () => {
   let userId;
@@ -43,18 +43,19 @@ describe('Inventory -> Call Number Browse', () => {
   });
 
   afterEach('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userId);
     InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
   });
 
   it(
     'C388549 Browse call numbers - Correct sorting for Other scheme type call numbers (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const holdingsCallNumbers = ['FIC WAL', 'B WASHINGTON', 'FIC CLE', 'B JORDAN', 'SC BRU'];
       const itemsCallNumbers = ['SC VIV', 'FIC DAN', 'DVD F GON', 'B OBAMA', 'SC DAH'];
       // #1 Input query in search input field that will return Instance records → Click "Search" button
-      InventoryInstance.searchByTitle(testData.instanceTitle);
+      InventoryInstances.searchByTitle(testData.instanceTitle);
       // #2 Click on "Title" value for any row in second pane
       InventoryInstances.selectInstance();
 
@@ -163,12 +164,12 @@ describe('Inventory -> Call Number Browse', () => {
 
   it(
     'C388548 Browse call numbers - Correct sorting for Dewey type call numbers (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const holdingsCallNumbers = ['331.2', '331.042', '331.01', '331.016', '331.1'];
       const itemsCallNumbers = ['331', '331.041', '331.198', '331.0413', '331.02'];
       // #1 Input query in search input field that will return Instance records → Click "Search" button
-      InventoryInstance.searchByTitle(testData.instanceTitle);
+      InventoryInstances.searchByTitle(testData.instanceTitle);
       // #2 Click on "Title" value for any row in second pane
       InventoryInstances.selectInstance();
 

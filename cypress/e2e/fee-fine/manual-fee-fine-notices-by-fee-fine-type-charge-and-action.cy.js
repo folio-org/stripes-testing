@@ -1,35 +1,33 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Users from '../../support/fragments/users/users';
+import AppPaths from '../../support/fragments/app-paths';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
 } from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import { NOTICE_CATEGORIES } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../support/utils/stringTools';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
-import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import AppPaths from '../../support/fragments/app-paths';
-import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
-import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
-import WaiveFeeFinesModal from '../../support/fragments/users/waiveFeeFineModal';
-import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import RefundReasons from '../../support/fragments/settings/users/refundReasons';
 import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
-import { NOTICE_CATEGORIES } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
+import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import WaiveFeeFinesModal from '../../support/fragments/users/waiveFeeFineModal';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Overdue fine', () => {
   const patronGroup = {
@@ -133,6 +131,7 @@ describe('Overdue fine', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
@@ -161,7 +160,7 @@ describe('Overdue fine', () => {
 
   it(
     'C347877 Manual fee/fine notices by fee/fine type: charge and action (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       const feeFineCreate = (feeFineName) => {
         cy.visit(TopMenu.usersPath);

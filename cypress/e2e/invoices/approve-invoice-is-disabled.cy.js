@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
-import { Invoices, InvoiceView } from '../../support/fragments/invoices';
+import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
+import { InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import Approvals from '../../support/fragments/settings/invoices/approvals';
 import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
 import Users from '../../support/fragments/users/users';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import { INVOICE_STATUSES } from '../../support/constants';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -64,11 +64,13 @@ describe('Invoices', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     Invoices.deleteInvoiceViaApi(testData.invoice.id);
     Orders.deleteOrderViaApi(testData.order.id);
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Users.deleteViaApi(testData.user.userId);
   });
@@ -85,47 +87,43 @@ describe('Invoices', () => {
       isApprovePayEnabled: false,
     },
   ].forEach(({ description, isApprovePayEnabled }) => {
-    it(
-      description,
-      { tags: [TestTypes.criticalPath, DevTeams.thunderjet, Parallelization.nonParallel] },
-      () => {
-        Approvals.setApprovePayValue(isApprovePayEnabled);
+    it(description, { tags: ['criticalPath', 'thunderjet', 'nonParallel'] }, () => {
+      Approvals.setApprovePayValue(isApprovePayEnabled);
 
-        // Click on "Vendor invoice number" link
-        Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
-        Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
+      // Click on "Vendor invoice number" link
+      Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
+      Invoices.selectInvoice(testData.invoice.vendorInvoiceNo);
 
-        // * Invoice "Status" is "Open" under "Invoice information" accordion
-        // * "Total number of invoice lines: 0" text is displayed under "Invoice lines" accordion
-        InvoiceView.checkInvoiceDetails({
-          title: testData.invoice.vendorInvoiceNo,
-          invoiceInformation: [
-            { key: 'Status', value: INVOICE_STATUSES.OPEN },
-            { key: 'Fiscal year', value: 'No value set' },
-          ],
-          invoiceLines: [],
-        });
+      // * Invoice "Status" is "Open" under "Invoice information" accordion
+      // * "Total number of invoice lines: 0" text is displayed under "Invoice lines" accordion
+      InvoiceView.checkInvoiceDetails({
+        title: testData.invoice.vendorInvoiceNo,
+        invoiceInformation: [
+          { key: 'Status', value: INVOICE_STATUSES.OPEN },
+          { key: 'Fiscal year', value: 'No value set' },
+        ],
+        invoiceLines: [],
+      });
 
-        // Click "Actions" button, Select "Add line from POL" option
-        const SelectOrderLinesModal = InvoiceView.openSelectOrderLineModal();
+      // Click "Actions" button, Select "Add line from POL" option
+      const SelectOrderLinesModal = InvoiceView.openSelectOrderLineModal();
 
-        // Search for the POL, Select it by checking checkbox in "Order lines" pane, Click "Save" button
-        SelectOrderLinesModal.selectOrderLine(testData.order.poNumber);
+      // Search for the POL, Select it by checking checkbox in "Order lines" pane, Click "Save" button
+      SelectOrderLinesModal.selectOrderLine(testData.order.poNumber);
 
-        // * Warning banner is displayed at top of invoice "Invoice can not be approved."
-        InvoiceView.checkInvoiceCanNotBeApprovedWarning();
+      // * Warning banner is displayed at top of invoice "Invoice can not be approved."
+      InvoiceView.checkInvoiceCanNotBeApprovedWarning();
 
-        // Click "Actions" menu button
-        InvoiceView.expandActionsDropdown();
-        InvoiceView.checkActionButtonsConditions([
-          { label: 'Edit', conditions: { disabled: false } },
-          {
-            label: isApprovePayEnabled ? 'Approve & pay' : 'Approve',
-            conditions: { disabled: true },
-          },
-          { label: 'Delete', conditions: { disabled: false } },
-        ]);
-      },
-    );
+      // Click "Actions" menu button
+      InvoiceView.expandActionsDropdown();
+      InvoiceView.checkActionButtonsConditions([
+        { label: 'Edit', conditions: { disabled: false } },
+        {
+          label: isApprovePayEnabled ? 'Approve & pay' : 'Approve',
+          conditions: { disabled: true },
+        },
+        { label: 'Delete', conditions: { disabled: false } },
+      ]);
+    });
   });
 });

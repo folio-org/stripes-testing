@@ -60,8 +60,10 @@ export {
 } from './multi-select';
 export { default as NavList, NavListItem } from './navlist';
 export { default as NoValue } from './no-value';
-export { default as Option } from './option';
+export { default as Option, OptionGroup } from './option';
 export { default as Pane, PaneHeader, PaneSet, PaneContent } from './pane';
+export { default as Progress } from './progress';
+export { default as Popover } from './popover';
 export { default as RadioButton } from './radio-button';
 export { default as RadioButtonGroup } from './radio-button-group';
 export {

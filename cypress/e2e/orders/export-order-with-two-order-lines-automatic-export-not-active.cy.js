@@ -1,16 +1,16 @@
 import moment from 'moment';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { Exports } from '../../support/fragments/exportManager';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
 import {
+  Integrations,
   NewOrganization,
   Organizations,
-  Integrations,
 } from '../../support/fragments/organizations';
-import { Exports } from '../../support/fragments/exportManager';
 import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES, ACQUISITION_METHOD_NAMES_IN_PROFILE } from '../../support/constants';
 
 describe('Orders', () => {
   describe('Export in edifact format', () => {
@@ -95,15 +95,17 @@ describe('Orders', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Organizations.deleteOrganizationViaApi(testData.organization.id);
       Orders.deleteOrderViaApi(testData.order.id);
       OrderLinesLimit.setPOLLimit(1);
+      testData.integrations.forEach(({ id }) => Integrations.deleteIntegrationViaApi(id));
       Users.deleteViaApi(testData.user.userId);
     });
 
     it(
       'C350546 Verify if "Purchase order" and "PO Line Details" DO NOT display export details accordion for NOT exported order lines (thunderjet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+      { tags: ['extendedPath', 'thunderjet'] },
       () => {
         // Search for exported order and click on it
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

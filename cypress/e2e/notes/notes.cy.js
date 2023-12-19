@@ -1,9 +1,7 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import NotesEholdings from '../../support/fragments/notes/notesEholdings';
 import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Note creation', () => {
   const testData = {};
@@ -44,17 +42,18 @@ describe('Note creation', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
-  it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C1296 Create a note (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteTitle(note.title);
     NotesEholdings.openNoteView(note.title);
     NotesEholdings.deleteNote();
   });
 
-  it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C1299 Edit a note (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
     const newNote = {
       title: `Changed Title ${getRandomPostfix()}`,
       details: `Changed details ${getRandomPostfix()}`,
@@ -66,7 +65,7 @@ describe('Note creation', () => {
     NotesEholdings.deleteNote();
   });
 
-  it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C16992 View a note (spitfire)', { tags: ['smoke', 'spitfire'] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteTitle(note.title);
     NotesEholdings.openNoteView(note.title);
@@ -75,7 +74,7 @@ describe('Note creation', () => {
 
   it(
     'C359004 A user can view Notes that were created by deleted user (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, {
         path: urlToEholdings,
@@ -83,6 +82,7 @@ describe('Note creation', () => {
       });
       NotesEholdings.createNote(note.title, note.details);
       NotesEholdings.verifyNoteTitle(note.title);
+      cy.getAdminToken();
       Users.deleteViaApi(testData.deletedUserProperties.userId);
 
       cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -96,7 +96,7 @@ describe('Note creation', () => {
 
   it(
     'C16993 Able to sort Notes accordion column headings (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       note.titleFirst = '1 Title';
       note.titleSecond = '2 Title';
@@ -115,17 +115,13 @@ describe('Note creation', () => {
     },
   );
 
-  it(
-    'C1300 Delete a note (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
-    () => {
-      note.addDetails = `Test details ${getRandomPostfix()}`;
+  it('C1300 Delete a note (spitfire)', { tags: ['criticalPath', 'spitfire'] }, () => {
+    note.addDetails = `Test details ${getRandomPostfix()}`;
 
-      NotesEholdings.createNote(note.title, note.addDetails);
-      NotesEholdings.verifyNoteCreation(note.title, note.addDetails);
-      NotesEholdings.openNoteView(note.title, note.addDetails);
-      NotesEholdings.deleteNote();
-      NotesEholdings.verifyNoteDeletion(note.title, note.addDetails);
-    },
-  );
+    NotesEholdings.createNote(note.title, note.addDetails);
+    NotesEholdings.verifyNoteCreation(note.title, note.addDetails);
+    NotesEholdings.openNoteView(note.title, note.addDetails);
+    NotesEholdings.deleteNote();
+    NotesEholdings.verifyNoteDeletion(note.title, note.addDetails);
+  });
 });

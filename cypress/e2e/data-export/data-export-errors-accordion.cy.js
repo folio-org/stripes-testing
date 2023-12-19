@@ -1,13 +1,12 @@
-import TopMenu from '../../support/fragments/topMenu';
-import FileManager from '../../support/utils/fileManager';
-import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportViewAllLogs from '../../support/fragments/data-export/dataExportViewAllLogs';
-import devTeams from '../../support/dictionary/devTeams';
+import ExportFileHelper from '../../support/fragments/data-export/exportFile';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import FileManager from '../../support/utils/fileManager';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -27,12 +26,12 @@ describe.skip('Data-export', () => {
       permissions.dataExportEnableModule.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password);
-      cy.visit(TopMenu.dataExportPath);
       const instanceID = InventoryInstances.createInstanceViaApi(
         item.instanceName,
         item.itemBarcode,
       );
+      cy.login(user.username, user.password);
+      cy.visit(TopMenu.dataExportPath);
       FileManager.createFile(`cypress/fixtures/${validFile}`, instanceID);
       FileManager.createFile(`cypress/fixtures/${invalidFile}`, 'not a valid id');
       FileManager.createFile(
@@ -49,6 +48,7 @@ describe.skip('Data-export', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validFile}`);
@@ -58,7 +58,7 @@ describe.skip('Data-export', () => {
 
   it(
     'C404374 Verify "Errors" accordion in the Search & filter pane on the "View all" screen (firebird) (TaaS)',
-    { tags: [devTeams.firebird] },
+    { tags: ['firebird'] },
     () => {
       DataExportViewAllLogs.openAllJobLogs();
 

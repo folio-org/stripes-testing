@@ -1,17 +1,15 @@
 import uuid from 'uuid';
-import TopMenu from '../../../support/fragments/topMenu';
-import FilterItems from '../../../support/fragments/inventory/filterItems';
-import permissions from '../../../support/dictionary/permissions';
 import { MultiColumnList } from '../../../../interactors';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import TestTypes from '../../../support/dictionary/testTypes';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../support/dictionary/devTeams';
 import { ITEM_STATUS_NAMES } from '../../../support/constants';
+import permissions from '../../../support/dictionary/permissions';
+import FilterItems from '../../../support/fragments/inventory/filterItems';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -69,6 +67,7 @@ describe('ui-inventory: Search in Inventory', () => {
   });
 
   after('Delete all data', () => {
+    cy.getAdminToken();
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` }).then(
       (instance) => {
         instance.items.forEach((item) => {
@@ -83,7 +82,7 @@ describe('ui-inventory: Search in Inventory', () => {
 
   it(
     'C11081: Verify item status filters retrieve items with that item status (spitfire)',
-    { tags: [TestTypes.smoke, DevTeams.spitfire] },
+    { tags: ['smoke', 'spitfire'] },
     () => {
       cy.intercept('GET', '/inventory/items?*').as('getItems');
       cy.intercept('GET', '/search/instances?*').as('getInstances');
@@ -108,6 +107,7 @@ describe('ui-inventory: Search in Inventory', () => {
 
         // Waiter required for the pane to be loaded.
         cy.wait(1000);
+        FilterItems.toggleAccordionItemsButton(holdingId);
         FilterItems.toggleAccordionItemsButton(holdingId);
         cy.wait('@getItems');
         FilterItems.verifyItemWithStatusExists(holdingId, status);

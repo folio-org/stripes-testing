@@ -1,11 +1,11 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Orders', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -57,6 +57,7 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);
     Budgets.deleteBudgetWithFundLedgerAndFYViaApi(testData.budget);
@@ -65,7 +66,7 @@ describe('Orders', () => {
 
   it(
     'C380392 Encumbrance is released when an Order was closed automatically (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click on the Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -96,7 +97,7 @@ describe('Orders', () => {
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,
-          encumbrance: '0.00',
+          currentEncumbrance: '0.00',
         },
       ]);
 

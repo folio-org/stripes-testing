@@ -1,9 +1,9 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import EHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
-import EHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
-import EHoldingsProviderView from '../../../support/fragments/eholdings/eHoldingsProviderView';
+import { Permissions } from '../../../support/dictionary';
 import EHoldingsProviderEdit from '../../../support/fragments/eholdings/eHoldingsProviderEdit';
+import EHoldingsProviderView from '../../../support/fragments/eholdings/eHoldingsProviderView';
+import EHoldingsProviders from '../../../support/fragments/eholdings/eHoldingsProviders';
+import EHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('eHoldings', () => {
@@ -20,25 +20,22 @@ describe('eHoldings', () => {
         cy.visit(TopMenu.eholdingsPath);
       });
     });
-    it(
-      'C696 Edit proxy setting (spitfire)',
-      { tags: [TestTypes.smoke, DevTeams.spitfire, TestTypes.broken] },
-      () => {
-        const specialProvider = 'Johns Hopkins University Press';
-        EHoldingsProvidersSearch.byProvider(specialProvider);
-        EHoldingsProviders.viewProvider();
-        EHoldingsProviderView.edit(specialProvider);
-        EHoldingsProviderEdit.waitLoading(specialProvider);
-        EHoldingsProviderEdit.changeProxy().then((newProxy) => {
-          EHoldingsProviderEdit.saveAndClose();
-          // additional delay related with update of proxy information in ebsco services
-          cy.wait(10000);
-          cy.reload();
-          EHoldingsProviderView.checkProxy(newProxy);
-        });
-      },
-    );
+    it('C696 Edit proxy setting (spitfire)', { tags: ['smoke', 'spitfire', 'broken'] }, () => {
+      const specialProvider = 'Johns Hopkins University Press';
+      EHoldingsProvidersSearch.byProvider(specialProvider);
+      EHoldingsProviders.viewProvider();
+      EHoldingsProviderView.edit(specialProvider);
+      EHoldingsProviderEdit.waitLoading(specialProvider);
+      EHoldingsProviderEdit.changeProxy().then((newProxy) => {
+        EHoldingsProviderEdit.saveAndClose();
+        // additional delay related with update of proxy information in ebsco services
+        cy.wait(10000);
+        cy.reload();
+        EHoldingsProviderView.checkProxy(newProxy);
+      });
+    });
     afterEach(() => {
+      cy.getAdminToken();
       Users.deleteViaApi(userId);
     });
   });

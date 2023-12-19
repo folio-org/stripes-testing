@@ -1,34 +1,31 @@
 import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi, {
-  NOTICE_CATEGORIES,
-} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
-import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
 } from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import Requests from '../../support/fragments/requests/requests';
 
 describe('Request notice triggers', () => {
-  let addedCirculationRule;
   const patronGroup = {
     name: 'groupToTestNotices' + getRandomPostfix(),
   };
@@ -158,10 +155,11 @@ describe('Request notice triggers', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
@@ -187,7 +185,7 @@ describe('Request notice triggers', () => {
 
   it(
     'C347866 Page request + Cancel request triggers (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.createPatronNoticeTemplate(noticeTemplates.pageRequest);
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.pageRequest);
@@ -222,34 +220,18 @@ describe('Request notice triggers', () => {
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
-      CirculationRules.getViaApi().then((response) => {
-        testData.baseRules = response.rulesAsText;
-        testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-          testData.ruleProps.n = noticePolicyRes[0].id;
-          testData.ruleProps.r = requestPolicyBody.id;
-          addedCirculationRule =
-            't ' +
-            testData.loanTypeId +
-            ': i ' +
-            testData.ruleProps.i +
-            ' l ' +
-            testData.ruleProps.l +
-            ' r ' +
-            testData.ruleProps.r +
-            ' o ' +
-            testData.ruleProps.o +
-            ' n ' +
-            testData.ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            testData.baseRules,
-            testData.ruleProps,
-            't ',
-            testData.loanTypeId,
-          );
+      cy.getAdminToken();
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        testData.noticePolicyId = noticePolicyRes[0].id;
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId, r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
         });
       });
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(TopMenu.requestsPath);
       Requests.waitLoading();
       NewRequest.openNewRequestPane();

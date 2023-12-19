@@ -1,7 +1,5 @@
-import testTypes from '../../../../support/dictionary/testTypes';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../../support/dictionary/devTeams';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import Users from '../../../../support/fragments/users/users';
@@ -35,10 +33,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
       InventoryInstances.createInstanceViaApi(
         inventoryEntity.instanceName,
         inventoryEntity.itemBarcode,
@@ -54,10 +48,15 @@ describe('Bulk Edit - Logs', () => {
         `cypress/fixtures/${validItemBarcodesFileName}`,
         inventoryEntity.itemBarcode,
       );
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
     FileManager.deleteFileFromDownloadsByMask(
@@ -70,7 +69,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C380761 Verify generated Logs files for Items suppressed from discovery (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -88,7 +87,7 @@ describe('Bulk Edit - Logs', () => {
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
       BulkEditSearchPane.verifyChangesUnderColumns('Suppress from discovery', false);
       BulkEditActions.downloadChangedCSV();
 

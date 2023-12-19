@@ -14,9 +14,11 @@ import {
   including,
   MultiColumnListRow,
   TextField,
+  Image,
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
 
+const bulkEditIcon = Image({ alt: 'View and manage bulk edit' });
 const logsStartDateAccordion = Accordion('Started');
 const logsEndDateAccordion = Accordion('Ended');
 const applyBtn = Button('Apply');
@@ -42,8 +44,10 @@ const setCriteriaPane = Pane('Set criteria');
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
-const textFildTo = TextField('To');
-const textFildFrom = TextField('From');
+const saveAndClose = Button('Save and close');
+const textFieldTo = TextField('To');
+const textFieldFrom = TextField('From');
+const confirmChanges = Button('Confirm changes');
 const triggerBtn = DropdownMenu().find(Button('File that was used to trigger the bulk edit'));
 const errorsEncounteredBtn = DropdownMenu().find(
   Button('File with errors encountered during the record matching'),
@@ -60,11 +64,28 @@ const buildQueryButton = Button('Build query');
 const buildQueryModal = Modal('Build query');
 const logsActionButton = Button({ icon: 'ellipsis' });
 
+const newCheckbox = Checkbox('New');
+const retrievingRecordsCheckbox = Checkbox('Retrieving records');
+const savingRecordsCheckbox = Checkbox('Saving records');
+const dataModificationCheckbox = Checkbox('Data modification');
+const reviewingChangesCheckbox = Checkbox('Reviewing changes');
+const completedCheckbox = Checkbox('Completed');
+const completedWithErrorsCheckbox = Checkbox('Completed with errors');
+const failedCheckbox = Checkbox('Failed');
+
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
   },
 
+  checkForUploading(fileName) {
+    cy.expect(HTML(including(`Uploading ${fileName} and retrieving relevant data`)).exists());
+    cy.expect(HTML(including('Retrieving...')));
+  },
+  progresBarIsAbsent() {
+    cy.expect(HTML(including('Uploading ... and retrieving relevant data')).absent());
+    cy.expect(HTML(including('Retrieving...')).absent());
+  },
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
@@ -77,10 +98,17 @@ export default {
     cy.expect(resetAllButton.has({ disabled: isDisabled }));
   },
 
+  resetAll() {
+    cy.do(resetAllButton.click());
+  },
+
   actionsIsAbsent() {
     cy.expect(actions.absent());
   },
 
+  verifyPopulatedPreviewPage() {
+    cy.expect([errorsAccordion.exists(), resultsAccordion.exists(), actions.exists()]);
+  },
   logActionsIsAbsent() {
     cy.expect(logsActionButton.absent());
   },
@@ -91,6 +119,10 @@ export default {
 
   verifyPanesBeforeImport() {
     cy.expect([setCriteriaPane.exists(), bulkEditPane.exists()]);
+  },
+
+  verifyBulkEditImage() {
+    cy.expect([bulkEditIcon.exists()]);
   },
 
   verifyBulkEditPaneItems() {
@@ -110,6 +142,23 @@ export default {
       setCriteriaPane.find(HTML('Drag and drop')).exists(),
       fileButton.has({ disabled: true }),
     ]);
+  },
+  verifySetCriteriaPaneElements() {
+    cy.expect([
+      setCriteriaPane.find(identifierToggle).exists(),
+      setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
+      recordTypesAccordion.find(usersRadio).exists(),
+      this.isUsersRadioChecked(false),
+      recordTypesAccordion.find(itemsRadio).exists(),
+      this.isItemsRadioChecked(false),
+      recordTypesAccordion.find(holdingsRadio).exists(),
+      this.isHoldingsRadioChecked(false),
+      setCriteriaPane.find(recordIdentifierDropdown).exists(),
+      recordIdentifierDropdown.has({ disabled: true }),
+      setCriteriaPane.find(HTML('Drag and drop')).exists(),
+      fileButton.has({ disabled: true }),
+    ]);
+    cy.expect(HTML('Select a file with record identifiers').exists());
   },
 
   verifySetCriteriaPaneSpecificTabs(...tabs) {
@@ -341,6 +390,10 @@ export default {
     ]);
   },
 
+  openIdentifierSearch() {
+    cy.do(identifierToggle.click());
+  },
+
   openQuerySearch() {
     cy.do(queryToggle.click());
   },
@@ -367,27 +420,36 @@ export default {
     this.verifyBulkEditPaneItems();
   },
 
+  verifySetCriteriaPaneExists() {
+    cy.expect(setCriteriaPane.exists());
+  },
+
   verifyLogsPane() {
+    this.verifyLogsStatusesAccordionExistsAndUnchecked();
     cy.expect([
       logsToggle.has({ default: false }),
       resetAllButton.has({ disabled: true }),
-      logsStatusesAccordion.has({ open: true }),
-      logsStatusesAccordion.find(Checkbox('New')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Retrieving records')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Saving records')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Data modification')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Reviewing changes')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Completed')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Completed with errors')).has({ checked: false }),
-      logsStatusesAccordion.find(Checkbox('Failed')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - items')).has({ checked: false }),
       recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
       logsStartDateAccordion.has({ open: false }),
       logsEndDateAccordion.has({ open: false }),
+      bulkEditPane.find(HTML('Bulk edit logs')).exists(),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
     ]);
+  },
+
+  checkLogsCheckbox(status) {
+    cy.do(Checkbox(status).click());
+  },
+
+  resetStatuses() {
+    cy.do(
+      Accordion('Statuses')
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
   },
 
   verifyCsvViewPermission() {
@@ -422,8 +484,8 @@ export default {
     ]);
   },
 
-  verifyRecordIdentifierDisabled() {
-    cy.expect(recordIdentifierDropdown.has({ disabled: true }));
+  verifyRecordIdentifierDisabled(disabled = true) {
+    cy.expect(recordIdentifierDropdown.has({ disabled }));
   },
 
   selectRecordIdentifier(value) {
@@ -533,6 +595,10 @@ export default {
     });
   },
 
+  errorsAccordionIsAbsent() {
+    cy.expect(errorsAccordion.absent());
+  },
+
   matchedAccordionIsAbsent() {
     cy.expect(resultsAccordion.absent());
   },
@@ -557,6 +623,13 @@ export default {
     );
   },
 
+  verifyNoChangesPreview() {
+    cy.expect([
+      changesAccordion.absent(),
+      bulkEditPane.find(HTML('0 records have been successfully changed')).exists(),
+    ]);
+  },
+
   verifyLocationChanges(rows, locationValue) {
     for (let i = 0; i < rows; i++) {
       cy.expect(
@@ -567,6 +640,10 @@ export default {
 
   verifyChangesUnderColumns(columnName, value) {
     cy.expect(MultiColumnListCell({ column: columnName, content: including(value) }).exists());
+  },
+
+  verifyExactChangesUnderColumns(columnName, value) {
+    cy.expect(MultiColumnListCell({ column: columnName, content: value }).exists());
   },
 
   verifyNonMatchedResults(...values) {
@@ -661,7 +738,18 @@ export default {
       DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
   },
-
+  verifyAllCheckboxesInShowColumnMenuAreDisabled() {
+    cy.expect(
+      DropdownMenu()
+        .find(Checkbox({ disabled: false }))
+        .absent(),
+    );
+  },
+  verifyCheckboxesAbsent(...checkboxes) {
+    checkboxes.forEach((checkbox) => {
+      cy.expect(Checkbox(checkbox).absent());
+    });
+  },
   verifyHoldingActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
@@ -684,7 +772,7 @@ export default {
       DropdownMenu().find(Checkbox('Acquisition format')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
-      DropdownMenu().find(Checkbox('Notes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Note')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Administrative notes')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
       DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
@@ -727,6 +815,44 @@ export default {
     );
   },
 
+  getMultiColumnListCellsValues(cell) {
+    return cy.get('[data-row-index]').then((rows) => {
+      return rows
+        .get()
+        .map((row) => row.querySelector(`[class*="mclCell-"]:nth-child(${cell})`).innerText);
+    });
+  },
+
+  verifyRecordTypesSortedAlphabetically() {
+    cy.get('#entityType [class*="labelText"]').then((checkboxes) => {
+      const textArray = checkboxes.get().map((el) => el.innerText);
+      const sortedArray = [...textArray].sort((a, b) => a - b);
+      expect(sortedArray).to.eql(textArray);
+    });
+  },
+
+  verifyCellsValues(column, status) {
+    this.getMultiColumnListCellsValues(column)
+      .should('have.length.at.least', 1)
+      .each((value) => {
+        expect(value).to.eq(status);
+      });
+  },
+
+  verifyDateCellsValues(column, fromDate, toDate) {
+    this.getMultiColumnListCellsValues(column)
+      .should('have.length.at.least', 1)
+      .each((value) => {
+        if (!value.includes('No value set')) {
+          const cellDate = new Date(value);
+          const to = new Date(toDate);
+          to.setDate(to.getDate() + 1);
+          expect(cellDate).to.greaterThan(new Date(fromDate));
+          expect(cellDate).to.lessThan(to);
+        }
+      });
+  },
+
   verifyResultColumTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
@@ -747,6 +873,18 @@ export default {
     cy.do(recordTypesAccordion.clickHeader());
   },
 
+  clickLogsStatusesAccordion() {
+    cy.do(logsStatusesAccordion.clickHeader());
+  },
+
+  clickLogsStartedAccordion() {
+    cy.do(logsStartDateAccordion.clickHeader());
+  },
+
+  clickLogsEndedAccordion() {
+    cy.do(logsEndDateAccordion.clickHeader());
+  },
+
   verifyRecordTypesAccordionCollapsed() {
     cy.expect([
       recordTypesAccordion.has({ open: false }),
@@ -754,6 +892,144 @@ export default {
       itemsRadio.absent(),
       holdingsRadio.absent(),
     ]);
+  },
+
+  verifyUserAccordionCollapsed() {
+    cy.expect(Accordion('User').has({ open: false }));
+  },
+
+  verifyLogsStatusesAccordionCollapsed() {
+    cy.expect([
+      logsStatusesAccordion.has({ open: false }),
+      newCheckbox.absent(),
+      retrievingRecordsCheckbox.absent(),
+      savingRecordsCheckbox.absent(),
+      dataModificationCheckbox.absent(),
+      reviewingChangesCheckbox.absent(),
+      completedCheckbox.absent(),
+      completedWithErrorsCheckbox.absent(),
+      failedCheckbox.absent(),
+    ]);
+  },
+
+  verifyLogsRecordTypesAccordionCollapsed() {
+    cy.expect([
+      recordTypesAccordion.has({ open: false }),
+      usersCheckbox.absent(),
+      holdingsCheckbox.absent(),
+      itemsCheckbox.absent(),
+    ]);
+  },
+
+  verifyLogsStatusesAccordionExistsAndUnchecked() {
+    cy.expect([
+      logsStatusesAccordion.has({ open: true }),
+      newCheckbox.has({ checked: false }),
+      retrievingRecordsCheckbox.has({ checked: false }),
+      savingRecordsCheckbox.has({ checked: false }),
+      dataModificationCheckbox.has({ checked: false }),
+      reviewingChangesCheckbox.has({ checked: false }),
+      completedCheckbox.has({ checked: false }),
+      completedWithErrorsCheckbox.has({ checked: false }),
+      failedCheckbox.has({ checked: false }),
+    ]);
+  },
+
+  verifyLogsRecordTypesAccordionExistsAndUnchecked() {
+    cy.expect([
+      recordTypesAccordion.has({ open: true }),
+      usersCheckbox.has({ checked: false }),
+      holdingsCheckbox.has({ checked: false }),
+      itemsCheckbox.has({ checked: false }),
+    ]);
+  },
+
+  verifyLogsStartedAccordionExistsWithElements() {
+    cy.expect([
+      logsStartDateAccordion.has({ open: true }),
+      logsStartDateAccordion
+        .find(textFieldFrom)
+        .find(Button({ icon: 'calendar' }))
+        .exists(),
+      logsStartDateAccordion
+        .find(textFieldTo)
+        .find(Button({ icon: 'calendar' }))
+        .exists(),
+      logsStartDateAccordion.find(textFieldFrom).has({ placeholder: 'YYYY-MM-DD' }),
+      logsStartDateAccordion.find(textFieldTo).has({ placeholder: 'YYYY-MM-DD' }),
+      logsStartDateAccordion.find(applyBtn).exists(),
+    ]);
+  },
+
+  verifyDateFieldWithError(accordion, textField, errorMessage) {
+    cy.expect([
+      Accordion(accordion).find(TextField(textField)).has({ errorIcon: true }),
+      Accordion(accordion).find(TextField(textField)).has({ errorBorder: true }),
+      Accordion(accordion).find(TextField(textField)).has({ error: errorMessage }),
+    ]);
+  },
+
+  verifyDateAccordionValidationMessage(accordion, message) {
+    cy.expect(Accordion(accordion).has({ validationMessage: message }));
+  },
+
+  verifyLogsEndedAccordionExistsWithElements() {
+    cy.expect([
+      logsEndDateAccordion.has({ open: true }),
+      logsEndDateAccordion
+        .find(textFieldFrom)
+        .find(Button({ icon: 'calendar' }))
+        .exists(),
+      logsEndDateAccordion
+        .find(textFieldTo)
+        .find(Button({ icon: 'calendar' }))
+        .exists(),
+      logsEndDateAccordion.find(textFieldFrom).has({ placeholder: 'YYYY-MM-DD' }),
+      logsEndDateAccordion.find(textFieldTo).has({ placeholder: 'YYYY-MM-DD' }),
+      logsEndDateAccordion.find(applyBtn).exists(),
+    ]);
+  },
+
+  verifyLogsDateFiledIsEqual(accordion, fieldName, valueToVerify) {
+    cy.expect(Accordion(accordion).find(TextField(fieldName)).has({ value: valueToVerify }));
+  },
+
+  // verifyClearSelectedFiltersButton(accordion, verification = 'exists') {
+  //   if (!['exists', 'absent'].includes(verification)) {
+  //     throw new Error(`${verification} is not supported`);
+  //   }
+  //   cy.expect(
+  //     Accordion(accordion)
+  //       .find(Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }))[verification]()
+  //   );
+  // },
+
+  verifyClearSelectedDateButtonExists(accordion, textField) {
+    cy.expect(
+      Accordion(accordion)
+        .find(TextField({ label: textField }))
+        .find(Button({ icon: 'times-circle-solid' }))
+        .exists(),
+    );
+  },
+
+  clickClearSelectedFiltersButton(accordion) {
+    cy.do(
+      Accordion(accordion)
+        .find(
+          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
+        )
+        .click(),
+    );
+  },
+
+  clickClearSelectedDateButton(accordion, textField) {
+    cy.do(
+      Accordion(accordion)
+        .find(TextField({ label: textField }))
+        .find(Button({ icon: 'times-circle-solid' }))
+        .click(),
+    );
   },
 
   clickActionsOnTheRow(row = 0) {
@@ -764,12 +1040,24 @@ export default {
     );
   },
 
+  verifyLogStatus(runByUsername, content) {
+    cy.do(
+      ListRow({ text: including(runByUsername) })
+        .find(MultiColumnListCell({ content }))
+        .click(),
+    );
+  },
+
   clickActionsRunBy(runByUsername) {
     cy.do(
       ListRow({ text: including(runByUsername) })
         .find(logsActionButton)
         .click(),
     );
+  },
+
+  verifyActionsRunBy(name) {
+    cy.expect(ListRow({ text: including(`\n${name}\n`) }).exists());
   },
 
   verifyTriggerLogsAction() {
@@ -786,6 +1074,15 @@ export default {
       matchingRecordsBtn.exists(),
       previewPorposedChangesBtn.exists(),
       updatedRecordBtn.exists(),
+    ]);
+  },
+
+  verifyLogsRowActionWhenNoChangesApplied() {
+    cy.expect([
+      triggerBtn.exists(),
+      matchingRecordsBtn.exists(),
+      previewPorposedChangesBtn.exists(),
+      errorsCommittingBtn.exists(),
     ]);
   },
 
@@ -853,19 +1150,23 @@ export default {
     ]);
   },
 
+  fillLogsDate(accordion, dataPicker, value) {
+    cy.do(Accordion(accordion).find(TextField(dataPicker)).fillIn(value));
+  },
+
   fillLogsStartDate(fromDate, toDate) {
     cy.do([
       logsStartDateAccordion.clickHeader(),
-      logsStartDateAccordion.find(textFildFrom).fillIn(fromDate),
-      logsStartDateAccordion.find(textFildTo).fillIn(toDate),
+      logsStartDateAccordion.find(textFieldFrom).fillIn(fromDate),
+      logsStartDateAccordion.find(textFieldTo).fillIn(toDate),
     ]);
   },
 
   fillLogsEndDate(fromDate, toDate) {
     cy.do([
       logsEndDateAccordion.clickHeader(),
-      logsEndDateAccordion.find(textFildFrom).fillIn(fromDate),
-      logsEndDateAccordion.find(textFildTo).fillIn(toDate),
+      logsEndDateAccordion.find(textFieldFrom).fillIn(fromDate),
+      logsEndDateAccordion.find(textFieldTo).fillIn(toDate),
     ]);
   },
 
@@ -877,17 +1178,50 @@ export default {
     cy.do(logsEndDateAccordion.find(applyBtn).click());
   },
 
+  verifyDirection(header, direction = 'descending') {
+    cy.get('[class^="mclHeader"]')
+      .contains(header)
+      .then((mclHeader) => {
+        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
+        expect(sort).to.eq(direction);
+      });
+  },
+
+  verifyNoDirection(header) {
+    cy.get('[class^="mclHeader"]')
+      .contains(header)
+      .then((mclHeader) => {
+        const sort = mclHeader.prevObject[1].getAttribute('aria-sort');
+        expect(sort).to.eq('none');
+      });
+  },
+
+  clickLogHeader(header) {
+    cy.do(MultiColumnListHeader(header).click());
+  },
+
   noLogResultsFound() {
     cy.expect(logsResultPane.find(HTML('No results found. Please check your filters.')).exists());
+  },
+
+  verifyLogResultsFound() {
+    cy.expect(logsResultPane.find(MultiColumnList()).exists());
   },
 
   isDragAndDropAreaDisabled(isDisabled) {
     cy.expect(fileButton.has({ disabled: isDisabled }));
   },
 
+  isSaveAndCloseButtonDisabled(isDisabled) {
+    cy.expect(saveAndClose.has({ disabled: isDisabled }));
+  },
+
   isBuildQueryButtonDisabled(isDisabled) {
     cy.expect(buildQueryButton.has({ disabled: isDisabled }));
     cy.wait(2000);
+  },
+  isConfirmButtonDisabled(isDisabled) {
+    cy.expect(confirmChanges.has({ disabled: isDisabled }));
   },
 
   clickBuildQueryButton() {
@@ -896,5 +1230,9 @@ export default {
 
   verifyBuildQueryModal() {
     cy.expect(buildQueryModal.exists());
+  },
+
+  verifyFirstOptionRecordIdentifierDropdown(value) {
+    cy.expect(recordIdentifierDropdown.has({ checkedOptionText: value }));
   },
 };

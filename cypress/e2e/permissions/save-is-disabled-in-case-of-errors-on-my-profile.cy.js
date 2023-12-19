@@ -1,16 +1,14 @@
-import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import arrays from '../../support/utils/arrays';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import generatePassword from '../../support/utils/generatePassword';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
 import ChangePassword from '../../support/fragments/settings/my-profile/change-password';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import MyProfile from '../../support/fragments/settings/my-profile/my-profile';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import arrays from '../../support/utils/arrays';
+import generatePassword from '../../support/utils/generatePassword';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Permissions --> My Profile', () => {
   let userData;
@@ -44,13 +42,14 @@ describe('Permissions --> My Profile', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
   });
 
   it(
     'C410871 Verify that my profile page title follows correct format (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.myProfilePath);
       MyProfile.waitLoading();
@@ -61,12 +60,11 @@ describe('Permissions --> My Profile', () => {
 
   it(
     'C375097 Verify that "Save" button is disabled in case of validation errors on "My profile" form (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       ChangePassword.openChangePasswordViaUserProfile();
       ChangePassword.checkInitialState();
 
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000);
       ChangePassword.typeNewPassword(randomChar);
       ChangePassword.verifyNewPasswordMessage(ChangePassword.messages.notEnoughSymbols);
@@ -94,6 +92,7 @@ describe('Permissions --> My Profile', () => {
       ChangePassword.verifySaveButtonInactive();
       ChangePassword.typeConfirmPassword(newPassword);
       ChangePassword.saveNewPassword();
+      cy.logout();
 
       cy.login(userData.username, newPassword);
     },

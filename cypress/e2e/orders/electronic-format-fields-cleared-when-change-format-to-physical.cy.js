@@ -1,12 +1,12 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Orders', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -82,6 +82,7 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);
     InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
@@ -92,7 +93,7 @@ describe('Orders', () => {
 
   it(
     'C354281 “Electronic” format specific fields are cleared when changing order format from "P/E Mix" to "Physical Resource" (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       // Click on the Order record from preconditions
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);

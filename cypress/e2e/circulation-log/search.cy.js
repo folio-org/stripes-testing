@@ -1,23 +1,21 @@
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import getRandomPostfix from '../../support/utils/stringTools';
-import permissions from '../../support/dictionary/permissions';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import devTeams from '../../support/dictionary/devTeams';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import Checkout from '../../support/fragments/checkout/checkout';
-import LoansPage from '../../support/fragments/loans/loansPage';
-import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
-import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
+import permissions from '../../support/dictionary/permissions';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import SearchResults from '../../support/fragments/circulation-log/searchResults';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -92,6 +90,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,
@@ -116,8 +115,8 @@ describe('circulation-log', () => {
   });
 
   it(
-    'C15484 Filter circulation log on item barcode (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    'C15484 Filter circulation log on item barcode (volaris)',
+    { tags: ['smoke', 'volaris'] },
     () => {
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
       SearchPane.verifyResultCells();
@@ -127,7 +126,7 @@ describe('circulation-log', () => {
 
   it(
     'C16979 Check item details from filtering Circulation log by checked-out (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird5'] },
     () => {
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
       SearchResults.clickOnCell(ITEM_BARCODE, 0);
@@ -137,21 +136,17 @@ describe('circulation-log', () => {
     },
   );
 
-  it(
-    'C16976 Filter circulation log by date (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
-    () => {
-      const verifyDate = true;
+  it('C16976 Filter circulation log by date (firebird)', { tags: ['smoke', 'firebird'] }, () => {
+    const verifyDate = true;
 
-      SearchPane.filterByLastWeek();
-      SearchPane.verifyResultCells(verifyDate);
-      SearchPane.resetResults();
-    },
-  );
+    SearchPane.filterByLastWeek();
+    SearchPane.verifyResultCells(verifyDate);
+    SearchPane.resetResults();
+  });
 
   it(
-    'C15485 Filter circulation log on user barcode (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    'C15485 Filter circulation log on user barcode (volaris)',
+    { tags: ['smoke', 'volaris'] },
     () => {
       const userBarcode = Cypress.env('users')[0].barcode;
 
@@ -163,7 +158,7 @@ describe('circulation-log', () => {
 
   it(
     'C16978 Filter circulation log by checked-out (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SearchPane.searchByCheckedOut();
       SearchPane.verifyResult(ITEM_BARCODE);
@@ -179,7 +174,7 @@ describe('circulation-log', () => {
 
   it(
     'C15853 Filter circulation log on description (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       // login with user that has all permissions
       cy.loginAsAdmin();
@@ -208,7 +203,7 @@ describe('circulation-log', () => {
 
   it(
     'C16975 Check the Actions button from filtering Circulation log by description (User details) (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SearchPane.goToUserDetails();
       SearchPane.userDetailIsOpen();
@@ -217,7 +212,7 @@ describe('circulation-log', () => {
 
   it(
     'C16980 Filter circulation log by changed due date (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
       cy.visit(TopMenu.usersPath);
@@ -239,7 +234,7 @@ describe('circulation-log', () => {
 
   it(
     'C17010 Filter circulation log by service points (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SearchPane.searchByServicePoint('Circ Desk 2');
       SearchPane.verifyResultCells();
@@ -248,7 +243,7 @@ describe('circulation-log', () => {
 
   it(
     'C16981 Check the Actions button from filtering Circulation log by changed due date (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
       SearchPane.searchByChangedDueDate();

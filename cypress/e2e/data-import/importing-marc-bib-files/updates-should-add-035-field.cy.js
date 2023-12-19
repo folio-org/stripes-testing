@@ -1,29 +1,30 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -69,7 +70,7 @@ describe('data-import', () => {
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
-    beforeEach('create test data', () => {
+    beforeEach('create user and login', () => {
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
         Permissions.settingsDataImportEnabled.gui,
@@ -89,12 +90,13 @@ describe('data-import', () => {
 
     it(
       'C358998 Data Import Updates should add 035 field from 001/003, if HRID already exists (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         // upload the first .mrc file
         DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
@@ -104,12 +106,12 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1');
         FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrId = initialInstanceHrId;
 
@@ -158,23 +160,24 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
+          JobProfiles.waitFileIsUploaded();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
           JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(firstFileNameAfterUpload);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.srsMarc,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
           );
           FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
           FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
           // open the first Instance in the Inventory and check 001, 003, 035 fields
-          FileDetails.openInstanceInInventory('Updated');
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
           InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
           InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
           InstanceRecordView.viewSource();
@@ -184,26 +187,28 @@ describe('data-import', () => {
           InventoryViewSource.contains('035\t');
           InventoryViewSource.contains('(LTSCA)303845');
 
-          JobProfiles.deleteJobProfile(jobProfile.profileName);
-          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-          ActionProfiles.deleteActionProfile(actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-          Users.deleteViaApi(user.userId);
-          // delete downloads folder and created files in fixtures
+          cy.getAdminToken().then(() => {
+            Users.deleteViaApi(user.userId);
+            JobProfiles.deleteJobProfile(jobProfile.profileName);
+            MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+            ActionProfiles.deleteActionProfile(actionProfile.name);
+            FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+            cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrId}"` }).then(
+              (instance) => {
+                InventoryInstance.deleteInstanceViaApi(instance.id);
+              },
+            );
+          });
+          // delete created files in fixtures
           FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
           FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
-          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrId}"` }).then(
-            (instance) => {
-              InventoryInstance.deleteInstanceViaApi(instance.id);
-            },
-          );
         });
       },
     );
 
     it(
       'C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const itemQuantity = '8';
         const arrayOf999Fields = [];
@@ -221,20 +226,21 @@ describe('data-import', () => {
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondMarcFileNameForCreate);
         cy.wrap(fieldsContent).each((row) => {
-          cy.wait(8000);
+          cy.wait(1000);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.srsMarc,
             row.rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.instance,
             row.rowNumber,
           );
@@ -248,7 +254,7 @@ describe('data-import', () => {
             cy.visit(TopMenu.dataImportPath);
             DataImport.waitLoading();
             Logs.openFileDetails(secondMarcFileNameForCreate);
-            FileDetails.openInstanceInInventory('Created', row.rowNumber);
+            FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, row.rowNumber);
             cy.wait(8000);
             InventoryInstance.viewSource();
             // changing the second file
@@ -316,20 +322,21 @@ describe('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.waitLoading();
         DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(secondFileNameAfterUpload);
         cy.wrap(fieldsContent).each((row) => {
-          cy.wait(8000);
+          cy.wait(1000);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.srsMarc,
             row.rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
             row.rowNumber,
           );
@@ -343,7 +350,7 @@ describe('data-import', () => {
           cy.wait(8000);
           cy.visit(TopMenu.dataImportPath);
           Logs.openFileDetails(secondFileNameAfterUpload);
-          FileDetails.openInstanceInInventory('Updated', element.rowNumber);
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED, element.rowNumber);
           cy.wait(8000);
           InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusTerm);
           InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
@@ -357,15 +364,16 @@ describe('data-import', () => {
             InventoryViewSource.contains('035\t');
             InventoryViewSource.contains(element.content);
           });
-          cy.wait(8000);
         });
 
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-        Users.deleteViaApi(user.userId);
-        // delete downloads folder and created files in fixtures
+        cy.getAdminToken().then(() => {
+          Users.deleteViaApi(user.userId);
+          JobProfiles.deleteJobProfile(jobProfile.profileName);
+          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+          ActionProfiles.deleteActionProfile(actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        });
+        // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
       },

@@ -1,26 +1,26 @@
 import uuid from 'uuid';
 
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import { REQUEST_TYPES, REQUEST_LEVELS, FULFILMENT_PREFERENCES } from '../../support/constants';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Requests from '../../support/fragments/requests/requests';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import AppPaths from '../../support/fragments/app-paths';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
+import Checkout from '../../support/fragments/checkout/checkout';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import LoansPage from '../../support/fragments/loans/loansPage';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import Requests from '../../support/fragments/requests/requests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
 import PayFeeFine from '../../support/fragments/users/payFeeFaine';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Loan Details', () => {
   const feeFineType = {};
@@ -110,7 +110,7 @@ describe('Loan Details', () => {
             }).then((checkoutResponse) => {
               Requests.createNewRequestViaApi({
                 fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-                holdingsRecordId: testData.folioInstances[0].holdingId,
+                holdingsRecordId: testData.folioInstances[0].holdings[0].id,
                 instanceId: testData.folioInstances[0].instanceId,
                 item: { barcode: testData.folioInstances[0].barcodes[0] },
                 itemId: checkoutResponse.itemId,
@@ -132,6 +132,7 @@ describe('Loan Details', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(testData.requestsId);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
@@ -157,87 +158,83 @@ describe('Loan Details', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it(
-    'C561 Loan details: test links (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
-    () => {
-      const itemBarcode = testData.folioInstances[0].barcodes[0];
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
+  it('C561 Loan details: test links (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+    const itemBarcode = testData.folioInstances[0].barcodes[0];
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
 
-      // Click linked value for item title
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        title: testData.folioInstances[0].instanceTitle,
-        expectedPage: 'Instance',
-      });
+    // Click linked value for item title
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      title: testData.folioInstances[0].instanceTitle,
+      expectedPage: 'Instance',
+    });
 
-      // Click linked value for barcode
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        title: itemBarcode,
-        expectedPage: 'Item',
-      });
+    // Click linked value for barcode
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      title: itemBarcode,
+      expectedPage: 'Item',
+    });
 
-      // Click linked value for Loan policy
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        href: '/settings/circulation/loan-policies',
-        expectedPage: 'Loan policies',
-      });
+    // Click linked value for Loan policy
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      href: '/settings/circulation/loan-policies',
+      expectedPage: 'Loan policies',
+    });
 
-      // Click on linked value for Fine incurred
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyButtonRedirectsToCorrectPage({
-        title: '100.00',
-        expectedPage: 'Fee/fine details',
-      });
+    // Click on linked value for Fine incurred
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyButtonRedirectsToCorrectPage({
+      title: '100.00',
+      expectedPage: 'Fee/fine details',
+    });
 
-      // Add another fee/fine to loan and click linked value for Fine incurred
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyButtonRedirectsToCorrectPage({
-        title: '200.00',
-        expectedPage: 'Fees/fines',
-      });
+    // Add another fee/fine to loan and click linked value for Fine incurred
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.createNewFeeFine(itemBarcode, ownerData.name, feeFineType.name);
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyButtonRedirectsToCorrectPage({
+      title: '200.00',
+      expectedPage: 'Fees/fines',
+    });
 
-      // Pay fee fines
-      UserAllFeesFines.goToOpenFeeFines();
-      UserAllFeesFines.selectAllFeeFines();
-      FeeFinesDetails.openActions().then(() => {
-        FeeFinesDetails.openPayModal();
-      });
-      PayFeeFine.checkAmount(200);
-      PayFeeFine.setPaymentMethod(testData.paymentMethod);
-      PayFeeFine.setAmount(200);
-      PayFeeFine.checkRestOfPay(200);
-      PayFeeFine.submitAndConfirm();
-      PayFeeFine.checkConfirmModalClosed();
+    // Pay fee fines
+    UserAllFeesFines.goToOpenFeeFines();
+    UserAllFeesFines.selectAllFeeFines();
+    FeeFinesDetails.openActions().then(() => {
+      FeeFinesDetails.openPayModal();
+    });
+    PayFeeFine.checkAmount(200);
+    PayFeeFine.setPaymentMethod(testData.paymentMethod);
+    PayFeeFine.setAmount(200);
+    PayFeeFine.checkRestOfPay(200);
+    PayFeeFine.submitAndConfirm();
+    PayFeeFine.checkConfirmModalClosed();
 
-      // Click on linked value for overdue policy
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        href: '/settings/circulation/fine-policies',
-        expectedPage: 'Overdue fine policies',
-      });
+    // Click on linked value for overdue policy
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      href: '/settings/circulation/fine-policies',
+      expectedPage: 'Overdue fine policies',
+    });
 
-      // Click on linked value for lost item policy
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({
-        href: '/settings/circulation/lost-item-fee-policy',
-        expectedPage: 'Lost item fee policies',
-      });
+    // Click on linked value for lost item policy
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({
+      href: '/settings/circulation/lost-item-fee-policy',
+      expectedPage: 'Lost item fee policies',
+    });
 
-      // Click on linked value for Request queue
-      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
-      UserLoans.openLoanDetails(itemBarcode);
-      LoansPage.verifyLinkRedirectsCorrectPage({ href: '/requests?', expectedPage: 'Requests' });
-    },
-  );
+    // Click on linked value for Request queue
+    cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+    UserLoans.openLoanDetails(itemBarcode);
+    LoansPage.verifyLinkRedirectsCorrectPage({ href: '/requests?', expectedPage: 'Requests' });
+  });
 });

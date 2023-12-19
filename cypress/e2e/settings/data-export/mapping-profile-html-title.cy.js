@@ -1,15 +1,13 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
+import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
+import SettingsDataExport from '../../../support/fragments/data-export/settingsDataExport';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
-import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
-import SettingsDataExport from '../../../support/fragments/data-export/settingsDataExport';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
-import SingleFieldMappingProfilePane from '../../../support/fragments/data-export/exportMappingProfile/singleFieldMappingProfilePane';
-import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const mappingProfile = {
@@ -19,7 +17,7 @@ const mappingProfile = {
 };
 const callout = `The field mapping profile ${mappingProfile.name} has been successfully created`;
 
-describe('Job profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -31,12 +29,13 @@ describe('Job profile - setup', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C410768 Verify "Data export -> Field mapping profiles" settings HTML page title format (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       TopMenuNavigation.navigateToApp('Settings');
       SettingsDataExport.verifyPageTitle('Settings - FOLIO');

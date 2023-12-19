@@ -1,11 +1,9 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import TestTypes from '../../../support/dictionary/testTypes';
-import Users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../../support/fragments/users/userEdit';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
 import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
 
 describe('Permissions --> My Profile', () => {
   let userData;
@@ -28,12 +26,13 @@ describe('Permissions --> My Profile', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
   });
 
   it(
     'C388654 permission insufficient to view custom fields on user settings (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(TopMenu.customFieldsPath);
       CustomFields.waitLoading();

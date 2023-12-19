@@ -1,45 +1,42 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi, {
-  NOTICE_CATEGORIES,
-} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
-import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import LoanPolicy from '../../support/fragments/circulation/loan-policy';
+import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
 } from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
+import NoticePolicyApi, {
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../support/utils/stringTools';
-import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import LoanPolicy from '../../support/fragments/circulation/loan-policy';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
-import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Overdue fine', () => {
-  let addedCirculationRule;
   const patronGroup = {
     name: 'groupToTestNotices' + getRandomPostfix(),
   };
@@ -54,7 +51,6 @@ describe('Overdue fine', () => {
   };
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
-    ruleProps: {},
   };
   const noticeTemplates = [
     createNoticeTemplate({
@@ -240,11 +236,6 @@ describe('Overdue fine', () => {
             testData.userServicePoint.id,
           );
 
-          cy.getCirculationRules().then((response) => {
-            testData.baseRules = response.rulesAsText;
-            testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-          });
-
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
@@ -254,11 +245,12 @@ describe('Overdue fine', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     OverdueFinePolicy.deleteViaApi(overdueFinePolicyBody.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
@@ -285,7 +277,7 @@ describe('Overdue fine', () => {
 
   it(
     'C347874 Overdue fine, returned triggers (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       noticeTemplates.forEach((template, index) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);
@@ -298,31 +290,18 @@ describe('Overdue fine', () => {
       NewNoticePolicy.createPolicy({ noticePolicy, noticeTemplates });
       NewNoticePolicy.checkPolicyName(noticePolicy);
 
+      cy.getAdminToken();
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
-        testData.ruleProps.n = noticePolicyRes[0].id;
-        testData.ruleProps.l = loanPolicyBody.id;
-        testData.ruleProps.o = overdueFinePolicyBody.id;
-        addedCirculationRule =
-          't ' +
-          testData.loanTypeId +
-          ': i ' +
-          testData.ruleProps.i +
-          ' l ' +
-          testData.ruleProps.l +
-          ' r ' +
-          testData.ruleProps.r +
-          ' o ' +
-          testData.ruleProps.o +
-          ' n ' +
-          testData.ruleProps.n;
+        testData.noticePolicyId = noticePolicyRes[0].id;
         CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          't ',
-          testData.loanTypeId,
-        );
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId, l: loanPolicyBody.id, o: overdueFinePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);
@@ -330,8 +309,10 @@ describe('Overdue fine', () => {
       Checkout.verifyResultsInTheRow([itemData.barcode]);
       CheckOutActions.endCheckOutSession();
 
+      cy.getAdminToken();
       UserLoans.changeDueDateForAllOpenPatronLoans(userData.userId, -1);
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItem(itemData.barcode);
       CheckInActions.verifyLastCheckInItem(itemData.barcode);

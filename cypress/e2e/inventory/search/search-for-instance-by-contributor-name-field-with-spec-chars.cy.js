@@ -1,14 +1,14 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},
@@ -39,9 +39,10 @@ const testData = {
   },
 };
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(testData.marcFile.marc, testData.marcFile.fileName);
@@ -66,6 +67,7 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       testData.instanceIDs.forEach((id) => {
         InventoryInstance.deleteInstanceViaApi(id);
@@ -74,10 +76,10 @@ describe('Inventory', () => {
 
     it(
       'C368043 Search for "Instance" by "Contributor name" field with special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         testData.searchQueries.forEach((query) => {
-          InventoryInstance.searchByTitle(query);
+          InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(8);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
@@ -85,7 +87,7 @@ describe('Inventory', () => {
           InventoryInstances.resetAllFilters();
         });
 
-        InventoryInstance.searchByTitle(
+        InventoryInstances.searchByTitle(
           'Arroyo Center 1984 Force Development and Technology Program',
         );
         InventorySearchAndFilter.checkRowsCount(3);
@@ -94,14 +96,14 @@ describe('Inventory', () => {
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
-        InventoryInstance.searchByTitle(
+        InventoryInstances.searchByTitle(
           'Arroyo Center & 1984 Force Development : Technology / (Program for gov)',
         );
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[5], true);
 
         InventoryInstances.resetAllFilters();
-        InventoryInstance.searchByTitle(
+        InventoryInstances.searchByTitle(
           '.Arroyo Center - 1984 Force Development [Technology] Program !',
           false,
         );

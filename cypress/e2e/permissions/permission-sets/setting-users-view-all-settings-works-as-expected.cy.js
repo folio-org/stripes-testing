@@ -1,23 +1,21 @@
 import uuid from 'uuid';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
-import Arrays from '../../../support/utils/arrays';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import TestTypes from '../../../support/dictionary/testTypes';
-import Users from '../../../support/fragments/users/users';
-import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
-import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons';
-import RefundReasons from '../../../support/fragments/settings/users/refundReasons';
-import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
-import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
-import Departments from '../../../support/fragments/settings/users/departments';
 import Conditions from '../../../support/fragments/settings/users/conditions';
+import Departments from '../../../support/fragments/settings/users/departments';
 import Limits from '../../../support/fragments/settings/users/limits';
+import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
+import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
 import PermissionSets from '../../../support/fragments/settings/users/permissionSets';
+import RefundReasons from '../../../support/fragments/settings/users/refundReasons';
+import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
+import UsersSettingsGeneral from '../../../support/fragments/settings/users/usersSettingsGeneral';
+import WaiveReasons from '../../../support/fragments/settings/users/waiveReasons';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import Arrays from '../../../support/utils/arrays';
+import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Permission Sets', () => {
   let userData;
@@ -84,6 +82,7 @@ describe('Permission Sets', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     PermissionSets.deletePermissionSetViaApi(permissionSetBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
@@ -98,7 +97,7 @@ describe('Permission Sets', () => {
 
   it(
     'C402342 Verify that Creating and Editing options are disabled for users with "Setting (Users): View all settings" permission scenario 1 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.permissionSets);
       PermissionSets.waitLoading();
@@ -118,7 +117,7 @@ describe('Permission Sets', () => {
 
   it(
     'C402752 Verify that "Settings (Users): View all settings" works as expected Scenario 2 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.usersOwnersPath);
       UsersSettingsGeneral.checkEntityInTable({
@@ -149,7 +148,7 @@ describe('Permission Sets', () => {
 
   it(
     'C404380 Verify that "Settings (Users): View all settings" works as expected Scenario 4 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup('undergrad');
@@ -159,7 +158,7 @@ describe('Permission Sets', () => {
 
   it(
     'C404383 Verify that "Settings (Users): View all settings" works as expected Scenario 5 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
@@ -170,7 +169,7 @@ describe('Permission Sets', () => {
 
   it(
     'C405545 Verify that "Settings (Users): View all settings" works as expected Scenario 6 (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.patronGroups);
       UsersSettingsGeneral.checkEntityInTable({

@@ -1,5 +1,3 @@
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -37,10 +35,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
 
       item.instanceId = InventoryInstances.createInstanceViaApi(
         item.instanceName,
@@ -69,10 +63,15 @@ describe('Bulk Edit - Logs', () => {
           FileManager.createFile(`cypress/fixtures/${instanceHRIDFileName}`, item.instanceHRID);
         },
       );
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${instanceHRIDFileName}`);
@@ -86,7 +85,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C402321 Verify "Suppress from discovery" option is set True in when Holdings are suppressed and associated Items are not (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
@@ -97,7 +96,7 @@ describe('Bulk Edit - Logs', () => {
       const suppressFromDiscovery = true;
       const newLocation = 'Main Library';
       BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
       BulkEditActions.addNewBulkEditFilterString();

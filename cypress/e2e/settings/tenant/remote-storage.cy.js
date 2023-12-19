@@ -1,13 +1,13 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import TenantPane from '../../../support/fragments/settings/tenant/tenantPane';
+import { Permissions } from '../../../support/dictionary';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
+import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
+import TenantPane from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Remote Storage', () => {
+describe('Settings: Tenant', () => {
   let locationName;
   const testData = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
@@ -53,6 +53,7 @@ describe('Remote Storage', () => {
   });
 
   after('Delete authorized user', () => {
+    cy.getAdminToken();
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Configurations.deleteViaApi(testData.configuration.id);
@@ -62,7 +63,7 @@ describe('Remote Storage', () => {
   it(
     'C163925 View remote storage details in settings > tenant > location (firebird) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.firebird],
+      tags: ['criticalPath', 'firebird'],
     },
     () => {
       // Navigate to Settings > Tenant > Locations

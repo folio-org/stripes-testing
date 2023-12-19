@@ -52,6 +52,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     liValues: (el) => [...el.querySelectorAll('li')].map((li) => li.textContent),
     innerHTML: (el) => el.innerHTML,
     innerText: (el) => el.innerText,
+    boldText: (el) => el.querySelector('b')?.innerText,
   })
   .actions({ hrefClick: ({ perform }) => perform((el) => el.querySelector('a').click()) });
 
@@ -62,6 +63,7 @@ export const MultiColumnListHeader = HTML.extend('multi column list header')
     content,
     index: childIndex,
     id: (el) => el.getAttribute('id'),
+    sort: (el) => el.getAttribute('aria-sort'),
   })
   .actions({
     click: ({ perform }) => perform((el) => el.querySelector('[role=button]').click()),

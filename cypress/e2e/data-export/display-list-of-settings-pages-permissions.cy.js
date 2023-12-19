@@ -1,10 +1,8 @@
 import Permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
-import DevTeams from '../../support/dictionary/devTeams';
-import TestTypes from '../../support/dictionary/testTypes';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 let user;
 
@@ -22,12 +20,13 @@ describe('data-export', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C389473 Verify that "Settings (Data export): display list of settings pages" permission is searchable and renamed (firebird) (Taas)',
-    { tags: [DevTeams.firebird, TestTypes.extendedPath] },
+    { tags: ['firebird', 'extendedPath'] },
     () => {
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByUsername(user.username);

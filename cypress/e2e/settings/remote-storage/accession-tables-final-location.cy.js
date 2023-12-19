@@ -1,11 +1,11 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
-  Configurations,
   AccessionTables,
+  Configurations,
 } from '../../../support/fragments/settings/remote-storage';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('Remote Storage: Accession tables', () => {
@@ -45,6 +45,7 @@ describe('Remote Storage: Accession tables', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.location.institutionId,
@@ -58,7 +59,7 @@ describe('Remote Storage: Accession tables', () => {
 
   it(
     'C343224 Check that the created locations are displayed in the “Final location (Remote)” column (firebird) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       AccessionTables.verifyAccessionTablePane();
 

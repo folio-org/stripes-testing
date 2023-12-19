@@ -1,10 +1,8 @@
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import Users from '../../support/fragments/users/users';
 import permissions from '../../support/dictionary/permissions';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import { OaiPmh, Behavior } from '../../support/fragments/oai-pmh';
+import { Behavior, OaiPmh } from '../../support/fragments/oai-pmh';
 import { SECTIONS } from '../../support/fragments/oai-pmh/oaipmhPane';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import Users from '../../support/fragments/users/users';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 let user;
@@ -22,12 +20,13 @@ describe('OAI-PMH', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
-    'C367985 Verify that "Record Source" dropdown is added to Behavior page',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    'C367985 Verify that "Record Source" dropdown is added to Behavior page (firebird)',
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       OaiPmh.checkSectionListItems();
       OaiPmh.selectSection(SECTIONS.BEHAVIOR);

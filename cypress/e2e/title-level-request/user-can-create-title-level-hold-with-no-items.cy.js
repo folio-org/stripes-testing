@@ -1,16 +1,16 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Requests from '../../support/fragments/requests/requests';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import getRandomPostfix from '../../support/utils/stringTools';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import { Permissions } from '../../support/dictionary';
 import Helper from '../../support/fragments/finance/financeHelper';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Title Level Request', () => {
   let instanceHRID;
@@ -60,6 +60,7 @@ describe('Title Level Request', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Requests.getRequestApi({ query: `(instance.title=="${instanceTitle}")` }).then(
       (requestResponse) => {
         Requests.deleteRequestViaApi(requestResponse[0].id);
@@ -75,7 +76,7 @@ describe('Title Level Request', () => {
 
   it(
     'C411787 Check that user can create TLR Hold for Instance with no Items (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       NewRequest.openNewRequestPane();
       NewRequest.enterHridInfo(instanceHRID);
@@ -83,7 +84,7 @@ describe('Title Level Request', () => {
       NewRequest.verifyTitleLevelRequestsCheckbox('checked');
       NewRequest.verifyRequestTypeHasOptions('Hold');
       NewRequest.chooseRequestType('Hold');
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyRequestSuccessfullyCreated(testData.user.username);
     },

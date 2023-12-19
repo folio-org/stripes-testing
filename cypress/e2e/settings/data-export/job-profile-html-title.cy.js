@@ -1,15 +1,13 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import Users from '../../../support/fragments/users/users';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportNewJobProfile from '../../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
-import SettingsDataExport from '../../../support/fragments/data-export/settingsDataExport';
-import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
 import SingleJobProfile from '../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
+import SelectJobProfile from '../../../support/fragments/data-export/selectJobProfile';
+import SettingsDataExport from '../../../support/fragments/data-export/settingsDataExport';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const jobProfile = {
@@ -19,7 +17,7 @@ const jobProfile = {
 };
 const callout = `Job profile ${jobProfile.name} has been successfully created`;
 
-describe('Job profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -31,12 +29,13 @@ describe('Job profile - setup', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C410765 Verify "Data export -> Job profiles" settings HTML page title format (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       TopMenuNavigation.navigateToApp('Settings');
       SettingsDataExport.verifyPageTitle('Settings - FOLIO');

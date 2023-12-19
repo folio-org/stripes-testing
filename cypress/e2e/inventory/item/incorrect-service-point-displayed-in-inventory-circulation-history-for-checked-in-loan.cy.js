@@ -1,21 +1,21 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import uuid from 'uuid';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import UserEdit from '../../../support/fragments/users/userEdit';
 import ConfirmItemInModal from '../../../support/fragments/check-in-actions/confirmItemInModal';
 import Checkout from '../../../support/fragments/checkout/checkout';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import Users from '../../../support/fragments/users/users';
 import FilterItems from '../../../support/fragments/inventory/filterItems';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SwitchServicePoint from '../../../support/fragments/settings/tenant/servicePoints/switchServicePoint';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Item', () => {
@@ -105,19 +105,21 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      UserEdit.changeServicePointPreferenceViaApi(user.userId, [
-        firstServicePoint.id,
-        secondServicePoint.id,
-      ]);
-      ServicePoints.deleteViaApi(firstServicePoint.id);
-      ServicePoints.deleteViaApi(secondServicePoint.id);
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+      cy.getAdminToken().then(() => {
+        UserEdit.changeServicePointPreferenceViaApi(user.userId, [
+          firstServicePoint.id,
+          secondServicePoint.id,
+        ]);
+        ServicePoints.deleteViaApi(firstServicePoint.id);
+        ServicePoints.deleteViaApi(secondServicePoint.id);
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+      });
     });
 
     it(
       'C399075 Incorrect service point displayed in Inventory Circulation history for checked in loan (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.waitLoading();
         InventorySearchAndFilter.switchToItem();
@@ -130,7 +132,7 @@ describe('inventory', () => {
         CheckInActions.checkInItemGui(itemData.barcode);
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+        InventorySearchAndFilter.byKeywords(itemData.instanceTitle);
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.ONLINE_UI} >`);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
@@ -147,7 +149,7 @@ describe('inventory', () => {
         ConfirmItemInModal.confirmInTransitModal();
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.waitLoading();
-        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+        InventorySearchAndFilter.byKeywords(itemData.instanceTitle);
         InventoryInstance.openItemByBarcode(itemData.barcode);
         ItemRecordView.waitLoading();
         ItemRecordView.checkItemCirculationHistory(

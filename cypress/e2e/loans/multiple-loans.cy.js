@@ -1,22 +1,22 @@
 import uuid from 'uuid';
 
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
-import { getTestEntityValue } from '../../support/utils/stringTools';
 import { Permissions } from '../../support/dictionary';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Requests from '../../support/fragments/requests/requests';
-import Users from '../../support/fragments/users/users';
 import AppPaths from '../../support/fragments/app-paths';
-import LoansPage from '../../support/fragments/loans/loansPage';
+import Checkout from '../../support/fragments/checkout/checkout';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import Requests from '../../support/fragments/requests/requests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 import Loans from '../../support/fragments/users/userDefaultObjects/loans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 const testData = {
   folioInstances: InventoryInstances.generateFolioInstances({ count: 2 }),
@@ -66,7 +66,7 @@ describe('Multiple loans', () => {
           }).then((checkoutResponse) => {
             Requests.createNewRequestViaApi({
               fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-              holdingsRecordId: testData.folioInstances[1].holdingId,
+              holdingsRecordId: testData.folioInstances[1].holdings[0].id,
               instanceId: testData.folioInstances[1].instanceId,
               item: { barcode: testData.folioInstances[1].barcodes[0] },
               itemId: checkoutResponse.itemId,
@@ -87,6 +87,7 @@ describe('Multiple loans', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(testData.requestsId);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);

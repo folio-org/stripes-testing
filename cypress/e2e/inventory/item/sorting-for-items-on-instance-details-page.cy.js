@@ -1,14 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import generateUniqueItemBarcodeWithShift from '../../../support/utils/generateUniqueItemBarcodeWithShift';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import Users from '../../../support/fragments/users/users';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import { MultiColumnListHeader } from '../../../../interactors';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import generateUniqueItemBarcodeWithShift from '../../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Item', () => {
@@ -182,21 +182,23 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getInstance({
-        limit: 1,
-        expandAll: true,
-        query: `"title"=="${itemData.instanceTitle}"`,
-      }).then((instance) => {
-        instance.items.forEach((el) => cy.deleteItemViaApi(el.id));
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
+      cy.getAdminToken().then(() => {
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"title"=="${itemData.instanceTitle}"`,
+        }).then((instance) => {
+          instance.items.forEach((el) => cy.deleteItemViaApi(el.id));
+          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
     });
 
     it(
       'C409420 Verify the sorting for Items on Instance details page (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);
         InstanceRecordView.verifyQuantityOfItemsRelatedtoHoldings(

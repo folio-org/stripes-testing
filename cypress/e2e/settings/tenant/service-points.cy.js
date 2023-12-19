@@ -1,10 +1,8 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import Users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const newServicePoint = {
@@ -14,7 +12,7 @@ const newServicePoint = {
   newNameForEdit: `test_${getRandomPostfix()}`,
 };
 
-describe('settings: service-points', () => {
+describe('Settings: Tenant', () => {
   before('create test data', () => {
     cy.createTempUser([permissions.uiTenantSettingsServicePointsCRUD.gui]).then(
       (userProperties) => {
@@ -28,6 +26,7 @@ describe('settings: service-points', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     ServicePoints.getViaApi({ query: `("name"=="${newServicePoint.newNameForEdit}")` }).then(
       (servicePoints) => {
         ServicePoints.deleteViaApi(servicePoints[0].id);
@@ -38,7 +37,7 @@ describe('settings: service-points', () => {
 
   it(
     'C375150 Verify that user can save new Service point (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       ServicePoints.createNewServicePoint(newServicePoint);
       ServicePoints.servicePointExists(newServicePoint.name);
@@ -47,7 +46,7 @@ describe('settings: service-points', () => {
 
   it(
     'C375151 Verify that user can edit existing Service point (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       ServicePoints.editServicePoint({
         name: newServicePoint.name,

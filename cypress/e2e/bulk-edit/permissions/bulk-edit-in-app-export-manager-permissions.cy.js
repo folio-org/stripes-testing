@@ -1,5 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -33,10 +31,6 @@ describe('bulk-edit', () => {
       ])
         .then((userProperties) => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
           item.instanceId = InventoryInstances.createInstanceViaApi(
             item.instanceName,
             item.itemBarcode,
@@ -44,6 +38,10 @@ describe('bulk-edit', () => {
           FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
         })
         .then(() => {
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item barcode');
           BulkEditSearchPane.uploadFile(itemBarcodesFileName);
@@ -52,6 +50,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
@@ -60,7 +59,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353971 Verify that user can view data in Export Manager based on permissions (In-app approach) (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         cy.visit(TopMenu.exportManagerPath);
         ExportManagerSearchPane.searchByBulkEdit();

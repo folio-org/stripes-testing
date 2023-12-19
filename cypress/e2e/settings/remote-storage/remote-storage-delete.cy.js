@@ -1,9 +1,9 @@
+import { Permissions } from '../../../support/dictionary';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
+import DeleteRemoteStorageModal from '../../../support/fragments/settings/remote-storage/madals/deleteRemoteStorageModal';
 import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
 import Users from '../../../support/fragments/users/users';
-import DeleteRemoteStorageModal from '../../../support/fragments/settings/remote-storage/madals/deleteRemoteStorageModal';
 
 describe('remote-storage-configuration', () => {
   const testData = {};
@@ -21,12 +21,13 @@ describe('remote-storage-configuration', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C163921 Delete remote storage configuration (firebird) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       // #1 - 2 Open **"Settings"** app and **"Remote Storage"** in "Settings"
       cy.visit(SettingsMenu.remoteStoragePath);

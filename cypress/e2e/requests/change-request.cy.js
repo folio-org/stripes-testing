@@ -1,30 +1,26 @@
 import uuid from 'uuid';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import permissions from '../../support/dictionary/permissions';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
+import permissions from '../../support/dictionary/permissions';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../support/utils/stringTools';
-import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Requests from '../../support/fragments/requests/requests';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import EditRequest from '../../support/fragments/requests/edit-request';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Title Level Request', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const instanceData = {
     title: `Instance title_${getRandomPostfix()}`,
     itemBarcode: `item${generateUniqueItemBarcodeWithShift()}`,
@@ -97,29 +93,11 @@ describe('Title Level Request', () => {
           });
         });
         RequestPolicy.createViaApi(requestPolicyBody);
-        CirculationRules.getViaApi().then((circulationRule) => {
-          originalCirculationRules = circulationRule.rulesAsText;
-          const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-          ruleProps.r = requestPolicyBody.id;
-          addedCirculationRule =
-            't ' +
-            testData.loanType.id +
-            ': i ' +
-            ruleProps.i +
-            ' l ' +
-            ruleProps.l +
-            ' r ' +
-            ruleProps.r +
-            ' o ' +
-            ruleProps.o +
-            ' n ' +
-            ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            originalCirculationRules,
-            ruleProps,
-            't ',
-            testData.loanType.id,
-          );
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanType.id },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
         });
       });
 
@@ -142,6 +120,8 @@ describe('Title Level Request', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: instanceData.itemBarcode,
       servicePointId: testData.userServicePoint.id,
@@ -161,12 +141,11 @@ describe('Title Level Request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
   });
 
   it(
     'C380544 Verify that the item information is not changed in "Item information" accordion after editing a request. (vega) (TaaS)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       Requests.waitLoading();
       NewRequest.openNewRequestPane();

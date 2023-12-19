@@ -1,15 +1,13 @@
-import TopMenu from '../../../support/fragments/topMenu';
+import { MultiColumnListCell } from '../../../../interactors';
+import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
+import permissions from '../../../support/dictionary/permissions';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { MultiColumnListCell } from '../../../../interactors';
-import permissions from '../../../support/dictionary/permissions';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import TestTypes from '../../../support/dictionary/testTypes';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import DevTeams from '../../../support/dictionary/devTeams';
-import { INSTANCE_SOURCE_NAMES, LOCATION_NAMES } from '../../../support/constants';
 
 describe('inventory', () => {
   describe('Holdings', () => {
@@ -38,19 +36,21 @@ describe('inventory', () => {
     });
 
     afterEach(() => {
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
-        (instance) => {
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
-      Users.deleteViaApi(firstUser.userId);
-      Users.deleteViaApi(secondUser.userId);
+      cy.getAdminToken().then(() => {
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+          (instance) => {
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        Users.deleteViaApi(firstUser.userId);
+        Users.deleteViaApi(secondUser.userId);
+      });
     });
 
     it(
-      'C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      'C1294: Create a Holdings record as another user than the one that created the Instance (folijet)',
+      { tags: ['smoke', 'folijet'] },
       () => {
         const InventoryNewInstance = InventoryInstances.addNewInventory();
         InventoryNewInstance.fillRequiredValues(recordsData.instanceTitle);

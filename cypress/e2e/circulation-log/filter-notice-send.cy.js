@@ -1,26 +1,28 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import SearchResults from '../../support/fragments/circulation-log/searchResults';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
+import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import NoticePolicyApi, {
   getDefaultNoticePolicy,
 } from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
-let addedCirculationRule;
 const templateBody = {
   active: true,
   category: 'Loan',
@@ -50,89 +52,74 @@ const testData = {
 
 describe('circulation-log', () => {
   before('create test data', () => {
-    cy.createTempUser([permissions.checkoutAll.gui]).then((userProperties) => {
-      user = userProperties;
-
-      ServicePoints.createViaApi(testData.userServicePoint);
-      cy.createLoanType({
-        name: `type_${getRandomPostfix()}`,
-      }).then((loanType) => {
-        testData.loanTypeId = loanType.id;
-      });
-
-      UserEdit.addServicePointViaApi(
-        testData.userServicePoint.id,
-        user.userId,
-        testData.userServicePoint.id,
-      );
-
-      cy.getCirculationRules().then((response) => {
-        testData.baseRules = response.rulesAsText;
-        testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-      });
-
-      NoticePolicyTemplateApi.createViaApi(templateBody).then(() => {
-        NoticePolicyApi.createWithTemplateApi(noticePolicy);
-      });
-
-      InventoryInstances.createInstanceViaApi(item.instanceTitle, item.barcode);
-      cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
-        (res) => {
-          res.permanentLoanType = { id: testData.loanTypeId };
-          cy.updateItemViaApi(res);
-        },
-      );
-
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((response) => {
-        testData.ruleProps.n = response[0].id;
-        addedCirculationRule =
-          't ' +
-          testData.loanTypeId +
-          ': i ' +
-          testData.ruleProps.i +
-          ' l ' +
-          testData.ruleProps.l +
-          ' r ' +
-          testData.ruleProps.r +
-          ' o ' +
-          testData.ruleProps.o +
-          ' n ' +
-          testData.ruleProps.n;
-        CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          't ',
-          testData.loanTypeId,
+    cy.createTempUser([permissions.checkoutAll.gui])
+      .then((userProperties) => {
+        user = userProperties;
+        ServicePoints.createViaApi(testData.userServicePoint);
+        UserEdit.addServicePointViaApi(
+          testData.userServicePoint.id,
+          user.userId,
+          testData.userServicePoint.id,
         );
+      })
+      .then(() => {
+        cy.createLoanType({
+          name: `type_${getRandomPostfix()}`,
+        }).then((loanType) => {
+          testData.loanTypeId = loanType.id;
+        });
+      })
+      .then(() => {
+        InventoryInstances.createInstanceViaApi(item.instanceTitle, item.barcode);
+        cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
+          (res) => {
+            res.permanentLoanType = { id: testData.loanTypeId };
+            cy.updateItemViaApi(res);
+          },
+        );
+      })
+      .then(() => {
+        NoticePolicyTemplateApi.createViaApi(templateBody).then((noticeTemplate) => {
+          testData.templateData = noticeTemplate;
+          NoticePolicyApi.createWithTemplateApi(noticePolicy);
+        });
+        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((response) => {
+          testData.noticePolicyId = response[0].id;
+          CirculationRules.addRuleViaApi(
+            { t: testData.loanTypeId },
+            { n: testData.noticePolicyId },
+          ).then((newRule) => {
+            testData.addedRule = newRule;
+          });
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.checkOutPath,
+          waiter: Checkout.waitLoading,
+        });
+        CheckOutActions.checkOutUser(user.barcode);
+        Checkout.checkoutItemViaApi({
+          id: uuid(),
+          itemBarcode: item.barcode,
+          loanDate: moment.utc().format(),
+          servicePointId: testData.userServicePoint.id,
+          userBarcode: user.barcode,
+        });
+        CheckOutActions.endCheckOutSession();
+        cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
       });
-
-      cy.login(user.username, user.password, {
-        path: TopMenu.checkOutPath,
-        waiter: Checkout.waitLoading,
-      });
-      CheckOutActions.checkOutUser(user.barcode);
-      Checkout.checkoutItemViaApi({
-        id: uuid(),
-        itemBarcode: item.barcode,
-        loanDate: moment.utc().format(),
-        servicePointId: testData.userServicePoint.id,
-        userBarcode: user.barcode,
-      });
-      CheckOutActions.endCheckOutSession();
-      cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
-    });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: item.barcode,
       servicePointId: testData.userServicePoint.id,
       checkInDate: moment.utc().format(),
     });
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     cy.deleteLoanType(testData.loanTypeId);
@@ -143,7 +130,7 @@ describe('circulation-log', () => {
 
   it(
     'C17092 Filter circulation log by (notice) send (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,
@@ -162,6 +149,47 @@ describe('circulation-log', () => {
       SearchPane.searchByUserBarcode(user.barcode);
       SearchPane.verifyResultCells();
       SearchPane.checkResultSearch(searchResultsData);
+    },
+  );
+
+  it(
+    'C17093 Check the Actions button from filtering Circulation log by (notices) send (volaris)',
+    { tags: ['criticalPath', 'volaris'] },
+    () => {
+      const goToCircLogApp = (filterName) => {
+        cy.visit(TopMenu.circulationLogPath);
+        SearchPane.waitLoading();
+        SearchPane.setFilterOptionFromAccordion('notice', filterName);
+        SearchPane.searchByItemBarcode(item.barcode);
+        return SearchPane.findResultRowIndexByContent(filterName);
+      };
+
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.chooseActionByRow(rowIndex, 'Loan details');
+        LoansPage.waitLoading();
+      });
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.chooseActionByRow(rowIndex, 'User details');
+        Users.verifyFirstNameOnUserDetailsPane(user.firstName);
+      });
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.chooseActionByRow(rowIndex, 'Notice policy');
+        NewNoticePolicy.checkPolicyName(noticePolicy);
+      });
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.chooseActionByRow(rowIndex, 'Live version of template');
+        NewNoticePolicyTemplate.checkAfterSaving({
+          name: testData.templateData.name,
+          description: testData.templateData.description,
+          category: { requestId: testData.templateData.category },
+          subject: 'Subject_Test',
+          body: 'Test_email_body{{item.title}}',
+        });
+      });
+      goToCircLogApp('Send').then((rowIndex) => {
+        SearchResults.clickOnCell(item.barcode, Number(rowIndex));
+        ItemRecordView.waitLoading();
+      });
     },
   );
 });

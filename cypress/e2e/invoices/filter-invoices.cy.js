@@ -1,24 +1,22 @@
-import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import TopMenu from '../../support/fragments/topMenu';
-import Orders from '../../support/fragments/orders/orders';
-import TestTypes from '../../support/dictionary/testTypes';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import getRandomPostfix from '../../support/utils/stringTools';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Funds from '../../support/fragments/finance/funds/funds';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import Invoices from '../../support/fragments/invoices/invoices';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import DateTools from '../../support/utils/dateTools';
 import { ORDER_TYPES } from '../../support/constants';
+import permissions from '../../support/dictionary/permissions';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
+import Invoices from '../../support/fragments/invoices/invoices';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import DateTools from '../../support/utils/dateTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Invoices', () => {
   const order = {
@@ -88,7 +86,7 @@ describe('Invoices', () => {
       orderNumber = response.body.poNumber;
       cy.visit(TopMenu.ordersPath);
       Orders.searchByParameter('PO number', orderNumber);
-      Orders.selectFromResultsList();
+      Orders.selectFromResultsList(orderNumber);
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 5);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
@@ -120,6 +118,7 @@ describe('Invoices', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
@@ -162,7 +161,7 @@ describe('Invoices', () => {
   ].forEach((filter) => {
     it(
       'C6724: Test the invoice filters (thunderjet)',
-      { tags: [TestTypes.criticalPath, devTeams.thunderjet] },
+      { tags: ['criticalPath', 'thunderjet'] },
       () => {
         filter.filterActions();
         Invoices.selectInvoice(invoice.invoiceNumber);

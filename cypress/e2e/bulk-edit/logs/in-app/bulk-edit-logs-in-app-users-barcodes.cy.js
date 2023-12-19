@@ -1,7 +1,5 @@
 import permissions from '../../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import TopMenu from '../../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../../support/utils/fileManager';
@@ -41,6 +39,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     FileManager.deleteFile(`cypress/fixtures/${validUserBarcodesFileName}`);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFileFromDownloadsByMask(
@@ -53,7 +52,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375244 Verify generated Logs files for Users In app -- only valid (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
       BulkEditSearchPane.uploadFile(validUserBarcodesFileName);

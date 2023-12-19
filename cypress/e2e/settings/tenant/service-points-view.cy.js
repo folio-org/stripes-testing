@@ -1,20 +1,20 @@
 import uuid from 'uuid';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import { Permissions } from '../../../support/dictionary';
 import {
-  Locations,
-  Libraries,
   Campuses,
   Institutions,
+  Libraries,
+  Locations,
 } from '../../../support/fragments/settings/tenant/location-setup';
 import LocationDetails from '../../../support/fragments/settings/tenant/locations/locationDetails';
 import LocationEditForm from '../../../support/fragments/settings/tenant/locations/locationEditForm';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
 
-describe('Settings: Location', () => {
+describe('Settings: Tenant', () => {
   const testData = {
     servicePoints: [ServicePoints.getDefaultServicePoint(), ServicePoints.getDefaultServicePoint()],
     user: {},
@@ -44,13 +44,14 @@ describe('Settings: Location', () => {
       testData.user = userProperties;
 
       cy.login(testData.user.username, testData.user.password);
-      cy.wait(1000);
+      cy.wait(2000);
       TopMenuNavigation.navigateToApp('Settings');
       Locations.goToLocationsTab();
     });
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     testData.locations.forEach(({ id }) => {
       Locations.deleteViaApi({ id });
     });
@@ -65,7 +66,7 @@ describe('Settings: Location', () => {
 
   it(
     'C359588 Verify view of services points on the view page (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       Locations.viewLocations(testData.locations[0]);
 

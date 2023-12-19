@@ -3,6 +3,7 @@ import { HTML, including } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiColumnListHeader,
   MultiSelect,
   Pane,
@@ -15,6 +16,7 @@ import {
   Section,
   Heading,
   Spinner,
+  KeyValue,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -28,6 +30,7 @@ import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
+const requestDetailsSection = Pane({ title: 'Request Detail' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 const requestsPane = Pane({ title: 'Requests' });
 const pageCheckbox = Checkbox({ name: 'Page' });
@@ -35,14 +38,13 @@ const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
-const resultsPane = Pane({ id: 'pane-results' });
-const actionsButtonInResultsPane = resultsPane.find(Button('Actions'));
+const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
   cy.expect(
-    resultsPane
+    requestsResultsSection
       .find(HTML(including('Choose a filter or enter a search query to show results.')))
       .exists(),
   );
@@ -219,42 +221,6 @@ function getRequestApi(searchParams) {
     });
 }
 
-function updateCirculationRulesApi(ruleText) {
-  return cy.okapiRequest({
-    method: 'PUT',
-    path: 'circulation/rules',
-    body: { rulesAsText: ruleText },
-    isDefaultSearchParamsRequired: false,
-  });
-}
-
-function setRequestPolicyApi(requestTypes = Object.values(REQUEST_TYPES)) {
-  /**
-   * rule comes in bespoke text format, and we need to update 'r <someId>' part.
-   * rulesAsText: "priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line\n
-                  fallback-policy: ... r 334e5a9e-94f9-4673-8d1d-ab552863886b ..."
-   */
-  const regexp = /(?<=\s)r\s+[a-zA-Z0-9-]+(?=\s)/;
-  let oldRulesAsText;
-
-  return cy
-    .okapiRequest({
-      path: 'circulation/rules',
-      isDefaultSearchParamsRequired: false,
-    })
-    .then(({ body: rule }) => {
-      oldRulesAsText = rule.rulesAsText;
-      cy.okapiRequest({
-        method: 'POST',
-        path: 'request-policy-storage/request-policies',
-        body: { id: uuid(), name: `test_all_${uuid().substring(0, 6)}`, requestTypes },
-      }).then(({ body: policy }) => {
-        rule.rulesAsText = rule.rulesAsText.replace(regexp, `r ${policy.id}`);
-        updateCirculationRulesApi(rule.rulesAsText).then(() => ({ oldRulesAsText, policy }));
-      });
-    });
-}
-
 function deleteRequestPolicyApi(policyId) {
   return cy.okapiRequest({
     method: 'DELETE',
@@ -273,6 +239,7 @@ function waitLoadingTags() {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
+
 function selectSpecifiedRequestLevel(parameter) {
   return cy.do(Checkbox({ name: parameter }).click());
 }
@@ -280,9 +247,7 @@ function selectSpecifiedRequestLevel(parameter) {
 export default {
   createRequestApi,
   deleteRequestViaApi,
-  setRequestPolicyApi,
   deleteRequestPolicyApi,
-  updateCirculationRulesApi,
   getRequestApi,
   waitContentLoading,
   waitLoadingTags,
@@ -312,7 +277,7 @@ export default {
 
   cancelRequest() {
     cy.do([
-      Pane({ title: 'Request Detail' }).find(Button('Actions')).click(),
+      requestDetailsSection.find(Button('Actions')).click(),
       Button({ id: 'clickable-cancel-request' }).click(),
       TextArea('Additional information for patron  ').fillIn('test'),
       Button('Confirm').click(),
@@ -388,6 +353,14 @@ export default {
     } else if (requestType === REQUEST_TYPES.RECALL) {
       this.selectRecallsRequestType();
     }
+  },
+
+  checkRequestStatus(requestStatus) {
+    cy.expect(KeyValue('Request status').has({ value: requestStatus }));
+  },
+
+  checkActionDropdownHidden: () => {
+    cy.expect(requestDetailsSection.find(Button('Actions')).absent());
   },
 
   verifyRequestTypeChecked(requestType) {
@@ -588,6 +561,10 @@ export default {
       MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).focus(),
       MultiSelect({ ariaLabelledby: 'pickupServicePoints' }).select(servicePoint),
     ]);
+  },
+
+  selectTheFirstRequest() {
+    cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
   },
 
   exportRequestToCsv: () => {

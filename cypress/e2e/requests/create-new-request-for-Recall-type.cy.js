@@ -1,16 +1,16 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES, REQUEST_LEVELS } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Requests from '../../support/fragments/requests/requests';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
+import { ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Request', () => {
   let userData = {};
@@ -55,6 +55,7 @@ describe('Request', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: testData.servicePoint.id,
@@ -77,7 +78,7 @@ describe('Request', () => {
 
   it(
     'C547 Create new request for "Recall" type (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       // Create new request with item barcode and requester barcode
       NewRequest.openNewRequestPane();
@@ -89,7 +90,7 @@ describe('Request', () => {
       NewRequest.verifyRequestTypeHasOptions(REQUEST_TYPES.HOLD, REQUEST_TYPES.RECALL);
       // Select "Recall" request type
       NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
-      NewRequest.choosepickupServicePoint(testData.servicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.servicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {

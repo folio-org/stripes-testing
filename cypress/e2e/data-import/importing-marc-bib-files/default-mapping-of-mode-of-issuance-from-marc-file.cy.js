@@ -1,6 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -17,7 +16,6 @@ describe('data-import', () => {
     const fileName = `C11121 autotestFile.${getRandomPostfix()}.mrc`;
 
     before('login', () => {
-      cy.getAdminToken();
       cy.loginAsAdmin({
         path: TopMenu.dataImportPath,
         waiter: DataImport.waitLoading,
@@ -25,22 +23,25 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.wrap(instanceHrids).each((hrid) => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+      cy.getAdminToken().then(() => {
+        cy.wrap(instanceHrids).each((hrid) => {
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
+            (instance) => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+        });
       });
     });
 
     it(
       'C11121 Check the default mapping of Mode of issuance from the MARC record to the Inventory Instance record (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
@@ -60,7 +61,7 @@ describe('data-import', () => {
             modeOfIssuance: 'single unit',
           },
         ]).each((instanceData) => {
-          FileDetails.openInstanceInInventory('Created', instanceData.rowNumber);
+          FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, instanceData.rowNumber);
           InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
             instanceHrids.push(initialInstanceHrId);
           });

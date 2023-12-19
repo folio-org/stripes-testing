@@ -260,6 +260,24 @@ export default {
     );
   },
 
+  openInstanceInInventoryByStatus: (itemStatus) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ content: itemStatus, columnIndex: 3 }))
+        .perform((element) => {
+          const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+          cy.do(
+            resultsList
+              .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+              .find(MultiColumnListCell({ columnIndex: 3 }))
+              .find(Link(itemStatus))
+              .click(),
+          );
+        }),
+    );
+  },
+
   openHoldingsInInventory: (itemStatus, rowNumber = 0) => {
     cy.do(
       resultsList
@@ -287,14 +305,14 @@ export default {
     );
   },
 
-  openItemInInventoryByTitle: (title, itemStatus = 'Updated') => {
+  openItemInInventoryByTitle: (title, columnIndex, itemStatus = 'Updated') => {
     cy.do(
       MultiColumnListCell({ content: title }).perform((element) => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
         cy.do(
           resultsList
-            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex: 5 }))
+            .find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex }))
             .find(Link(itemStatus))
             .click(),
         );
@@ -302,12 +320,36 @@ export default {
     );
   },
 
+  openInvoiceLine: (itemStatus, rowNumber = 0) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 8 }))
+        .find(Link(itemStatus))
+        .click(),
+    );
+  },
+
   openJsonScreen: (title) => {
-    cy.get('#search-results-list')
-      .find('*[class^="mclCell"]')
-      .contains(title)
-      .invoke('removeAttr', 'target')
+    cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target')
       .click();
+    cy.wait(2000);
+  },
+
+  openJsonScreenByStatus: (importStatus, title) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ content: importStatus, columnIndex: 2 }))
+        .perform((element) => {
+          const rowNumber = element.parentElement.getAttribute('data-row-inner');
+
+          cy.get('#search-results-list')
+            .find(`div[data-row-inner="${rowNumber}"]`)
+            .find('a')
+            .contains(title)
+            .invoke('removeAttr', 'target')
+            .click();
+        }),
+    );
   },
 
   filterRecordsWithError: (index) => {

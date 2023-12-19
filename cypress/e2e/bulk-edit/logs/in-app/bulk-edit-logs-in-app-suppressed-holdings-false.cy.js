@@ -1,5 +1,3 @@
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -34,10 +32,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
 
       item.instanceId = InventoryInstances.createInstanceViaApi(
         item.instanceName,
@@ -69,10 +63,15 @@ describe('Bulk Edit - Logs', () => {
         instance.discoverySuppress = true;
         cy.updateInstance(instance);
       });
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
@@ -86,7 +85,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C399063 Verify generated Logs files for Holdings suppressed from discovery (Set false) (firebird) (TaaS)',
-    { tags: [testTypes.extendedPath, devTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
@@ -95,7 +94,7 @@ describe('Bulk Edit - Logs', () => {
 
       const suppressFromDiscovery = false;
       BulkEditActions.openActions();
-      BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+      BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
       BulkEditActions.checkApplyToItemsRecordsCheckbox();

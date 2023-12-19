@@ -445,57 +445,62 @@ export default {
       });
   },
 
-  createMatchProfileViaApiMarc: (name, incomingRecords, existingRecords) => {
+  createMatchProfileViaApiMarc: ({
+    profileName,
+    incomingRecordFields,
+    existingRecordFields,
+    recordType,
+  }) => {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'data-import-profiles/matchProfiles',
         body: {
           profile: {
-            incomingRecordType: incomingRecords.type,
+            incomingRecordType: recordType,
             matchDetails: [
               {
-                incomingRecordType: incomingRecords.type,
+                incomingRecordType: recordType,
                 incomingMatchExpression: {
                   fields: [
                     {
                       label: 'field',
-                      value: incomingRecords.field,
+                      value: incomingRecordFields.field,
                     },
                     {
                       label: 'indicator1',
-                      value: incomingRecords.ind1,
+                      value: incomingRecordFields.in1,
                     },
                     {
                       label: 'indicator2',
-                      value: incomingRecords.ind2,
+                      value: incomingRecordFields.in2,
                     },
                     {
                       label: 'recordSubfield',
-                      value: incomingRecords.subfield,
+                      value: incomingRecordFields.subfield,
                     },
                   ],
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
                 },
-                existingRecordType: existingRecords.type,
+                existingRecordType: recordType,
                 existingMatchExpression: {
                   fields: [
                     {
                       label: 'field',
-                      value: existingRecords.field,
+                      value: existingRecordFields.field,
                     },
                     {
                       label: 'indicator1',
-                      value: existingRecords.ind1,
+                      value: existingRecordFields.in1,
                     },
                     {
                       label: 'indicator2',
-                      value: existingRecords.ind2,
+                      value: existingRecordFields.in2,
                     },
                     {
                       label: 'recordSubfield',
-                      value: existingRecords.subfield,
+                      value: existingRecordFields.subfield,
                     },
                   ],
                   staticValueDetails: null,
@@ -504,8 +509,8 @@ export default {
                 matchCriterion: 'EXACTLY_MATCHES',
               },
             ],
-            name,
-            existingRecordType: existingRecords.type,
+            name: profileName,
+            existingRecordType: recordType,
           },
           addedRelations: [],
           deletedRelations: [],

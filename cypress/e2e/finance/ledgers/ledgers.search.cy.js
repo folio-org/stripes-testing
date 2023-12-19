@@ -1,13 +1,11 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import TopMenu from '../../../support/fragments/topMenu';
 import { MultiColumnList } from '../../../../interactors';
-import TestType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Ledgers', () => {
   let aUnit;
@@ -53,13 +51,14 @@ describe('ui-finance: Ledgers', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     cy.deleteLedgerApi(ledger.id);
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C4061 Test the search and filter options for ledgers (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
+    { tags: ['smoke', 'thunderjet'] },
     () => {
       FinanceHelp.checkZeroSearchResultsMessage();
 

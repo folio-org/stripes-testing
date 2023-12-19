@@ -1,35 +1,32 @@
 import moment from 'moment';
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import topMenu from '../../support/fragments/topMenu';
-import settingsMenu from '../../support/fragments/settingsMenu';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi, {
-  NOTICE_CATEGORIES,
-  NOTICE_ACTIONS,
-} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
-import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
-import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import Checkout from '../../support/fragments/checkout/checkout';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../support/utils/stringTools';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
+import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
+import NewNoticePolicyTemplate from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NoticePolicyApi, {
+  NOTICE_ACTIONS,
+  NOTICE_CATEGORIES,
+} from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import settingsMenu from '../../support/fragments/settingsMenu';
+import topMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Receiving notice: Checkout', () => {
-  let addedCirculationRule;
   const noticePolicyTemplate = {
     ...NewNoticePolicyTemplate.defaultUi,
     category: NOTICE_CATEGORIES.loan,
@@ -166,11 +163,6 @@ describe('Receiving notice: Checkout', () => {
             testData.userServicePoint.id,
           );
 
-          cy.getCirculationRules().then((response) => {
-            testData.baseRules = response.rulesAsText;
-            testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-          });
-
           cy.login(userData.username, userData.password, {
             path: settingsMenu.circulationPatronNoticePoliciesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
@@ -180,6 +172,7 @@ describe('Receiving notice: Checkout', () => {
   });
 
   afterEach('Deleting created entities', () => {
+    cy.getAdminToken();
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -188,9 +181,9 @@ describe('Receiving notice: Checkout', () => {
       });
     });
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.noticePolicyId);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each((item, index) => {
@@ -214,7 +207,7 @@ describe('Receiving notice: Checkout', () => {
 
   it(
     'C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (volaris)',
-    { tags: [testTypes.smoke, devTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
@@ -235,29 +228,18 @@ describe('Receiving notice: Checkout', () => {
       NewNoticePolicy.checkAfterSaving(noticePolicy);
       NewNoticePolicy.checkNoticeActions(noticePolicy);
 
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-        testData.ruleProps.n = res[0].id;
-        addedCirculationRule =
-          't ' +
-          testData.loanTypeId +
-          ': i ' +
-          testData.ruleProps.i +
-          ' l ' +
-          testData.ruleProps.l +
-          ' r ' +
-          testData.ruleProps.r +
-          ' o ' +
-          testData.ruleProps.o +
-          ' n ' +
-          testData.ruleProps.n;
+      cy.getAdminToken();
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        testData.noticePolicyId = noticePolicyRes[0].id;
         CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          't ',
-          testData.loanTypeId,
-        );
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(topMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);
@@ -276,7 +258,7 @@ describe('Receiving notice: Checkout', () => {
 
   it(
     'C347622 Check that user can receive notice with multiple items after finishing the session "Check out" by setting automatic end (volaris)',
-    { tags: [testTypes.smoke, devTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
@@ -301,29 +283,18 @@ describe('Receiving notice: Checkout', () => {
       NewNoticePolicy.checkAfterSaving(noticePolicy);
       NewNoticePolicy.checkNoticeActions(noticePolicy);
 
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-        testData.ruleProps.n = res[0].id;
-        addedCirculationRule =
-          'g ' +
-          patronGroup.id +
-          ': i ' +
-          testData.ruleProps.i +
-          ' l ' +
-          testData.ruleProps.l +
-          ' r ' +
-          testData.ruleProps.r +
-          ' o ' +
-          testData.ruleProps.o +
-          ' n ' +
-          testData.ruleProps.n;
+      cy.getAdminToken();
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
+        testData.noticePolicyId = noticePolicyRes[0].id;
         CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          'g ',
-          patronGroup.id,
-        );
+          { t: testData.loanTypeId },
+          { n: testData.noticePolicyId },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
+      cy.getToken(userData.username, userData.password);
       cy.visit(topMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);

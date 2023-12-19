@@ -1,16 +1,16 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import {
-  RECEIVING_WORKFLOWS,
   CHECKIN_ITEMS_VALUE,
+  RECEIVING_WORKFLOWS,
 } from '../../support/fragments/orders/basicOrderLine';
-import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
-import { Locations, ServicePoints } from '../../support/fragments/settings/tenant';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Orders', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -80,6 +80,7 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);
     testData.locations.forEach((location) => {
@@ -92,7 +93,7 @@ describe('Orders', () => {
 
   it(
     'C402352 Holdings records creation when open order with "Physical Resource" format PO line and Independent workflow (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Open Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -120,8 +121,8 @@ describe('Orders', () => {
       // Click on "Title" link in "Item details" accordion
       const InventoryInstance = OrderLineDetails.openInventoryItem();
       InventoryInstance.checkInstanceTitle(testData.orderLine.titleOrPackage);
-      InventoryInstance.checkHoldingTitle(testData.locations[0].name);
-      InventoryInstance.checkHoldingTitle(testData.locations[1].name);
+      InventoryInstance.checkHoldingTitle({ title: testData.locations[0].name });
+      InventoryInstance.checkHoldingTitle({ title: testData.locations[1].name });
     },
   );
 });

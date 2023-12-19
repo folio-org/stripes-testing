@@ -1,13 +1,11 @@
 import TopMenu from '../../support/fragments/topMenu';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
-import TestType from '../../support/dictionary/testTypes';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
@@ -25,6 +23,7 @@ describe('orders: create an order', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
@@ -32,7 +31,7 @@ describe('orders: create an order', () => {
 
   it(
     'C734 Open order for physical material set to create Instance, Holding, Item (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] },
+    { tags: ['smoke', 'thunderjet', 'broken'] },
     () => {
       Orders.createOrder(order).then((orderId) => {
         order.id = orderId;

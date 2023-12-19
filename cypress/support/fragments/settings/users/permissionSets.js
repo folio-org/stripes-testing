@@ -10,6 +10,7 @@ import {
   ListItem,
   TextArea,
   NavListItem,
+  MultiColumnListCell,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
@@ -28,9 +29,15 @@ export default {
   addPermissions(permissions) {
     cy.do(Button({ id: 'clickable-add-permission' }).click());
     cy.expect(selectPermissionsModal.exists());
+    cy.wait(2000);
     cy.wrap(permissions).each((permission) => {
       cy.do(userSearch.fillIn(permission));
       cy.do(Button('Search').click());
+      cy.expect(
+        MultiColumnListRow({ index: 0 })
+          .find(MultiColumnListCell({ innerText: permission }))
+          .exists(),
+      );
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
     });
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());

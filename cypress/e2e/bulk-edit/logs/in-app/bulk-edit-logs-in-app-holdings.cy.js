@@ -1,8 +1,6 @@
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
-import devTeams from '../../../../support/dictionary/devTeams';
-import testTypes from '../../../../support/dictionary/testTypes';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../../support/fragments/users/users';
 import FileManager from '../../../../support/utils/fileManager';
@@ -32,6 +30,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     FileManager.deleteFile(`cypress/fixtures/${invalidHoldingHRIDsFileName}`);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFileFromDownloadsByMask(
@@ -42,7 +41,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375299 Verify generated Logs files for Holdings In app -- only invalid records (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
       BulkEditSearchPane.uploadFile(invalidHoldingHRIDsFileName);

@@ -1,18 +1,18 @@
 import moment from 'moment/moment';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Checkout from '../../support/fragments/checkout/checkout';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import LoansPage from '../../support/fragments/loans/loansPage';
-import UsersCard from '../../support/fragments/users/usersCard';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
 
 describe('Circulation log', () => {
   let userData;
@@ -64,6 +64,7 @@ describe('Circulation log', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.userId);
@@ -86,7 +87,7 @@ describe('Circulation log', () => {
 
   it(
     'C17000 Check the Actions button from filtering Circulation log by closed loan (volaris) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       goToCircLogApp().then((rowIndex) => {
         SearchResults.chooseActionByRow(rowIndex, 'Loan details');

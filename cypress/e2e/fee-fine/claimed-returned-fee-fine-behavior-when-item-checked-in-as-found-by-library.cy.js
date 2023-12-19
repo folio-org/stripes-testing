@@ -1,37 +1,35 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import uuid from 'uuid';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import Checkout from '../../support/fragments/checkout/checkout';
-import LoanPolicy from '../../support/fragments/circulation/loan-policy';
+import { Permissions } from '../../support/dictionary';
+import AppPaths from '../../support/fragments/app-paths';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckInClaimedReturnedItem from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
+import Checkout from '../../support/fragments/checkout/checkout';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LoanPolicy from '../../support/fragments/circulation/loan-policy';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
-import CheckInClaimedReturnedItem from '../../support/fragments/checkin/modals/checkInClaimedReturnedItem';
-import LoansPage from '../../support/fragments/loans/loansPage';
-import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
+import TopMenu from '../../support/fragments/topMenu';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
-import WaiveFeeFinesModal from '../../support/fragments/users/waiveFeeFineModal';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import AppPaths from '../../support/fragments/app-paths';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import WaiveFeeFinesModal from '../../support/fragments/users/waiveFeeFineModal';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Claimed Returned', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const patronGroup = {
     name: getTestEntityValue('groupClaimedReturned'),
   };
@@ -91,6 +89,11 @@ describe('Claimed Returned', () => {
     replacementAllowed: false,
     lostItemReturned: 'Charge',
     id: uuid(),
+  };
+  const ruleProps = {
+    l: loanPolicyBody.id,
+    o: overdueFinePolicyBody.id,
+    i: lostItemFeePolicyBody.id,
   };
   const ownerBody = {
     id: uuid(),
@@ -160,31 +163,8 @@ describe('Claimed Returned', () => {
         LoanPolicy.createViaApi(loanPolicyBody);
         OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
         LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-        CirculationRules.getViaApi().then((circulationRule) => {
-          originalCirculationRules = circulationRule.rulesAsText;
-          const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-          ruleProps.l = loanPolicyBody.id;
-          ruleProps.o = overdueFinePolicyBody.id;
-          ruleProps.i = lostItemFeePolicyBody.id;
-          addedCirculationRule =
-            't ' +
-            testData.loanTypeId +
-            ': i ' +
-            ruleProps.i +
-            ' l ' +
-            ruleProps.l +
-            ' r ' +
-            ruleProps.r +
-            ' o ' +
-            ruleProps.o +
-            ' n ' +
-            ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            originalCirculationRules,
-            ruleProps,
-            't ',
-            testData.loanTypeId,
-          );
+        CirculationRules.addRuleViaApi({ t: testData.loanTypeId }, ruleProps).then((newRule) => {
+          testData.addedRule = newRule;
         });
       })
       .then(() => {
@@ -268,7 +248,7 @@ describe('Claimed Returned', () => {
     cy.getToken(userData.username, userData.password);
     UserLoans.updateTimerForAgedToLost('reset');
     cy.getAdminToken();
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
@@ -290,7 +270,7 @@ describe('Claimed Returned', () => {
 
   it(
     'C11041 Verify claimed returned fee/fine behavior when item checked in as "found by library" (vega)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       CheckInActions.checkInItemGui(instanceData.item1Barcode);
       CheckInClaimedReturnedItem.checkModalMessage({

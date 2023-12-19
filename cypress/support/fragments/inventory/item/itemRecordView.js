@@ -11,8 +11,10 @@ import {
   Link,
   MultiColumnListCell,
 } from '../../../../../interactors';
+import ItemRecordEdit from './itemRecordEdit';
 import dateTools from '../../../utils/dateTools';
 
+const actionsButton = Button('Actions');
 const loanAccordion = Accordion('Loan and availability');
 const administrativeDataAccordion = Accordion('Administrative data');
 const acquisitionAccordion = Accordion('Acquisition');
@@ -49,13 +51,13 @@ const verifyItemStatusInPane = (itemStatus) => {
 const closeDetailView = () => {
   cy.expect(Pane(including('Item')).exists());
   cy.do(Button({ icon: 'times' }).click());
+  cy.expect(Pane(including('Item')).absent());
 };
 const findRowAndClickLink = (enumerationValue) => {
-  cy.get('div[class^="mclRow-"]')
-    .contains('div[class^="mclCell-"]', enumerationValue)
-    .then((elem) => {
-      elem.parent()[0].querySelector('a').click();
-    });
+  cy.get(`div[class^="mclCell-"]:contains('${enumerationValue}')`).then((cell) => {
+    const row = cell.closest('div[class^="mclRow-"]');
+    row.find('button').click();
+  });
 };
 const getAssignedHRID = () => cy.then(() => KeyValue('Item HRID').value());
 
@@ -111,17 +113,31 @@ export default {
   addPieceToItem: (numberOfPieces) => {
     cy.do([TextField({ name: 'numberOfPieces' }).fillIn(numberOfPieces), saveAndCloseBtn.click()]);
   },
+  openItemEditForm(itemTitle) {
+    cy.do([actionsButton.click(), Button('Edit').click()]);
+    ItemRecordEdit.waitLoading(itemTitle);
+
+    return ItemRecordEdit;
+  },
 
   duplicateItem() {
-    cy.do([Button('Actions').click(), Button('Duplicate').click()]);
+    cy.do([actionsButton.click(), Button('Duplicate').click()]);
   },
 
   createNewRequest() {
-    cy.do([Button('Actions').click(), Button('New request').click()]);
+    cy.do([actionsButton.click(), Button('New request').click()]);
   },
 
   openRequest() {
     cy.do(loanAccordion.find(Link({ href: including('/requests?filters=requestStatus') })).click());
+  },
+
+  openBorrowerPage() {
+    cy.do(
+      KeyValue('Borrower')
+        .find(Link({ href: including('/users/view') }))
+        .click(),
+    );
   },
 
   verifyEffectiveLocation: (location) => {
@@ -154,6 +170,10 @@ export default {
     );
   },
 
+  verifyTextAbsent(text) {
+    cy.expect(HTML(including(text)).absent());
+  },
+
   verifyMaterialType: (type) => {
     cy.expect(itemDataAccordion.find(HTML(including(type))).exists());
   },
@@ -168,7 +188,11 @@ export default {
       cy.expect([KeyValue(itemNote.type).has({ value: itemNote.note })]);
     });
   },
-
+  checkFieldsConditions({ fields, section } = {}) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(section.find(KeyValue(label)).has(conditions));
+    });
+  },
   checkCheckInNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
     cy.expect(HTML(staffValue).exists());
@@ -191,16 +215,27 @@ export default {
     cy.expect(administrativeDataAccordion.find(KeyValue('Item barcode')).has({ value: barcode }));
   },
 
+  checkCopyNumber: (copyNumber) => {
+    cy.expect(itemDataAccordion.find(KeyValue('Copy number')).has({ value: copyNumber }));
+  },
+
   checkCalloutMessage: () => {
     cy.expect(
       Callout({ textContent: including('The item - HRID  has been successfully saved.') }).exists(),
     );
   },
-
+  checkItemRecordDetails({ administrativeData = [], itemData = [], acquisitionData = [] } = {}) {
+    this.checkFieldsConditions({
+      fields: administrativeData,
+      section: administrativeDataAccordion,
+    });
+    this.checkFieldsConditions({ fields: itemData, section: itemDataAccordion });
+    this.checkFieldsConditions({ fields: acquisitionData, section: acquisitionAccordion });
+  },
   checkItemDetails(location, barcode, status) {
     this.verifyEffectiveLocation(location);
     this.checkBarcode(barcode);
-    this.checkStatus(status);
+    this.verifyItemStatus(status);
   },
 
   checkAccessionNumber: (number) => {
@@ -209,7 +244,7 @@ export default {
     );
   },
 
-  checkNumberOfPieces: (number) => {
+  verifyNumberOfPieces: (number) => {
     cy.expect(itemDataAccordion.find(KeyValue('Number of pieces')).has({ value: number }));
   },
 
@@ -259,10 +294,105 @@ export default {
   },
 
   verifyFormerIdentifiers: (identifier) => cy.expect(KeyValue('Former identifier').has({ value: identifier })),
+  verifyShelvingOrder: (orderValue) => cy.expect(KeyValue('Shelving order').has({ value: orderValue })),
+  verifyCallNumber: (callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
   verifyItemPermanentLocation: (value) => {
     cy.get('div[data-testid="item-permanent-location"]')
       .find('div[class*=kvValue]')
       .should('have.text', value);
+  },
+  verifyItemMetadata: (updatedHoldingsDate, updatedItemData, userId) => {
+    const convertedHoldingsDate = new Date(updatedHoldingsDate).getTime();
+    const convertedItemsDate = new Date(updatedItemData.updatedDate).getTime();
+    const timeDifference = (convertedItemsDate - convertedHoldingsDate) / 1000;
+
+    // check that difference in time is less than 1 minute
+    expect(timeDifference).to.be.lessThan(60000);
+    expect(userId).to.eq(updatedItemData.updatedByUserId);
+  },
+  verifyItemCallNumberChangedAfterChangedInHoldings: (
+    createdItemData,
+    updatedItemData,
+    updatedCallNumber,
+  ) => {
+    const updatedEffectiveCallNumberComponents = {
+      callNumber: updatedItemData.effectiveCallNumberComponents.callNumber,
+      prefix: updatedItemData.effectiveCallNumberComponents.prefix,
+      suffix: updatedItemData.effectiveCallNumberComponents.suffix,
+      typeId: updatedItemData.effectiveCallNumberComponents.typeId,
+    };
+    const createdEffectiveCallNumberComponents = {
+      prefix: createdItemData.effectiveCallNumberComponents.prefix,
+      suffix: createdItemData.effectiveCallNumberComponents.suffix,
+      typeId: createdItemData.effectiveCallNumberComponents.typeId,
+    };
+
+    expect(updatedEffectiveCallNumberComponents.callNumber).to.eq(updatedCallNumber);
+    expect(updatedEffectiveCallNumberComponents.prefix).to.eq(
+      createdEffectiveCallNumberComponents.prefix,
+    );
+    expect(updatedEffectiveCallNumberComponents.suffix).to.eq(
+      createdEffectiveCallNumberComponents.suffix,
+    );
+    expect(updatedEffectiveCallNumberComponents.typeId).to.eq(
+      createdEffectiveCallNumberComponents.typeId,
+    );
+  },
+  verifyItemPrefixChangedAfterChangedInHoldings: (
+    createdItemData,
+    updatedItemData,
+    updatedPrefix,
+  ) => {
+    const updatedEffectiveCallNumberComponents = {
+      callNumber: updatedItemData.effectiveCallNumberComponents.callNumber,
+      prefix: updatedItemData.effectiveCallNumberComponents.prefix,
+      suffix: updatedItemData.effectiveCallNumberComponents.suffix,
+      typeId: updatedItemData.effectiveCallNumberComponents.typeId,
+    };
+    const createdEffectiveCallNumberComponents = {
+      callNumber: createdItemData.effectiveCallNumberComponents.callNumber,
+      suffix: createdItemData.effectiveCallNumberComponents.suffix,
+      typeId: createdItemData.effectiveCallNumberComponents.typeId,
+    };
+
+    expect(updatedEffectiveCallNumberComponents.callNumber).to.eq(
+      createdEffectiveCallNumberComponents.callNumber,
+    );
+    expect(updatedEffectiveCallNumberComponents.prefix).to.eq(updatedPrefix);
+    expect(updatedEffectiveCallNumberComponents.suffix).to.eq(
+      createdEffectiveCallNumberComponents.suffix,
+    );
+    expect(updatedEffectiveCallNumberComponents.typeId).to.eq(
+      createdEffectiveCallNumberComponents.typeId,
+    );
+  },
+  verifyItemSuffixChangedAfterChangedInHoldings: (
+    createdItemData,
+    updatedItemData,
+    updatedSuffix,
+  ) => {
+    const updatedEffectiveCallNumberComponents = {
+      callNumber: updatedItemData.effectiveCallNumberComponents.callNumber,
+      prefix: updatedItemData.effectiveCallNumberComponents.prefix,
+      suffix: updatedItemData.effectiveCallNumberComponents.suffix,
+      typeId: updatedItemData.effectiveCallNumberComponents.typeId,
+    };
+    const createdEffectiveCallNumberComponents = {
+      callNumber: createdItemData.effectiveCallNumberComponents.callNumber,
+      prefix: createdItemData.effectiveCallNumberComponents.prefix,
+      typeId: createdItemData.effectiveCallNumberComponents.typeId,
+    };
+
+    expect(updatedEffectiveCallNumberComponents.callNumber).to.eq(
+      createdEffectiveCallNumberComponents.callNumber,
+    );
+    expect(updatedEffectiveCallNumberComponents.prefix).to.eq(
+      createdEffectiveCallNumberComponents.prefix,
+    );
+    expect(updatedEffectiveCallNumberComponents.suffix).to.eq(updatedSuffix);
+    expect(updatedEffectiveCallNumberComponents.typeId).to.eq(
+      createdEffectiveCallNumberComponents.typeId,
+    );
   },
 
   checkElectronicAccess: (relationshipValue, uriValue) => {
@@ -276,5 +406,13 @@ export default {
         .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: uriValue }))
         .exists(),
     );
+  },
+
+  verifyLastUpdatedDate(date, userName) {
+    cy.get('button[class^="metaHeaderButton-"]').click();
+    cy.expect([
+      administrativeDataAccordion.find(HTML(including(`Record last updated: ${date}`))).exists(),
+      administrativeDataAccordion.find(HTML(including(`Source: ${userName}`))).exists(),
+    ]);
   },
 };

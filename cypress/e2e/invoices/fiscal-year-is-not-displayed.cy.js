@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Invoices } from '../../support/fragments/invoices';
+import { Permissions } from '../../support/dictionary';
 import { Budgets, FinanceHelper } from '../../support/fragments/finance';
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Users from '../../support/fragments/users/users';
+import { Invoices } from '../../support/fragments/invoices';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 
 describe('Invoices', () => {
@@ -60,6 +60,7 @@ describe('Invoices', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Invoices.getInvoiceViaApi({
       query: `vendorInvoiceNo="${testData.invoice.vendorInvoiceNo}"`,
@@ -73,7 +74,7 @@ describe('Invoices', () => {
 
   it(
     'C387533 "Fiscal year" field is NOT displayed and can NOT be selected by user without "Invoice: Pay invoices in a different fiscal year" permission when creating and editing invoice (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // #1 Click "Actions" button on the second "Invoices" pane -> select "New" option
       const InvoiceEditForm = Invoices.openInvoiceEditForm({ createNew: true });

@@ -1,16 +1,16 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
-import TopMenu from '../../support/fragments/topMenu';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
+import { Permissions } from '../../support/dictionary';
 import Checkout from '../../support/fragments/checkout/checkout';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 describe('Loans: Claim returned', () => {
   const testData = {
@@ -74,6 +74,7 @@ describe('Loans: Claim returned', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UsersOwners.deleteViaApi(testData.owner.id);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
@@ -95,7 +96,7 @@ describe('Loans: Claim returned', () => {
 
   it(
     'C10960 Loans: Resolve claimed returned item (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       // Navigate to loan details for a loan where the item is claim returned
       UsersSearchPane.openUserCard(testData.user.username);

@@ -1,30 +1,28 @@
 import uuid from 'uuid';
-import devTeams from '../../../../support/dictionary/devTeams';
-import testTypes from '../../../../support/dictionary/testTypes';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import permissions from '../../../../support/dictionary/permissions';
+import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../../../support/fragments/checkout/checkout';
+import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
+import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
+import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
+import OverdueFinePolicy from '../../../../support/fragments/circulation/overdue-fine-policy';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import OverdueFinePolicies from '../../../../support/fragments/settings/circulation/fee-fine/overdueFinePolicies';
+import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
+import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
+import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
-import permissions from '../../../../support/dictionary/permissions';
-import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
-import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
-import OverdueFinePolicy from '../../../../support/fragments/circulation/overdue-fine-policy';
-import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
-import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
-import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
-import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
-import UserEdit from '../../../../support/fragments/users/userEdit';
-import Checkout from '../../../../support/fragments/checkout/checkout';
-import Users from '../../../../support/fragments/users/users';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
-import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import Users from '../../../../support/fragments/users/users';
+import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 // TO DO remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => {
@@ -33,8 +31,6 @@ Cypress.on('uncaught:exception', () => {
 
 describe('ui-circulation-settings: overdue fine policies management', () => {
   let userData;
-  let originalCirculationRules;
-  let addedCirculationRule;
   const minutes = 5;
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -148,29 +144,23 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+        LoanPolicy.createViaApi(loanPolicyBody);
+        OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { l: loanPolicyBody.id, i: lostItemFeePolicyBody.id, o: overdueFinePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
     OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    LoanPolicy.createViaApi(loanPolicyBody);
-    OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
     UsersOwners.createViaApi(userOwnerBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.l = loanPolicyBody.id;
-      ruleProps.i = lostItemFeePolicyBody.id;
-      ruleProps.o = overdueFinePolicyBody.id;
-      addedCirculationRule = `t ${testData.loanTypeId}: i ${ruleProps.i} l ${ruleProps.l} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
     cy.createTempUser(
       [
         permissions.checkoutAll.gui,
@@ -190,8 +180,9 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     LoanPolicy.deleteApi(loanPolicyBody.id);
     OverdueFinePolicy.deleteViaApi(overdueFinePolicyBody.id);
@@ -219,7 +210,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it(
     'C5557: Verify that you can create/edit/delete overdue fine policies (vega)',
-    { tags: [devTeams.vega, testTypes.smoke] },
+    { tags: ['vega', 'smoke'] },
     () => {
       cy.loginAsAdmin();
       // TODO add check that name is unique
@@ -249,7 +240,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it(
     'C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)',
-    { tags: [devTeams.spitfire, testTypes.smoke, testTypes.broken] },
+    { tags: ['spitfire', 'smoke', 'broken'] },
     () => {
       cy.login(userData.username, userData.password, {
         path: TopMenu.checkOutPath,

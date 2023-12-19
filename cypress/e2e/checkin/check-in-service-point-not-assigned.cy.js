@@ -1,4 +1,4 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
@@ -12,7 +12,7 @@ import { Locations } from '../../support/fragments/settings/tenant/location-setu
 
 describe('Check In - Actions', () => {
   let userData;
-  let materialTypes;
+  let materialType;
   let testData;
   let checkInResultsData;
   let ITEM_BARCODE;
@@ -23,12 +23,12 @@ describe('Check In - Actions', () => {
 
       cy.getAdminToken().then(() => {
         InventoryInstances.getMaterialTypes({ limit: 1 })
-          .then((materialTypesRes) => {
-            materialTypes = materialTypesRes;
+          .then((materialTypes) => {
+            materialType = materialTypes[0];
 
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
-                properties: materialTypes.map(({ id, name }) => ({ materialType: { id, name } })),
+                itemsProperties: { materialType: { id: materialType.id } },
               }),
               servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation(),
               servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -64,6 +64,7 @@ describe('Check In - Actions', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.servicePointS.id,
@@ -86,7 +87,7 @@ describe('Check In - Actions', () => {
 
   it(
     "C588 Check in: at service point not assigned to item's effective location (vega) (TaaS)",
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
@@ -100,7 +101,7 @@ describe('Check In - Actions', () => {
       // Check In app displays item information
       CheckInPane.checkResultsInTheRow([ITEM_BARCODE]);
       CheckInPane.checkResultsInTheRow([
-        `${testData.folioInstances[0].instanceTitle} (${testData.folioInstances[0].properties.materialType.name})`,
+        `${testData.folioInstances[0].instanceTitle} (${materialType.name})`,
       ]);
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS);
       // Open ellipsis menu for item that has been checked in.
@@ -117,7 +118,7 @@ describe('Check In - Actions', () => {
       // Check In app displays item information
       CheckInPane.checkResultsInTheRow([ITEM_BARCODE]);
       CheckInPane.checkResultsInTheRow([
-        `${testData.folioInstances[0].instanceTitle} (${testData.folioInstances[0].properties.materialType.name})`,
+        `${testData.folioInstances[0].instanceTitle} (${materialType.name})`,
       ]);
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS);
       // Open ellipsis menu for item that has been checked in.

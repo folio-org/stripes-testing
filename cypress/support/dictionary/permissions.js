@@ -97,7 +97,7 @@ export default {
     internal: 'ui-quick-marc.quick-marc-editor.view',
     gui: 'quickMARC: View MARC bibliographic record',
   },
-  uiCanLinkUnlinkAuthorityRecordsToBibRecords: {
+  uiQuickMarcQuickMarcAuthorityLinkUnlink: {
     internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink',
     gui: 'quickMARC: Can Link/unlink authority records to bib records',
   },
@@ -118,10 +118,6 @@ export default {
     internal: 'ui-marc-authorities.authority-record.delete',
     gui: 'MARC Authority: Delete MARC authority record',
   },
-  uiQuickMarcQuickMarcAuthorityLinkUnlink: {
-    internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink',
-    gui: 'quickMARC: Can Link/unlink authority records to bib records',
-  },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: {
@@ -139,6 +135,10 @@ export default {
   uiInventorySingleRecordImport: {
     internal: 'ui-inventory.single-record-import',
     gui: 'Inventory: Import single bibliographic records',
+  },
+  uiInventoryCreateOrderFromInstance: {
+    internal: 'ui-inventory.instance.createOrder',
+    gui: 'Inventory: Create order from instance',
   },
   uiInventoryMarkItemsWithdrawn: {
     internal: 'ui-inventory.items.mark-items-withdrawn',
@@ -213,6 +213,10 @@ export default {
     internal: 'ui-inventory.holdings.delete',
     gui: 'Inventory: View, create, edit, delete holdings',
   },
+  inventoryCRUDHoldingsNoteTypes: {
+    internal: 'ui-inventory.settings.holdings-note-types',
+    gui: 'Settings (Inventory): Create, edit, delete holdings note types',
+  },
   inventoryCRUDItemNoteTypes: {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
@@ -257,6 +261,10 @@ export default {
   dataImportUploadAll: {
     internal: 'data-import.upload.all',
     gui: 'Data Import File Upload - all permissions',
+  },
+  dataImportCanUploadImportAndView: {
+    internal: 'ui-data-import.manage',
+    gui: 'Data import: Can upload files, import, and view logs',
   },
   moduleDataImportEnabled: {
     internal: 'ui-data-import.settings.manage',
@@ -331,6 +339,10 @@ export default {
   uiUserLoansAnonymize: {
     internal: 'ui-users.loans.anonymize',
     gui: 'Users: User loans anonymize',
+  },
+  uiUserLostItemRequiringActualCost: {
+    internal: 'ui-users.lost-items.requiring-actual-cost',
+    gui: 'Users: Can process lost items requiring actual cost',
   },
   uiFeeFinesActions: {
     internal: 'ui-users.feefineactions',
@@ -487,9 +499,21 @@ export default {
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
   // Receiving
+  uiReceivingView: {
+    internal: 'ui-receiving.view',
+    gui: 'Receiving: View',
+  },
   uiReceivingViewEditCreate: {
     internal: 'ui-receiving.create',
     gui: 'Receiving: View, edit, create',
+  },
+  uiReceivingViewEditDelete: {
+    internal: 'ui-receiving.delete',
+    gui: 'Receiving: View, edit, delete',
+  },
+  uiReceivingExportSearchResults: {
+    internal: 'ui-receiving.exportCSV',
+    gui: 'Receiving: Export search results',
   },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
@@ -513,6 +537,10 @@ export default {
   invoiceSettingsAll: {
     internal: 'ui-invoice.settings.all',
     gui: 'Settings (Invoices): Can view and edit settings',
+  },
+  invoiceSettingsBatchGroupViewEdit: {
+    internal: 'ui-invoice.batchVoucher.exportConfigs.credentials.edit',
+    gui: 'Settings (Invoices): Batch group usernames and passwords: view and edit',
   },
   uiInvoicesCancelInvoices: { internal: 'ui-invoice.cancel', gui: 'Invoice: Cancel invoices' },
   uiInvoicesCanViewAndEditInvoicesAndInvoiceLines: {
@@ -797,17 +825,49 @@ export default {
   },
   settingsUsersCRUD: {
     internal: 'ui-users.settings.transfers.all',
-    gui: 'Settings (Users): Can create, edit and remove transfer accounts',
+    gui: 'Settings (Users): Can create, edit and remove transfer accounts ',
   },
   uiSettingsCanChangeLoacalPassword: {
     internal: 'ui-myprofile.settings.change-password',
     gui: 'Settings (My profile): Can change your local password',
   },
+  uiSettingsTenantPlugins: {
+    internal: 'ui-tenant-settings.settings.plugins',
+    gui: 'Settings (tenant): Can maintain preferred plugins',
+  },
+  uiSettingsTenantSSO: {
+    internal: 'ui-tenant-settings.settings.sso',
+    gui: 'Settings (tenant): Can maintain SSO settings',
+  },
+  uiSettingsTenantAddresses: {
+    internal: 'ui-tenant-settings.settings.addresses',
+    gui: 'Settings (tenant): Can manage tenant addresses',
+  },
+  uiSettingsInstanceStatusesCreateEditDelete: {
+    internal: 'ui-inventory.settings.instance-statuses',
+    gui: 'Settings (Inventory): Create, edit, delete instance status types',
+  },
+  uiSettingsStatisticalCodesCreateEditDelete: {
+    internal: 'ui-inventory.settings.statistical-codes',
+    gui: 'Settings (Inventory): Create, edit, delete statistical codes',
+  },
   // Added the below permissions for custom label creation
 
+  uiSettingsEHoldingsViewAccessStatusTypes: {
+    internal: 'ui-eholdings.settings.access-types.view',
+    gui: 'Settings (eholdings): Can view access status types',
+  },
+  uiSettingsEHoldingsViewCustomLabel: {
+    internal: 'ui-eholdings.settings.custom-labels.view',
+    gui: 'Settings (eholdings): Can view custom labels',
+  },
   uiSettingseholdingsViewEditCreateDelete: {
     internal: 'ui-eholdings.settings.all',
     gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels',
+  },
+  uiSettingsEHoldingsViewSettings: {
+    internal: 'ui-eholdings.settings.enabled',
+    gui: 'Settings (eHoldings): View settings',
   },
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',
@@ -827,9 +887,13 @@ export default {
     internal: 'ui-export-manager.jobs.downloadAndResend',
     gui: 'Export manager: Download and re-send files',
   },
+  exportManagerView: {
+    internal: 'ui-export-manager.export-manager.view',
+    gui: 'Export manager: View',
+  },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',
-    gui: 'Transfer exports: Transfer admin',
+    gui: 'Bursar exports: Bursar admin',
   },
   // OAI-PMH
   oaipmhViewLogs: {
@@ -851,5 +915,23 @@ export default {
   settingsLoanPoliciesAll: {
     internal: 'settings.loan-policies.all',
     gui: 'Settings (Circ): Can create, edit and remove loan policies [LEGACY]',
+  },
+
+  // Lists
+  listsAll: {
+    internal: 'module.lists.all',
+    gui: 'Lists (Admin): All permissions',
+  },
+
+  // Licenses
+  licensesSearchAndView: {
+    internal: 'ui-licenses.licenses.view',
+    gui: 'Licenses: Search & view licenses',
+  },
+
+  // Courses
+  coursesAll: {
+    internal: 'ui-courses.all',
+    gui: 'Courses: All permissions',
   },
 };

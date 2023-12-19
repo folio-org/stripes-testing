@@ -1,25 +1,23 @@
-import devTeams from '../../support/dictionary/devTeams';
-import permissions from '../../support/dictionary/permissions';
-import { getTestEntityValue } from '../../support/utils/stringTools';
 import {
   FULFILMENT_PREFERENCES,
+  ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
-  ITEM_STATUS_NAMES,
 } from '../../support/constants';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TestTypes from '../../support/dictionary/testTypes';
+import permissions from '../../support/dictionary/permissions';
 import EditStaffClips from '../../support/fragments/circulation/editStaffClips';
-import Users from '../../support/fragments/users/users';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Requests from '../../support/fragments/requests/requests';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UserEdit from '../../support/fragments/users/userEdit';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Staff slips', () => {
   let userData;
@@ -115,6 +113,7 @@ describe('Staff slips', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(testData.requestsId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
@@ -131,7 +130,7 @@ describe('Staff slips', () => {
 
   it(
     'C375293 Add "requester.patronGroup" as staff slip token in Settings (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editTransit();
@@ -145,7 +144,7 @@ describe('Staff slips', () => {
 
   it(
     'C387442 Add "Departments" as staff slip token in Settings (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editTransit();
@@ -159,7 +158,7 @@ describe('Staff slips', () => {
 
   it(
     'C388508 Verify that token "currentDateTime" is populated in the pick slip (volaris)',
-    { tags: [TestTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editPickslip();

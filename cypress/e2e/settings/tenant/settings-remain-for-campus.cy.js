@@ -1,16 +1,16 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
+import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -82,12 +82,13 @@ describe('Settings: Tenant', () => {
     ]).then((userProperties) => {
       testData.user = userProperties;
       cy.login(testData.user.username, testData.user.password);
-      cy.wait(1000);
+      cy.wait(2000);
       TopMenuNavigation.navigateToApp('Settings');
     });
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     testData.locations.forEach(({ id }) => {
       Locations.deleteViaApi({ id });
     });
@@ -106,7 +107,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C397997 Verify that selected settings remain for "Campuses" (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       TenantPane.goToTenantTab();
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });

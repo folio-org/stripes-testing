@@ -1,7 +1,5 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -87,9 +85,8 @@ describe('Check In - Actions', () => {
           }).then((specialInstanceIds) => {
             itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
             itemsData.itemsWithSeparateInstance[index].holdingId =
-              specialInstanceIds.holdingIds[0].id;
-            itemsData.itemsWithSeparateInstance[index].itemId =
-              specialInstanceIds.holdingIds[0].itemIds;
+              specialInstanceIds.holdings[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.items[0].id;
             itemsData.itemsWithSeparateInstance[index].materialType = testData.materialType;
           });
         });
@@ -138,6 +135,7 @@ describe('Check In - Actions', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePointS.id]);
     ServicePoints.deleteViaApi(testData.servicePointS.id);
     Users.deleteViaApi(userData.userId);
@@ -155,47 +153,43 @@ describe('Check In - Actions', () => {
     );
     cy.deleteLoanType(testData.loanTypeId);
   });
-  it(
-    'C10974 Check In: claimed returned items (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
-    () => {
-      const itemForFoundByLibrary = itemsData.itemsWithSeparateInstance[0];
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.waitLoading();
-      CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
-      ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
-      ClaimedReturned.closeModal();
-      CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
-      ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
-      ClaimedReturned.chooseItemReturnedByLibrary();
-      CheckInActions.openLoanDetails(userData.username);
-      UsersCard.getApi(userData.userId).then((user) => {
-        Loans.getApi(userData.userId).then(([foundByLibraryLoan]) => {
-          cy.getLoanHistory(foundByLibraryLoan.id).then(([loanHistoryFirstAction]) => {
-            LoanDetails.checkAction('Checked in (found by library)');
-            LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
-            LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
-            LoanDetails.checkSource(0, user);
-          });
+  it('C10974 Check In: claimed returned items (vega)', { tags: ['criticalPath', 'vega'] }, () => {
+    const itemForFoundByLibrary = itemsData.itemsWithSeparateInstance[0];
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.waitLoading();
+    CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
+    ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
+    ClaimedReturned.closeModal();
+    CheckInActions.checkInItemGui(itemForFoundByLibrary.barcode);
+    ClaimedReturned.checkModalMessage(itemForFoundByLibrary);
+    ClaimedReturned.chooseItemReturnedByLibrary();
+    CheckInActions.openLoanDetails(userData.username);
+    UsersCard.getApi(userData.userId).then((user) => {
+      Loans.getApi(userData.userId).then(([foundByLibraryLoan]) => {
+        cy.getLoanHistory(foundByLibraryLoan.id).then(([loanHistoryFirstAction]) => {
+          LoanDetails.checkAction('Checked in (found by library)');
+          LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
+          LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
+          LoanDetails.checkSource(0, user);
         });
       });
+    });
 
-      const itemReturnedByPatron = itemsData.itemsWithSeparateInstance[1];
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemGui(itemReturnedByPatron.barcode);
-      ClaimedReturned.checkModalMessage(itemReturnedByPatron);
-      ClaimedReturned.chooseItemReturnedByPatron();
-      CheckInActions.openLoanDetails(userData.username);
-      UsersCard.getApi(userData.userId).then((user) => {
-        Loans.getApi(userData.userId).then(([returnedByPatron]) => {
-          cy.getLoanHistory(returnedByPatron.id).then(([loanHistoryFirstAction]) => {
-            LoanDetails.checkAction('Checked in (returned by patron)');
-            LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
-            LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
-            LoanDetails.checkSource(0, user);
-          });
+    const itemReturnedByPatron = itemsData.itemsWithSeparateInstance[1];
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemGui(itemReturnedByPatron.barcode);
+    ClaimedReturned.checkModalMessage(itemReturnedByPatron);
+    ClaimedReturned.chooseItemReturnedByPatron();
+    CheckInActions.openLoanDetails(userData.username);
+    UsersCard.getApi(userData.userId).then((user) => {
+      Loans.getApi(userData.userId).then(([returnedByPatron]) => {
+        cy.getLoanHistory(returnedByPatron.id).then(([loanHistoryFirstAction]) => {
+          LoanDetails.checkAction('Checked in (returned by patron)');
+          LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
+          LoanDetails.checkStatusInList(0, ITEM_STATUS_NAMES.AVAILABLE);
+          LoanDetails.checkSource(0, user);
         });
       });
-    },
-  );
+    });
+  });
 });

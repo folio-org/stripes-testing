@@ -1,17 +1,17 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import {
   Budgets,
   FiscalYears,
   Funds,
-  Ledgers,
   LedgerRollovers,
+  Ledgers,
 } from '../../support/fragments/finance';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
-import { StringTools, CodeTools, DateTools } from '../../support/utils';
+import { CodeTools, DateTools, StringTools } from '../../support/utils';
 
 describe('Orders', () => {
   const date = new Date();
@@ -134,6 +134,7 @@ describe('Orders', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Orders.deleteOrderViaApi(testData.order.id);
     testData.budgets.forEach((budget) => Budgets.deleteViaApi(budget.id));
@@ -142,7 +143,7 @@ describe('Orders', () => {
 
   it(
     'C407711 Open order having PO line with two fund distributions related to different ledgers and same fiscal year after executing rollover (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click on "PO number" link on "Orders" pane
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -153,11 +154,11 @@ describe('Orders', () => {
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.funds[0].name,
-          encumbrance: '-',
+          currentEncumbrance: '-',
         },
         {
           name: testData.funds[1].name,
-          encumbrance: '-',
+          currentEncumbrance: '-',
         },
       ]);
 
@@ -171,11 +172,11 @@ describe('Orders', () => {
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.funds[0].name,
-          encumbrance: '30.00',
+          currentEncumbrance: '30.00',
         },
         {
           name: testData.funds[1].name,
-          encumbrance: '20.00',
+          currentEncumbrance: '20.00',
         },
       ]);
 
@@ -201,7 +202,7 @@ describe('Orders', () => {
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
 
       // Click the link in "Current encumbrance" column for "Fund B"
-      OrderLineDetails.openEncumbrancePane(1);
+      OrderLineDetails.openEncumbrancePane(testData.funds[1].name);
       TransactionDetails.checkTransactionDetails({
         information: [
           { key: 'Fiscal year', value: testData.fiscalYears[1].code },
