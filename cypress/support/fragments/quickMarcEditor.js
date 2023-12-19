@@ -752,6 +752,7 @@ export default {
   verifyDerivedMarcBibSave() {
     cy.expect(calloutOnDeriveFirst.exists());
   },
+
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
