@@ -48,12 +48,6 @@ describe('bulk-edit', () => {
           query: `"instanceId"="${item.instanceId}"`,
         }).then((holdings) => {
           item.holdingsHRID = holdings[0].hrid;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-          });
-        });
-        cy.getInstanceById(item.instanceId).then((body) => {
-          cy.updateInstance(body);
         });
         cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${item.instanceId}"` }).then(
           (instance) => {
