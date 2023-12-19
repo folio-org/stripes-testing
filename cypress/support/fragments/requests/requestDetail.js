@@ -237,8 +237,16 @@ export default {
   clickBarcodeTitle(itemBarcode) {
     cy.do(
       fulfillmentInProgressAccordion
-        // .find(MultiColumnListCell({ column: 'Item barcode', content: itemBarcode }))
         .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
+        .find(Link(itemBarcode))
+        .click(),
+    );
+  },
+
+  clickRequesterBarcode(itemBarcode) {
+    cy.do(
+      fulfillmentInProgressAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 7 }))
         .find(Link(itemBarcode))
         .click(),
     );

@@ -19,6 +19,9 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
+import UsersCard from '../../support/fragments/users/usersCard';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
@@ -105,10 +108,7 @@ describe('Title Level Request. Request Detail', () => {
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    cy.createTempUser(
-      [permissions.requestsAll.gui],
-      // patronGroup.name
-    ).then((userProperties) => {
+    cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
       userForTLR = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
@@ -118,14 +118,8 @@ describe('Title Level Request. Request Detail', () => {
     });
 
     cy.createTempUser(
-      [
-        permissions.uiRequestsCreate.gui,
-        permissions.uiRequestsView.gui,
-        permissions.uiRequestsEdit.gui,
-        permissions.requestsAll.gui,
-        permissions.uiNotesItemView.gui,
-      ],
-      // patronGroup.name,
+      [permissions.requestsAll.gui, permissions.inventoryAll.gui, permissions.uiUsersView.gui],
+      patronGroup.name,
     ).then((userProperties) => {
       cy.log(JSON.stringify(userProperties));
       userData = userProperties;
@@ -167,10 +161,6 @@ describe('Title Level Request. Request Detail', () => {
     });
   });
 
-  afterEach('Reset filters', () => {
-    Requests.resetAllFilters();
-  });
-
   after('Deleting created entities', () => {
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,
@@ -208,7 +198,17 @@ describe('Title Level Request. Request Detail', () => {
       RequestDetail.openActions();
       RequestDetail.clickReorderQueue();
       RequestDetail.clickBarcodeTitle(testData.itemBarcode);
-      cy.wait(5000);
+      cy.url().should('include', '/inventory/view');
+      ItemRecordView.verifyItemBarcode(testData.itemBarcode);
+
+      cy.go('back');
+      Requests.clickInstanceDescription();
+      InstanceRecordView.verifyInstancePaneExists();
+
+      cy.go('back');
+      RequestDetail.clickRequesterBarcode(userData.barcode);
+      cy.url().should('include', '/users/view');
+      UsersCard.verifyUserInformationPresence();
     },
   );
 });
