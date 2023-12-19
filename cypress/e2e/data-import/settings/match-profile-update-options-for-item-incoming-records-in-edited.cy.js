@@ -68,7 +68,7 @@ describe('data-import', () => {
         // Click on "Item" option as the "Existing records" type
         MatchProfileEdit.clickOnExistingRecordByName('Item');
 
-        // Click on "MARC Authority" option in "Incoming record" column and check the available options
+        // Click on "MARC Bibliographic" option in "Incoming record" column and check the available options
         MatchProfileEdit.verifyIncomingRecordsDropdown(
           'MARC Bibliographic',
           'Static value (submatch only)',
