@@ -19,6 +19,7 @@ import PayInvoiceModal from './modal/payInvoiceModal';
 import CancelInvoiceModal from './modal/cancelInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
+import interactorsTools from '../../utils/interactorsTools';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
@@ -39,6 +40,7 @@ const linksAndDocumentsSection = Section({ id: 'documents' });
 // voucher details
 const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
 const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
+const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
 
 export default {
   expandActionsDropdown() {
@@ -135,6 +137,7 @@ export default {
     title,
     invoiceInformation = [],
     invoiceLines,
+    vendorDetails = [],
     voucherExport = [],
     voucherInformation = [],
   } = {}) {
@@ -144,6 +147,10 @@ export default {
 
     invoiceInformation.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    vendorDetails.forEach(({ key, value }) => {
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     voucherExport.forEach(({ key, value }) => {
@@ -162,6 +169,26 @@ export default {
       );
       this.checkInvoiceLinesTableContent(invoiceLines);
     }
+  },
+  checkFieldsHasCopyIcon(fields = []) {
+    fields.forEach(({ label }) => {
+      cy.expect(
+        invoiceDetailsPane
+          .find(KeyValue(label))
+          .find(Button({ icon: 'clipboard' }))
+          .exists(),
+      );
+    });
+  },
+  copyOrderNumber(vendorInvoiceNo) {
+    cy.do(
+      invoiceDetailsPane
+        .find(KeyValue('Vendor invoice number'))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    interactorsTools.checkCalloutMessage(`Successfully copied "${vendorInvoiceNo}" to clipboard.`);
   },
   approveInvoice({ isApprovePayEnabled = false } = {}) {
     cy.do([
@@ -251,5 +278,9 @@ export default {
         .find(Button({ className: including('invoiceDocumentButton') }))
         .click(),
     );
+  },
+
+  verifyWarningMessage(message) {
+    cy.expect(HTML(including(message)).exists());
   },
 };

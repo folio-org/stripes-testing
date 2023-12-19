@@ -52,6 +52,12 @@ export default {
 
     return AddTransferModal;
   },
+  clickMoveAllocationButton() {
+    cy.do([actionsButton.click(), Button('Move allocation').click()]);
+    AddTransferModal.verifyModalView({ header: 'Move allocation' });
+
+    return AddTransferModal;
+  },
   clickViewTransactionsLink() {
     cy.do(informationSection.find(Link('View transactions')).click());
     Transactions.waitLoading();

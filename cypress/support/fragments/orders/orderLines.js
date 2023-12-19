@@ -97,7 +97,7 @@ const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
 const note = 'Edited by AQA team';
-
+const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
 
 // Edit form
@@ -532,6 +532,44 @@ export default {
     submitOrderLine();
   },
 
+  rolloverPOLineInfoforPhysicalMaterialWithFundInPercents(
+    fund,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
   rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
     fund,
     expClass,
@@ -911,6 +949,14 @@ export default {
     submitOrderLine();
   },
 
+  changeFundInPOLWithoutSaveInPercents(indexOfPreviusFund, fund, value) {
+    cy.do([
+      Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value),
+    ]);
+  },
+
   selectOrderline: (POlinenumber) => {
     cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
   },
@@ -933,6 +979,15 @@ export default {
     ]);
     cy.wait(6000);
     submitOrderLine();
+  },
+
+  addFundToPOLWithoutSave(indexOfPreviusFund, fund, value) {
+    cy.do([
+      addFundDistributionButton.click(),
+      Button({ id: `fundDistribution[${indexOfPreviusFund}].fundId` }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      TextField({ name: `fundDistribution[${indexOfPreviusFund}].value` }).fillIn(value),
+    ]);
   },
 
   addTwoFundsToPOLinPercent(
@@ -1056,7 +1111,7 @@ export default {
       ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      Button({ id: 'currency' }).click(),
+      currencyButton.click(),
       SelectionOption('Euro (EUR)').click(),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
@@ -1089,7 +1144,7 @@ export default {
       ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      Button({ id: 'currency' }).click(),
+      currencyButton.click(),
       SelectionOption('Polish Zloty (PLN)').click(),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
@@ -1649,6 +1704,16 @@ export default {
     cy.do(fundDistributionSection.find(Link(currentEncumbrance)).click());
   },
 
+  openPageCurrentEncumbranceInFund: (fund, linkText) => {
+    cy.get('#FundDistribution')
+      .contains('div[class^="mclCell-"]', fund)
+      .parent()
+      .find('a')
+      .contains(linkText)
+      .invoke('removeAttr', 'target')
+      .click();
+  },
+
   openPageCurrentEncumbrance: (title) => {
     cy.get('#FundDistribution').find('a').contains(title).invoke('removeAttr', 'target')
       .click();
@@ -1776,6 +1841,9 @@ export default {
     cy.expect(KeyValue('Payment status').has({ value: paymentStatus }));
   },
 
+  verifyOrderFieldContent: (orderData) => {
+    cy.expect([KeyValue(orderData.name).has({ value: orderData.value })]);
+  },
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
     cy.expect([
       KeyValue('Title').has({ value: orderData.title }),

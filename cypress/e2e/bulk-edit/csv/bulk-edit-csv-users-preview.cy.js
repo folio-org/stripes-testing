@@ -17,20 +17,19 @@ const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditCsvEdit.gui,
-        permissions.uiUserEdit.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(
-          `cypress/fixtures/${userUUIDsFileName}`,
-          `${user.userId}\r\n${invalidUserUUID}`,
-        );
-      });
+      cy.createTempUser([permissions.bulkEditCsvEdit.gui, permissions.uiUserEdit.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
+          });
+          FileManager.createFile(
+            `cypress/fixtures/${userUUIDsFileName}`,
+            `${user.userId}\r\n${invalidUserUUID}`,
+          );
+        },
+      );
     });
 
     after('delete test data', () => {
@@ -73,10 +72,7 @@ describe('bulk-edit', () => {
         BulkEditActions.clickNext();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns(
-          'First name',
-          newFirstName
-        );
+        BulkEditSearchPane.verifyChangesUnderColumns('First name', newFirstName);
         BulkEditActions.downloadMatchedRecordsAbsent();
         BulkEditActions.startBulkEditAbsent();
 
