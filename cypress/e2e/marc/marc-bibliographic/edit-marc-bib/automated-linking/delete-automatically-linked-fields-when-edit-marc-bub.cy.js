@@ -4,7 +4,7 @@ import JobProfiles from '../../../../../support/fragments/data_import/job_profil
 import Logs from '../../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-// import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
@@ -14,7 +14,11 @@ import InventoryViewSource from '../../../../../support/fragments/inventory/inve
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () => {
   const testData = {
+    tag700: '700',
     createdRecordIDs: [],
+    instanceTitle:
+      'Black Panther (Test: with all eligible for linking fields with and without valid subfield 0)',
+    calloutMessage: 'Field 100, 610, 700, and 800 has been linked to MARC authority record(s).',
   };
 
   const marcFiles = [
@@ -36,53 +40,23 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     100, 110, 111, 130, 240, 600, 610, 611, 630, 650, 651, 655, 700, 710, 711, 730, 800, 810, 811,
     830,
   ];
-
-  const fields = [
-    {
-      tag: '100',
-      rowIndex: 33,
-      status: 'linked',
-    },
-    {
-      tag: '610',
-      rowIndex: 56,
-      status: 'linked',
-    },
-    {
-      tag: '700',
-      rowIndex: 78,
-      status: 'linked',
-    },
-    {
-      tag: '700',
-      rowIndex: 79,
-    },
-    {
-      tag: '700',
-      rowIndex: 80,
-      status: 'linked',
-    },
-    {
-      tag: '700',
-      rowIndex: 81,
-    },
-    {
-      tag: '700',
-      rowIndex: 82,
-      status: 'linked',
-    },
-    {
-      tag: '700',
-      rowIndex: 83,
-      status: 'linked',
-    },
-    {
-      tag: '800',
-      rowIndex: 84,
-    },
-  ];
+  const linkedFieldIndexes = [33, 56, 78, 79, 80, 81, 82, 83, 84];
+  const linkedFieldIndexesAfterDeleting = [33, 56, 78, 79, 80, 81];
 
   before('Creating user and data', () => {
+    // make sure there are no duplicate authority records in the system
+    cy.getAdminToken().then(() => {
+      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C388518"' }).then(
+        (records) => {
+          records.forEach((record) => {
+            if (record.authRefType === 'Authorized') {
+              MarcAuthority.deleteViaAPI(record.id);
+            }
+          });
+        },
+      );
+    });
+
     cy.createTempUser([
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.inventoryAll.gui,
@@ -133,39 +107,29 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
-      // InventoryInstances.searchByTitle('0d2a7402-3bf7-4c4b-8902-a39a8ece9090');
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyEnabledLinkHeadingsButton();
       QuickMarcEditor.clickLinkHeadingsButton();
-      // QuickMarcEditor.checkCallout(
-      //   'Field 100, 610, 700 and 800 has been linked to MARC authority record(s).',
-      // );
-      fields.forEach((field) => {
-        QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(field.rowIndex);
+      QuickMarcEditor.checkCallout(testData.calloutMessage);
+      linkedFieldIndexes.forEach((index) => {
+        QuickMarcEditor.verifyUnlinkAndViewAuthorityButtons(index);
       });
       QuickMarcEditor.verifyDisabledLinkHeadingsButton();
-      // [fields[3], fields[5], fields[8]].forEach(field => {
-      //   QuickMarcEditor.deleteField(field.rowIndex);
-      //   QuickMarcEditor.afterDeleteNotification(field.tag);
-      // });
-      // QuickMarcEditor.deleteField(79);
-      // QuickMarcEditor.afterDeleteNotification('700');
-      // QuickMarcEditor.deleteField(81);
-      // QuickMarcEditor.afterDeleteNotification('700');
+      QuickMarcEditor.deleteField(79);
+      QuickMarcEditor.afterDeleteNotification(testData.tag700);
+      QuickMarcEditor.deleteField(81);
+      QuickMarcEditor.afterDeleteNotification(testData.tag700);
       QuickMarcEditor.deleteField(84);
-      QuickMarcEditor.afterDeleteNotification('800');
       QuickMarcEditor.clickSaveAndKeepEditingButton();
       QuickMarcEditor.confirmDeletingFields();
+      // need to wait until fields will be deleted
+      cy.wait(1500);
       QuickMarcEditor.closeEditorPane();
-      InventoryInstance.checkInstanceTitle(
-        'Black Panther (Test: with all eligible for linking fields with and without valid subfield 0)',
-      );
+      InventoryInstance.checkInstanceTitle(testData.instanceTitle);
       InventoryInstance.viewSource();
-      fields.forEach((field) => {
-        if (field.status === 'linked') {
-          InventoryViewSource.verifyLinkedToAuthorityIcon(field.rowIndex, true);
-        }
+      linkedFieldIndexesAfterDeleting.forEach((index) => {
+        InventoryViewSource.verifyLinkedToAuthorityIcon(index, true);
       });
     },
   );

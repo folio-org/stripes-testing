@@ -114,7 +114,7 @@ export default {
     cy.okapiRequest({
       method: 'DELETE',
       isDefaultSearchParamsRequired: false,
-      path: `records-editor/records/${internalAuthorityId}`,
+      path: `authority-storage/authorities/${internalAuthorityId}`,
     });
   },
   addNewField: (rowIndex, tag, content, indicator0 = '\\', indicator1 = '\\') => {
