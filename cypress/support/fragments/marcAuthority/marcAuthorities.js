@@ -283,7 +283,7 @@ export default {
     cy.do(searchButton.click());
     cy.expect(
       MultiColumnListRow({ index: 0 })
-        .find(Button({ text: including('Beethoven, Ludwig van (no 010)') }))
+        .find(Button({ text: including(value) }))
         .exists(),
     );
     cy.expect(marcViewSection.exists());
