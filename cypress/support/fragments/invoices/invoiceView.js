@@ -34,15 +34,13 @@ const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
-// vendor details section
-const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
-
 // Links & documents section
 const linksAndDocumentsSection = Section({ id: 'documents' });
 
 // voucher details
 const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
 const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
+const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
 
 export default {
   expandActionsDropdown() {
@@ -280,5 +278,9 @@ export default {
         .find(Button({ className: including('invoiceDocumentButton') }))
         .click(),
     );
+  },
+
+  verifyWarningMessage(message) {
+    cy.expect(HTML(including(message)).exists());
   },
 };

@@ -994,15 +994,15 @@ export default {
     cy.expect(Accordion(accordion).find(TextField(fieldName)).has({ value: valueToVerify }));
   },
 
-  verifyClearSelectedFiltersButtonExists(accordion) {
-    cy.expect(
-      Accordion(accordion)
-        .find(
-          Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }),
-        )
-        .exists(),
-    );
-  },
+  // verifyClearSelectedFiltersButton(accordion, verification = 'exists') {
+  //   if (!['exists', 'absent'].includes(verification)) {
+  //     throw new Error(`${verification} is not supported`);
+  //   }
+  //   cy.expect(
+  //     Accordion(accordion)
+  //       .find(Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }))[verification]()
+  //   );
+  // },
 
   verifyClearSelectedDateButtonExists(accordion, textField) {
     cy.expect(
