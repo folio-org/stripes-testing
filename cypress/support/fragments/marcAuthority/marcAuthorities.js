@@ -1055,6 +1055,14 @@ export default {
     }
   },
 
+  checkSearchInputInFocus() {
+    cy.expect(TextArea({ id: 'textarea-authorities-search' }).has({ focused: true }));
+  },
+
+  checkResetAllButtonDisabled(isDisabled = true) {
+    cy.expect(resetButton.is({ disabled: isDisabled }));
+  },
+
   verifyAllAuthorizedAreBold() {
     const actualValues = [];
 
