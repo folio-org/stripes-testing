@@ -16,6 +16,9 @@ import {
   DropdownMenu,
   Callout,
   Pane,
+  IconButton,
+  Popover,
+  Label,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -1102,5 +1105,14 @@ export default {
       TextField('Material supplier').has({ value: `"${profile.materialSupplier}"` }),
       TextField('Access provider').has({ value: `"${profile.accessProvider}"` }),
     ]);
+  },
+
+  verifyAcquisitionsUnitsInfoMessage: (message) => {
+    cy.do(
+      Label('Acquisitions units')
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
   },
 };
