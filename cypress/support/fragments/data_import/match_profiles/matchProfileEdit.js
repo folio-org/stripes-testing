@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { including } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   Form,
@@ -7,6 +7,8 @@ import {
   TextField,
   SelectionList,
   SelectionOption,
+  Dropdown,
+  DropdownMenu,
 } from '../../../../../interactors';
 
 const selectActionProfile = Select({ name: 'profile.action' });
@@ -29,5 +31,14 @@ export default {
   changesNotSaved: () => {
     cy.expect(TextField({ name: 'profile.name' }).exists());
     cy.expect(selectActionProfile.exists());
+  },
+  verifyIncomingRecordsDropdown: (...names) => {
+    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
+    names.forEach((name) => {
+      cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
+    });
+  },
+  verifyIncomingRecordsItemDoesNotExist(name) {
+    cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).absent()]);
   },
 };
