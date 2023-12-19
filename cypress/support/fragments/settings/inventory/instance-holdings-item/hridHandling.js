@@ -69,6 +69,16 @@ export default {
     cy.expect(Callout({ textContent: calloutMessages }).exists());
   },
 
+  uncheckRemoveLeadingZeroesIfCheckedAndSave() {
+    if (!removeLeadingZeroesCheckbox.checked) {
+      cy.do(removeLeadingZeroesCheckbox.uncheckIfSelected());
+      this.clickSaveAndCloseButton();
+      cy.do(confirmEditHridModal.exists());
+      this.clickUpdateButtonInConfirmEditHridModal();
+      cy.expect(Callout({ textContent: calloutMessages }).exists());
+    }
+  },
+
   verifyValueInRecordDetailsSection(value) {
     cy.expect(
       MetaSection().has({

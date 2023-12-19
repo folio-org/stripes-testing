@@ -30,7 +30,10 @@ describe('Settings', () => {
       HridHandling.recordLastUpdatedAccourdionLabelValueCorrect();
       HridHandling.clickRecordLastUpdatedAccordion();
       HridHandling.verifyValueInRecordDetailsSection('Unknown user');
+      // wait, because next steps can be failed without it
       cy.wait(2000);
+      // uncheck first, since this checkbox can be checked by default
+      HridHandling.uncheckRemoveLeadingZeroesIfCheckedAndSave();
       HridHandling.checkRemoveLeadingZeroesAndSave();
       let date = DateTools.getFormattedDateWithTime().replace(',', '');
       HridHandling.verifyValueInRecordDetailsSection(testData.user.username);
