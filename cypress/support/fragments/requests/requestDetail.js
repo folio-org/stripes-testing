@@ -24,7 +24,6 @@ const staffNotesInfoSection = Section({ id: 'staff-notes' });
 const actionsButton = requestDetailsSection.find(Button('Actions'));
 const moveRequestButton = Button('Move request');
 const duplicateRequestButton = Button('Duplicate');
-const reorderQueueButton = Button('Reorder queue');
 const fulfillmentInProgressAccordion = Accordion({
   id: 'fulfillment-in-progress',
 });
