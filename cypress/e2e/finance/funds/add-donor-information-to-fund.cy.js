@@ -149,4 +149,55 @@ describe('Finance', () => {
       },
     );
   });
+
+  describe('Funds', () => {
+    testData.fund = { ...Funds.getDefaultFund(), ledgerId: ledger.id };
+
+    before('Create test Fund', () => {
+      cy.getAdminToken().then(() => {
+        Funds.createViaApi(testData.fund);
+      });
+
+      cy.createTempUser([Permissions.uiFinanceViewEditCreateFundAndBudget.gui]).then(
+        (userProperties) => {
+          testData.userWoPermissions = userProperties;
+
+          cy.login(testData.userWoPermissions.username, testData.userWoPermissions.password, {
+            path: TopMenu.fundPath,
+            waiter: Funds.waitLoading,
+          });
+        },
+      );
+    });
+
+    after('Delete test Fund', () => {
+      cy.getAdminToken().then(() => {
+        Funds.deleteFundViaApi(testData.fund.id);
+        Users.deleteViaApi(testData.userWoPermissions.userId);
+      });
+    });
+
+    it(
+      'C422194 Adding donor information to existing fund with permission restrictions (thunderjet) (TaaS)',
+      { tags: ['criticalPath', 'thunderjet'] },
+      () => {
+        // Open Fund from Preconditions
+        Funds.searchByName(testData.fund.name);
+        const FundDetails = Funds.selectFund(testData.fund.name);
+
+        // Click on "Actions" button, Select "Edit" option
+        const FundEditForm = FundDetails.openFundEditForm();
+
+        // Click on "Add donor" button, Check the checkbox next to a donor organization, Click "Save" button
+        FundEditForm.fillDonorInfoSectionFields({ donorName: testData.organization.name });
+        FundEditForm.checkDonorInformationSectionContent({
+          donors: [{ name: testData.organization.name, code: testData.organization.code }],
+          hasViewPermissions: false,
+        });
+
+        // Click on "Save & close" button on "Create fund" page
+        FundEditForm.clickSaveAndCloseButton();
+      },
+    );
+  });
 });
