@@ -11,8 +11,10 @@ import {
   Link,
   MultiColumnListCell,
 } from '../../../../../interactors';
+import ItemRecordEdit from './itemRecordEdit';
 import dateTools from '../../../utils/dateTools';
 
+const actionsButton = Button('Actions');
 const loanAccordion = Accordion('Loan and availability');
 const administrativeDataAccordion = Accordion('Administrative data');
 const acquisitionAccordion = Accordion('Acquisition');
@@ -111,13 +113,19 @@ export default {
   addPieceToItem: (numberOfPieces) => {
     cy.do([TextField({ name: 'numberOfPieces' }).fillIn(numberOfPieces), saveAndCloseBtn.click()]);
   },
+  openItemEditForm(itemTitle) {
+    cy.do([actionsButton.click(), Button('Edit').click()]);
+    ItemRecordEdit.waitLoading(itemTitle);
+
+    return ItemRecordEdit;
+  },
 
   duplicateItem() {
-    cy.do([Button('Actions').click(), Button('Duplicate').click()]);
+    cy.do([actionsButton.click(), Button('Duplicate').click()]);
   },
 
   createNewRequest() {
-    cy.do([Button('Actions').click(), Button('New request').click()]);
+    cy.do([actionsButton.click(), Button('New request').click()]);
   },
 
   openRequest() {
@@ -180,7 +188,11 @@ export default {
       cy.expect([KeyValue(itemNote.type).has({ value: itemNote.note })]);
     });
   },
-
+  checkFieldsConditions({ fields, section } = {}) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(section.find(KeyValue(label)).has(conditions));
+    });
+  },
   checkCheckInNote: (note, staffValue = 'Yes') => {
     cy.expect(loanAccordion.find(KeyValue('Check in note')).has({ value: note }));
     cy.expect(HTML(staffValue).exists());
@@ -212,7 +224,14 @@ export default {
       Callout({ textContent: including('The item - HRID  has been successfully saved.') }).exists(),
     );
   },
-
+  checkItemRecordDetails({ administrativeData = [], itemData = [], acquisitionData = [] } = {}) {
+    this.checkFieldsConditions({
+      fields: administrativeData,
+      section: administrativeDataAccordion,
+    });
+    this.checkFieldsConditions({ fields: itemData, section: itemDataAccordion });
+    this.checkFieldsConditions({ fields: acquisitionData, section: acquisitionAccordion });
+  },
   checkItemDetails(location, barcode, status) {
     this.verifyEffectiveLocation(location);
     this.checkBarcode(barcode);

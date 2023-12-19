@@ -15,9 +15,6 @@ export default HTML.extend('option')
     index: (el) => [...el.parentElement.children].indexOf(el),
   });
 
-export const OptionGroup = HTML.extend('option group')
-  .selector('optgroup')
-  .locator(label)
-  .filters({
-    text
-  });
+export const OptionGroup = HTML.extend('option group').selector('optgroup').locator(label).filters({
+  text,
+});
