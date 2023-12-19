@@ -4,8 +4,6 @@ export default {
   spitfire: 'spitfire',
   thunderjet: 'thunderjet',
   folijet: 'folijet',
-  prokopovych: 'prokopovych',
-  bama: 'bama'
   volaris: 'volaris',
   ideaLabsTests: 'ideaLabsTests',
   erm: 'erm',
