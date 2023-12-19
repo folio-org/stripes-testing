@@ -1,3 +1,4 @@
+import { matching } from '@interactors/html';
 import {
   QuickMarcEditor,
   QuickMarcEditorRow,
@@ -97,6 +98,10 @@ const calloutMultiple010MarcTags = Callout('Record cannot be saved with more tha
 const calloutMultiple010Subfields = Callout('010 can only have one $a.');
 const calloutInvalidLDRValue = Callout(
   including('Record cannot be saved. Please enter a valid Leader'),
+);
+
+const calloutThreeCharacterMarcTag = Callout(
+  'Record cannot be saved. A MARC tag must contain three characters.',
 );
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
@@ -252,8 +257,8 @@ const tag008DefaultValues = [
   { interactor: TextField('Indx'), defaultValue: '\\' },
   { interactor: TextField('Fest'), defaultValue: '\\' },
   { interactor: TextField('DtSt'), defaultValue: '\\' },
-  { interactor: TextField('Start date'), defaultValue: '\\\\\\\\' },
-  { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
+  { interactor: TextField('Date 1'), defaultValue: '\\\\\\\\' },
+  { interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
   { interactor: TextField('Ills', { name: including('Ills[0]') }), defaultValue: '\\' },
   { interactor: TextField('Ills', { name: including('Ills[1]') }), defaultValue: '\\' },
   { interactor: TextField('Ills', { name: including('Ills[2]') }), defaultValue: '\\' },
@@ -445,6 +450,7 @@ export default {
   },
 
   clickSaveAndCloseThenCheck(records) {
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
     cy.expect([
       confirmationModal.exists(),
@@ -671,8 +677,20 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
   },
 
-  verifySaveAndCloseButtonEnabled() {
-    cy.expect(saveAndCloseButton.is({ disabled: false }));
+  verifySaveAndCloseButtonEnabled(isEnabled = true) {
+    cy.expect(saveAndCloseButton.is({ disabled: !isEnabled }));
+  },
+
+  verifySaveAndCloseButtonDisabled() {
+    cy.expect(saveAndCloseButton.is({ disabled: true }));
+  },
+
+  verifySaveAndKeepEditingButtonEnabled() {
+    cy.expect(saveAndKeepEditingBtn.is({ disabled: false }));
+  },
+
+  verifySaveAndKeepEditingButtonDisabled() {
+    cy.expect(saveAndKeepEditingBtn.is({ disabled: true }));
   },
 
   deleteFieldWithEnter(rowNumber) {
@@ -837,6 +855,52 @@ export default {
     ]);
   },
 
+  verifyRowLinked(rowIndex, isLinked = true) {
+    if (isLinked) {
+      cy.expect([
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].content` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
+        QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
+        QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).absent(),
+      ]);
+    } else {
+      cy.expect([
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].content` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
+        QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).absent(),
+        QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
+      ]);
+    }
+  },
+
   verifyTagFieldAfterLinking(
     rowIndex,
     tag,
@@ -939,6 +1003,14 @@ export default {
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ name: `records[${rowIndex}].content` }))
         .has({ value: including(subfieldI) }),
+    ]);
+  },
+
+  updateLinkedFifthBox(rowIndex, updatedValue) {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` }))
+        .fillIn(`${updatedValue}`),
     ]);
   },
 
@@ -1634,10 +1706,20 @@ export default {
     cy.expect(Callout(`Record cannot be saved with more than one ${tagNumber} field`).exists());
   },
 
+  verifyRecordCanNotBeSavedCalloutLDR() {
+    cy.expect(
+      Callout(
+        'Record cannot be saved. The Leader must contain 24 characters, including null spaces.',
+      ).exists(),
+    );
+  },
+
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
   },
-
+  verifyMarcTagThreeCharacterCallout() {
+    cy.expect(calloutThreeCharacterMarcTag.exists());
+  },
   verifyAndDismissMultiple010TagCallout() {
     cy.expect(calloutMultiple010MarcTags.exists());
     cy.do(calloutMultiple010MarcTags.dismiss());
@@ -1693,11 +1775,19 @@ export default {
   },
 
   checkUserNameInHeader(firstName, lastName) {
-    cy.expect(
-      PaneHeader()
-        .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
-        .exists(),
-    );
+    if (!firstName) {
+      cy.expect(
+        PaneHeader()
+          .find(HTML(matching(new RegExp(`Source: ${lastName}$`))))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        PaneHeader()
+          .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
+          .exists(),
+      );
+    }
   },
 
   updateIndicatorValue(tag, newValue, indicatorIndex = 0) {
@@ -1768,6 +1858,19 @@ export default {
   saveAndKeepEditingUpdatedLinkedBibField() {
     cy.do(saveAndKeepEditingBtn.click());
     cy.expect([updateLinkedBibFieldsModal.exists(), saveButton.exists()]);
+  },
+
+  verifyUpdateLinkedBibsKeepEditingModal(linkedRecordsNumber) {
+    cy.expect(updateLinkedBibFieldsModal.exists());
+    cy.expect(
+      updateLinkedBibFieldsModal.has({
+        content: including(
+          `${linkedRecordsNumber} bibliographic record is linked to this authority record and will be updated by clicking the Save button.`,
+        ),
+      }),
+    );
+    cy.expect(saveButton.exists());
+    cy.expect(keepEditingButton.exists());
   },
 
   confirmUpdateLinkedBibsKeepEditing(linkedRecordsNumber) {

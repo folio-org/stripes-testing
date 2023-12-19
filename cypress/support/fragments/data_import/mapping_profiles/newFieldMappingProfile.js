@@ -1020,7 +1020,7 @@ export default {
       });
   },
 
-  createMappingProfileViaApiMarc: (name, incomRecordType, folioRecordType) => {
+  createMappingProfileViaApiMarc: ({ name }) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -1028,12 +1028,30 @@ export default {
         body: {
           profile: {
             name,
-            incomRecordType,
-            existingRecordType: folioRecordType,
+            incomingRecordType: 'MARC_AUTHORITY',
+            existingRecordType: 'MARC_AUTHORITY',
+            description: '',
             mappingDetails: {
-              marcMappingOption: 'UPDATE',
               name: 'marcAuthority',
               recordType: 'MARC_AUTHORITY',
+              marcMappingOption: 'UPDATE',
+              mappingFields: [
+                {
+                  name: 'discoverySuppress',
+                  enabled: true,
+                  path: 'marcAuthority.discoverySuppress',
+                  value: null,
+                  booleanFieldAction: 'IGNORE',
+                  subfields: [],
+                },
+                {
+                  name: 'hrid',
+                  enabled: true,
+                  path: 'marcAuthority.hrid',
+                  value: '',
+                  subfields: [],
+                },
+              ],
             },
           },
         },
