@@ -122,7 +122,7 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyChangesInAreYouSureForm('Electronic bookplate note', [notes.electronicBookplate]);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,,`
+          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,`
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -135,7 +135,7 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,,`
+          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,`
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
