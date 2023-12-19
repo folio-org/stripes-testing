@@ -21,6 +21,7 @@ import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   RECORD_STATUSES,
+  EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
@@ -72,6 +73,7 @@ describe('data-import', () => {
         in2: 'f',
         subfield: 's',
       },
+      recordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -116,23 +118,13 @@ describe('data-import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
-      // make sure there are no duplicate authority records in the system
-      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374167"' }).then(
-        (records) => {
-          records.forEach((record) => {
-            if (record.authRefType === 'Authorized') {
-              MarcAuthority.deleteViaAPI(record.id);
-            }
-          });
-        },
-      );
       cy.loginAsAdmin()
         .then(() => {
           // create Match profile
           NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
 
           // create Field mapping profile
-          NewFieldMappingProfile.createMappingProfileViaApiMarc(mappingProfile);
+          NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
 
           // create Action profile and link it to Field mapping profile
           cy.visit(SettingsMenu.actionProfilePath);
@@ -206,10 +198,6 @@ describe('data-import', () => {
     });
 
     after('Delete test data', () => {
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
-      FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
       cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -219,6 +207,10 @@ describe('data-import', () => {
       InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
       InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[1]);
       MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2]);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.csvFile}`);
     });
 
     it(
@@ -266,7 +258,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.marcAuthorities);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
-        MarcAuthorities.verifyNumberOfTitles(6, '');
+        MarcAuthorities.verifyNumberOfTitles(5, '');
         MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
         MarcAuthority.contains(testData.tag110);
