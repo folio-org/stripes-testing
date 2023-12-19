@@ -41,7 +41,7 @@ describe('data-import', () => {
       exportedMarcFile: `exportedMarcFile${getRandomPostfix()}.mrc`,
       marcFileForModify: 'marcBibFileForC374167_1.mrc',
       modifiedMarcFile: `C374167 editedMarcFile${getRandomPostfix()}.mrc`,
-      uploadModifiedMarcFile: `testMarcFile${getRandomPostfix()}.mrc`,
+      uploadModifiedMarcFile: `C374167 testMarcFile${getRandomPostfix()}.mrc`,
       updated700Field: [
         65,
         '700',
@@ -253,6 +253,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
+        cy.wait(10000);
         Logs.waitFileIsImported(testData.uploadModifiedMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.uploadModifiedMarcFile);
@@ -265,7 +266,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.marcAuthorities);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
-        MarcAuthorities.verifyNumberOfTitles(5, '');
+        MarcAuthorities.verifyNumberOfTitles(6, '');
         MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
         MarcAuthority.contains(testData.tag110);
