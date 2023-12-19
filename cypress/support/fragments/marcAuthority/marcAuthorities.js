@@ -1056,7 +1056,7 @@ export default {
   },
 
   checkSearchInputInFocus() {
-    cy.focused().should('have.id', 'textarea-authorities-search');
+    cy.expect(TextArea({ id: 'textarea-authorities-search' }).has({ focused: true }));
   },
 
   checkResetAllButtonDisabled(isDisabled = true) {
