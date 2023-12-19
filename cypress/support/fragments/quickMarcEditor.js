@@ -426,6 +426,17 @@ export default {
     cy.expect(Callout(including(calloutMsg)).exists());
   },
 
+  verifyAreYouSureModal(content) {
+    cy.expect(
+      updateLinkedBibFieldsModal.has({
+        content: including('Are you sure?'),
+      }),
+      updateLinkedBibFieldsModal.has({
+        content: including(content),
+      }),
+    );
+  },
+
   restoreDeletedFields: () => {
     cy.do(deleteFieldsModal.find(cancelButtonInDeleteFieldsModal).click());
   },
