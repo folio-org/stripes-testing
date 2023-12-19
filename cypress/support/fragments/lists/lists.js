@@ -16,11 +16,15 @@ import {
 const closeModal = Modal();
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
+const cancelRefresh = Button('Cancel refresh');
+const buildQueryButton = Button('Build query');
 const closeWithoutSavingButton = Button('Close without saving');
 // const keepEditingButton = Button('Keep editing');
 const keepEditingButton = closeModal.find(Button('Keep editing'));
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
+const editList = Button('Edit list');
+const exportList = Button('Export list');
 
 export default {
   waitLoading: () => {
@@ -36,10 +40,31 @@ export default {
     cy.wait(5000);
   },
 
+  cancelRefresh() {
+    cy.do(cancelRefresh.click());
+    cy.wait(5000);
+  },
+
   saveList() {
     cy.do(saveButton.click());
     cy.wait(5000);
   },
+
+  buildQuery() {
+    cy.do(buildQueryButton.click());
+    cy.wait(5000);
+  },
+
+  editList() {
+    cy.do(editList.click());
+    cy.wait(5000);
+  },
+
+  exportList() {
+    cy.do(exportList.click());
+    cy.wait(5000);
+  },
+
   cancelList() {
     cy.do(cancelButton.click());
     cy.wait(5000);
