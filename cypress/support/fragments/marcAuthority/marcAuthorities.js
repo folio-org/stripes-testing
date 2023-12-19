@@ -1045,4 +1045,12 @@ export default {
       marcViewSection.absent();
     }
   },
+
+  checkSearchInputInFocus() {
+    cy.focused().should('have.id', 'textarea-authorities-search');
+  },
+
+  checkResetAllButtonDisabled(isDisabled = true) {
+    cy.expect(resetButton.is({ disabled: isDisabled }));
+  },
 };
