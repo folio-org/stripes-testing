@@ -8,13 +8,16 @@ import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marc
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
-// import Users from '../../../../../support/fragments/users/users';
+import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
 
 describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () => {
   const testData = {
     tag100: '100',
+    tag245: '245',
+    tag245content:
+      "$a Black Panther /Updated $c writer, Ta-Nehisi Coates ; artist, Brian Stelfreeze ; pencils/layouts, Chris Sprouse ; color artist, Laura Martin ; letterer, VC's Joe Sabino.",
     createdRecordIDs: [],
     bib100AfterLinkingToAuth100: [
       33,
@@ -115,14 +118,14 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
     });
   });
 
-  // after('Deleting created user and records', () => {
-  //   cy.getAdminToken();
-  //   Users.deleteViaApi(testData.user.userId);
-  //   InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
-  //   testData.createdRecordIDs.forEach((id, index) => {
-  //     if (index) MarcAuthority.deleteViaAPI(id);
-  //   });
-  // });
+  after('Deleting created user and records', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(testData.user.userId);
+    InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+    testData.createdRecordIDs.forEach((id, index) => {
+      if (index) MarcAuthority.deleteViaAPI(id);
+    });
+  });
 
   it(
     'C366577 Derive | Restore deleted and saved linked field of "MARC Bib" record in deriving window (spitfire) (TaaS)',
@@ -131,7 +134,6 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
       InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBibRecord();
-      // QuickMarcEditor.checkButtonSaveAndCloseEnable();
       QuickMarcEditor.verifyTagFieldAfterLinking(...testData.bib100AfterLinkingToAuth100);
       QuickMarcEditor.deleteField(33);
       QuickMarcEditor.afterDeleteNotification(testData.tag100);
@@ -144,8 +146,10 @@ describe('MARC -> MARC Bibliographic -> derive MARC bib -> Manual linking', () =
       QuickMarcEditor.clickRestoreDeletedField();
       QuickMarcEditor.checkDeleteModalClosed();
       QuickMarcEditor.verifyTagValue(33, testData.tag100);
+      QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245content);
+      QuickMarcEditor.checkButtonSaveAndCloseEnable();
       QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkAfterSaveAndClose();
+      QuickMarcEditor.checkCallout('Record created.');
       InstanceRecordView.verifyInstancePaneExists();
       InventoryInstance.verifyContributor(
         0,
