@@ -573,6 +573,11 @@ export default {
     cy.do(cancelEditConfirmBtn.click());
   },
 
+  closeWithoutSavingInEditConformation() {
+    cy.expect(cancelEditConformModel.exists());
+    cy.do(closeWithoutSavingBtn.click());
+  },
+
   deleteConfirmationPresented() {
     cy.expect(confirmationModal.exists());
   },
