@@ -558,6 +558,12 @@ export default {
       DropdownMenu({ visible: true }).find(HTML('MARC Bibliographic')).exists(),
       DropdownMenu({ visible: true }).find(HTML('Static value (submatch only)')).exists(),
     ]);
+    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
+  },
+  verifyAbsenceInIncomingRecordsDropdown: (option) => {
+    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
+    cy.expect(DropdownMenu({ visible: true }).find(HTML(option)).absent());
+    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
   },
   verifyNewMatchProfileFormIsOpened: () => {
     cy.expect(Pane('New match profile').exists());
