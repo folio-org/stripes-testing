@@ -329,6 +329,15 @@ export default {
     );
   },
 
+  openAuthority: (itemStatus, rowNumber = 0) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 6 }))
+        .find(Link(itemStatus))
+        .click(),
+    );
+  },
+
   openJsonScreen: (title) => {
     cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target')
       .click();
