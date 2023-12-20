@@ -24,6 +24,7 @@ const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
 const matchCriterionSelect = Select('Match criterion');
 const nameTextField = TextField('Name*');
+const closeButton = Button('Close');
 
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
@@ -445,17 +446,22 @@ export default {
       });
   },
 
-  createMatchProfileViaApiMarc: ({ profileName, incomingRecordFields, existingRecordFields }) => {
+  createMatchProfileViaApiMarc: ({
+    profileName,
+    incomingRecordFields,
+    existingRecordFields,
+    recordType,
+  }) => {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'data-import-profiles/matchProfiles',
         body: {
           profile: {
-            incomingRecordType: 'MARC_AUTHORITY',
+            incomingRecordType: recordType,
             matchDetails: [
               {
-                incomingRecordType: 'MARC_AUTHORITY',
+                incomingRecordType: recordType,
                 incomingMatchExpression: {
                   fields: [
                     {
@@ -478,7 +484,7 @@ export default {
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
                 },
-                existingRecordType: 'MARC_AUTHORITY',
+                existingRecordType: recordType,
                 existingMatchExpression: {
                   fields: [
                     {
@@ -505,7 +511,7 @@ export default {
               },
             ],
             name: profileName,
-            existingRecordType: 'MARC_AUTHORITY',
+            existingRecordType: recordType,
           },
           addedRelations: [],
           deletedRelations: [],
@@ -575,4 +581,5 @@ export default {
       }),
     ]);
   },
+  clickClose: () => cy.do(closeButton.click()),
 };

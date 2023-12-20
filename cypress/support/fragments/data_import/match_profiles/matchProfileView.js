@@ -5,6 +5,7 @@ import { Button, Pane, Accordion } from '../../../../../interactors';
 
 const viewPane = Pane({ id: 'view-match-profile-pane' });
 const actionsButton = Button('Actions');
+const accordionProfileDetails = Accordion({ id: 'view-match-profile-details' });
 
 export default {
   edit: () => {
@@ -117,5 +118,9 @@ export default {
     cy.contains('Existing Holdings record field')
       .parent()
       .should('include.text', existingRecordOption);
+  },
+
+  verifyExistingDetails: (recordItem) => {
+    cy.expect(accordionProfileDetails.find(Button({ dataId: recordItem })).exists());
   },
 };
