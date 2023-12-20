@@ -44,6 +44,12 @@ describe('plug-in MARC authority | Browse', () => {
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numberOfRecords: 3,
       },
+      {
+        marc: 'marcAuthC359184_3.mrc',
+        fileName: `testMarcFileAuthC359184_2.${randomFourDigitNumber()}.mrc`,
+        jobProfileToRun: 'Default - Create SRS MARC Authority',
+        numberOfRecords: 1,
+      },
     ],
   };
 
@@ -162,7 +168,7 @@ describe('plug-in MARC authority | Browse', () => {
       MarcAuthorities.unselectHeadingType(testData.headingTypes[0]);
       MarcAuthorities.verifyColumnValuesOnlyExist({
         column: 'Type of heading',
-        expectedValues: testData.headingTypes[1],
+        expectedValues: [testData.headingTypes[1]],
         browsePane: true,
       });
       MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[0], false);
