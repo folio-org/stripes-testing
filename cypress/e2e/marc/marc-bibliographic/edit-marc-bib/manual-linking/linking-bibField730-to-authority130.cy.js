@@ -21,7 +21,7 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       '730',
       '\\',
       '\\',
-      '$a C375083 Gone with the wind $f 1939) $g (Motion picture : $w one $0 id.loc.gov/authorities/names/n79067095 $1 tre $2 test',
+      '$a C375083 Gone with the wind $f 1939) $g (Motion picture : $w one $0 id.loc.gov/authorities/names/n79066095 $1 tre $2 test',
     ],
   };
   const marcFiles = [
