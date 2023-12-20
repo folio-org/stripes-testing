@@ -322,6 +322,10 @@ export default {
     ]);
   },
 
+  checkAuthorizedColumn(authorized) {
+    cy.expect([MultiColumnListCell({ columnIndex: 1, content: authorized }).exists()]);
+  },
+
   checkAfterSearch(type, record) {
     cy.expect([
       MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
