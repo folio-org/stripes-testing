@@ -5,7 +5,7 @@ import {
   REQUEST_LEVELS,
   REQUEST_TYPES,
 } from '../../support/constants';
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -105,7 +105,7 @@ describe('Title Level Request. Request Detail', () => {
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
+    cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
       userForTLR = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
@@ -116,11 +116,10 @@ describe('Title Level Request. Request Detail', () => {
 
     cy.createTempUser(
       [
-        permissions.uiRequestsCreate.gui,
-        permissions.uiRequestsView.gui,
-        permissions.uiRequestsEdit.gui,
-        permissions.requestsAll.gui,
-        permissions.uiNotesItemView.gui,
+        Permissions.uiRequestsCreate.gui,
+        Permissions.uiRequestsView.gui,
+        Permissions.uiRequestsEdit.gui,
+        Permissions.requestsAll.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
@@ -197,9 +196,7 @@ describe('Title Level Request. Request Detail', () => {
     () => {
       Requests.findCreatedRequest(instanceData.title);
       Requests.selectFirstRequest(instanceData.title);
-      RequestDetail.openActions();
-      RequestDetail.verifyAllRequestOptionsDisplayed();
-      RequestDetail.selectReorderOption();
+      RequestDetail.requestQueueOnInstance(instanceData.title);
       RequestDetail.verifyHeaders(instanceData.title);
       RequestDetail.verifyAllQueueAccordeonsDisplayed();
       RequestDetail.verifyNotFilledYetAccordionHeaders();

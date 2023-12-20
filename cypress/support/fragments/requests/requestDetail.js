@@ -210,16 +210,6 @@ export default {
     cy.expect(cancelRequestButton.exists());
   },
 
-  verifyAllRequestOptionsDisplayed() {
-    cy.expect([
-      cancelRequestButton.exists(),
-      moveRequestButton.exists(),
-      duplicateRequestButton.exists(),
-      editRequestButton.exists(),
-      reorderQueueButton.exists(),
-    ]);
-  },
-
   verifyAllQueueAccordeonsDisplayed() {
     cy.expect([fulfilmentInProgressAccordion.exists(), openNotFilledYetAccordion.exists()]);
   },
@@ -228,10 +218,6 @@ export default {
     notFilledYetRequestColumnHeaders.forEach((headerName) => {
       cy.expect(openNotFilledYetAccordion.find(MultiColumnListHeader(headerName)).exists());
     });
-  },
-
-  selectReorderOption() {
-    cy.do(reorderQueueButton.click());
   },
 
   openCancelRequest() {
