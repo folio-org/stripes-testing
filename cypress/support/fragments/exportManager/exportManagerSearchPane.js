@@ -231,8 +231,10 @@ export default {
   checkFilterOptions({ jobTypeFilterOption = [] } = {}) {
     jobTypeFilterOption.forEach((filterOption) => {
       cy.expect(jobTypeFilters[filterOption].exists());
+      cy.expect([jobTypeAccordion.find(Checkbox(filterOption)).has({ checked: false })]);
     });
   },
+
   checkColumnInResultsTable({ status, jobType } = {}) {
     if (status) {
       this.checkColumnValues({ columnIndex: 1, value: status });
