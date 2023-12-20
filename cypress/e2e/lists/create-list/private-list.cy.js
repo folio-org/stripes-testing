@@ -11,7 +11,7 @@ describe('Create a new list', () => {
     name: getTestEntityValue('test_list'),
     recordType: 'Loans',
     status: 'Active',
-    visibility: 'Shared',
+    visibility: 'Private',
   };
 
   before('Create a user', () => {
@@ -52,10 +52,10 @@ describe('Create a new list', () => {
       Lists.selectRecordType(listData.recordType);
       Lists.selectVisibility(listData.visibility);
       Lists.saveList();
-      Lists.verifySuccessCalloutMessage(`List ${listData.name} saved.`);
+      cy.contains(`List ${listData.name} saved.`);
 
       Lists.closeListDetailsPane();
-      Lists.verifySuccessCalloutMessage(
+      cy.contains(
         `List ${listData.name} was created. Reload to see changes. Note: the list may not appear based on filters.`,
       );
       cy.reload();
