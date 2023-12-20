@@ -9,6 +9,7 @@ import {
   Section,
   including,
 } from '../../../../../interactors';
+import { TRANSFER_ACTIONS } from '../transfer/constants';
 import AddTransferModal from '../modals/addTransferModal';
 import Transactions from '../transactions/transactions';
 
@@ -47,14 +48,20 @@ export default {
     cy.expect(budgetPane.find(HTML(including(`${name} balance: ${value}`))).exists());
   },
   openAddTransferModal() {
-    cy.do([actionsButton.click(), Button('Transfer').click()]);
+    cy.do([actionsButton.click(), Button(TRANSFER_ACTIONS.TRANSFER).click()]);
     AddTransferModal.verifyModalView();
 
     return AddTransferModal;
   },
+  clickDecreaseAllocationButton() {
+    cy.do([actionsButton.click(), Button(TRANSFER_ACTIONS.DECREASE_ALLOCATION).click()]);
+    AddTransferModal.verifyModalView({ header: TRANSFER_ACTIONS.DECREASE_ALLOCATION });
+
+    return AddTransferModal;
+  },
   clickMoveAllocationButton() {
-    cy.do([actionsButton.click(), Button('Move allocation').click()]);
-    AddTransferModal.verifyModalView({ header: 'Move allocation' });
+    cy.do([actionsButton.click(), Button(TRANSFER_ACTIONS.MOVE_ALLOCATION).click()]);
+    AddTransferModal.verifyModalView({ header: TRANSFER_ACTIONS.MOVE_ALLOCATION });
 
     return AddTransferModal;
   },
@@ -66,5 +73,6 @@ export default {
   },
   closeBudgetDetails() {
     cy.do(budgetDetailsPaneHeader.find(Button({ icon: 'times' })).click());
+    cy.expect(budgetPane.absent());
   },
 };
