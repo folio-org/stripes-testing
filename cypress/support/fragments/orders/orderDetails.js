@@ -22,6 +22,7 @@ import OpenConfirmationModal from './modals/openConfirmationModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import ExportDetails from '../exportManager/exportDetails';
 import Receivings from '../receiving/receiving';
+import CloseConfirmationModal from './modals/closeConfirmationModal';
 
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
@@ -89,6 +90,18 @@ export default {
     );
 
     InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
+  },
+  closeOrder({ orderNumber, confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Cancel').click());
+
+    if (orderNumber) {
+      CloseConfirmationModal.verifyModalView({ orderNumber });
+    }
+
+    if (confirm) {
+      CloseConfirmationModal.clickSubmitButton();
+    }
   },
   openOrder({ orderNumber, confirm = true } = {}) {
     this.expandActionsDropdown();

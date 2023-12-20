@@ -34,15 +34,13 @@ const informationSection = invoiceDetailsPane.find(Section({ id: 'information' }
 // invoice lines section
 const invoiceLinesSection = Section({ id: 'invoiceLines' });
 
-// vendor details section
-const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
-
 // Links & documents section
 const linksAndDocumentsSection = Section({ id: 'documents' });
 
 // voucher details
 const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
 const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
+const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
 
 export default {
   expandActionsDropdown() {
@@ -142,6 +140,7 @@ export default {
     vendorDetails = [],
     voucherExport = [],
     voucherInformation = [],
+    vendorDetailsInformation = [],
   } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
@@ -161,6 +160,10 @@ export default {
 
     voucherInformation.forEach(({ key, value }) => {
       cy.expect(voucherInformationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    vendorDetailsInformation.forEach(({ key, value }) => {
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     if (invoiceLines) {
@@ -281,7 +284,27 @@ export default {
         .click(),
     );
   },
+  verifyInvoicesList() {
+    cy.expect(MultiColumnList({ id: 'invoices-list' }).exists());
+  },
+  verifyInvoiceLinkExists(linkName) {
+    cy.expect(
+      MultiColumnList({ id: 'invoices-list' })
+        .find(MultiColumnListCell({ content: linkName }))
+        .find(Link())
+        .exists(),
+    );
+  },
+  selectInvoiceLineByName(linkName) {
+    cy.do(
+      MultiColumnList({ id: 'invoices-list' })
+        .find(MultiColumnListCell({ content: linkName }))
+        .find(Link())
+        .click(),
+    );
 
+    return InvoiceLineDetails;
+  },
   verifyWarningMessage(message) {
     cy.expect(HTML(including(message)).exists());
   },

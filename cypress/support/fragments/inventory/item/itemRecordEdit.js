@@ -47,6 +47,16 @@ export default {
       TextArea({ ariaLabel: 'Administrative note' }).fillIn(note),
     ]);
   },
+  addItemsNotes: (text, type = 'Action note') => {
+    cy.do([
+      Accordion('Item notes').find(Button('Add note')).click(),
+      Select('Note type*').choose(type),
+      TextArea({ ariaLabel: 'Note' }).fillIn(text),
+    ]);
+  },
+  editItemNotes: (newType, newText) => {
+    cy.do([Select('Note type*').choose(newType), TextArea({ ariaLabel: 'Note' }).fillIn(newText)]);
+  },
   saveAndClose({ itemSaved = false } = {}) {
     cy.do(saveAndCloseBtn.click());
     cy.expect(itemEditForm.absent());
