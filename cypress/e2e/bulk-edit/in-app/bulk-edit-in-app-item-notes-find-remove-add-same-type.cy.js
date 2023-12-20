@@ -40,9 +40,7 @@ describe('bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
-            res.circulationNotes = [
-              { noteType: 'Check out', note: checkOutNote, staffOnly: true },
-            ];
+            res.circulationNotes = [{ noteType: 'Check out', note: checkOutNote, staffOnly: true }];
             cy.updateItemViaApi(res);
             FileManager.createFile(`cypress/fixtures/${itemHRIDsFileName}`, res.hrid);
           },
