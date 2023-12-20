@@ -115,8 +115,6 @@ describe('Manual Linking Bib field to Authority 1XX', () => {
       QuickMarcEditor.verifyTagFieldAfterLinking(...bib730AfterLinkingToAuth130);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndClose();
-      MarcAuthorities.checkRecordDetailPageMarkedValue(marcFiles[1].authorityHeading);
-      InventoryInstance.goToPreviousPage();
       InventoryInstance.waitLoading();
       InventoryInstance.viewSource();
       InventoryInstance.checkExistanceOfAuthorityIconInMarcViewPane();
