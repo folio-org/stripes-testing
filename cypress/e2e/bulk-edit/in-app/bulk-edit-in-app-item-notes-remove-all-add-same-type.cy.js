@@ -77,7 +77,11 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemHRIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, changedRecordsFileName, previewFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        matchedRecordsFileName,
+        changedRecordsFileName,
+        previewFileName,
+      );
     });
 
     it(
@@ -92,7 +96,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.downloadMatchedResults();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [
-          `${notes.admin},Copy note;${notes.copy};false|Electronic bookplate;${notes.electronicBookplate};false,${notes.checkIn},${notes.checkOut}`
+          `${notes.admin},Copy note;${notes.copy};false|Electronic bookplate;${notes.electronicBookplate};false,${notes.checkIn},${notes.checkOut}`,
         ]);
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Administrative note',
@@ -100,7 +104,7 @@ describe('bulk-edit', () => {
           'Electronic bookplate note',
           'Check in notes',
           'Check out notes',
-          'Action note'
+          'Action note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.verifyItemOptions();
@@ -119,35 +123,35 @@ describe('bulk-edit', () => {
         BulkEditActions.addItemNote('Action note', notes.action, 4);
 
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyChangesInAreYouSureForm('Electronic bookplate note', [notes.electronicBookplate]);
+        BulkEditActions.verifyChangesInAreYouSureForm('Electronic bookplate note', [
+          notes.electronicBookplate,
+        ]);
         BulkEditActions.downloadPreview();
         ExportFile.verifyFileIncludes(previewFileName, [
-          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,`
+          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,`,
         ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Administrative note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Copy note', '');
-        BulkEditSearchPane.verifyExactChangesUnderColumns('Electronic bookplate note', notes.electronicBookplate);
+        BulkEditSearchPane.verifyExactChangesUnderColumns(
+          'Electronic bookplate note',
+          notes.electronicBookplate,
+        );
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', notes.action);
         BulkEditSearchPane.verifyExactChangesUnderColumns('Check in notes', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Check out notes', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
-          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,`
+          `,Electronic bookplate;${notes.electronicBookplate};false|Action note;${notes.action};false,,`,
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
         ItemRecordView.waitLoading();
-        [
-          notes.admin,
-          'Copy note',
-          'Check in notes',
-          'Check out notes'
-        ].forEach((text) => {
+        [notes.admin, 'Copy note', 'Check in notes', 'Check out notes'].forEach((text) => {
           ItemRecordView.verifyTextAbsent(text);
         });
         const electronicBookplateNote = {
