@@ -16,6 +16,8 @@ import {
   DropdownMenu,
   Callout,
   Pane,
+  Form,
+  Option,
   IconButton,
   Popover,
   Label,
@@ -74,6 +76,9 @@ const existingRecordType = Select({ name: 'profile.existingRecordType' });
 const approvedCheckbox = Checkbox({
   name: 'profile.mappingDetails.mappingFields[1].booleanFieldAction',
 });
+const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
+const recordTypeselect = Select({ name: 'profile.existingRecordType' });
+const closeButton = Button('Close');
 
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -364,6 +369,9 @@ export default {
   selectOrganizationByName,
   selectAdminNotesAction,
   save,
+  waitLoading: () => {
+    cy.expect(mappingProfilesForm.exists());
+  },
 
   fillMappingProfile: (specialMappingProfile = defaultMappingProfile) => {
     fillSummaryInMappingProfile(specialMappingProfile);
@@ -1023,7 +1031,33 @@ export default {
       });
   },
 
-  createMappingProfileViaApiMarc: ({ name }) => {
+  createMappingProfileForUpdateMarcBibViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+            existingRecordType: 'MARC_BIBLIOGRAPHIC',
+            description: '',
+            mappingDetails: {
+              name: 'marcBib',
+              recordType: 'MARC_BIBLIOGRAPHIC',
+              marcMappingDetails: [],
+              marcMappingOption: 'UPDATE',
+            },
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createMappingProfileForUpdateMarcAuthViaApi: ({ name }) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -1106,6 +1140,12 @@ export default {
       TextField('Access provider').has({ value: `"${profile.accessProvider}"` }),
     ]);
   },
+
+  verifyFOLIORecordTypeOptionExists(type) {
+    cy.expect(recordTypeselect.find(Option(type)).exists());
+  },
+
+  clickClose: () => cy.do(closeButton.click()),
 
   verifyAcquisitionsUnitsInfoMessage: (message) => {
     cy.do(

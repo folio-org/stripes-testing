@@ -33,6 +33,10 @@ const polListingAccordion = Section({ id: 'POListing' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
 
+const headerDetail = orderDetailsPane.find(PaneHeader({ id: 'paneHeaderorder-details' }));
+
+const iconTimes = Button({ icon: 'times' });
+
 const invoicesList = MultiColumnList({ id: 'orderInvoices' });
 
 const openPolDetails = (title) => {
@@ -247,9 +251,19 @@ export default {
       );
     }
   },
+
+  verifyOrderTitle(title) {
+    cy.expect(headerDetail.has({ text: including(title) }));
+  },
+
+  closeOrderDetails: () => {
+    cy.do(orderDetailsPane.find(iconTimes).click());
+  },
+
   verifyAccordionExists(name) {
     cy.expect(Accordion({ label: including(name) }).exists());
   },
+
   openInvoice(number) {
     cy.do(invoicesList.find(Link({ href: including(`${number}`) })).click());
   },
