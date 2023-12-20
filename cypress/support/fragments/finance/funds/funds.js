@@ -879,10 +879,11 @@ export default {
       });
   },
 
-  deleteFundViaApi: (fundId) => cy.okapiRequest({
+  deleteFundViaApi: (fundId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/funds/${fundId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
   createFundWithAU(fund, ledger, AUName) {
     cy.do([

@@ -609,10 +609,11 @@ export default {
       });
   },
 
-  deleteledgerViaApi: (ledgerId) => cy.okapiRequest({
+  deleteledgerViaApi: (ledgerId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/ledgers/${ledgerId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
 
   selectLedger: (ledgerName) => {
