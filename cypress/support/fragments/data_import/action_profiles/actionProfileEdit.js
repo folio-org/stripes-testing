@@ -26,11 +26,7 @@ export default {
 
   fieldMappingProfileAbsent: () => cy.expect(Button('Link Profile').exists()),
   verifyScreenName: (profileName) => cy.expect(Form(including(`Edit ${profileName}`)).exists()),
-  changeAction: () => cy.do(
-    selectActionProfile.choose(
-      'Update (all record types except Orders, Invoices, or MARC Holdings)',
-    ),
-  ),
+  changeAction: (action = 'Update (all record types except Orders, Invoices, or MARC Holdings)') => cy.do(selectActionProfile.choose(action)),
 
   changesNotSaved: () => {
     cy.expect(TextField({ name: 'profile.name' }).exists());
@@ -40,4 +36,6 @@ export default {
   verifyFOLIORecordTypeOptionExists(type) {
     cy.expect(recordTypeselect.find(Option(type)).exists());
   },
+
+  changeRecordType: (type) => cy.do(recordTypeselect.choose(type)),
 };

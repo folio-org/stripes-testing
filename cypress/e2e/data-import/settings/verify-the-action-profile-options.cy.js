@@ -15,15 +15,6 @@ describe('Data Import', () => {
 
     const mappingProfileName = `mapping_${getRandomPostfix()}`;
     const actionProfileName = `action_${getRandomPostfix()}`;
-    const FOLIORecordTypes = [
-      'Instance',
-      'Holdings',
-      'Item',
-      'Order',
-      'Invoice',
-      'MARC Bibliographic',
-      'MARC Authority',
-    ];
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -53,10 +44,22 @@ describe('Data Import', () => {
       'C421995 - (NON-CONSORTIA) Verify the action profile options (Folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
+        const actionCreate = 'Create (all record types except MARC Authority or MARC Holdings)';
+        const actionModify = 'Modify (MARC Bibliographic record type only)';
+        const recordTypeBibliographic = 'MARC Bibliographic';
+
         ActionProfiles.openNewActionProfileForm();
         NewActionProfile.verifyNewActionProfileExists();
 
-        FOLIORecordTypes.forEach((type) => {
+        [
+          'Instance',
+          'Holdings',
+          'Item',
+          'Order',
+          'Invoice',
+          'MARC Bibliographic',
+          'MARC Authority',
+        ].forEach((type) => {
           NewActionProfile.verifyFOLIORecordTypeOptionExists(type);
         });
 
@@ -65,9 +68,23 @@ describe('Data Import', () => {
         ActionProfiles.verifyActionProfileOpened(actionProfileName);
         ActionProfileView.edit();
 
-        FOLIORecordTypes.forEach((type) => {
+        ActionProfileEdit.changeAction(actionCreate);
+
+        ['Instance', 'Holdings', 'Item', 'Order', 'Invoice', 'MARC Bibliographic'].forEach(
+          (type) => {
+            ActionProfileEdit.verifyFOLIORecordTypeOptionExists(type);
+          },
+        );
+
+        ActionProfileEdit.changeAction();
+
+        ['Instance', 'Holdings', 'Item', 'MARC Bibliographic', 'MARC Authority'].forEach((type) => {
           ActionProfileEdit.verifyFOLIORecordTypeOptionExists(type);
         });
+
+        ActionProfileEdit.changeRecordType(recordTypeBibliographic);
+        ActionProfileEdit.changeAction(actionModify);
+        ActionProfileEdit.verifyFOLIORecordTypeOptionExists(recordTypeBibliographic);
       },
     );
   });
