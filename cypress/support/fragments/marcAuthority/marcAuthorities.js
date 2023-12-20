@@ -1172,7 +1172,10 @@ export default {
   },
 
   verifyPagination() {
-    cy.expect([previousButton.exists(), nextButton.has({ disabled: or(true, false) })]);
+    cy.expect([
+      previousButton.has({ disabled: or(true, false) }),
+      nextButton.has({ disabled: or(true, false) }),
+    ]);
     cy.then(() => authoritiesList.rowCount()).then((rowsCount) => {
       expect(rowsCount).to.lessThan(101);
     });
