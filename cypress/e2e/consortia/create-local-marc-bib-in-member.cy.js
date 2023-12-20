@@ -56,7 +56,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () =>
           Permissions.uiInventoryViewInstances.gui,
           Permissions.uiQuickMarcQuickMarcBibliographicEditorCreate.gui,
         ]);
-      })
+      });
   });
 
   after('Delete users, data', () => {
