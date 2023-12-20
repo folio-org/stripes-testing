@@ -8,6 +8,8 @@ import {
   Pane,
   including,
 } from '../../../../interactors';
+import FundDetails from './funds/fundDetails';
+import LedgerDetails from './ledgers/ledgerDetails';
 
 const searchField = SearchField({ id: 'input-record-search' });
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
@@ -26,6 +28,9 @@ export default {
   statusFrozen: 'Frozen',
   statusInactive: 'Inactive',
 
+  switchSearchType({ type }) {
+    cy.do(Button(type).click());
+  },
   searchByName: (name) => {
     cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), Button('Search').click()]);
     cy.wait(4000);
@@ -66,9 +71,15 @@ export default {
   },
   selectFirstLedger: (name) => {
     cy.do(ledgerResultList.find(Link(name)).click());
+    LedgerDetails.checkLedgeDetails({ information: [{ key: 'Name', value: name }] });
+
+    return LedgerDetails;
   },
   selectFirstFundRecord: (name) => {
     cy.do(FundResultList.find(Link(name)).click());
+    FundDetails.checkFundDetails({ information: [{ key: 'Name', value: name }] });
+
+    return FundDetails;
   },
   selectFirstFiscalRecord: (name) => {
     cy.do(fiscalResultsList.find(Link(name)).click());
@@ -112,5 +123,20 @@ export default {
 
   clickFundButton() {
     cy.do(filtersPane.find(fundButton).click());
+  },
+  selectFiscalYearsNavigation: () => {
+    cy.get('[data-test-finance-navigation-fiscalyear="true"]').click();
+  },
+
+  selectLedgersNavigation: () => {
+    cy.get('[data-test-finance-navigation-ledger="true"]').click();
+  },
+
+  selectGroupsNavigation: () => {
+    cy.get('[data-test-finance-navigation-group="true"]').click();
+  },
+
+  selectFundsNavigation: () => {
+    cy.get('[data-test-finance-navigation-fund="true"]').click();
   },
 };
