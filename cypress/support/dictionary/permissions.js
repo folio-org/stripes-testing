@@ -936,4 +936,8 @@ export default {
     internal: 'ui-courses.all',
     gui: 'Courses: All permissions',
   },
+  coursesReadAll: {
+    internal: 'ui-courses.read-all',
+    gui: 'Courses: Read all',
+  },
 };
