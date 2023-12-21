@@ -21,6 +21,7 @@ import {
   FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   RECORD_STATUSES,
+  EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
@@ -80,6 +81,7 @@ describe('data-import', () => {
         in2: 'f',
         subfield: 's',
       },
+      recordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -114,7 +116,7 @@ describe('data-import', () => {
       NewMatchProfile.createMatchProfileViaApiMarc(matchProfile);
 
       // create Field mapping profile
-      NewFieldMappingProfile.createMappingProfileViaApiMarc(mappingProfile);
+      NewFieldMappingProfile.createMappingProfileForUpdateMarcAuthViaApi(mappingProfile);
 
       // create Action profile and link it to Field mapping profile
       cy.visit(SettingsMenu.actionProfilePath);
