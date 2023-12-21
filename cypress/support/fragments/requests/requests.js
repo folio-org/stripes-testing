@@ -6,6 +6,7 @@ import {
   MultiColumnListRow,
   MultiColumnListHeader,
   MultiSelect,
+  MultiSelectOption,
   Pane,
   IconButton,
   TextArea,
@@ -38,6 +39,7 @@ const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
+const addTagForSelectOption = MultiSelectOption(including('Add tag for:'));
 const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
 
@@ -310,6 +312,21 @@ export default {
     // TODO investigate what to wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
+  },
+
+  addNewTag(newTag) {
+    // cy.do([
+    //   TextInput({id: 'input-tag-input'}).click(),
+    //   TextInput({id: 'input-tag-input'}).fillIn(newTag)
+    // ]);
+    cy.do([
+      cy.get('div#input-tag').click(),
+      cy.wait(2000),
+      cy.get('div#input-tag').type(newTag),
+      cy.wait(2000),
+    ]);
+    cy.expect(addTagForSelectOption.exists());
+    cy.do(addTagForSelectOption.click());
   },
 
   verifyAssignedTags(tag) {
