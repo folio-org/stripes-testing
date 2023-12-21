@@ -17,7 +17,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import UserEdit from '../../support/fragments/users/userEdit';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
-describe('ui-requests: Assign Tags to Request', () => {
+describe('Requests -> Filter Requests with Special Symbols', () => {
   const tag = `autotest_tag${uuid()}[`;
   const userData = {};
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
