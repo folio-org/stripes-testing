@@ -9,8 +9,6 @@ import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import EditRequest from '../../support/fragments/requests/edit-request';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -117,11 +115,10 @@ describe('Title Level Request. Request Detail', () => {
 
     cy.createTempUser(
       [
-        permissions.uiRequestsCreate.gui,
         permissions.uiRequestsView.gui,
-        permissions.uiRequestsEdit.gui,
+        permissions.uiRequestsCreate.gui,
         permissions.requestsAll.gui,
-        permissions.uiNotesItemView.gui,
+        permissions.uiRequestsEdit.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
@@ -195,73 +192,18 @@ describe('Title Level Request. Request Detail', () => {
     );
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
+
   it(
-    'C350415 Check that the user can see "Request Detail" for Item request (vega)',
-    { tags: ['criticalPath', 'vega'] },
+    'C350414 Check that user can see "Requests" columns (vega) (TaaS)',
+    { tags: ['extended', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
-      Requests.findCreatedRequest(instanceData.title);
-      Requests.selectFirstRequest(instanceData.title);
-      RequestDetail.waitLoading();
+      Requests.waitUIFilteredByRequestType();
+      Requests.verifyColumnsPresence();
 
-      RequestDetail.checkTitleInformation({
-        TLRs: '1',
-        title: instanceData.title,
-      });
-
-      RequestDetail.checkItemInformation({
-        itemBarcode: testData.itemBarcode,
-        title: instanceData.title,
-        effectiveLocation: testData.defaultLocation.name,
-        itemStatus: ITEM_STATUS_NAMES.PAGED,
-        requestsOnItem: '1',
-      });
-
-      RequestDetail.checkRequestInformation({
-        type: REQUEST_TYPES.PAGE,
-        status: EditRequest.requestStatuses.NOT_YET_FILLED,
-        level: REQUEST_LEVELS.ITEM,
-      });
-
-      RequestDetail.checkRequesterInformation({
-        lastName: userData.lastName,
-        barcode: userData.barcode,
-        group: patronGroup.name,
-        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        pickupSP: testData.userServicePoint.name,
-      });
-    },
-  );
-
-  it(
-    'C350416 Check that the user can see "Request Detail" for Title request (vega)',
-    { tags: ['criticalPath', 'vega'] },
-    () => {
       Requests.selectTitleRequestLevel();
-      Requests.findCreatedRequest(instanceData.title);
-      Requests.selectFirstRequest(instanceData.title);
-      RequestDetail.waitLoading();
-
-      RequestDetail.checkTitleInformation({
-        TLRs: '1',
-        title: instanceData.title,
-      });
-
-      RequestDetail.checkItemInformation();
-
-      RequestDetail.checkRequestInformation({
-        type: REQUEST_TYPES.HOLD,
-        status: EditRequest.requestStatuses.NOT_YET_FILLED,
-        level: REQUEST_LEVELS.TITLE,
-      });
-
-      RequestDetail.checkRequesterInformation({
-        lastName: userForTLR.lastName,
-        barcode: userForTLR.barcode,
-        group: patronGroup.name,
-        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-        pickupSP: testData.userServicePoint.name,
-      });
+      Requests.waitUIFilteredByRequestType();
+      Requests.verifyColumnsPresence();
     },
   );
 });
