@@ -143,6 +143,7 @@ describe('ui-requests: Assign Tags to Request', () => {
       Requests.closePane('Tags');
       Requests.closePane('Request Detail');
       Requests.resetAllFilters();
+      Requests.waitContentLoading();
       Requests.filterRequestsByTag(tag);
       Requests.selectFirstRequest(itemData.instanceTitle);
       Requests.openTagsPane();
