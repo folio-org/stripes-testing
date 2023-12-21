@@ -1,4 +1,7 @@
-import getRandomPostfix from '../../../utils/stringTools';
+import { Button } from '../../../../../../interactors';
+import ResultsPane from '../resultsPane';
+import FieldMappingProfileEditForm from './fieldMappingProfileEditForm';
+import getRandomPostfix from '../../../../utils/stringTools';
 
 const marcAuthorityUpdateMappingProfile = {
   profile: {
@@ -34,6 +37,15 @@ const marcAuthorityUpdateMappingProfile = {
 };
 
 export default {
+  ...ResultsPane,
+  clickCreateNewFieldMappingProfile() {
+    ResultsPane.expandActionsDropdown();
+    cy.do(Button('New field mapping profile').click());
+    FieldMappingProfileEditForm.waitLoading();
+    FieldMappingProfileEditForm.verifyFormView();
+
+    return FieldMappingProfileEditForm;
+  },
   marcAuthorityUpdateMappingProfile,
   createMappingProfileApi: (mappingProfile = marcAuthorityUpdateMappingProfile) => cy.okapiRequest({
     method: 'POST',
