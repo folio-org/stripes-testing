@@ -17,6 +17,7 @@ import {
   Heading,
   Spinner,
   KeyValue,
+  Link,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -33,6 +34,7 @@ const requestsResultsSection = Section({ id: 'pane-results' });
 const requestDetailsSection = Pane({ title: 'Request Detail' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 const requestsPane = Pane({ title: 'Requests' });
+const requestQueuePane = Pane({ id: 'request-queue' });
 const pageCheckbox = Checkbox({ name: 'Page' });
 const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
@@ -586,5 +588,9 @@ export default {
   deleteDownloadedFile(fileName) {
     const filePath = `cypress\\downloads\\${fileName}`;
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
+  },
+
+  clickInstanceDescription() {
+    cy.do(requestQueuePane.find(Link({ text: including('Instance') })).click());
   },
 };

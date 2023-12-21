@@ -27,6 +27,7 @@ const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
+const userInformationSection = Accordion({ id: 'userInformationSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
 const notesSection = Accordion('Notes');
@@ -420,5 +421,9 @@ export default {
 
   openNoteForEdit(noteTitle) {
     cy.do(MultiColumnListCell(including(noteTitle)).find(Button('Edit')).click());
+  },
+
+  verifyUserInformationPresence() {
+    cy.expect(userInformationSection.exists());
   },
 };
