@@ -571,11 +571,6 @@ export default {
     cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).absent()]);
     cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
   },
-  verifyAbsenceInIncomingRecordsDropdown: (option) => {
-    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
-    cy.expect(DropdownMenu({ visible: true }).find(HTML(option)).absent());
-    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
-  },
   verifyNewMatchProfileFormIsOpened: () => {
     cy.expect(Pane('New match profile').exists());
   },

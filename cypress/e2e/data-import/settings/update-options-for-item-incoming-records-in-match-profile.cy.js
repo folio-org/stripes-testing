@@ -1,3 +1,4 @@
+import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -27,9 +28,12 @@ describe('data-import', () => {
       () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.openNewMatchProfileForm();
-        NewMatchProfile.selectExistingRecordType('ITEM');
-        NewMatchProfile.verifyIncomingRecordsDropdown();
-        NewMatchProfile.verifyAbsenceInIncomingRecordsDropdown('MARC Authority');
+        NewMatchProfile.selectExistingRecordType(EXISTING_RECORDS_NAMES.ITEM);
+        NewMatchProfile.verifyIncomingRecordsDropdown(
+          'MARC Bibliographic',
+          'Static value (submatch only)',
+        );
+        NewMatchProfile.verifyIncomingRecordsItemDoesNotExist('MARC Authority');
       },
     );
   });
