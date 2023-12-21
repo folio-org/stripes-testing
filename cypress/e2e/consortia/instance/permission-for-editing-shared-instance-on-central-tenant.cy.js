@@ -10,7 +10,6 @@ import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRec
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('Inventory -> Instance -> Consortia', () => {
-  let user;
   const testData = {
     newInstanceTitle: `C407746 instanceTitle${getRandomPostfix()}`,
   };
@@ -23,9 +22,9 @@ describe('Inventory -> Instance -> Consortia', () => {
 
     cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
       (userProperties) => {
-        user = userProperties;
+        testData.user = userProperties;
 
-        cy.login(user.username, user.password, {
+        cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
