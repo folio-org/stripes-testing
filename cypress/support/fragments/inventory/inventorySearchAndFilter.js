@@ -506,6 +506,11 @@ export default {
     ]);
   },
 
+  executeSearch(text) {
+    cy.do(inventorySearchAndFilter.fillIn(text));
+    this.clickSearch();
+  },
+
   verifySelectedSearchOption(option) {
     cy.expect(inventorySearchAndFilterInput.has({ value: option }));
   },
