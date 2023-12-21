@@ -486,6 +486,10 @@ export default {
     cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: false }));
   },
 
+  verifyOnlyOne001FieldAreDisplayed(tag) {
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).has({ text: '001' }));
+  },
+
   verifyDisabledLinkHeadingsButton() {
     cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: true }));
   },
@@ -2013,6 +2017,10 @@ export default {
 
   checkEditableQuickMarcFormIsOpened: () => {
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
+  },
+
+  clickXCloseButton: () => {
+    cy.do(Button({ icon: 'times' }).click());
   },
 
   verifyNoDuplicatedFieldsWithTag: (tag) => {

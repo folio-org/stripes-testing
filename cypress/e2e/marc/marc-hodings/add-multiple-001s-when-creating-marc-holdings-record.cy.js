@@ -12,6 +12,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
 const testData = {
   marc: 'marcBibFileC387462.mrc',
@@ -29,6 +30,7 @@ describe('MARC › MARC Holdings', () => {
       Permissions.uiInventoryViewInstances.gui,
       Permissions.uiInventoryViewCreateEditHoldings.gui,
       Permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+      Permissions.uiQuickMarcQuickMarcHoldingsEditorAll.gui,
     ]).then((createdUserProperties) => {
       testData.userProperties = createdUserProperties;
 
@@ -81,6 +83,13 @@ describe('MARC › MARC Holdings', () => {
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
       MarcAuthority.checkAddNew001Tag(5, '$a test');
+      cy.wait(1000);
+      QuickMarcEditor.clickXCloseButton();
+      InventoryInstance.goToMarcHoldingRecordAdding();
+      QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
+      MarcAuthority.checkAddNew001Tag(5, '$a test');
+      HoldingsRecordView.editInQuickMarc();
+      // QuickMarcEditor.verify001FieldAreDisabled(1);
     },
   );
 });
