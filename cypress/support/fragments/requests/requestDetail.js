@@ -78,7 +78,6 @@ export default {
       itemInformationSection.visible(),
       requestInfoSection.visible(),
       requesterInfoSection.visible(),
-      staffNotesInfoSection.visible(),
     ]);
   },
 

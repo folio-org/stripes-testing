@@ -23,7 +23,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Title Level Request. Request Detail Closed', () => {
+describe('Request Detail. TLR', () => {
   let userData = {};
   let userForTLR = {};
   const requestIds = [];
@@ -117,15 +117,13 @@ describe('Title Level Request. Request Detail Closed', () => {
 
     cy.createTempUser(
       [
-        permissions.uiRequestsCreate.gui,
         permissions.uiRequestsView.gui,
-        permissions.uiRequestsEdit.gui,
+        permissions.uiRequestsCreate.gui,
         permissions.requestsAll.gui,
-        permissions.uiNotesItemView.gui,
+        permissions.uiRequestsEdit.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
-      cy.log(JSON.stringify(userProperties));
       userData = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
@@ -165,10 +163,6 @@ describe('Title Level Request. Request Detail Closed', () => {
     });
   });
 
-  afterEach('Reset filters', () => {
-    Requests.resetAllFilters();
-  });
-
   after('Deleting created entities', () => {
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,
@@ -198,7 +192,7 @@ describe('Title Level Request. Request Detail Closed', () => {
 
   it(
     'C350556 Check that the user can see "Request Detail" for request after it is Closed (vega) (TaaS)',
-    { tags: ['extended', 'vega'] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);
