@@ -317,16 +317,7 @@ export default {
   },
 
   addNewTag(newTag) {
-    // cy.do([
-    //   TextInput({id: 'input-tag-input'}).click(),
-    //   TextInput({id: 'input-tag-input'}).fillIn(newTag)
-    // ]);
-    cy.do([
-      cy.get('div#input-tag').click(),
-      cy.wait(2000),
-      cy.get('div#input-tag').type(newTag),
-      cy.wait(2000),
-    ]);
+    cy.do([cy.get('div#input-tag').click().wait(2000).type(newTag)]);
     cy.expect(addTagForSelectOption.exists());
     cy.do(addTagForSelectOption.click());
   },

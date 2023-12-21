@@ -138,7 +138,6 @@ describe('ui-requests: Assign Tags to Request', () => {
       Requests.selectFirstRequest(itemData.instanceTitle);
       Requests.openTagsPane();
       Requests.addNewTag(tag);
-      cy.wait(5000);
       InteractorsTools.checkCalloutMessage('New tag created');
 
       // JobProfileView.verifyAssignedTags(newTag, 2);
