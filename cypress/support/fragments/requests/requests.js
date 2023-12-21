@@ -590,6 +590,10 @@ export default {
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
   },
 
+  closeRequestQueue() {
+    cy.do(requestQueuePane.find(Button({ ariaLabel: 'Close New Request' })).click());
+  },
+
   clickInstanceDescription() {
     cy.do(requestQueuePane.find(Link({ text: including('Instance') })).click());
   },
