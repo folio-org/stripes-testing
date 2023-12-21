@@ -283,7 +283,7 @@ export default {
     cy.do(searchButton.click());
     cy.expect(
       MultiColumnListRow({ index: 0 })
-        .find(Button({ text: including('Beethoven, Ludwig van (no 010)') }))
+        .find(Button({ text: including(value) }))
         .exists(),
     );
     cy.expect(marcViewSection.exists());
@@ -1055,6 +1055,14 @@ export default {
     }
   },
 
+  checkSearchInputInFocus() {
+    cy.expect(TextArea({ id: 'textarea-authorities-search' }).has({ focused: true }));
+  },
+
+  checkResetAllButtonDisabled(isDisabled = true) {
+    cy.expect(resetButton.is({ disabled: isDisabled }));
+  },
+
   verifyAllAuthorizedAreBold() {
     const actualValues = [];
 
@@ -1130,5 +1138,9 @@ export default {
 
   closeFindAuthorityModal() {
     cy.do(findAuthorityModal.find(buttonClose).click());
+  },
+
+  selectRecordByIndex(rowIndex) {
+    cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
   },
 };

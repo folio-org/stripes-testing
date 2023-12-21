@@ -426,6 +426,17 @@ export default {
     cy.expect(Callout(including(calloutMsg)).exists());
   },
 
+  verifyAreYouSureModal(content) {
+    cy.expect(
+      updateLinkedBibFieldsModal.has({
+        content: including('Are you sure?'),
+      }),
+      updateLinkedBibFieldsModal.has({
+        content: including(content),
+      }),
+    );
+  },
+
   restoreDeletedFields: () => {
     cy.do(deleteFieldsModal.find(cancelButtonInDeleteFieldsModal).click());
   },
@@ -741,6 +752,7 @@ export default {
   verifyDerivedMarcBibSave() {
     cy.expect(calloutOnDeriveFirst.exists());
   },
+
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
@@ -1643,6 +1655,14 @@ export default {
     ]);
   },
 
+  verifyZeroSubfieldInUnlinkedField(rowIndex, content) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .has({ value: including(`$0 ${content}`) }),
+    );
+  },
+
   verifyRemoveLinkingModal() {
     cy.expect([
       removeLinkingModal.exists(),
@@ -1961,5 +1981,12 @@ export default {
     cy.get(`input[name*=".tag"][value="${tag}"]`).then(
       (elements) => elements.length === numOfFields,
     );
+  },
+
+  openLinkingAuthorityByIndex(rowIndex) {
+    cy.wrap(QuickMarcEditorRow({ index: rowIndex }).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
   },
 };

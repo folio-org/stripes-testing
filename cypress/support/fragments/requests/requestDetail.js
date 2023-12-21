@@ -7,6 +7,7 @@ import {
   Link,
   Modal,
   MultiColumnListCell,
+  MultiColumnListHeader,
   Pane,
   Section,
   Select,
@@ -24,8 +25,13 @@ const staffNotesInfoSection = Section({ id: 'staff-notes' });
 const actionsButton = requestDetailsSection.find(Button('Actions'));
 const moveRequestButton = Button('Move request');
 const duplicateRequestButton = Button('Duplicate');
+const reorderQueueButton = Button('Reorder queue');
+const editRequestButton = Button('Edit');
 const fulfillmentInProgressAccordion = Accordion({
   id: 'fulfillment-in-progress',
+});
+const notYetFilledAccordion = Accordion({
+  id: 'not-yet-filled',
 });
 const cancelRequestButton = Button({ id: 'clickable-cancel-request' });
 const confirmButton = Button('Confirm');
@@ -37,7 +43,6 @@ const additionalInfoRequiredInput = TextField('Additional information for patron
 const additionalInfoForCancellation = TextArea({ dataTestID: 'additionalInfo' });
 const confirmCancellationButton = Button({ dataTestID: 'cancelRequestDialogCancel' });
 const editButton = Button({ id: 'clickable-edit-request' });
-const reorderQueueButton = Button({ id: 'reorder-queue' });
 
 const availableOptions = {
   Edit: editButton,
@@ -224,9 +229,93 @@ export default {
   },
 
   verifyEditButtonAbsent() {
-    cy.expect(Button('Edit').absent());
+    cy.expect(editRequestButton.absent());
     this.openActions();
-    cy.expect(Button('Edit').absent());
+    cy.expect(editRequestButton.absent());
+  },
+
+  verifyActionButtonsPresence() {
+    cy.expect([
+      editRequestButton.visible(),
+      cancelRequestButton.visible(),
+      duplicateRequestButton.visible(),
+      moveRequestButton.visible(),
+      reorderQueueButton.visible(),
+    ]);
+  },
+
+  requestQueueColumns: [
+    {
+      title: 'Order',
+      id: 'position',
+      columnIndex: 1,
+    },
+    {
+      title: 'Status',
+      id: 'fulfillmentstatus',
+      columnIndex: 2,
+    },
+    {
+      title: 'Item barcode',
+      id: 'itembarcode',
+      columnIndex: 3,
+    },
+    {
+      title: 'Request date',
+      id: 'requestdate',
+      columnIndex: 4,
+    },
+    {
+      title: 'Pickup/Delivery',
+      id: 'pickupdelivery',
+      columnIndex: 5,
+    },
+    {
+      title: 'Requester',
+      id: 'requester',
+      columnIndex: 6,
+    },
+    {
+      title: 'Requester barcode',
+      id: 'requesterbarcode',
+      columnIndex: 7,
+    },
+    {
+      title: 'Patron group',
+      id: 'patrongroup',
+      columnIndex: 8,
+    },
+    {
+      title: 'Type',
+      id: 'requesttype',
+      columnIndex: 9,
+    },
+    {
+      title: 'Enumeration',
+      id: 'enumeration',
+      columnIndex: 10,
+    },
+    {
+      title: 'Chronology',
+      id: 'chronology',
+      columnIndex: 11,
+    },
+    {
+      title: 'Volume',
+      id: 'volume',
+      columnIndex: 12,
+    },
+    {
+      title: 'Patron comments',
+      id: 'patroncomments',
+      columnIndex: 13,
+    },
+  ],
+
+  verifyRequestQueueColumnsPresence() {
+    cy.expect([
+      this.requestQueueColumns.forEach(({ title }) => MultiColumnListHeader(title).exists()),
+    ]);
   },
 
   openMoveRequest() {
@@ -237,13 +326,29 @@ export default {
     cy.do(duplicateRequestButton.click());
   },
 
+  clickReorderQueue() {
+    cy.do(reorderQueueButton.click());
+  },
+
   verifyMoveRequestButtonExists() {
     cy.expect(moveRequestButton.exists());
   },
 
+  verifyQueueInstance(instanceTitle) {
+    cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
+  },
+
   requestQueueOnInstance(instanceTitle) {
     cy.do([actionsButton.click(), reorderQueueButton.click()]);
-    cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
+    this.verifyQueueInstance(instanceTitle);
+  },
+
+  verifyAccordionsPresence(presence = true) {
+    const visibilityption = presence ? 'exists' : 'absent';
+    cy.expect([
+      fulfillmentInProgressAccordion[visibilityption](),
+      notYetFilledAccordion[visibilityption](),
+    ]);
   },
 
   checkRequestMovedToFulfillmentInProgress(itemBarcode, moved = true) {
@@ -260,6 +365,24 @@ export default {
           .absent(),
       );
     }
+  },
+
+  clickBarcodeTitle(itemBarcode) {
+    cy.do(
+      fulfillmentInProgressAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
+        .find(Link(itemBarcode))
+        .click(),
+    );
+  },
+
+  clickRequesterBarcode(itemBarcode) {
+    cy.do(
+      fulfillmentInProgressAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 7 }))
+        .find(Link(itemBarcode))
+        .click(),
+    );
   },
 
   openItemByBarcode(barcode = '') {
