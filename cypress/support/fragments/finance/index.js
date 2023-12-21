@@ -3,6 +3,7 @@ export { default as BudgetDetails } from './budgets/budgetDetails';
 export { default as FiscalYears } from './fiscalYears/fiscalYears';
 export { default as Funds } from './funds/funds';
 export { default as FundDetails } from './funds/fundDetails';
+export { default as FundEditForm } from './funds/fundEditForm';
 export { default as LedgerDetails } from './ledgers/ledgerDetails';
 export { default as LedgerRolloverDetails } from './ledgers/ledgerRolloverDetails';
 export { default as LedgerRolloverInProgress } from './ledgers/ledgerRolloverInProgress';
