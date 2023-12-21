@@ -16,6 +16,8 @@ import {
   DropdownMenu,
   Callout,
   Pane,
+  Form,
+  Option,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -71,6 +73,9 @@ const existingRecordType = Select({ name: 'profile.existingRecordType' });
 const approvedCheckbox = Checkbox({
   name: 'profile.mappingDetails.mappingFields[1].booleanFieldAction',
 });
+const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
+const recordTypeselect = Select({ name: 'profile.existingRecordType' });
+const closeButton = Button('Close');
 
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -361,6 +366,9 @@ export default {
   selectOrganizationByName,
   selectAdminNotesAction,
   save,
+  waitLoading: () => {
+    cy.expect(mappingProfilesForm.exists());
+  },
 
   fillMappingProfile: (specialMappingProfile = defaultMappingProfile) => {
     fillSummaryInMappingProfile(specialMappingProfile);
@@ -1129,4 +1137,10 @@ export default {
       TextField('Access provider').has({ value: `"${profile.accessProvider}"` }),
     ]);
   },
+
+  verifyFOLIORecordTypeOptionExists(type) {
+    cy.expect(recordTypeselect.find(Option(type)).exists());
+  },
+
+  clickClose: () => cy.do(closeButton.click()),
 };
