@@ -283,7 +283,7 @@ export default {
     cy.do(searchButton.click());
     cy.expect(
       MultiColumnListRow({ index: 0 })
-        .find(Button({ text: including('Beethoven, Ludwig van (no 010)') }))
+        .find(Button({ text: including(value) }))
         .exists(),
     );
     cy.expect(marcViewSection.exists());
@@ -1053,6 +1053,14 @@ export default {
     } else {
       marcViewSection.absent();
     }
+  },
+
+  checkSearchInputInFocus() {
+    cy.expect(TextArea({ id: 'textarea-authorities-search' }).has({ focused: true }));
+  },
+
+  checkResetAllButtonDisabled(isDisabled = true) {
+    cy.expect(resetButton.is({ disabled: isDisabled }));
   },
 
   verifyAllAuthorizedAreBold() {
