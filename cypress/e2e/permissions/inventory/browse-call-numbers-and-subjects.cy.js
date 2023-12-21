@@ -53,15 +53,15 @@ describe('Permisions -> Inventory', () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifySearchAndFilterPaneBrowseToggle();
       InventorySearchAndFilter.selectBrowseCallNumbers();
-      InventorySearchAndFilter.verifySerachAndResetAllButtonsDisabled(true);
+      InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(true);
       InventorySearchAndFilter.browseSearch('K1');
-      InventorySearchAndFilter.verifySerachAndResetAllButtonsDisabled(false);
+      InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(false);
       InventorySearchAndFilter.verifyBrowseInventorySearchResults();
 
       InventorySearchAndFilter.selectBrowseSubjects();
-      InventorySearchAndFilter.verifySerachAndResetAllButtonsDisabled(true);
+      InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(true);
       InventorySearchAndFilter.browseSearch('art');
-      InventorySearchAndFilter.verifySerachAndResetAllButtonsDisabled(false);
+      InventorySearchAndFilter.verifySearchAndResetAllButtonsDisabled(false);
       InventorySearchAndFilter.verifyBrowseInventorySearchResults();
     },
   );

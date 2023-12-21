@@ -732,7 +732,7 @@ export default {
     });
   },
 
-  verifySerachAndResetAllButtonsDisabled(state) {
+  verifySearchAndResetAllButtonsDisabled(state) {
     cy.expect([searchButton.has({ disabled: state }), resetAllBtn.has({ disabled: state })]);
   },
 
