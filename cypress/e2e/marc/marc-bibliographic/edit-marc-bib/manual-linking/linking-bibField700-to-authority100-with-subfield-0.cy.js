@@ -8,27 +8,60 @@ import MarcAuthorities from '../../../../../support/fragments/marcAuthority/marc
 import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../../support/fragments/topMenu';
-// import Users from '../../../../../support/fragments/users/users';
+import Users from '../../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../../support/utils/stringTools';
 import MarcAuthoritiesSearch from '../../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
+import InstanceRecordView from '../../../../../support/fragments/inventory/instanceRecordView';
+import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
 
 describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => {
   const testData = {
     createdRecordIDs: [],
-    tag700: '700',
     filterStateTag100: [
       'advancedSearch',
       'keyword==C380742 Lee, Stan, 1922-2018, or identifiers.value==n83169267',
     ],
     authority010FieldValue: 'n  83169267',
     authority100FieldValue: 'C380742 Lee, Stan,',
-    // tag010: '010',
-    // tag240: '240',
-    // authority100FieldValue: 'Coates, Ta-Nehisi',
-    // authority010FieldValue: 'n 2008001084',
-    // successMsg:
-    //   'This record has successfully saved and is in process. Changes may not appear immediately.',
-    // accordion: 'Contributor',
+    tag100: '100',
+    linkButtonToolTipText: 'Link "C380742 Lee, Stan, 1922-2018"',
+    calloutMessage: 'Record created.',
+    successMsg:
+      'This record has successfully saved and is in process. Changes may not appear immediately.',
+    accordion: 'Contributor',
+    contributorName: '1922-2018 Lee, Stan,',
+    marcAuthIcon: 'Linked to MARC authority',
+  };
+
+  const field700 = {
+    tag: '700',
+    rowIndex: 79,
+    content: [
+      79,
+      '700',
+      '1',
+      '\\',
+      '$a C380742 Lee, Stan, $d 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
+    ],
+    updatedContent:
+      '$d C380742 Lee, Stan, $t 1922-2018, $e creator. $0 id.loc.gov/authorities/names/n83169267',
+    contentAfterLinking: [
+      79,
+      '700',
+      '1',
+      '\\',
+      '$d 1922-2018 $a C380742 Lee, Stan,',
+      '$e creator.',
+      '$0 id.loc.gov/authorities/names/n83169267',
+      '',
+    ],
+    contentAfterUnlinking: [
+      79,
+      '700',
+      '1',
+      '\\',
+      '$d 1922-2018 $a C380742 Lee, Stan, $e creator. $0 id.loc.gov/authorities/names/n83169267',
+    ],
   };
 
   const marcFiles = [
@@ -45,6 +78,15 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       numOfRecords: 1,
     },
   ];
+
+  after('Deleting created user', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(testData.userProperties.userId);
+    testData.createdRecordIDs.forEach((id, index) => {
+      if (index) MarcAuthority.deleteViaAPI(id);
+      else InventoryInstance.deleteInstanceViaApi(id);
+    });
+  });
 
   before('Creating user', () => {
     // make sure there are no duplicate authority records in the system
@@ -71,8 +113,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       marcFiles.forEach((marcFile) => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-        JobProfiles.waitLoadingList();
+        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(marcFile.jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(marcFile.fileName);
@@ -99,70 +141,78 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       InventoryInstances.searchByTitle(testData.createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
-      QuickMarcEditor.checkLinkButtonExistByRowIndex(79);
-      QuickMarcEditor.verifyTagFieldAfterUnlinking(
-        79,
-        '700',
-        '1',
-        '\\',
-        '$a C380742 Lee, Stan, $d 1922-2018, $e creator. $0 http://id.loc.gov/authorities/names/n83169267',
-      );
-      QuickMarcEditor.clickLinkIconInTagField(79);
+      QuickMarcEditor.checkLinkButtonExistByRowIndex(field700.rowIndex);
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(...field700.content);
+      QuickMarcEditor.clickLinkIconInTagField(field700.rowIndex);
       InventoryInstance.verifySelectMarcAuthorityModal();
       MarcAuthoritiesSearch.verifyFiltersState(
         testData.filterStateTag100[0],
         testData.filterStateTag100[1],
         'Search',
       );
-      // keyword==C380742 Lee, Stan, 1922-2018, or identifiers.value==n83169267
-      // keyword containsAll C380742 Lee, Stan, or identifiers.value containsAll n83169267
-      // MarcAuthority.contains(testData.authority010FieldValue);
-      // MarcAuthority.contains(testData.authority100FieldValue);
-      // MarcAuthorities.closeFindAuthorityModal();
-      // QuickMarcEditor.updateExistingFieldContent(79, '$d C380742 Lee, Stan, $t 1922-2018, $e creator. $0 id.loc.gov/authorities/names/n83169267');
+      MarcAuthority.contains(testData.authority010FieldValue);
+      MarcAuthority.contains(testData.authority100FieldValue);
+      InventoryInstance.closeFindAuthorityModal();
+      QuickMarcEditor.updateExistingFieldContent(field700.rowIndex, field700.updatedContent);
 
-      // QuickMarcEditor.clickLinkIconInTagField(79);
-      // InventoryInstance.verifySelectMarcAuthorityModal();
-      // MarcAuthoritiesSearch.verifyFiltersState(
-      //   testData.filterStateTag100[0],
-      //   testData.filterStateTag100[1],
-      //   'Search',
-      // );
-      // // MarcAuthority.contains(testData.authority010FieldValue);
-      // // MarcAuthority.contains(testData.authority100FieldValue);
+      QuickMarcEditor.clickLinkIconInTagField(field700.rowIndex);
+      InventoryInstance.verifySelectMarcAuthorityModal();
+      MarcAuthoritiesSearch.verifyFiltersState(
+        testData.filterStateTag100[0],
+        testData.filterStateTag100[1],
+        'Search',
+      );
+      MarcAuthority.contains(testData.authority010FieldValue);
+      MarcAuthority.contains(testData.authority100FieldValue);
 
-      // MarcAuthorities.checkLinkButtonToolTipText('Link "C380742 Lee, Stan, 1922-2018"');
-      // InventoryInstance.clickLinkButton();
-      // QuickMarcEditor.verifyAfterLinkingUsingRowIndex('700', 79);
-      // QuickMarcEditor.verifyTagFieldAfterLinking(
-      //   79,
-      //   '700',
-      //   '1',
-      //   '\\',
-      //   '$d 1922-2018 $a Lee, Stan,',
-      //   '$e creator.',
-      //   '$0 id.loc.gov/authorities/names/n83169267',
-      //   ''
-      // );
-      // QuickMarcEditor.pressSaveAndKeepEditing('This record has successfully saved and is in process. Changes may not appear immediately.');
-      // QuickMarcEditor.checkViewMarcAuthorityTooltipText(79);
-      // QuickMarcEditor.clickViewMarcAuthorityIconInTagField(79);
-      // MarcAuthorities.checkFieldAndContentExistence('100', 'C380742 Lee, Stan');
-      // cy.go('back');
-      // QuickMarcEditor.closeEditorPane();
-      // InstanceRecordView.verifyInstancePaneExists();
-      // InventoryInstance.verifyContributorWithMarcAppLink(1, 1, '1922-2018 Lee, Stan,');
-      // InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Contributor');
-      // InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane('Contributor');
-      // MarcAuthorities.checkDetailViewIncludesText('1922-2018 Lee, Stan,');
-      // cy.go('back');
-      // InstanceRecordView.verifyInstancePaneExists();
-      // InventoryInstance.viewSource();
-      // InventoryViewSource.verifyLinkedToAuthorityIcon(76);
+      MarcAuthorities.checkLinkButtonToolTipText(testData.linkButtonToolTipText);
+      InventoryInstance.clickLinkButton();
+      QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field700.tag, field700.rowIndex);
+      QuickMarcEditor.verifyTagFieldAfterLinking(...field700.contentAfterLinking);
+      QuickMarcEditor.pressSaveAndKeepEditing(testData.successMsg);
+      QuickMarcEditor.checkViewMarcAuthorityTooltipText(field700.rowIndex);
+      QuickMarcEditor.clickViewMarcAuthorityIconInTagField(field700.rowIndex);
+      MarcAuthorities.checkFieldAndContentExistence(
+        testData.tag100,
+        testData.authority100FieldValue,
+      );
+      cy.go('back');
+      QuickMarcEditor.closeEditorPane();
+      InstanceRecordView.verifyInstancePaneExists();
+      InventoryInstance.verifyContributorWithMarcAppLink(
+        5,
+        1,
+        `${testData.marcAuthIcon}1922-2018 C380742 Lee, Stan`,
+      );
+      InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
+      InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(testData.accordion);
+      MarcAuthorities.checkFieldAndContentExistence(
+        testData.tag100,
+        testData.authority100FieldValue,
+      );
+      cy.go('back');
+      InstanceRecordView.verifyInstancePaneExists();
+      InventoryInstance.viewSource();
+      InventoryViewSource.verifyLinkedToAuthorityIcon(field700.rowIndex);
+      InventoryViewSource.clickViewMarcAuthorityIcon();
+      MarcAuthorities.checkDetailViewIncludesText('C380742 Lee, Stan');
+      cy.go('back');
+      InventoryViewSource.close();
 
-      // // MarcAuthorities.checkDetailViewIncludesText('C380742 Lee, Stan');
-      // // cy.go('back');
-      // // InventoryInstance.closeDetailsView();
+      InstanceRecordView.verifyInstancePaneExists();
+      InventoryInstance.editMarcBibliographicRecord();
+      QuickMarcEditor.verifyRowLinked(field700.rowIndex);
+      QuickMarcEditor.clickUnlinkIconInTagField(field700.rowIndex);
+      QuickMarcEditor.confirmUnlinkingField();
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.contentAfterUnlinking);
+      QuickMarcEditor.verifyIconsAfterUnlinking(field700.rowIndex);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkCallout(testData.calloutMessage);
+
+      InstanceRecordView.verifyInstancePaneExists();
+      InventoryInstance.verifyContributorAbsent(testData.contributorName);
+      InventoryInstance.viewSource();
+      InventoryViewSource.verifyLinkedToAuthorityIcon(field700.rowIndex, false);
     },
   );
 });

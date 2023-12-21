@@ -96,4 +96,9 @@ export default {
       );
     }
   },
+
+  clickViewMarcAuthorityIcon() {
+    cy.get('#marc-view-pane').find('a').invoke('removeAttr', 'target').click();
+    cy.wait(2000);
+  },
 };
