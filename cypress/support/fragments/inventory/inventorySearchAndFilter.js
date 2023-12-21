@@ -206,6 +206,10 @@ export default {
     cy.do(this.getSearchResult(indexRow, 0).click());
   },
 
+  verifyNumberOfSearchResults(expectedNumber) {
+    cy.expect(instancesList.has({ rowCount: expectedNumber }));
+  },
+
   byEffectiveLocation(values) {
     cy.do(effectiveLocationInput.clickHeader());
     // wait to avoid robotic clicks
