@@ -38,6 +38,7 @@ export default HTML.extend('select')
     disabled: (el) => el.querySelector('select').disabled,
     checkedOptionText: (el) => el.querySelector('select option:checked').textContent,
     optionsText: (el) => [...el.querySelectorAll('option:not([disabled])')].map(({ textContent }) => textContent),
+    focused: (el) => el.querySelector('select').contains(el.ownerDocument.activeElement),
   })
   .actions({
     choose,

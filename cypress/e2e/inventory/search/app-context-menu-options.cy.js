@@ -126,7 +126,7 @@ describe('Inventory', () => {
       // * "Effective location (item)" accordion appears below the search field
       InventorySearchAndFilter.selectBrowseCallNumbers();
       InventorySearchAndFilter.verifySearchButtonDisabled();
-      InventorySearchAndFilter.verifyResetAllButtonDisabled();
+      InventorySearchAndFilter.verifyResetAllButtonDisabled(true);
 
       // #15 Enter any existing call number in the search field, for example: "DE3"  => Click "Search" button
       // Search results appear in "Browse inventory" pane

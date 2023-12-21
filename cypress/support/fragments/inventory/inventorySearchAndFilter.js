@@ -13,6 +13,7 @@ import {
   MultiSelect,
   MultiSelectOption,
   Pane,
+  PaneHeader,
   SearchField,
   Section,
   Select,
@@ -49,6 +50,8 @@ const inventorySearchAndFilterInput = Select({
   id: 'input-inventory-search-qindex',
 });
 const browseSearchAndFilterInput = Select({ id: 'input-record-search-qindex' });
+const browseSearchInputField = TextArea({ id: 'input-record-search' });
+const browseResultList = MultiColumnList({ id: 'browse-results-list-callNumbers' });
 const resetAllButton = Button({ id: 'clickable-reset-all' });
 const resetAllBtn = Button('Reset all');
 const navigationInstancesButton = Button({
@@ -389,12 +392,7 @@ export default {
   },
 
   verifyCallNumbersResultsInBrowsePane(item) {
-    cy.expect(
-      callNumberBrowsePane
-        .find(MultiColumnList({ id: 'browse-results-list-callNumbers' }))
-        .find(MultiColumnListCell(item))
-        .exists(),
-    );
+    cy.expect(callNumberBrowsePane.find(browseResultList).find(MultiColumnListCell(item)).exists());
   },
 
   saveUUIDs() {
@@ -457,7 +455,7 @@ export default {
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
       browseButton.click(),
-      TextArea({ id: 'input-record-search' }).fillIn(searchString),
+      browseSearchInputField.fillIn(searchString),
       searchButton.click(),
     ]);
     cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
@@ -670,7 +668,7 @@ export default {
   },
 
   browseSearch(searchValue) {
-    cy.do([TextArea({ id: 'input-record-search' }).fillIn(searchValue), searchButton.click()]);
+    cy.do([browseSearchInputField.fillIn(searchValue), searchButton.click()]);
   },
 
   clickEditInstance() {
@@ -712,7 +710,7 @@ export default {
 
   verifySearchToggleButtonSelected: () => cy.expect(searchToggleButton.has({ default: false })),
   verifySearchButtonDisabled: () => cy.expect(searchButton.has({ disabled: true })),
-  verifyResetAllButtonDisabled: () => cy.expect(resetAllBtn.has({ disabled: true })),
+  verifyResetAllButtonDisabled: (isDisabled) => cy.expect(resetAllBtn.has({ disabled: isDisabled })),
   verifyBrowseInventorySearchResults({ records = [] } = {}) {
     cy.expect(inventorySearchResultsPane.exists());
 
@@ -868,5 +866,41 @@ export default {
         .find(Checkbox())
         .has({ label: matching(/.{1,}\d{1,}/) }),
     );
+  },
+
+  checkBrowseOptionDropdownInFocus() {
+    cy.expect(Select({ id: 'input-record-search-qindex' }).has({ focused: true }));
+  },
+
+  clickEffectiveLocationAccordionToggleButton() {
+    cy.do(effectiveLocationInput.clickHeader());
+  },
+
+  clickEffectiveLocationAccordionInput() {
+    cy.get('input[type=search]').click();
+  },
+
+  checkEffectiveLocationAccordionInputInFocus() {
+    cy.expect(TextField({ type: 'search' }).has({ focused: true }));
+  },
+
+  checkBrowseSearchInputFieldContent(text) {
+    cy.expect(browseSearchInputField.has({ textContent: text }));
+  },
+
+  checkBrowseSearchInputFieldInFocus(isFocused) {
+    cy.expect(browseSearchInputField.has({ focused: isFocused }));
+  },
+
+  checkBrowseInventoryResultPaneInFocus() {
+    cy.expect(PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' }).has({ focused: true }));
+  },
+
+  checkBrowseResultListCallNumbersExists(isExist) {
+    if (isExist) {
+      cy.expect(browseResultList.exists());
+    } else {
+      cy.expect(browseResultList.absent());
+    }
   },
 };
