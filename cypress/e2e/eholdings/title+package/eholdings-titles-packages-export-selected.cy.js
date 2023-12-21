@@ -5,7 +5,6 @@ import {
   EHoldingsPackagesSearch,
 } from '../../../support/fragments/eholdings';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -27,8 +26,6 @@ describe('eHoldings', () => {
         Permissions.exportManagerAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-
-        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
 
         cy.login(testData.user.username, testData.user.password, {
           path: `${TopMenu.eholdingsPath}?searchType=packages`,
