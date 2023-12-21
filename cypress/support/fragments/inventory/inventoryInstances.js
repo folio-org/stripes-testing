@@ -28,6 +28,7 @@ import getRandomPostfix from '../../utils/stringTools';
 import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
 
 const rootSection = Section({ id: 'pane-results' });
+const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
@@ -1096,15 +1097,27 @@ export default {
     });
   },
 
+  verifySelectAllInstancesCheckbox(selected = false) {
+    cy.expect([
+      selectAllInstancesCheckbox.exists(),
+      selectAllInstancesCheckbox.has({ checked: selected }),
+    ]);
+  },
+
+  checkSearchResultCount(text) {
+    cy.expect(resultsPaneHeader.find(HTML(new RegExp(text))).exists());
+  },
+
   verifyInventoryLabelText(textLabel) {
     cy.wrap(Pane({ id: 'pane-results' }).subtitle()).then((element) => {
       cy.expect(element).contains(textLabel);
     });
   },
 
-  verifyAllCheckboxesAreUnchecked() {
+  verifyAllCheckboxesAreChecked(state) {
     cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
-      cy.expect(!checkbox.checked);
+      const expectedState = state ? checkbox.checked : !checkbox.checked;
+      cy.expect(expectedState);
     });
   },
 
