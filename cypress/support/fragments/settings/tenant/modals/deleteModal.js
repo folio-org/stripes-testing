@@ -24,4 +24,8 @@ export default {
     cy.expect(deleteButton.exists());
     cy.expect(cancelButton.exists());
   },
+
+  closeModalByEsc() {
+    cy.get('#delete-controlled-vocab-entry-confirmation').type('{esc}');
+  },
 };

@@ -48,6 +48,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
     measured: (el) => el.style && el.style.width !== '',
     visible: (el) => isVisible(el),
+    clickable: (el) => !!el.querySelector('a')?.href,
     inputTextFieldNames: (el) => [...el.querySelectorAll('input')].map((input) => input.name),
     liValues: (el) => [...el.querySelectorAll('li')].map((li) => li.textContent),
     innerHTML: (el) => el.innerHTML,
