@@ -31,7 +31,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       numOfRecords: 1,
     },
     {
-      marc: 'marcFileForC365134.mrc',
+      marc: 'marcAuthFileForC365134.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,

@@ -28,6 +28,7 @@ import {
   including,
   not,
   or,
+  Tooltip,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -1138,5 +1139,14 @@ export default {
 
   closeFindAuthorityModal() {
     cy.do(findAuthorityModal.find(buttonClose).click());
+  },
+
+  checkLinkButtonToolTipText(text) {
+    cy.do(
+      marcViewSection
+        .find(Button({ ariaLabelledby: 'marc-authority-link-tooltip-text' }))
+        .hoverMouse(),
+    );
+    cy.expect(Tooltip().has({ text }));
   },
 };
