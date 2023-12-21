@@ -137,6 +137,15 @@ export default {
     cy.do([rolloverConfirmButton.click()]);
   },
 
+  fillInclearRolloverInfo(fiscalYear) {
+    cy.do(fiscalYearSelect.click());
+    // Need to wait,while date of fiscal year will be loaded
+    cy.do([fiscalYearSelect.choose(fiscalYear)]);
+    cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
+    this.continueRollover();
+    cy.do([rolloverConfirmButton.click()]);
+  },
+
   fillInCommonRolloverInfo(fiscalYear, rolloverBudgetValue, rolloverValueAs) {
     cy.wait(4000);
     cy.do(fiscalYearSelect.click());
@@ -600,10 +609,11 @@ export default {
       });
   },
 
-  deleteledgerViaApi: (ledgerId) => cy.okapiRequest({
+  deleteledgerViaApi: (ledgerId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/ledgers/${ledgerId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
 
   selectLedger: (ledgerName) => {

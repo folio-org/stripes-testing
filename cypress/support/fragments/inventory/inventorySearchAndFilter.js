@@ -206,6 +206,10 @@ export default {
     cy.do(this.getSearchResult(indexRow, 0).click());
   },
 
+  verifyNumberOfSearchResults(expectedNumber) {
+    cy.expect(instancesList.has({ rowCount: expectedNumber }));
+  },
+
   byEffectiveLocation(values) {
     cy.do(effectiveLocationInput.clickHeader());
     // wait to avoid robotic clicks
@@ -442,8 +446,8 @@ export default {
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },
-  switchToItem: () => cy.do(Button({ id: 'segment-navigation-items' }).click()),
-  switchToHoldings: () => cy.do(Button({ id: 'segment-navigation-holdings' }).click()),
+  switchToItem: () => cy.do(itemToggleButton.click()),
+  switchToHoldings: () => cy.do(holdingsToggleButton.click()),
   switchToInstance: () => cy.do(navigationInstancesButton.click()),
 
   instanceTabIsDefault() {
@@ -504,6 +508,11 @@ export default {
       inventorySearchAndFilterInput.choose(searchOption),
       inventorySearchAndFilter.fillIn(text),
     ]);
+  },
+
+  executeSearch(text) {
+    cy.do(inventorySearchAndFilter.fillIn(text));
+    this.clickSearch();
   },
 
   verifySelectedSearchOption(option) {
@@ -570,8 +579,16 @@ export default {
     cy.expect(HTML('No matching options').exists());
   },
 
-  verifyResultPaneEmpty() {
-    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
+  verifyResultPaneEmpty({ noResultsFound = false, searchQuery = '(?:\\S+)' } = {}) {
+    const message = noResultsFound
+      ? `No results found for "${searchQuery}". Please check your spelling and filters.`
+      : emptyResultsMessage;
+
+    cy.expect(
+      paneResultsSection
+        .find(HTML({ className: including('noResultsMessage-') }))
+        .has({ text: matching(message) }),
+    );
   },
 
   resetAllAndVerifyNoResultsAppear() {

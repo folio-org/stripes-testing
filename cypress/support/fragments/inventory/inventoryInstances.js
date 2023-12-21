@@ -23,11 +23,12 @@ import InventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 import InventoryItems from './item/inventoryItems';
 import Arrays from '../../utils/arrays';
-import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../constants';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
 import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
 
 const rootSection = Section({ id: 'pane-results' });
+const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
@@ -192,6 +193,28 @@ const getCallNumberTypes = (searchParams) => {
     });
 };
 
+const createHoldingsNoteTypeViaApi = (noteTypeName) => {
+  return cy
+    .okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: 'holdings-note-types',
+      body: {
+        id: uuid(),
+        name: noteTypeName,
+        source: 'folio',
+      },
+    })
+    .then((response) => response.body.id);
+};
+
+const deleteHoldingsNoteTypeViaApi = (noteTypeId) => {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.DELETE,
+    path: `holdings-note-types/${noteTypeId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+};
+
 const getHoldingsNotesTypes = (searchParams) => {
   return cy
     .okapiRequest({
@@ -229,6 +252,8 @@ const getIdentifierTypes = (searchParams) => {
 };
 
 export default {
+  createHoldingsNoteTypeViaApi,
+  deleteHoldingsNoteTypeViaApi,
   getHoldingsNotesTypes,
   getCallNumberTypes,
   getIdentifierTypes,
@@ -573,13 +598,13 @@ export default {
     return [...Array(count).keys()].map((index) => {
       const gHoldings =
         holdings ||
-        [...Array(holdingsCount || 1).keys()].map(() => ({
+        [...Array(holdingsCount ?? 1).keys()].map(() => ({
           id: uuid(),
         }));
       const gItems =
         items ||
         gHoldings.reduce((acc, it) => {
-          const holdingItems = [...Array(itemsCount || 1).keys()].map(() => {
+          const holdingItems = [...Array(itemsCount ?? 1).keys()].map(() => {
             const properties = Array.isArray(itemsProperties)
               ? itemsProperties[index]
               : itemsProperties;
@@ -1072,15 +1097,27 @@ export default {
     });
   },
 
+  verifySelectAllInstancesCheckbox(selected = false) {
+    cy.expect([
+      selectAllInstancesCheckbox.exists(),
+      selectAllInstancesCheckbox.has({ checked: selected }),
+    ]);
+  },
+
+  checkSearchResultCount(text) {
+    cy.expect(resultsPaneHeader.find(HTML(new RegExp(text))).exists());
+  },
+
   verifyInventoryLabelText(textLabel) {
     cy.wrap(Pane({ id: 'pane-results' }).subtitle()).then((element) => {
       cy.expect(element).contains(textLabel);
     });
   },
 
-  verifyAllCheckboxesAreUnchecked() {
+  verifyAllCheckboxesAreChecked(state) {
     cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
-      cy.expect(!checkbox.checked);
+      const expectedState = state ? checkbox.checked : !checkbox.checked;
+      cy.expect(expectedState);
     });
   },
 

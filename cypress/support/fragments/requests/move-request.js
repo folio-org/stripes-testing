@@ -5,6 +5,7 @@ import {
   Pane,
   PaneHeader,
   Button,
+  Option,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -31,5 +32,10 @@ export default {
         .find(Button({ icon: 'times' }))
         .click(),
     );
+  },
+
+  verifyRequestTypes(...requestTypes) {
+    cy.expect(Modal(including('Select request type')).exists());
+    requestTypes.forEach((type) => cy.expect(Option({ value: type }).exists()));
   },
 };

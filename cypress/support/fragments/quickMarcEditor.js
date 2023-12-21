@@ -1,3 +1,4 @@
+import { matching } from '@interactors/html';
 import {
   QuickMarcEditor,
   QuickMarcEditorRow,
@@ -97,6 +98,10 @@ const calloutMultiple010MarcTags = Callout('Record cannot be saved with more tha
 const calloutMultiple010Subfields = Callout('010 can only have one $a.');
 const calloutInvalidLDRValue = Callout(
   including('Record cannot be saved. Please enter a valid Leader'),
+);
+
+const calloutThreeCharacterMarcTag = Callout(
+  'Record cannot be saved. A MARC tag must contain three characters.',
 );
 const closeButton = Button({ icon: 'times' });
 const validRecord = InventoryInstance.validOCLC;
@@ -421,6 +426,17 @@ export default {
     cy.expect(Callout(including(calloutMsg)).exists());
   },
 
+  verifyAreYouSureModal(content) {
+    cy.expect(
+      updateLinkedBibFieldsModal.has({
+        content: including('Are you sure?'),
+      }),
+      updateLinkedBibFieldsModal.has({
+        content: including(content),
+      }),
+    );
+  },
+
   restoreDeletedFields: () => {
     cy.do(deleteFieldsModal.find(cancelButtonInDeleteFieldsModal).click());
   },
@@ -434,6 +450,7 @@ export default {
   },
 
   clickSaveAndCloseThenCheck(records) {
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
     cy.expect([
       confirmationModal.exists(),
@@ -735,6 +752,7 @@ export default {
   verifyDerivedMarcBibSave() {
     cy.expect(calloutOnDeriveFirst.exists());
   },
+
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
@@ -836,6 +854,52 @@ export default {
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
       QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
     ]);
+  },
+
+  verifyRowLinked(rowIndex, isLinked = true) {
+    if (isLinked) {
+      cy.expect([
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].content` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
+        QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
+        QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).absent(),
+      ]);
+    } else {
+      cy.expect([
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].content` }))
+          .exists(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.controlled` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledAlpha` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.zeroSubfield` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex })
+          .find(TextArea({ name: `records[${rowIndex}].subfieldGroups.uncontrolledNumber` }))
+          .absent(),
+        QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).absent(),
+        QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).absent(),
+        QuickMarcEditorRow({ index: rowIndex }).find(linkToMarcRecordButton).exists(),
+      ]);
+    }
   },
 
   verifyTagFieldAfterLinking(
@@ -1591,6 +1655,14 @@ export default {
     ]);
   },
 
+  verifyZeroSubfieldInUnlinkedField(rowIndex, content) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .has({ value: including(`$0 ${content}`) }),
+    );
+  },
+
   verifyRemoveLinkingModal() {
     cy.expect([
       removeLinkingModal.exists(),
@@ -1654,7 +1726,9 @@ export default {
   verifyMultiple001TagCallout() {
     cy.expect(calloutMultiple001MarcTags.exists());
   },
-
+  verifyMarcTagThreeCharacterCallout() {
+    cy.expect(calloutThreeCharacterMarcTag.exists());
+  },
   verifyAndDismissMultiple010TagCallout() {
     cy.expect(calloutMultiple010MarcTags.exists());
     cy.do(calloutMultiple010MarcTags.dismiss());
@@ -1710,11 +1784,19 @@ export default {
   },
 
   checkUserNameInHeader(firstName, lastName) {
-    cy.expect(
-      PaneHeader()
-        .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
-        .exists(),
-    );
+    if (!firstName) {
+      cy.expect(
+        PaneHeader()
+          .find(HTML(matching(new RegExp(`Source: ${lastName}$`))))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        PaneHeader()
+          .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
+          .exists(),
+      );
+    }
   },
 
   updateIndicatorValue(tag, newValue, indicatorIndex = 0) {
@@ -1899,5 +1981,12 @@ export default {
     cy.get(`input[name*=".tag"][value="${tag}"]`).then(
       (elements) => elements.length === numOfFields,
     );
+  },
+
+  openLinkingAuthorityByIndex(rowIndex) {
+    cy.wrap(QuickMarcEditorRow({ index: rowIndex }).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
   },
 };

@@ -86,6 +86,16 @@ export default {
       id: uuid(),
     };
   },
+  getLedgerRolloverViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'finance/ledger-rollovers',
+        method: 'GET',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.ledgerFiscalYearRollovers);
+  },
   createLedgerRolloverViaApi(ledgersProperties) {
     return cy
       .okapiRequest({
