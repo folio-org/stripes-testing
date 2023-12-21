@@ -20,10 +20,12 @@ import {
   KeyValue,
   Card,
   TextArea,
+  HTML,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectOrganizationModal from './modals/selectOrganizationModal';
+import OrderLineDetails from './orderLineDetails';
 import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
@@ -959,6 +961,12 @@ export default {
 
   selectOrderline: (POlinenumber) => {
     cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
+  },
+  selectOrderLineByPolNumber(poLineNumber) {
+    this.searchByParameter('Keyword', poLineNumber);
+    this.selectOrderline(poLineNumber);
+
+    return OrderLineDetails;
   },
   selectreceivedTitleName: (title) => {
     cy.do(receivedtitleDetails.find(Link(title)).click());
@@ -2008,5 +2016,59 @@ export default {
       path: `orders/order-lines/${orderLine.id}`,
       body: orderLine,
     });
+  },
+  verifyPOlineListIncludesLink: (POlinenumber) => {
+    cy.expect(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).exists());
+  },
+
+  verifyNoResultsMessage() {
+    cy.expect(HTML('Choose a filter or enter a search query to show results.').exists());
+  },
+
+  verifyOrderTitlePOL(title) {
+    cy.expect(
+      orderLineDetailsPane.find(paneHeaderOrderLinesDetailes).has({ text: including(title) }),
+    );
+  },
+
+  selectStatusInSearchOrderLine: (orderStatus) => {
+    cy.do(Accordion({ id: 'receiptStatus' }).clickHeader());
+    switch (orderStatus) {
+      case 'Awaiting receipt':
+        cy.do(
+          Checkbox({ id: 'clickable-filter-receiptStatus-awaiting-receipt' }).checkIfNotSelected(),
+        );
+        break;
+      case 'Cancelled':
+        cy.do(Checkbox({ id: 'clickable-filter-receiptStatus-cancelled' }).checkIfNotSelected());
+        break;
+      case 'Fully received':
+        cy.do(
+          Checkbox({ id: 'clickable-filter-receiptStatus-fully-received' }).checkIfNotSelected(),
+        );
+        break;
+      case 'Ongoing':
+        cy.do(Checkbox({ id: 'clickable-filter-receiptStatus-ongoing' }).checkIfNotSelected());
+        break;
+      case 'Partially received':
+        cy.do(
+          Checkbox({
+            id: 'clickable-filter-receiptStatus-partially-received',
+          }).checkIfNotSelected(),
+        );
+        break;
+      case 'Pending':
+        cy.do(Checkbox({ id: 'clickable-filter-receiptStatus-pending' }).checkIfNotSelected());
+        break;
+      case 'Receipt not required':
+        cy.do(
+          Checkbox({
+            id: 'clickable-filter-receiptStatus-receipt-not-required',
+          }).checkIfNotSelected(),
+        );
+        break;
+      default:
+        cy.log('No such status like ' + orderStatus + '. Please use Closed, Open or Pending');
+    }
   },
 };
