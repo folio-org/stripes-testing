@@ -5,10 +5,10 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Inventory -> Call Number and Subjects Browse', () => {
+describe('Permisions -> Inventory', () => {
   let userId;
   const testData = {};
-  beforeEach('create tests data', () => {
+  before('create tests data', () => {
     testData.instanceTitle = `autoTestInstanceTitle ${getRandomPostfix()}`;
     cy.getAdminToken()
       .then(() => {
@@ -39,7 +39,7 @@ describe('Inventory -> Call Number and Subjects Browse', () => {
     );
   });
 
-  afterEach('delete test data', () => {
+  after('delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(userId);
     InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.instanceId);
@@ -47,21 +47,21 @@ describe('Inventory -> Call Number and Subjects Browse', () => {
 
   it(
     'C375076 User with "Inventory: View, create, edit instances" permission can see browse call numbers and subjects without assigning specific browse permissions (Orchid+) (thunderjet) (TaaS)',
-    { tags: ['extended', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       InventorySearchAndFilter.verifySearchAndFilterPane();
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifySearchAndFilterPaneBrowseToggle();
       InventorySearchAndFilter.selectBrowseCallNumbers();
-      InventorySearchAndFilter.verifyButtonsDisabled(true);
+      InventorySearchAndFilter.verifySerachAndResetAllButtonsDisabled(true);
       InventorySearchAndFilter.browseSearch('K1');
-      InventorySearchAndFilter.verifyButtonsDisabled(false);
+      InventorySearchAndFilter.verifySerachAndResetAllButtonsDisabled(false);
       InventorySearchAndFilter.verifyBrowseInventorySearchResults();
 
       InventorySearchAndFilter.selectBrowseSubjects();
-      InventorySearchAndFilter.verifyButtonsDisabled(true);
+      InventorySearchAndFilter.verifySerachAndResetAllButtonsDisabled(true);
       InventorySearchAndFilter.browseSearch('art');
-      InventorySearchAndFilter.verifyButtonsDisabled(false);
+      InventorySearchAndFilter.verifySerachAndResetAllButtonsDisabled(false);
       InventorySearchAndFilter.verifyBrowseInventorySearchResults();
     },
   );
