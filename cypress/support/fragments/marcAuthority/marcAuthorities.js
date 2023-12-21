@@ -1139,4 +1139,8 @@ export default {
   closeFindAuthorityModal() {
     cy.do(findAuthorityModal.find(buttonClose).click());
   },
+
+  selectRecordByIndex(rowIndex) {
+    cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
+  },
 };
