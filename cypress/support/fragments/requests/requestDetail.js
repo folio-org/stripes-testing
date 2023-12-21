@@ -237,6 +237,10 @@ export default {
     cy.do(duplicateRequestButton.click());
   },
 
+  clickReorderQueue() {
+    cy.do(reorderQueueButton.click());
+  },
+
   verifyMoveRequestButtonExists() {
     cy.expect(moveRequestButton.exists());
   },
@@ -260,6 +264,24 @@ export default {
           .absent(),
       );
     }
+  },
+
+  clickBarcodeTitle(itemBarcode) {
+    cy.do(
+      fulfillmentInProgressAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
+        .find(Link(itemBarcode))
+        .click(),
+    );
+  },
+
+  clickRequesterBarcode(itemBarcode) {
+    cy.do(
+      fulfillmentInProgressAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 7 }))
+        .find(Link(itemBarcode))
+        .click(),
+    );
   },
 
   openItemByBarcode(barcode = '') {
