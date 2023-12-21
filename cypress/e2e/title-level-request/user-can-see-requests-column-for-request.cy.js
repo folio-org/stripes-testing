@@ -129,7 +129,6 @@ describe('Title Level Request. Request Detail', () => {
         userData.userId,
         testData.userServicePoint.id,
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         holdingsRecordId: testData.holdingTypeId,
@@ -190,7 +189,6 @@ describe('Title Level Request. Request Detail', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
 
   it(
