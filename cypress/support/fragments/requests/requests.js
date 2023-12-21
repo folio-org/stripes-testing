@@ -301,10 +301,11 @@ export default {
   },
 
   filterRequestsByTag(tag) {
+    cy.wait(2000);
     cy.do(
       Pane({ title: 'Search & filter' })
         .find(MultiSelect({ ariaLabelledby: 'tags' }))
-        .select(tag),
+        .choose(tag),
     );
   },
 
@@ -326,7 +327,7 @@ export default {
   },
 
   addNewTag(newTag) {
-    cy.do([cy.get('div#input-tag').click().wait(2000).type(newTag)]);
+    cy.do(cy.get('div#input-tag').click().wait(2000).type(newTag));
     cy.expect(addTagForSelectOption.exists());
     cy.do(addTagForSelectOption.click());
   },
