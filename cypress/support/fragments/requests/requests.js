@@ -17,6 +17,7 @@ import {
   Heading,
   Spinner,
   KeyValue,
+  Link,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -591,5 +592,9 @@ export default {
 
   closeRequestQueue() {
     cy.do(requestQueuePane.find(Button({ ariaLabel: 'Close New Request' })).click());
+  },
+
+  clickInstanceDescription() {
+    cy.do(requestQueuePane.find(Link({ text: including('Instance') })).click());
   },
 };

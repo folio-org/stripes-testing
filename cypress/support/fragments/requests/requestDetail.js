@@ -42,6 +42,15 @@ const additionalInfoRequiredInput = TextField('Additional information for patron
 
 const additionalInfoForCancellation = TextArea({ dataTestID: 'additionalInfo' });
 const confirmCancellationButton = Button({ dataTestID: 'cancelRequestDialogCancel' });
+const editButton = Button({ id: 'clickable-edit-request' });
+
+const availableOptions = {
+  Edit: editButton,
+  'Cancel request': cancelRequestButton,
+  Duplicate: duplicateRequestButton,
+  'Move request': moveRequestButton,
+  'Reorder queue': reorderQueueButton,
+};
 
 export default {
   waitLoading: (type = 'staff') => {
@@ -150,7 +159,22 @@ export default {
     InteractorsTools.checkKeyValue(requesterInfoSection, 'Pickup service point', data.pickupSP);
   },
 
+  checkCreatedDate(date) {
+    cy.do(Button(including('Record last updated')).click());
+    cy.expect(requestInfoSection.find(HTML(including(`Record created: ${date}`))).exists());
+  },
+
   openActions() {
+    cy.do(actionsButton.click());
+  },
+
+  verifyActionsAvailableOptions(
+    options = ['Edit', 'Cancel request', 'Duplicate', 'Move request', 'Reorder queue'],
+  ) {
+    cy.do(actionsButton.click());
+    options.forEach((option) => {
+      cy.expect(availableOptions[option].exists());
+    });
     cy.do(actionsButton.click());
   },
 
@@ -327,11 +351,37 @@ export default {
     ]);
   },
 
-  checkRequestMovedToFulfillmentInProgress(itemBarcode) {
-    cy.expect(
+  checkRequestMovedToFulfillmentInProgress(itemBarcode, moved = true) {
+    if (moved) {
+      cy.expect(
+        fulfillmentInProgressAccordion
+          .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        fulfillmentInProgressAccordion
+          .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+          .absent(),
+      );
+    }
+  },
+
+  clickBarcodeTitle(itemBarcode) {
+    cy.do(
       fulfillmentInProgressAccordion
-        .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
-        .exists(),
+        .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
+        .find(Link(itemBarcode))
+        .click(),
+    );
+  },
+
+  clickRequesterBarcode(itemBarcode) {
+    cy.do(
+      fulfillmentInProgressAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 7 }))
+        .find(Link(itemBarcode))
+        .click(),
     );
   },
 

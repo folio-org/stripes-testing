@@ -23,4 +23,19 @@ export default {
       this.assignUserViaApi({ userId, credentialsId: credentials[0].id });
     });
   },
+  unassignUserViaApi({ userId, credentialsId }) {
+    return cy
+      .okapiRequest({
+        method: 'DELETE',
+        path: `eholdings/kb-credentials/${credentialsId}/users/${userId}`,
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+  unassignUserFromDefaultCredentialsViaApi({ userId }) {
+    Credentials.getCredentialsViaApi().then((credentials) => {
+      this.unassignUserViaApi({ userId, credentialsId: credentials[0].id });
+    });
+  },
 };
