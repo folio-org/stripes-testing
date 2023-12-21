@@ -308,6 +308,15 @@ export default {
     );
   },
 
+  clearSelectedTag() {
+    cy.do(
+      Pane({ title: 'Search & filter' })
+        .find(MultiSelect({ ariaLabelledby: 'tags' }))
+        .find(Button({ className: including('iconButton') }))
+        .click(),
+    );
+  },
+
   addTag(tag) {
     waitLoadingTags();
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby: 'input-tag-label' })).choose(tag));

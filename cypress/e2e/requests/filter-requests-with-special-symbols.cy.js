@@ -18,7 +18,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('ui-requests: Assign Tags to Request', () => {
-  const tag = `autotest_tag${getRandomPostfix()}[`;
+  const tag = `autotest_tag${uuid()}[`;
   const userData = {};
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
   const itemData = {
@@ -130,7 +130,7 @@ describe('ui-requests: Assign Tags to Request', () => {
 
   it(
     'C374173 Verify filtering Requests by Tags with one special symbol (vega) (TaaS)',
-    { tags: ['extended', 'vega'] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       Requests.selectNotYetFilledRequest();
@@ -140,24 +140,18 @@ describe('ui-requests: Assign Tags to Request', () => {
       Requests.addNewTag(tag);
       InteractorsTools.checkCalloutMessage('New tag created');
 
-      // JobProfileView.verifyAssignedTags(newTag, 2);
+      Requests.closePane('Tags');
+      Requests.closePane('Request Detail');
+      Requests.resetAllFilters();
+      Requests.filterRequestsByTag(tag);
+      Requests.selectFirstRequest(itemData.instanceTitle);
+      Requests.openTagsPane();
+      Requests.verifyAssignedTags(tag);
 
-      //     JobProfileView.removeTag(tag);
-      //     JobProfileView.verifyAssignedTagsIsAbsent(tag);
-
-      // Requests.closePane('Tags');
-      // Requests.closePane('Request Detail');
-      // Requests.findCreatedRequest(itemData.instanceTitle);
-      // Requests.selectFirstRequest(itemData.instanceTitle);
-      // Requests.openTagsPane();
-      // Requests.verifyAssignedTags(tag);
-      // // cancel request for verifying tags can't be added or removed from a closed request
-      // Requests.cancelRequest();
-      // Requests.resetAllFilters();
-      // Requests.selectClosedCancelledRequest();
-      // Requests.findCreatedRequest(itemData.instanceTitle);
-      // Requests.selectFirstRequest(itemData.instanceTitle);
-      // Requests.verifyShowTagsButtonIsDisabled();
+      Requests.clearSelectedTag();
+      Requests.verifyNoResultMessage('Choose a filter or enter a search query to show results.');
+      Requests.filterRequestsByTag(tag);
+      Requests.verifyAssignedTags(tag);
     },
   );
 });
