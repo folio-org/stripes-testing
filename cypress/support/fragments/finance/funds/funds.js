@@ -24,6 +24,7 @@ import {
   Select,
 } from '../../../../../interactors';
 import FundDetails from './fundDetails';
+import FundEditForm from './fundEditForm';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
@@ -117,6 +118,13 @@ export default {
     cy.do(fundDetailsPane.visible());
   },
 
+  clickCreateNewFundButton() {
+    cy.do(newButton.click());
+    FundEditForm.waitLoading();
+    FundEditForm.verifyFormView();
+
+    return FundEditForm;
+  },
   createFund(fund) {
     cy.do([
       newButton.click(),
@@ -866,6 +874,16 @@ export default {
     ]);
   },
 
+  getFundsViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'finance/funds',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
   createViaApi: (fundProperties) => {
     return cy
       .okapiRequest({
@@ -885,6 +903,11 @@ export default {
     isDefaultSearchParamsRequired: false,
     failOnStatusCode,
   }),
+  deleteFundsByLedgerIdViaApi(ledgerId, failOnStatusCode) {
+    this.getFundsViaApi({ query: `ledgerId=="${ledgerId}"` }).then(({ funds }) => {
+      funds.forEach((fund) => this.deleteFundViaApi(fund.id, failOnStatusCode));
+    });
+  },
   createFundWithAU(fund, ledger, AUName) {
     cy.do([
       newButton.click(),
