@@ -605,6 +605,10 @@ export default {
     ]);
   },
 
+  verifyNoResultFoundMessage(absenceMessage) {
+    cy.expect(paneResultsSection.find(HTML(including(absenceMessage))).exists());
+  },
+
   selectRecord() {
     cy.do(
       MultiColumnListRow({ index: 0 })
