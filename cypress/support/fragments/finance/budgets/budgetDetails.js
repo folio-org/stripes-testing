@@ -1,7 +1,6 @@
 import {
   Button,
   HTML,
-  KeyValue,
   Link,
   MultiColumnListCell,
   MultiColumnListRow,
@@ -10,6 +9,7 @@ import {
   including,
 } from '../../../../../interactors';
 import { TRANSFER_ACTIONS } from '../transfer/constants';
+import FinanceDetails from '../financeDetails';
 import AddTransferModal from '../modals/addTransferModal';
 import Transactions from '../transactions/transactions';
 
@@ -17,14 +17,15 @@ const budgetPane = Section({ id: 'pane-budget' });
 const budgetDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-budget' });
 const actionsButton = budgetDetailsPaneHeader.find(Button('Actions'));
 
-const summarySection = Section({ id: 'summary' });
-const informationSection = Section({ id: 'information' });
+const summarySection = budgetPane.find(Section({ id: 'summary' }));
+const informationSection = budgetPane.find(Section({ id: 'information' }));
+const expenseClassSection = budgetPane.find(Section({ id: 'expense-classes' }));
 
 export default {
   waitLoading() {
     cy.expect(budgetPane.exists());
   },
-  checkBudgetDetails({ summary = [], information = [], balance = {} } = {}) {
+  checkBudgetDetails({ summary = [], information = [], balance = {}, expenseClass } = {}) {
     summary.forEach(({ key, value }) => {
       cy.expect(
         summarySection
@@ -33,15 +34,22 @@ export default {
           .has({ content: including(value) }),
       );
     });
-    information.forEach(({ key, value }) => {
-      cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
-    });
+    if (information.length) {
+      FinanceDetails.checkInformation(information);
+    }
 
     if (balance.cash) {
       this.checkBalance({ name: 'Cash', value: balance.cash });
     }
     if (balance.available) {
       this.checkBalance({ name: 'Available', value: balance.available });
+    }
+
+    if (expenseClass) {
+      FinanceDetails.checkExpenseClassesTableContent({
+        section: expenseClassSection,
+        items: [expenseClass],
+      });
     }
   },
   checkBalance({ name, value }) {
