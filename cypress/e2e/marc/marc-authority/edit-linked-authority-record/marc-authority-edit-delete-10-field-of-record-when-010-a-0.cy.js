@@ -147,6 +147,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
       MarcAuthorities.searchByParameter(testData.searchOption, testData.searchValue);
 
       MarcAuthorities.selectTitle(testData.authorityTitle);
+      MarcAuthorities.getViewPaneContent();
       MarcAuthority.edit();
 
       QuickMarcEditor.checkContent(testData.field010Value, testData.tag010RowIndex);
@@ -162,12 +163,17 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
 
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkCallout(testData.colloutMessage);
+      QuickMarcEditor.closeCallout();
 
       QuickMarcEditor.pressSaveAndKeepEditing(testData.colloutMessage);
+      QuickMarcEditor.closeCallout();
 
       QuickMarcEditor.pressCancel();
       AreYouSureModal.clickCloseWithoutSavingButton();
       MarcAuthorities.verifyMarcViewPaneIsOpened();
+      cy.get('@viewAuthorityPaneContent').then((viewAuthorityPaneContent) => {
+        MarcAuthorities.verifyViewPaneContent(viewAuthorityPaneContent);
+      });
 
       MarcAuthorities.closeMarcViewPane();
       MarcAuthorities.checkResultList([testData.authorityTitle]);

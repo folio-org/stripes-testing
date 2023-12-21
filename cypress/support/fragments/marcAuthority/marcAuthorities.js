@@ -390,6 +390,14 @@ export default {
     ]);
   },
 
+  verifyViewPaneContent(value) {
+    cy.expect([marcViewSection.exists(), marcViewSectionContent.has({ text: including(value) })]);
+  },
+
+  getViewPaneContent() {
+    cy.wrap(marcViewSectionContent.text()).as('viewAuthorityPaneContent');
+  },
+
   check010FieldAbsence: () => {
     cy.expect([editorSection.exists(), QuickMarcEditorRow({ tagValue: '010' }).absent()]);
   },
