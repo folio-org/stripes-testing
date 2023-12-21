@@ -453,6 +453,14 @@ export default {
     internal: 'ui-circulation.settings.titleLevelRequests',
     gui: 'Settings (Circulation): Title level request edit',
   },
+  uiMoveRequest: {
+    internal: 'ui-requests.moveRequest',
+    gui: 'Requests: Move to new item, reorder queue',
+  },
+  uiRequestsReorderQueue: {
+    internal: 'ui-requests.reorderQueue',
+    gui: 'Requests: Requests: Reorder queue',
+  },
   // Calendar
   calendarEdit: {
     internal: 'ui-calendar.edit',
