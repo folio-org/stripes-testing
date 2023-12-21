@@ -10,6 +10,7 @@ import {
   MultiSelect,
   Select,
   TextArea,
+  PaneContent,
 } from '../../../../interactors';
 import marcAuthorities from './marcAuthorities';
 import { REFERENCES_FILTER_CHECKBOXES } from '../../constants';
@@ -17,6 +18,12 @@ import { REFERENCES_FILTER_CHECKBOXES } from '../../constants';
 const rootSection = Section({ id: 'pane-authorities-filters' });
 const referencesFilterAccordion = Accordion('References');
 const authorityList = MultiColumnList({ id: 'authority-result-list' });
+const collapseButton = Button({ icon: 'caret-left' });
+const expandButton = Button({ icon: 'caret-right' });
+const resultsPane = Section({ id: 'authority-search-results-pane' });
+const showFiltersButton = Button('Show filters');
+const searchInput = SearchField({ id: 'textarea-authorities-search' });
+const searchButton = Button({ id: 'submit-authorities-search' });
 
 export default {
   searchBy: (parameter, value) => {
@@ -111,5 +118,55 @@ export default {
         .find(MultiSelect({ selectedCount: 0 }))
         .exists(),
     ]);
+  },
+
+  collapseSearchPane() {
+    cy.do([collapseButton.click()]);
+  },
+
+  verifySearchPaneIsCollapsed(isResultsEmpty = false) {
+    cy.expect([rootSection.absent(), expandButton.exists()]);
+    if (isResultsEmpty) {
+      resultsPane.find(showFiltersButton).exists();
+    } else {
+      resultsPane.find(showFiltersButton).absent();
+    }
+  },
+
+  expandSearchPane() {
+    cy.do(expandButton.click());
+  },
+
+  verifySearchPaneExpanded(isResultsEmpty = false) {
+    cy.expect([
+      rootSection.exists(),
+      rootSection.find(collapseButton).exists(),
+      resultsPane.find(showFiltersButton).absent(),
+    ]);
+
+    if (isResultsEmpty) {
+      resultsPane.find(PaneContent()).has({ empty: true });
+    } else {
+      resultsPane.find(PaneContent()).has({ empty: false });
+    }
+  },
+
+  clickShowFilters() {
+    cy.do(resultsPane.find(showFiltersButton).click());
+    cy.expect([
+      rootSection.exists(),
+      collapseButton.exists(),
+      resultsPane.find(PaneContent()).has({ empty: true }),
+      resultsPane.find(showFiltersButton).absent(),
+    ]);
+  },
+
+  fillSearchInput(value) {
+    cy.do(rootSection.find(searchInput).fillIn(value));
+    cy.expect(searchInput.has({ value }));
+  },
+
+  clickSearchButton() {
+    cy.do(rootSection.find(searchButton).click());
   },
 };

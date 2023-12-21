@@ -1655,6 +1655,14 @@ export default {
     ]);
   },
 
+  verifyZeroSubfieldInUnlinkedField(rowIndex, content) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .has({ value: including(`$0 ${content}`) }),
+    );
+  },
+
   verifyRemoveLinkingModal() {
     cy.expect([
       removeLinkingModal.exists(),
