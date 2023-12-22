@@ -10,7 +10,7 @@ import {
 } from '../../../../../interactors';
 
 const selectActionProfile = Select({ name: 'profile.action' });
-const recordTypeselect = Select({ name: 'profile.folioRecord' });
+const recordTypeSelect = Select({ name: 'profile.folioRecord' });
 
 export default {
   unlinkFieldMappingProfile: () => cy.do(Button({ title: 'Unlink this profile' }).click()),
@@ -34,8 +34,8 @@ export default {
   },
 
   verifyFOLIORecordTypeOptionExists(type) {
-    cy.expect(recordTypeselect.find(Option(type)).exists());
+    cy.expect(recordTypeSelect.find(Option(type)).exists());
   },
 
-  changeRecordType: (type) => cy.do(recordTypeselect.choose(type)),
+  changeRecordType: (type) => cy.do(recordTypeSelect.choose(type)),
 };
