@@ -46,7 +46,10 @@ describe('data-import', () => {
         NewMatchProfile.verifyExistingRecordSection();
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
-        NewMatchProfile.verifyIncomingRecordsDropdown();
+        NewMatchProfile.verifyIncomingRecordsDropdown(
+          'MARC Bibliographic',
+          'Static value (submatch only)',
+        );
         NewMatchProfile.fillIncomingRecordSections(matchProfile);
         NewMatchProfile.selectExistingRecordField(matchProfile.instanceOption);
         NewMatchProfile.saveAndClose();

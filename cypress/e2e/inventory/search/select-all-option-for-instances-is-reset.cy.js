@@ -47,7 +47,7 @@ describe('Inventory', () => {
         InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
         InventoryInstances.verifyInventoryLabelText('Enter search criteria to start search');
         InventorySearchAndFilter.byKeywords();
-        InventoryInstances.verifyAllCheckboxesAreUnchecked();
+        InventoryInstances.verifyAllCheckboxesAreChecked(false);
         InventoryInstances.verifyInventoryLabelText('records found');
       },
     );
