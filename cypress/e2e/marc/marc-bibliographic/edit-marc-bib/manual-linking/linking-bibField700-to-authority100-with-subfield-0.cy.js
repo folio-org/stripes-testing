@@ -19,13 +19,12 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     createdRecordIDs: [],
     filterStateTag100: [
       'advancedSearch',
-      'keyword==C380742 Lee, Stan, 1922-2018, or identifiers.value==n83169267',
+      'keyword exactPhrase C380742 Lee, Stan, 1922-2018, or identifiers.value exactPhrase n83169267',
     ],
     authority010FieldValue: 'n  83169267',
     authority100FieldValue: 'C380742 Lee, Stan,',
     tag100: '100',
     linkButtonToolTipText: 'Link "C380742 Lee, Stan, 1922-2018"',
-    calloutMessage: 'Record created.',
     successMsg:
       'This record has successfully saved and is in process. Changes may not appear immediately.',
     accordion: 'Contributor',
@@ -79,15 +78,6 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
     },
   ];
 
-  after('Deleting created user', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(testData.userProperties.userId);
-    testData.createdRecordIDs.forEach((id, index) => {
-      if (index) MarcAuthority.deleteViaAPI(id);
-      else InventoryInstance.deleteInstanceViaApi(id);
-    });
-  });
-
   before('Creating user', () => {
     // make sure there are no duplicate authority records in the system
     cy.getAdminToken().then(() => {
@@ -131,6 +121,15 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
+    });
+  });
+
+  after('Deleting created user', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(testData.user.userId);
+    testData.createdRecordIDs.forEach((id, index) => {
+      if (index) MarcAuthority.deleteViaAPI(id);
+      else InventoryInstance.deleteInstanceViaApi(id);
     });
   });
 
@@ -204,10 +203,10 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       QuickMarcEditor.verifyRowLinked(field700.rowIndex);
       QuickMarcEditor.clickUnlinkIconInTagField(field700.rowIndex);
       QuickMarcEditor.confirmUnlinkingField();
-      QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.contentAfterUnlinking);
+      QuickMarcEditor.verifyTagFieldAfterUnlinking(...field700.contentAfterUnlinking);
       QuickMarcEditor.verifyIconsAfterUnlinking(field700.rowIndex);
       QuickMarcEditor.pressSaveAndClose();
-      QuickMarcEditor.checkCallout(testData.calloutMessage);
+      QuickMarcEditor.checkCallout(testData.successMsg);
 
       InstanceRecordView.verifyInstancePaneExists();
       InventoryInstance.verifyContributorAbsent(testData.contributorName);
