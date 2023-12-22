@@ -19,6 +19,7 @@ import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import Users from '../../support/fragments/users/users';
 
 describe('Fees&Fines', () => {
   const testData = {
@@ -102,10 +103,17 @@ describe('Fees&Fines', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
+    InventoryInstances.deleteInstanceViaApi({
+      instance: testData.folioInstances[0],
+      servicePoint: testData.servicePoint,
+    });
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
+    Users.deleteViaApi(testData.user.userId);
+    PatronGroups.deleteViaApi(patronGroup.id);
+    Locations.deleteViaApi(testData.defaultLocation);
     ManualCharges.deleteViaApi(testData.manualChargeId);
     UsersOwners.deleteViaApi(testData.ownerData.id);
-    ServicePoints.deleteViaApi(testData.servicePoint.id);
   });
 
   it(
@@ -137,7 +145,7 @@ describe('Fees&Fines', () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
       ItemRecordView.waitLoading();
-      ItemRecordView.deleteItem();
+      ItemRecordView.clickDeleteButton();
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
