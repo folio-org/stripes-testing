@@ -152,7 +152,9 @@ describe('Title Level Request', () => {
         // From Action menu of request details, select Reorder queue
         RequestDetail.requestQueueOnInstance(instanceData.instanceTitle);
         RequestDetail.checkRequestMovedToFulfillmentInProgress(instanceData.barcodes[0]);
-        RequestDetail.checkRequestMovedToFulfillmentInProgress(instanceData.barcodes[1], false);
+        RequestDetail.checkRequestMovedToFulfillmentInProgress(instanceData.barcodes[1], {
+          moved: false,
+        });
         // Go back to Request details for item 1
         cy.go('back');
         Requests.resetAllFilters();
