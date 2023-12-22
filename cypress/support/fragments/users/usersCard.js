@@ -27,6 +27,7 @@ const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
+const userInformationSection = Accordion({ id: 'userInformationSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
 const notesSection = Accordion('Notes');
@@ -43,6 +44,7 @@ const keepEditingButton = Button({ id: 'clickable-cancel-editing-confirmation-co
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const areYouSureModal = Modal('Are you sure?');
 const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
+const createRequestButton = Button('Create request');
 
 export default {
   errors,
@@ -103,6 +105,15 @@ export default {
 
   openCustomFieldsSection() {
     cy.do(Accordion({ id: 'customFields' }).clickHeader());
+  },
+
+  expandRequestSection() {
+    cy.do(Accordion({ id: 'requestsSection' }).clickHeader());
+    cy.expect([
+      Link({ id: 'clickable-viewopenrequests' }).exists(),
+      Link({ id: 'clickable-viewclosedrequests' }).exists(),
+      createRequestButton.exists(),
+    ]);
   },
 
   verifySponsorsAlphabeticalOrder() {
@@ -325,7 +336,11 @@ export default {
 
   startRequest: () => {
     cy.do(actionsButton.click());
-    cy.do(Button('Create request').click());
+    cy.do(createRequestButton.click());
+  },
+
+  createNewRequest: () => {
+    cy.do(createRequestButton.click());
   },
 
   startBlock: () => {
@@ -425,5 +440,10 @@ export default {
 
   selectFeeFines(feeFines) {
     cy.do([listFeesFines.find(MultiColumnListCell(including(feeFines))).click()]);
+  },
+
+  verifyUserInformationPresence() {
+    cy.expect(userInformationSection.exists());
+
   },
 };

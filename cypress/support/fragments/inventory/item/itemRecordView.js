@@ -14,6 +14,7 @@ import {
 } from '../../../../../interactors';
 import ItemRecordEdit from './itemRecordEdit';
 import dateTools from '../../../utils/dateTools';
+import ConfirmDeleteItemModal from '../modals/confirmDeleteItemModal';
 
 const actionsButton = Button('Actions');
 const loanAccordion = Accordion('Loan and availability');
@@ -119,6 +120,12 @@ export default {
     ItemRecordEdit.waitLoading(itemTitle);
 
     return ItemRecordEdit;
+  },
+
+  clickDeleteButton() {
+    cy.do([actionsButton.click(), Button('Delete').click()]);
+
+    return ConfirmDeleteItemModal;
   },
 
   duplicateItem() {
