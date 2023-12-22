@@ -322,6 +322,10 @@ export default {
     ]);
   },
 
+  checkAuthorizedColumn(authorized) {
+    cy.expect([MultiColumnListCell({ columnIndex: 1, content: authorized }).exists()]);
+  },
+
   checkAfterSearch(type, record) {
     cy.expect([
       MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
@@ -1138,5 +1142,9 @@ export default {
 
   closeFindAuthorityModal() {
     cy.do(findAuthorityModal.find(buttonClose).click());
+  },
+
+  selectRecordByIndex(rowIndex) {
+    cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
   },
 };
