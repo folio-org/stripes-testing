@@ -12,8 +12,8 @@ const resultSection = Section({ className: 'list-courses' });
 
 const defaultCourse = {
   name: `autotestCourse_${getRandomPostfix()}`,
-  departmentId: '4b39d92c-e3b3-4206-a819-fe436a00260a',
-  courseListingId: '2cb7df8a-3845-4479-a581-5fefb90a47d9',
+  departmentId: '',
+  courseListingId: '',
 };
 
 export default {
@@ -49,7 +49,6 @@ export default {
       path: `coursereserves/courses/${courseId}`,
       isDefaultSearchParamsRequired: false,
     }).then(({ body }) => {
-      cy.log('body:' + JSON.stringify(body));
       cy.okapiRequest({
         method: 'DELETE',
         path: `coursereserves/courses/${body.id}`,
@@ -67,5 +66,35 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then((response) => response.body);
+  },
+
+  retrieveDepartmentsViaAPI() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'coursereserves/departments?limit=500',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.departments[0]);
+  },
+
+  retrieveCourseListingViaAPI() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'coursereserves/courselistings',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.courseTypes);
+  },
+
+  retrieveCoursesViaAPI() {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'coursereserves/courses?limit=100&query=%28cql.allRecords%3D1%29%20sortby%20name',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body.courses);
   },
 };
