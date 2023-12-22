@@ -72,12 +72,12 @@
   },
   "resolutions": {
     "cypress": "12.0.0",
-    "chromedriver": "107.0.0"
+    "chromedriver": "107.0.0",
+    "sharp": "0.32.6"
   },
   "overrides": {
     "bigtest": {
       "chromedriver": "107.0.0"
-    },
-    "sharp": "0.32.6"
+    }
   }
 }
