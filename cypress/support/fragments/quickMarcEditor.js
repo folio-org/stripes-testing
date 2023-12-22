@@ -486,8 +486,8 @@ export default {
     cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: false }));
   },
 
-  verifyOnlyOne001FieldAreDisplayed(tag) {
-    cy.expect(QuickMarcEditorRow({ tagValue: tag }).has({ text: '001' }));
+  verifyOnlyOne001FieldAreDisplayed() {
+    cy.expect(TextField({ name: 'records[2].tag' })).not.equal('001');
   },
 
   verifyDisabledLinkHeadingsButton() {

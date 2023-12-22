@@ -83,13 +83,13 @@ describe('MARC › MARC Holdings', () => {
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
       MarcAuthority.checkAddNew001Tag(5, '$a test');
-      cy.wait(1000);
+      cy.wait(1000); // wait until redirect marc holding page
       QuickMarcEditor.clickXCloseButton();
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
       MarcAuthority.checkAddNew001Tag(5, '$a test');
       HoldingsRecordView.editInQuickMarc();
-      // QuickMarcEditor.verify001FieldAreDisabled(1);
+      QuickMarcEditor.verifyOnlyOne001FieldAreDisplayed();
     },
   );
 });
