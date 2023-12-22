@@ -110,6 +110,10 @@ export default {
     });
   },
 
+  verifySearchValue(value) {
+    cy.expect(recordSearch.has({ value }));
+  },
+
   searchBrowseSubjects(searchString) {
     InventorySearchAndFilter.selectBrowseSubjects();
     this.verifySearchTextFieldEmpty();
