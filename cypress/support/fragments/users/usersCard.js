@@ -444,6 +444,5 @@ export default {
 
   verifyUserInformationPresence() {
     cy.expect(userInformationSection.exists());
-
   },
 };
