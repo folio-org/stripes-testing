@@ -2,7 +2,6 @@ import { CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
@@ -10,18 +9,18 @@ describe('inventory', () => {
   const user = {};
   const searchOption = 'a';
 
+  function searchBrowseRecordAndCheckBrowseInventoryResultPaneInFocus() {
+    InventorySearchAndFilter.browseSubjectsSearch(searchOption);
+    InventorySearchAndFilter.verifyResetAllButtonDisabled(false);
+    InventorySearchAndFilter.checkBrowseInventoryResultPaneInFocus(true);
+  }
+
   function resetAllAndCheckBrowseSearchInputFieldInFocus() {
     InventorySearchAndFilter.clickResetAllButton();
     InventorySearchAndFilter.checkBrowseResultListCallNumbersExists(false);
     InventorySearchAndFilter.checkBrowseSearchInputFieldContent('');
     InventorySearchAndFilter.verifyResetAllButtonDisabled(true);
     InventorySearchAndFilter.checkBrowseSearchInputFieldInFocus(true);
-  }
-
-  function searchBrowseSubjectAndCheckBrowseInventoryResultPaneInFocus() {
-    InventorySearchAndFilter.browseSubjectsSearch(searchOption);
-    InventorySearchAndFilter.verifyResetAllButtonDisabled(false);
-    InventorySearchAndFilter.checkBrowseInventoryResultPaneInFocus();
   }
 
   describe('Call Number Browse', () => {
@@ -48,14 +47,16 @@ describe('inventory', () => {
         InventorySearchAndFilter.checkBrowseOptionDropdownInFocus();
         InventorySearchAndFilter.verifyCallNumberBrowsePane();
         InventorySearchAndFilter.selectBrowseCallNumbers();
-        searchBrowseSubjectAndCheckBrowseInventoryResultPaneInFocus();
+        searchBrowseRecordAndCheckBrowseInventoryResultPaneInFocus();
         InventorySearchAndFilter.clickEffectiveLocationAccordionToggleButton();
         InventorySearchAndFilter.clickEffectiveLocationAccordionInput();
         InventorySearchAndFilter.checkEffectiveLocationAccordionInputInFocus();
         resetAllAndCheckBrowseSearchInputFieldInFocus();
+
         Object.values(CALL_NUMBER_TYPE_NAMES).forEach((type) => {
-          BrowseCallNumber.selectBrowseCallNumbersOption(type);
-          searchBrowseSubjectAndCheckBrowseInventoryResultPaneInFocus();
+          InventorySearchAndFilter.selectBrowseOption(type);
+          InventorySearchAndFilter.checkBrowseOptionSelected(type);
+          searchBrowseRecordAndCheckBrowseInventoryResultPaneInFocus();
           resetAllAndCheckBrowseSearchInputFieldInFocus();
         });
       },

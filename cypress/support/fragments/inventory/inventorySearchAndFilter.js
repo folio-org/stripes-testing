@@ -892,8 +892,10 @@ export default {
     cy.expect(browseSearchInputField.has({ focused: isFocused }));
   },
 
-  checkBrowseInventoryResultPaneInFocus() {
-    cy.expect(PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' }).has({ focused: true }));
+  checkBrowseInventoryResultPaneInFocus(isFocused) {
+    cy.expect(
+      PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' }).has({ focused: isFocused }),
+    );
   },
 
   checkBrowseResultListCallNumbersExists(isExist) {
@@ -902,5 +904,9 @@ export default {
     } else {
       cy.expect(browseResultList.absent());
     }
+  },
+
+  checkBrowseOptionSelected(option) {
+    cy.expect(browseSearchAndFilterInput.has({ checkedOptionText: option }));
   },
 };
