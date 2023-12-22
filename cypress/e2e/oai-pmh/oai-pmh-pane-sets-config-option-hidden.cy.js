@@ -28,9 +28,7 @@ describe('OAI-PMH', () => {
     { tags: ['extendedPath', 'firebird'] },
     () => {
       TopMenuNavigation.navigateToApp('Settings', 'OAI-PMH');
-
       OaiPmh.checkSectionListItems();
-
       OaiPmh.checkSectionListItemDoesNotExist('Sets');
     },
   );
