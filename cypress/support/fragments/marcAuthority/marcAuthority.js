@@ -12,6 +12,8 @@ import {
   TableRow,
   DropdownMenu,
   PaneHeader,
+  TableCell,
+  matching,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 import DateTools from '../../utils/dateTools';
@@ -355,5 +357,13 @@ export default {
         // check that difference in time is less than 1 minute
         expect(timeDifference).to.be.lessThan(120000);
       });
+  },
+
+  verify005FieldInMarc21AuthFormat() {
+    cy.expect(
+      TableRow({ innerText: including('005') })
+        .find(TableCell({ innerText: matching(/^[0-9]{8}[0-9]{6}\.[0-9]$/) }))
+        .exists(),
+    );
   },
 };
