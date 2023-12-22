@@ -36,6 +36,9 @@ const loanDataFields = {
 const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
 const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
 
+const permanentLocationDropdown = Button({ id: 'additem_permanentlocation' });
+const permanentLocationList = SelectionList({ id: 'sl-container-additem_permanentlocation' });
+
 export default {
   waitLoading: (itemTitle) => {
     cy.expect(itemEditForm.find(PaneHeader(including(itemTitle))).exists());
@@ -100,5 +103,12 @@ export default {
   verifyTemporaryLocationItemExists: (temporarylocation) => {
     cy.expect(temporaryLocationList.exists());
     cy.expect(temporaryLocationList.find(SelectionOption(including(temporarylocation))).exists());
+  },
+  openPermanentLocation() {
+    cy.do(permanentLocationDropdown.click());
+  },
+  verifyPermanentLocationItemExists: (permanentLocation) => {
+    cy.expect(permanentLocationList.exists());
+    cy.expect(permanentLocationList.find(SelectionOption(including(permanentLocation))).exists());
   },
 };
