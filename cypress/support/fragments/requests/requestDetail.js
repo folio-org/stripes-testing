@@ -147,7 +147,7 @@ export default {
     InteractorsTools.checkKeyValue(requestInfoSection, 'Position in queue', data.position);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Request level', data.level);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
-    InteractorsTools.checkKeyValue(requestInfoSection, 'Cancellation reason', data.reason);
+    if (data.reason) InteractorsTools.checkKeyValue(requestInfoSection, 'Cancellation reason', data.reason);
   },
 
   checkItemBarcode: (barcode) => {
