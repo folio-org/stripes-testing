@@ -206,6 +206,10 @@ export default {
     cy.do(this.getSearchResult(indexRow, 0).click());
   },
 
+  verifyNumberOfSearchResults(expectedNumber) {
+    cy.expect(instancesList.has({ rowCount: expectedNumber }));
+  },
+
   byEffectiveLocation(values) {
     cy.do(effectiveLocationInput.clickHeader());
     // wait to avoid robotic clicks
@@ -504,6 +508,11 @@ export default {
       inventorySearchAndFilterInput.choose(searchOption),
       inventorySearchAndFilter.fillIn(text),
     ]);
+  },
+
+  executeSearch(text) {
+    cy.do(inventorySearchAndFilter.fillIn(text));
+    this.clickSearch();
   },
 
   verifySelectedSearchOption(option) {
