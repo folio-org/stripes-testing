@@ -18,6 +18,9 @@ import {
   Pane,
   Form,
   Option,
+  IconButton,
+  Popover,
+  Label,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -1143,4 +1146,13 @@ export default {
   },
 
   clickClose: () => cy.do(closeButton.click()),
+
+  verifyAcquisitionsUnitsInfoMessage: (message) => {
+    cy.do(
+      Label('Acquisitions units')
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+  },
 };
