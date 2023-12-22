@@ -1,6 +1,6 @@
 import Permissions from '../../../../../support/dictionary/permissions';
 import TopMenu from '../../../../../support/fragments/topMenu';
-// import Users from '../../../../../support/fragments/users/users';
+import Users from '../../../../../support/fragments/users/users';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
@@ -14,6 +14,9 @@ import MarcAuthority from '../../../../../support/fragments/marcAuthority/marcAu
 describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () => {
   const testData = {
     createdRecordIDs: [],
+    authority010_1FieldValue: 'C366552 Sprouse, Chris',
+    authority010_2FieldValue: 'C366552 Sabino, Joe',
+    authority010_3FieldValue: 'C366552 Lee, Stan, 1922-2018',
   };
   const fields = [
     {
@@ -31,7 +34,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
         '\\',
         '$a C366552 Sprouse, Chris',
         '',
-        '$0 id.loc.gov/authorities/names/nb 98017694',
+        '$0 id.loc.gov/authorities/names/nb98017694',
         '',
       ],
       bib700AfterUnlinking: [76, '700', '1', '\\', '$a'],
@@ -157,6 +160,15 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
     });
   });
 
+  after('delete test data', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(testData.user.userId);
+    InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+    testData.createdRecordIDs.forEach((id, index) => {
+      if (index) MarcAuthority.deleteViaAPI(id);
+    });
+  });
+
   it(
     'C366552 Unlink existing unsaved linked "MARC Bib" field from "MARC Authority" record (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
@@ -172,10 +184,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
       QuickMarcEditor.clickLinkIconInTagField(fields[0].rowIndex);
       MarcAuthorities.switchToSearch();
       MarcAuthorities.searchByParameter(fields[0].searchOption, fields[0].marcValue);
-      MarcAuthority.contains(
-        'C366552 Sprouse, Chris',
-        // testData.authority010FieldValue
-      );
+      MarcAuthority.contains(testData.authority010_1FieldValue);
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields[0].tag, fields[0].rowIndex);
       QuickMarcEditor.verifyTagFieldAfterLinking(...fields[0].bib700AfterLinkingToAuth100);
@@ -183,10 +192,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
       QuickMarcEditor.clickLinkIconInTagField(fields[1].rowIndex);
       MarcAuthorities.switchToSearch();
       MarcAuthorities.searchByParameter(fields[1].searchOption, fields[1].marcValue);
-      MarcAuthority.contains(
-        'C366552 Sabino, Joe',
-        // testData.authority010FieldValue
-      );
+      MarcAuthority.contains(testData.authority010_2FieldValue);
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields[1].tag, fields[1].rowIndex);
       QuickMarcEditor.verifyTagFieldAfterLinking(...fields[1].bib700AfterLinkingToAuth100);
@@ -194,10 +200,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
       QuickMarcEditor.clickLinkIconInTagField(fields[2].rowIndex);
       MarcAuthorities.switchToSearch();
       MarcAuthorities.searchByParameter(fields[2].searchOption, fields[2].marcValue);
-      MarcAuthority.contains(
-        'C366552 Sabino, Joe',
-        // testData.authority010FieldValue
-      );
+      MarcAuthority.contains(testData.authority010_3FieldValue);
       InventoryInstance.clickLinkButton();
       QuickMarcEditor.verifyAfterLinkingUsingRowIndex(fields[2].tag, fields[2].rowIndex);
       QuickMarcEditor.verifyTagFieldAfterLinking(...fields[2].bib700AfterLinkingToAuth100);
