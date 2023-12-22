@@ -32,14 +32,14 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
       marc: 'marcBibFileForC375139.mrc',
       fileName: `testMarcFileC375139.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-      instanceTitle: 'Variations/ C375139 Beethoven, Ludwig van',
+      instanceTitle: 'Variations / C375139Ludwig Van Beethoven.',
       numOfRecords: 1,
     },
     {
       marc: 'marcAuthFileForC375139.mrc',
       fileName: `testMarcFileC375139.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'Beethoven,Ludwig van (no 010)',
+      authorityHeading: 'Beethoven, Ludwig van (no 010)',
       numOfRecords: 1,
     },
   ];
@@ -49,8 +49,8 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
       path: TopMenu.dataImportPath,
       waiter: DataImport.waitLoading,
     }).then(() => {
+      cy.visit(TopMenu.dataImportPath);
       marcFiles.forEach((marcFile) => {
-        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
         JobProfiles.waitFileIsUploaded();
@@ -63,6 +63,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
         Logs.getCreatedItemsID().then((link) => {
           createdRecordIDs.push(link.split('/')[5]);
         });
+        JobProfiles.closeJobProfile(marcFile.fileName);
       });
     });
 
@@ -113,6 +114,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchAndVerify(testData.searchOption, marcFiles[1].authorityHeading);
+      MarcAuthorities.verifyMarcViewPaneIsOpened();
 
       MarcAuthority.edit();
       QuickMarcEditor.checkFieldAbsense(testData.tag010);
@@ -125,12 +127,16 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
 
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseAuthority();
+      MarcAuthorities.checkFieldAndContentExistence(
+        testData.fieldForEditing.tag,
+        testData.fieldForEditing.newValue,
+      );
 
       TopMenuNavigation.navigateToApp('Inventory');
 
       InventoryInstances.searchAndVerify(marcFiles[0].instanceTitle);
       InventoryInstances.selectInstance();
-      InventoryInstance.waitLoading();
+      InventoryInstance.waitInstanceRecordViewOpened(marcFiles[0].instanceTitle);
 
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.verifyTagFieldAfterLinking(
