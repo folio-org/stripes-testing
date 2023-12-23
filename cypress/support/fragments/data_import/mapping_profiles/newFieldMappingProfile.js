@@ -1155,4 +1155,13 @@ export default {
     );
     cy.expect(Popover({ content: including(message) }).exists());
   },
+
+  verifyPurchaseOrderStatusInfoMessage: (message) => {
+    cy.do(
+      Label('Purchase order status*')
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+  },
 };
