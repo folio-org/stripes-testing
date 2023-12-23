@@ -482,6 +482,20 @@ export default {
     );
   },
 
+  verifyContributorNameWithoutMarcAppIcon: (indexRow, indexColumn, value) => {
+    cy.expect(
+      Accordion('Contributor')
+        .find(MultiColumnListRow({ index: indexRow }))
+        .find(
+          MultiColumnListCell({
+            columnIndex: indexColumn,
+            content: 'Linked to MARC authority' + value,
+          }),
+        )
+        .absent(),
+    );
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },
