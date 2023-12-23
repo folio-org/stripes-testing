@@ -1155,4 +1155,19 @@ export default {
     );
     cy.expect(Popover({ content: including(message) }).exists());
   },
+
+  verifyPermanentFieldInfoMessage: (message) => {
+    cy.do(
+      Label('Permanent')
+        .find(Button({ icon: 'info' }))
+        .triggerClick(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+    cy.do(
+      Label('Permanent')
+        .find(Button({ icon: 'info' }))
+        .triggerClick(),
+    );
+    cy.expect(Popover({ content: including(message) }).absent());
+  },
 };
