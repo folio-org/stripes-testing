@@ -1155,4 +1155,8 @@ export default {
     );
     cy.expect(Popover({ content: including(message) }).exists());
   },
+
+  isPurchaseOrderStatusFieldFocused: (value) => {
+    purchaseOrderStatus.has({ focused: value });
+  },
 };
