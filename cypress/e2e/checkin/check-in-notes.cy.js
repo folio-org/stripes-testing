@@ -55,7 +55,7 @@ describe('Check in', () => {
         query: `"barcode"=="${testData.folioInstances[0].barcodes[0]}"`,
       }).then((res) => {
         const itemData = res;
-        note1.date = DateTools.getFormattedDateWithTime(new Date(), true);
+        note1.date = DateTools.getFormattedDateWithTime(new Date(), { withoutComma: true });
         itemData.circulationNotes = [{ noteType: 'Check in', note: note1.title, staffOnly: true }];
         cy.updateItemViaApi(itemData);
       });
@@ -69,7 +69,7 @@ describe('Check in', () => {
         query: `"barcode"=="${testData.folioInstances[0].barcodes[0]}"`,
       }).then((res) => {
         const itemData = res;
-        note2.date = DateTools.getFormattedDateWithTime(new Date(), true);
+        note2.date = DateTools.getFormattedDateWithTime(new Date(), { withoutComma: true });
         itemData.circulationNotes = [
           ...itemData.circulationNotes,
           { noteType: 'Check in', note: note2.title, staffOnly: true },

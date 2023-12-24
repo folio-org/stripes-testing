@@ -33,7 +33,7 @@ describe('ui-organizations: Filtering organization', () => {
         filter.filterActions();
         Organizations.checkOrganizationFilter();
         Organizations.selectOrganization(organization.name);
-        Organizations.checkOpenOrganizationInfo(organization);
+        Organizations.checkOrganizationInfo(organization);
         Organizations.resetFilters();
       },
     );

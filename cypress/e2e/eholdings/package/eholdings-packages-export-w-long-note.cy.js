@@ -1,5 +1,4 @@
 import { Permissions } from '../../../support/dictionary';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import {
   EHoldingsPackages,
   EHoldingsPackagesSearch,
@@ -44,8 +43,6 @@ describe('eHoldings', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
-        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
-
         cy.login(testData.user.username, testData.user.password, {
           path: `${TopMenu.eholdingsPath}?searchType=packages`,
           waiter: EHoldingsPackages.waitLoading,
@@ -84,6 +81,9 @@ describe('eHoldings', () => {
           testData.packageData = `package_data_${testData.package.id}.csv`;
           testData.titleData = `title_data_${testData.package.id}.csv`;
 
+          // Package should not contain any note for successfull pass
+          Notes.deleteNotesForEHoldingViaApi(testData.package.id);
+
           // View "Package" record with "Total titles" value more than 1.
           EHoldingsPackages.openPackageWithExpectedName(testData.package.name);
           EHoldingsPackageView.verifyPackageDetailViewIsOpened(
@@ -121,6 +121,9 @@ describe('eHoldings', () => {
 
             // Download the exported ".csv" file by clicking on the "Job ID" hyperlink.
             ExportManagerSearchPane.exportJobRecursively({ jobId });
+
+            // could take some time to download big file
+            cy.wait(30000);
           });
 
           FileManager.writeToSeparateFile({
@@ -130,15 +133,15 @@ describe('eHoldings', () => {
           });
           FileManager.convertCsvToJson(testData.packageData).then((data) => {
             // Check information matches "Package" record
-            const { PackageId, PackageName, PackageNote1 } = data[0];
-            const actualPackageNote = PackageNote1.replace(/\\n/g, '');
             const expectedPackageNote = `${testData.note.type};${
               testData.note.title
             };<p>${testData.note.details.replace(/\n/g, '')}</p>`;
 
-            cy.expect(PackageId).to.equal(testData.package.id);
-            cy.expect(PackageName).to.equal(testData.package.name);
-            cy.expect(actualPackageNote).to.include(expectedPackageNote);
+            cy.expect(data[0]['Package Id']).to.equal(testData.package.id);
+            cy.expect(data[0]['Package Name']).to.equal(testData.package.name);
+            cy.expect(data[0]['Package Note 1'].replace(/\\n/g, '')).to.include(
+              expectedPackageNote,
+            );
           });
 
           FileManager.writeToSeparateFile({
@@ -147,7 +150,7 @@ describe('eHoldings', () => {
             lines: [2],
           });
           FileManager.convertCsvToJson(testData.titleData).then((data) => {
-            const titleNames = data.map(({ TitleName }) => TitleName);
+            const titleNames = data.map(({ 'Title Name': TitleName }) => TitleName);
 
             // Check number of rows
             cy.expect(data.length).to.equal(testData.package.titles);

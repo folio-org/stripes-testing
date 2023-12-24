@@ -208,7 +208,7 @@ describe('Finance', () => {
         // Open downloaded file, Check *"Encumbered (Budget)"* column
         FileManager.convertCsvToJson(testData.fileName).then((data) => {
           data.forEach((fund) => {
-            cy.expect(fund['"Encumbered(Budget)"']).to.equal('0');
+            cy.expect(fund['Encumbered (Budget)']).to.equal(0);
           });
         });
 

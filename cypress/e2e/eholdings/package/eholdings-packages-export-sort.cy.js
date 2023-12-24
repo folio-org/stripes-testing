@@ -1,7 +1,6 @@
 import { Permissions } from '../../../support/dictionary';
 import { EHoldingsPackage, EHoldingsPackageView } from '../../../support/fragments/eholdings';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import ArrayUtils from '../../../support/utils/arrays';
@@ -20,8 +19,6 @@ describe('eHoldings', () => {
       Permissions.exportManagerAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-
-      AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
     });
   });
 
@@ -84,10 +81,8 @@ describe('eHoldings', () => {
         });
         FileManager.convertCsvToJson(testData.packageData).then((data) => {
           // Check information matches "Package" record
-          const { PackageId, PackageName } = data[0];
-
-          cy.expect(PackageId).to.equal(testData.package.id);
-          cy.expect(PackageName).to.equal(testData.package.name);
+          cy.expect(data[0]['Package Id']).to.equal(packageId);
+          cy.expect(data[0]['Package Name']).to.equal(packageName);
         });
 
         FileManager.writeToSeparateFile({
@@ -96,7 +91,7 @@ describe('eHoldings', () => {
           lines: [2],
         });
         FileManager.convertCsvToJson(testData.titleData).then((data) => {
-          const titleNames = data.map(({ TitleName }) => TitleName);
+          const titleNames = data.map(({ 'Title Name': TitleName }) => TitleName);
 
           // Check number of rows
           cy.expect(data.length).to.equal(testData.titlesCount);
@@ -171,8 +166,8 @@ describe('eHoldings', () => {
         });
         FileManager.convertCsvToJson(testData.packageData).then((data) => {
           // Check information matches "Package" record
-          cy.expect(packageId === data.PackageId);
-          cy.expect(packageName === data.PackageName);
+          cy.expect(data[0]['Package Id']).to.equal(packageId);
+          cy.expect(data[0]['Package Name']).to.equal(packageName);
         });
 
         FileManager.writeToSeparateFile({
@@ -181,7 +176,7 @@ describe('eHoldings', () => {
           lines: [2],
         });
         FileManager.convertCsvToJson(testData.titleData).then((data) => {
-          const titleNames = data.map(({ TitleName }) => TitleName);
+          const titleNames = data.map(({ 'Title Name': TitleName }) => TitleName);
 
           // Check number of rows
           cy.expect(data.length).to.equal(testData.titlesCount);

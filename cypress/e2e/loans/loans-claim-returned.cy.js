@@ -120,7 +120,7 @@ describe('Loans ', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
     Users.deleteViaApi(userData.userId).then(() => folioInstances.forEach((item) => {
       item.itemIds.forEach((id) => cy.deleteItemViaApi(id));
-      cy.deleteHoldingRecordViaApi(item.holdingId);
+      cy.deleteHoldingRecordViaApi(item.holdings[0].id);
       InventoryInstance.deleteInstanceViaApi(item.instanceId);
     }));
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
