@@ -5,7 +5,6 @@ import {
   EHoldingsPackagesSearch,
 } from '../../../support/fragments/eholdings';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
@@ -27,8 +26,6 @@ describe('eHoldings', () => {
         Permissions.exportManagerAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-
-        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
 
         cy.login(testData.user.username, testData.user.password, {
           path: `${TopMenu.eholdingsPath}?searchType=packages`,
@@ -104,10 +101,8 @@ describe('eHoldings', () => {
           });
           FileManager.convertCsvToJson(testData.packageData).then((data) => {
             // Check information matches "Package" record
-            const { PackageId, PackageName } = data[0];
-
-            cy.expect(PackageId).to.equal(testData.package.id);
-            cy.expect(PackageName).to.equal(testData.package.name);
+            cy.expect(data[0]['Package Id']).to.equal(testData.package.id);
+            cy.expect(data[0]['Package Name']).to.equal(testData.package.name);
           });
 
           FileManager.writeToSeparateFile({
@@ -120,7 +115,7 @@ describe('eHoldings', () => {
             cy.expect(data.length).to.equal(1);
 
             // Check title
-            cy.expect(data[0].TitleName).to.equal(testData.recource.title);
+            cy.expect(data[0]['Title Name']).to.equal(testData.recource.title);
           });
         });
       },

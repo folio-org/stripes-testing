@@ -37,8 +37,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         'Ills',
         'Fest',
         'DtSt',
-        'Start date',
-        'End date',
+        'Date 1',
+        'Date 2',
       ],
     },
     {
@@ -54,8 +54,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         'Ctry',
         'File',
         'DtSt',
-        'Start date',
-        'End date',
+        'Date 1',
+        'Date 2',
       ],
     },
     {
@@ -133,8 +133,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         'FMus',
         'LTxt',
         'DtSt',
-        'Start date',
-        'End date',
+        'Date 1',
+        'Date 2',
       ],
     },
     {
@@ -157,8 +157,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         'SrTp',
         'Cont',
         'DtSt',
-        'Start date',
-        'End date',
+        'Date 1',
+        'Date 2',
       ],
     },
     {
@@ -220,14 +220,14 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         'TMat',
         'Time',
         'DtSt',
-        'Start date',
-        'End date',
+        'Date 1',
+        'Date 2',
       ],
     },
     {
       position6: ['a', 'a', 'a', 'a', 'a', 'a', 'a'],
       position7: ['a', 'b', 'c', 'd', 'i', 'm', 's'],
-      fields008: ['Srce', 'Lang', 'Form', 'MRec', 'Ctry', 'DtSt', 'Start date', 'End date'],
+      fields008: ['Srce', 'Lang', 'Form', 'MRec', 'Ctry', 'DtSt', 'Date 1', 'Date 2'],
     },
   ];
 

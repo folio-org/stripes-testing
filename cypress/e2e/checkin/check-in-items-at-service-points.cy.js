@@ -21,12 +21,12 @@ describe('Check in', () => {
 
       cy.getAdminToken();
       InventoryInstances.getMaterialTypes({ limit: 1 })
-        .then((materialTypeRes) => {
-          materialType = materialTypeRes;
+        .then((materialTypes) => {
+          materialType = materialTypes[0];
 
           testData = {
             folioInstances: InventoryInstances.generateFolioInstances({
-              properties: materialType.map(({ id, name }) => ({ materialType: { id, name } })),
+              itemsProperties: { materialType: { id: materialType.id } },
             }),
             servicePointA: ServicePoints.getDefaultServicePointWithPickUpLocation(),
             servicePointB: ServicePoints.getDefaultServicePointWithPickUpLocation(),
@@ -95,7 +95,7 @@ describe('Check in', () => {
       CheckInPane.checkResultsInTheRow([
         ITEM_BARCODE,
         'Available',
-        `${testData.folioInstances[0].instanceTitle} (${testData.folioInstances[0].properties.materialType.name})`,
+        `${testData.folioInstances[0].instanceTitle} (${materialType.name})`,
       ]);
       // In  FOLIO UI, change logged in user's service point to service point B
       SwitchServicePoint.switchServicePoint(testData.servicePointB.name);
@@ -108,7 +108,7 @@ describe('Check in', () => {
         [
           ITEM_BARCODE,
           'Available',
-          `${testData.folioInstances[0].instanceTitle} (${testData.folioInstances[0].properties.materialType.name})`,
+          `${testData.folioInstances[0].instanceTitle} (${materialType.name})`,
         ],
         1,
       );

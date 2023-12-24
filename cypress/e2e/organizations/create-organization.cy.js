@@ -22,6 +22,6 @@ describe('ui-organizations: Creating organization', () => {
 
   it('C675 Create new organization record (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
     Organizations.createOrganizationViaUi(organization);
-    Organizations.checkCreatedOrganization(organization);
+    Organizations.checkOrganizationInfo(organization);
   });
 });
