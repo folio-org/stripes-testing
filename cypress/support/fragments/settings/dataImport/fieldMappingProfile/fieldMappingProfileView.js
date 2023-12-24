@@ -27,6 +27,19 @@ const holdingDetailsViews = {
   holdingsElectronicAccess: detailsSection.find(Section({ id: 'view-holdings-electronic-access' })),
   holdingsReceivingHistory: detailsSection.find(Section({ id: 'view-holdings-receiving-history' })),
 };
+
+const invoiceDetailsViews = {
+  invoiceInformation: detailsSection.find(Section({ id: 'view-invoice-information' })),
+  invoiceAdjustments: detailsSection.find(Section({ id: 'view-invoice-adjustments' })),
+  vendorInformation: detailsSection.find(Section({ id: 'view-vendor-information' })),
+  extendedInformation: detailsSection.find(Section({ id: 'view-extended-information' })),
+  invoiceLineInformation: detailsSection.find(Section({ id: 'view-invoice-line-information' })),
+  invoiceLIneFundDistribution: detailsSection.find(
+    Section({ id: 'view-invoice-line-fund-distribution' }),
+  ),
+  invoiceLineAdjustments: detailsSection.find(Section({ id: 'view-invoice-line-adjustments' })),
+};
+
 const actionsButton = mappingProfileView.find(Button('Actions'));
 
 export default {
@@ -42,6 +55,10 @@ export default {
 
     if (type === 'HOLDINGS') {
       Object.values(holdingDetailsViews).forEach((view) => cy.expect(view.exists()));
+    }
+
+    if (type === 'INVOICE') {
+      Object.values(invoiceDetailsViews).forEach((view) => cy.expect(view.exists()));
     }
   },
   checkFieldsConditions({ fields, section } = {}) {
