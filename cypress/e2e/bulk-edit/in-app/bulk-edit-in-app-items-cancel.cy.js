@@ -5,10 +5,7 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
-import DateTools from '../../../support/utils/dateTools';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../support/fragments/users/usersCard';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
@@ -37,7 +34,7 @@ describe('bulk-edit', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-        
+
         InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
         cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${item.barcode}"` }).then(
           (res) => {
