@@ -1,6 +1,9 @@
+import uuid from 'uuid';
+
 import { Button } from '../../../../../../interactors';
 import ResultsPane from '../resultsPane';
 import FieldMappingProfileEditForm from './fieldMappingProfileEditForm';
+import FieldMappingProfileView from './fieldMappingProfileView';
 import getRandomPostfix from '../../../../utils/stringTools';
 
 const marcAuthorityUpdateMappingProfile = {
@@ -46,11 +49,31 @@ export default {
 
     return FieldMappingProfileEditForm;
   },
+  openFieldMappingProfileView(mappingProfileName) {
+    ResultsPane.searchByName(mappingProfileName);
+    FieldMappingProfileView.waitLoading();
+    FieldMappingProfileView.verifyFormView();
+
+    return FieldMappingProfileView;
+  },
   marcAuthorityUpdateMappingProfile,
-  createMappingProfileApi: (mappingProfile = marcAuthorityUpdateMappingProfile) => cy.okapiRequest({
+  getDefaultMappingProfile({
+    name = `autotest_mapping_profile_${getRandomPostfix()}`,
+    id = uuid(),
+  } = {}) {
+    return {
+      ...marcAuthorityUpdateMappingProfile,
+      profile: {
+        ...marcAuthorityUpdateMappingProfile.profile,
+        name,
+        id,
+      },
+    };
+  },
+  createMappingProfileViaApi: (mappingProfile = marcAuthorityUpdateMappingProfile) => cy.okapiRequest({
     method: 'POST',
     path: 'data-import-profiles/mappingProfiles',
-    body: { ...mappingProfile },
+    body: mappingProfile,
     isDefaultSearchParamsRequired: false,
   }),
   unlinkMappingProfileFromActionProfileApi: (id, linkedMappingProfile) => cy.okapiRequest({
@@ -59,7 +82,7 @@ export default {
     body: linkedMappingProfile,
     isDefaultSearchParamsRequired: false,
   }),
-  deleteMappingProfileApi: (id) => cy.okapiRequest({
+  deleteMappingProfileViaApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `data-import-profiles/mappingProfiles/${id}`,
     isDefaultSearchParamsRequired: false,

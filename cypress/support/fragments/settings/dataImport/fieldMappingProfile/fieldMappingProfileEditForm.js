@@ -90,6 +90,7 @@ export default {
       cy.expect(confirmModal.has({ message: 'There are unsaved changes' }));
       cy.do(confirmModal.confirm('Close without saving'));
     }
+    cy.wait(300);
     cy.expect(mappingProfileForm.absent());
   },
   clickSaveAndCloseButton() {
