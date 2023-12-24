@@ -6,6 +6,7 @@ import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldi
 import UHoldingsProvidersSearch from '../../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import { FILTER_STATUSES } from '../../../support/fragments/eholdings/eholdingsConstants';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
@@ -117,8 +118,8 @@ describe('eHoldings', () => {
               waiter: () => EHoldingsPackage.waitLoading(specialPackage.name),
             });
             EHoldingsPackage.removeFromHoldings();
-            EHoldingsPackage.verifyHoldingStatus(EHoldingsPackage.filterStatuses.notSelected);
-            EHoldingsPackage.filterTitles(EHoldingsPackage.filterStatuses.notSelected);
+            EHoldingsPackage.verifyHoldingStatus(FILTER_STATUSES.NOT_SELECTED);
+            EHoldingsPackage.filterTitles(FILTER_STATUSES.NOT_SELECTED);
             EHoldingsPackage.checkEmptyTitlesList();
             // reset test data
             EHoldingsPackage.addToHoldings();

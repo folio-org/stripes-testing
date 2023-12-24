@@ -20,10 +20,12 @@ import {
   KeyValue,
   Card,
   TextArea,
+  HTML,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectOrganizationModal from './modals/selectOrganizationModal';
+import OrderLineDetails from './orderLineDetails';
 import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
@@ -97,7 +99,7 @@ const invoiceLinesSection = Section({ id: 'relatedInvoiceLines' });
 const notesSection = Section({ id: 'notes' });
 const trashButton = Button({ icon: 'trash' });
 const note = 'Edited by AQA team';
-
+const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
 
 // Edit form
@@ -532,6 +534,44 @@ export default {
     submitOrderLine();
   },
 
+  rolloverPOLineInfoforPhysicalMaterialWithFundInPercents(
+    fund,
+    unitPrice,
+    quantity,
+    value,
+    institutionId,
+  ) {
+    cy.do([
+      orderFormatSelect.choose(ORDER_FORMAT_NAMES.PHYSICAL_RESOURCE),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption(ACQUISITION_METHOD_NAMES.DEPOSITORY).click(),
+      receivingWorkflowSelect.choose(
+        RECEIVING_WORKFLOW_NAMES.SYNCHRONIZED_ORDER_AND_RECEIPT_QUANTITY,
+      ),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('%')).click(),
+      fundDistributionField.fillIn(value),
+      materialTypeSelect.choose(MATERIAL_TYPE_NAMES.BOOK),
+      addLocationButton.click(),
+      createNewLocationButton.click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      selectPermanentLocationModal.find(saveButton).click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndCloseButton.click(),
+    ]);
+    cy.wait(4000);
+    submitOrderLine();
+  },
+
   rolloverPOLineInfoforPhysicalMaterialWithFundAndExpClass(
     fund,
     expClass,
@@ -922,6 +962,12 @@ export default {
   selectOrderline: (POlinenumber) => {
     cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
   },
+  selectOrderLineByPolNumber(poLineNumber) {
+    this.searchByParameter('Keyword', poLineNumber);
+    this.selectOrderline(poLineNumber);
+
+    return OrderLineDetails;
+  },
   selectreceivedTitleName: (title) => {
     cy.do(receivedtitleDetails.find(Link(title)).click());
   },
@@ -1073,7 +1119,7 @@ export default {
       ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      Button({ id: 'currency' }).click(),
+      currencyButton.click(),
       SelectionOption('Euro (EUR)').click(),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
@@ -1106,7 +1152,7 @@ export default {
       ),
       physicalUnitPriceTextField.fillIn(unitPrice),
       quantityPhysicalTextField.fillIn(quantity),
-      Button({ id: 'currency' }).click(),
+      currencyButton.click(),
       SelectionOption('Polish Zloty (PLN)').click(),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
@@ -1803,6 +1849,9 @@ export default {
     cy.expect(KeyValue('Payment status').has({ value: paymentStatus }));
   },
 
+  verifyOrderFieldContent: (orderData) => {
+    cy.expect([KeyValue(orderData.name).has({ value: orderData.value })]);
+  },
   checkIsOrderCreatedWithDataFromImportedFile: (orderData) => {
     cy.expect([
       KeyValue('Title').has({ value: orderData.title }),
@@ -1967,5 +2016,59 @@ export default {
       path: `orders/order-lines/${orderLine.id}`,
       body: orderLine,
     });
+  },
+  verifyPOlineListIncludesLink: (POlinenumber) => {
+    cy.expect(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).exists());
+  },
+
+  verifyNoResultsMessage() {
+    cy.expect(HTML('Choose a filter or enter a search query to show results.').exists());
+  },
+
+  verifyOrderTitlePOL(title) {
+    cy.expect(
+      orderLineDetailsPane.find(paneHeaderOrderLinesDetailes).has({ text: including(title) }),
+    );
+  },
+
+  selectStatusInSearchOrderLine: (orderStatus) => {
+    cy.do(Accordion({ id: 'receiptStatus' }).clickHeader());
+    switch (orderStatus) {
+      case 'Awaiting receipt':
+        cy.do(
+          Checkbox({ id: 'clickable-filter-receiptStatus-awaiting-receipt' }).checkIfNotSelected(),
+        );
+        break;
+      case 'Cancelled':
+        cy.do(Checkbox({ id: 'clickable-filter-receiptStatus-cancelled' }).checkIfNotSelected());
+        break;
+      case 'Fully received':
+        cy.do(
+          Checkbox({ id: 'clickable-filter-receiptStatus-fully-received' }).checkIfNotSelected(),
+        );
+        break;
+      case 'Ongoing':
+        cy.do(Checkbox({ id: 'clickable-filter-receiptStatus-ongoing' }).checkIfNotSelected());
+        break;
+      case 'Partially received':
+        cy.do(
+          Checkbox({
+            id: 'clickable-filter-receiptStatus-partially-received',
+          }).checkIfNotSelected(),
+        );
+        break;
+      case 'Pending':
+        cy.do(Checkbox({ id: 'clickable-filter-receiptStatus-pending' }).checkIfNotSelected());
+        break;
+      case 'Receipt not required':
+        cy.do(
+          Checkbox({
+            id: 'clickable-filter-receiptStatus-receipt-not-required',
+          }).checkIfNotSelected(),
+        );
+        break;
+      default:
+        cy.log('No such status like ' + orderStatus + '. Please use Closed, Open or Pending');
+    }
   },
 };

@@ -92,7 +92,7 @@ describe('Lost loan', () => {
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 count: 4,
-                properties: materialTypes.map(({ id }) => ({ materialType: { id } })),
+                itemsProperties: materialTypes.map(({ id }) => ({ materialType: { id } })),
               }),
               servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
               requestsId: '',

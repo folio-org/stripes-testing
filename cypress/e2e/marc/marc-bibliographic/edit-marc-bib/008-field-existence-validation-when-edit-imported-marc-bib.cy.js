@@ -23,8 +23,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     tag00: '00',
     expected008BoxesSets: [
       'DtSt',
-      'Start date',
-      'End date',
+      'Date 1',
+      'Date 2',
       'Ctry',
       'Ills',
       'Audn',

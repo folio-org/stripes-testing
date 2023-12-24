@@ -8,13 +8,17 @@ import {
   KeyValue,
   Modal,
   Accordion,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 import EHoldingsResourceEdit from './eHoldingsResourceEdit';
 import ExportSettingsModal from './modals/exportSettingsModal';
+import SelectAgreementModal from './modals/selectAgreementModal';
 
+const closeViewButton = Button({ dataTestID: 'close-details-view-button' });
 const actionsButton = Button('Actions');
 const holdingStatusSection = Section({ id: 'resourceShowHoldingStatus' });
+const agreementsSection = Section({ id: 'resourceShowAgreements' });
 const addToHoldingButton = holdingStatusSection.find(Button('Add to holdings'));
 const exportButton = Button('Export title package (CSV)');
 
@@ -117,5 +121,33 @@ export default {
     expect(actualName).to.match(
       /^cypress\/downloads\/\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_\d+_\d+-\d+-\d+_resource\.csv$/,
     );
+  },
+  openSelectAgreementModal() {
+    cy.do(agreementsSection.find(Button('Add')).click());
+    SelectAgreementModal.waitLoading();
+    SelectAgreementModal.verifyModalView();
+
+    return SelectAgreementModal;
+  },
+  checkAgreementsTableContent({ records = [] }) {
+    records.forEach((record, index) => {
+      if (record.status) {
+        cy.expect(
+          agreementsSection
+            .find(MultiColumnListCell({ row: index, column: 'Status' }))
+            .has({ content: including(record.status) }),
+        );
+      }
+      if (record.name) {
+        cy.expect(
+          agreementsSection
+            .find(MultiColumnListCell({ row: index, column: 'Name' }))
+            .has({ content: including(record.name) }),
+        );
+      }
+    });
+  },
+  closeHoldingsResourceView() {
+    cy.do(closeViewButton.click());
   },
 };

@@ -1,6 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { including } from '@interactors/html';
-import { Button, Form, TextField, Accordion } from '../../../../../interactors';
+import { Button, Form, TextField, Accordion, Option, Select } from '../../../../../interactors';
+
+const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 
 export default {
   save: () => {
@@ -43,4 +45,8 @@ export default {
   },
 
   verifyScreenName: (profileName) => cy.expect(Form(including(`Edit ${profileName}`)).exists()),
+
+  verifyFOLIORecordTypeOptionExists(type) {
+    cy.expect(recordTypeselect.find(Option(type)).exists());
+  },
 };
