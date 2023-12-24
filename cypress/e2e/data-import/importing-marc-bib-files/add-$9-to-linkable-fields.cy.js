@@ -17,7 +17,6 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -234,11 +233,11 @@ describe('data-import', () => {
         QuickMarcEditor.closeEditorPane();
 
         InventoryInstance.viewSource();
-        InventoryViewSource.contains(`\t130\t1  \t$a De Berquelle, Raymond $d 1933-`);
-        InventoryViewSource.contains(`\t240\t   \t$a The value`);
-        InventoryViewSource.contains(`\t800\t   \t$a Series`);
-        InventoryViewSource.contains(`\t811\t  0\t$a Wangaratta, Victoria, 1994.`);
-        InventoryViewSource.contains(`\t245\t1 0\t$a Welcome home Olympians Added subfields 9`);
+        InventoryViewSource.contains('\t130\t1  \t$a De Berquelle, Raymond $d 1933-');
+        InventoryViewSource.contains('\t240\t   \t$a The value');
+        InventoryViewSource.contains('\t800\t   \t$a Series');
+        InventoryViewSource.contains('\t811\t  0\t$a Wangaratta, Victoria, 1994.');
+        InventoryViewSource.contains('\t245\t1 0\t$a Welcome home Olympians Added subfields 9');
         InventoryViewSource.close();
         InventoryInstance.deriveNewMarcBib();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.the130Field);
