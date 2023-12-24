@@ -109,9 +109,9 @@ describe('Data Import', () => {
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
 
         // Open field mapping profile view
-        const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView(
-          testData.mapping.profile.name,
-        );
+        const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({
+          name: testData.mapping.profile.name,
+        });
 
         // Click Actions button, Select 'Edit' option
         const FieldMappingProfileEditForm = FieldMappingProfileView.clickEditButton();
