@@ -161,6 +161,14 @@ export default {
     );
   },
 
+  checkFYInGroup: (fiscalYear) => {
+    cy.expect(
+      Accordion({ id: 'information' })
+        .find(KeyValue({ value: fiscalYear }))
+        .exists(),
+    );
+  },
+
   deleteGroupViaApi: (groupId) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/groups/${groupId}`,

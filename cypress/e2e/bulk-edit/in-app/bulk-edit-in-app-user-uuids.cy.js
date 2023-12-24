@@ -40,7 +40,10 @@ describe('bulk-edit', () => {
       cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${invalidUserUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`, errorsFromMatchingFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        `*${matchedRecordsFileName}`,
+        errorsFromMatchingFileName,
+      );
       Users.deleteViaApi(user.userId);
     });
 
@@ -191,7 +194,7 @@ describe('bulk-edit', () => {
         BulkEditActions.downloadErrors();
         ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
           invalidUserUUID,
-          'No match found'
+          'No match found',
         ]);
       },
     );

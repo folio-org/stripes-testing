@@ -9,6 +9,8 @@ import {
   including,
 } from '../../../../interactors';
 import eHoldingsProviderView from './eHoldingsProviderView';
+import { FILTER_STATUSES } from './eholdingsConstants';
+
 // eslint-disable-next-line import/no-cycle
 const resultSection = Section({ id: 'search-results' });
 const selectionStatusSection = Section({ id: 'filter-packages-selected' });
@@ -17,11 +19,6 @@ const selectionStatusAccordion = Accordion({
 });
 const searchIcon = Button({ icon: 'search' });
 const packagesSection = Section({ id: 'providerShowProviderList' });
-const filterStatuses = {
-  all: 'All',
-  selected: 'Selected',
-  notSelected: 'Not selected',
-};
 const packagesAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderList',
 });
@@ -84,8 +81,8 @@ export default {
 
   verifyOnlySelectedPackagesInResults() {
     cy.expect([
-      packagesSection.find(ListItem({ text: including(filterStatuses.selected) })).exists(),
-      packagesSection.find(ListItem({ text: including(filterStatuses.notSelected) })).absent(),
+      packagesSection.find(ListItem({ text: including(FILTER_STATUSES.SELECTED) })).exists(),
+      packagesSection.find(ListItem({ text: including(FILTER_STATUSES.NOT_SELECTED) })).absent(),
     ]);
   },
 

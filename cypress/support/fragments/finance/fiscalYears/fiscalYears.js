@@ -235,10 +235,11 @@ export default {
       body: fiscalYear,
     });
   },
-  deleteFiscalYearViaApi: (fiscalYearId) => cy.okapiRequest({
+  deleteFiscalYearViaApi: (fiscalYearId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/fiscal-years/${fiscalYearId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
 
   selectFY: (FYName) => {

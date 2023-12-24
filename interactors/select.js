@@ -37,6 +37,7 @@ export default HTML.extend('select')
     valid: (el) => el.querySelector('select').getAttribute('aria-invalid') !== 'true',
     disabled: (el) => el.querySelector('select').disabled,
     checkedOptionText: (el) => el.querySelector('select option:checked').textContent,
+    optionsText: (el) => [...el.querySelectorAll('option:not([disabled])')].map(({ textContent }) => textContent),
   })
   .actions({
     choose,

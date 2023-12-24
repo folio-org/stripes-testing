@@ -63,7 +63,7 @@ describe('ui-organizations: Organizations', () => {
         waiter: Organizations.waitLoading,
       });
       Organizations.createOrganizationWithAU(organization, defaultAcquisitionUnit.name);
-      Organizations.checkCreatedOrganization(organization);
+      Organizations.checkOrganizationInfo(organization);
 
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,
