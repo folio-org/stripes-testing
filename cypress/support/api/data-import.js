@@ -53,7 +53,7 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
 
   testData.jobProfileForCreate = jobProfile;
 
-  FieldMappingProfiles.createMappingProfileApi(testData.marcBibMappingProfile).then(
+  FieldMappingProfiles.createMappingProfileViaApi(testData.marcBibMappingProfile).then(
     (bodyWithMappingProfile) => {
       testData.marcBibActionProfile.addedRelations[0].detailProfileId =
         bodyWithMappingProfile.body.id;
@@ -68,7 +68,7 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
     },
   );
 
-  FieldMappingProfiles.createMappingProfileApi(testData.instanceMappingProfile).then(
+  FieldMappingProfiles.createMappingProfileViaApi(testData.instanceMappingProfile).then(
     (bodyWithMappingProfile) => {
       testData.instanceActionProfile.addedRelations[0].detailProfileId =
         bodyWithMappingProfile.body.id;
@@ -83,7 +83,7 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
     },
   );
 
-  FieldMappingProfiles.createMappingProfileApi(testData.holdingsMappingProfile).then(
+  FieldMappingProfiles.createMappingProfileViaApi(testData.holdingsMappingProfile).then(
     (bodyWithMappingProfile) => {
       testData.holdingsActionProfile.addedRelations[0].detailProfileId =
         bodyWithMappingProfile.body.id;
@@ -98,7 +98,7 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
     },
   );
 
-  FieldMappingProfiles.createMappingProfileApi(testData.itemMappingProfile).then(
+  FieldMappingProfiles.createMappingProfileViaApi(testData.itemMappingProfile).then(
     (bodyWithMappingProfile) => {
       testData.itemActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
       SettingsActionProfiles.createActionProfileApi(testData.itemActionProfile).then(
@@ -120,7 +120,7 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
 });
 
 Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, actionProfile) => {
-  FieldMappingProfiles.createMappingProfileApi(mappingProfile).then((bodyWithMappingProfile) => {
+  FieldMappingProfiles.createMappingProfileViaApi(mappingProfile).then((bodyWithMappingProfile) => {
     actionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
     SettingsActionProfiles.createActionProfileApi(actionProfile).then((bodyWithActionProfile) => {
       cy.wrap(bodyWithActionProfile.body.id).as('idActionProfile');
