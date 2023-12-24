@@ -30,11 +30,13 @@ describe('Data Import', () => {
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
+      });
+    });
 
-        cy.login(testData.user.username, testData.user.password, {
-          path: SettingsMenu.dataImportSettingsPath,
-          waiter: SettingsDataImport.waitLoading,
-        });
+    beforeEach('Login', () => {
+      cy.login(testData.user.username, testData.user.password, {
+        path: SettingsMenu.dataImportSettingsPath,
+        waiter: SettingsDataImport.waitLoading,
       });
     });
 
@@ -81,6 +83,46 @@ describe('Data Import', () => {
 
         // Click "Actions" button, Click "Duplicate" option
         const FieldMappingProfileEditForm = FieldMappingProfileView.clickDuplicateButton();
+
+        // Click "Close" button
+        FieldMappingProfileEditForm.clickCloseButton({ closeWoSaving: false });
+      },
+    );
+
+    it(
+      'C376002 Verify no error appears after switching record types when viewing a field mapping profile, then editing a different one (folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet'] },
+      () => {
+        // Go to Settings application-> Data import-> Field mapping profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+
+        // Open field mapping profile view for item records
+        const FieldMappingProfileView = FieldMappingProfiles.openFieldMappingProfileView({
+          name: testData.mappings.item.profile.name,
+          type: 'ITEM',
+        });
+        FieldMappingProfileView.checkSummaryFieldsConditions([
+          { label: 'Name', conditions: { value: testData.mappings.item.profile.name } },
+          { label: 'Incoming record type', conditions: { value: 'MARC Authority' } },
+          { label: 'FOLIO record type', conditions: { value: 'Item' } },
+        ]);
+
+        // Close those details by clicking the x at the top left of the screen
+        FieldMappingProfileView.clickCloseButton();
+
+        // Open field mapping profile view for Inventory holdings records
+        FieldMappingProfiles.openFieldMappingProfileView({
+          name: testData.mappings.holding.profile.name,
+          type: 'HOLDINGS',
+        });
+        FieldMappingProfileView.checkSummaryFieldsConditions([
+          { label: 'Name', conditions: { value: testData.mappings.holding.profile.name } },
+          { label: 'Incoming record type', conditions: { value: 'MARC Authority' } },
+          { label: 'FOLIO record type', conditions: { value: 'Holdings' } },
+        ]);
+
+        // Click "Actions" button, Click "Edit" option
+        const FieldMappingProfileEditForm = FieldMappingProfileView.clickEditButton();
 
         // Click "Close" button
         FieldMappingProfileEditForm.clickCloseButton({ closeWoSaving: false });
