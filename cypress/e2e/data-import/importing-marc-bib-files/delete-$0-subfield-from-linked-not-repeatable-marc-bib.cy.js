@@ -13,6 +13,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
@@ -101,6 +102,13 @@ describe('data-import', () => {
       profileName: 'Update MARC Bib records by matching 999 ff $s subfield value',
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
+    const field = {
+      field: '100',
+      ind1: '*',
+      ind2: '*',
+      subfield: 'a',
+    };
+
     const marcFiles = [
       {
         marc: 'marcBibFileForC377001.mrc',
@@ -177,7 +185,10 @@ describe('data-import', () => {
             MatchProfiles.createMatchProfile(matchProfile);
             // create Field mapping profile
             cy.visit(SettingsMenu.mappingProfilePath);
-            FieldMappingProfiles.createMappingProfileForUpdatesMarc(mappingProfile);
+            FieldMappingProfiles.openNewMappingProfileForm();
+            NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
+            NewFieldMappingProfile.addFieldToMarcBibUpdate(field);
+            NewFieldMappingProfile.save();
             FieldMappingProfileView.closeViewMode(mappingProfile.name);
             FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
             // create Action profile and link it to Field mapping profile
