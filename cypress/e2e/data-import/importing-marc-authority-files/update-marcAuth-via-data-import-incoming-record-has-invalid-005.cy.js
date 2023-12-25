@@ -23,6 +23,7 @@ import FieldMappingProfileView from '../../../support/fragments/data_import/mapp
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 describe('data-import', () => {
   describe('Importing MARC Authority files', () => {
@@ -80,6 +81,7 @@ describe('data-import', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.intercept('GET', 'data-import/splitStatus').as('splitStatus');
         // need to change the 010 field to random value in the file for creating because the match is by the 010 field
         DataImport.editMarcFile(
           testData.filePathForCreate,
@@ -160,23 +162,27 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(testData.editedFileNameForUpdate, testData.fileNameForUpdate);
-        JobProfiles.waitLoadingList();
+        DataImport.uploadFile(testData.editedFileNameForUpdate, testData.fileNameForUpdate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(testData.fileNameForUpdate);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(testData.fileNameForUpdate);
-        [
-          FileDetails.columnNameInResultList.srsMarc,
-          FileDetails.columnNameInResultList.authority,
-        ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
+        cy.wait('@splitStatus', getLongDelay()).then(() => {
+          // set date after updated
+          const updatedDate = new Date();
+          JobProfiles.waitFileIsImported(testData.fileNameForUpdate);
+          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+          Logs.openFileDetails(testData.fileNameForUpdate);
+          [
+            FileDetails.columnNameInResultList.srsMarc,
+            FileDetails.columnNameInResultList.authority,
+          ].forEach((columnName) => {
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
+          });
+          FileDetails.openAuthority(RECORD_STATUSES.UPDATED);
+          MarcAuthority.waitLoading();
+          MarcAuthority.contains(testData.tag005);
+          MarcAuthority.verifyFieldContent(3, updatedDate);
         });
-        FileDetails.openAuthority(RECORD_STATUSES.UPDATED);
-        MarcAuthority.waitLoading();
-        MarcAuthority.contains(testData.tag005);
-        MarcAuthority.contains(testData.todayDate);
       },
     );
   });
