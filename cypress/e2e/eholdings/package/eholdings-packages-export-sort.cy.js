@@ -1,7 +1,6 @@
 import { Permissions } from '../../../support/dictionary';
 import { EHoldingsPackage, EHoldingsPackageView } from '../../../support/fragments/eholdings';
 import ExportManagerSearchPane from '../../../support/fragments/exportManager/exportManagerSearchPane';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import ArrayUtils from '../../../support/utils/arrays';
@@ -20,8 +19,6 @@ describe('eHoldings', () => {
       Permissions.exportManagerAll.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-
-      AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
     });
   });
 

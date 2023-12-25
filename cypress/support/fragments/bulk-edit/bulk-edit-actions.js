@@ -15,6 +15,7 @@ import {
   Selection,
   Option,
   OptionGroup,
+  Keyboard,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import BulkEditSearchPane from './bulk-edit-search-pane';
@@ -39,6 +40,7 @@ const downloadChnagedRecordsButton = Button('Download changed records (CSV)');
 const bulkEditFirstRow = RepeatableFieldItem({ index: 0 });
 const bulkEditSecondRow = RepeatableFieldItem({ index: 1 });
 const commitChanges = Button('Commit changes');
+const locationSelection = Selection({ name: 'locationId' });
 
 function getEmailField() {
   // 2 the same selects without class, id or someone different attr
@@ -96,6 +98,22 @@ export default {
   },
   verifyRowIcons() {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: true }).exists()]);
+  },
+
+  verifyOptionsDropdown(isExist = true) {
+    if (isExist) {
+      cy.expect(bulkPageSelections.valueType.exists());
+    } else {
+      cy.expect(bulkPageSelections.valueType.absent());
+    }
+  },
+
+  verifySearchSectionClosed() {
+    cy.expect(locationSelection.has({ open: false }));
+  },
+
+  verifyLocationValue(value) {
+    cy.expect(Selection({ singleValue: value }).visible());
   },
 
   isDisabledRowIcons(isDisabled) {
@@ -198,10 +216,12 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
-  replaceWithIsDisabled() {
-    cy.xpath(
-      '(//div[contains(@class, "select--")]//select[contains(@class, "selectControl--")])[3]',
-    ).should('be.disabled');
+  replaceWithIsDisabled(rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ content: 'Replace with' }))
+        .has({ disabled: true }),
+    ]);
   },
 
   replaceEmail(oldEmailDomain, newEmailDomain, rowIndex = 0) {
@@ -665,6 +685,7 @@ export default {
   isCommitButtonDisabled(isDisabled) {
     cy.expect(commitChanges.has({ disabled: isDisabled }));
   },
+
   confirmChanges() {
     cy.do(confirmChangesButton.click());
     this.isCommitButtonDisabled(true);
@@ -896,6 +917,16 @@ export default {
         .find(Option({ text: 'Reproduction' }))
         .exists(),
       Option({ value: 'SUPPRESS_FROM_DISCOVERY' }).exists(),
+    ]);
+  },
+
+  fillLocation(location) {
+    cy.do([
+      locationSelection.open(),
+      locationSelection.filterOptions(location),
+      // need to wait until value will be applied
+      cy.wait(1000),
+      Keyboard.enter(),
     ]);
   },
 
