@@ -37,6 +37,7 @@ const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result
 const filtersSection = Section({ id: 'pane-authorities-filters' });
 const marcViewSectionContent = PaneContent({ id: 'marc-view-pane-content' });
 const searchInput = SearchField({ id: 'textarea-authorities-search' });
+const searchResults = PaneContent({ id: 'authority-search-results-pane-content' });
 const searchButton = Button({ id: 'submit-authorities-search' });
 const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
@@ -64,6 +65,7 @@ const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
 const previousButton = Button({ id: 'authority-result-list-prev-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
+const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
@@ -371,6 +373,10 @@ export default {
 
   clickLinkButton() {
     cy.do(buttonLink.click());
+  },
+
+  clickLinkIcon() {
+    cy.do(searchResults.find(linkIconButton).click());
   },
 
   verifyLinkButtonExistOnMarcViewPane(isExist = true) {
