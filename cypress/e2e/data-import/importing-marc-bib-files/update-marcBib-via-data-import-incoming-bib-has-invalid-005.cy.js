@@ -22,8 +22,8 @@ import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
-// import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -35,9 +35,7 @@ describe('data-import', () => {
       filePathForUpdate: 'marcBibFileForC415267.mrc',
       editedFileName: `C415267 marcFileName${getRandomPostfix()}.mrc`,
       fileNameForUpdate: `C415267 marcFileName${getRandomPostfix()}.mrc`,
-      // tag005: '005',
-      // todayDate: moment(new Date()).format('YYYYMMDD'),
-      // YYYYMMDDHHMMSS.S
+      tag005: '005',
     };
     const mappingProfile = {
       name: `C415267 Field mapping profile 2 - MODSOURCE-642 -MARC ${getRandomPostfix()}`,
@@ -75,6 +73,8 @@ describe('data-import', () => {
       ]).then((userProperties) => {
         testData.user = userProperties;
 
+        cy.intercept('GET', 'data-import/splitStatus').as('splitStatus');
+
         cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
@@ -93,6 +93,7 @@ describe('data-import', () => {
       });
       // delete created files
       FileManager.deleteFile(`cypress/fixtures/${testData.editedFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${testData.fileNameForCreate}`);
     });
 
     // https://issues.folio.org/browse/MODSOURMAN-1106
@@ -155,27 +156,26 @@ describe('data-import', () => {
           JobProfiles.waitLoadingList();
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(testData.fileNameForUpdate);
-          // const timeStamp = new Date();
-          // console.log(timeStamp);
-          Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-          Logs.openFileDetails(testData.fileNameForUpdate);
-          // [
-          //   FileDetails.columnNameInResultList.srsMarc,
-          //   FileDetails.columnNameInResultList.instance,
-          // ].forEach((columnName) => {
-          //   FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
-          // });
-          // Logs.getCreatedItemsID(1).then((link) => {
-          //   testData.createdRecordIDs.push(link.split('/')[5]);
-          // });
-          // FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
-
-          cy.visit(TopMenu.inventoryPath);
-          InventorySearchAndFilter.searchInstanceByHRID(initialInstanceHrId);
-          InventoryInstance.viewSource();
-          // InventoryViewSource.contains(`${testData.tag005}\t`);
-          // InventoryViewSource.contains(testData.todayDate);
+          cy.wait('@splitStatus', getLongDelay()).then(() => {
+            // set date after updating record
+            const updatedDate = new Date();
+            JobProfiles.waitFileIsImported(testData.fileNameForUpdate);
+            Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
+            Logs.openFileDetails(testData.fileNameForUpdate);
+            [
+              FileDetails.columnNameInResultList.srsMarc,
+              FileDetails.columnNameInResultList.instance,
+            ].forEach((columnName) => {
+              FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
+            });
+            Logs.getCreatedItemsID(1).then((link) => {
+              testData.createdRecordIDs.push(link.split('/')[5]);
+            });
+            FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
+            InventoryInstance.viewSource();
+            InventoryViewSource.contains(`${testData.tag005}\t`);
+            InventoryViewSource.verifyFieldContent(3, updatedDate);
+          });
         });
       },
     );
