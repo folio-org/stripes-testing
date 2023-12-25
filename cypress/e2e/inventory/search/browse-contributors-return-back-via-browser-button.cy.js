@@ -1,5 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BrowseSearch from '../../../support/fragments/inventory/search/browseSubjects';
@@ -55,7 +56,7 @@ describe('Inventory › Contributors Browse', () => {
       BrowseContributors.checkSearchResultsTable();
       BrowseSearch.verifyBrowseInventoryPane();
       BrowseContributors.openInstance(instance.contributors[0]);
-      BrowseContributors.checkSearchResultCount('1 record found');
+      InventoryInstances.checkSearchResultCount(/1 record found/);
       InventoryInstance.verifyInstanceTitle(instance.title);
       InventorySearchAndFilter.instanceTabIsDefault();
       BrowseSearch.verifyInventoryPane();
