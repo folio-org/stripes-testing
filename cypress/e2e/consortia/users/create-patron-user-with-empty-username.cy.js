@@ -1,14 +1,9 @@
-import Permissions from '../../../support/dictionary/permissions';
-import Affiliations from '../../../support/dictionary/affiliations';
 import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 import devTeams from '../../../support/dictionary/devTeams';
 import testTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../support/fragments/users/usersCard';
 import UserEdit from '../../../support/fragments/users/userEdit';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 let user;
@@ -24,7 +19,7 @@ const testUser = {
   },
   patronGroup: 'undergrad (Undergraduate Student)',
   userType: 'Staff' // select staff
-}
+};
 const newUsername = getTestEntityValue('username');
 
 describe('Users (Consortia)', () => {
@@ -34,8 +29,8 @@ describe('Users (Consortia)', () => {
       permissions.uiUsersCreate.gui,
       permissions.uiUsersPermissionsView.gui,
       permissions.uiUsersView.gui,
-    ]).then((secondUserProperties) => {
-      user = secondUserProperties;
+    ]).then((userProperties) => {
+      user = userProperties;
       cy.login(user.username, user.password, {
         path: TopMenu.usersPath,
         waiter: Users.waitLoading,
@@ -68,5 +63,5 @@ describe('Users (Consortia)', () => {
       UserEdit.saveEditedUser();
       Users.verifyUserTypeOnUserDetailsPane('staff');
       Users.verifyUsernameOnUserDetailsPane(newUsername);
-  });
+    });
 });

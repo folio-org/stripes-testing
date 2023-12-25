@@ -121,10 +121,11 @@ export default {
   },
 
   verifyUsernameMandatory(mandatory = true) {
-    if (mandatory) cy.expect(
-      TextField('Username*').exists(),
-    );
-    else {
+    if (mandatory) {
+      cy.expect(
+        TextField('Username*').exists(),
+      );
+    } else {
       cy.expect(TextField('Username').exists());
     }
   },

@@ -379,6 +379,6 @@ export default {
   },
 
   editUsername(username) {
-    cy.do(TextField({ id: 'adduser_username' }).fillIn(username),)
+    cy.do(TextField({ id: 'adduser_username' }).fillIn(username));
   },
 };
