@@ -92,7 +92,7 @@ describe('Data Import', () => {
 
         // Click on the "FOLIO record type" dropdown, Select "Item" type
         FieldMappingProfileEditForm.fillMappingProfileFields({
-          existingRecordType: 'Item',
+          summary: { existingRecordType: 'Item' },
         });
         FieldMappingProfileEditForm.verifyFormView({ type: 'ITEM' });
         FieldMappingProfileEditForm.checkButtonsConditions([
@@ -101,7 +101,7 @@ describe('Data Import', () => {
 
         // Click on the "FOLIO record type" dropdown, Select "Order" type
         FieldMappingProfileEditForm.fillMappingProfileFields({
-          existingRecordType: 'Order',
+          summary: { existingRecordType: 'Order' },
         });
         FieldMappingProfileEditForm.verifyFormView({ type: 'ORDER' });
         FieldMappingProfileEditForm.checkButtonsConditions([

@@ -7,7 +7,10 @@ import {
   TextArea,
   TextField,
   including,
+  matching,
 } from '../../../../../../interactors';
+import InteractorsTools from '../../../../utils/interactorsTools';
+import Notifications from '../notifications';
 
 const mappingProfileForm = Form({ id: 'mapping-profiles-form' });
 
@@ -61,6 +64,12 @@ const summaryFields = {
   existingRecordType: summarySection.find(Select({ name: 'profile.existingRecordType' })),
   description: summarySection.find(TextArea({ name: 'profile.description' })),
 };
+const administrativeDataFields = {
+  suppressFromDiscovery: itemDetails.administrativeData.find(Select('Suppress from discovery')),
+};
+const electronicAccessFields = {
+  select: itemDetails.itemElectronicAccess.find(Select('Select action')),
+};
 
 const incomingRecordTypes = {
   'MARC Bibliographic': 'MARC_BIBLIOGRAPHIC',
@@ -79,6 +88,19 @@ const existingRecordTypes = {
   'MARC Authority': 'MARC_AUTHORITY',
 };
 
+const suppressFromDiscoveryOptions = {
+  'Select сheckbox field mapping': '',
+  'Mark for all affected records': 'ALL_TRUE',
+  'Unmark for all affected records': 'ALL_FALSE',
+  'Keep the existing value for all affected records': 'AS_IS',
+};
+const electronicAccessOptions = {
+  'Select action': '',
+  'Add these to existing': 'EXTEND_EXISTING',
+  'Delete all existing values': 'DELETE_EXISTING',
+  'Delete all existing and add these': 'EXCHANGE_EXISTING',
+  'Find and remove these': 'DELETE_INCOMING',
+};
 const formButtons = {
   Close: closeButton,
   'Save as profile & Close': saveAndCloseButton,
@@ -120,7 +142,19 @@ export default {
       cy.expect(optionsList).to.eql(expectedList);
     });
   },
-  fillMappingProfileFields({ name, incomingRecordType, existingRecordType, description }) {
+  fillMappingProfileFields({ summary, adminData, electronicAccess }) {
+    if (summary) {
+      this.fillSummaryProfileFields(summary);
+    }
+    if (adminData) {
+      this.fillAdministrativeDataProfileFields(adminData);
+    }
+    if (electronicAccess) {
+      this.fillElectronicAccessProfileFields(electronicAccess);
+    }
+    cy.wait(300);
+  },
+  fillSummaryProfileFields({ name, incomingRecordType, existingRecordType, description }) {
     if (name) {
       cy.do(summaryFields.name.fillIn(name));
       cy.expect(summaryFields.name.has({ value: name }));
@@ -143,6 +177,25 @@ export default {
     }
     cy.wait(2000);
   },
+  fillAdministrativeDataProfileFields({ suppressFromDiscovery }) {
+    if (suppressFromDiscovery) {
+      cy.do([
+        administrativeDataFields.suppressFromDiscovery.focus(),
+        administrativeDataFields.suppressFromDiscovery.choose(suppressFromDiscovery),
+      ]);
+      cy.expect(
+        administrativeDataFields.suppressFromDiscovery.has({
+          value: suppressFromDiscoveryOptions[suppressFromDiscovery],
+        }),
+      );
+    }
+  },
+  fillElectronicAccessProfileFields({ value }) {
+    if (value) {
+      cy.do([electronicAccessFields.select.focus(), electronicAccessFields.select.choose(value)]);
+      cy.expect(electronicAccessFields.select.has({ value: electronicAccessOptions[value] }));
+    }
+  },
   clickCloseButton({ closeWoSaving = true } = {}) {
     cy.expect(closeButton.has({ disabled: false }));
     cy.do(closeButton.click());
@@ -155,9 +208,15 @@ export default {
     cy.wait(300);
     cy.expect(mappingProfileForm.absent());
   },
-  clickSaveAndCloseButton() {
+  clickSaveAndCloseButton({ profileCreated = true } = {}) {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
     cy.expect(mappingProfileForm.absent());
+
+    if (profileCreated) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(Notifications.fieldMappingProfileCreatedSuccessfully)),
+      );
+    }
   },
 };

@@ -74,6 +74,16 @@ export default {
       deletedRelations: [],
     };
   },
+  getMappingProfilesViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'data-import-profiles/mappingProfiles',
+        isDefaultSearchParamsRequired: false,
+        searchParams,
+      })
+      .then(({ body }) => body);
+  },
   createMappingProfileViaApi: (mappingProfile = marcAuthorityUpdateMappingProfile) => cy.okapiRequest({
     method: 'POST',
     path: 'data-import-profiles/mappingProfiles',
@@ -91,4 +101,13 @@ export default {
     path: `data-import-profiles/mappingProfiles/${id}`,
     isDefaultSearchParamsRequired: false,
   }),
+  deleteMappingProfileByNameViaApi(profileName) {
+    this.getMappingProfilesViaApi({ query: `name=="${profileName}"` }).then(
+      ({ mappingProfiles }) => {
+        mappingProfiles.forEach((mappingProfile) => {
+          this.deleteMappingProfileViaApi(mappingProfile.id);
+        });
+      },
+    );
+  },
 };

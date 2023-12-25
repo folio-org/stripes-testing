@@ -69,6 +69,12 @@ export default {
   checkSummaryFieldsConditions(fields = []) {
     this.checkFieldsConditions({ fields, section: summarySection });
   },
+  checkAdminDataFieldsConditions(fields = []) {
+    this.checkFieldsConditions({ fields, section: itemDetailsViews.administrativeData });
+  },
+  checkElectronicAccessFieldsConditions(fields = []) {
+    this.checkFieldsConditions({ fields, section: itemDetailsViews.itemElectronicAccess });
+  },
   expandActionsDropdown() {
     cy.do(actionsButton.click());
   },
