@@ -996,6 +996,27 @@ export default {
     ]);
   },
 
+  addFieldToMarcBibUpdate({
+    field,
+    ind1,
+    ind2,
+    subfield,
+  }) {
+    cy.do([
+      Accordion({ id: 'edit-field-mappings-for-marc-updates' }).find(Button('Add field')).click(),
+      TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(field),
+      TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.indicator1' }).fillIn(
+        ind1,
+      ),
+      TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.indicator2' }).fillIn(
+        ind2,
+      ),
+      TextField({
+        name: 'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield',
+      }).fillIn(subfield),
+    ]);
+  },
+
   fillMissingPieces: (value) => cy.do(TextField('Missing pieces').fillIn(value)),
 
   verifyExpenseClassesIsPresentedInDropdown: (value) => {
