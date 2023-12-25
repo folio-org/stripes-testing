@@ -49,7 +49,7 @@ export default {
       (acc, it) => {
         if (mappingFieldsNames.includes(it.name)) {
           const field = mappingFields.find(({ name: fieldName }) => fieldName === it.name);
-          return [...acc, { ...it, value: field.value }];
+          return [...acc, { ...it, ...field }];
         }
         return [...acc, it];
       },
