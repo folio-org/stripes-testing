@@ -1,7 +1,12 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
-const getDefaultOrganization = ({ id = uuid(), isDonor = false, isVendor = true, accounts = 0 } = {}) => {
+const getDefaultOrganization = ({
+  id = uuid(),
+  isDonor = false,
+  isVendor = true,
+  accounts = 0,
+} = {}) => {
   const defaultUiOrganizations = {
     id,
     name: `autotest_name_${getRandomPostfix()}`,
