@@ -17,6 +17,7 @@ import {
   Heading,
   Spinner,
   KeyValue,
+  Link,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -33,6 +34,7 @@ const requestsResultsSection = Section({ id: 'pane-results' });
 const requestDetailsSection = Pane({ title: 'Request Detail' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 const requestsPane = Pane({ title: 'Requests' });
+const requestQueuePane = Pane({ id: 'request-queue' });
 const pageCheckbox = Checkbox({ name: 'Page' });
 const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
@@ -262,6 +264,16 @@ export default {
   selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
   selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
   selectFirstRequest: (title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
+  selectRequest: (title, rowIndex) => cy.do(
+    requestsPane
+      .find(
+        MultiColumnListCell({
+          row: rowIndex,
+          content: title,
+        }),
+      )
+      .click(),
+  ),
   openTagsPane: () => cy.do(showTagsButton.click()),
   closePane: (title) => cy.do(
     Pane({ title })
@@ -567,6 +579,12 @@ export default {
     cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
   },
 
+  verifyRequestIsAbsent(barcode) {
+    cy.expect(
+      requestsResultsSection.find(MultiColumnListRow({ content: including(barcode) })).absent(),
+    );
+  },
+
   exportRequestToCsv: () => {
     cy.wait(1000);
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
@@ -586,5 +604,13 @@ export default {
   deleteDownloadedFile(fileName) {
     const filePath = `cypress\\downloads\\${fileName}`;
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
+  },
+
+  closeRequestQueue() {
+    cy.do(requestQueuePane.find(Button({ ariaLabel: 'Close New Request' })).click());
+  },
+
+  clickInstanceDescription() {
+    cy.do(requestQueuePane.find(Link({ text: including('Instance') })).click());
   },
 };
