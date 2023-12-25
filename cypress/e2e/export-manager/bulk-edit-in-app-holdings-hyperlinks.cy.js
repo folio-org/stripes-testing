@@ -25,15 +25,11 @@ describe('export-manager', () => {
       permissions.bulkEditEdit.gui,
       permissions.inventoryAll.gui,
       permissions.exportManagerView.gui,
-    ])
-      .then((userProperties) => {
-        userWithPermissions = userProperties;
-      });
-    cy.createTempUser([
-      permissions.bulkEditView.gui,
-      permissions.exportManagerView.gui,
-    ])
-      .then((userProperties) => {
+    ]).then((userProperties) => {
+      userWithPermissions = userProperties;
+    });
+    cy.createTempUser([permissions.bulkEditView.gui, permissions.exportManagerView.gui]).then(
+      (userProperties) => {
         user = userProperties;
         cy.login(userWithPermissions.username, userWithPermissions.password, {
           path: TopMenu.bulkEditPath,
@@ -50,7 +46,8 @@ describe('export-manager', () => {
           item.holdingHRID = holdings[0].hrid;
           FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
         });
-      });
+      },
+    );
   });
 
   after('delete test data', () => {

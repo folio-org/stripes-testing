@@ -76,7 +76,7 @@ describe('Finance', () => {
         // Click on Ledger name link from preconditions
         FinanceHelper.searchByName(ledger.name);
         const LedgerDetails = Ledgers.selectLedger(ledger.name);
-        LedgerDetails.checkLedgeDetails({
+        LedgerDetails.checkLedgerDetails({
           information: [{ key: 'Name', value: ledger.name }],
         });
 
@@ -92,7 +92,7 @@ describe('Finance', () => {
 
         // Click "Close & view ledger details" button
         LedgerRolloverInProgress.clickCloseAndViewLedgerButton();
-        LedgerDetails.checkLedgeDetails({
+        LedgerDetails.checkLedgerDetails({
           information: [{ key: 'Name', value: ledger.name }],
         });
 
