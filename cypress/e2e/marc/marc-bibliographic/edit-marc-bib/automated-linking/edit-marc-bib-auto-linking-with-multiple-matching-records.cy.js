@@ -103,7 +103,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
     () => {
       // 1 Find and open detail view of record from precondition
       InventoryInstances.waitContentLoading();
-      InventoryInstance.searchByTitle(createdRecordIDs[0]);
+      InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       // 2 Click on "Actions" button in the third pane → Select "Edit MARC bibliographic record" option
       InventoryInstance.editMarcBibliographicRecord();
