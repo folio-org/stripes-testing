@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
   Button,
@@ -29,7 +30,14 @@ export default {
     code: getRandomPostfix(),
     status: 'Active',
   },
-
+  getDefaultGroup() {
+    return {
+      id: uuid(),
+      name: `autotest_group_${getRandomPostfix()}`,
+      code: getRandomPostfix(),
+      status: 'Active',
+    };
+  },
   createViaApi: (groupProperties) => {
     return cy
       .okapiRequest({
@@ -157,6 +165,14 @@ export default {
     cy.expect(
       Accordion({ id: 'information' })
         .find(KeyValue({ value: defaultGroup.name }))
+        .exists(),
+    );
+  },
+
+  checkFYInGroup: (fiscalYear) => {
+    cy.expect(
+      Accordion({ id: 'information' })
+        .find(KeyValue({ value: fiscalYear }))
         .exists(),
     );
   },

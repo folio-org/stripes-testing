@@ -11,13 +11,16 @@ import {
   Modal,
   TableRow,
   DropdownMenu,
+  PaneHeader,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
 const rootSection = Section({ id: 'marc-view-pane' });
+const rootHeader = rootSection.find(PaneHeader());
 
+const buttonClose = rootHeader.find(Button({ icon: 'times' }));
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const infoButton = Button({ ariaLabel: 'info' });
@@ -29,6 +32,8 @@ const buttonLink = Button({ icon: 'unlink' });
 const calloutUpdatedRecordSuccess = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
+const searchPane = Section({ id: 'pane-authorities-filters' });
+const closeButton = Button({ icon: 'times' });
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = {
@@ -95,6 +100,10 @@ export default {
     cy.do(rootSection.find(Button('Actions')).click());
     cy.do(Button('Edit').click());
     QuickMarcEditorWindow.waitLoading();
+  },
+  delete: () => {
+    cy.do(rootSection.find(Button('Actions')).click());
+    cy.do(Button('Delete').click());
   },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
   notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
@@ -317,5 +326,17 @@ export default {
       buttons.forEach((button) => actualResArray.push(button.innerText));
       cy.expect(actualResArray).to.deep.equal(expectedContent);
     });
+  },
+
+  verifyHeader(titleValue) {
+    cy.expect([
+      buttonClose.exists(),
+      rootHeader.has({ title: including(titleValue) }),
+      rootHeader.has({ subtitle: including('Last updated') }),
+    ]);
+  },
+
+  verifySearchPanesIsAbsent() {
+    cy.expect([searchPane.absent(), rootSection.find(closeButton).exists()]);
   },
 };

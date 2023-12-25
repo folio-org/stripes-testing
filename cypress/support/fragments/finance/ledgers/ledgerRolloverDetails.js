@@ -34,6 +34,8 @@ const messages = {
     'Please confirm that you have completed the necessary details and are ready to proceed with your rollover TEST. This process may take several minutes to complete. A link to the results will be sent to test@folio.org when the process is complete.',
   rolloverConfirm:
     'Ledger (?:\\S+) for (?:\\S+) will be rolled over to (?:\\S+). Please confirm that you have completed the necessary details and are ready to proceed with rollover. This process may take several minutes to complete and cannot be undone.',
+  rolloverFailed:
+    '(?:\\S+) was already rolled over from the fiscal year (?:\\S+) to the fiscal year (?:\\S+)',
 };
 
 export default {
@@ -151,7 +153,7 @@ export default {
       );
     }
   },
-  clickRolloverButton() {
+  clickRolloverButton({ rolloverFailed = false } = {}) {
     const confirmModal = ConfirmationModal('Fiscal year rollover');
 
     cy.expect(rolloverButton.has({ disabled: false }));
@@ -161,5 +163,9 @@ export default {
 
     cy.expect(confirmModal.has({ message: matching(new RegExp(messages.rolloverConfirm)) }));
     cy.do(confirmModal.confirm());
+
+    if (rolloverFailed) {
+      InteractorsTools.checkCalloutErrorMessage(matching(new RegExp(messages.rolloverFailed)));
+    }
   },
 };

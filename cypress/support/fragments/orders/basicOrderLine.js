@@ -32,6 +32,7 @@ const getDefaultOrderLine = ({
   vendorAccount = '1234',
   paymentStatus = 'Pending',
   receiptStatus = 'Pending',
+  renewalNote,
 } = {}) => {
   const defaultOrderLine = {
     id: uuid(),
@@ -86,6 +87,7 @@ const getDefaultOrderLine = ({
     purchaseOrderId,
     receiptStatus,
     reportingCodes: [],
+    renewalNote,
     source: 'User',
     titleOrPackage: title,
     vendorDetail: vendorDetail || {
