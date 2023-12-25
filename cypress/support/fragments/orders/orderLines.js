@@ -25,6 +25,7 @@ import {
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './modals/selectInstanceModal';
 import SelectOrganizationModal from './modals/selectOrganizationModal';
+import OrderLineDetails from './orderLineDetails';
 import {
   ORDER_FORMAT_NAMES,
   ACQUISITION_METHOD_NAMES,
@@ -960,6 +961,12 @@ export default {
 
   selectOrderline: (POlinenumber) => {
     cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
+  },
+  selectOrderLineByPolNumber(poLineNumber) {
+    this.searchByParameter('Keyword', poLineNumber);
+    this.selectOrderline(poLineNumber);
+
+    return OrderLineDetails;
   },
   selectreceivedTitleName: (title) => {
     cy.do(receivedtitleDetails.find(Link(title)).click());
