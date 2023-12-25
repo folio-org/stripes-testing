@@ -590,6 +590,11 @@ export default {
     cy.do(cancelEditConfirmBtn.click());
   },
 
+  closeWithoutSavingInEditConformation() {
+    cy.expect(cancelEditConformModel.exists());
+    cy.do(closeWithoutSavingBtn.click());
+  },
+
   deleteConfirmationPresented() {
     cy.expect(confirmationModal.exists());
   },
@@ -1653,6 +1658,14 @@ export default {
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
       QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
     ]);
+  },
+
+  verifyZeroSubfieldInUnlinkedField(rowIndex, content) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .has({ value: including(`$0 ${content}`) }),
+    );
   },
 
   verifyRemoveLinkingModal() {

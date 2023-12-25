@@ -48,7 +48,6 @@ const defaultInstanceZWithContributor = {
 
 const paneIntanceDetails = PaneContent({ id: 'browse-inventory-results-pane-content' });
 const resulstPaneDetails = PaneContent({ id: 'pane-instancedetails-content' });
-const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 const recordSelect = Select({ id: 'input-record-search-qindex' });
 const instanceRecordSelect = Select({ id: 'input-inventory-search-qindex' });
 const recordSearch = TextInput({ id: 'input-record-search' });
@@ -246,10 +245,6 @@ export default {
 
   checkActionsButton(state = 'exists') {
     cy.expect(actionsButton[state]());
-  },
-
-  checkSearchResultCount(text) {
-    cy.expect(resultsPaneHeader.find(HTML(including(text))).exists());
   },
 
   checkAuthorityIconAndValueDisplayed(value) {
