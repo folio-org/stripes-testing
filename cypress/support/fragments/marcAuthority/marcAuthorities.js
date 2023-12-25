@@ -283,7 +283,7 @@ export default {
     cy.do(searchButton.click());
     cy.expect(
       MultiColumnListRow({ index: 0 })
-        .find(Button({ text: including('Beethoven, Ludwig van (no 010)') }))
+        .find(Button({ text: including(value) }))
         .exists(),
     );
     cy.expect(marcViewSection.exists());
@@ -320,6 +320,10 @@ export default {
       MultiColumnListCell({ columnIndex: 1, content: authorized }).exists(),
       MultiColumnListCell({ columnIndex: 1, content: reference }).exists(),
     ]);
+  },
+
+  checkAuthorizedColumn(authorized) {
+    cy.expect([MultiColumnListCell({ columnIndex: 1, content: authorized }).exists()]);
   },
 
   checkAfterSearch(type, record) {
@@ -546,7 +550,13 @@ export default {
     cy.expect(modalAdvancedSearch.absent());
   },
 
-  checkAdvancedSearchModalFields: (row, value, searchOption, boolean) => {
+  checkAdvancedSearchModalFields: (
+    row,
+    value,
+    searchOption,
+    boolean,
+    matchOption = 'Contains all',
+  ) => {
     cy.expect([
       modalAdvancedSearch.exists(),
       AdvancedSearchRow({ index: 0 }).has({ text: including('Search for') }),
@@ -557,6 +567,9 @@ export default {
       AdvancedSearchRow({ index: row })
         .find(Select({ label: 'Search options*' }))
         .has({ content: including(searchOption) }),
+      AdvancedSearchRow({ index: row })
+        .find(Select({ label: 'Match option*' }))
+        .has({ content: including(matchOption) }),
       modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
       modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
     ]);
@@ -1055,6 +1068,14 @@ export default {
     }
   },
 
+  checkSearchInputInFocus() {
+    cy.expect(TextArea({ id: 'textarea-authorities-search' }).has({ focused: true }));
+  },
+
+  checkResetAllButtonDisabled(isDisabled = true) {
+    cy.expect(resetButton.is({ disabled: isDisabled }));
+  },
+
   verifyAllAuthorizedAreBold() {
     const actualValues = [];
 
@@ -1130,5 +1151,9 @@ export default {
 
   closeFindAuthorityModal() {
     cy.do(findAuthorityModal.find(buttonClose).click());
+  },
+
+  selectRecordByIndex(rowIndex) {
+    cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
   },
 };
