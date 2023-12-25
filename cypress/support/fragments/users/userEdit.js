@@ -68,6 +68,10 @@ export default {
     cy.do(TextField({ id: 'adduser_preferredname' }).fillIn(prefName));
   },
 
+  changeUserType(type = 'Patron') {
+    cy.do(Select({ id: 'type' }).choose(type));
+  },
+
   addPermissions(permissions) {
     cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
     cy.wait(5000);
@@ -135,6 +139,12 @@ export default {
 
   saveAndClose() {
     cy.do(saveAndCloseBtn.click());
+  },
+
+  saveEditedUser() {
+    cy.intercept('PUT', '/users/*').as('updateUser');
+    this.saveAndClose();
+    cy.wait('@updateUser', { timeout: 100000 });
   },
 
   addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
@@ -366,5 +376,9 @@ export default {
 
   addAddress(type = 'Home') {
     cy.do([Button('Add address').click(), Select('Address Type*').choose(type)]);
+  },
+
+  editUsername(username) {
+    cy.do(TextField({ id: 'adduser_username' }).fillIn(username),)
   },
 };

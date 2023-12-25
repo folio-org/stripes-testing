@@ -101,6 +101,34 @@ export default {
       });
   },
 
+  createViaUiIncomplete: (userData) => {
+    return cy
+      .do([
+        Dropdown('Actions').find(Button()).click(),
+        Button({ id: 'clickable-newuser' }).click(),
+        TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
+        TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),
+        TextField({ id: 'adduser_firstname' }).fillIn(userData.personal.firstName),
+        TextField({ id: 'adduser_preferredname' }).fillIn(userData.personal.preferredFirstName),
+        Select({ id: 'adduser_group' }).choose(userData.patronGroup),
+        Select({ id: 'type' }).choose(userData.userType),
+        TextField({ name: 'barcode' }).fillIn(userData.barcode),
+        TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
+        TextField({ id: 'adduser_username' }).fillIn(userData.username),
+        Button({ id: 'clickable-save' }).click(),
+        Dropdown('Actions').absent(),
+      ]);
+  },
+
+  verifyUsernameMandatory(mandatory = true) {
+    if (mandatory) cy.expect(
+      TextField('Username*').exists(),
+    );
+    else {
+      cy.expect(TextField('Username').exists());
+    }
+  },
+
   waitLoading() {
     cy.expect(Section({ id: 'users-search-results-pane' }).exists());
   },
@@ -175,6 +203,17 @@ export default {
     cy.expect(userDetailsPane.find(KeyValue(name)).has({ value: text }));
   },
 
+  verifyUsernameOnUserDetailsPane(username) {
+    cy.contains('[class^=accordion]', 'Extended information')
+      .invoke('attr', 'aria-expanded')
+      .then((ariaExpanded) => {
+        if (!ariaExpanded) {
+          cy.do(Accordion('Extended information').clickHeader());
+        }
+      });
+    cy.expect(userDetailsPane.find(KeyValue('Username')).has({ value: username }));
+  },
+
   clearTextField() {
     cy.do(TextField({ id: 'adduser_preferredname' }).clear());
   },
@@ -198,8 +237,10 @@ export default {
     cy.expect(Callout(message).exists());
   },
 
-  saveButton() {
-    cy.do([Button({ id: 'clickable-save' }).click()]);
+  saveCreatedUser() {
+    cy.intercept('POST', '/users').as('createUser');
+    cy.do(Button({ id: 'clickable-save' }).click());
+    cy.wait('@createUser', { timeout: 100000 });
   },
 
   editButton: () => {
