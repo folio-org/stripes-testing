@@ -7,6 +7,7 @@ import {
   Section,
   including,
 } from '../../../../../interactors';
+import FundEditForm from './fundEditForm';
 import BudgetDetails from '../budgets/budgetDetails';
 import AddBudgetModal from '../modals/addBudgetModal';
 import Transactions from '../transactions/transactions';
@@ -27,6 +28,14 @@ export default {
   },
   expandActionsDropdown() {
     cy.do(fundDetailsPaneHeader.find(actionsButton).click());
+  },
+  openFundEditForm() {
+    this.expandActionsDropdown();
+    cy.do(Button('Edit').click());
+    FundEditForm.waitLoading();
+    FundEditForm.verifyFormView();
+
+    return FundEditForm;
   },
   viewTransactionsForCurrentBudget() {
     this.expandActionsDropdown();

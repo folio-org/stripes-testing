@@ -1189,8 +1189,12 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
   },
 
-  verifyItemBarcode(barcode) {
-    cy.expect(MultiColumnListCell({ content: barcode }).exists());
+  verifyItemBarcode(barcode, isExist = true) {
+    if (isExist) {
+      cy.expect(MultiColumnListCell({ content: barcode }).exists());
+    } else {
+      cy.expect(MultiColumnListCell({ content: barcode }).absent());
+    }
   },
 
   openItemByBarcodeAndIndex: (barcode) => {

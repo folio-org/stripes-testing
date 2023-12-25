@@ -10,6 +10,7 @@ import {
   Warning,
   including,
 } from '../../../../interactors';
+import CancelConfirmationModal from './modals/cancelConfirmationModal';
 import OrderLineEditForm from './orderLineEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
 import TransactionDetails from '../finance/transactions/transactionDetails';
@@ -89,6 +90,21 @@ export default {
 
     InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
   },
+  expandActionsDropdown() {
+    cy.do(paneHeaderOrderLinesDetailes.find(actionsButton).click());
+  },
+  cancelOrderLine({ orderLineNumber, confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Cancel').click());
+
+    if (orderLineNumber) {
+      CancelConfirmationModal.verifyModalView({ orderLineNumber });
+    }
+
+    if (confirm) {
+      CancelConfirmationModal.clickCancelOrderLineButton();
+    }
+  },
   openInventoryItem() {
     cy.do(itemDetailsSection.find(KeyValue('Title')).find(Link()).click());
 
@@ -97,7 +113,8 @@ export default {
     return InventoryInstance;
   },
   openOrderLineEditForm() {
-    cy.do([paneHeaderOrderLinesDetailes.find(actionsButton).click(), Button('Edit').click()]);
+    this.expandActionsDropdown();
+    cy.do(Button('Edit').click());
 
     OrderLineEditForm.waitLoading();
 

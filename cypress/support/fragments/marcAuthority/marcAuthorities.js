@@ -322,6 +322,10 @@ export default {
     ]);
   },
 
+  checkAuthorizedColumn(authorized) {
+    cy.expect([MultiColumnListCell({ columnIndex: 1, content: authorized }).exists()]);
+  },
+
   checkAfterSearch(type, record) {
     cy.expect([
       MultiColumnListCell({ columnIndex: 1, content: type }).exists(),
@@ -546,7 +550,13 @@ export default {
     cy.expect(modalAdvancedSearch.absent());
   },
 
-  checkAdvancedSearchModalFields: (row, value, searchOption, boolean) => {
+  checkAdvancedSearchModalFields: (
+    row,
+    value,
+    searchOption,
+    boolean,
+    matchOption = 'Contains all',
+  ) => {
     cy.expect([
       modalAdvancedSearch.exists(),
       AdvancedSearchRow({ index: 0 }).has({ text: including('Search for') }),
@@ -557,6 +567,9 @@ export default {
       AdvancedSearchRow({ index: row })
         .find(Select({ label: 'Search options*' }))
         .has({ content: including(searchOption) }),
+      AdvancedSearchRow({ index: row })
+        .find(Select({ label: 'Match option*' }))
+        .has({ content: including(matchOption) }),
       modalAdvancedSearch.find(buttonSearchInAdvancedModal).exists(),
       modalAdvancedSearch.find(buttonCancelInAdvancedModal).exists(),
     ]);
@@ -1138,5 +1151,9 @@ export default {
 
   closeFindAuthorityModal() {
     cy.do(findAuthorityModal.find(buttonClose).click());
+  },
+
+  selectRecordByIndex(rowIndex) {
+    cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
   },
 };
