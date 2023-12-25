@@ -4,6 +4,7 @@ import {
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -154,7 +155,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
-        Logs.clickOnHotLink(0, 3, 'Created');
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyInstanceTitle(firstInstanceTitle);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[0].type,
@@ -168,7 +169,7 @@ describe('data-import', () => {
         );
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(fileNameForCreateInstance);
-        Logs.clickOnHotLink(1, 3, 'Created');
+        Logs.clickOnHotLink(1, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyInstanceTitle(secondInstaneTitle);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[2].type,
@@ -218,22 +219,22 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.dash,
+          RECORD_STATUSES.DASH,
           FileDetails.columnNameInResultList.srsMarc,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.instance,
         );
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName, 1);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName, 1);
         });
 
         // check updated instance in Inventory
-        FileDetails.openInstanceInInventory('Updated', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED, 1);
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);

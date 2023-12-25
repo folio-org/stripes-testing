@@ -85,7 +85,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
         cy.visit(TopMenu.dataImportPath);
       });
       cy.visit(TopMenu.inventoryPath).then(() => {
-        InventoryInstance.searchByTitle(createdRecordsIDs[0]);
+        InventoryInstances.searchByTitle(createdRecordsIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         linkingTagAndValues.forEach((linking) => {
@@ -116,7 +116,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Manual linking', () =
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(createdRecordsIDs[0]);
+      InventoryInstances.searchByTitle(createdRecordsIDs[0]);
       InventoryInstances.selectInstance();
     });
   });

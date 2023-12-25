@@ -64,7 +64,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         waiter: InventoryInstances.waitContentLoading,
       });
 
-      InventoryInstance.searchByTitle('C380643 The Journal of ecclesiastical history.');
+      InventoryInstances.searchByTitle('C380643 The Journal of ecclesiastical history.');
       InventoryInstances.selectInstance();
 
       // #5 Click on the "Actions" button placed on the third pane >> Select "Edit MARC bibliographic record" option.

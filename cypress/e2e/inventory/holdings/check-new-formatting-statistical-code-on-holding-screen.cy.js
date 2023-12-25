@@ -71,7 +71,7 @@ describe('inventory', () => {
       'C400653 Check the new formatting of Statistical codes field on Holdings create/edit screen (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.item.instanceName);
+        InventoryInstances.searchByTitle(testData.item.instanceName);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);
         InventorySearchAndFilter.checkRowsCount(1);
         InventoryInstances.selectInstance();

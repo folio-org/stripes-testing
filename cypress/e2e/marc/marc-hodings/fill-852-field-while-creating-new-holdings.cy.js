@@ -71,7 +71,7 @@ describe('MARC -> MARC Holdings', () => {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle(testData.recordID);
+      InventoryInstances.searchByTitle(testData.recordID);
       InventoryInstances.selectInstance();
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.updateExistingField(testData.tag852, testData.tag852_B_value);

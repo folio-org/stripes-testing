@@ -165,7 +165,7 @@ describe('data-import', () => {
           })
           .then(() => {
             cy.visit(TopMenu.inventoryPath);
-            InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+            InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             linkingTagAndValues.forEach((linking) => {
@@ -235,7 +235,7 @@ describe('data-import', () => {
       'C374189 Update tag value of linked "MARC Bib" field which is controlled by "MARC Authority" record (spitfire) (TaaS)',
       { tags: ['criticalPath', 'spitfire'] },
       () => {
-        InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstances.selectInstance();
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
@@ -268,7 +268,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
         InventoryInstance.editMarcBibliographicRecord();

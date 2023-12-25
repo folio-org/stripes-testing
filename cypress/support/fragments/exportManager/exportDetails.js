@@ -33,4 +33,7 @@ export default {
       cy.expect(KeyValue(label).exists());
     });
   },
+  closeJobDetails() {
+    cy.do(exportDetailsPane.find(Button({ icon: 'times' })).click());
+  },
 };

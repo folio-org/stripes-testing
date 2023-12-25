@@ -52,7 +52,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
         waiter: InventoryInstances.waitContentLoading,
       }).then(() => {
         InventoryInstances.waitContentLoading();
-        InventoryInstance.searchByTitle(instanceIDs[0]);
+        InventoryInstances.searchByTitle(instanceIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
       });

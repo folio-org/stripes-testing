@@ -123,7 +123,7 @@ describe('Invoices', { retries: 3 }, () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '80.00' },
+        { name: testData.fund.name, currentEncumbrance: '80.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
@@ -164,7 +164,7 @@ describe('Invoices', { retries: 3 }, () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '80.00' },
+        { name: testData.fund.name, currentEncumbrance: '80.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
@@ -205,7 +205,7 @@ describe('Invoices', { retries: 3 }, () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '100.00' },
+        { name: testData.fund.name, currentEncumbrance: '100.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
@@ -251,7 +251,7 @@ describe('Invoices', { retries: 3 }, () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '100.00' },
+        { name: testData.fund.name, currentEncumbrance: '100.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion

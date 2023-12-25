@@ -45,7 +45,7 @@ describe('inventory', () => {
       'C602 In Accordion Administrative Data --> Instance status term --> (Validate matching settings) (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.instance.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.edit();
@@ -61,7 +61,7 @@ describe('inventory', () => {
       'C604 In Accordion Administrative Data --> Go to the Statistical code --> (Validate matching settings) (folijet)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.instance.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instance.instanceTitle);
         InventoryInstances.selectInstance();
         InstanceRecordView.verifyInstancePaneExists();
         InstanceRecordView.edit();

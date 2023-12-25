@@ -154,11 +154,11 @@ describe('Orders', () => {
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.funds[0].name,
-          encumbrance: '-',
+          currentEncumbrance: '-',
         },
         {
           name: testData.funds[1].name,
-          encumbrance: '-',
+          currentEncumbrance: '-',
         },
       ]);
 
@@ -172,11 +172,11 @@ describe('Orders', () => {
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.funds[0].name,
-          encumbrance: '30.00',
+          currentEncumbrance: '30.00',
         },
         {
           name: testData.funds[1].name,
-          encumbrance: '20.00',
+          currentEncumbrance: '20.00',
         },
       ]);
 
@@ -202,7 +202,7 @@ describe('Orders', () => {
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
 
       // Click the link in "Current encumbrance" column for "Fund B"
-      OrderLineDetails.openEncumbrancePane(1);
+      OrderLineDetails.openEncumbrancePane(testData.funds[1].name);
       TransactionDetails.checkTransactionDetails({
         information: [
           { key: 'Fiscal year', value: testData.fiscalYears[1].code },

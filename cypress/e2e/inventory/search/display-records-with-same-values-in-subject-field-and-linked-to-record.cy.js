@@ -99,7 +99,7 @@ describe('inventory', () => {
       });
       cy.visit(TopMenu.inventoryPath);
       for (let i = 0; i < testData.instanceRecords.length - 1; i++) {
-        InventoryInstance.searchByTitle(testData.instanceRecords[i]);
+        InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tags[0]);

@@ -5,6 +5,7 @@ import {
   JOB_STATUS_NAMES,
   PAYMENT_METHOD,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -107,10 +108,10 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.dash,
+          RECORD_STATUSES.DASH,
           FileDetails.columnNameInResultList.srsMarc,
         );
-        FileDetails.checkSrsRecordQuantityInSummaryTable('No value set-');
+        FileDetails.checkSrsRecordQuantityInSummaryTable(RECORD_STATUSES.DASH);
       },
     );
   });

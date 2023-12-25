@@ -24,6 +24,9 @@ export default {
 
   searchByLossType(type) {
     cy.do(Accordion({ id: 'lossTypeFilterAccordion' }).find(Checkbox(type)).click());
+    cy.expect(
+      Accordion({ id: 'lossTypeFilterAccordion' }).find(Checkbox(type)).has({ checked: true }),
+    );
   },
 
   filterByStatus(status) {
@@ -35,6 +38,14 @@ export default {
       ListRow(including(instanceTitle))
         .find(MultiColumnListCell({ column: 'Loss type' }))
         .has({ content: type }),
+    );
+  },
+
+  checkResultsPatronColumn(instanceTitle, patron) {
+    cy.expect(
+      ListRow(including(instanceTitle))
+        .find(MultiColumnListCell({ column: 'Patron' }))
+        .has({ content: including(patron) }),
     );
   },
 

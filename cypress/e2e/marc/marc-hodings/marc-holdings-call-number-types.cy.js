@@ -141,7 +141,7 @@ describe('MARC -> MARC Holdings', () => {
     'C389500 Verify that "Call number type" is correctly mapped after importing and editing. (spitfire)',
     { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
-      InventoryInstance.searchByTitle(recordIDs[0]);
+      InventoryInstances.searchByTitle(recordIDs[0]);
       for (let i = 0; i < holdingsFile.numOfRecords; i++) {
         InventoryInstance.openHoldingViewByID(recordIDs[i + 1]);
         HoldingsRecordView.waitLoading();

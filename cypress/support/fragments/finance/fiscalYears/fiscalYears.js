@@ -74,11 +74,11 @@ export default {
   },
 
   waitLoading: () => {
-    cy.expect([fiscalYearFiltersSection.exists, fiscalYearResultsSection.exists]);
+    cy.expect([fiscalYearFiltersSection.exists(), fiscalYearResultsSection.exists()]);
   },
 
   waitForFiscalYearDetailsLoading: () => {
-    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists);
+    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists());
   },
 
   createDefaultFiscalYear(fiscalYear) {
@@ -235,10 +235,11 @@ export default {
       body: fiscalYear,
     });
   },
-  deleteFiscalYearViaApi: (fiscalYearId) => cy.okapiRequest({
+  deleteFiscalYearViaApi: (fiscalYearId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/fiscal-years/${fiscalYearId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
 
   selectFY: (FYName) => {

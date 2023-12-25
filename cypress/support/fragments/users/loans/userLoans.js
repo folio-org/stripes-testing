@@ -23,7 +23,7 @@ const itemDetailsButton = Button('Item details');
 const markAsMissingButton = Button('Mark as missing');
 const newFeeFineButton = Button('New fee/fine');
 const renewButton = Button('Renew');
-const chageDueDateButton = Button('Change due date');
+const changeDueDateButton = Button('Change due date');
 const ellipsisButton = Button({ icon: 'ellipsis' });
 const rowInList = MultiColumnListRow({ indexRow: 'row-0' });
 
@@ -71,7 +71,7 @@ export default {
     return LoansPage;
   },
   openChangeDueDatePane: () => {
-    cy.do(chageDueDateButton.click());
+    cy.do(changeDueDateButton.click());
   },
   closeLoansHistory() {
     cy.do(loansHistoryPane.find(Button({ ariaLabel: 'Close ' })).click());
@@ -185,6 +185,21 @@ export default {
       }
     });
     openActionsMenuOfLoanByBarcode(barcode);
+  },
+  checkOptionsInActionMenu(options, barcode) {
+    openActionsMenuOfLoanByBarcode(barcode);
+    options.forEach((option) => {
+      cy.expect(Button(option, { className: including('dropdownItem') }).exists());
+    });
+  },
+  checkRenewButton(disabled) {
+    cy.expect(renewButton.has({ disabled }));
+  },
+  clickRenewButton() {
+    cy.do(renewButton.click());
+  },
+  checkChangeDueDateButton(disabled) {
+    cy.expect(changeDueDateButton.has({ disabled }));
   },
   openItemRecordInInventory: (barcode) => {
     cy.get('div[class^="mclRow--"]')

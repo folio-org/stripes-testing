@@ -39,4 +39,13 @@ export default {
   verifyModalIsClosed() {
     cy.expect(overrideModal.absent());
   },
+
+  verifyNewDueDate(loan) {
+    cy.expect(
+      overrideModal
+        .find(MultiColumnListRow({ text: matching(loan.itemBarcode), isContainer: false }))
+        .find(MultiColumnListCell({ column: 'New due date' }))
+        .has({ content: including(loan.newDueDate) }),
+    );
+  },
 };

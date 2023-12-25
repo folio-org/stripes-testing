@@ -5,6 +5,7 @@ import {
   INVOICE_STATUSES,
   PAYMENT_METHOD,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -113,7 +114,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(fileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.invoice,
         );
         FileDetails.checkInvoiceInSummaryTable(quantityOfItems);

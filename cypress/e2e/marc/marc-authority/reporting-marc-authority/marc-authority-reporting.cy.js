@@ -107,7 +107,7 @@ describe('MARC -> MARC Authority -> Reporting MARC authority', () => {
 
       dataForC375231.forEach((value) => {
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(value.recordTitle);
+        InventoryInstances.searchByTitle(value.recordTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(value.tagValue);

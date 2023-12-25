@@ -12,6 +12,7 @@ import {
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
   PROFILE_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
@@ -416,7 +417,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameMarcFileForImportCreate);
 
         // check the instance is created
-        FileDetails.openInstanceInInventory(FileDetails.status.created);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
@@ -567,7 +568,7 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         // check Created counter in the Summary table
         FileDetails.checkItemsQuantityInSummaryTable(0, '0');
@@ -579,7 +580,7 @@ describe('data-import', () => {
         FileDetails.checkItemsQuantityInSummaryTable(3, '0');
 
         // check instance, holdings, item are updated
-        FileDetails.openInstanceInInventory(FileDetails.status.updated);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyCatalogedDate(
           collectionOfMappingAndActionProfiles[0].mappingProfile.catalogedDateUi,
         );
@@ -591,7 +592,7 @@ describe('data-import', () => {
         );
         cy.wait(2000);
         cy.go('back');
-        FileDetails.openHoldingsInInventory(FileDetails.status.updated);
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.checkHoldingsType(
           collectionOfMappingAndActionProfiles[1].mappingProfile.holdingsType,
         );
@@ -609,7 +610,7 @@ describe('data-import', () => {
         );
         cy.wait(2000);
         cy.go('back');
-        FileDetails.openItemInInventory(FileDetails.status.updated);
+        FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
         ItemRecordView.verifyMaterialType(
           collectionOfMappingAndActionProfiles[2].mappingProfile.materialType,
         );

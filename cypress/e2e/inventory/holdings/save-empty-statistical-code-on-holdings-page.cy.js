@@ -72,7 +72,7 @@ describe('inventory', () => {
       'C396396 Verify the inability to save empty statistical code field on Holdings create/edit page (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        InventoryInstance.searchByTitle(testData.item.instanceName);
+        InventoryInstances.searchByTitle(testData.item.instanceName);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);
         InventorySearchAndFilter.checkRowsCount(1);
         InventoryInstances.selectInstance();

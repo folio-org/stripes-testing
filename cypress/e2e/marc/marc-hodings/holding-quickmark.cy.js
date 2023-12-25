@@ -1,4 +1,5 @@
 import { calloutTypes } from '../../../../interactors';
+import { RECORD_STATUSES } from '../../../support/constants';
 import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -44,7 +45,7 @@ describe('MARC -> MARC Holdings', () => {
       Logs.getCreatedItemsID(0).then((link) => {
         instanceID = link.split('/')[5];
       });
-      Logs.goToTitleLink('Created');
+      Logs.goToTitleLink(RECORD_STATUSES.CREATED);
       InventorySteps.addMarcHoldingRecord();
     });
   });

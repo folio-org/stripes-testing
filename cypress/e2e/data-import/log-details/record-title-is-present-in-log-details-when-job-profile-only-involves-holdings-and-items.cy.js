@@ -5,6 +5,7 @@ import {
   FOLIO_RECORD_TYPE,
   ITEM_STATUS_NAMES,
   LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -340,26 +341,26 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.dash, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.DASH, columnName);
         });
         [
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.verifyTitle(
           testData.firstInstanceTitle,
           FileDetails.columnNameInResultList.title,
         );
 
-        FileDetails.openHoldingsInInventory('Updated');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.checkAdministrativeNote(
           collectionOfMappingAndActionProfiles[0].mappingProfile.adminNote,
         );
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileNameForUpdate);
-        FileDetails.openItemInInventory('Updated');
+        FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
         ItemRecordView.checkItemNote(
           collectionOfMappingAndActionProfiles[1].mappingProfile.note,
           'No',
@@ -560,26 +561,26 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.dash, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.DASH, columnName);
         });
         [
           FileDetails.columnNameInResultList.holdings,
           FileDetails.columnNameInResultList.item,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.verifyTitle(
           testData.secondInstanceTitle,
           FileDetails.columnNameInResultList.title,
         );
 
-        FileDetails.openHoldingsInInventory('Updated');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.UPDATED);
         HoldingsRecordView.checkAdministrativeNote(
           collectionOfMappingAndActionProfiles[0].mappingProfile.adminNote,
         );
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(marcFileNameForUpdate);
-        FileDetails.openItemInInventory('Updated');
+        FileDetails.openItemInInventory(RECORD_STATUSES.UPDATED);
         ItemRecordView.checkItemNote(
           collectionOfMappingAndActionProfiles[1].mappingProfile.note,
           'No',

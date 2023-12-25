@@ -48,7 +48,7 @@ describe('MARC -> MARC Holdings', () => {
         Logs.getCreatedItemsID().then((link) => {
           recordIDs.push(link.split('/')[5]);
           cy.visit(TopMenu.inventoryPath).then(() => {
-            InventoryInstance.searchByTitle(recordIDs[0]);
+            InventoryInstances.searchByTitle(recordIDs[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.goToMarcHoldingRecordAdding();
             QuickMarcEditor.updateExistingField(
@@ -84,7 +84,7 @@ describe('MARC -> MARC Holdings', () => {
     { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.searchBySource('MARC');
-      InventoryInstance.searchByTitle(recordIDs[0]);
+      InventoryInstances.searchByTitle(recordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkSource('MARC');
@@ -108,7 +108,7 @@ describe('MARC -> MARC Holdings', () => {
     { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.searchBySource('MARC');
-      InventoryInstance.searchByTitle(recordIDs[0]);
+      InventoryInstances.searchByTitle(recordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.checkSource('MARC');
@@ -135,7 +135,7 @@ describe('MARC -> MARC Holdings', () => {
     { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.searchBySource('MARC');
-      InventoryInstance.searchByTitle(recordIDs[0]);
+      InventoryInstances.searchByTitle(recordIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.waitLoading();
       // "Edit in quickMARC" option might not be active immediately when opening MARC Holdings - re-opening activates it

@@ -162,7 +162,7 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Ledgers.closeRolloverInfo();
       Ledgers.selectFundInLedger(defaultFund.name);
       Funds.selectPlannedBudgetDetails();
-      Funds.checkBudgetQuantity1(allocatedQuantityForPlannedBudget, '350');
+      Funds.checkBudgetQuantity1(`$${allocatedQuantityForPlannedBudget}`, '$350.00');
     },
   );
 });

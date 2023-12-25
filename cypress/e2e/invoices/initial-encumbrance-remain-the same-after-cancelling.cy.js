@@ -96,7 +96,7 @@ describe('Invoices', () => {
       // Click invoice line record on invoice
       const InvoiceLineDetails = InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '110.00' },
+        { name: testData.fund.name, currentEncumbrance: '110.00' },
       ]);
 
       // Click "Actions" button, Select "Edit" option
@@ -125,7 +125,7 @@ describe('Invoices', () => {
       // Click invoice line record on invoice
       InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '100.00' },
+        { name: testData.fund.name, currentEncumbrance: '100.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
@@ -158,7 +158,7 @@ describe('Invoices', () => {
       // Click invoice line record on invoice
       InvoiceView.selectInvoiceLine();
       InvoiceLineDetails.checkFundDistibutionTableContent([
-        { name: testData.fund.name, encumbrance: '110.00' },
+        { name: testData.fund.name, currentEncumbrance: '110.00' },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion

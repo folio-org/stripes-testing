@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../../../support/utils/stringTools';
+import { RECORD_STATUSES } from '../../../../support/constants';
 import Permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
@@ -57,7 +58,7 @@ describe('Importing MARC Authority files', () => {
       Logs.getCreatedItemsID().then((link) => {
         createdAuthorityID = link.split('/')[5];
       });
-      Logs.clickOnHotLink(0, 3, 'Created');
+      Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.checkLinkButtonDontExist('050');
       QuickMarcEditor.checkLinkButtonDontExist('082');

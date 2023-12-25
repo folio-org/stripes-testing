@@ -86,7 +86,7 @@ describe('MARC Authority -> Edit linked Authority record', () => {
         })
         .then(() => {
           cy.visit(TopMenu.inventoryPath);
-          InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+          InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           QuickMarcEditor.clickLinkIconInTagField(linkingTagAndValues.rowIndex);

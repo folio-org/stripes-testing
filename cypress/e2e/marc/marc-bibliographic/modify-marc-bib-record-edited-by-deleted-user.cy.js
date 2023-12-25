@@ -83,7 +83,7 @@ describe('MARC -> MARC Bibliographic', () => {
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.searchBySource(testData.source);
-      InventoryInstance.searchByTitle(createdRecordID);
+      InventoryInstances.searchByTitle(createdRecordID);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       QuickMarcEditor.updateExistingField(testData.tag245, `$a ${testData.updatedTag245Value}`);
@@ -105,7 +105,7 @@ describe('MARC -> MARC Bibliographic', () => {
       );
 
       cy.visit(TopMenu.inventoryPath);
-      InventoryInstance.searchByTitle(testData.updatedTag245Value);
+      InventoryInstances.searchByTitle(testData.updatedTag245Value);
       InventoryInstances.selectInstance();
       InventoryInstance.deriveNewMarcBibRecord();
       QuickMarcEditor.closeWithoutSaving();

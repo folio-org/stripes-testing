@@ -1,4 +1,4 @@
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -46,10 +46,10 @@ describe('data-import', () => {
         Logs.openFileDetails(fileName);
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.summary, [
-          'Created',
-          'Updated',
-          'No action',
-          'Error',
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.NO_ACTION,
+          RECORD_STATUSES.ERROR,
         ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.srs, ['103', '0', '0', '0']);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.instance, [
@@ -59,33 +59,33 @@ describe('data-import', () => {
           '0',
         ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.holdings, [
-          'No value set-',
-          'No value set-',
-          'No value set-',
-          'No value set-',
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
         ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.item, [
-          'No value set-',
-          'No value set-',
-          'No value set-',
-          'No value set-',
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
         ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.order, [
-          'No value set-',
-          'No value set-',
-          'No value set-',
-          'No value set-',
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
         ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.invoice, [
-          'No value set-',
-          'No value set-',
-          'No value set-',
-          'No value set-',
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
         ]);
         FileDetails.verifyColumnValuesInSummaryTable(columnNumbers.error, [
-          'No value set-',
-          'No value set-',
-          'No value set-',
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.DASH,
           '0',
         ]);
         FileDetails.clickNextPaginationButton();

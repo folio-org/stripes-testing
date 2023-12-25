@@ -3,6 +3,7 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Users from '../../../../support/fragments/users/users';
@@ -57,7 +58,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       cy.visit(TopMenu.inventoryPath);
-      InventoryInstance.searchByTitle(testData.marcBibTitle);
+      InventoryInstances.searchByTitle(testData.marcBibTitle);
       InventoryInstance.selectTopRecord();
       InventoryInstance.deriveNewMarcBib();
       QuickMarcEditor.addNewField('010', '$a   766384', 6);

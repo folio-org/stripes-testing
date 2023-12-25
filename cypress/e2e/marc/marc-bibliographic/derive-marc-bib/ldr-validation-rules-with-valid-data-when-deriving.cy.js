@@ -90,7 +90,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       cy.wrap(LDRvalues).each((LDRvalue) => {
-        InventoryInstance.searchByTitle(testData.instanceID);
+        InventoryInstances.searchByTitle(testData.instanceID);
         InventoryInstances.selectInstance();
         InventoryInstance.waitLoading();
         InventoryInstance.deriveNewMarcBibRecord();

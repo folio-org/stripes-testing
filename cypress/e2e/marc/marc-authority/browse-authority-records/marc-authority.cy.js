@@ -1,4 +1,5 @@
 import Permissions from '../../../../support/dictionary/permissions';
+import { RECORD_STATUSES } from '../../../../support/constants';
 import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -105,7 +106,7 @@ describe('MARC -> MARC Authority -> Browse - Authority records', () => {
       JobProfiles.waitFileIsImported(updatedfileName);
       Logs.checkStatusOfJobProfile('Completed');
       Logs.openFileDetails(updatedfileName);
-      Logs.goToTitleLink('Created');
+      Logs.goToTitleLink(RECORD_STATUSES.CREATED);
       MarcAuthority.contains('MARC');
     },
   );

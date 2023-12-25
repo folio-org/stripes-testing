@@ -4,6 +4,7 @@ import {
   FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -113,11 +114,11 @@ describe('data-import', () => {
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(fileName);
-        FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         cy.wait(2000);
         FileDetails.verifyEachInvoiceTitleInColunm();
         FileDetails.clickNextPaginationButton();
-        FileDetails.verifyEachInvoiceStatusInColunm('Created');
+        FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
         cy.wait(2000);
         FileDetails.verifyEachInvoiceTitleInColunm();
         Logs.checkQuantityRecordsInFile(quantityOfInvoices);

@@ -55,7 +55,7 @@ describe('Inventory -> Call Number Browse', () => {
       const holdingsCallNumbers = ['FIC WAL', 'B WASHINGTON', 'FIC CLE', 'B JORDAN', 'SC BRU'];
       const itemsCallNumbers = ['SC VIV', 'FIC DAN', 'DVD F GON', 'B OBAMA', 'SC DAH'];
       // #1 Input query in search input field that will return Instance records → Click "Search" button
-      InventoryInstance.searchByTitle(testData.instanceTitle);
+      InventoryInstances.searchByTitle(testData.instanceTitle);
       // #2 Click on "Title" value for any row in second pane
       InventoryInstances.selectInstance();
 
@@ -169,7 +169,7 @@ describe('Inventory -> Call Number Browse', () => {
       const holdingsCallNumbers = ['331.2', '331.042', '331.01', '331.016', '331.1'];
       const itemsCallNumbers = ['331', '331.041', '331.198', '331.0413', '331.02'];
       // #1 Input query in search input field that will return Instance records → Click "Search" button
-      InventoryInstance.searchByTitle(testData.instanceTitle);
+      InventoryInstances.searchByTitle(testData.instanceTitle);
       // #2 Click on "Title" value for any row in second pane
       InventoryInstances.selectInstance();
 

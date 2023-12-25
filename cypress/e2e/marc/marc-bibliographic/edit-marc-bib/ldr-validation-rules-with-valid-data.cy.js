@@ -89,7 +89,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     'C388651 "008" field updated when valid LDR 06-07 combinations entered when editing "MARC bib" record (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(testData.instanceID);
+      InventoryInstances.searchByTitle(testData.instanceID);
       InventoryInstances.selectInstance();
       InventoryInstance.waitInventoryLoading();
       InventoryInstance.editMarcBibliographicRecord();

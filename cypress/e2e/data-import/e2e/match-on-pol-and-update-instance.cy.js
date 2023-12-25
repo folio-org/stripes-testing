@@ -12,6 +12,7 @@ import {
   MATERIAL_TYPE_NAMES,
   ORDER_FORMAT_NAMES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -253,12 +254,12 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
         Logs.openFileDetails(nameMarcFileForCreate);
         FileDetails.checkItemsStatusesInResultList(0, [
-          FileDetails.status.created,
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          FileDetails.status.created,
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
         ]);
 
         // create PO with POL
@@ -302,17 +303,17 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(marcFileName);
         FileDetails.checkItemsStatusesInResultList(0, [
-          FileDetails.status.updated,
-          FileDetails.status.updated,
-          FileDetails.status.created,
-          FileDetails.status.created,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.UPDATED,
+          RECORD_STATUSES.CREATED,
+          RECORD_STATUSES.CREATED,
         ]);
         FileDetails.checkItemsStatusesInResultList(1, [
-          FileDetails.status.dash,
-          FileDetails.status.noAction,
+          RECORD_STATUSES.DASH,
+          RECORD_STATUSES.NO_ACTION,
         ]);
 
-        FileDetails.openInstanceInInventory('Updated');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InventoryInstance.checkIsInstanceUpdated();
         InventoryInstance.checkIsHoldingsCreated([`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`]);
         InventoryInstance.openHoldingsAccordion(`${LOCATION_NAMES.MAIN_LIBRARY_UI} >`);

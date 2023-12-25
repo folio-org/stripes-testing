@@ -1,7 +1,7 @@
 const { defineConfig } = require('cypress');
 const path = require('path');
 const globby = require('globby');
-const csvToJson = require('convert-csv-to-json');
+const converter = require('json-2-csv');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const { rmdir, unlink } = require('fs');
 const fs = require('fs');
@@ -19,6 +19,7 @@ module.exports = defineConfig({
   video: false,
   defaultCommandTimeout: 51000,
   pageLoadTimeout: 60000,
+  downloadsFolder: 'cypress/downloads',
   env: {
     OKAPI_HOST: 'https://folio-testing-cypress-okapi.ci.folio.org',
     OKAPI_TENANT: 'diku',
@@ -56,8 +57,9 @@ module.exports = defineConfig({
           return list;
         },
 
-        convertCsvToJson(fileName) {
-          return csvToJson.supportQuotedField(true).fieldDelimiter(',').getJsonFromCsv(fileName);
+        convertCsvToJson(data) {
+          const options = { excelBOM: true, trimHeaderFields: true, trimFieldValues: true };
+          return converter.csv2json(data, options);
         },
 
         downloadFile,

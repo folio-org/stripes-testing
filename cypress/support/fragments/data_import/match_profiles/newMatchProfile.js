@@ -24,6 +24,7 @@ const recordSelectorDropdown = Dropdown({ id: 'record-selector-dropdown' });
 const matchProfileDetailsSection = Section({ id: 'match-profile-details' });
 const matchCriterionSelect = Select('Match criterion');
 const nameTextField = TextField('Name*');
+const closeButton = Button('Close');
 
 const optionsList = {
   instanceHrid: 'Admin data: Instance HRID',
@@ -445,57 +446,62 @@ export default {
       });
   },
 
-  createMatchProfileViaApiMarc: (name, incomingRecords, existingRecords) => {
+  createMatchProfileViaApiMarc: ({
+    profileName,
+    incomingRecordFields,
+    existingRecordFields,
+    recordType,
+  }) => {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'data-import-profiles/matchProfiles',
         body: {
           profile: {
-            incomingRecordType: incomingRecords.type,
+            incomingRecordType: recordType,
             matchDetails: [
               {
-                incomingRecordType: incomingRecords.type,
+                incomingRecordType: recordType,
                 incomingMatchExpression: {
                   fields: [
                     {
                       label: 'field',
-                      value: incomingRecords.field,
+                      value: incomingRecordFields.field,
                     },
                     {
                       label: 'indicator1',
-                      value: incomingRecords.ind1,
+                      value: incomingRecordFields.in1,
                     },
                     {
                       label: 'indicator2',
-                      value: incomingRecords.ind2,
+                      value: incomingRecordFields.in2,
                     },
                     {
                       label: 'recordSubfield',
-                      value: incomingRecords.subfield,
+                      value: incomingRecordFields.subfield,
                     },
                   ],
                   staticValueDetails: null,
                   dataValueType: 'VALUE_FROM_RECORD',
                 },
-                existingRecordType: existingRecords.type,
+                existingRecordType: recordType,
                 existingMatchExpression: {
                   fields: [
                     {
                       label: 'field',
-                      value: existingRecords.field,
+                      value: existingRecordFields.field,
                     },
                     {
                       label: 'indicator1',
-                      value: existingRecords.ind1,
+                      value: existingRecordFields.in1,
                     },
                     {
                       label: 'indicator2',
-                      value: existingRecords.ind2,
+                      value: existingRecordFields.in2,
                     },
                     {
                       label: 'recordSubfield',
-                      value: existingRecords.subfield,
+                      value: existingRecordFields.subfield,
                     },
                   ],
                   staticValueDetails: null,
@@ -504,8 +510,8 @@ export default {
                 matchCriterion: 'EXACTLY_MATCHES',
               },
             ],
-            name,
-            existingRecordType: existingRecords.type,
+            name: profileName,
+            existingRecordType: recordType,
           },
           addedRelations: [],
           deletedRelations: [],
@@ -539,6 +545,9 @@ export default {
       cy.get('#panel-existing-edit [data-id=MARC_AUTHORITY]').should('exist'),
     ]);
   },
+  clickOnExistingRecordByName: (name) => {
+    cy.do(matchProfileDetailsAccordion.find(Button({ text: name })).click());
+  },
   verifyExistingRecordTypeIsSelected: (existingRecordType) => {
     cy.get(`[data-test-compare-record=${existingRecordType}]`).should(
       'contain',
@@ -552,12 +561,14 @@ export default {
       expect(content).to.not.include(value);
     });
   },
-  verifyIncomingRecordsDropdown: () => {
+  verifyIncomingRecordsDropdown: (...names) => {
     cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
-    cy.expect([
-      DropdownMenu({ visible: true }).find(HTML('MARC Bibliographic')).exists(),
-      DropdownMenu({ visible: true }).find(HTML('Static value (submatch only)')).exists(),
-    ]);
+    names.forEach((name) => {
+      cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
+    });
+  },
+  verifyIncomingRecordsItemDoesNotExist(name) {
+    cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).absent()]);
   },
   verifyNewMatchProfileFormIsOpened: () => {
     cy.expect(Pane('New match profile').exists());
@@ -575,4 +586,5 @@ export default {
       }),
     ]);
   },
+  clickClose: () => cy.do(closeButton.click()),
 };

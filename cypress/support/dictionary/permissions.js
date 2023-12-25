@@ -262,6 +262,10 @@ export default {
     internal: 'data-import.upload.all',
     gui: 'Data Import File Upload - all permissions',
   },
+  dataImportCanUploadImportAndView: {
+    internal: 'ui-data-import.manage',
+    gui: 'Data import: Can upload files, import, and view logs',
+  },
   moduleDataImportEnabled: {
     internal: 'ui-data-import.settings.manage',
     gui: 'Data import: Can upload files, import, and view logs',
@@ -497,6 +501,10 @@ export default {
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
   // Receiving
+  uiReceivingView: {
+    internal: 'ui-receiving.view',
+    gui: 'Receiving: View',
+  },
   uiReceivingViewEditCreate: {
     internal: 'ui-receiving.create',
     gui: 'Receiving: View, edit, create',
@@ -504,6 +512,10 @@ export default {
   uiReceivingViewEditDelete: {
     internal: 'ui-receiving.delete',
     gui: 'Receiving: View, edit, delete',
+  },
+  uiReceivingExportSearchResults: {
+    internal: 'ui-receiving.exportCSV',
+    gui: 'Receiving: Export search results',
   },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
@@ -843,9 +855,21 @@ export default {
   },
   // Added the below permissions for custom label creation
 
+  uiSettingsEHoldingsViewAccessStatusTypes: {
+    internal: 'ui-eholdings.settings.access-types.view',
+    gui: 'Settings (eholdings): Can view access status types',
+  },
+  uiSettingsEHoldingsViewCustomLabel: {
+    internal: 'ui-eholdings.settings.custom-labels.view',
+    gui: 'Settings (eholdings): Can view custom labels',
+  },
   uiSettingseholdingsViewEditCreateDelete: {
     internal: 'ui-eholdings.settings.all',
     gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels',
+  },
+  uiSettingsEHoldingsViewSettings: {
+    internal: 'ui-eholdings.settings.enabled',
+    gui: 'Settings (eHoldings): View settings',
   },
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',

@@ -78,7 +78,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     'C380643 Editing imported "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle('C380643 The Journal of ecclesiastical history.');
+      InventoryInstances.searchByTitle('C380643 The Journal of ecclesiastical history.');
       InventoryInstances.selectInstance();
 
       // #5 Click on the "Actions" button placed on the third pane >> Select "Edit MARC bibliographic record" option.
@@ -112,7 +112,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
     'C380645 Edit "MARC Bibliographic" record with multiple "010" fields (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle('C380645 The Journal of ecclesiastical history.');
+      InventoryInstances.searchByTitle('C380645 The Journal of ecclesiastical history.');
       InventoryInstances.selectInstance();
 
       // # 1 Click on the "Actions" button placed on the third pane >> Select "Edit MARC bibliographic record" option.

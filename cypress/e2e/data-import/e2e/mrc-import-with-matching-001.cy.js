@@ -3,6 +3,7 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -100,12 +101,12 @@ describe('data-import', () => {
       JobProfiles.waitFileIsImported(nameForMarcFile);
       Logs.openFileDetails(nameForMarcFile);
       FileDetails.checkStatusInColumn(
-        FileDetails.status.created,
+        RECORD_STATUSES.CREATED,
         FileDetails.columnNameInResultList.instance,
       );
 
       // open Instance for getting hrid
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         const instanceHRID = initialInstanceHrId;
 
@@ -155,7 +156,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameForExportedMarcFile);
         Logs.openFileDetails(nameForExportedMarcFile);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.updated,
+          RECORD_STATUSES.UPDATED,
           FileDetails.columnNameInResultList.instance,
         );
 

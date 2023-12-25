@@ -5,6 +5,7 @@ import {
   ITEM_STATUS_NAMES,
   LOCATION_NAMES,
   PROFILE_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -261,7 +262,7 @@ describe('data-import', () => {
         FileDetails.columnNameInResultList.holdings,
         FileDetails.columnNameInResultList.item,
       ].forEach((columnName) => {
-        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
       });
       FileDetails.checkItemsQuantityInSummaryTable(0, quantityOfItems);
     });
@@ -295,7 +296,7 @@ describe('data-import', () => {
       'C11123 Export from Inventory, edit file, and re-import to update items (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 
@@ -368,7 +369,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
           Logs.openFileDetails(nameMarcFileForUpdate);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.item,
           );
           FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 1);

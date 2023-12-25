@@ -26,7 +26,7 @@ describe('ui-organizations: View organization', () => {
       Organizations.selectActiveStatus();
       Organizations.checkOrganizationFilter();
       Organizations.selectOrganization(organization.name);
-      Organizations.checkOpenOrganizationInfo(organization);
+      Organizations.checkOrganizationInfo(organization);
     },
   );
 });

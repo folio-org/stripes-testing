@@ -138,7 +138,7 @@ describe('plug-in MARC authority | Browse', () => {
         });
       });
       cy.visit(TopMenu.inventoryPath);
-      InventoryInstance.searchByTitle(createdAuthorityIDs[0]);
+      InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
       InventoryInstance.verifyAndClickLinkIcon('700');

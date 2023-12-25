@@ -6,6 +6,7 @@ import {
   LOAN_TYPE_NAMES,
   LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
@@ -278,7 +279,7 @@ describe('data-import', () => {
             FileDetails.columnNameInResultList.holdings,
             FileDetails.columnNameInResultList.item,
           ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, i);
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName, i);
           });
         }
         [
@@ -298,7 +299,7 @@ describe('data-import', () => {
             status: 'Unknown',
           },
         ].forEach((marker) => {
-          Logs.clickOnHotLink(marker.lineNumber, 5, 'Created');
+          Logs.clickOnHotLink(marker.lineNumber, 5, RECORD_STATUSES.CREATED);
           ItemRecordView.waitLoading();
           marker.markFunction();
           ItemRecordView.verifyItemStatusInPane(marker.status);
@@ -339,7 +340,7 @@ describe('data-import', () => {
         });
         // check items what statuses were changed have No action status
         titlesItemsStatusChanged.forEach((title) => {
-          FileDetails.checkStatusByTitle(title, FileDetails.status.noAction);
+          FileDetails.checkStatusByTitle(title, RECORD_STATUSES.NO_ACTION);
         });
       },
     );

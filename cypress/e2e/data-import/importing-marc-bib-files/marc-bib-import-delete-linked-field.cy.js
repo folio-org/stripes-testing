@@ -166,7 +166,7 @@ describe('data-import', () => {
         // link MARC Bib field to MARC Authority
         cy.visit(TopMenu.inventoryPath).then(() => {
           InventoryInstances.waitContentLoading();
-          InventoryInstance.searchByTitle(createdRecordIDs[0]);
+          InventoryInstances.searchByTitle(createdRecordIDs[0]);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           InventoryInstance.verifyAndClickLinkIcon(testData.tag100);
@@ -212,7 +212,7 @@ describe('data-import', () => {
       'C376946 Delete non-repeatable linked field which is controlled by "MARC Authority" record (spitfire)',
       { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
-        InventoryInstance.searchByTitle(createdRecordIDs[0]);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         // download .csv file
         InventorySearchAndFilter.saveUUIDs();
         ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -244,7 +244,7 @@ describe('data-import', () => {
         Logs.openFileDetails(nameForUpdatedMarcBibFile);
 
         cy.visit(TopMenu.inventoryPath);
-        InventoryInstance.searchByTitle(marcFiles[0].instanceTitle);
+        InventoryInstances.searchByTitle(marcFiles[0].instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.checkValueAbsenceInDetailView(
           testData.contributorAccordion,

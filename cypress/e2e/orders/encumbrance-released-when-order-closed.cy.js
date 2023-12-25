@@ -97,7 +97,7 @@ describe('Orders', () => {
       OrderLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,
-          encumbrance: '0.00',
+          currentEncumbrance: '0.00',
         },
       ]);
 

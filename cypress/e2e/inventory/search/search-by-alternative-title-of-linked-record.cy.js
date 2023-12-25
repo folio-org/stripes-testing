@@ -102,7 +102,7 @@ describe('inventory', () => {
       });
       cy.visit(TopMenu.inventoryPath);
       for (let i = 0; i < testData.instanceRecords.length; i++) {
-        InventoryInstance.searchByTitle(testData.instanceRecords[i]);
+        InventoryInstances.searchByTitle(testData.instanceRecords[i]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tags[i]);
@@ -140,7 +140,7 @@ describe('inventory', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        InventoryInstance.searchByTitle('Bible');
+        InventoryInstances.searchByTitle('Bible');
         InventorySearchAndFilter.checkRowsCount(4);
         testData.searchResults.forEach((result) => {
           InventorySearchAndFilter.verifyInstanceDisplayed(result, true);

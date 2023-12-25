@@ -10,10 +10,14 @@ describe('inventory', () => {
     const firstCallNumber = 'QS 11 .GA1 E99 2005';
     const secondCallNumber = 'D15.H63 A3 2002';
     const testData = {
-      folioInstances: InventoryInstances.generateFolioInstances({
-        count: 2,
-        callNumbers: [firstCallNumber, secondCallNumber],
-      }),
+      folioInstances: [
+        InventoryInstances.generateFolioInstances({
+          holdings: [{ callNumber: firstCallNumber }],
+        })[0],
+        InventoryInstances.generateFolioInstances({
+          holdings: [{ callNumber: secondCallNumber }],
+        })[0],
+      ],
       servicePoint: ServicePoints.getDefaultServicePoint(),
     };
 

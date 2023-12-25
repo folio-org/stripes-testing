@@ -5,6 +5,7 @@ import {
   JOB_STATUS_NAMES,
   PAYMENT_METHOD,
   INVOICE_STATUSES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InvoiceLineDetails from '../../../support/fragments/invoices/invoiceLineDetails';
@@ -121,8 +122,8 @@ describe('data-import', () => {
         Logs.checkImportFile(jobProfile.profileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(testData.fileName);
-        FileDetails.verifyEachInvoiceStatusInColunm('Created');
-        FileDetails.openInvoiceLine('Created');
+        FileDetails.verifyEachInvoiceStatusInColunm(RECORD_STATUSES.CREATED);
+        FileDetails.openInvoiceLine(RECORD_STATUSES.CREATED);
 
         InvoiceLineDetails.checkInvoiceLineDetails({
           invoiceLineInformation: [

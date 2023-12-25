@@ -64,7 +64,7 @@ describe('Inventory -> Contributors Browse', () => {
     'C357021 Verify that deleted Contributor from "MARC Bibliographic" record not displayed at browse result list (spitfire)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(importedInstanceID[0]);
+      InventoryInstances.searchByTitle(importedInstanceID[0]);
       InventoryInstances.selectInstance();
       InventoryInstance.editMarcBibliographicRecord();
 

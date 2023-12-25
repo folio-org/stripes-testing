@@ -34,4 +34,14 @@ export default {
       cy.expect(Button('Override').absent());
     }
   },
+  verifyRenewalStatus: (loans) => {
+    loans.forEach((loan) => {
+      cy.expect(
+        rootModal
+          .find(MultiColumnListRow({ text: matching(loan.itemBarcode), isContainer: false }))
+          .find(MultiColumnListCell({ column: 'Renewal status' }))
+          .has({ content: loan.renewalStatus }),
+      );
+    });
+  },
 };

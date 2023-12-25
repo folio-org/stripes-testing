@@ -155,8 +155,17 @@ export const ORDER_STATUSES = {
   CLOSED: 'Closed',
 };
 
+export const RECORD_STATUSES = {
+  CREATED: 'Created',
+  UPDATED: 'Updated',
+  NO_ACTION: 'No action',
+  DASH: 'No value set-',
+  BLANK: 'No value set',
+  ERROR: 'Error',
+};
+
 export const ORDER_TYPES = {
-  ONE_TIME: 'One-Time',
+  ONE_TIME: 'One-time',
   ONGOING: 'Ongoing',
 };
 
@@ -251,6 +260,7 @@ export const CALL_NUMBER_TYPE_NAMES = {
   LIBRARY_OF_MEDICINE: 'National Library of Medicine classification',
   DEWAY_DECIMAL: 'Dewey Decimal classification',
   SUDOC: 'Superintendent of Documents classification',
+  LOCAL: 'Local',
 };
 
 export const EXPORT_TRANSFORMATION_NAMES = {

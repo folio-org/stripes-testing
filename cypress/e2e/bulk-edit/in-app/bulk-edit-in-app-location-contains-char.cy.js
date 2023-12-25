@@ -1,4 +1,5 @@
 import { Locations } from '../../../support/fragments/settings/tenant/location-setup';
+import Permissions from '../../../support/dictionary/permissions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';

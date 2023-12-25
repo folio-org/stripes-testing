@@ -107,7 +107,7 @@ describe('MARC -> MARC Authority', () => {
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.waitContentLoading();
         twoMarcBibsToLink.forEach((marcBib) => {
-          InventoryInstance.searchByTitle(marcBib.marcBibRecord);
+          InventoryInstances.searchByTitle(marcBib.marcBibRecord);
           InventoryInstances.selectInstance();
           InventoryInstance.editMarcBibliographicRecord();
           marcBib.linkingFields.forEach((linking) => {
@@ -165,7 +165,7 @@ describe('MARC -> MARC Authority', () => {
       MarcAuthoritiesDelete.checkAfterDeletion(testData.marcValue);
 
       cy.visit(TopMenu.inventoryPath);
-      InventoryInstance.searchByTitle(twoMarcBibsToLink[1].marcBibRecord);
+      InventoryInstances.searchByTitle(twoMarcBibsToLink[1].marcBibRecord);
       InventoryInstances.selectInstance();
       InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
       InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane('Subject');
@@ -190,7 +190,7 @@ describe('MARC -> MARC Authority', () => {
       QuickMarcEditor.checkLinkButtonExist('100');
 
       QuickMarcEditor.closeEditorPane();
-      InventoryInstance.searchByTitle(twoMarcBibsToLink[0].marcBibRecord);
+      InventoryInstances.searchByTitle(twoMarcBibsToLink[0].marcBibRecord);
       InventoryInstances.selectInstance();
       InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Contributor');
       InventoryInstance.checkAbsenceOfAuthorityIconInInstanceDetailPane('Subject');

@@ -84,7 +84,7 @@ describe('Orders', () => {
       ]);
 
       // Click "Add fund distribution" button, Select "Fund A"
-      OrderLineEditForm.addFundDistribution();
+      OrderLineEditForm.clickAddFundDistributionButton();
       OrderLineEditForm.selectFundDistribution(testData.fund.name);
 
       // Click "Save & close" button
