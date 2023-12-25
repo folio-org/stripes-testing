@@ -2071,4 +2071,13 @@ export default {
         cy.log('No such status like ' + orderStatus + '. Please use Closed, Open or Pending');
     }
   },
+
+  verifyProductIdentifier: (productId, rowIndex) => {
+    cy.expect(
+      MultiColumnList({ id: 'list-product-ids' })
+        .find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: productId }),
+    );
+  },
 };
