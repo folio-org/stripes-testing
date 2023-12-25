@@ -137,4 +137,15 @@ export default {
       }).exists(),
     );
   },
+  getFieldMappingProfileInDataImport: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'data-import-profiles/mappingProfiles',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body.mappingProfiles[0];
+      });
+  },
 };
