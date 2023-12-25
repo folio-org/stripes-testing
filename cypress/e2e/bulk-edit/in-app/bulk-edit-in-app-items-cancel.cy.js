@@ -44,7 +44,10 @@ describe('bulk-edit', () => {
             // Online
             res.temporaryLocation = { id: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5' };
             cy.updateItemViaApi(res);
-            FileManager.createFile(`cypress/fixtures/${itemUUIDsFileName}`, `${item.itemId}\r\n${invalidItemUUID}`);
+            FileManager.createFile(
+              `cypress/fixtures/${itemUUIDsFileName}`,
+              `${item.itemId}\r\n${invalidItemUUID}`,
+            );
           },
         );
       });
