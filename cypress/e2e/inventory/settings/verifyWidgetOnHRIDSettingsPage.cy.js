@@ -1,4 +1,4 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import HridHandling from '../../../support/fragments/settings/inventory/instance-holdings-item/hridHandling';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -24,7 +24,7 @@ describe('inventory', () => {
 
     it(
       'C369055 Verify created/updated by widget on HRID Settings page (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.hridHandlingPath);
         HridHandling.waitloading();
