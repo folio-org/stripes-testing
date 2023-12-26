@@ -84,25 +84,28 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createMappingProfileViaApi: (mappingProfile = marcAuthorityUpdateMappingProfile) => cy.okapiRequest({
-    method: 'POST',
-    path: 'data-import-profiles/mappingProfiles',
-    body: mappingProfile,
-    isDefaultSearchParamsRequired: false,
-  }),
-  unlinkMappingProfileFromActionProfileApi: (id, linkedMappingProfile) => cy.okapiRequest({
-    method: 'PUT',
-    path: `data-import-profiles/mappingProfiles/${id}`,
-    body: linkedMappingProfile,
-    isDefaultSearchParamsRequired: false,
-  }),
-  deleteMappingProfileViaApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `data-import-profiles/mappingProfiles/${id}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  createMappingProfileViaApi(mappingProfile = marcAuthorityUpdateMappingProfile) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'data-import-profiles/mappingProfiles',
+      body: mappingProfile,
+    });
+  },
+  unlinkMappingProfileFromActionProfileApi(id, linkedMappingProfile) {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `data-import-profiles/mappingProfiles/${id}`,
+      body: linkedMappingProfile,
+    });
+  },
+  deleteMappingProfileViaApi(profileId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `data-import-profiles/mappingProfiles/${profileId}`,
+    });
+  },
   deleteMappingProfileByNameViaApi(profileName) {
-    this.getMappingProfilesViaApi({ query: `name=="${profileName}"` }).then(
+    this.getMappingProfilesViaApi({ query: `name="${profileName}"` }).then(
       ({ mappingProfiles }) => {
         mappingProfiles.forEach((mappingProfile) => {
           this.deleteMappingProfileViaApi(mappingProfile.id);

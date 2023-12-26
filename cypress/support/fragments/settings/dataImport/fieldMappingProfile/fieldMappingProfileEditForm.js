@@ -2,6 +2,7 @@ import {
   Button,
   ConfirmationModal,
   Decorator,
+  DecoratorWrapper,
   Form,
   Section,
   Select,
@@ -10,6 +11,7 @@ import {
   including,
   matching,
 } from '../../../../../../interactors';
+import FinanceHelper from '../../../finance/financeHelper';
 import InteractorsTools from '../../../../utils/interactorsTools';
 import Notifications from '../notifications';
 
@@ -72,6 +74,40 @@ const administrativeDataFields = {
     .find(Decorator('Statistical codes'))
     .find(Select('Select action')),
 };
+const orderInformationFields = {
+  orderStatus: orderDetails.orderInformation.find(
+    DecoratorWrapper({ label: including('Purchase order status') }).find(TextField()),
+  ),
+  vendor: orderDetails.orderInformation.find(TextField({ label: including('Vendor') })),
+  organizationLookUp: orderDetails.orderInformation.find(Button('Organization look-up')),
+};
+const orderLineInformationFields = {
+  title: orderDetails.orderLineInformation.find(TextField({ label: including('Title') })),
+  acquisitionMethod: orderDetails.orderLineInformation
+    .find(Section({ id: 'po-line-details' }))
+    .find(DecoratorWrapper({ label: including('Acquisition method') }))
+    .find(TextField()),
+  orderFormat: orderDetails.orderLineInformation
+    .find(Section({ id: 'po-line-details' }))
+    .find(DecoratorWrapper({ label: including('Order format') }))
+    .find(TextField()),
+  receivingWorkflow: orderDetails.orderLineInformation
+    .find(Section({ id: 'po-line-details' }))
+    .find(DecoratorWrapper({ label: including('Receiving workflow') }))
+    .find(TextField()),
+  physicalUnitPrice: orderDetails.orderLineInformation
+    .find(Section({ id: 'cost-details' }))
+    .find(TextField('Physical unit price')),
+  currency: orderDetails.orderLineInformation
+    .find(Section({ id: 'cost-details' }))
+    .find(DecoratorWrapper({ label: including('Currency') }))
+    .find(TextField()),
+  createInventory: orderDetails.orderLineInformation
+    .find(Section({ id: 'physical-resource-details' }))
+    .find(DecoratorWrapper({ label: including('Create inventory') }))
+    .find(TextField()),
+};
+
 const electronicAccessFields = {
   select: detailsSection
     .find(Section({ id: matching('(?:holdings|item)-electronic-access') }))
@@ -156,12 +192,24 @@ export default {
       cy.expect(optionsList).to.eql(expectedList);
     });
   },
-  fillMappingProfileFields({ summary, adminData, electronicAccess }) {
+  fillMappingProfileFields({
+    summary,
+    adminData,
+    orderInformation,
+    orderLineInformation,
+    electronicAccess,
+  }) {
     if (summary) {
       this.fillSummaryProfileFields(summary);
     }
     if (adminData) {
       this.fillAdministrativeDataProfileFields(adminData);
+    }
+    if (orderInformation) {
+      this.fillOrderInformationProfileFields(orderInformation);
+    }
+    if (orderLineInformation) {
+      this.fillOrderLineInformationProfileFields(orderLineInformation);
     }
     if (electronicAccess) {
       this.fillElectronicAccessProfileFields(electronicAccess);
@@ -214,6 +262,182 @@ export default {
           value: statisticalCodesOptions[statisticalCodes],
         }),
       );
+    }
+  },
+  fillOrderInformationProfileFields({ status, vendor }) {
+    if (status) {
+      cy.do([
+        orderInformationFields.orderStatus.focus(),
+        orderInformationFields.orderStatus.fillIn(`"${status}"`),
+      ]);
+      cy.expect(orderInformationFields.orderStatus.has({ value: `"${status}"` }));
+    }
+
+    if (vendor) {
+      cy.do([
+        orderInformationFields.vendor.focus(),
+        orderInformationFields.organizationLookUp.click(),
+      ]);
+      FinanceHelper.selectFromLookUpView({ itemName: vendor });
+      cy.expect(orderInformationFields.vendor.has({ value: `"${vendor}"` }));
+    }
+  },
+  fillOrderLineInformationProfileFields({
+    title,
+    contributors,
+    productIds,
+    poLineDetails,
+    costDetails,
+    physicalResourceDetails,
+  }) {
+    if (title) {
+      cy.do([
+        orderLineInformationFields.title.focus(),
+        orderLineInformationFields.title.fillIn(`"${title}"`),
+      ]);
+      cy.expect(orderLineInformationFields.title.has({ value: `"${title}"` }));
+    }
+
+    if (contributors?.length) {
+      contributors.forEach((contributor, index) => {
+        const nameField = `profile.mappingDetails.mappingFields[25].subfields.${index}.fields.0.value`;
+        const typeField = `profile.mappingDetails.mappingFields[25].subfields.${index}.fields.1.value`;
+        cy.do(orderDetails.orderLineInformation.find(Button('Add contributor')).click());
+
+        if (contributor.name) {
+          cy.do(
+            orderDetails.orderLineInformation
+              .find(TextField({ name: nameField }))
+              .fillIn(`"${contributor.name}"`),
+          );
+          cy.expect(
+            orderDetails.orderLineInformation
+              .find(TextField({ name: nameField }))
+              .has({ value: `"${contributor.name}"` }),
+          );
+        }
+
+        if (contributor.type) {
+          cy.do(
+            orderDetails.orderLineInformation
+              .find(TextField({ name: typeField }))
+              .fillIn(`"${contributor.type}"`),
+          );
+          cy.expect(
+            orderDetails.orderLineInformation
+              .find(TextField({ name: typeField }))
+              .has({ value: `"${contributor.type}"` }),
+          );
+        }
+      });
+    }
+
+    if (productIds?.length) {
+      productIds.forEach((productId, index) => {
+        const idField = `profile.mappingDetails.mappingFields[26].subfields.${index}.fields.0.value`;
+        const typeField = `profile.mappingDetails.mappingFields[26].subfields.${index}.fields.1.value`;
+
+        cy.do(
+          orderDetails.orderLineInformation
+            .find(Button('Add product ID and product ID type'))
+            .click(),
+        );
+
+        if (productId.id) {
+          cy.do(
+            orderDetails.orderLineInformation
+              .find(TextField({ name: idField }))
+              .fillIn(`"${productId.id}"`),
+          );
+          cy.expect(
+            orderDetails.orderLineInformation
+              .find(TextField({ name: idField }))
+              .has({ value: `"${productId.id}"` }),
+          );
+        }
+
+        if (productId.type) {
+          cy.do(
+            orderDetails.orderLineInformation
+              .find(TextField({ name: typeField }))
+              .fillIn(`"${productId.type}"`),
+          );
+          cy.expect(
+            orderDetails.orderLineInformation
+              .find(TextField({ name: typeField }))
+              .has({ value: `"${productId.type}"` }),
+          );
+        }
+      });
+    }
+
+    if (poLineDetails) {
+      this.fillPoLineDetailsProfileFields(poLineDetails);
+    }
+
+    if (costDetails) {
+      this.fillCostDetailsProfileFields(costDetails);
+    }
+
+    if (physicalResourceDetails) {
+      this.fillPhysicalResourceDetailsPfofileFields(physicalResourceDetails);
+    }
+  },
+  fillPoLineDetailsProfileFields({ acquisitionMethod, orderFormat, receivingWorkflow }) {
+    if (acquisitionMethod) {
+      cy.do([
+        orderLineInformationFields.acquisitionMethod.focus(),
+        orderLineInformationFields.acquisitionMethod.fillIn(`"${acquisitionMethod}"`),
+      ]);
+      cy.expect(
+        orderLineInformationFields.acquisitionMethod.has({ value: `"${acquisitionMethod}"` }),
+      );
+    }
+
+    if (orderFormat) {
+      cy.do([
+        orderLineInformationFields.orderFormat.focus(),
+        orderLineInformationFields.orderFormat.fillIn(`"${orderFormat}"`),
+      ]);
+      cy.expect(orderLineInformationFields.orderFormat.has({ value: `"${orderFormat}"` }));
+    }
+
+    if (receivingWorkflow) {
+      cy.do([
+        orderLineInformationFields.receivingWorkflow.focus(),
+        orderLineInformationFields.receivingWorkflow.fillIn(`"${receivingWorkflow}"`),
+      ]);
+      cy.expect(
+        orderLineInformationFields.receivingWorkflow.has({ value: `"${receivingWorkflow}"` }),
+      );
+    }
+  },
+  fillCostDetailsProfileFields({ physicalUnitPrice, currency }) {
+    if (physicalUnitPrice) {
+      cy.do([
+        orderLineInformationFields.physicalUnitPrice.focus(),
+        orderLineInformationFields.physicalUnitPrice.fillIn(`"${physicalUnitPrice}"`),
+      ]);
+      cy.expect(
+        orderLineInformationFields.physicalUnitPrice.has({ value: `"${physicalUnitPrice}"` }),
+      );
+    }
+
+    if (currency) {
+      cy.do([
+        orderLineInformationFields.currency.focus(),
+        orderLineInformationFields.currency.fillIn(`"${currency}"`),
+      ]);
+      cy.expect(orderLineInformationFields.currency.has({ value: `"${currency}"` }));
+    }
+  },
+  fillPhysicalResourceDetailsPfofileFields({ createInventory }) {
+    if (createInventory) {
+      cy.do([
+        orderLineInformationFields.createInventory.focus(),
+        orderLineInformationFields.createInventory.fillIn(`"${createInventory}"`),
+      ]);
+      cy.expect(orderLineInformationFields.createInventory.has({ value: `"${createInventory}"` }));
     }
   },
   fillElectronicAccessProfileFields({ value }) {
