@@ -19,7 +19,7 @@ describe('data-import', () => {
     let user;
     const discountCurrency = '€';
     const mappingProfile = {
-      name: `C380564 dropdown items ${getRandomStringCode(50)}`,
+      name: `C380564 discount details ${getRandomStringCode(50)}`,
       incomingRecordType: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
       orderStatus: ORDER_STATUSES.PENDING,
@@ -50,7 +50,7 @@ describe('data-import', () => {
     });
 
     it(
-      'C380564 Order field mapping profile: fix the values in the "Payment status" field (folijet) (TaaS)',
+      'C380564 Order field mapping: verify the cost discount details on the view screen (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.mappingProfilePath);
