@@ -66,7 +66,7 @@ describe('Multiple loans', () => {
           }).then((checkoutResponse) => {
             Requests.createNewRequestViaApi({
               fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-              holdingsRecordId: testData.folioInstances[1].holdingId,
+              holdingsRecordId: testData.folioInstances[1].holdings[0].id,
               instanceId: testData.folioInstances[1].instanceId,
               item: { barcode: testData.folioInstances[1].barcodes[0] },
               itemId: checkoutResponse.itemId,

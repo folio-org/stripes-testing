@@ -31,7 +31,7 @@ describe('Check In', () => {
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 count: 4,
-                properties: itemProps,
+                itemsProperties: itemProps,
               }),
               servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
             };

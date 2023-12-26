@@ -147,9 +147,9 @@ describe('Circulation log', () => {
       })
       .then(() => {
         testData.itemBarcode = testData.folioInstances[0].barcodes[0];
-        testData.itemId = testData.folioInstances[0].itemIds[0];
+        testData.itemId = testData.folioInstances[0].items[0].id;
         testData.instanceId = testData.folioInstances[0].instanceId;
-        testData.holdingTypeId = testData.folioInstances[0].holdingId;
+        testData.holdingTypeId = testData.folioInstances[0].holdings[0].id;
       });
     cy.createLoanType({
       name: getTestEntityValue('loan'),

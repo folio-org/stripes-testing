@@ -12,10 +12,12 @@ import {
   including,
   matching,
 } from '../../../../../interactors';
+import { TRANSFER_ACTIONS } from '../transfer/constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import States from '../states';
 
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
+const fundSelection = addTransferModal.find(Selection('Fund'));
 const fromSelection = addTransferModal.find(Selection('From'));
 const toSelection = addTransferModal.find(Selection('To'));
 const amountTextField = addTransferModal.find(TextField({ name: 'amount' }));
@@ -26,11 +28,14 @@ const cancelButton = addTransferModal.find(Button('Cancel'));
 const confirmButton = addTransferModal.find(Button('Confirm'));
 
 export default {
-  verifyModalView() {
+  verifyModalView({ header = TRANSFER_ACTIONS.TRANSFER } = {}) {
+    if (header === TRANSFER_ACTIONS.DECREASE_ALLOCATION) {
+      cy.expect(fundSelection.exists());
+    } else {
+      cy.expect([fromSelection.exists(), toSelection.exists()]);
+    }
     cy.expect([
-      addTransferModal.has({ header: 'Transfer' }),
-      fromSelection.exists(),
-      toSelection.exists(),
+      addTransferModal.has({ header }),
       amountTextField.exists(),
       tagsMultiSelect.exists(),
       descriptionTextArea.exists(),
@@ -66,13 +71,14 @@ export default {
     cy.do(cancelButton.click());
     cy.expect(addTransferModal.absent());
   },
-  clickConfirmButton({ transferCreated = true, confirmNegative } = {}) {
+  clickConfirmButton({ transferCreated = true, ammountAllocated = false, confirmNegative } = {}) {
+    cy.wait(300);
     cy.do(confirmButton.click());
 
     if (confirmNegative) {
       const confirmationModal = ConfirmationModal({
         header: 'Negative available amount',
-        message: matching(new RegExp(States.transferConfirmation)),
+        message: matching(new RegExp(States.negativeAmountConfirmation)),
       });
       cy.expect(confirmationModal.exists());
 
@@ -86,6 +92,12 @@ export default {
     if (transferCreated) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(States.transferCreatedSuccessfully)),
+      );
+    }
+
+    if (ammountAllocated) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(States.amountAllocatedSuccessfully)),
       );
     }
   },
