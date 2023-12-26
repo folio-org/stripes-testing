@@ -113,4 +113,9 @@ export default {
         expect(timeDifference).to.be.lessThan(120000);
       });
   },
+
+  clickViewMarcAuthorityIcon() {
+    cy.get('#marc-view-pane').find('a').invoke('removeAttr', 'target').click();
+    cy.wait(2000);
+  },
 };
