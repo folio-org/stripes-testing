@@ -9,6 +9,7 @@ import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import EditRequest from '../../support/fragments/requests/edit-request';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
@@ -22,7 +23,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Request Detail.TLR', () => {
+describe('Request Detail. TLR', () => {
   let userData = {};
   let userForTLR = {};
   const requestIds = [];
@@ -41,7 +42,6 @@ describe('Request Detail.TLR', () => {
     name: `requestPolicy${getRandomPostfix()}`,
     id: uuid(),
   };
-
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
@@ -121,8 +121,6 @@ describe('Request Detail.TLR', () => {
         permissions.uiRequestsCreate.gui,
         permissions.requestsAll.gui,
         permissions.uiRequestsEdit.gui,
-        permissions.uiMoveRequest.gui,
-        permissions.uiRequestsReorderQueue.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
@@ -193,21 +191,43 @@ describe('Request Detail.TLR', () => {
   });
 
   it(
-    'C350563 Check that the user can click on the "Reorder queue" option (vega) (TaaS)',
+    'C350556 Check that the user can see "Request Detail" for request after it is Closed (vega) (TaaS)',
     { tags: ['extendedPath', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);
       Requests.selectFirstRequest(instanceData.title);
       RequestDetail.waitLoading();
-      RequestDetail.openActions();
-      RequestDetail.verifyActionButtonsPresence();
-      RequestDetail.clickReorderQueue();
-      RequestDetail.verifyQueueInstance(instanceData.title);
-      RequestDetail.verifyAccordionsPresence();
-      RequestDetail.verifyRequestQueueColumnsPresence();
-      Requests.closeRequestQueue();
-      RequestDetail.verifyAccordionsPresence(false);
+      Requests.cancelRequest();
+      cy.reload();
+      Requests.selectFirstRequest(instanceData.title);
+      RequestDetail.verifySectionsVisibility();
+      RequestDetail.checkTitleInformation({
+        TLRs: '1',
+        title: instanceData.title,
+      });
+
+      RequestDetail.checkItemInformation({
+        itemBarcode: testData.itemBarcode,
+        title: instanceData.title,
+        effectiveLocation: testData.defaultLocation.name,
+        requestsOnItem: '0',
+      });
+
+      RequestDetail.checkRequestInformation({
+        type: REQUEST_TYPES.PAGE,
+        status: EditRequest.requestStatuses.CLOSED_CANCELLED,
+        level: REQUEST_LEVELS.ITEM,
+        reason: 'INN-Reach',
+      });
+
+      RequestDetail.checkRequesterInformation({
+        lastName: userData.lastName,
+        barcode: userData.barcode,
+        group: patronGroup.name,
+        preference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+        pickupSP: testData.userServicePoint.name,
+      });
     },
   );
 });

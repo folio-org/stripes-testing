@@ -22,7 +22,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Request Detail.TLR', () => {
+describe('Request queue. TLR', () => {
   let userData = {};
   let userForTLR = {};
   const requestIds = [];
@@ -121,8 +121,6 @@ describe('Request Detail.TLR', () => {
         permissions.uiRequestsCreate.gui,
         permissions.requestsAll.gui,
         permissions.uiRequestsEdit.gui,
-        permissions.uiMoveRequest.gui,
-        permissions.uiRequestsReorderQueue.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
@@ -193,7 +191,7 @@ describe('Request Detail.TLR', () => {
   });
 
   it(
-    'C350563 Check that the user can click on the "Reorder queue" option (vega) (TaaS)',
+    'C347887 Check that user can see Fulfillment in progress accordion (vega) (TaaS)',
     { tags: ['extendedPath', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
@@ -206,8 +204,6 @@ describe('Request Detail.TLR', () => {
       RequestDetail.verifyQueueInstance(instanceData.title);
       RequestDetail.verifyAccordionsPresence();
       RequestDetail.verifyRequestQueueColumnsPresence();
-      Requests.closeRequestQueue();
-      RequestDetail.verifyAccordionsPresence(false);
     },
   );
 });

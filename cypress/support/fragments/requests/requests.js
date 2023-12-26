@@ -287,6 +287,11 @@ export default {
   verifyNoResultMessage: (noResultMessage) => cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
   navigateToApp: (appName) => cy.do([appsButton.click(), Button(appName).click()]),
   verifyCreatedRequest: (title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
+  verifyColumnsPresence() {
+    cy.expect([
+      [...this.columns, this.sortingColumns].forEach(({ title }) => MultiColumnListHeader(title).exists()),
+    ]);
+  },
 
   cancelRequest() {
     cy.do([
@@ -429,6 +434,34 @@ export default {
       title: 'Requester Barcode',
       id: 'requesterbarcode',
       columnIndex: 9,
+    },
+  ],
+
+  columns: [
+    {
+      title: 'Request Date',
+      id: 'requestdate',
+      columnIndex: 1,
+    },
+    {
+      title: 'Year',
+      id: 'year',
+      columnIndex: 3,
+    },
+    {
+      title: 'Request status',
+      id: 'requeststatus',
+      columnIndex: 6,
+    },
+    {
+      title: 'Queue position',
+      id: 'position',
+      columnIndex: 7,
+    },
+    {
+      title: 'Proxy',
+      id: 'proxy',
+      columnIndex: 10,
     },
   ],
 
