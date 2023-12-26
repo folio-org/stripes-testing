@@ -1,5 +1,4 @@
 import { Permissions } from '../../../support/dictionary';
-import { AssignedUsers } from '../../../support/fragments/settings/eholdings';
 import {
   EHoldingsPackages,
   EHoldingsPackagesSearch,
@@ -43,8 +42,6 @@ describe('eHoldings', () => {
         Permissions.exportManagerAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
-
-        AssignedUsers.assignUserToDefaultCredentialsViaApi({ userId: testData.user.userId });
 
         cy.login(testData.user.username, testData.user.password, {
           path: `${TopMenu.eholdingsPath}?searchType=packages`,
