@@ -56,7 +56,7 @@ describe('data-import', () => {
         testData.user = userProperties;
         cy.login(testData.user.username, testData.user.password, {
           path: SettingsMenu.mappingProfilePath,
-          waiter: FieldMappingProfiles.openNewMappingProfileForm,
+          waiter: FieldMappingProfiles.waitLoading,
         });
       });
     });
