@@ -198,8 +198,8 @@ describe('Title Level Request. Request Detail', () => {
       Requests.selectFirstRequest(instanceData.title);
       RequestDetail.requestQueueOnInstance(instanceData.title);
       RequestDetail.verifyHeaders(instanceData.title);
-      RequestDetail.verifyAllQueueAccordeonsDisplayed();
-      RequestDetail.verifyNotFilledYetAccordionHeaders();
+      RequestDetail.verifyAccordionsPresence();
+      RequestDetail.verifyRequestQueueColumnsPresence(false, true);
     },
   );
 });

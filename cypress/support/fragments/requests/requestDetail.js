@@ -35,8 +35,6 @@ const notYetFilledAccordion = Accordion({
   id: 'not-yet-filled',
 });
 const cancelRequestButton = Button({ id: 'clickable-cancel-request' });
-const fulfilmentInProgressAccordion = Accordion({ id: 'fulfillment-in-progress' });
-const openNotFilledYetAccordion = Accordion({ id: 'not-yet-filled' });
 const confirmButton = Button('Confirm');
 const confirmRequestCancellationModal = Modal('Confirm request cancellation');
 const cancellationReasonSelect = Select({ dataTestID: 'selectCancelationReason' });
@@ -54,21 +52,6 @@ const availableOptions = {
   'Move request': moveRequestButton,
   'Reorder queue': reorderQueueButton,
 };
-
-const notFilledYetRequestColumnHeaders = [
-  'Order',
-  'Item barcode',
-  'Request date',
-  'Pickup/Delivery',
-  'Requester',
-  'Requester barcode',
-  'Patron group',
-  'Type',
-  'Enumeration',
-  'Chronology',
-  'Volume',
-  'Patron comments',
-];
 
 export default {
   waitLoading: (type = 'staff') => {
@@ -210,16 +193,6 @@ export default {
     cy.expect(cancelRequestButton.exists());
   },
 
-  verifyAllQueueAccordeonsDisplayed() {
-    cy.expect([fulfilmentInProgressAccordion.exists(), openNotFilledYetAccordion.exists()]);
-  },
-
-  verifyNotFilledYetAccordionHeaders() {
-    notFilledYetRequestColumnHeaders.forEach((headerName) => {
-      cy.expect(openNotFilledYetAccordion.find(MultiColumnListHeader(headerName)).exists());
-    });
-  },
-
   openCancelRequest() {
     cy.do(cancelRequestButton.click());
   },
@@ -350,10 +323,17 @@ export default {
     },
   ],
 
-  verifyRequestQueueColumnsPresence() {
-    cy.expect([
-      this.requestQueueColumns.forEach(({ title }) => MultiColumnListHeader(title).exists()),
-    ]);
+  verifyRequestQueueColumnsPresence(
+    inProgressAccordionOption = true,
+    notYetFilledAccordionOption = true,
+  ) {
+    if (inProgressAccordionOption) {
+      this.requestQueueColumns.forEach(({ title }) => cy.expect(fulfillmentInProgressAccordion.find(MultiColumnListHeader(title)).exists()));
+    }
+    if (notYetFilledAccordionOption) {
+      this.requestQueueColumns.splice(1, 1);
+      this.requestQueueColumns.forEach(({ title }) => cy.expect(notYetFilledAccordion.find(MultiColumnListHeader(title)).exists()));
+    }
   },
 
   openMoveRequest() {
@@ -382,10 +362,10 @@ export default {
   },
 
   verifyAccordionsPresence(presence = true) {
-    const visibilityption = presence ? 'exists' : 'absent';
+    const visibilityOption = presence ? 'exists' : 'absent';
     cy.expect([
-      fulfillmentInProgressAccordion[visibilityption](),
-      notYetFilledAccordion[visibilityption](),
+      fulfillmentInProgressAccordion[visibilityOption](),
+      notYetFilledAccordion[visibilityOption](),
     ]);
   },
 
