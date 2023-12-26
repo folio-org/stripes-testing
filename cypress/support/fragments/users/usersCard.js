@@ -30,6 +30,9 @@ const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' 
 const userInformationSection = Accordion({ id: 'userInformationSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
+const requestsAccordion = Accordion({ id: 'requestsSection' });
+const openedRequestsLink = requestsAccordion.find(Link({ id: 'clickable-viewopenrequests' }));
+const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclosedrequests' }));
 const notesSection = Accordion('Notes');
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
@@ -70,6 +73,26 @@ export default {
     cy.do(notesSection.clickHeader());
 
     return details && this.verifyNoteDetails({ details });
+  },
+  expandRequestsSection(openRequests, closedRequests) {
+    cy.do(requestsAccordion.clickHeader());
+
+    return openRequests && this.verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests);
+  },
+  verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests) {
+    cy.expect(
+      openedRequestsLink.has({
+        text: `${openRequests} open requests`,
+      }),
+    );
+
+    if (closedRequests) {
+      cy.expect(
+        closedRequestsLink.has({
+          text: `${closedRequests} closed request`,
+        }),
+      );
+    }
   },
   verifyNoteDetails({ details = '' } = {}) {
     cy.expect([

@@ -407,4 +407,7 @@ export default {
       requestInfoSection.find(KeyValue('Position in queue')).has({ value: including(value) }),
     );
   },
+  openRequesterByBarcode(barcode = '') {
+    cy.do(requesterInfoSection.find(Link(including(barcode))).click());
+  },
 };
