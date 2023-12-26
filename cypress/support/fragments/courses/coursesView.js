@@ -1,5 +1,11 @@
 import { HTML, including } from '@interactors/html';
-import { Button, Section, MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
+import {
+  Button,
+  Section,
+  or,
+  MultiColumnListCell,
+  MultiColumnListRow,
+} from '../../../../interactors';
 import Courses from './courses';
 import NoteEditForm from '../notes/existingNoteEdit';
 
@@ -12,12 +18,12 @@ export default {
   },
 
   waitLoading() {
-    cy.expect([notesSection.exists(), Button('Actions').exists()]);
+    cy.expect(or([notesSection.exists(), Button('Actions').exists()]));
   },
 
   checkNotesSectionContent(notes = []) {
     // wait for section to load
-    cy.wait(900);
+    Courses.waitLoading();
 
     notes.forEach((note, index) => {
       cy.expect([
