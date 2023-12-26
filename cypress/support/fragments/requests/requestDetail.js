@@ -351,17 +351,17 @@ export default {
     ]);
   },
 
-  checkRequestMovedToFulfillmentInProgress(itemBarcode, moved = true) {
-    if (moved) {
+  checkRequestMovedToFulfillmentInProgress(itemBarcode, data = { moved: true, rowIndex: 0 }) {
+    if (data.moved) {
       cy.expect(
         fulfillmentInProgressAccordion
-          .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+          .find(MultiColumnListCell({ row: data.rowIndex, content: itemBarcode }))
           .exists(),
       );
     } else {
       cy.expect(
         fulfillmentInProgressAccordion
-          .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+          .find(MultiColumnListCell({ row: data.rowIndex, content: itemBarcode }))
           .absent(),
       );
     }
@@ -385,6 +385,14 @@ export default {
     );
   },
 
+  checkRequestIsNotYetFilled(itemBarcode, rowIndex = 0) {
+    cy.expect(
+      notYetFilledAccordion
+        .find(MultiColumnListCell({ row: rowIndex, content: itemBarcode }))
+        .exists(),
+    );
+  },
+
   openItemByBarcode(barcode = '') {
     cy.do(itemInformationSection.find(Link(including(barcode))).click());
     ItemRecordView.waitLoading();
@@ -392,5 +400,14 @@ export default {
 
   viewRequestsInQueue() {
     cy.do(requestInfoSection.find(KeyValue('Position in queue').find(Link())).click());
+  },
+
+  verifyPositionInQueue(value) {
+    cy.expect(
+      requestInfoSection.find(KeyValue('Position in queue')).has({ value: including(value) }),
+    );
+  },
+  openRequesterByBarcode(barcode = '') {
+    cy.do(requesterInfoSection.find(Link(including(barcode))).click());
   },
 };
