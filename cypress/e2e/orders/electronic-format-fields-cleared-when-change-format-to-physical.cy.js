@@ -102,7 +102,7 @@ describe('Orders', () => {
       // Click on the PO line record in "PO lines" accordion
       const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [{ key: 'Order format', value: 'P/E Mix' }],
+        poLineInformation: [{ key: 'Order format', value: 'P/E Mix' }],
       });
 
       // Click "Actions" button, Select "Edit" option
@@ -131,7 +131,7 @@ describe('Orders', () => {
       });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
+        poLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
       });
 
       // #7 Click "Back to PO" arrow on the top of "PO Line details" pane
@@ -145,7 +145,7 @@ describe('Orders', () => {
       // Click on the PO line record in "PO lines" accordion
       OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
+        poLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
       });
 
       // Click "Actions" button, Select "Edit" option
@@ -157,7 +157,7 @@ describe('Orders', () => {
       });
       OrderLineEditForm.clickSaveButton();
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
+        poLineInformation: [{ key: 'Order format', value: 'Physical Resource' }],
         costDetails: [
           { key: 'Quantity physical', value: '1' },
           { key: 'Quantity electronic', value: '-' },

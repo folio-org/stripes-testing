@@ -5,6 +5,8 @@ import {
   Link,
   SearchField,
   PaneContent,
+  Pane,
+  including,
 } from '../../../../interactors';
 import FundDetails from './funds/fundDetails';
 import LedgerDetails from './ledgers/ledgerDetails';
@@ -15,7 +17,11 @@ const chooseAFilterMessage = 'Choose a filter or enter a search query to show re
 const fiscalResultsList = PaneContent({ id: 'fiscal-year-results-pane-content' });
 const ledgerResultList = PaneContent({ id: 'ledger-results-pane-content' });
 const FundResultList = PaneContent({ id: 'fund-results-pane-content' });
-const FiscalYearResultList = PaneContent({ id: 'fiscal-year-results-pane-content' });
+const filtersPane = Pane({ id: including('filters-pane') });
+const fiscalYearButton = Button('Fiscal year');
+const ledgerButton = Button('Ledger');
+const groupButton = Button('Group');
+const fundButton = Button('Fund');
 
 export default {
   statusActive: 'Active',
@@ -76,7 +82,7 @@ export default {
     return FundDetails;
   },
   selectFirstFiscalRecord: (name) => {
-    cy.do(FiscalYearResultList.find(Link(name)).click());
+    cy.do(fiscalResultsList.find(Link(name)).click());
   },
 
   checkZeroSearchResultsMessage: () => {
@@ -103,6 +109,21 @@ export default {
     return Math.floor(100000000 + Math.random() * 900000).toString();
   },
 
+  clickFiscalYearButton() {
+    cy.do(filtersPane.find(fiscalYearButton).click());
+  },
+
+  clickLedgerButton() {
+    cy.do(filtersPane.find(ledgerButton).click());
+  },
+
+  clickGroupButton() {
+    cy.do(filtersPane.find(groupButton).click());
+  },
+
+  clickFundButton() {
+    cy.do(filtersPane.find(fundButton).click());
+  },
   selectFiscalYearsNavigation: () => {
     cy.get('[data-test-finance-navigation-fiscalyear="true"]').click();
   },

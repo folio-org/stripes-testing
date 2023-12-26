@@ -1009,12 +1009,7 @@ export default {
     ]);
   },
 
-  addFieldToMarcBibUpdate({
-    field,
-    ind1,
-    ind2,
-    subfield,
-  }) {
+  addFieldToMarcBibUpdate({ field, ind1, ind2, subfield }) {
     cy.do([
       Accordion({ id: 'edit-field-mappings-for-marc-updates' }).find(Button('Add field')).click(),
       TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(field),
