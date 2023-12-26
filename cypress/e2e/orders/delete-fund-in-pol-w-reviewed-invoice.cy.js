@@ -99,7 +99,7 @@ describe('Orders', () => {
       // Click on PO line on "Purchase order" pane
       const OrderLineDetails = OrderDetails.openPolDetails(testData.orderLine.titleOrPackage);
       OrderLineDetails.checkOrderLineDetails({
-        purchaseOrderLineInformation: [
+        poLineInformation: [
           { key: 'Payment status', value: 'Awaiting Payment' },
           { key: 'Receipt status', value: 'Awaiting Receipt' },
         ],

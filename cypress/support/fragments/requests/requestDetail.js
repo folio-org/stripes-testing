@@ -87,6 +87,15 @@ export default {
     cy.expect(requestInfoSection.find(KeyValue('Request status', { value: status })).exists());
   },
 
+  verifySectionsVisibility() {
+    cy.expect([
+      titleInformationSection.visible(),
+      itemInformationSection.visible(),
+      requestInfoSection.visible(),
+      requesterInfoSection.visible(),
+    ]);
+  },
+
   checkRequestsOnItem: (requests) => {
     cy.expect(
       itemInformationSection.find(KeyValue('Requests on item', { value: requests })).exists(),
@@ -138,6 +147,7 @@ export default {
     InteractorsTools.checkKeyValue(requestInfoSection, 'Position in queue', data.position);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Request level', data.level);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
+    if (data.reason) InteractorsTools.checkKeyValue(requestInfoSection, 'Cancellation reason', data.reason);
   },
 
   checkItemBarcode: (barcode) => {
@@ -406,5 +416,8 @@ export default {
     cy.expect(
       requestInfoSection.find(KeyValue('Position in queue')).has({ value: including(value) }),
     );
+  },
+  openRequesterByBarcode(barcode = '') {
+    cy.do(requesterInfoSection.find(Link(including(barcode))).click());
   },
 };

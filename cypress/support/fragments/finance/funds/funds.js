@@ -884,11 +884,11 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createViaApi: (fundProperties) => {
+  createViaApi: (fundProperties, groupIds) => {
     return cy
       .okapiRequest({
         path: 'finance/funds',
-        body: { fund: fundProperties },
+        body: { fund: fundProperties, groupIds },
         method: 'POST',
         isDefaultSearchParamsRequired: false,
       })
@@ -1026,5 +1026,9 @@ export default {
 
   varifyCanNotCreatePlannedBudget: () => {
     cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
+  },
+
+  verifyFundLinkNameExists: (FundName) => {
+    cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
   },
 };
