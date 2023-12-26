@@ -15,19 +15,21 @@ const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
 
 describe('export-manager', () => {
   before('create test data', () => {
-    cy.createTempUser([
-      permissions.bulkEditUpdateRecords.gui,
-      permissions.uiUserEdit.gui,
-      permissions.exportManagerAll.gui,
-    ], 'staff')
-      .then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+    cy.createTempUser(
+      [
+        permissions.bulkEditUpdateRecords.gui,
+        permissions.uiUserEdit.gui,
+        permissions.exportManagerAll.gui,
+      ],
+      'staff',
+    ).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+      FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+    });
   });
 
   after('delete test data', () => {

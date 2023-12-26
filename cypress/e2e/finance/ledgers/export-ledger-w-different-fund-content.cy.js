@@ -117,7 +117,7 @@ describe('Finance', () => {
         // Click on Ledger name link from preconditions
         FinanceHelper.searchByName(ledgers.first.name);
         const LedgerDetails = Ledgers.selectLedger(ledgers.first.name);
-        LedgerDetails.checkLedgeDetails({ funds: [] });
+        LedgerDetails.checkLedgerDetails({ funds: [] });
 
         // Export budget information for Ledger #1
         const ExportBudgetModal = LedgerDetails.exportBudgetInformation({
@@ -136,7 +136,7 @@ describe('Finance', () => {
         // Open Ledger #2 from Preconditions details pane
         cy.visit(`${TopMenu.ledgerPath}?query=${ledgers.second.name}`);
         Ledgers.selectLedger(ledgers.second.name);
-        LedgerDetails.checkLedgeDetails({ funds: [{ name: funds.second.name }] });
+        LedgerDetails.checkLedgerDetails({ funds: [{ name: funds.second.name }] });
 
         // Export budget information for Ledger #1
         LedgerDetails.exportBudgetInformation({
@@ -155,7 +155,7 @@ describe('Finance', () => {
         // Open Ledger #3 from Preconditions details pane
         cy.visit(`${TopMenu.ledgerPath}?query=${ledgers.third.name}`);
         Ledgers.selectLedger(ledgers.third.name);
-        LedgerDetails.checkLedgeDetails({ funds: [{ name: funds.third.name }] });
+        LedgerDetails.checkLedgerDetails({ funds: [{ name: funds.third.name }] });
 
         // Export budget information for Ledger #1
         LedgerDetails.exportBudgetInformation({
