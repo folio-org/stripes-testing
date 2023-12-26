@@ -90,10 +90,6 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
             userData.username = userProperties.username;
             userData.password = userProperties.password;
             userData.userId = userProperties.userId;
-            userData.barcode = userProperties.barcode;
-            userData.firstName = userProperties.firstName;
-            userData.patronGroup = userProperties.patronGroup;
-            userData.fullName = `${userData.username}, ${Users.defaultUser.personal.firstName} ${Users.defaultUser.personal.middleName}`;
           })
           .then(() => {
             cy.wrap(true)
@@ -107,7 +103,6 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
               });
 
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
-
             cy.login(userData.username, userData.password);
           });
       });
