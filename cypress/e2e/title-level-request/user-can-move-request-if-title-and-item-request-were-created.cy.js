@@ -98,14 +98,16 @@ describe('Title Level Request', () => {
         }).then((request) => {
           requestIds.push(request.body.id);
         });
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
-        });
-        Requests.findCreatedRequest(testData.user.barcode);
-        Requests.selectFirstRequest(instanceData.instanceTitle);
-        RequestDetail.waitLoading();
+        cy.login(testData.user.username, testData.user.password);
       });
+    });
+
+    beforeEach('Open Request detail page', () => {
+      cy.visit(TopMenu.requestsPath);
+      Requests.waitLoading();
+      Requests.findCreatedRequest(testData.user.barcode);
+      Requests.selectFirstRequest(instanceData.instanceTitle);
+      RequestDetail.waitLoading();
     });
 
     after('Delete test data', () => {
@@ -147,6 +149,39 @@ describe('Title Level Request', () => {
         MoveRequest.chooseItem(instanceData.barcodes[1]);
         // "Hold" and "Recall" request types are available for selection
         MoveRequest.verifyRequestTypes('Hold', 'Recall');
+      },
+    );
+
+    it(
+      'C350427 Check that the request has disappeared from the queue after changing the "Close-Cancelled" status (vega) (TaaS)',
+      { tags: ['extendedPath', 'vega'] },
+      () => {
+        // Pay attention on the Request status and Item status
+        RequestDetail.checkRequestInformation({
+          status: 'Open - Not yet filled',
+        });
+        RequestDetail.checkItemStatus('Paged');
+        // Click On the Action button
+        RequestDetail.verifyActionsAvailableOptions();
+        // Click on the Cancel request
+        RequestDetail.openCancelRequestForm();
+        RequestDetail.verifyCancelRequestModalDisplayed();
+        // Cancel request
+        RequestDetail.confirmRequestCancellation();
+        RequestDetail.checkRequestStatus('Closed - Cancelled');
+        // Open other request (request for the same instance)
+        cy.visit(TopMenu.requestsPath);
+        Requests.waitLoading();
+        Requests.findCreatedRequest(testData.userForTLR.barcode);
+        Requests.selectFirstRequest(instanceData.instanceTitle);
+        RequestDetail.waitLoading();
+        // Click on the Action button
+        RequestDetail.openActions();
+        // Select Request queue
+        RequestDetail.viewRequestsInQueue();
+        Requests.waitLoading();
+        // Pay attention on the requests
+        Requests.verifyRequestIsAbsent(testData.user.barcode);
       },
     );
   });
