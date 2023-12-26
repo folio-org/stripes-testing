@@ -1,4 +1,3 @@
-// import moment from 'moment';
 import { Permissions } from '../../../support/dictionary';
 import {
   EXISTING_RECORDS_NAMES,
