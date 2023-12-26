@@ -14,32 +14,50 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 describe('Data Import', () => {
   describe('Settings', () => {
     const testData = {
-      profileName: `autotest_mapping_profile_name_${getRandomPostfix()}`,
+      profileName: '',
       user: {},
     };
 
-    before('Create test data', () => {
+    before('Create test user', () => {
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
-
-        cy.login(testData.user.username, testData.user.password, {
-          path: SettingsMenu.dataImportSettingsPath,
-          waiter: SettingsDataImport.waitLoading,
-        });
       });
     });
 
-    after('Delete test data', () => {
+    beforeEach('Login', () => {
+      testData.profileName = `autotest_mapping_profile_name_${getRandomPostfix()}`;
+
+      cy.login(testData.user.username, testData.user.password, {
+        path: SettingsMenu.dataImportSettingsPath,
+        waiter: SettingsDataImport.waitLoading,
+      });
+    });
+
+    afterEach('Delete mapping profile', () => {
       cy.getAdminToken().then(() => {
         FieldMappingProfiles.deleteMappingProfileByNameViaApi(testData.profileName);
+      });
+    });
+
+    after('Delete test user', () => {
+      cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
       });
     });
 
-    it(
-      'C377016 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Items (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
-      () => {
+    [
+      {
+        description:
+          'C377016 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Items (folijet) (TaaS)',
+        existingRecordType: 'Item',
+      },
+      {
+        description:
+          'C377017 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Holdings (folijet) (TaaS)',
+        existingRecordType: 'Holdings',
+      },
+    ].forEach(({ description, existingRecordType }) => {
+      it(description, { tags: ['extendedPath', 'folijet'] }, () => {
         // Go to Settings application-> Data import-> Field mapping profiles
         SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
 
@@ -52,7 +70,7 @@ describe('Data Import', () => {
           summary: {
             name: testData.profileName,
             incomingRecordType: 'MARC Bibliographic',
-            existingRecordType: 'Item',
+            existingRecordType,
           },
           adminData: { suppressFromDiscovery: 'Mark for all affected records' },
           electronicAccess: { value: 'Delete all existing values' },
@@ -105,7 +123,7 @@ describe('Data Import', () => {
         FieldMappingProfileView.checkElectronicAccessFieldsConditions([
           { label: 'Electronic access', conditions: { value: including('No value set-') } },
         ]);
-      },
-    );
+      });
+    });
   });
 });
