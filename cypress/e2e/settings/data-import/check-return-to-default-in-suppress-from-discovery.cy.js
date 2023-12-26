@@ -125,5 +125,81 @@ describe('Data Import', () => {
         ]);
       });
     });
+
+    it(
+      'C377018 Verify the possibility to return to the defaults values in dropdown with "Delete all existing values" for Instance (folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet'] },
+      () => {
+        // Go to Settings application-> Data import-> Field mapping profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.FIELD_MAPPING_PROFILE);
+
+        // Click Actions button, Select New field mapping profile
+        const FieldMappingProfileEditForm =
+          FieldMappingProfiles.clickCreateNewFieldMappingProfile();
+
+        // Populate mapping profile fields
+        FieldMappingProfileEditForm.fillMappingProfileFields({
+          summary: {
+            name: testData.profileName,
+            incomingRecordType: 'MARC Bibliographic',
+            existingRecordType: 'Instance',
+          },
+          adminData: {
+            suppressFromDiscovery: 'Mark for all affected records',
+            statisticalCodes: 'Delete all existing values',
+          },
+        });
+
+        // Change the value in "Suppress from discovery" dropdown back to "Select checkbox field mapping" option
+        // Change the value in "Statistical codes" dropdown back to "Select action" option
+        FieldMappingProfileEditForm.fillMappingProfileFields({
+          adminData: {
+            suppressFromDiscovery: 'Select сheckbox field mapping',
+            statisticalCodes: 'Select action',
+          },
+        });
+
+        // Populate "Suppress from discovery" and "Statistical codes" dropdowns with the values from step 2
+        FieldMappingProfileEditForm.fillMappingProfileFields({
+          adminData: {
+            suppressFromDiscovery: 'Mark for all affected records',
+            statisticalCodes: 'Delete all existing values',
+          },
+        });
+
+        // Click "Save as profile & Close" button
+        FieldMappingProfileEditForm.clickSaveAndCloseButton();
+        FieldMappingProfileView.checkAdminDataFieldsConditions([
+          {
+            label: 'Suppress from discovery',
+            conditions: { value: 'Mark for all affected records' },
+          },
+          { label: 'Statistical codes', conditions: { value: 'Delete all existing values' } },
+        ]);
+
+        // Click "Actions" button, Select "Edit" option
+        FieldMappingProfileView.clickEditButton();
+
+        // Change the value in "Suppress from discovery" dropdown back to "Select checkbox field mapping" option
+        // Change the value in "Statistical codes" dropdown back to "Select action" option
+        FieldMappingProfileEditForm.fillMappingProfileFields({
+          adminData: {
+            suppressFromDiscovery: 'Select сheckbox field mapping',
+            statisticalCodes: 'Select action',
+          },
+        });
+
+        // Click "Save as profile & Close" button
+        // * The detail view page of the updated profile is shown
+        FieldMappingProfileEditForm.clickSaveAndCloseButton();
+        FieldMappingProfileView.checkAdminDataFieldsConditions([
+          {
+            label: 'Suppress from discovery',
+            conditions: { value: 'No value set-' },
+          },
+          { label: 'Statistical codes', conditions: { value: including('No value set-') } },
+        ]);
+      },
+    );
   });
 });

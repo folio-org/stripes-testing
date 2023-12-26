@@ -1,6 +1,7 @@
 import {
   Button,
   ConfirmationModal,
+  Decorator,
   Form,
   Section,
   Select,
@@ -67,6 +68,9 @@ const summaryFields = {
 };
 const administrativeDataFields = {
   suppressFromDiscovery: adminDataSection.find(Select('Suppress from discovery')),
+  statisticalCodes: adminDataSection
+    .find(Decorator('Statistical codes'))
+    .find(Select('Select action')),
 };
 const electronicAccessFields = {
   select: detailsSection
@@ -96,6 +100,13 @@ const suppressFromDiscoveryOptions = {
   'Mark for all affected records': 'ALL_TRUE',
   'Unmark for all affected records': 'ALL_FALSE',
   'Keep the existing value for all affected records': 'AS_IS',
+};
+const statisticalCodesOptions = {
+  'Select action': '',
+  'Add these to existing': 'EXTEND_EXISTING',
+  'Delete all existing values': 'DELETE_EXISTING',
+  'Delete all existing and add these': 'EXCHANGE_EXISTING',
+  'Find and remove these': 'DELETE_INCOMING',
 };
 const electronicAccessOptions = {
   'Select action': '',
@@ -180,7 +191,7 @@ export default {
     }
     cy.wait(2000);
   },
-  fillAdministrativeDataProfileFields({ suppressFromDiscovery }) {
+  fillAdministrativeDataProfileFields({ suppressFromDiscovery, statisticalCodes }) {
     if (suppressFromDiscovery) {
       cy.do([
         administrativeDataFields.suppressFromDiscovery.focus(),
@@ -189,6 +200,18 @@ export default {
       cy.expect(
         administrativeDataFields.suppressFromDiscovery.has({
           value: suppressFromDiscoveryOptions[suppressFromDiscovery],
+        }),
+      );
+    }
+
+    if (statisticalCodes) {
+      cy.do([
+        administrativeDataFields.statisticalCodes.focus(),
+        administrativeDataFields.statisticalCodes.choose(statisticalCodes),
+      ]);
+      cy.expect(
+        administrativeDataFields.statisticalCodes.has({
+          value: statisticalCodesOptions[statisticalCodes],
         }),
       );
     }
