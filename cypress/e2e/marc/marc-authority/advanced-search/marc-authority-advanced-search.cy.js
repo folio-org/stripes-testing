@@ -95,7 +95,7 @@ describe('MARC -> MARC Authority -> Advanced search', () => {
       );
       MarcAuthorities.clickSearchButton();
       MarcAuthorities.checkSearchInput(
-        `personalNameTitle==${testData.titles.titlePersonalName} or corporateNameTitle==${testData.titles.titleCorporateName}`,
+        `personalNameTitle containsAll ${testData.titles.titlePersonalName} or corporateNameTitle containsAll ${testData.titles.titleCorporateName}`,
       );
       MarcAuthorities.checkRowsContent([
         testData.titles.titleCorporateName,
@@ -111,7 +111,7 @@ describe('MARC -> MARC Authority -> Advanced search', () => {
       );
       MarcAuthorities.clickSearchButton();
       MarcAuthorities.checkSearchInput(
-        `personalNameTitle==${testData.titles.titlePersonalName} or corporateNameTitle==${testData.titles.titleCorporateName} or uniformTitle==${testData.titles.titleUniform}`,
+        `personalNameTitle containsAll ${testData.titles.titlePersonalName} or corporateNameTitle containsAll ${testData.titles.titleCorporateName} or uniformTitle containsAll ${testData.titles.titleUniform}`,
       );
       MarcAuthorities.checkRowsContent([
         testData.titles.titleCorporateName,
@@ -128,7 +128,7 @@ describe('MARC -> MARC Authority -> Advanced search', () => {
       );
       MarcAuthorities.clickSearchButton();
       MarcAuthorities.checkSearchInput(
-        `personalNameTitle==${testData.titles.titlePersonalName} or uniformTitle==${testData.titles.titleUniform}`,
+        `personalNameTitle containsAll ${testData.titles.titlePersonalName} or uniformTitle containsAll ${testData.titles.titleUniform}`,
       );
       MarcAuthorities.checkRowsContent([
         testData.titles.titlePersonalName,
@@ -174,7 +174,7 @@ describe('MARC -> MARC Authority -> Advanced search', () => {
         testData.titles.titleUniform,
       ]);
       MarcAuthorities.checkSearchInput(
-        `personalNameTitle==${testData.titles.titlePersonalName} or corporateNameTitle==${testData.titles.titleCorporateName} or uniformTitle==${testData.titles.titleUniform}`,
+        `personalNameTitle containsAll ${testData.titles.titlePersonalName} or corporateNameTitle containsAll ${testData.titles.titleCorporateName} or uniformTitle containsAll ${testData.titles.titleUniform}`,
       );
 
       MarcAuthorities.clickAdvancedSearchButton();
@@ -203,12 +203,12 @@ describe('MARC -> MARC Authority -> Advanced search', () => {
         testData.titles.titleUniform,
       ]);
       MarcAuthorities.checkSearchInput(
-        `personalNameTitle==${testData.titles.titlePersonalName} or corporateNameTitle==${testData.titles.titleCorporateName} or uniformTitle==${testData.titles.titleUniform}`,
+        `personalNameTitle containsAll ${testData.titles.titlePersonalName} or corporateNameTitle containsAll ${testData.titles.titleCorporateName} or uniformTitle containsAll ${testData.titles.titleUniform}`,
       );
 
       MarcAuthorities.searchBy(
         'Advanced search',
-        `personalNameTitle==${testData.titles.titlePersonalName} or corporateNameTitle==${testData.titles.titleCorporateName}`,
+        `personalNameTitle containsAll ${testData.titles.titlePersonalName} or corporateNameTitle containsAll ${testData.titles.titleCorporateName}`,
       );
       MarcAuthorities.clickAdvancedSearchButton();
       MarcAuthorities.checkAdvancedSearchModalFields(
@@ -237,7 +237,7 @@ describe('MARC -> MARC Authority -> Advanced search', () => {
       MarcAuthorities.checkAdvancedSearchOption(2);
       MarcAuthorities.clickSearchButton();
       MarcAuthorities.checkSearchInput(
-        `personalNameTitle==${testData.titles.titlePersonalName} or corporateNameTitle==${testData.titles.titleCorporateName} or uniformTitle==${testData.titles.titleUniform}`,
+        `personalNameTitle containsAll ${testData.titles.titlePersonalName} or corporateNameTitle containsAll ${testData.titles.titleCorporateName} or uniformTitle containsAll ${testData.titles.titleUniform}`,
       );
 
       MarcAuthorities.clickResetAndCheck();
