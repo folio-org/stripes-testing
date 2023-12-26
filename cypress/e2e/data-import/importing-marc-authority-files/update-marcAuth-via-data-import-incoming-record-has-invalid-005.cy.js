@@ -167,7 +167,7 @@ describe('data-import', () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         cy.wait('@splitStatus', getLongDelay()).then(() => {
-          // set date after updated
+          // set date after updating record
           const updatedDate = new Date();
           JobProfiles.waitFileIsImported(testData.fileNameForUpdate);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
