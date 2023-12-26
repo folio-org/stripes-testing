@@ -71,7 +71,7 @@ export default {
   },
   selectFirstLedger: (name) => {
     cy.do(ledgerResultList.find(Link(name)).click());
-    LedgerDetails.checkLedgeDetails({ information: [{ key: 'Name', value: name }] });
+    LedgerDetails.checkLedgerDetails({ information: [{ key: 'Name', value: name }] });
 
     return LedgerDetails;
   },

@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
   Button,
@@ -32,7 +33,14 @@ export default {
     code: getRandomPostfix(),
     status: 'Active',
   },
-
+  getDefaultGroup() {
+    return {
+      id: uuid(),
+      name: `autotest_group_${getRandomPostfix()}`,
+      code: getRandomPostfix(),
+      status: 'Active',
+    };
+  },
   createViaApi: (groupProperties) => {
     return cy
       .okapiRequest({

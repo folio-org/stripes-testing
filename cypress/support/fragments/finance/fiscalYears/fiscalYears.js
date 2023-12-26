@@ -77,11 +77,11 @@ export default {
   },
 
   waitLoading: () => {
-    cy.expect([fiscalYearFiltersSection.exists, fiscalYearResultsSection.exists]);
+    cy.expect([fiscalYearFiltersSection.exists(), fiscalYearResultsSection.exists()]);
   },
 
   waitForFiscalYearDetailsLoading: () => {
-    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists);
+    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists());
   },
 
   createDefaultFiscalYear(fiscalYear) {

@@ -579,6 +579,12 @@ export default {
     cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
   },
 
+  verifyRequestIsAbsent(barcode) {
+    cy.expect(
+      requestsResultsSection.find(MultiColumnListRow({ content: including(barcode) })).absent(),
+    );
+  },
+
   exportRequestToCsv: () => {
     cy.wait(1000);
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);

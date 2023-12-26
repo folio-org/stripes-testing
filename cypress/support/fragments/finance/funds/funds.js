@@ -884,11 +884,11 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createViaApi: (fundProperties) => {
+  createViaApi: (fundProperties, groupIds) => {
     return cy
       .okapiRequest({
         path: 'finance/funds',
-        body: { fund: fundProperties },
+        body: { fund: fundProperties, groupIds },
         method: 'POST',
         isDefaultSearchParamsRequired: false,
       })

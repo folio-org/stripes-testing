@@ -1,15 +1,8 @@
-import {
-  Button,
-  HTML,
-  KeyValue,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  PaneHeader,
-  Section,
-  including,
-} from '../../../../../interactors';
+import { Button, PaneHeader, Section } from '../../../../../interactors';
+import FinanceDetails from '../financeDetails';
 import LedgerRollovers from './ledgerRollovers';
 import LedgerRolloverDetails from './ledgerRolloverDetails';
+import GroupDetails from '../groups/groupDetails';
 import FundDetails from '../funds/fundDetails';
 import ExportBudgetModal from '../modals/exportBudgetModal';
 
@@ -19,10 +12,8 @@ const ledgerDetailsPane = Section({ id: 'pane-ledger-details' });
 const ledgerDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-ledger-details' });
 const actionsButton = Button('Actions');
 
-const summarySection = Section({ id: 'financial-summary' });
-const fundsSection = Section({ id: 'fund' });
-
 export default {
+  ...FinanceDetails,
   waitLoading() {
     cy.expect(ledgerDetailsPane.exists());
   },
@@ -50,62 +41,25 @@ export default {
 
     return LedgerRollovers;
   },
-  checkLedgeDetails({ information = [], summary = [], funds } = {}) {
-    information.forEach(({ key, value }) => {
-      cy.expect(ledgerDetailsPane.find(KeyValue(key)).has({ value: including(value) }));
-    });
-
-    summary.forEach(({ key, value }) => {
-      cy.expect(
-        summarySection
-          .find(MultiColumnListRow({ isContainer: true, content: including(key) }))
-          .find(MultiColumnListCell({ columnIndex: 1 }))
-          .has({ content: including(value) }),
-      );
-    });
-
+  checkLedgerDetails({ information, financialSummary, funds } = {}) {
+    if (information) {
+      FinanceDetails.checkInformation(information);
+    }
+    if (financialSummary) {
+      FinanceDetails.checkFinancialSummary(financialSummary);
+    }
     if (funds) {
-      this.checkFunds(funds);
+      FinanceDetails.checkFundsDetails(funds);
     }
   },
-  checkFunds(funds = []) {
-    funds.forEach((fund, index) => {
-      if (fund.name) {
-        cy.expect(
-          fundsSection
-            .find(MultiColumnListCell({ row: index, column: 'Name' }))
-            .has({ content: including(fund.name) }),
-        );
-      }
-      if (fund.allocated) {
-        cy.expect(
-          fundsSection
-            .find(MultiColumnListCell({ row: index, column: 'Allocated' }))
-            .has({ content: including(fund.allocated) }),
-        );
-      }
-      if (fund.unavailable) {
-        cy.expect(
-          fundsSection
-            .find(MultiColumnListCell({ row: index, column: 'Unavailable' }))
-            .has({ content: including(fund.unavailable) }),
-        );
-      }
-      if (fund.available) {
-        cy.expect(
-          fundsSection
-            .find(MultiColumnListCell({ row: index, column: 'Available' }))
-            .has({ content: including(fund.available) }),
-        );
-      }
-    });
+  openGroupDetails(name) {
+    FinanceDetails.openGroupDetails(name);
+    GroupDetails.waitLoading();
 
-    if (!funds.length) {
-      cy.expect(fundsSection.find(HTML('The list contains no items')).exists());
-    }
+    return GroupDetails;
   },
-  openFundDetails({ row = 0 } = {}) {
-    cy.do(fundsSection.find(MultiColumnListCell({ row, column: 'Name' })).click());
+  openFundDetails(name) {
+    FinanceDetails.openFundDetails(name);
     FundDetails.waitLoading();
 
     return FundDetails;
