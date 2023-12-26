@@ -28,14 +28,6 @@ describe('Course Reserves', () => {
     };
 
     before('Create test data', () => {
-      /*
-       * At least one "Course" record exists in the system
-       * User is logged in with following permissions:
-       * Courses: Read all
-       * Notes: Can create a note
-       * Notes: Can edit a note
-       * User is on the main page of "Courses" app
-       */
       cy.createTempUser([
         Permissions.coursesReadAll.gui,
         Permissions.uiNotesItemCreate.gui,
