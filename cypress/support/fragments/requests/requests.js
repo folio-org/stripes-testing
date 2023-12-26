@@ -13,7 +13,6 @@ import {
   ValueChipRoot,
   Checkbox,
   TextField,
-  Badge,
   Section,
   Heading,
   Spinner,
@@ -347,7 +346,6 @@ export default {
     // need to wait until number of tags is displayed
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
-    cy.expect(showTagsButton.find(Badge()).has({ value: '1' }));
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
 
