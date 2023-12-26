@@ -41,10 +41,12 @@ describe('Finance', () => {
     const funds = {
       first: {
         ...Funds.getDefaultFund(),
+        name: `autotest_fund_00A.${new Date().getTime()}`,
         ledgerId: ledger.id,
       },
       second: {
         ...Funds.getDefaultFund(),
+        name: `autotest_fund_00B.${new Date().getTime()}`,
         ledgerId: ledger.id,
       },
     };
@@ -170,7 +172,7 @@ describe('Finance', () => {
         // Click on Ledger name link from preconditions
         FinanceHelper.searchByName(ledger.name);
         const LedgerDetails = Ledgers.selectLedger(ledger.name);
-        LedgerDetails.checkLedgeDetails({
+        LedgerDetails.checkLedgerDetails({
           information: [{ key: 'Current fiscal year', value: fiscalYears.current.code }],
         });
 
@@ -231,12 +233,12 @@ describe('Finance', () => {
 
         // Click "Close & view ledger details" button
         LedgerRolloverInProgress.clickCloseAndViewLedgerButton();
-        LedgerDetails.checkLedgeDetails({
+        LedgerDetails.checkLedgerDetails({
           information: [{ key: 'Current fiscal year', value: fiscalYears.current.code }],
         });
 
         // Click **"Fund A"** record in "Fund" accordion on
-        const FundDetails = LedgerDetails.openFundDetails({ row: 0 });
+        const FundDetails = LedgerDetails.openFundDetails(funds.first.name);
         FundDetails.checkFundDetails({
           plannedBudgets: [{ unavailable: '$0.00' }],
         });
@@ -246,7 +248,7 @@ describe('Finance', () => {
         LedgerRolloverInProgress.clickCloseAndViewLedgerButton();
 
         // Click **"Fund B"** record in "Fund" accordion
-        LedgerDetails.openFundDetails({ row: 1 });
+        LedgerDetails.openFundDetails(funds.second.name);
         FundDetails.checkFundDetails({
           plannedBudgets: [{ unavailable: '$0.00' }],
         });
