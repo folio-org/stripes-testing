@@ -812,6 +812,15 @@ export default {
     }
   },
 
+  checkHoldingsStatus: (rowNumber, status, languageAccordionValue = 'Holdings: Main Library >') => {
+    const indexRowNumber = `row-${rowNumber}`;
+    cy.do(Accordion({ label: including(languageAccordionValue) }).clickHeader());
+    const row = Accordion({ label: including(languageAccordionValue) }).find(
+      MultiColumnListRow({ indexRow: indexRowNumber }),
+    );
+    cy.expect([row.find(MultiColumnListCell({ content: status })).exists()]);
+  },
+
   moveItemToAnotherHolding({ fromHolding, toHolding, shouldOpen = true, itemMoved = false }) {
     if (shouldOpen) {
       openHoldings(fromHolding, toHolding);
