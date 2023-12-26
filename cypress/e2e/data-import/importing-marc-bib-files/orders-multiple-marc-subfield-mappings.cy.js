@@ -14,14 +14,14 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-// import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-// import Orders from '../../../support/fragments/orders/orders';
+import Orders from '../../../support/fragments/orders/orders';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -30,14 +30,15 @@ describe('data-import', () => {
     const marcFileName = `C380431 autotestFileName ${getRandomPostfix()}`;
     const productIdentifiers = [
       {
-        identifier: 'T90028 Verve',
+        identifier: 'T90028Verve',
         rowIndex: 0,
       },
       {
-        identifier: 'V-4061 Verve',
+        identifier: 'V-4061Verve',
         rowIndex: 1,
       },
     ];
+    let orderNumber;
     const mappingProfile = {
       name: `C380431 Test multiple MARC subfield mappings${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -86,12 +87,12 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        //     JobProfiles.deleteJobProfile(jobProfile.profileName);
-        //     ActionProfiles.deleteActionProfile(actionProfile.name);
-        //     FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-        //     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-        //       Orders.deleteOrderViaApi(orderId[0].id);
-        //     });
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
       });
     });
 
@@ -124,11 +125,10 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.openOrder(RECORD_STATUSES.CREATED);
-        // OrderLines.getAssignedPOLNumber().then((initialNumber) => {
-        //   const polNumber = initialNumber;
-        //   orderNumber = polNumber.replace('-1', '');
-        // });
-        // forEach
+        OrderLines.getAssignedPOLNumber().then((initialNumber) => {
+          const polNumber = initialNumber;
+          orderNumber = polNumber.replace('-1', '');
+        });
         productIdentifiers.forEach((id) => {
           OrderLines.verifyProductIdentifier(id.identifier, id.rowIndex);
         });
