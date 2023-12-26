@@ -104,6 +104,14 @@ export default {
       AddDonorsModal.clickSaveButton();
     }
   },
+  unassignDonorFromFund(donorName) {
+    cy.do(
+      donorInfoSection
+        .find(MultiColumnListRow({ content: including(donorName), isContainer: true }))
+        .find(Button({ ariaLabel: 'Unassign' }))
+        .click(),
+    );
+  },
   expandDonorInformationSection() {
     this.clickSectionButton({ section: donorInfoSection, checkIsEmpty: true });
   },

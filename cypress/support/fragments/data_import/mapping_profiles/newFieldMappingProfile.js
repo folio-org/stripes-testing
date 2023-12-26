@@ -48,6 +48,7 @@ const catalogedDateField = TextField('Cataloged date');
 const titleField = TextField('Title*');
 const incomingRecordTypeField = Select({ name: 'profile.incomingRecordType' });
 const currencyField = TextField('Currency*');
+const vendor = TextField('Vendor*');
 const noteTypeField = TextField('Note type');
 const reEncumberField = TextField('Re-encumber');
 const purchaseOrderStatus = TextField('Purchase order status*');
@@ -58,6 +59,7 @@ const editionField = TextField('Edition');
 const internalNoteField = TextArea('Internal note');
 const acquisitionMethodField = TextField('Acquisition method*');
 const orderFormatField = TextField('Order format*');
+const orderTypetField = TextField('Order type*');
 const receiptStatusField = TextField('Receipt status');
 const paymentStatusField = TextField('Payment status');
 const selectorField = TextField('Selector');
@@ -79,6 +81,17 @@ const approvedCheckbox = Checkbox({
 const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
 const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 const closeButton = Button('Close');
+
+const requiredFields = {
+  'Purchase order status': purchaseOrderStatus,
+  Vendor: vendor,
+  'Order type': orderTypetField,
+  Title: titleField,
+  'Acquisition method': acquisitionMethodField,
+  'Order format': orderFormatField,
+  'Receiving workflow': receivingWorkflowField,
+  Currency: currencyField,
+};
 
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -996,12 +1009,7 @@ export default {
     ]);
   },
 
-  addFieldToMarcBibUpdate({
-    field,
-    ind1,
-    ind2,
-    subfield,
-  }) {
+  addFieldToMarcBibUpdate({ field, ind1, ind2, subfield }) {
     cy.do([
       Accordion({ id: 'edit-field-mappings-for-marc-updates' }).find(Button('Add field')).click(),
       TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(field),
@@ -1160,6 +1168,12 @@ export default {
       TextField('Material supplier').has({ value: `"${profile.materialSupplier}"` }),
       TextField('Access provider').has({ value: `"${profile.accessProvider}"` }),
     ]);
+  },
+
+  verifyFieldsMarkedWithAsterisks(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(requiredFields[label].has(conditions));
+    });
   },
 
   verifyFOLIORecordTypeOptionExists(type) {
