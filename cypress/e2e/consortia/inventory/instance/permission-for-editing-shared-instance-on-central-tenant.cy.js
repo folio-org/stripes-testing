@@ -1,13 +1,13 @@
-import Permissions from '../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import Permissions from '../../../../support/dictionary/permissions';
+import getRandomPostfix from '../../../../support/utils/stringTools';
+import Users from '../../../../support/fragments/users/users';
+import TopMenu from '../../../../support/fragments/topMenu';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
+import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
+import InteractorsTools from '../../../../support/utils/interactorsTools';
 
 describe('Inventory -> Instance -> Consortia', () => {
   const testData = {
