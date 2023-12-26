@@ -205,4 +205,8 @@ export default {
       expect(existingValues).to.eql(expectedValues);
     });
   },
+
+  verifyDiscount: (discount) => {
+    cy.expect(KeyValue('Discount').has({ value: discount }));
+  },
 };

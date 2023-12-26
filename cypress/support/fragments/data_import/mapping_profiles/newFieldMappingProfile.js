@@ -1190,4 +1190,16 @@ export default {
     );
     cy.expect(Popover({ content: including(message) }).exists());
   },
+
+  fillDiscountAmount: (amount) => {
+    cy.do(TextField('Discount').fillIn(amount));
+  },
+
+  selectDiscountType: (type) => {
+    cy.do(
+      Accordion('Cost details')
+        .find(Button(`${type}`))
+        .click(),
+    );
+  },
 };
