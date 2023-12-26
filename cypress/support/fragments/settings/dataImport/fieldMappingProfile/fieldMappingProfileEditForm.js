@@ -16,12 +16,13 @@ const mappingProfileForm = Form({ id: 'mapping-profiles-form' });
 
 const summarySection = mappingProfileForm.find(Section({ id: 'summary' }));
 const detailsSection = mappingProfileForm.find(Section({ id: 'mapping-profile-details' }));
+const adminDataSection = detailsSection.find(Section({ id: 'administrative-data' }));
 const actionProfilesSection = mappingProfileForm.find(
   Section({ id: 'mappingProfileFormAssociatedActionProfileAccordion' }),
 );
 
 const itemDetails = {
-  administrativeData: detailsSection.find(Section({ id: 'administrative-data' })),
+  administrativeData: adminDataSection,
   itemData: detailsSection.find(Section({ id: 'item-data' })),
   enumerationData: detailsSection.find(Section({ id: 'enumeration-data' })),
   itemCondition: detailsSection.find(Section({ id: 'item-condition' })),
@@ -31,7 +32,7 @@ const itemDetails = {
   itemElectronicAccess: detailsSection.find(Section({ id: 'item-electronic-access' })),
 };
 const holdingDetails = {
-  administrativeData: detailsSection.find(Section({ id: 'administrative-data' })),
+  administrativeData: adminDataSection,
   holdingsLOcation: detailsSection.find(Section({ id: 'holdings-location' })),
   holdingsDetails: detailsSection.find(Section({ id: 'holdings-details' })),
   holdingsNotes: detailsSection.find(Section({ id: 'holdings-notes' })),
@@ -65,10 +66,12 @@ const summaryFields = {
   description: summarySection.find(TextArea({ name: 'profile.description' })),
 };
 const administrativeDataFields = {
-  suppressFromDiscovery: itemDetails.administrativeData.find(Select('Suppress from discovery')),
+  suppressFromDiscovery: adminDataSection.find(Select('Suppress from discovery')),
 };
 const electronicAccessFields = {
-  select: itemDetails.itemElectronicAccess.find(Select('Select action')),
+  select: detailsSection
+    .find(Section({ id: matching('(?:holdings|item)-electronic-access') }))
+    .find(Select('Select action')),
 };
 
 const incomingRecordTypes = {

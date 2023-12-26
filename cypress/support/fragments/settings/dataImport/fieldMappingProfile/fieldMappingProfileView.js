@@ -1,16 +1,17 @@
-import { Button, KeyValue, Section } from '../../../../../../interactors';
+import { Button, KeyValue, Section, matching } from '../../../../../../interactors';
 import FieldMappingProfileEditForm from './fieldMappingProfileEditForm';
 
 const mappingProfileView = Section({ id: 'full-screen-view' });
 
 const summarySection = mappingProfileView.find(Section({ id: 'view-summary' }));
 const detailsSection = mappingProfileView.find(Section({ id: 'view-mapping-profile-details' }));
+const adminDataSection = detailsSection.find(Section({ id: 'view-administrative-data' }));
 const actionProfilesSection = mappingProfileView.find(
   Section({ id: 'view-mappingProfileFormAssociatedActionProfileAccordion' }),
 );
 
 const itemDetailsViews = {
-  administrativeData: detailsSection.find(Section({ id: 'view-administrative-data' })),
+  administrativeData: adminDataSection,
   itemData: detailsSection.find(Section({ id: 'view-item-data' })),
   enumerationData: detailsSection.find(Section({ id: 'view-enumeration-data' })),
   itemCondition: detailsSection.find(Section({ id: 'view-item-condition' })),
@@ -20,7 +21,7 @@ const itemDetailsViews = {
   itemElectronicAccess: detailsSection.find(Section({ id: 'view-item-electronic-access' })),
 };
 const holdingDetailsViews = {
-  administrativeData: detailsSection.find(Section({ id: 'view-administrative-data' })),
+  administrativeData: adminDataSection,
   holdingsLOcation: detailsSection.find(Section({ id: 'view-holdings-location' })),
   holdingsDetails: detailsSection.find(Section({ id: 'view-holdings-details' })),
   holdingsNotes: detailsSection.find(Section({ id: 'view-holdings-notes' })),
@@ -70,10 +71,15 @@ export default {
     this.checkFieldsConditions({ fields, section: summarySection });
   },
   checkAdminDataFieldsConditions(fields = []) {
-    this.checkFieldsConditions({ fields, section: itemDetailsViews.administrativeData });
+    this.checkFieldsConditions({ fields, section: adminDataSection });
   },
   checkElectronicAccessFieldsConditions(fields = []) {
-    this.checkFieldsConditions({ fields, section: itemDetailsViews.itemElectronicAccess });
+    this.checkFieldsConditions({
+      fields,
+      section: detailsSection.find(
+        Section({ id: matching('view-(?:holdings|item)-electronic-access') }),
+      ),
+    });
   },
   expandActionsDropdown() {
     cy.do(actionsButton.click());
