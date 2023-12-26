@@ -1,4 +1,4 @@
-import { Button, PaneHeader, Section } from '../../../../../interactors';
+import { Button, PaneHeader, Section, including } from '../../../../../interactors';
 import FinanceDetails from '../financeDetails';
 import LedgerDetails from '../ledgers/ledgerDetails';
 
