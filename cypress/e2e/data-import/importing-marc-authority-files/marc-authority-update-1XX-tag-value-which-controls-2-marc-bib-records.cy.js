@@ -118,6 +118,16 @@ describe('data-import', () => {
 
     before('Create test data and login', () => {
       cy.getAdminToken();
+      // make sure there are no duplicate authority records in the system
+      MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C374167"' }).then(
+        (records) => {
+          records.forEach((record) => {
+            if (record.authRefType === 'Authorized') {
+              MarcAuthority.deleteViaAPI(record.id);
+            }
+          });
+        },
+      );
       cy.loginAsAdmin()
         .then(() => {
           // create Match profile
@@ -198,15 +208,16 @@ describe('data-import', () => {
     });
 
     after('Delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
-      InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[1]);
-      MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2]);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(testData.user.userId);
+        InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+        InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[1]);
+        MarcAuthority.deleteViaAPI(testData.createdRecordIDs[2]);
+      });
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${testData.exportedMarcFile}`);
@@ -258,7 +269,7 @@ describe('data-import', () => {
 
         cy.visit(TopMenu.marcAuthorities);
         MarcAuthoritiesSearch.searchBy(testData.searchOption, testData.marcValue);
-        MarcAuthorities.verifyNumberOfTitles(5, '');
+        MarcAuthorities.verifyEmptyNumberOfTitles();
         MarcAuthorities.selectTitle(marcFiles[1].authorityHeading);
         MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedValue);
         MarcAuthority.contains(testData.tag110);
