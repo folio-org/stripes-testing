@@ -40,7 +40,7 @@ const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
-const addTagForSelectOption = MultiSelectOption(including('Add tag for:'));
+const addTagInput = MultiSelect({ id: 'input-tag' });
 const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
 
@@ -335,10 +335,13 @@ export default {
     cy.wait(2000);
   },
 
-  addNewTag(newTag) {
-    cy.do(cy.get('div#input-tag').click().wait(2000).type(newTag));
-    cy.expect(addTagForSelectOption.exists());
-    cy.do(addTagForSelectOption.click());
+  addNewTag(tag) {
+    cy.do([
+      addTagInput.fillIn(tag),
+      cy.wait(3000),
+      addTagInput.open(),
+      MultiSelectOption(including(tag)).click(),
+    ]);
   },
 
   verifyAssignedTags(tag) {
