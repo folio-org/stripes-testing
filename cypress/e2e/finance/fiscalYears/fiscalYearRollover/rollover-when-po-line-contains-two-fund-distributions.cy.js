@@ -157,7 +157,7 @@ describe('Finance', () => {
         // Click on Ledger name link from preconditions
         FinanceHelper.searchByName(ledgers.first.name);
         const LedgerDetails = Ledgers.selectLedger(ledgers.first.name);
-        LedgerDetails.checkLedgeDetails({
+        LedgerDetails.checkLedgerDetails({
           information: [{ key: 'Current fiscal year', value: fiscalYears.current.code }],
         });
 
@@ -194,12 +194,12 @@ describe('Finance', () => {
         LedgerRolloverInProgress.clickCloseAndViewLedgerButton();
 
         // Click **"Fund A"** record in "Fund" accordion
-        LedgerDetails.openFundDetails();
+        LedgerDetails.openFundDetails(funds.first.name);
         FundDetails.checkFundDetails({ plannedBudgets: [{ unavailable: '$10.00' }] });
 
         // Go back to "Ledger name" pane, Open "Ledger #2" details pane
         cy.visit(`${TopMenu.ledgerPath}/${ledgers.second.id}/view`);
-        LedgerDetails.checkLedgeDetails({
+        LedgerDetails.checkLedgerDetails({
           information: [{ key: 'Current fiscal year', value: fiscalYears.current.code }],
         });
 
@@ -224,7 +224,7 @@ describe('Finance', () => {
         LedgerRolloverInProgress.clickCloseAndViewLedgerButton();
 
         // Click **"Fund B"** record in "Fund" accordion
-        LedgerDetails.openFundDetails();
+        LedgerDetails.openFundDetails(funds.second.name);
         FundDetails.checkFundDetails({ plannedBudgets: [{ unavailable: '$35.00' }] });
 
         // Open **"Fund A"** details pane
