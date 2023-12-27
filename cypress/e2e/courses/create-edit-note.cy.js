@@ -58,7 +58,6 @@ describe('Course Reserves', () => {
       'C421983 Courses > Create and edit  a note (spitfire) (TaaS)',
       { tags: ['extendedPath', 'spitfire'] },
       () => {
-        cy.log('testdata' + JSON.stringify(testData.course));
         Courses.verifyExistingCourseIsDisplayed(testData.course.name);
         // #1 Open any "Course" record in second pane by clicking on it
         Courses.openCourseWithExpectedName(testData.course.name);
