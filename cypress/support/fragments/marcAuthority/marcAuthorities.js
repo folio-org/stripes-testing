@@ -390,6 +390,14 @@ export default {
     ]);
   },
 
+  verifyViewPaneContent(value) {
+    cy.expect([marcViewSection.exists(), marcViewSectionContent.has({ text: including(value) })]);
+  },
+
+  getViewPaneContent() {
+    cy.wrap(marcViewSectionContent.text()).as('viewAuthorityPaneContent');
+  },
+
   check010FieldAbsence: () => {
     cy.expect([editorSection.exists(), QuickMarcEditorRow({ tagValue: '010' }).absent()]);
   },
@@ -744,7 +752,11 @@ export default {
       );
     });
   },
-
+  verifyNoHeadingsUpdatesDataViaAPI(startDate, endDate) {
+    cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
+      cy.expect(updatesData.length).to.be.equal(0);
+    });
+  },
   verifyHeadingsUpdateExistsViaAPI(startDate, endDate, newHeading, matchesCounter = 1) {
     cy.getAuthorityHeadingsUpdatesViaAPI(startDate, endDate).then((updatesData) => {
       const selectedUpdate = updatesData.filter((update) => update.headingNew === newHeading);
@@ -805,6 +817,7 @@ export default {
       );
     }
   },
+
   verifyTextOfPaneHeaderMarcAuthority(text) {
     cy.expect(
       PaneHeader('MARC authority')

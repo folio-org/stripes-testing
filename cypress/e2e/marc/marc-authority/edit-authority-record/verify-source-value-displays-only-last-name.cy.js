@@ -32,7 +32,7 @@ describe('MARC', () => {
     before('Create test data', () => {
       cy.createTempUser([
         Permissions.dataImportUploadAll.gui,
-        Permissions.dataImportCanUploadImportAndView.gui,
+        Permissions.moduleDataImportEnabled.gui,
       ])
         .then((createdUserProperties) => {
           testData.firstUser = createdUserProperties;

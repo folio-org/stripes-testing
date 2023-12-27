@@ -725,6 +725,10 @@ export default {
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
   },
 
+  checkUndoDeleteAbsent() {
+    cy.get('#quick-marc-editor-pane').find('[class^=deletedRowPlaceholder-]').should('not.exist');
+  },
+
   afterDeleteNotificationNoTag() {
     cy.get('[class^=deletedRowPlaceholder-]').should(
       'include.text',
@@ -1352,6 +1356,21 @@ export default {
         );
       }
     });
+  },
+
+  verifyAllBoxesInARowAreEditable(tag) {
+    cy.expect([
+      getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: false }),
+    ]);
   },
 
   checkLDRValue(ldrValue = validRecord.ldrValue) {

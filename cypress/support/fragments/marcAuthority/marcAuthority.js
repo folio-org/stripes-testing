@@ -14,6 +14,7 @@ import {
   PaneHeader,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
+import DateTools from '../../utils/dateTools';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
@@ -338,5 +339,21 @@ export default {
 
   verifySearchPanesIsAbsent() {
     cy.expect([searchPane.absent(), rootSection.find(closeButton).exists()]);
+  },
+
+  verifyFieldContent: (rowIndex, updatedDate) => {
+    cy.get('table')
+      .find('tr')
+      .eq(rowIndex)
+      .find('td')
+      .then((elems) => {
+        const dateFromField = DateTools.convertMachineReadableDateToHuman(elems.eq(2).text());
+        const convertedUpdatedDate = new Date(updatedDate).getTime();
+        const convertedDateFromField = new Date(dateFromField).getTime();
+        const timeDifference = (convertedDateFromField - convertedUpdatedDate) / 1000;
+
+        // check that difference in time is less than 1 minute
+        expect(timeDifference).to.be.lessThan(120000);
+      });
   },
 };
