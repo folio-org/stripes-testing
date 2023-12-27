@@ -327,10 +327,6 @@ export default {
     );
   },
 
-  clearSelectedTags() {
-    cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());
-  },
-
   enterTag: (tag) => {
     cy.then(() => tagsAccordion.open()).then((isOpen) => {
       if (!isOpen) {
@@ -350,6 +346,10 @@ export default {
 
   addNewTag(tag) {
     cy.do([addTagInput.fillIn(tag), cy.wait(3000), MultiSelectOption(including(tag)).click()]);
+  },
+
+  clearSelectedTags() {
+    cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());
   },
 
   verifyAssignedTags(tag) {
