@@ -173,7 +173,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       QuickMarcEditor.pressCancel();
       InstanceRecordView.verifyInstancePaneExists();
 
-      InstanceRecordView.verifyContributorNameWithoutMarcAppIcon(1, 1, testData.authorityTitle);
+      InstanceRecordView.verifyContributorNameWithoutMarcAppIcon(0, testData.authorityTitle);
 
       InstanceRecordView.viewSource();
       InventoryViewSource.waitLoading();

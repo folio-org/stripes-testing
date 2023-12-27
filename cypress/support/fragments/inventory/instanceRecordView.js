@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, not } from '@interactors/html';
 import {
   KeyValue,
   MultiColumnList,
@@ -482,17 +482,11 @@ export default {
     );
   },
 
-  verifyContributorNameWithoutMarcAppIcon: (indexRow, indexColumn, value) => {
+  verifyContributorNameWithoutMarcAppIcon: (row, value) => {
     cy.expect(
       Accordion('Contributor')
-        .find(MultiColumnListRow({ index: indexRow }))
-        .find(
-          MultiColumnListCell({
-            columnIndex: indexColumn,
-            content: 'Linked to MARC authority' + value,
-          }),
-        )
-        .absent(),
+        .find(MultiColumnListCell({ row, content: including(value) }))
+        .has({ content: not(including('Linked to MARC authority')) }),
     );
   },
 
