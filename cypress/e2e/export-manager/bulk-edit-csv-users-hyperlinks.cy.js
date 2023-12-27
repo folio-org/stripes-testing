@@ -21,15 +21,14 @@ describe('export-manager', () => {
       permissions.bulkEditCsvEdit.gui,
       permissions.uiUserEdit.gui,
       permissions.exportManagerAll.gui,
-    ])
-      .then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+    ]).then((userProperties) => {
+      user = userProperties;
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
       });
+      FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+    });
   });
 
   after('delete test data', () => {
