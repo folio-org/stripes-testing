@@ -5,31 +5,36 @@ import {
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   VENDOR_NAMES,
-  // RECORD_STATUSES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-// import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-// import OrderLines from '../../../support/fragments/orders/orderLines';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-// import Orders from '../../../support/fragments/orders/orders';
-// import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import Orders from '../../../support/fragments/orders/orders';
 
 describe('data-import', () => {
   describe('Log details', () => {
     let user;
-    const filePathForCreateOrder = 'marcBibFileForC78893.mrc';
+    let orderNumber;
+    const filePathForCreateOrder = 'marcBibFileForC378893.mrc';
     const marcFileName = `C378893 autotestFileName ${getRandomPostfix()}`;
+    const title = 'Ella & Basie! [sound recording] / arranged by Quincy Jones.';
+    const productJson = {
+      productId: '"productId": "T90028"',
+      productIdType: '"productIdType": "b5d8cdc4-9441-487c-90cf-0c7ec97728eb"',
+    };
     const mappingProfile = {
       name: `C378893 Test multiple Product ID types: ISBN first${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -48,6 +53,11 @@ describe('data-import', () => {
       productId: '020$a',
       qualifier: '020$q',
       productIDType: 'ISBN',
+    };
+    const additionalProduct = {
+      id: '028$a',
+      qualifier: '',
+      idType: 'Publisher or distributor number',
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.ORDER,
@@ -75,29 +85,29 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        //     JobProfiles.deleteJobProfile(jobProfile.profileName);
-        //     ActionProfiles.deleteActionProfile(actionProfile.name);
-        //     FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-        //     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-        //       Orders.deleteOrderViaApi(orderId[0].id);
-        //     });
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
       });
     });
+
+    function createMappingProfile(profile, product) {
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillOrderMappingProfile(profile);
+      NewFieldMappingProfile.addAdditionalProductInfo(product);
+      NewFieldMappingProfile.save();
+      FieldMappingProfileView.closeViewMode(profile.name);
+    }
 
     it(
       'C378893 Verify no errors when importing orders with multiple product ID types mapped: Case 1 (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // create mapping profile
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
-        NewFieldMappingProfile.addProductId({
-          productId: '028$a',
-          qualifier: '',
-          productIDType: 'Publisher or distributor number',
-        });
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(mappingProfile.name);
+        createMappingProfile(mappingProfile, additionalProduct);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
         // create action profile
         cy.visit(SettingsMenu.actionProfilePath);
@@ -120,10 +130,20 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        // FileDetails.openJsonScreen(title);
-        // JsonScreenView.verifyJsonScreenIsOpened();
-        // JsonScreenView.openOrderTab();
-        // JsonScreenView.verifyContentInTab('T90028');
+        [
+          FileDetails.columnNameInResultList.srsMarc,
+          FileDetails.columnNameInResultList.order,
+        ].forEach((columnName) => {
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
+        });
+        FileDetails.openJsonScreen(title);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.openOrderTab();
+        JsonScreenView.verifyContentInTab(productJson.productId);
+        JsonScreenView.verifyContentInTab(productJson.productIdType);
+        JsonScreenView.getOrderNumber().then((number) => {
+          orderNumber = number;
+        });
       },
     );
   });
