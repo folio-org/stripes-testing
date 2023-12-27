@@ -76,6 +76,9 @@ export default {
   clickDeleteButtonInDeleteModal() {
     cy.do(deleteButtonInDeleteAdressModal.click());
   },
+  clickCancelButtonInDeleteModal() {
+    cy.do(cancelButtonInDeleteAdressModal.click());
+  },
   verifyCalloutForAddressDeletionAppears() {
     cy.expect(Callout({ textContent: including(deleteCalloutMessage[0]) }).exists());
     cy.expect(Callout({ textContent: including(deleteCalloutMessage[1]) }).exists());
