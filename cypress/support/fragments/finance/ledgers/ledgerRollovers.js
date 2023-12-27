@@ -68,14 +68,15 @@ export default {
     ledger,
     fromFiscalYear,
     toFiscalYear,
+    budgetsRollover = [
+      { addAvailableTo: 'Allocation', rolloverBudgetValue: 'None', rolloverAllocation: true },
+    ],
     encumbrancesRollover = [{ orderType: 'Ongoing', basedOn: 'InitialAmount' }],
     needCloseBudgets = true,
   }) {
     return {
       ledgerId: ledger.id,
-      budgetsRollover: [
-        { addAvailableTo: 'Allocation', rolloverBudgetValue: 'None', rolloverAllocation: true },
-      ],
+      budgetsRollover,
       encumbrancesRollover,
       needCloseBudgets,
       fromFiscalYearId: fromFiscalYear.id,
@@ -85,6 +86,16 @@ export default {
       rolloverType: 'Commit',
       id: uuid(),
     };
+  },
+  getLedgerRolloverViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'finance/ledger-rollovers',
+        method: 'GET',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body.ledgerFiscalYearRollovers);
   },
   createLedgerRolloverViaApi(ledgersProperties) {
     return cy

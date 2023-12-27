@@ -12,6 +12,8 @@ import {
   matching,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
+import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectLocationModal from './modals/selectLocationModal';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
@@ -87,6 +89,15 @@ export default {
   checkNotAvailableInstanceData(fields = []) {
     this.checkFieldsConditions({ fields, section: disabledButtons });
   },
+  checkLocationDetailsSection({ rows = [] } = {}) {
+    if (!rows.length) {
+      cy.expect([
+        locationSection.find(Selection({ name: 'locations[0].locationId' })).exists(),
+        locationSection.find(TextField({ name: 'locations[0].quantityPhysical' })).exists(),
+        locationSection.find(TextField({ name: 'locations[0].quantityElectronic' })).exists(),
+      ]);
+    }
+  },
   fillOrderLineFields(orderLine) {
     if (orderLine.itemDetails) {
       this.fillItemDetails(orderLine.itemDetails);
@@ -112,6 +123,25 @@ export default {
     if (orderLine.paymentStatus) {
       cy.do(orderLineFields.paymentStatus.choose(orderLine.paymentStatus));
     }
+  },
+  clickTitleLookUpButton() {
+    cy.do(itemDetailsSection.find(Button('Title look-up')).click());
+    SelectInstanceModal.waitLoading();
+    SelectInstanceModal.verifyModalView();
+
+    return SelectInstanceModal;
+  },
+  clickLocationLookUpButton() {
+    cy.do(locationSection.find(Button('Location look-up')).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.verifyModalView();
+
+    return SelectLocationModal;
+  },
+  fillItemDetailsTitle({ instanceTitle }) {
+    this.clickTitleLookUpButton();
+    SelectInstanceModal.searchByName(instanceTitle);
+    SelectInstanceModal.selectInstance(instanceTitle);
   },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
@@ -151,6 +181,18 @@ export default {
       });
     });
   },
+  searchLocationByName({ name, checkOptions = true }) {
+    this.filterDropDownValue('Name (code)', name);
+
+    if (checkOptions) {
+      cy.then(() => SelectionList().optionList()).then((options) => {
+        options.forEach((option) => cy.expect(option).to.include(name));
+      });
+    }
+  },
+  clickAddLocationButton() {
+    cy.do(Button('Add location').click());
+  },
   clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
   },
@@ -171,6 +213,14 @@ export default {
         .click(),
     );
     cy.wait(2000);
+  },
+  filterDropDownValue(label, option, index = 0) {
+    cy.do([
+      RepeatableFieldItem({ index })
+        .find(Selection(including(label)))
+        .open(),
+      SelectionList().filter(option),
+    ]);
   },
   selectDropDownValue(label, option, index = 0) {
     cy.do([
@@ -246,5 +296,8 @@ export default {
 
     // wait for changes to be applied
     cy.wait(2000);
+  },
+  verifyOrderLineEditFormClosed() {
+    cy.expect(orderLineEditFormRoot.absent());
   },
 };

@@ -47,7 +47,7 @@ describe('Check out', () => {
         query: `"barcode"=="${itemBarcode}"`,
       }).then((res) => {
         const itemData = res;
-        note1.date = DateTools.getFormattedDateWithTime(new Date(), true);
+        note1.date = DateTools.getFormattedDateWithTime(new Date(), { withoutComma: true });
         itemData.circulationNotes = [{ noteType: 'Check out', note: note1.title, staffOnly: true }];
         InventoryItems.editItemViaApi(itemData);
       });
@@ -61,7 +61,7 @@ describe('Check out', () => {
         query: `"barcode"=="${itemBarcode}"`,
       }).then((res) => {
         const itemData = res;
-        note2.date = DateTools.getFormattedDateWithTime(new Date(), true);
+        note2.date = DateTools.getFormattedDateWithTime(new Date(), { withoutComma: true });
         itemData.circulationNotes = [
           ...itemData.circulationNotes,
           {

@@ -19,14 +19,12 @@ const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('csv approach', () => {
     before('create test data', () => {
-      cy.createTempUser(
-        [
-          Permissions.bulkEditCsvView.gui,
-          Permissions.bulkEditCsvEdit.gui,
-          Permissions.bulkEditLogsView.gui,
-          Permissions.uiUserEdit.gui,
-        ]
-      ).then((userProperties) => {
+      cy.createTempUser([
+        Permissions.bulkEditCsvView.gui,
+        Permissions.bulkEditCsvEdit.gui,
+        Permissions.bulkEditLogsView.gui,
+        Permissions.uiUserEdit.gui,
+      ]).then((userProperties) => {
         user = userProperties;
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -111,10 +109,7 @@ describe('bulk-edit', () => {
         BulkEditActions.clickNext();
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.verifyChangesUnderColumns(
-          'First name',
-          newFirstName
-        );
+        BulkEditSearchPane.verifyChangesUnderColumns('First name', newFirstName);
       },
     );
   });

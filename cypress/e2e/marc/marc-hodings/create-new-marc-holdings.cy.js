@@ -194,7 +194,9 @@ describe('MARC -> MARC Holdings', () => {
       InventoryInstance.checkExpectedMARCSource();
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.waitLoading();
+      QuickMarcEditor.verifySaveAndCloseButtonEnabled(false);
       QuickMarcEditor.updateExistingField(testData.tag852, QuickMarcEditor.getExistingLocation());
+      QuickMarcEditor.verifySaveAndCloseButtonEnabled();
       QuickMarcEditor.addEmptyFields(5);
       QuickMarcEditor.updateExistingTagValue(6, testData.tag866);
       QuickMarcEditor.updateExistingField(testData.tag866, testData.tag866Value);
@@ -239,7 +241,7 @@ describe('MARC -> MARC Holdings', () => {
       HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
         recordIDs.push(holdingsID);
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
+        InventoryInstance.openHoldingViewByID(holdingsID);
         HoldingsRecordView.viewSource();
         InventoryViewSource.checkFieldContentMatch(
           testData.tag001,

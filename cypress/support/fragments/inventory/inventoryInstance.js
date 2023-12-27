@@ -70,6 +70,10 @@ const descriptiveDataAccordion = Accordion('Descriptive data');
 const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }));
 const titleDataAccordion = Accordion('Title data');
 const contributorAccordion = Accordion('Contributor');
+const acquisitionAccordion = Accordion('Acquisition');
+const listInstanceAcquisitions = acquisitionAccordion.find(
+  MultiColumnList({ id: 'list-instance-acquisitions' }),
+);
 const callNumberTextField = TextArea('Call number');
 const copyNumberTextField = TextField('Copy number');
 const callNumSuffixTextField = TextArea('Call number suffix');
@@ -159,8 +163,8 @@ const validOCLC = {
     ctry: { interactor: TextField('Ctry'), defaultValue: 'ru\\' },
     desc: { interactor: TextField('MRec'), defaultValue: 'o' },
     dtSt: { interactor: TextField('DtSt'), defaultValue: 's' },
-    startDate: { interactor: TextField('Start date'), defaultValue: '2007' },
-    endDate: { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
+    startDate: { interactor: TextField('Date 1'), defaultValue: '2007' },
+    endDate: { interactor: TextField('Date 2'), defaultValue: '\\\\\\\\' },
   },
 };
 
@@ -356,6 +360,36 @@ export default {
 
   openSubjectAccordion: () => cy.do(Accordion('Subject').click()),
 
+  checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
+    if (isPresent) {
+      cy.expect(
+        MultiColumnList(sectionId)
+          .find(MultiColumnListCell({ content: `Linked to MARC authority${value}` }))
+          .find(marcAuthorityAppIcon)
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        MultiColumnList(sectionId)
+          .find(MultiColumnListCell({ content: value }))
+          .find(marcAuthorityAppIcon)
+          .absent(),
+      );
+    }
+  },
+
+  checkAuthorityAppIconLink: (sectionId, title, authorityId) => {
+    cy.expect(
+      MultiColumnList(sectionId)
+        .find(MultiColumnListCell({ content: `Linked to MARC authority${title}` }))
+        .find(Button())
+        .has({
+          href: `/marc-authorities/authorities/${authorityId}?authRefType=Authorized&segment=search`,
+          target: '_blank',
+        }),
+    );
+  },
+
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -397,6 +431,7 @@ export default {
   },
 
   viewSource: () => {
+    cy.wait(2000);
     cy.do(actionsButton.click());
     cy.wait(2000);
     cy.do(viewSourceButton.click());
@@ -1158,8 +1193,12 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
   },
 
-  verifyItemBarcode(barcode) {
-    cy.expect(MultiColumnListCell({ content: barcode }).exists());
+  verifyItemBarcode(barcode, isExist = true) {
+    if (isExist) {
+      cy.expect(MultiColumnListCell({ content: barcode }).exists());
+    } else {
+      cy.expect(MultiColumnListCell({ content: barcode }).absent());
+    }
   },
 
   openItemByBarcodeAndIndex: (barcode) => {
@@ -1263,17 +1302,48 @@ export default {
 
   verifyOrdersCount(ordersCount) {
     if (ordersCount === 0) {
-      cy.expect(
-        Accordion({ label: including('Acquisition') })
-          .find(MultiColumnList({ id: 'list-instance-acquisitions' }))
-          .absent(),
-      );
+      cy.expect(listInstanceAcquisitions.absent());
     } else {
-      cy.expect(
-        Accordion({ label: including('Acquisition') })
-          .find(MultiColumnList({ id: 'list-instance-acquisitions' }))
-          .has({ rowCount: ordersCount }),
-      );
+      cy.expect(listInstanceAcquisitions.has({ rowCount: ordersCount }));
     }
+  },
+  checkAcquisitionsDetails(orderLines = []) {
+    orderLines.forEach((item, index) => {
+      if (item.polNumber) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
+            .has({ content: including(item.polNumber) }),
+        );
+      }
+      if (item.orderStatus) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'Order status' }))
+            .has({ content: including(item.orderStatus) }),
+        );
+      }
+      if (item.receiptStatus) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'POL receipt status' }))
+            .has({ content: including(item.receiptStatus) }),
+        );
+      }
+      if (item.unit) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'Acquisition unit' }))
+            .has({ content: including(item.unit) }),
+        );
+      }
+      if (item.orderType) {
+        cy.expect(
+          acquisitionAccordion
+            .find(MultiColumnListCell({ row: index, column: 'Order type' }))
+            .has({ content: including(item.orderType) }),
+        );
+      }
+    });
   },
 };

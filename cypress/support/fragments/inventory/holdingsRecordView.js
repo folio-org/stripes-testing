@@ -159,8 +159,8 @@ export default {
       .find(MultiColumnListCell({ content: code }))
       .exists(),
   ),
-  checkHoldingsNote: (value) => cy.expect(
-    MultiColumnList({ id: 'list-holdings-notes-0' })
+  checkHoldingsNote: (value, row = 0) => cy.expect(
+    MultiColumnList({ id: `list-holdings-notes-${row}` })
       .find(MultiColumnListCell({ content: value }))
       .exists(),
   ),

@@ -117,7 +117,7 @@ describe('Finance', () => {
         // Click on Ledger name link from preconditions
         FinanceHelper.searchByName(ledgers.first.name);
         const LedgerDetails = Ledgers.selectLedger(ledgers.first.name);
-        LedgerDetails.checkLedgeDetails({ funds: [] });
+        LedgerDetails.checkLedgerDetails({ funds: [] });
 
         // Export budget information for Ledger #1
         const ExportBudgetModal = LedgerDetails.exportBudgetInformation({
@@ -129,16 +129,14 @@ describe('Finance', () => {
 
         // Open downloaded file, Check "Name (Budget)", "Name(Fund)" columns
         FileManager.convertCsvToJson(testData.fileMasks.first).then((data) => {
-          const budget = data[0];
-
-          cy.expect('No budget found').to.equal(budget['"Name(Budget)"']);
-          cy.expect(funds.first.name).to.equal(budget['"Name(Fund)"']);
+          cy.expect(data[0]['Name (Budget)']).to.equal('No budget found');
+          cy.expect(data[0]['Name (Fund)']).to.equal(funds.first.name);
         });
 
         // Open Ledger #2 from Preconditions details pane
         cy.visit(`${TopMenu.ledgerPath}?query=${ledgers.second.name}`);
         Ledgers.selectLedger(ledgers.second.name);
-        LedgerDetails.checkLedgeDetails({ funds: [{ name: funds.second.name }] });
+        LedgerDetails.checkLedgerDetails({ funds: [{ name: funds.second.name }] });
 
         // Export budget information for Ledger #1
         LedgerDetails.exportBudgetInformation({
@@ -150,16 +148,14 @@ describe('Finance', () => {
 
         // Open downloaded file, Check "Name (Budget)", "Name(Fund)" columns
         FileManager.convertCsvToJson(testData.fileMasks.second).then((data) => {
-          const budget = data[0];
-
-          cy.expect(budgets.second.name).to.equal(budget['"Name(Budget)"']);
-          cy.expect(funds.second.name).to.equal(budget['"Name(Fund)"']);
+          cy.expect(data[0]['Name (Budget)']).to.equal(budgets.second.name);
+          cy.expect(data[0]['Name (Fund)']).to.equal(funds.second.name);
         });
 
         // Open Ledger #3 from Preconditions details pane
         cy.visit(`${TopMenu.ledgerPath}?query=${ledgers.third.name}`);
         Ledgers.selectLedger(ledgers.third.name);
-        LedgerDetails.checkLedgeDetails({ funds: [{ name: funds.third.name }] });
+        LedgerDetails.checkLedgerDetails({ funds: [{ name: funds.third.name }] });
 
         // Export budget information for Ledger #1
         LedgerDetails.exportBudgetInformation({
@@ -172,10 +168,10 @@ describe('Finance', () => {
         // Open downloaded file, Check "Name (Budget)", "Name(Fund)", "Name (ExpClass)" columns
         FileManager.convertCsvToJson(testData.fileMasks.third).then((data) => {
           data.forEach((budget) => {
-            cy.expect(funds.third.name).to.equal(budget['"Name(Fund)"']);
-            cy.expect(budgets.third.name).to.equal(budget['"Name(Budget)"']);
+            cy.expect(funds.third.name).to.equal(budget['Name (Fund)']);
+            cy.expect(budgets.third.name).to.equal(budget['Name (Budget)']);
             cy.expect(expenseClasses.map(({ name }) => name)).to.include(
-              budget['"Name(ExpClass)"'],
+              budget['Name (Exp Class)'],
             );
           });
         });
