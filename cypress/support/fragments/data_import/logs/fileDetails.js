@@ -296,6 +296,16 @@ export default {
     );
   },
 
+  openErrorInSummaryTable: (row) => {
+    cy.do(
+      jobSummaryTable
+        .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+        .find(MultiColumnListCell({ columnIndex: 8 }))
+        .find(Link())
+        .click(),
+    );
+  },
+
   openOrder: (itemStatus, rowNumber = 0) => {
     cy.do(
       resultsList
