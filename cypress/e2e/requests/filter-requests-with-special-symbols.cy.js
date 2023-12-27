@@ -143,9 +143,9 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
       Requests.openTagsPane();
       Requests.verifyAssignedTags(tag);
 
-      Requests.clearSelectedTag();
+      Requests.clearSelectedTags();
       Requests.verifyNoResultMessage('Choose a filter or enter a search query to show results.');
-      Requests.filterRequestsByTag(tag);
+      Requests.enterTypeOfHeading(tag);
       Requests.verifyAssignedTags(tag);
     },
   );
