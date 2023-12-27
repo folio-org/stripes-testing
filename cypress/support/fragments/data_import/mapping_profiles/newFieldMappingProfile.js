@@ -1061,6 +1061,33 @@ export default {
   checkNewMatchProfileFormIsOpened: () => {
     cy.expect(Pane('New field mapping profile').exists());
   },
+
+  createMappingProfileForUpdateMarcBibViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+            existingRecordType: 'MARC_BIBLIOGRAPHIC',
+            description: '',
+            mappingDetails: {
+              name: 'marcBib',
+              recordType: 'MARC_BIBLIOGRAPHIC',
+              marcMappingDetails: [],
+              marcMappingOption: 'UPDATE',
+            },
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
   checkPreviouslyPopulatedDataIsDisplayed: (profile) => {
     cy.expect([
       nameField.has({ value: profile.name }),
