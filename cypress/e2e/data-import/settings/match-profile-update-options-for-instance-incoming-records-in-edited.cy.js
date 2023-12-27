@@ -37,6 +37,10 @@ describe('data-import', () => {
 
       cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.settingsPath,
+          waiter: SettingsPane.waitLoading,
+        });
       });
     });
 
@@ -52,10 +56,6 @@ describe('data-import', () => {
       { tags: ['extendedPath', 'folijet'] },
       () => {
         // Go to "Settings" application-> "Data import" section-> "Match profiles" section
-        cy.login(user.username, user.password, {
-          path: TopMenu.settingsPath,
-          waiter: SettingsPane.waitLoading,
-        });
         SettingsDataImport.goToSettingsDataImport();
         DataImport.selectDataImportProfile('Match profiles');
 
