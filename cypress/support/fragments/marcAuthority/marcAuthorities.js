@@ -809,6 +809,7 @@ export default {
       );
     }
   },
+
   verifyTextOfPaneHeaderMarcAuthority(text) {
     cy.expect(
       PaneHeader('MARC authority')
