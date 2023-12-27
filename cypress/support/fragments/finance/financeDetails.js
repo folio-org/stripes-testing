@@ -89,6 +89,52 @@ export default {
       cy.expect(section.find(HTML('The list contains no items')).exists());
     }
   },
+  checkExpenseClassesTableContent({ section, items }) {
+    items.forEach((item, index) => {
+      if (item.name) {
+        cy.expect(
+          section
+            .find(MultiColumnListCell({ row: index, column: 'Expense class' }))
+            .has({ content: including(item.name) }),
+        );
+      }
+      if (item.encumbered) {
+        cy.expect(
+          section
+            .find(MultiColumnListCell({ row: index, column: 'Encumbered' }))
+            .has({ content: including(item.encumbered) }),
+        );
+      }
+      if (item.awaitingPayment) {
+        cy.expect(
+          section
+            .find(MultiColumnListCell({ row: index, column: 'Awaiting payment' }))
+            .has({ content: including(item.awaitingPayment) }),
+        );
+      }
+      if (item.expended) {
+        cy.expect(
+          section
+            .find(MultiColumnListCell({ row: index, column: 'Expended' }))
+            .has({ content: including(item.expended) }),
+        );
+      }
+      if (item.percentExpended) {
+        cy.expect(
+          section
+            .find(MultiColumnListCell({ row: index, column: 'Percent of total expended' }))
+            .has({ content: including(item.percentExpended) }),
+        );
+      }
+      if (item.status) {
+        cy.expect(
+          section
+            .find(MultiColumnListCell({ row: index, column: 'Status' }))
+            .has({ content: including(item.status) }),
+        );
+      }
+    });
+  },
   checkLedgersDetails(ledgers = []) {
     this.checkTableContent({ section: ledgersSection, items: ledgers });
   },
@@ -98,13 +144,16 @@ export default {
   checkFundsDetails(funds = []) {
     this.checkTableContent({ section: fundsSection, items: funds });
   },
+  openItemDetails({ section, name }) {
+    cy.do(section.find(MultiColumnListCell({ content: name })).click());
+  },
   openLedgerDetails(name) {
-    cy.do(ledgersSection.find(MultiColumnListCell({ content: name })).click());
+    this.openItemDetails({ section: ledgersSection, name });
   },
   openGroupDetails(name) {
-    cy.do(groupsSection.find(MultiColumnListCell({ content: name })).click());
+    this.openItemDetails({ section: groupsSection, name });
   },
   openFundDetails(name) {
-    cy.do(fundsSection.find(MultiColumnListCell({ content: name })).click());
+    this.openItemDetails({ section: fundsSection, name });
   },
 };
