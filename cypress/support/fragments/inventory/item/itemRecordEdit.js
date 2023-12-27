@@ -8,6 +8,8 @@ import {
   including,
   matching,
   PaneHeader,
+  SelectionList,
+  SelectionOption,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import InstanceStates from '../instanceStates';
@@ -30,6 +32,12 @@ const itemDataFields = {
 const loanDataFields = {
   loanType: itemEditForm.find(Select({ id: 'additem_loanTypePerm' })),
 };
+
+const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
+const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
+
+const permanentLocationDropdown = Button({ id: 'additem_permanentlocation' });
+const permanentLocationList = SelectionList({ id: 'sl-container-additem_permanentlocation' });
 
 export default {
   waitLoading: (itemTitle) => {
@@ -88,5 +96,19 @@ export default {
   chooseItemPermanentLoanType: (permanentLoanType) => {
     cy.do(loanDataFields.loanType.choose(permanentLoanType));
     cy.expect(loanDataFields.loanType.has({ checkedOptionText: permanentLoanType }));
+  },
+  openTemporaryLocation() {
+    cy.do(temporaryLocationDropdown.click());
+  },
+  verifyTemporaryLocationItemExists: (temporarylocation) => {
+    cy.expect(temporaryLocationList.exists());
+    cy.expect(temporaryLocationList.find(SelectionOption(including(temporarylocation))).exists());
+  },
+  openPermanentLocation() {
+    cy.do(permanentLocationDropdown.click());
+  },
+  verifyPermanentLocationItemExists: (permanentLocation) => {
+    cy.expect(permanentLocationList.exists());
+    cy.expect(permanentLocationList.find(SelectionOption(including(permanentLocation))).exists());
   },
 };

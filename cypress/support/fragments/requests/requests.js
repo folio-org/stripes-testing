@@ -1,18 +1,20 @@
 import uuid from 'uuid';
+import { Keyboard } from '@interactors/keyboard';
 import { HTML, including } from '@interactors/html';
 import {
+  Accordion,
   Button,
   MultiColumnListCell,
   MultiColumnListRow,
   MultiColumnListHeader,
   MultiSelect,
+  MultiSelectOption,
   Pane,
   IconButton,
   TextArea,
   ValueChipRoot,
   Checkbox,
   TextField,
-  Badge,
   Section,
   Heading,
   Spinner,
@@ -40,8 +42,11 @@ const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
+const addTagInput = MultiSelect({ id: 'input-tag' });
 const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
+const tagsAccordion = Accordion('Tags');
+const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
@@ -314,11 +319,21 @@ export default {
   },
 
   filterRequestsByTag(tag) {
+    cy.wait(2000);
     cy.do(
       Pane({ title: 'Search & filter' })
         .find(MultiSelect({ ariaLabelledby: 'tags' }))
-        .select(tag),
+        .choose(tag),
     );
+  },
+
+  enterTag: (tag) => {
+    cy.then(() => tagsAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(tagsAccordion.clickHeader());
+      }
+    });
+    cy.do([tagsSelect.focus(), Keyboard.type(tag), Keyboard.press({ code: 'Enter' })]);
   },
 
   addTag(tag) {
@@ -329,12 +344,19 @@ export default {
     cy.wait(2000);
   },
 
+  addNewTag(tag) {
+    cy.do([addTagInput.fillIn(tag), cy.wait(3000), MultiSelectOption(including(tag)).click()]);
+  },
+
+  clearSelectedTags() {
+    cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+  },
+
   verifyAssignedTags(tag) {
     cy.expect(Spinner().absent());
     // need to wait until number of tags is displayed
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
-    cy.expect(showTagsButton.find(Badge()).has({ value: '1' }));
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
 

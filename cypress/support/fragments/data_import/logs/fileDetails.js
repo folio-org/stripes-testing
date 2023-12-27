@@ -344,10 +344,10 @@ export default {
     cy.wait(2000);
   },
 
-  openJsonScreenByStatus: (importStatus, title) => {
+  openJsonScreenByStatus: (importStatus, title, columnNumber = 2) => {
     cy.do(
       resultsList
-        .find(MultiColumnListCell({ content: importStatus, columnIndex: 2 }))
+        .find(MultiColumnListCell({ content: importStatus, columnIndex: columnNumber }))
         .perform((element) => {
           const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
