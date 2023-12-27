@@ -45,8 +45,8 @@ const tagsPane = Pane({ title: 'Tags' });
 const addTagInput = MultiSelect({ id: 'input-tag' });
 const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
-const headingTagsAccordion = Accordion('Tags');
-const tagsHeadingSelect = MultiSelect({ ariaLabelledby: including('tags') });
+const tagsAccordion = Accordion('Tags');
+const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
@@ -328,24 +328,16 @@ export default {
   },
 
   clearSelectedTags() {
-    cy.do(
-      Accordion({ id: 'tags' })
-        .find(Button({ icon: 'times-circle-solid' }))
-        .click(),
-    );
+    cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());
   },
 
-  enterTypeOfHeading: (headingType) => {
-    cy.then(() => headingTagsAccordion.open()).then((isOpen) => {
+  enterTag: (tag) => {
+    cy.then(() => tagsAccordion.open()).then((isOpen) => {
       if (!isOpen) {
-        cy.do(headingTagsAccordion.clickHeader());
+        cy.do(tagsAccordion.clickHeader());
       }
     });
-    cy.do([
-      tagsHeadingSelect.focus(),
-      Keyboard.type(headingType),
-      Keyboard.press({ code: 'Enter' }),
-    ]);
+    cy.do([tagsSelect.focus(), Keyboard.type(tag), Keyboard.press({ code: 'Enter' })]);
   },
 
   addTag(tag) {
