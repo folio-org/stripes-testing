@@ -62,7 +62,6 @@ describe('bulk-edit', () => {
         ItemRecordView.waitLoading();
         InventoryItems.edit();
         ItemRecordEdit.addItemsNotes(itemNote, noteType);
-        cy.pause();
         ItemRecordEdit.saveAndClose({ itemSaved: true });
         cy.visit(TopMenu.bulkEditPath);
       });
