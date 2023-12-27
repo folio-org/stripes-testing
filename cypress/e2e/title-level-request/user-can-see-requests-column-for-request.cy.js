@@ -9,7 +9,6 @@ import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
 import Requests from '../../support/fragments/requests/requests';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -22,7 +21,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Request Detail.TLR', () => {
+describe('Title Level Request. Request Detail', () => {
   let userData = {};
   let userForTLR = {};
   const requestIds = [];
@@ -41,7 +40,6 @@ describe('Request Detail.TLR', () => {
     name: `requestPolicy${getRandomPostfix()}`,
     id: uuid(),
   };
-
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
@@ -121,18 +119,16 @@ describe('Request Detail.TLR', () => {
         permissions.uiRequestsCreate.gui,
         permissions.requestsAll.gui,
         permissions.uiRequestsEdit.gui,
-        permissions.uiMoveRequest.gui,
-        permissions.uiRequestsReorderQueue.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
+      cy.log(JSON.stringify(userProperties));
       userData = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
         userData.userId,
         testData.userServicePoint.id,
       );
-      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
       Requests.createNewRequestViaApi({
         fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
         holdingsRecordId: testData.holdingTypeId,
@@ -165,6 +161,10 @@ describe('Request Detail.TLR', () => {
     });
   });
 
+  afterEach('Reset filters', () => {
+    Requests.resetAllFilters();
+  });
+
   after('Deleting created entities', () => {
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,
@@ -189,25 +189,19 @@ describe('Request Detail.TLR', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id,
     );
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
 
   it(
-    'C350563 Check that the user can click on the "Reorder queue" option (vega) (TaaS)',
-    { tags: ['extendedPath', 'vega'] },
+    'C350414 Check that user can see "Requests" columns (vega) (TaaS)',
+    { tags: ['extended', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
-      Requests.findCreatedRequest(instanceData.title);
-      Requests.selectFirstRequest(instanceData.title);
-      RequestDetail.waitLoading();
-      RequestDetail.openActions();
-      RequestDetail.verifyActionButtonsPresence();
-      RequestDetail.clickReorderQueue();
-      RequestDetail.verifyQueueInstance(instanceData.title);
-      RequestDetail.verifyAccordionsPresence();
-      RequestDetail.verifyRequestQueueColumnsPresence();
-      Requests.closeRequestQueue();
-      RequestDetail.verifyAccordionsPresence(false);
+      Requests.waitUIFilteredByRequestType();
+      Requests.verifyColumnsPresence();
+
+      Requests.selectTitleRequestLevel();
+      Requests.waitUIFilteredByRequestType();
+      Requests.verifyColumnsPresence();
     },
   );
 });

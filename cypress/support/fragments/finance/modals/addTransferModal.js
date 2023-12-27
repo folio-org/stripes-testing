@@ -12,10 +12,12 @@ import {
   including,
   matching,
 } from '../../../../../interactors';
+import { TRANSFER_ACTIONS } from '../transfer/constants';
 import InteractorsTools from '../../../utils/interactorsTools';
 import States from '../states';
 
 const addTransferModal = Modal({ id: 'add-transfer-modal' });
+const fundSelection = addTransferModal.find(Selection('Fund'));
 const fromSelection = addTransferModal.find(Selection('From'));
 const toSelection = addTransferModal.find(Selection('To'));
 const amountTextField = addTransferModal.find(TextField({ name: 'amount' }));
@@ -26,11 +28,14 @@ const cancelButton = addTransferModal.find(Button('Cancel'));
 const confirmButton = addTransferModal.find(Button('Confirm'));
 
 export default {
-  verifyModalView({ header = 'Transfer' } = {}) {
+  verifyModalView({ header = TRANSFER_ACTIONS.TRANSFER } = {}) {
+    if (header === TRANSFER_ACTIONS.DECREASE_ALLOCATION) {
+      cy.expect(fundSelection.exists());
+    } else {
+      cy.expect([fromSelection.exists(), toSelection.exists()]);
+    }
     cy.expect([
       addTransferModal.has({ header }),
-      fromSelection.exists(),
-      toSelection.exists(),
       amountTextField.exists(),
       tagsMultiSelect.exists(),
       descriptionTextArea.exists(),
@@ -67,12 +72,13 @@ export default {
     cy.expect(addTransferModal.absent());
   },
   clickConfirmButton({ transferCreated = true, ammountAllocated = false, confirmNegative } = {}) {
+    cy.wait(300);
     cy.do(confirmButton.click());
 
     if (confirmNegative) {
       const confirmationModal = ConfirmationModal({
         header: 'Negative available amount',
-        message: matching(new RegExp(States.transferConfirmation)),
+        message: matching(new RegExp(States.negativeAmountConfirmation)),
       });
       cy.expect(confirmationModal.exists());
 
