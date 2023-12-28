@@ -1700,6 +1700,10 @@ export default {
     ]);
   },
 
+  verifyRemoveLinkingModalAbsence() {
+    cy.expect([removeLinkingModal.absent()]);
+  },
+
   confirmRemoveAuthorityLinking() {
     cy.do(removeLinkingModal.find(removeLinkingButton).click());
     cy.expect([removeLinkingModal.absent(), rootSection.exists()]);
