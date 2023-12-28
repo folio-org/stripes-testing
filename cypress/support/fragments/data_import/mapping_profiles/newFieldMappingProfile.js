@@ -49,6 +49,7 @@ const titleField = TextField('Title*');
 const incomingRecordTypeField = Select({ name: 'profile.incomingRecordType' });
 const currencyField = TextField('Currency*');
 const vendor = TextField('Vendor*');
+const purchaseOrderLinesLimit = TextField('Purchase order lines limit setting');
 const noteTypeField = TextField('Note type');
 const reEncumberField = TextField('Re-encumber');
 const purchaseOrderStatus = TextField('Purchase order status*');
@@ -1193,5 +1194,9 @@ export default {
 
   isPurchaseOrderStatusFieldFocused: (value) => {
     purchaseOrderStatus.has({ focused: value });
+  },
+
+  verifyDefaultPurchaseOrderLinesLimit(value) {
+    cy.expect(purchaseOrderLinesLimit.has({ value }));
   },
 };

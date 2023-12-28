@@ -791,6 +791,14 @@ export default {
     );
   },
 
+  checkContentByTag(content, tag) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextArea())
+        .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
+    );
+  },
+
   verifyEditableFieldIcons(rowNumber) {
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).exists());
@@ -1698,6 +1706,10 @@ export default {
         ),
       }),
     ]);
+  },
+
+  verifyRemoveLinkingModalAbsence() {
+    cy.expect([removeLinkingModal.absent()]);
   },
 
   confirmRemoveAuthorityLinking() {
