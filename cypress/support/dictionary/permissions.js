@@ -262,12 +262,8 @@ export default {
     internal: 'data-import.upload.all',
     gui: 'Data Import File Upload - all permissions',
   },
-  dataImportCanUploadImportAndView: {
-    internal: 'ui-data-import.manage',
-    gui: 'Data import: Can upload files, import, and view logs',
-  },
   moduleDataImportEnabled: {
-    internal: 'ui-data-import.settings.manage',
+    internal: 'ui-data-import.manage',
     gui: 'Data import: Can upload files, import, and view logs',
   },
   dataImportDeleteLogs: {
