@@ -3,4 +3,6 @@ export default {
   jobProfileCreatedSuccessfully: 'The job profile (?:\\S+) was successfully created',
   fieldMappingProfileCreatedSuccessfully:
     'The field mapping profile "(?:\\S+)" was successfully created',
+  fieldMappingProfileUpdateSuccessfully:
+    'The field mapping profile "(?:\\S+)" was successfully updated',
 };
