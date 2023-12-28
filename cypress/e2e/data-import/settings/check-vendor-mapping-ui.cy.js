@@ -11,7 +11,6 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
-import SettingsMappingProfiles from '../../../support/fragments/settings/dataImport/settingsMappingProfiles';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
 
@@ -56,11 +55,7 @@ describe('data-import', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      FieldMappingProfiles.getFieldMappingProfileInDataImport({
-        query: `"name"=="${mappingProfile.name}"`,
-      }).then((response) => {
-        SettingsMappingProfiles.deleteMappingProfileApi(response.id);
-      });
+      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
     });
 
     it(
