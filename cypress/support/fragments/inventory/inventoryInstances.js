@@ -774,20 +774,32 @@ export default {
       });
   },
 
-  deleteInstanceViaApi({ instance, servicePoint, shouldCheckIn = false }) {
-    instance.items.forEach(({ id: itemId, barcode }) => {
-      if (shouldCheckIn) {
-        CheckinActions.checkinItemViaApi({
-          itemBarcode: barcode,
-          claimedReturnedResolution: 'Returned by patron',
-          servicePointId: servicePoint.id,
-        });
-      }
-      InventoryItems.deleteItemViaApi(itemId);
-    });
-    instance.holdings.forEach(({ id: holdingId }) => {
-      InventoryHoldings.deleteHoldingRecordViaApi(holdingId);
-    });
+  deleteInstanceViaApi({
+    instance,
+    servicePoint,
+    shouldDeleteItems = true,
+    shouldDeleteHoldings = true,
+    shouldCheckIn = false,
+  }) {
+    if (shouldDeleteItems) {
+      instance.items.forEach(({ id: itemId, barcode }) => {
+        if (shouldCheckIn) {
+          CheckinActions.checkinItemViaApi({
+            itemBarcode: barcode,
+            claimedReturnedResolution: 'Returned by patron',
+            servicePointId: servicePoint.id,
+          });
+        }
+        InventoryItems.deleteItemViaApi(itemId);
+      });
+    }
+
+    if (shouldDeleteHoldings) {
+      instance.holdings.forEach(({ id: holdingId }) => {
+        InventoryHoldings.deleteHoldingRecordViaApi(holdingId);
+      });
+    }
+
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
 
