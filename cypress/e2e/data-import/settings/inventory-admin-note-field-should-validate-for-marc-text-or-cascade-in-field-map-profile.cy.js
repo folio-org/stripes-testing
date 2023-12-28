@@ -6,6 +6,7 @@ import {
   MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -68,7 +69,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         collectionOfMappingProfiles.forEach((profile) => {
-          FieldMappingProfileView.deleteViaApi(profile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(profile.name);
         });
         Users.deleteViaApi(user.userId);
       });

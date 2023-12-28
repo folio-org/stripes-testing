@@ -24,6 +24,12 @@ import {
   EXISTING_RECORDS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -196,10 +202,10 @@ describe('data-import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
       testData.createdRecordIDs.forEach((id, index) => {

@@ -7,6 +7,12 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -110,10 +116,10 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);

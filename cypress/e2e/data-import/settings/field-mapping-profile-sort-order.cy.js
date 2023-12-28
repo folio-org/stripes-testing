@@ -1,5 +1,6 @@
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -36,7 +37,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      testData.mappingProfiles.forEach((mappingProfile) => FieldMappingProfileView.deleteViaApi(mappingProfile.name));
+      testData.mappingProfiles.forEach((mappingProfile) => SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name));
     });
 
     it(
