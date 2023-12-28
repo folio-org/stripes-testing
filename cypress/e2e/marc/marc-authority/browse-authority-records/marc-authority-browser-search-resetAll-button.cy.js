@@ -59,8 +59,8 @@ describe('MARC -> MARC Authority', () => {
   after('Deleting created user', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
-    createdAuthorityIDs.forEach((id, index) => {
-      if (index) MarcAuthority.deleteViaAPI(id);
+    createdAuthorityIDs.forEach((id) => {
+      MarcAuthority.deleteViaAPI(id);
     });
   });
 
