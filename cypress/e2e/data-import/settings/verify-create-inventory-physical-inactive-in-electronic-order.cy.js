@@ -7,7 +7,6 @@ import {
 } from '../../../support/constants';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import FieldMappingProfilesSettings from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
@@ -104,11 +103,7 @@ describe('data-import', () => {
     after('Delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      FieldMappingProfiles.getFieldMappingProfileInDataImport({
-        query: `"name"=="${mappingProfileC380508.name}"`,
-      }).then((response) => {
-        FieldMappingProfilesSettings.deleteMappingProfileViaApi(response.id);
-      });
+      FieldMappingProfileView.deleteViaApi(mappingProfileC380508.name);
     });
 
     it(
@@ -157,7 +152,7 @@ describe('data-import', () => {
         NewFieldMappingProfile.verifyFieldValue(
           orderFormatField.accordion,
           orderFormatField.fieldName,
-          mappingProfileC380508.orderFormat1,
+          mappingProfileC380506.orderFormat1,
         );
 
         // #8 Repeat steps 3-5
