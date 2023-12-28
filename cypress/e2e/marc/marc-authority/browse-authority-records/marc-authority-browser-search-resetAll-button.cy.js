@@ -8,19 +8,18 @@ import DataImport from '../../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../../support/fragments/data_import/logs/logs';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 describe('MARC -> MARC Authority', () => {
   const testData = {
-    marcValue: 'test',
-    searchOption: 'Name-title',
+    marcValue: 'C422027',
+    searchOption: 'Personal name',
   };
 
   const marcFiles = [
     {
-      marc: 'marcBibFileForC369092.mrc',
+      marc: 'marcAuthC422027.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+      jobProfileToRun: 'Default - Create SRS MARC Authority',
       numOfRecords: 1,
     },
   ];
@@ -60,7 +59,6 @@ describe('MARC -> MARC Authority', () => {
   after('Deleting created user', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
     createdAuthorityIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
     });
