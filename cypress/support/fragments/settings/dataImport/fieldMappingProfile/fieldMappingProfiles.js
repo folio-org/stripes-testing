@@ -49,7 +49,7 @@ export default {
       (acc, it) => {
         if (mappingFieldsNames.includes(it.name)) {
           const field = mappingFields.find(({ name: fieldName }) => fieldName === it.name);
-          return [...acc, { ...it, value: field.value }];
+          return [...acc, { ...it, ...field }];
         }
         return [...acc, it];
       },
@@ -74,6 +74,16 @@ export default {
       deletedRelations: [],
     };
   },
+  getMappingProfilesViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'data-import-profiles/mappingProfiles',
+        isDefaultSearchParamsRequired: false,
+        searchParams,
+      })
+      .then(({ body }) => body);
+  },
   createMappingProfileViaApi: (mappingProfile = marcAuthorityUpdateMappingProfile) => cy.okapiRequest({
     method: 'POST',
     path: 'data-import-profiles/mappingProfiles',
@@ -91,4 +101,13 @@ export default {
     path: `data-import-profiles/mappingProfiles/${id}`,
     isDefaultSearchParamsRequired: false,
   }),
+  deleteMappingProfileByNameViaApi(profileName) {
+    this.getMappingProfilesViaApi({ query: `name=="${profileName}"` }).then(
+      ({ mappingProfiles }) => {
+        mappingProfiles.forEach((mappingProfile) => {
+          this.deleteMappingProfileViaApi(mappingProfile.id);
+        });
+      },
+    );
+  },
 };
