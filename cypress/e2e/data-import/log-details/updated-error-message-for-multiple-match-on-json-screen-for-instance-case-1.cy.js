@@ -35,50 +35,28 @@ describe('data-import', () => {
       createdRecordIDs: [],
       marcFilePath: 'marcBibFileForC389589.mrc',
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
-
+      fileName: `C389589 marcFileName${getRandomPostfix()}`,
       title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
       errorMessage:
         'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query: [identifiers =/@value/@identifierTypeId="439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
     };
-    const marcFileNames = [
-      {
-        fileName: `C389589 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-      {
-        fileName: `C389589 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-      {
-        fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-      {
-        fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-      {
-        fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-      {
-        fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-      {
-        fileName: `C389590 testMarcFile${getRandomPostfix()}.mrc`,
-      },
-    ];
     const matchProfile = {
-      profileName: `C389589/C389590 Updating SRS by 035 to OCLC number${getRandomPostfix()}`,
+      profileName: `C389589 Updating SRS by 035 to OCLC number${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '035',
-        in1: '*',
-        in2: '*',
+        in1: '',
+        in2: '',
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
       existingRecordType: EXISTING_RECORDS_NAMES.INSTANCE,
       instanceOption: NewMatchProfile.optionsList.identifierOCLC,
     };
+    // collectionOfMappingAndActionProfiles
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: {
-          name: `C389589/C389590 Modifying 500 record${getRandomPostfix()}`,
+          name: `C389589 Modifying 500 record${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
           modifications: {
             action: 'Add',
@@ -90,20 +68,20 @@ describe('data-import', () => {
           },
         },
         actionProfile: {
-          name: `C389589/C389590 Modifying 500 record${getRandomPostfix()}`,
+          name: `C389589 Modifying 500 record${getRandomPostfix()}`,
           action: 'Modify (MARC Bibliographic record type only)',
           typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
         },
       },
       {
         mappingProfile: {
-          name: `C389589/C389590 Updating Instance with ADM note${getRandomPostfix()}`,
+          name: `C389589 Updating Instance with ADM note${getRandomPostfix()}`,
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
           adminNotes: 'Add this to existing',
           adminNote: `Test${getRandomPostfix()}`,
         },
         actionProfile: {
-          name: `C389589/C389590 Updating Instance with ADM note${getRandomPostfix()}`,
+          name: `C389589 Updating Instance with ADM note${getRandomPostfix()}`,
           action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
           typeValue: FOLIO_RECORD_TYPE.INSTANCE,
         },
@@ -111,9 +89,18 @@ describe('data-import', () => {
     ];
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C389589/C389590 Updating Instance by 035 OCLC record${getRandomPostfix()}`,
+      profileName: `C389589 Updating Instance by 035 OCLC record${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
+
+    const marcFileNames = [
+      {
+        fileName: `C389589 testMarcFile${getRandomPostfix()}.mrc`,
+      },
+      {
+        fileName: `C389589 testMarcFile${getRandomPostfix()}.mrc`,
+      },
+    ];
 
     before('Create test data', () => {
       cy.getAdminToken();
@@ -143,6 +130,30 @@ describe('data-import', () => {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading,
         });
+      });
+    });
+
+    after('delete test data', () => {
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(testData.user.userId);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
+        });
+        testData.createdRecordIDs.forEach((id) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
+      });
+    });
+
+    it(
+      'C389589  Verify the updated error message for multiple match on JSON screen for Instance: Case 1 (folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet'] },
+      () => {
         // craete match profile
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(matchProfile);
@@ -202,63 +213,17 @@ describe('data-import', () => {
         );
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-      });
-    });
-
-    after('delete test data', () => {
-      cy.getAdminToken().then(() => {
-        Users.deleteViaApi(testData.user.userId);
-        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
-        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
-        collectionOfMappingAndActionProfiles.forEach((profile) => {
-          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
-          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(profile.mappingProfile.name);
-        });
-        testData.createdRecordIDs.forEach((id) => {
-          InventoryInstance.deleteInstanceViaApi(id);
-        });
-      });
-    });
-
-    it(
-      'C389589  Verify the updated error message for multiple match on JSON screen for Instance: Case 1 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
-      () => {
-        const fileName = `C389589 marcFileName${getRandomPostfix()}`;
 
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marcFilePath, fileName);
+        DataImport.uploadFile(testData.marcFilePath, testData.fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
+        JobProfiles.waitFileIsImported(testData.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
-        Logs.openFileDetails(fileName);
-        FileDetails.openJsonScreen(testData.title);
-        JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.openInstanceTab();
-        JsonScreenView.verifyContentInTab(testData.errorMessage);
-      },
-    );
-
-    it(
-      'C389590 Verify the updated error message for multiple match on JSON screen for Instance: Case 2 (folijet) (TaaS)',
-      { tags: ['extendedPath', 'folijet'] },
-      () => {
-        const fileName = `C389590 marcFileName${getRandomPostfix()}`;
-
-        cy.visit(TopMenu.dataImportPath);
-        // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.verifyUploadState();
-        DataImport.uploadFile(testData.marcFilePath, fileName);
-        JobProfiles.waitFileIsUploaded();
-        JobProfiles.search(jobProfile.profileName);
-        JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
-        Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
-        Logs.openFileDetails(fileName);
+        Logs.openFileDetails(testData.fileName);
         FileDetails.openJsonScreen(testData.title);
         JsonScreenView.verifyJsonScreenIsOpened();
         JsonScreenView.openInstanceTab();

@@ -10,7 +10,7 @@ import {
   SelectionOption,
   Dropdown,
   DropdownMenu,
-} from '../../../../../interactors';
+} from '../../../../../../interactors';
 
 const selectActionProfile = Select({ name: 'profile.action' });
 const criterionValueTypeSelectionList = SelectionList({ id: 'sl-container-criterion-value-type' });

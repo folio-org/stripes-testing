@@ -5,11 +5,11 @@ import {
   MatchProfiles as SettingsMatchProfiles,
 } from '../../../support/fragments/settings/dataImport';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import ConfirmDelete from '../../../support/fragments/data_import/match_profiles/modals/confirmDelete';
-import ExceptionDelete from '../../../support/fragments/data_import/match_profiles/modals/exceptionDelete';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import ConfirmDelete from '../../../support/fragments/settings/dataImport/matchProfiles/modals/confirmDelete';
+import ExceptionDelete from '../../../support/fragments/settings/dataImport/matchProfiles/modals/exceptionDelete';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
