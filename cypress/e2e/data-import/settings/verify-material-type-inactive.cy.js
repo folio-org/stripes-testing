@@ -26,8 +26,8 @@ describe('data-import', () => {
     const mappingProfile = {
       name: `C367955testMappingProfile.${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.ORDER,
-      orderStatus1: ORDER_STATUSES.PENDING,
-      orderStatus2: ORDER_STATUSES.OPEN,
+      pendingOrderStatus: ORDER_STATUSES.PENDING,
+      openOrderStatus: ORDER_STATUSES.OPEN,
       locationQuantityElectronic: '"1"',
       locationQuantityPhysical: '"1"',
       incomingRecordType: 'MARC_BIBLIOGRAPHIC',
@@ -49,10 +49,7 @@ describe('data-import', () => {
           },
         );
       });
-      cy.createTempUser([
-        Permissions.settingsDataImportEnabled.gui,
-        Permissions.uiOrganizationsView.gui,
-      ]).then((userProperties) => {
+      cy.createTempUser([Permissions.settingsDataImportEnabled.gui]).then((userProperties) => {
         testData.user = userProperties;
         cy.login(testData.user.username, testData.user.password, {
           path: SettingsMenu.mappingProfilePath,
@@ -79,11 +76,11 @@ describe('data-import', () => {
         // #2 Populate the following fields:
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         NewFieldMappingProfile.checkPreviouslyPopulatedDataIsDisplayed(mappingProfile);
-        NewFieldMappingProfile.fillPurchaseOrderStatus(mappingProfile.orderStatus1);
+        NewFieldMappingProfile.fillPurchaseOrderStatus(mappingProfile.pendingOrderStatus);
         NewFieldMappingProfile.verifyFieldValue(
           fields.purchaseOrderStatus.accordion,
           fields.purchaseOrderStatus.fieldName,
-          `"${mappingProfile.orderStatus1}"`,
+          `"${mappingProfile.pendingOrderStatus}"`,
         );
 
         // #3 Navigate to the "Material type" field in the "Physical resource details" accordion -> select any value from the dropdown list
@@ -123,11 +120,11 @@ describe('data-import', () => {
         );
 
         // #6 Return to the "Purchase order status" in the "Order information" accordion: select **"Open"** option
-        NewFieldMappingProfile.fillPurchaseOrderStatus(mappingProfile.orderStatus2);
+        NewFieldMappingProfile.fillPurchaseOrderStatus(mappingProfile.openOrderStatus);
         NewFieldMappingProfile.verifyFieldValue(
           fields.purchaseOrderStatus.accordion,
           fields.purchaseOrderStatus.fieldName,
-          `"${mappingProfile.orderStatus2}"`,
+          `"${mappingProfile.openOrderStatus}"`,
         );
         // #7 Navigate to the "Material type" field in the "Physical resource details" accordion
         NewFieldMappingProfile.verifyFieldEmptyAndDisabled(
