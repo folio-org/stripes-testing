@@ -205,4 +205,12 @@ export default {
       expect(existingValues).to.eql(expectedValues);
     });
   },
+
+  verifyFundDistributionValue: (val) => {
+    cy.expect(
+      Accordion('Fund distribution')
+        .find(MultiColumnListCell({ content: val }))
+        .exists(),
+    );
+  },
 };

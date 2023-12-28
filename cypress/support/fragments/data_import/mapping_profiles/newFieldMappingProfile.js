@@ -1194,4 +1194,12 @@ export default {
   isPurchaseOrderStatusFieldFocused: (value) => {
     purchaseOrderStatus.has({ focused: value });
   },
+
+  selectFundDistributionType: (type) => {
+    cy.do(
+      Accordion('Fund distribution')
+        .find(Button(`${type}`))
+        .click(),
+    );
+  },
 };
