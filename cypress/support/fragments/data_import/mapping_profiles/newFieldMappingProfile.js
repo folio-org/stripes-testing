@@ -1199,4 +1199,13 @@ export default {
   verifyDefaultPurchaseOrderLinesLimit(value) {
     cy.expect(purchaseOrderLinesLimit.has({ value }));
   },
+
+  verifyPhysicalResourceCreateInventoryInfoMessage: (message) => {
+    cy.do(
+      Accordion({ id: 'physical-resource-details' })
+        .find(Label('Create inventory').find(IconButton({ icon: 'info' })))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+  },
 };
