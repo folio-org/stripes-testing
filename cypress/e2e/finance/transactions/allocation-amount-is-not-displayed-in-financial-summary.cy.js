@@ -166,8 +166,8 @@ describe('Finance', () => {
         const LedgerDetails = FinanceHelper.selectFirstLedger(ledger.name);
 
         // Both "Increase in allocation" and "Decrease in allocation" fields in "Financial summary" accordion are specified with 0.00 value
-        LedgerDetails.checkLedgeDetails({
-          summary: [
+        LedgerDetails.checkLedgerDetails({
+          financialSummary: [
             { key: 'Increase in allocation', value: '$0.00' },
             { key: 'Decrease in allocation', value: '$0.00' },
           ],

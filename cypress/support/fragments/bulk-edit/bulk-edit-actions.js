@@ -216,10 +216,12 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
-  replaceWithIsDisabled() {
-    cy.xpath(
-      '(//div[contains(@class, "select--")]//select[contains(@class, "selectControl--")])[3]',
-    ).should('be.disabled');
+  replaceWithIsDisabled(rowIndex = 0) {
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(Select({ content: 'Replace with' }))
+        .has({ disabled: true }),
+    ]);
   },
 
   replaceEmail(oldEmailDomain, newEmailDomain, rowIndex = 0) {

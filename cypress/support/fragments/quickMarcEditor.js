@@ -590,6 +590,11 @@ export default {
     cy.do(cancelEditConfirmBtn.click());
   },
 
+  closeWithoutSavingInEditConformation() {
+    cy.expect(cancelEditConformModel.exists());
+    cy.do(closeWithoutSavingBtn.click());
+  },
+
   deleteConfirmationPresented() {
     cy.expect(confirmationModal.exists());
   },
@@ -718,6 +723,10 @@ export default {
 
   undoDelete() {
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
+  },
+
+  checkUndoDeleteAbsent() {
+    cy.get('#quick-marc-editor-pane').find('[class^=deletedRowPlaceholder-]').should('not.exist');
   },
 
   afterDeleteNotificationNoTag() {
@@ -1349,6 +1358,21 @@ export default {
     });
   },
 
+  verifyAllBoxesInARowAreEditable(tag) {
+    cy.expect([
+      getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: false }),
+    ]);
+  },
+
   checkLDRValue(ldrValue = validRecord.ldrValue) {
     cy.expect(
       getRowInteractorByTagName('LDR')
@@ -1653,6 +1677,14 @@ export default {
       QuickMarcEditorRow({ index: rowIndex }).find(unlinkIconButton).exists(),
       QuickMarcEditorRow({ index: rowIndex }).find(viewAuthorityIconButton).exists(),
     ]);
+  },
+
+  verifyZeroSubfieldInUnlinkedField(rowIndex, content) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .has({ value: including(`$0 ${content}`) }),
+    );
   },
 
   verifyRemoveLinkingModal() {

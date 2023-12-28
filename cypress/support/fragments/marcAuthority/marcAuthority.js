@@ -14,6 +14,7 @@ import {
   PaneHeader,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
+import DateTools from '../../utils/dateTools';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
@@ -32,6 +33,8 @@ const buttonLink = Button({ icon: 'unlink' });
 const calloutUpdatedRecordSuccess = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
+const searchPane = Section({ id: 'pane-authorities-filters' });
+const closeButton = Button({ icon: 'times' });
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = {
@@ -332,5 +335,25 @@ export default {
       rootHeader.has({ title: including(titleValue) }),
       rootHeader.has({ subtitle: including('Last updated') }),
     ]);
+  },
+
+  verifySearchPanesIsAbsent() {
+    cy.expect([searchPane.absent(), rootSection.find(closeButton).exists()]);
+  },
+
+  verifyFieldContent: (rowIndex, updatedDate) => {
+    cy.get('table')
+      .find('tr')
+      .eq(rowIndex)
+      .find('td')
+      .then((elems) => {
+        const dateFromField = DateTools.convertMachineReadableDateToHuman(elems.eq(2).text());
+        const convertedUpdatedDate = new Date(updatedDate).getTime();
+        const convertedDateFromField = new Date(dateFromField).getTime();
+        const timeDifference = (convertedDateFromField - convertedUpdatedDate) / 1000;
+
+        // check that difference in time is less than 1 minute
+        expect(timeDifference).to.be.lessThan(120000);
+      });
   },
 };
