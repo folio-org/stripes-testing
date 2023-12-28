@@ -11,9 +11,9 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 import { Permissions } from '../../../support/dictionary';
-import SettingsMappingProfiles from '../../../support/fragments/settings/dataImport/settingsMappingProfiles';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
+import FieldMappingProfilesSettings from '../../../support/fragments/settings/dataImport/fieldMappingProfile/fieldMappingProfiles';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -50,7 +50,7 @@ describe('data-import', () => {
       FieldMappingProfiles.getFieldMappingProfileInDataImport({
         query: `"name"=="${mappingProfile.name}"`,
       }).then((response) => {
-        SettingsMappingProfiles.deleteMappingProfileApi(response.id);
+        FieldMappingProfilesSettings.deleteMappingProfileViaApi(response.id);
       });
     });
 
