@@ -23,7 +23,6 @@ import defaultUser from './userDefaultObjects/defaultUser';
 import SelectUser from '../check-out-actions/selectUser';
 
 const permissionsList = MultiColumnList({ id: '#list-permissions' });
-const userSearch = TextField('User search');
 const saveAndCloseBtn = Button('Save & close');
 const actionsButton = Button('Actions');
 const userDetailsPane = Pane({ id: 'pane-userdetails' });
@@ -34,7 +33,7 @@ const customFieldsAccordion = Accordion('Custom fields');
 const selectPermissionsModal = Modal('Select Permissions');
 const permissionsAccordion = Accordion({ id: 'permissions' });
 const addPermissionsButton = Button({ id: 'clickable-add-permission' });
-const permissionsSearch = SearchField();
+const permissionsSearch = selectPermissionsModal.find(SearchField());
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const selectRequestType = Select({ id: 'type' });
@@ -68,31 +67,36 @@ export default {
     cy.do(TextField({ id: 'adduser_preferredname' }).fillIn(prefName));
   },
 
-  addPermissions(permissions) {
-    cy.do([userDetailsPane.find(actionsButton).click(), editButton.click()]);
-    cy.wait(5000);
-    cy.do([permissionsAccordion.clickHeader(), addPermissionsButton.click()]);
+  searchForPermission(permission) {
+    cy.do(permissionsSearch.fillIn(permission));
+    cy.expect(permissionsSearch.is({ value: permission }));
+    cy.do(searchButton.click());
+  },
 
-    permissions.forEach((permission) => {
-      cy.do(userSearch.fillIn(permission));
-      cy.expect(userSearch.is({ value: permission }));
-      // wait is needed to avoid so fast robot clicks
-      cy.wait(1000);
-      cy.do(Button('Search').click());
+  openSelectPermissionsModal() {
+    cy.do(permissionsAccordion.clickHeader());
+    cy.do(addPermissionsButton.click());
+    cy.expect(selectPermissionsModal.exists());
+  },
+
+  addPermissions(permissions) {
+    this.openEdit();
+    this.openSelectPermissionsModal();
+    cy.wrap(permissions).each((permission) => {
+      this.searchForPermission(permission);
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
       cy.wait(2000);
     });
     cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
   },
 
-  verifyPermissionDoesNotExist(permission) {
-    cy.do([addPermissionsButton.click(), userSearch.fillIn(permission)]);
-    cy.expect(userSearch.is({ value: permission }));
-    // wait is needed to avoid so fast robot clicks
-    cy.wait(1000);
-    cy.do(Button('Search').click());
+  verifyPermissionDoesNotExistInSelectPermissions(permission) {
+    this.searchForPermission(permission);
     cy.expect(selectPermissionsModal.find(HTML('The list contains no items')).exists());
-    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  cancelSelectPermissionsModal() {
+    cy.do(selectPermissionsModal.find(cancelButton).click());
   },
 
   addServicePoints(...points) {
@@ -322,26 +326,6 @@ export default {
     permissions.forEach((permission) => {
       cy.expect(permissionsAccordion.find(HTML(including(permission))).absent());
     });
-  },
-
-  permissionsCount() {
-    permissionsList.perform((el) => {
-      el.invoke('attr', 'aria-rowcount').then((rowCount) => {
-        totalRows = rowCount;
-      });
-    });
-  },
-
-  openSelectPermissions() {
-    cy.do(permissionsAccordion.clickHeader());
-    cy.do(addPermissionsButton.click());
-    cy.expect(selectPermissionsModal.exists());
-    this.permissionsCount();
-  },
-
-  searchForPermission(permission) {
-    cy.do(permissionsSearch.fillIn(permission));
-    cy.do(searchButton.click());
   },
 
   verifyPermissionsFiltered(permission) {

@@ -171,7 +171,7 @@ export default {
       }).exists(),
     );
   },
-
+  verifyValueBySection: (sectionName, value) => cy.expect(KeyValue(sectionName).has({ value: `"${value}"` })),
   verifyInstanceStatusTerm: (status) => cy.expect(KeyValue('Instance status term').has({ value: status })),
   verifyActionMenuAbsent: () => cy.expect(fullScreenView.find(actionsButton).absent()),
   verifyMappingProfileOpened: () => cy.expect(fullScreenView.exists()),

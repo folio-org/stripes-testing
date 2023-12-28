@@ -19,6 +19,10 @@ describe('bulk-edit', () => {
         permissions.uiUsersPermissions.gui,
       ]).then((userProperties) => {
         userWthViewEditPermissions = userProperties;
+        cy.login(userWthViewEditPermissions.username, userWthViewEditPermissions.password, {
+          path: TopMenu.usersPath,
+          waiter: UsersSearchPane.waitLoading,
+        });
       });
     });
 
@@ -40,13 +44,12 @@ describe('bulk-edit', () => {
         ];
         const csvDeletePermission = permissions.bulkEditCsvDelete.gui;
 
-        cy.login(userWthViewEditPermissions.username, userWthViewEditPermissions.password);
-        cy.visit(TopMenu.usersPath);
-
         UsersSearchPane.searchByKeywords(userWthViewEditPermissions.barcode);
         UsersSearchPane.openUser(userWthViewEditPermissions.userId);
         UserEdit.addPermissions(permissionsToVerify);
-        UserEdit.verifyPermissionDoesNotExist(csvDeletePermission);
+        UserEdit.openSelectPermissionsModal();
+        UserEdit.verifyPermissionDoesNotExistInSelectPermissions(csvDeletePermission);
+        UserEdit.cancelSelectPermissionsModal();
         UserEdit.saveAndClose();
         UsersCard.verifyPermissions(permissionsToVerify);
       },
