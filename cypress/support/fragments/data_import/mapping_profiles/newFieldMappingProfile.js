@@ -1192,6 +1192,30 @@ export default {
     cy.expect(Popover({ content: including(message) }).exists());
   },
 
+  verifyInfoIconClickable: (accordionName, fieldLabel) => {
+    cy.do(
+      Accordion(accordionName)
+        .find(Label(fieldLabel))
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().exists());
+  },
+
+  verifyFieldValue: (accordionName, fieldName, value) => {
+    cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ value }));
+  },
+
+  verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
+    cy.expect(
+      Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyAddLocationButtonEnabled: () => {
+    cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
+  },
+
   isPurchaseOrderStatusFieldFocused: (value) => {
     purchaseOrderStatus.has({ focused: value });
   },
