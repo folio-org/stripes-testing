@@ -2071,4 +2071,21 @@ export default {
         cy.log('No such status like ' + orderStatus + '. Please use Closed, Open or Pending');
     }
   },
+
+  claimingActiveAndSetInterval(interval) {
+    cy.do([
+      Checkbox({ name: 'claimingActive' }).click(),
+      TextField({ name: 'claimingInterval' }).fillIn(interval),
+    ]);
+  },
+
+  claimingActive() {
+    cy.do(Checkbox({ name: 'claimingActive' }).click());
+  },
+
+  checkClaimingIntervalInPOL(claimingInterval) {
+    cy.expect([
+      poLineInfoSection.find(KeyValue('Claiming interval')).has({ value: claimingInterval }),
+    ]);
+  },
 };
