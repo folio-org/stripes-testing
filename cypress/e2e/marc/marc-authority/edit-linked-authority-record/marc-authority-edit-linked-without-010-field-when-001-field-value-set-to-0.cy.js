@@ -19,7 +19,7 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
     tag100: '100',
     tag240: '240',
     authority001FieldValue: '4284518',
-    authority100FieldValue: 'Beethoven, Ludwig van (no 010)',
+    authority100FieldValue: 'C375139 Beethoven, Ludwig van (no 010)',
     searchOption: 'Keyword',
     fieldForEditing: { tag: '380', newValue: '$a Variations TEST $2 lcsh' },
     calloutMessage: 'Record cannot be saved with more than one 010 field',
@@ -39,12 +39,23 @@ describe('MARC -> MARC Authority -> Edit linked Authority record', () => {
       marc: 'marcAuthFileForC375139.mrc',
       fileName: `testMarcFileC375139.${getRandomPostfix()}.mrc`,
       jobProfileToRun: 'Default - Create SRS MARC Authority',
-      authorityHeading: 'Beethoven, Ludwig van (no 010)',
+      authorityHeading: 'C375139 Beethoven, Ludwig van (no 010)',
       numOfRecords: 1,
     },
   ];
 
   before('Create test data', () => {
+    cy.getAdminToken();
+    MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C375139"' }).then(
+      (records) => {
+        records.forEach((record) => {
+          if (record.authRefType === 'Authorized') {
+            MarcAuthority.deleteViaAPI(record.id);
+          }
+        });
+      },
+    );
+
     cy.loginAsAdmin({
       path: TopMenu.dataImportPath,
       waiter: DataImport.waitLoading,
