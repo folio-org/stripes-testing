@@ -1,7 +1,10 @@
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -47,9 +50,9 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfile);
-        ActionProfiles.deleteActionProfile(actionProfile);
-        FieldMappingProfileView.deleteViaApi(linkedMappingProfile);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(linkedMappingProfile);
         Users.deleteViaApi(user.userId);
       });
     });

@@ -1,5 +1,8 @@
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -32,7 +35,7 @@ describe('data-import', () => {
     });
 
     after('Delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
       // Returning Default job profile to its original properties
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.search(defaultJobProfileName);
