@@ -1191,6 +1191,21 @@ export default {
     cy.expect(Popover({ content: including(message) }).exists());
   },
 
+  addAdditionalProductInfo: (product) => {
+    cy.do([
+      Button('Add product ID and product ID type').click(),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.0.value',
+      }).fillIn(product.id),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.1.value',
+      }).fillIn(product.qualifier),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.2.value',
+      }).fillIn(`"${product.idType}"`),
+    ]);
+  },
+
   isPurchaseOrderStatusFieldFocused: (value) => {
     purchaseOrderStatus.has({ focused: value });
   },
