@@ -38,7 +38,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   ];
   const authority = {
     searchOption: 'Keyword',
-    searchInput: 'Lesbian activists--Jamaica--Biography',
+    title: 'Lesbian activists--Jamaica--Biography',
   };
   const marcFiles = [
     {
@@ -205,8 +205,8 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
       // #11 Click on any "MARC authority app" icon placed next to auto-linked subject name.
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthorities.waitLoading();
-      MarcAuthorities.searchBy(authority.searchOption, authority.title);
-      MarcAuthorities.selectTitle(authority.title);
+      MarcAuthorities.searchBy(authority.searchOption, 'Lesbian activists');
+      MarcAuthorities.selectTitle('Lesbian activists');
       MarcAuthority.waitLoading();
     },
   );
