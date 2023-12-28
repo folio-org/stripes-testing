@@ -4,12 +4,12 @@ import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragmen
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
-import MatchProfileEdit from '../../../support/fragments/data_import/match_profiles/matchProfileEdit';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
+import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEdit';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 
 let user;
 
