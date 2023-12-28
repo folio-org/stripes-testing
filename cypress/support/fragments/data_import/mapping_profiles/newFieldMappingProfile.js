@@ -16,6 +16,11 @@ import {
   DropdownMenu,
   Callout,
   Pane,
+  Form,
+  Option,
+  IconButton,
+  Popover,
+  Label,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -43,6 +48,8 @@ const catalogedDateField = TextField('Cataloged date');
 const titleField = TextField('Title*');
 const incomingRecordTypeField = Select({ name: 'profile.incomingRecordType' });
 const currencyField = TextField('Currency*');
+const vendor = TextField('Vendor*');
+const purchaseOrderLinesLimit = TextField('Purchase order lines limit setting');
 const noteTypeField = TextField('Note type');
 const reEncumberField = TextField('Re-encumber');
 const purchaseOrderStatus = TextField('Purchase order status*');
@@ -53,6 +60,7 @@ const editionField = TextField('Edition');
 const internalNoteField = TextArea('Internal note');
 const acquisitionMethodField = TextField('Acquisition method*');
 const orderFormatField = TextField('Order format*');
+const orderTypetField = TextField('Order type*');
 const receiptStatusField = TextField('Receipt status');
 const paymentStatusField = TextField('Payment status');
 const selectorField = TextField('Selector');
@@ -71,6 +79,20 @@ const existingRecordType = Select({ name: 'profile.existingRecordType' });
 const approvedCheckbox = Checkbox({
   name: 'profile.mappingDetails.mappingFields[1].booleanFieldAction',
 });
+const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
+const recordTypeselect = Select({ name: 'profile.existingRecordType' });
+const closeButton = Button('Close');
+
+const requiredFields = {
+  'Purchase order status': purchaseOrderStatus,
+  Vendor: vendor,
+  'Order type': orderTypetField,
+  Title: titleField,
+  'Acquisition method': acquisitionMethodField,
+  'Order format': orderFormatField,
+  'Receiving workflow': receivingWorkflowField,
+  Currency: currencyField,
+};
 
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -361,6 +383,9 @@ export default {
   selectOrganizationByName,
   selectAdminNotesAction,
   save,
+  waitLoading: () => {
+    cy.expect(mappingProfilesForm.exists());
+  },
 
   fillMappingProfile: (specialMappingProfile = defaultMappingProfile) => {
     fillSummaryInMappingProfile(specialMappingProfile);
@@ -985,6 +1010,22 @@ export default {
     ]);
   },
 
+  addFieldToMarcBibUpdate({ field, ind1, ind2, subfield }) {
+    cy.do([
+      Accordion({ id: 'edit-field-mappings-for-marc-updates' }).find(Button('Add field')).click(),
+      TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(field),
+      TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.indicator1' }).fillIn(
+        ind1,
+      ),
+      TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.indicator2' }).fillIn(
+        ind2,
+      ),
+      TextField({
+        name: 'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield',
+      }).fillIn(subfield),
+    ]);
+  },
+
   fillMissingPieces: (value) => cy.do(TextField('Missing pieces').fillIn(value)),
 
   verifyExpenseClassesIsPresentedInDropdown: (value) => {
@@ -1020,7 +1061,33 @@ export default {
       });
   },
 
-  createMappingProfileViaApiMarc: ({ name }) => {
+  createMappingProfileForUpdateMarcBibViaApi: (profile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: {
+          profile: {
+            name: profile.name,
+            incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+            existingRecordType: 'MARC_BIBLIOGRAPHIC',
+            description: '',
+            mappingDetails: {
+              name: 'marcBib',
+              recordType: 'MARC_BIBLIOGRAPHIC',
+              marcMappingDetails: [],
+              marcMappingOption: 'UPDATE',
+            },
+          },
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createMappingProfileForUpdateMarcAuthViaApi: ({ name }) => {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -1102,5 +1169,58 @@ export default {
       TextField('Material supplier').has({ value: `"${profile.materialSupplier}"` }),
       TextField('Access provider').has({ value: `"${profile.accessProvider}"` }),
     ]);
+  },
+
+  verifyFieldsMarkedWithAsterisks(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(requiredFields[label].has(conditions));
+    });
+  },
+
+  verifyFOLIORecordTypeOptionExists(type) {
+    cy.expect(recordTypeselect.find(Option(type)).exists());
+  },
+
+  clickClose: () => cy.do(closeButton.click()),
+
+  verifyAcquisitionsUnitsInfoMessage: (message) => {
+    cy.do(
+      Label('Acquisitions units')
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+  },
+
+  verifyInfoIconClickable: (accordionName, fieldLabel) => {
+    cy.do(
+      Accordion(accordionName)
+        .find(Label(fieldLabel))
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().exists());
+  },
+
+  verifyFieldValue: (accordionName, fieldName, value) => {
+    cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ value }));
+  },
+
+  verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
+    cy.expect(
+      Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyAddLocationButtonEnabled: () => {
+    cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
+  },
+
+  isPurchaseOrderStatusFieldFocused: (value) => {
+    purchaseOrderStatus.has({ focused: value });
+  },
+
+  verifyDefaultPurchaseOrderLinesLimit(value) {
+    cy.expect(purchaseOrderLinesLimit.has({ value }));
   },
 };

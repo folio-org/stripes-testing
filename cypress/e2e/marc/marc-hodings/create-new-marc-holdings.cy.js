@@ -241,7 +241,7 @@ describe('MARC -> MARC Holdings', () => {
       HoldingsRecordView.getHoldingsIDInDetailView().then((holdingsID) => {
         recordIDs.push(holdingsID);
         HoldingsRecordView.close();
-        InventoryInstance.openHoldingView();
+        InventoryInstance.openHoldingViewByID(holdingsID);
         HoldingsRecordView.viewSource();
         InventoryViewSource.checkFieldContentMatch(
           testData.tag001,

@@ -31,9 +31,9 @@ describe('data-export', () => {
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByUsername(user.username);
       Users.verifyUserDetailsPane();
-      Users.editButton();
+      UserEdit.openEdit();
       UserEdit.verifyUserPermissionsAccordion();
-      UserEdit.openSelectPermissions();
+      UserEdit.openSelectPermissionsModal();
       UserEdit.searchForPermission('Settings (Data export): display list of settings pages');
       UserEdit.verifyPermissionsFiltered([
         'Settings (Data export): display list of settings pages',

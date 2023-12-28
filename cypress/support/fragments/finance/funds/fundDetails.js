@@ -1,12 +1,12 @@
 import {
   Button,
-  HTML,
-  KeyValue,
   MultiColumnListCell,
   PaneHeader,
   Section,
   including,
 } from '../../../../../interactors';
+import FinanceDetails from '../financeDetails';
+import FundEditForm from './fundEditForm';
 import BudgetDetails from '../budgets/budgetDetails';
 import AddBudgetModal from '../modals/addBudgetModal';
 import Transactions from '../transactions/transactions';
@@ -14,19 +14,31 @@ import Transactions from '../transactions/transactions';
 const fundDetailsPane = Section({ id: 'pane-fund-details' });
 
 // fund details header
-const fundDetailsPaneHeader = PaneHeader({ id: 'paneHeaderpane-fund-details' });
+const fundDetailsPaneHeader = fundDetailsPane.find(
+  PaneHeader({ id: 'paneHeaderpane-fund-details' }),
+);
 const actionsButton = Button('Actions');
 
-const currentBudgetSection = Section({ id: 'currentBudget' });
-const plannedBudgetSection = Section({ id: 'plannedBudget' });
-const previousBudgetsSection = Section({ id: 'previousBudgets' });
+const currentBudgetSection = fundDetailsPane.find(Section({ id: 'currentBudget' }));
+const currentExpenseClassesSection = fundDetailsPane.find(Section({ id: 'currentExpenseClasses' }));
+const plannedBudgetSection = fundDetailsPane.find(Section({ id: 'plannedBudget' }));
+const previousBudgetsSection = fundDetailsPane.find(Section({ id: 'previousBudgets' }));
 
 export default {
+  ...FinanceDetails,
   waitLoading: () => {
     cy.expect(fundDetailsPane.exists());
   },
   expandActionsDropdown() {
     cy.do(fundDetailsPaneHeader.find(actionsButton).click());
+  },
+  openFundEditForm() {
+    this.expandActionsDropdown();
+    cy.do(Button('Edit').click());
+    FundEditForm.waitLoading();
+    FundEditForm.verifyFormView();
+
+    return FundEditForm;
   },
   viewTransactionsForCurrentBudget() {
     this.expandActionsDropdown();
@@ -64,15 +76,23 @@ export default {
 
     return BudgetDetails;
   },
-  checkFundDetails({ information = [], currentBudget, plannedBudgets, previousBudgets } = {}) {
-    information.forEach(({ key, value }) => {
-      cy.expect(fundDetailsPane.find(KeyValue(key)).has({ value: including(value) }));
-    });
+  checkFundDetails({
+    information,
+    currentBudget,
+    currentExpenseClasses,
+    plannedBudgets,
+    previousBudgets,
+  } = {}) {
+    if (information) {
+      FinanceDetails.checkInformation(information);
+    }
 
     if (currentBudget) {
       this.checkCurrentBudget(currentBudget);
     }
-
+    if (currentExpenseClasses) {
+      this.checkCurrentExpenseClasses(currentExpenseClasses);
+    }
     if (plannedBudgets) {
       this.checkPlannedBudgets(plannedBudgets);
     }
@@ -81,53 +101,27 @@ export default {
       this.checkPreviousBudgets(previousBudgets);
     }
   },
-  checkBudgets(budgets, section) {
-    budgets.forEach((budget, index) => {
-      if (budget.name) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Name' }))
-            .has({ content: including(budget.name) }),
-        );
-      }
-      if (budget.allocated) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Allocated' }))
-            .has({ content: including(budget.allocated) }),
-        );
-      }
-      if (budget.unavailable) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Unavailable' }))
-            .has({ content: including(budget.unavailable) }),
-        );
-      }
-      if (budget.available) {
-        cy.expect(
-          section
-            .find(MultiColumnListCell({ row: index, column: 'Available' }))
-            .has({ content: including(budget.available) }),
-        );
-      }
-    });
-
-    if (!budgets.length) {
-      cy.expect(section.find(HTML('The list contains no items')).exists());
-    }
-  },
   checkCurrentBudget(budget) {
     const budgets = budget ? [budget] : [];
-    this.checkBudgets(budgets, currentBudgetSection);
+    FinanceDetails.checkTableContent({ section: currentBudgetSection, items: budgets });
   },
   checkPlannedBudgets(budgets = []) {
-    this.checkBudgets(budgets, plannedBudgetSection);
+    FinanceDetails.checkTableContent({ section: plannedBudgetSection, items: budgets });
   },
   checkPreviousBudgets(budgets = []) {
-    this.checkBudgets(budgets, previousBudgetsSection);
+    FinanceDetails.checkTableContent({ section: previousBudgetsSection, items: budgets });
+  },
+  checkCurrentExpenseClasses(expenseClasses) {
+    FinanceDetails.checkExpenseClassesTableContent({
+      section: currentExpenseClassesSection,
+      items: expenseClasses,
+    });
   },
   closeFundDetails() {
     cy.do(fundDetailsPaneHeader.find(Button({ icon: 'times' })).click());
+  },
+
+  verifyGroupName: (title) => {
+    cy.expect(fundDetailsPane.find(fundDetailsPaneHeader).has({ text: including(title) }));
   },
 };

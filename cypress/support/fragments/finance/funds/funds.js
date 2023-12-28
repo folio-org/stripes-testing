@@ -24,6 +24,7 @@ import {
   Select,
 } from '../../../../../interactors';
 import FundDetails from './fundDetails';
+import FundEditForm from './fundEditForm';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
@@ -117,6 +118,13 @@ export default {
     cy.do(fundDetailsPane.visible());
   },
 
+  clickCreateNewFundButton() {
+    cy.do(newButton.click());
+    FundEditForm.waitLoading();
+    FundEditForm.verifyFormView();
+
+    return FundEditForm;
+  },
   createFund(fund) {
     cy.do([
       newButton.click(),
@@ -168,6 +176,7 @@ export default {
       MultiSelect({ label: 'Group' }).select([group]),
       saveAndCloseButton.click(),
     ]);
+    cy.wait(4000);
   },
 
   addTransferTo: (fund) => {
@@ -264,6 +273,19 @@ export default {
     cy.expect(Modal('Planned budget').exists());
     cy.do([
       Select({ name: 'fiscalYearId' }).choose(fiscalYear),
+      Modal('Planned budget')
+        .find(TextField({ name: 'allocated' }))
+        .fillIn(allocatedQuantity.toString()),
+    ]);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(4000);
+    cy.do([Button('Save').click()]);
+  },
+
+  addPlannedBudgetWithoutFY: (allocatedQuantity) => {
+    cy.do(Accordion('Planned budget').find(newButton).click());
+    cy.expect(Modal('Planned budget').exists());
+    cy.do([
       Modal('Planned budget')
         .find(TextField({ name: 'allocated' }))
         .fillIn(allocatedQuantity.toString()),
@@ -852,11 +874,21 @@ export default {
     ]);
   },
 
-  createViaApi: (fundProperties) => {
+  getFundsViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'finance/funds',
+        searchParams,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
+  createViaApi: (fundProperties, groupIds) => {
     return cy
       .okapiRequest({
         path: 'finance/funds',
-        body: { fund: fundProperties },
+        body: { fund: fundProperties, groupIds },
         method: 'POST',
         isDefaultSearchParamsRequired: false,
       })
@@ -865,11 +897,17 @@ export default {
       });
   },
 
-  deleteFundViaApi: (fundId) => cy.okapiRequest({
+  deleteFundViaApi: (fundId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/funds/${fundId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
+  deleteFundsByLedgerIdViaApi(ledgerId, failOnStatusCode) {
+    this.getFundsViaApi({ query: `ledgerId=="${ledgerId}"` }).then(({ funds }) => {
+      funds.forEach((fund) => this.deleteFundViaApi(fund.id, failOnStatusCode));
+    });
+  },
   createFundWithAU(fund, ledger, AUName) {
     cy.do([
       newButton.click(),
@@ -988,5 +1026,9 @@ export default {
 
   varifyCanNotCreatePlannedBudget: () => {
     cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
+  },
+
+  verifyFundLinkNameExists: (FundName) => {
+    cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
   },
 };

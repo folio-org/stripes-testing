@@ -130,10 +130,12 @@ describe('Finance', () => {
 
         // #2 Check "Financial summary" accordion
         FiscalYearDetails.checkFinancialSummary({
-          expended: '$10.00',
-          unavailable: '$10.00',
-          overExpended: '$10.00',
-          availableBalance: '$90.00',
+          information: [
+            { key: 'Expended', value: '$10.00' },
+            { key: 'Unavailable', value: '$10.00' },
+            { key: 'Over expended', value: '$10.00' },
+          ],
+          balance: { available: '$90.00' },
         });
 
         // Check Funds records in "Fund" accordion
