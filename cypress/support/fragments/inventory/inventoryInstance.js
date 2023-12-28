@@ -1065,14 +1065,27 @@ export default {
     );
   },
 
-  checkContributor: (text) => {
+  checkContributor: (name, index = 0, contributorType) => {
     cy.expect(section.find(Button(including('Contributor'))).exists());
-    cy.expect(
-      Accordion('Contributor')
-        .find(contributorsList)
-        .find(MultiColumnListCell(including(text)))
-        .exists(),
-    );
+    if (contributorType) {
+      cy.expect([
+        Accordion('Contributor')
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: name }),
+        Accordion('Contributor')
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: contributorType }),
+      ]);
+    } else {
+      cy.expect(
+        Accordion('Contributor')
+          .find(contributorsList)
+          .find(MultiColumnListCell(including(name)))
+          .exists(),
+      );
+    }
   },
 
   checkDetailViewOfInstance(accordion, value) {
@@ -1195,5 +1208,15 @@ export default {
     cy.get('div[data-test-updated-by="true"]')
       .find('a')
       .should('include.text', `${userLastName}, ${userFirsttName}`);
+  },
+
+  verifyContributorAbsent: (text) => {
+    cy.expect(section.find(Button(including('Contributor'))).exists());
+    cy.expect(
+      Accordion('Contributor')
+        .find(contributorsList)
+        .find(MultiColumnListCell(including(text)))
+        .absent(),
+    );
   },
 };

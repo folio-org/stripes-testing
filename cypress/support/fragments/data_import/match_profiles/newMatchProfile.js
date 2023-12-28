@@ -457,6 +457,8 @@ export default {
         path: 'data-import-profiles/matchProfiles',
         body: {
           profile: {
+            name: profileName,
+            description: '',
             incomingRecordType: recordType,
             matchDetails: [
               {
@@ -494,10 +496,7 @@ export default {
                       label: 'indicator1',
                       value: existingRecordFields.in1,
                     },
-                    {
-                      label: 'indicator2',
-                      value: existingRecordFields.in2,
-                    },
+                    { label: 'indicator2', value: existingRecordFields.in2 },
                     {
                       label: 'recordSubfield',
                       value: existingRecordFields.subfield,
@@ -509,7 +508,6 @@ export default {
                 matchCriterion: 'EXACTLY_MATCHES',
               },
             ],
-            name: profileName,
             existingRecordType: recordType,
           },
           addedRelations: [],
