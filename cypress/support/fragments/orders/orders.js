@@ -381,9 +381,7 @@ export default {
     });
   },
   checkCreatedOrder(order) {
-    cy.getAdminSourceRecord().then((source) => {
-      this.checkOrderDetails({ vendor: order.vendor, source });
-    });
+    this.checkOrderDetails({ vendor: order.vendor });
   },
   checkCreatedOngoingOrder(order) {
     this.checkOrderDetails({ vendor: order.vendor, orderType: order.orderType });
