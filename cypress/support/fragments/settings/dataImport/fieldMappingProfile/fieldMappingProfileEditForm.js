@@ -58,6 +58,14 @@ const orderDetails = {
   orderInformation: detailsSection.find(Section({ id: 'order-information' })),
   orderLineInformation: detailsSection.find(Section({ id: 'order-line-information' })),
 };
+const orderLineDetails = {
+  poLineDetails: orderDetails.orderLineInformation.find(Section({ id: 'po-line-details' })),
+  costDetails: orderDetails.orderLineInformation.find(Section({ id: 'cost-details' })),
+  physicalResourceDetails: orderDetails.orderLineInformation.find(
+    Section({ id: 'physical-resource-details' }),
+  ),
+  eResourceDetails: orderDetails.orderLineInformation.find(Section({ id: 'e-resources-details' })),
+};
 
 const closeButton = mappingProfileForm.find(Button('Close'));
 const saveAndCloseButton = mappingProfileForm.find(Button('Save as profile & Close'));
@@ -79,33 +87,36 @@ const orderInformationFields = {
     DecoratorWrapper({ label: including('Purchase order status') }).find(TextField()),
   ),
   vendor: orderDetails.orderInformation.find(TextField({ label: including('Vendor') })),
-  organizationLookUp: orderDetails.orderInformation.find(Button('Organization look-up')),
+  vendorLookUp: orderDetails.orderInformation.find(Button('Organization look-up')),
 };
 const orderLineInformationFields = {
   title: orderDetails.orderLineInformation.find(TextField({ label: including('Title') })),
-  acquisitionMethod: orderDetails.orderLineInformation
-    .find(Section({ id: 'po-line-details' }))
+  acquisitionMethod: orderLineDetails.poLineDetails
     .find(DecoratorWrapper({ label: including('Acquisition method') }))
     .find(TextField()),
-  orderFormat: orderDetails.orderLineInformation
-    .find(Section({ id: 'po-line-details' }))
+  orderFormat: orderLineDetails.poLineDetails
     .find(DecoratorWrapper({ label: including('Order format') }))
     .find(TextField()),
-  receivingWorkflow: orderDetails.orderLineInformation
-    .find(Section({ id: 'po-line-details' }))
+  receivingWorkflow: orderLineDetails.poLineDetails
     .find(DecoratorWrapper({ label: including('Receiving workflow') }))
     .find(TextField()),
-  physicalUnitPrice: orderDetails.orderLineInformation
-    .find(Section({ id: 'cost-details' }))
-    .find(TextField('Physical unit price')),
-  currency: orderDetails.orderLineInformation
-    .find(Section({ id: 'cost-details' }))
+  physicalUnitPrice: orderLineDetails.costDetails.find(TextField('Physical unit price')),
+  currency: orderLineDetails.costDetails
     .find(DecoratorWrapper({ label: including('Currency') }))
     .find(TextField()),
-  createInventory: orderDetails.orderLineInformation
-    .find(Section({ id: 'physical-resource-details' }))
+  materialSupplier: orderLineDetails.physicalResourceDetails.find(
+    TextField({ label: including('Material supplier') }),
+  ),
+  materialSupplierLookUp: orderLineDetails.physicalResourceDetails.find(
+    Button('Organization look-up'),
+  ),
+  createInventory: orderLineDetails.physicalResourceDetails
     .find(DecoratorWrapper({ label: including('Create inventory') }))
     .find(TextField()),
+  accessProvider: orderLineDetails.eResourceDetails.find(
+    TextField({ label: including('Access provider') }),
+  ),
+  accessProviderLookUp: orderLineDetails.eResourceDetails.find(Button('Organization look-up')),
 };
 
 const electronicAccessFields = {
@@ -264,7 +275,7 @@ export default {
       );
     }
   },
-  fillOrderInformationProfileFields({ status, vendor }) {
+  fillOrderInformationProfileFields({ status, vendor, organizationLookUp }) {
     if (status) {
       cy.do([
         orderInformationFields.orderStatus.focus(),
@@ -276,10 +287,15 @@ export default {
     if (vendor) {
       cy.do([
         orderInformationFields.vendor.focus(),
-        orderInformationFields.organizationLookUp.click(),
+        orderInformationFields.vendor.fillIn(`"${vendor}"`),
       ]);
-      FinanceHelper.selectFromLookUpView({ itemName: vendor });
       cy.expect(orderInformationFields.vendor.has({ value: `"${vendor}"` }));
+    }
+
+    if (organizationLookUp) {
+      cy.do([orderInformationFields.vendor.focus(), orderInformationFields.vendorLookUp.click()]);
+      FinanceHelper.selectFromLookUpView({ itemName: organizationLookUp });
+      cy.expect(orderInformationFields.vendor.has({ value: `"${organizationLookUp}"` }));
     }
   },
   fillOrderLineInformationProfileFields({
@@ -289,6 +305,7 @@ export default {
     poLineDetails,
     costDetails,
     physicalResourceDetails,
+    eResourceDetails,
   }) {
     if (title) {
       cy.do([
@@ -382,6 +399,10 @@ export default {
     if (physicalResourceDetails) {
       this.fillPhysicalResourceDetailsPfofileFields(physicalResourceDetails);
     }
+
+    if (eResourceDetails) {
+      this.fillElectronicResourceDetailsPfofileFields(eResourceDetails);
+    }
   },
   fillPoLineDetailsProfileFields({ acquisitionMethod, orderFormat, receivingWorkflow }) {
     if (acquisitionMethod) {
@@ -431,13 +452,58 @@ export default {
       cy.expect(orderLineInformationFields.currency.has({ value: `"${currency}"` }));
     }
   },
-  fillPhysicalResourceDetailsPfofileFields({ createInventory }) {
+  fillPhysicalResourceDetailsPfofileFields({
+    materialSupplier,
+    organizationLookUp,
+    createInventory,
+  }) {
+    if (materialSupplier) {
+      cy.do([
+        orderLineInformationFields.materialSupplier.focus(),
+        orderLineInformationFields.materialSupplier.fillIn(`"${materialSupplier}"`),
+      ]);
+      cy.expect(
+        orderLineInformationFields.materialSupplier.has({ value: `"${materialSupplier}"` }),
+      );
+    }
+
+    if (organizationLookUp) {
+      cy.do([
+        orderLineInformationFields.materialSupplier.focus(),
+        orderLineInformationFields.materialSupplierLookUp.click(),
+      ]);
+      FinanceHelper.selectFromLookUpView({ itemName: organizationLookUp });
+      cy.expect(
+        orderLineInformationFields.materialSupplier.has({ value: `"${organizationLookUp}"` }),
+      );
+    }
+
     if (createInventory) {
       cy.do([
         orderLineInformationFields.createInventory.focus(),
         orderLineInformationFields.createInventory.fillIn(`"${createInventory}"`),
       ]);
       cy.expect(orderLineInformationFields.createInventory.has({ value: `"${createInventory}"` }));
+    }
+  },
+  fillElectronicResourceDetailsPfofileFields({ accessProvider, organizationLookUp }) {
+    if (accessProvider) {
+      cy.do([
+        orderLineInformationFields.accessProvider.focus(),
+        orderLineInformationFields.accessProvider.fillIn(`"${accessProvider}"`),
+      ]);
+      cy.expect(orderLineInformationFields.accessProvider.has({ value: `"${accessProvider}"` }));
+    }
+
+    if (organizationLookUp) {
+      cy.do([
+        orderLineInformationFields.accessProvider.focus(),
+        orderLineInformationFields.accessProviderLookUp.click(),
+      ]);
+      FinanceHelper.selectFromLookUpView({ itemName: organizationLookUp });
+      cy.expect(
+        orderLineInformationFields.accessProvider.has({ value: `"${organizationLookUp}"` }),
+      );
     }
   },
   fillElectronicAccessProfileFields({ value }) {

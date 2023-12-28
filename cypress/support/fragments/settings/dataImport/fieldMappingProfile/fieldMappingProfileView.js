@@ -41,6 +41,20 @@ const invoiceDetailsViews = {
   invoiceLineAdjustments: detailsSection.find(Section({ id: 'view-invoice-line-adjustments' })),
 };
 
+const orderDetailsViews = {
+  orderInformation: detailsSection.find(Section({ id: 'view-order-information' })),
+  orderLineInformation: detailsSection.find(Section({ id: 'view-order-line-information' })),
+  // order line info sub sections
+  itemDetails: detailsSection.find(Section({ id: 'view-item-details' })),
+  poLineDetails: detailsSection.find(Section({ id: 'view-po-line-details' })),
+  vendorDetails: detailsSection.find(Section({ id: 'view-vendor' })),
+  costDetails: detailsSection.find(Section({ id: 'view-cost-details' })),
+  fundDistributionDetails: detailsSection.find(Section({ id: 'view-fund-distribution' })),
+  orderLocationDetails: detailsSection.find(Section({ id: 'view-order-location' })),
+  pResourceDetails: detailsSection.find(Section({ id: 'view-physical-resource-details' })),
+  eResourceDetails: detailsSection.find(Section({ id: 'view-e-resources-details' })),
+};
+
 const actionsButton = mappingProfileView.find(Button('Actions'));
 
 export default {
@@ -69,6 +83,12 @@ export default {
   },
   checkSummaryFieldsConditions(fields = []) {
     this.checkFieldsConditions({ fields, section: summarySection });
+  },
+  checkOrderFieldsConditions(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderDetailsViews.orderInformation });
+  },
+  checkOrderLineFieldsConditions(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderDetailsViews.orderLineInformation });
   },
   checkAdminDataFieldsConditions(fields = []) {
     this.checkFieldsConditions({ fields, section: adminDataSection });
