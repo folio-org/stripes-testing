@@ -9,9 +9,9 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TopMenu from '../../../support/fragments/topMenu';
-// import Users from '../../../support/fragments/users/users';
+import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-// import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -21,17 +21,18 @@ import NewMatchProfile from '../../../support/fragments/data_import/match_profil
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('data-import', () => {
   describe('Log details', () => {
     const testData = {
       createdRecordIDs: [],
-      marcFilePath: 'marcBibFileForC387452.mrc',
+      marcFilePath: 'marcBibFileForC389589.mrc',
       jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
       fileName: `C389589 marcFileName${getRandomPostfix()}`,
-      title: '',
+      title: "101 things I wish I'd known when I started using hypnosis / Dabney Ewin.",
       errorMessage:
-        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions (UUIDs: <UUIDs that matches divided by comma>")',
+        'org.folio.processing.exceptions.MatchingException: Found multiple records matching specified conditions. CQL query: [identifiers =/@value/@identifierTypeId="439bfbae-75bc-4f74-9fc7-b2a2d47ce3ef',
     };
     const matchProfile = {
       profileName: `C389589 Updating SRS by 035 to OCLC number${getRandomPostfix()}`,
@@ -46,24 +47,40 @@ describe('data-import', () => {
       instanceOption: NewMatchProfile.optionsList.identifierOCLC,
     };
     // collectionOfMappingAndActionProfiles
-    const mappingProfileForModify = {
-      name: `C389589 Modifying 500 record${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      modifications: {
-        action: 'Add',
-        field: '500',
-        ind1: '',
-        ind2: '',
-        subfield: 'a',
-        data: `Test.${getRandomPostfix()}`,
+    const collectionOfMappingAndActionProfiles = [
+      {
+        mappingProfile: {
+          name: `C389589 Modifying 500 record${getRandomPostfix()}`,
+          typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+          modifications: {
+            action: 'Add',
+            field: '500',
+            ind1: '',
+            ind2: '',
+            subfield: 'a',
+            data: `Test.${getRandomPostfix()}`,
+          },
+        },
+        actionProfile: {
+          name: `C389589 Modifying 500 record${getRandomPostfix()}`,
+          action: 'Modify (MARC Bibliographic record type only)',
+          typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
+        },
       },
-    };
-    const mappingProfile = {
-      name: `C389589 Updating Instance with ADM note${getRandomPostfix()}`,
-      typeValue: FOLIO_RECORD_TYPE.INSTANCE,
-      adminNotes: 'Add this to existing',
-      adminNote: `Test${getRandomPostfix()}`,
-    };
+      {
+        mappingProfile: {
+          name: `C389589 Updating Instance with ADM note${getRandomPostfix()}`,
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+          adminNotes: 'Add this to existing',
+          adminNote: `Test${getRandomPostfix()}`,
+        },
+        actionProfile: {
+          name: `C389589 Updating Instance with ADM note${getRandomPostfix()}`,
+          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+          typeValue: FOLIO_RECORD_TYPE.INSTANCE,
+        },
+      },
+    ];
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
       profileName: `C389589 Updating Instance by 035 OCLC record${getRandomPostfix()}`,
@@ -85,12 +102,13 @@ describe('data-import', () => {
       marcFileNames.forEach((name) => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(testData.marcFilePath, name);
+        DataImport.uploadFile(testData.marcFilePath, name.fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(testData.jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(name);
+        JobProfiles.waitFileIsImported(name.fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(name);
+        Logs.openFileDetails(name.fileName);
         Logs.getCreatedItemsID().then((link) => {
           testData.createdRecordIDs.push(link.split('/')[5]);
         });
@@ -98,7 +116,7 @@ describe('data-import', () => {
 
       cy.createTempUser([
         Permissions.moduleDataImportEnabled.gui,
-        Permissions.settingsDataImportCanViewOnly.gui,
+        Permissions.settingsDataImportEnabled.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
 
@@ -109,15 +127,20 @@ describe('data-import', () => {
       });
     });
 
-    // after('delete test data', () => {
-    //   cy.getAdminToken().then(() => {
-    //     Users.deleteViaApi(testData.user.userId);
-    //     JobProfiles.deleteJobProfile(jobProfile.profileName);
-    //     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-    //     ActionProfiles.deleteActionProfile(actionProfile.name);
-    //     FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-    //   });
-    // });
+    after('delete test data', () => {
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(testData.user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
+        testData.createdRecordIDs.forEach((id) => {
+          InventoryInstance.deleteInstanceViaApi(id);
+        });
+      });
+    });
 
     it(
       'C389589  Verify the updated error message for multiple match on JSON screen for Instance: Case 1 (folijet) (TaaS)',
@@ -129,47 +152,59 @@ describe('data-import', () => {
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
         // create mapping profile
-        FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfileForModify);
-        NewFieldMappingProfile.addFieldMappingsForMarc();
-        NewFieldMappingProfile.fillModificationSectionWithAdd(
-          mappingProfileForModify.modifications,
-        );
-        NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(mappingProfileForModify.name);
-        FieldMappingProfiles.checkMappingProfilePresented(mappingProfileForModify.name);
-
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-        NewFieldMappingProfile.addAdministrativeNote(mappingProfile.adminNote, 5);
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[0].mappingProfile,
+        );
+        NewFieldMappingProfile.addFieldMappingsForMarc();
+        NewFieldMappingProfile.fillModificationSectionWithAdd(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.modifications,
+        );
         NewFieldMappingProfile.save();
-        FieldMappingProfileView.closeViewMode(mappingProfile.name);
-        FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[0].mappingProfile.name,
+        );
 
-        // // create action profiles
-        // collectionOfMappingAndActionProfiles.forEach((profile) => {
-        //   cy.visit(SettingsMenu.actionProfilePath);
-        //   ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-        //   ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-        // });
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(
+          collectionOfMappingAndActionProfiles[1].mappingProfile,
+        );
+        NewFieldMappingProfile.addAdministrativeNote(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.adminNote,
+          9,
+        );
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
+        FieldMappingProfiles.checkMappingProfilePresented(
+          collectionOfMappingAndActionProfiles[1].mappingProfile.name,
+        );
+
+        // create action profiles
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          cy.visit(SettingsMenu.actionProfilePath);
+          ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+          ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+        });
 
         // create job profile
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfile);
-        // NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[0].matchProfile.profileName);
-        // NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[1].matchProfile.profileName);
-        // NewJobProfile.linkActionProfileForMatches(
-        //   collectionOfMappingAndActionProfiles[0].actionProfile.name,
-        //   2,
-        // );
-        // NewJobProfile.linkMatchProfile(collectionOfMatchProfiles[2].matchProfile.profileName);
-        // NewJobProfile.linkActionProfileForMatches(
-        //   collectionOfMappingAndActionProfiles[1].actionProfile.name,
-        //   4,
-        // );
-        // NewJobProfile.saveAndClose();
-        // JobProfiles.checkJobProfilePresented(jobProfileWithMatch.profileName);
+        NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
+        NewJobProfile.linkMatchProfile(matchProfile.profileName);
+        NewJobProfile.linkActionProfileForMatches(
+          collectionOfMappingAndActionProfiles[1].actionProfile.name,
+        );
+        NewJobProfile.saveAndClose();
+        JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -183,7 +218,7 @@ describe('data-import', () => {
         Logs.openFileDetails(testData.fileName);
         FileDetails.openJsonScreen(testData.title);
         JsonScreenView.verifyJsonScreenIsOpened();
-        JsonScreenView.openOrderTab();
+        JsonScreenView.openInstanceTab();
         JsonScreenView.verifyContentInTab(testData.errorMessage);
       },
     );
