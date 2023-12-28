@@ -33,7 +33,7 @@ describe('Data Import', () => {
         },
         orderInformation: {
           status: ORDER_STATUSES.PENDING,
-          vendor: 'GOBI Library Solutions',
+          organizationLookUp: 'GOBI Library Solutions',
         },
         orderLineInformation: {
           title: orderLineTitle,
