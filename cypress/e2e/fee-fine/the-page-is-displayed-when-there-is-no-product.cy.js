@@ -18,8 +18,10 @@ import ManualCharges from '../../support/fragments/settings/users/manualCharges'
 import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import ConfirmDeleteItemModal from '../../support/fragments/inventory/modals/confirmDeleteItemModal';
+import Users from '../../support/fragments/users/users';
 
 describe('Fees&Fines', () => {
   const testData = {
@@ -103,10 +105,19 @@ describe('Fees&Fines', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
+    InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.folioInstances[0].instanceId);
+    NewFeeFine.getUserFeesFines(testData.user.userId).then((userFeesFines) => {
+      userFeesFines.accounts.forEach(({ id }) => {
+        cy.deleteFeesFinesApi(id);
+      });
+    });
     ManualCharges.deleteViaApi(testData.manualChargeId);
     UsersOwners.deleteViaApi(testData.ownerData.id);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
+    Users.deleteViaApi(testData.user.userId);
+    PatronGroups.deleteViaApi(patronGroup.id);
+    Locations.deleteViaApi(testData.defaultLocation);
   });
 
   it(
