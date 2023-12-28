@@ -5,7 +5,7 @@ import {
   REQUEST_LEVELS,
   REQUEST_TYPES,
 } from '../../support/constants';
-import permissions from '../../support/dictionary/permissions';
+import Permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -22,7 +22,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Request queue. TLR', () => {
+describe('Title Level Request. Request Detail', () => {
   let userData = {};
   let userForTLR = {};
   const requestIds = [];
@@ -41,8 +41,7 @@ describe('Request queue. TLR', () => {
     name: `requestPolicy${getRandomPostfix()}`,
     id: uuid(),
   };
-
-  before('Preconditions', () => {
+  before('Create test data', () => {
     cy.getAdminToken()
       .then(() => {
         cy.loginAsAdmin({
@@ -106,7 +105,7 @@ describe('Request queue. TLR', () => {
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
+    cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
       userForTLR = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
@@ -117,13 +116,14 @@ describe('Request queue. TLR', () => {
 
     cy.createTempUser(
       [
-        permissions.uiRequestsView.gui,
-        permissions.uiRequestsCreate.gui,
-        permissions.requestsAll.gui,
-        permissions.uiRequestsEdit.gui,
+        Permissions.uiRequestsCreate.gui,
+        Permissions.uiRequestsView.gui,
+        Permissions.uiRequestsEdit.gui,
+        Permissions.requestsAll.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
+      cy.log(JSON.stringify(userProperties));
       userData = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
@@ -163,7 +163,7 @@ describe('Request queue. TLR', () => {
     });
   });
 
-  after('Deleting created entities', () => {
+  after('Delete test data', () => {
     cy.loginAsAdmin({
       path: SettingsMenu.circulationTitleLevelRequestsPath,
       waiter: TitleLevelRequests.waitLoading,
@@ -191,19 +191,15 @@ describe('Request queue. TLR', () => {
   });
 
   it(
-    'C347887 Check that user can see Fulfillment in progress accordion (vega) (TaaS)',
+    'C347891 Check that user can see Open - Not yet filled accordion (vega) (Taas)',
     { tags: ['extendedPath', 'vega'] },
     () => {
-      Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);
       Requests.selectFirstRequest(instanceData.title);
-      RequestDetail.waitLoading();
-      RequestDetail.openActions();
-      RequestDetail.verifyActionButtonsPresence();
-      RequestDetail.clickReorderQueue();
-      RequestDetail.verifyQueueInstance(instanceData.title);
+      RequestDetail.requestQueueOnInstance(instanceData.title);
+      RequestDetail.verifyHeaders(instanceData.title);
       RequestDetail.verifyAccordionsPresence();
-      RequestDetail.verifyRequestQueueColumnsPresence(true, false);
+      RequestDetail.verifyRequestQueueColumnsPresence(false, true);
     },
   );
 });
