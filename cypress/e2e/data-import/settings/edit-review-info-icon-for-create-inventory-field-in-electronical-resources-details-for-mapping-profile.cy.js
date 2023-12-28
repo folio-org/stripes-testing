@@ -55,11 +55,11 @@ describe('data-import', () => {
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
-        NewFieldMappingProfile.verifyCreateInventoryInfoMessage(message);
+        NewFieldMappingProfile.verifyElectronicalResourcesCreateInventoryInfoMessage(message);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.verifyMappingProfileOpened();
         FieldMappingProfileView.edit();
-        NewFieldMappingProfile.verifyCreateInventoryInfoMessage(message);
+        NewFieldMappingProfile.verifyElectronicalResourcesCreateInventoryInfoMessage(message);
       },
     );
   });

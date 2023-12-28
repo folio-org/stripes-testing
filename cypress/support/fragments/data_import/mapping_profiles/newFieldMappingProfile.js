@@ -1200,7 +1200,7 @@ export default {
     cy.expect(purchaseOrderLinesLimit.has({ value }));
   },
 
-  verifyCreateInventoryInfoMessage: (message) => {
+  verifyElectronicalResourcesCreateInventoryInfoMessage: (message) => {
     cy.do(
       Accordion({ id: 'e-resources-details' })
         .find(Label('Create inventory').find(IconButton({ icon: 'info' })))
