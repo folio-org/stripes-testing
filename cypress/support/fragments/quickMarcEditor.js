@@ -590,6 +590,11 @@ export default {
     cy.do(cancelEditConfirmBtn.click());
   },
 
+  closeWithoutSavingInEditConformation() {
+    cy.expect(cancelEditConformModel.exists());
+    cy.do(closeWithoutSavingBtn.click());
+  },
+
   deleteConfirmationPresented() {
     cy.expect(confirmationModal.exists());
   },
@@ -720,6 +725,10 @@ export default {
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
   },
 
+  checkUndoDeleteAbsent() {
+    cy.get('#quick-marc-editor-pane').find('[class^=deletedRowPlaceholder-]').should('not.exist');
+  },
+
   afterDeleteNotificationNoTag() {
     cy.get('[class^=deletedRowPlaceholder-]').should(
       'include.text',
@@ -778,6 +787,14 @@ export default {
     cy.expect(
       getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount() + 1)
         .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
+        .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
+    );
+  },
+
+  checkContentByTag(content, tag) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextArea())
         .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
     );
   },
@@ -1349,6 +1366,21 @@ export default {
     });
   },
 
+  verifyAllBoxesInARowAreEditable(tag) {
+    cy.expect([
+      getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: false }),
+    ]);
+  },
+
   checkLDRValue(ldrValue = validRecord.ldrValue) {
     cy.expect(
       getRowInteractorByTagName('LDR')
@@ -1674,6 +1706,10 @@ export default {
         ),
       }),
     ]);
+  },
+
+  verifyRemoveLinkingModalAbsence() {
+    cy.expect([removeLinkingModal.absent()]);
   },
 
   confirmRemoveAuthorityLinking() {
