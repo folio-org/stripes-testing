@@ -458,15 +458,22 @@ export default {
     cy.wait(300);
     cy.expect(mappingProfileForm.absent());
   },
-  clickSaveAndCloseButton({ profileCreated = true } = {}) {
+  clickSaveAndCloseButton({ profileCreated = true, profileUpdated = false } = {}) {
     cy.expect(saveAndCloseButton.has({ disabled: false }));
     cy.do(saveAndCloseButton.click());
-    cy.expect(mappingProfileForm.absent());
 
     if (profileCreated) {
       InteractorsTools.checkCalloutMessage(
         matching(new RegExp(Notifications.fieldMappingProfileCreatedSuccessfully)),
       );
+      cy.expect(mappingProfileForm.absent());
+    }
+
+    if (profileUpdated) {
+      InteractorsTools.checkCalloutMessage(
+        matching(new RegExp(Notifications.fieldMappingProfileUpdateSuccessfully)),
+      );
+      cy.expect(mappingProfileForm.absent());
     }
   },
 };
