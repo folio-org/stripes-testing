@@ -12,24 +12,25 @@ import Affiliations, { tenantNames } from '../../../../support/dictionary/affili
 import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
 
 describe('Inventory -> Instance -> Consortia', () => {
-  const user = {};
   const testData = {
     newInstanceTitle: `C407749 instanceTitle${getRandomPostfix()}`,
   };
 
   before('Create test data', () => {
     cy.getAdminToken();
-    cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
-      (userProperties) => {
-        user.userProperties = userProperties;
 
-        cy.assignAffiliationToUser(Affiliations.College, user.userProperties.userId);
+    cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui])
+      .then((userProperties) => {
+        testData.user = userProperties;
+      })
+      .then(() => {
+        cy.assignAffiliationToUser(Affiliations.College, testData.user.userId);
         cy.setTenant(Affiliations.College);
-        cy.assignPermissionsToExistingUser(user.userProperties.userId, [
+        cy.assignPermissionsToExistingUser(testData.user.userId, [
           Permissions.uiInventoryViewCreateEditInstances.gui,
         ]);
 
-        cy.login(user.userProperties.username, user.userProperties.password, {
+        cy.login(testData.user.username, testData.user.password, {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
@@ -37,13 +38,12 @@ describe('Inventory -> Instance -> Consortia', () => {
         InventoryInstance.createInstanceViaApi().then(({ instanceData }) => {
           testData.instance = instanceData;
         });
-      },
-    );
+      });
   });
 
   after('Delete test data', () => {
     InventoryInstance.deleteInstanceViaApi(testData.instance.instanceId);
-    Users.deleteViaApi(user.userProperties.userId);
+    Users.deleteViaApi(testData.user.userId);
   });
 
   it(
