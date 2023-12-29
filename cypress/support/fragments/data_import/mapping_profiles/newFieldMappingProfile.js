@@ -1216,14 +1216,6 @@ export default {
     cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
   },
 
-  isPurchaseOrderStatusFieldFocused: (value) => {
-    purchaseOrderStatus.has({ focused: value });
-  },
-
-  verifyDefaultPurchaseOrderLinesLimit(value) {
-    cy.expect(purchaseOrderLinesLimit.has({ value }));
-  },
-
   addAdditionalProductInfo: (product) => {
     cy.do([
       Button('Add product ID and product ID type').click(),
@@ -1237,5 +1229,13 @@ export default {
         name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.2.value',
       }).fillIn(`"${product.idType}"`),
     ]);
+  },
+
+  isPurchaseOrderStatusFieldFocused: (value) => {
+    purchaseOrderStatus.has({ focused: value });
+  },
+
+  verifyDefaultPurchaseOrderLinesLimit(value) {
+    cy.expect(purchaseOrderLinesLimit.has({ value }));
   },
 };
