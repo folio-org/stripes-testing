@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { HTML, including } from '@interactors/html';
 import {
+  Accordion,
   Button,
   Form,
   Select,
@@ -13,6 +14,7 @@ import {
 
 const selectActionProfile = Select({ name: 'profile.action' });
 const criterionValueTypeSelectionList = SelectionList({ id: 'sl-container-criterion-value-type' });
+const matchProfileDetailsAccordion = Accordion({ id: 'match-profile-details' });
 
 export default {
   save: () => cy.do(Button('Save as profile & Close').click()),
@@ -40,5 +42,8 @@ export default {
   },
   verifyIncomingRecordsItemDoesNotExist(name) {
     cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).absent()]);
+  },
+  clickOnExistingRecordByName: (name) => {
+    cy.do(matchProfileDetailsAccordion.find(Button({ text: name })).click());
   },
 };
