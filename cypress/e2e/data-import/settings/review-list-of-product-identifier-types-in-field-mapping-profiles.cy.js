@@ -1,3 +1,4 @@
+import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -22,16 +23,26 @@ describe('data-import', () => {
     });
 
     it(
-      'C380720 Order field mapping: review adjusted info icon to the "Acquisitions units" field in the Create page (folijet) (TaaS)',
+      'C376008 Order field mapping profile: Confirm the list of Product identifier types (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        const message =
-          'Order creation will error unless the importing user is a member of the specified acquisitions unit';
-
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.addFolioRecordType('Order');
-        NewFieldMappingProfile.verifyAcquisitionsUnitsInfoMessage(message);
+        NewFieldMappingProfile.addFolioRecordType(FOLIO_RECORD_TYPE.ORDER);
+        NewFieldMappingProfile.verifyProductIdTypeDropdown(
+          'ASIN',
+          'CODEN',
+          'DOI',
+          'GPO item number',
+          'ISBN',
+          'ISMN',
+          'ISSN',
+          'Publisher or distributor number',
+          'Report number',
+          'Standard technical report number',
+          'UPC',
+          'URN',
+        );
       },
     );
   });

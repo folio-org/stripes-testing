@@ -73,6 +73,18 @@ export default {
     cy.do(searchButton.click());
   },
 
+  selectFirsPermissionInSearch() {
+    cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
+  },
+
+  savePermissionsInModal() {
+    cy.do(selectPermissionsModal.find(saveAndCloseBtn).click());
+  },
+
+  saveUserEditForm() {
+    cy.do(Button({ id: 'clickable-save' }).click());
+  },
+
   openSelectPermissionsModal() {
     cy.do(permissionsAccordion.clickHeader());
     cy.do(addPermissionsButton.click());
