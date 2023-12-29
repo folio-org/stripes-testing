@@ -211,4 +211,12 @@ export default {
   verifyDiscount: (discount) => {
     cy.expect(KeyValue('Discount').has({ value: discount }));
   },
+
+  verifyFundDistributionValue: (val) => {
+    cy.expect(
+      Accordion('Fund distribution')
+        .find(MultiColumnListCell({ content: val }))
+        .exists(),
+    );
+  },
 };
