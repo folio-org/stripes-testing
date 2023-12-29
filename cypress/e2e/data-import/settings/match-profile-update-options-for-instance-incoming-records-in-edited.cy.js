@@ -5,7 +5,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import SettingsDataImport from '../../../support/fragments/data_import/settingsDataImport';
+import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
 import MatchProfileEdit from '../../../support/fragments/data_import/match_profiles/matchProfileEdit';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';

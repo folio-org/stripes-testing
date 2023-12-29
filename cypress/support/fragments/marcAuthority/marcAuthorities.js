@@ -38,6 +38,7 @@ const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result
 const filtersSection = Section({ id: 'pane-authorities-filters' });
 const marcViewSectionContent = PaneContent({ id: 'marc-view-pane-content' });
 const searchInput = SearchField({ id: 'textarea-authorities-search' });
+const searchResults = PaneContent({ id: 'authority-search-results-pane-content' });
 const searchButton = Button({ id: 'submit-authorities-search' });
 const browseSearchAndFilterInput = Select('Search field index');
 const marcViewSection = Section({ id: 'marc-view-pane' });
@@ -65,6 +66,7 @@ const nextButton = Button({ id: 'authority-result-list-next-paging-button' });
 const previousButton = Button({ id: 'authority-result-list-prev-paging-button' });
 const searchNav = Button({ id: 'segment-navigation-search' });
 const buttonLink = Button('Link');
+const linkIconButton = Button({ ariaLabel: 'Link' });
 const buttonAdvancedSearch = Button('Advanced search');
 const modalAdvancedSearch = Modal('Advanced search');
 const buttonSearchInAdvancedModal = Button({ ariaLabel: 'Search' });
@@ -210,7 +212,12 @@ export default {
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
-    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
+    cy.expect(
+      MultiColumnListRow({ indexRow: 'row-0' })
+        .find(MultiColumnListCell({ columnIndex, content: linkValue }))
+        .find(Link())
+        .exists(),
+    );
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
@@ -374,6 +381,10 @@ export default {
     cy.do(buttonLink.click());
   },
 
+  clickLinkIcon() {
+    cy.do(searchResults.find(linkIconButton).click());
+  },
+
   verifyLinkButtonExistOnMarcViewPane(isExist = true) {
     if (isExist) {
       cy.expect(marcViewSection.find(buttonLink).exists());
@@ -388,6 +399,14 @@ export default {
       marcViewSectionContent.has({ text: including(tag) }),
       marcViewSectionContent.has({ text: including(value) }),
     ]);
+  },
+
+  verifyViewPaneContent(value) {
+    cy.expect([marcViewSection.exists(), marcViewSectionContent.has({ text: including(value) })]);
+  },
+
+  getViewPaneContent() {
+    cy.wrap(marcViewSectionContent.text()).as('viewAuthorityPaneContent');
   },
 
   check010FieldAbsence: () => {
@@ -529,10 +548,11 @@ export default {
     cy.expect(modalAdvancedSearch.exists());
   },
 
-  fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption) {
+  fillAdvancedSearchField(rowIndex, value, searchOption, booleanOption, matchOption) {
     cy.do(AdvancedSearchRow({ index: rowIndex }).fillQuery(value));
     cy.do(AdvancedSearchRow({ index: rowIndex }).selectSearchOption(rowIndex, searchOption));
     if (booleanOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectBoolean(rowIndex, booleanOption));
+    if (matchOption) cy.do(AdvancedSearchRow({ index: rowIndex }).selectMatchOption(rowIndex, matchOption));
   },
 
   clickSearchButton() {
@@ -809,6 +829,7 @@ export default {
       );
     }
   },
+
   verifyTextOfPaneHeaderMarcAuthority(text) {
     cy.expect(
       PaneHeader('MARC authority')
@@ -1170,4 +1191,8 @@ export default {
   selectRecordByIndex(rowIndex) {
     cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
   },
+
+  checkRowByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).exists()),
+
+  checkRowAbsentByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).absent()),
 };

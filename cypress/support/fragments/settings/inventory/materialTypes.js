@@ -42,6 +42,16 @@ export default {
     cy.do(TextField({ placeholder: 'name' }).fillIn(materialTypeName));
     cy.do(Button('Save').click());
   },
+  getMaterialTypesViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'material-types',
+        isDefaultSearchParamsRequired: false,
+        searchParams,
+      })
+      .then(({ body }) => body);
+  },
   createMaterialTypeViaApi(materialTypeProperties) {
     return cy
       .okapiRequest({

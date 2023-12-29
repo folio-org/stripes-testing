@@ -5,7 +5,7 @@ import Users from '../../../support/fragments/users/users';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import SettingsDataImport from '../../../support/fragments/data_import/settingsDataImport';
+import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
 
 let user;
 

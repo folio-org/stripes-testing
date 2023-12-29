@@ -791,6 +791,14 @@ export default {
     );
   },
 
+  checkContentByTag(content, tag) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextArea())
+        .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
+    );
+  },
+
   verifyEditableFieldIcons(rowNumber) {
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).exists());
@@ -1358,6 +1366,21 @@ export default {
     });
   },
 
+  verifyAllBoxesInARowAreEditable(tag) {
+    cy.expect([
+      getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: false }),
+    ]);
+  },
+
   checkLDRValue(ldrValue = validRecord.ldrValue) {
     cy.expect(
       getRowInteractorByTagName('LDR')
@@ -1683,6 +1706,10 @@ export default {
         ),
       }),
     ]);
+  },
+
+  verifyRemoveLinkingModalAbsence() {
+    cy.expect([removeLinkingModal.absent()]);
   },
 
   confirmRemoveAuthorityLinking() {
