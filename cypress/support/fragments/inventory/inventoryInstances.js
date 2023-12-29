@@ -317,6 +317,19 @@ export default {
     cy.do(Checkbox(tagName).click());
   },
 
+  searchAndVerify(value) {
+    cy.do(filterSection.find(inventorySearchInput).fillIn(value));
+    cy.expect([
+      filterSection.find(inventorySearchInput).has({ value }),
+      filterSection.find(searchButton).has({ disabled: false }),
+    ]);
+    cy.do(filterSection.find(searchButton).click());
+    cy.expect([
+      inventoriesList.exists(),
+      inventoriesList.find(Button({ text: including(value) })).exists(),
+    ]);
+  },
+
   createInstanceViaApi(
     instanceName,
     itemBarcode,
