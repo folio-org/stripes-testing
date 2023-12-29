@@ -170,6 +170,10 @@ export default {
       });
   },
 
+  verifyLinkedProfilesEmpty() {
+    cy.get('[data-test-profile-link]').should('not.exist');
+  },
+
   verifyJobsUsingThisProfileSection(fileName) {
     cy.do(
       Accordion('Jobs using this profile')
