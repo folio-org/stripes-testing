@@ -41,6 +41,7 @@ const loanAndAvailabilityAccordion = Accordion('Loan and availability');
 const orderInformationAccordion = Accordion('Order information');
 const locationAccordion = Accordion('Location');
 const physicalResourceDetailsAccordion = Accordion('Physical resource details');
+const eResourcesDetailsAccordion = Accordion('E-resources details');
 const nameField = TextField({ name: 'profile.name' });
 const searchField = TextField({ id: 'input-record-search' });
 const permanentLocationField = TextField('Permanent');
@@ -655,6 +656,12 @@ export default {
   fillQuantity: (quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal: (number) => cy.do(TextField('Sub-total*').fillIn(number)),
   fillPurchaseOrderStatus: (orderStatus) => cy.do(purchaseOrderStatus.fillIn(`"${orderStatus}"`)),
+  fillCreateInventoryForPhysicalResource: (inventory) => {
+    cy.do(physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(inventory));
+  },
+  fillCreateInventoryForElectronicResource: (inventory) => {
+    cy.do(eResourcesDetailsAccordion.find(TextField('Create inventory')).fillIn(inventory));
+  },
 
   fillMappingProfileForUpdatesMarc: (specialMappingProfile = defaultMappingProfile) => {
     fillSummaryInMappingProfile(specialMappingProfile);
@@ -1200,6 +1207,20 @@ export default {
     cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ value }));
   },
 
+  verifyFieldEnabled: (accordionName, fieldName) => {
+    cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ disabled: false }));
+  },
+
+  verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
+    cy.expect(
+      Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyAddLocationButtonEnabled: () => {
+    cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
+  },
+
   addAdditionalProductInfo: (product) => {
     cy.do([
       Button('Add product ID and product ID type').click(),
@@ -1227,16 +1248,6 @@ export default {
         .click(),
     );
     cy.expect(Popover().exists());
-  },
-
-  verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
-    cy.expect(
-      Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
-    );
-  },
-
-  verifyAddLocationButtonEnabled: () => {
-    cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
   },
 
   verifyDefaultPurchaseOrderLinesLimit(value) {
