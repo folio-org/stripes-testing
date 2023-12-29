@@ -2104,6 +2104,23 @@ export default {
     }
   },
 
+  claimingActiveAndSetInterval(interval) {
+    cy.do([
+      Checkbox({ name: 'claimingActive' }).click(),
+      TextField({ name: 'claimingInterval' }).fillIn(interval),
+    ]);
+  },
+
+  claimingActive() {
+    cy.do(Checkbox({ name: 'claimingActive' }).click());
+  },
+
+  checkClaimingIntervalInPOL(claimingInterval) {
+    cy.expect([
+      poLineInfoSection.find(KeyValue('Claiming interval')).has({ value: claimingInterval }),
+    ]);
+  },
+
   verifyProductIdentifier: (productId, rowIndex = 0, productIdType) => {
     if (productIdType) {
       cy.expect([
