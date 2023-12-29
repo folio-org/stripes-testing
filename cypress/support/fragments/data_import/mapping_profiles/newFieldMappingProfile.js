@@ -1288,4 +1288,27 @@ export default {
     );
     cy.expect(Popover({ content: including(message) }).exists());
   },
+
+  verifyPaymentStatusDropdownOptions: (...names) => {
+    cy.get('#po-line-details')
+      .find('label:contains("Payment status") + div button[aria-haspopup]')
+      .click();
+    names.forEach((name) => {
+      cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
+    });
+    cy.get('#po-line-details')
+      .find('label:contains("Payment status") + div button[aria-haspopup]')
+      .click();
+  },
+
+  selectPaymentStatusFromDropdown: (name) => {
+    cy.get('#po-line-details')
+      .find('label:contains("Payment status") + div button[aria-haspopup]')
+      .click();
+    cy.do(
+      DropdownMenu({ visible: true })
+        .find(Button(`${name}`))
+        .click(),
+    );
+  },
 };
