@@ -82,6 +82,7 @@ const approvedCheckbox = Checkbox({
 const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
 const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 const closeButton = Button('Close');
+const closeWithoutSavingButton = Button('Close without saving');
 
 const requiredFields = {
   'Purchase order status': purchaseOrderStatus,
@@ -653,6 +654,7 @@ export default {
   fillVendorInvoiceNumber: (number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
   fillQuantity: (quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal: (number) => cy.do(TextField('Sub-total*').fillIn(number)),
+  fillPurchaseOrderStatus: (orderStatus) => cy.do(purchaseOrderStatus.fillIn(`"${orderStatus}"`)),
 
   fillMappingProfileForUpdatesMarc: (specialMappingProfile = defaultMappingProfile) => {
     fillSummaryInMappingProfile(specialMappingProfile);
@@ -1183,6 +1185,8 @@ export default {
 
   clickClose: () => cy.do(closeButton.click()),
 
+  confirmCloseWithoutSaving: () => cy.do(closeWithoutSavingButton.click()),
+
   verifyAcquisitionsUnitsInfoMessage: (message) => {
     cy.do(
       Label('Acquisitions units')
@@ -1192,28 +1196,8 @@ export default {
     cy.expect(Popover({ content: including(message) }).exists());
   },
 
-  verifyInfoIconClickable: (accordionName, fieldLabel) => {
-    cy.do(
-      Accordion(accordionName)
-        .find(Label(fieldLabel))
-        .find(IconButton({ icon: 'info' }))
-        .click(),
-    );
-    cy.expect(Popover().exists());
-  },
-
   verifyFieldValue: (accordionName, fieldName, value) => {
     cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ value }));
-  },
-
-  verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
-    cy.expect(
-      Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
-    );
-  },
-
-  verifyAddLocationButtonEnabled: () => {
-    cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
   },
 
   addAdditionalProductInfo: (product) => {
@@ -1233,6 +1217,26 @@ export default {
 
   isPurchaseOrderStatusFieldFocused: (value) => {
     purchaseOrderStatus.has({ focused: value });
+  },
+
+  verifyInfoIconClickable: (accordionName, fieldLabel) => {
+    cy.do(
+      Accordion(accordionName)
+        .find(Label(fieldLabel))
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().exists());
+  },
+
+  verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
+    cy.expect(
+      Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyAddLocationButtonEnabled: () => {
+    cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
   },
 
   verifyDefaultPurchaseOrderLinesLimit(value) {
