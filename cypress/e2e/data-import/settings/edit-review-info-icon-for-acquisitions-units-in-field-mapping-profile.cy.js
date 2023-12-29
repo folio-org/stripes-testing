@@ -1,9 +1,8 @@
 import {
   FOLIO_RECORD_TYPE,
-  ORDER_STATUSES,
+  BATCH_GROUP,
   VENDOR_NAMES,
-  ACQUISITION_METHOD_NAMES,
-  ORDER_FORMAT_NAMES_IN_PROFILE,
+  PAYMENT_METHOD,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
@@ -16,17 +15,19 @@ import getRandomStringCode from '../../../support/utils/genereteTextCode';
 describe('data-import', () => {
   describe('Settings', () => {
     let user;
-    const mappingProfile = {
-      name: `C380721 Info icon AcqUnits ${getRandomStringCode(160)}`,
+    const mappingProfileInvoice = {
+      name: `C380723 Info icon AcqUnits ${getRandomStringCode(160)}`,
       incomingRecordType: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      typeValue: FOLIO_RECORD_TYPE.ORDER,
-      orderStatus: ORDER_STATUSES.PENDING,
-      vendor: VENDOR_NAMES.GOBI,
-      title: '245$a',
-      acquisitionMethod: ACQUISITION_METHOD_NAMES.PURCHASE_AT_VENDOR_SYSTEM,
-      orderFormat: ORDER_FORMAT_NAMES_IN_PROFILE.PHYSICAL_RESOURCE,
+      typeValue: FOLIO_RECORD_TYPE.INVOICE,
+      invoiceLinePOlDescription: 'This is the Description',
+      invoiceDate: '###TODAY###',
+      batchGroup: BATCH_GROUP.FOLIO,
+      vendorInvoiceNumber: '1',
+      organizationName: VENDOR_NAMES.GOBI,
+      paymentMethod: PAYMENT_METHOD.CASH,
       currency: 'USD',
-      receivingWorkflow: 'Synchronized',
+      quantity: '1',
+      subtotal: '1',
     };
 
     before('create user', () => {
@@ -39,20 +40,24 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfileInvoice.name);
       });
     });
 
     it(
-      'C380721 Order field mapping: review adjusted info icon to the "Acquisitions units" field in the editing page (folijet) (TaaS)',
+      'C380723 Invoice field mapping: review adjusted info icon to the "Acquisitions units" field in the editing page (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
         const message =
-          'Order creation will error unless the importing user is a member of the specified acquisitions unit';
+          'Invoice creation will error unless the importing user is a member of the specified acquisitions unit';
 
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillOrderMappingProfile(mappingProfile);
+        NewFieldMappingProfile.fillInvoiceMappingProfile(mappingProfileInvoice);
+        NewFieldMappingProfile.fillInvoiceDate(mappingProfileInvoice.invoiceDate);
+        NewFieldMappingProfile.fillVendorInvoiceNumber(mappingProfileInvoice.vendorInvoiceNumber);
+        NewFieldMappingProfile.fillQuantity(mappingProfileInvoice.quantity);
+        NewFieldMappingProfile.fillSubTotal(mappingProfileInvoice.subtotal);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.verifyMappingProfileOpened();
         FieldMappingProfileView.edit();
