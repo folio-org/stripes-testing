@@ -137,6 +137,9 @@ describe('eHoldings', () => {
             eHoldingsResourceView.checkHoldingStatus(FILTER_STATUSES.SELECTED);
             eHoldingsResourceView.removeTitleFromHolding();
             eHoldingsResourceView.checkHoldingStatus(FILTER_STATUSES.NOT_SELECTED);
+
+            // reset test data
+            eHoldingsResourceView.addToHoldings();
           });
         });
       },
