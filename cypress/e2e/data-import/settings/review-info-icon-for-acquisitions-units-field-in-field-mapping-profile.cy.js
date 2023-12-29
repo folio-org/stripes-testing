@@ -34,5 +34,19 @@ describe('data-import', () => {
         NewFieldMappingProfile.verifyAcquisitionsUnitsInfoMessage(message);
       },
     );
+
+    it(
+      'C380722 Invoice field mapping: review adjusted info icon to the "Acquisitions units" field in the Create page (folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet'] },
+      () => {
+        const message =
+          'Invoice creation will error unless the importing user is a member of the specified acquisitions unit';
+
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.addFolioRecordType('Invoice');
+        NewFieldMappingProfile.verifyAcquisitionsUnitsInfoMessage(message);
+      },
+    );
   });
 });
