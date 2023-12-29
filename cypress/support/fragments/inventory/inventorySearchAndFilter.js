@@ -466,6 +466,7 @@ export default {
   },
 
   verifySearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
+  verifyContentNotExistInSearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).absent()),
 
   getInstancesByIdentifierViaApi(identifier, limit = 100) {
     return cy

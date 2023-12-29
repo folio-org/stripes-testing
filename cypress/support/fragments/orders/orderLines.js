@@ -102,6 +102,9 @@ const note = 'Edited by AQA team';
 const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
 
+// Results pane
+const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
+
 // Edit form
 // PO Line details section
 const lineDetails = Section({ id: 'lineDetails' });
@@ -126,6 +129,13 @@ const submitOrderLine = () => {
 };
 const checkQuantityPhysical = (quantity) => {
   cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
+};
+const expandActionsDropdownInPOL = () => {
+  cy.do(
+    orderLineDetailsPane
+      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton))
+      .click(),
+  );
 };
 
 export default {
@@ -960,7 +970,17 @@ export default {
   },
 
   selectOrderline: (POlinenumber) => {
-    cy.do(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).click());
+    cy.do(searchResultsPane.find(Link(POlinenumber)).click());
+  },
+  selectOrderLineByIndex(rowIndex = 0) {
+    cy.do(
+      searchResultsPane
+        .find(MultiColumnListCell({ row: rowIndex, columnIndex: 0 }))
+        .find(Link())
+        .click(),
+    );
+
+    return OrderLineDetails;
   },
   selectOrderLineByPolNumber(poLineNumber) {
     this.searchByParameter('Keyword', poLineNumber);
@@ -1361,6 +1381,12 @@ export default {
     ]);
     cy.wait(4000);
     submitOrderLine();
+  },
+
+  deleteButtonInOrderLineIsAbsent: () => {
+    cy.wait(4000);
+    expandActionsDropdownInPOL();
+    cy.expect(Button('Delete').absent());
   },
 
   editPOLineInfoAndChangeLocation(accountNumber, AUMethod, institutionName, quantity) {
@@ -2017,8 +2043,14 @@ export default {
       body: orderLine,
     });
   },
+  deleteOrderLineViaApi(orderLineId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `orders/order-lines/${orderLineId}`,
+    });
+  },
   verifyPOlineListIncludesLink: (POlinenumber) => {
-    cy.expect(Pane({ id: 'order-lines-results-pane' }).find(Link(POlinenumber)).exists());
+    cy.expect(searchResultsPane.find(Link(POlinenumber)).exists());
   },
 
   verifyNoResultsMessage() {
@@ -2087,5 +2119,27 @@ export default {
     cy.expect([
       poLineInfoSection.find(KeyValue('Claiming interval')).has({ value: claimingInterval }),
     ]);
+  },
+
+  verifyProductIdentifier: (productId, rowIndex = 0, productIdType) => {
+    if (productIdType) {
+      cy.expect([
+        MultiColumnList({ id: 'list-product-ids' })
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ columnIndex: 0 }))
+          .has({ content: productId }),
+        MultiColumnList({ id: 'list-product-ids' })
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: productIdType }),
+      ]);
+    } else {
+      cy.expect(
+        MultiColumnList({ id: 'list-product-ids' })
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ columnIndex: 0 }))
+          .has({ content: productId }),
+      );
+    }
   },
 };
