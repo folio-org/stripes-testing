@@ -569,6 +569,7 @@ export default {
   },
   verifyIncomingRecordsItemDoesNotExist(name) {
     cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).absent()]);
+    cy.do(Dropdown({ id: 'record-selector-dropdown' }).toggle());
   },
   verifyNewMatchProfileFormIsOpened: () => {
     cy.expect(Pane('New match profile').exists());

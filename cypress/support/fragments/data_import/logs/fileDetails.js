@@ -329,16 +329,25 @@ export default {
     );
   },
 
+  openAuthority: (itemStatus, rowNumber = 0) => {
+    cy.do(
+      resultsList
+        .find(MultiColumnListCell({ row: rowNumber, columnIndex: 6 }))
+        .find(Link(itemStatus))
+        .click(),
+    );
+  },
+
   openJsonScreen: (title) => {
     cy.get('#search-results-list').find('a').contains(title).invoke('removeAttr', 'target')
       .click();
     cy.wait(2000);
   },
 
-  openJsonScreenByStatus: (importStatus, title) => {
+  openJsonScreenByStatus: (importStatus, title, columnNumber = 2) => {
     cy.do(
       resultsList
-        .find(MultiColumnListCell({ content: importStatus, columnIndex: 2 }))
+        .find(MultiColumnListCell({ content: importStatus, columnIndex: columnNumber }))
         .perform((element) => {
           const rowNumber = element.parentElement.getAttribute('data-row-inner');
 
