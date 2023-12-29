@@ -15,7 +15,7 @@ import getRandomStringCode from '../../../support/utils/genereteTextCode';
 describe('data-import', () => {
   describe('Settings', () => {
     let user;
-    const mappingProfile = {
+    const mappingProfileInvoice = {
       name: `C380723 Info icon AcqUnits ${getRandomStringCode(160)}`,
       incomingRecordType: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       typeValue: FOLIO_RECORD_TYPE.INVOICE,
@@ -40,7 +40,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfileInvoice.name);
       });
     });
 
@@ -53,11 +53,11 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
-        NewFieldMappingProfile.fillInvoiceMappingProfile(mappingProfile);
-        NewFieldMappingProfile.fillInvoiceDate(mappingProfile.invoiceDate);
-        NewFieldMappingProfile.fillVendorInvoiceNumber(mappingProfile.vendorInvoiceNumber);
-        NewFieldMappingProfile.fillQuantity(mappingProfile.quantity);
-        NewFieldMappingProfile.fillSubTotal(mappingProfile.subtotal);
+        NewFieldMappingProfile.fillInvoiceMappingProfile(mappingProfileInvoice);
+        NewFieldMappingProfile.fillInvoiceDate(mappingProfileInvoice.invoiceDate);
+        NewFieldMappingProfile.fillVendorInvoiceNumber(mappingProfileInvoice.vendorInvoiceNumber);
+        NewFieldMappingProfile.fillQuantity(mappingProfileInvoice.quantity);
+        NewFieldMappingProfile.fillSubTotal(mappingProfileInvoice.subtotal);
         NewFieldMappingProfile.save();
         FieldMappingProfileView.verifyMappingProfileOpened();
         FieldMappingProfileView.edit();
