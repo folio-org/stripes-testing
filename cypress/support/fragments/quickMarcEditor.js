@@ -2019,10 +2019,6 @@ export default {
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
   },
 
-  clickXCloseButton: () => {
-    cy.do(Button({ icon: 'times' }).click());
-  },
-
   verifyNoDuplicatedFieldsWithTag: (tag) => {
     cy.get(`input[name*=".tag"][value="${tag}"]`).then((elements) => elements.length === 1);
   },

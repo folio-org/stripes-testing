@@ -399,11 +399,6 @@ export default {
     cy.expect(instanceDetailsSection.find(HTML(including('FOLIO'))).absent());
   },
 
-  clickMARCSourceCheckBox: () => {
-    cy.do(Accordion('Source').clickHeader());
-    cy.do(Checkbox('MARC').click());
-  },
-
   verifyUnlinkIcon(tag) {
     // Waiter needed for the link to be loaded properly.
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(unlinkIconButton).exists());

@@ -76,7 +76,7 @@ describe('MARC › MARC Holdings', () => {
     'C387462 Add multiple 001s when creating "MARC Holdings" record (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      InventoryInstance.clickMARCSourceCheckBox();
+      InventoryInstances.searchBySource('MARC');
       InventorySearchAndFilter.selectSearchOptions(testData.searchOption, testData.instanceTitle);
       InventorySearchAndFilter.clickSearch();
       InventoryInstance.selectTopRecord();
@@ -84,7 +84,7 @@ describe('MARC › MARC Holdings', () => {
       QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
       MarcAuthority.checkAddNew001Tag(5, '$a test');
       cy.wait(1000); // wait until redirect marc holding page
-      QuickMarcEditor.clickXCloseButton();
+      QuickMarcEditor.closeEditorPane();
       InventoryInstance.goToMarcHoldingRecordAdding();
       QuickMarcEditor.selectExistingHoldingsLocation(testData.location);
       MarcAuthority.checkAddNew001Tag(5, '$a test');
