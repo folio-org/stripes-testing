@@ -31,6 +31,7 @@ import {
   Tooltip,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import { MARC_AUTHORITY_SEARCH_OPTIONS, MARC_AUTHORITY_BROWSE_OPTIONS } from '../../constants';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -1178,5 +1179,25 @@ export default {
 
   selectRecordByIndex(rowIndex) {
     cy.do(MultiColumnListCell({ row: rowIndex, columnIndex: 2 }).find(Button()).click());
+  },
+
+  selectSearchOptionInDropdown(searchOption) {
+    cy.do(selectField.choose(searchOption));
+  },
+
+  checkSearchOptionsInDropdownInOrder() {
+    cy.wrap(selectField.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(MARC_AUTHORITY_SEARCH_OPTIONS));
+    });
+  },
+
+  checkBrowseOptionsInDropdownInOrder() {
+    cy.wrap(selectField.optionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(MARC_AUTHORITY_BROWSE_OPTIONS));
+    });
+  },
+
+  checkSelectOptionFieldContent(option) {
+    cy.expect(selectField.has({ checkedOptionText: option }));
   },
 };
