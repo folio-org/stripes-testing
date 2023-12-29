@@ -985,23 +985,26 @@ export default {
   },
 
   verifyColumnValuesOnlyExist({ column, expectedValues, browsePane = false } = {}) {
-    const actualValues = [];
-    let browsePaneValues = [];
+    let actualValues = [];
+
     cy.then(() => authoritiesList.rowCount())
       .then((rowsCount) => {
-        for (let i = 0; i < rowsCount; i++) {
-          cy.then(() => authoritiesList.find(MultiColumnListCell({ column, row: i })).content()).then((content) => {
-            actualValues.push(content);
-          });
-        }
+        Array.from({ length: rowsCount }).forEach((_, index) => {
+          authoritiesList
+            .find(MultiColumnListCell({ column, row: index }))
+            .content()
+            .then((content) => {
+              actualValues.push(content);
+            });
+        });
       })
       .then(() => {
         if (browsePane && actualValues.includes('')) {
-          browsePaneValues = actualValues
+          actualValues = actualValues
             .slice(0, actualValues.indexOf(''))
             .concat(actualValues.slice(actualValues.indexOf('') + 1));
         }
-        const isOnlyValuesExist = browsePaneValues.every((value) => expectedValues.includes(value));
+        const isOnlyValuesExist = actualValues.every((value) => expectedValues.includes(value));
         expect(isOnlyValuesExist).to.equal(true);
       });
   },
@@ -1169,7 +1172,10 @@ export default {
   },
 
   verifyPagination() {
-    cy.expect([previousButton.exists(), nextButton.has({ disabled: or(true, false) })]);
+    cy.expect([
+      previousButton.has({ disabled: or(true, false) }),
+      nextButton.has({ disabled: or(true, false) }),
+    ]);
     cy.then(() => authoritiesList.rowCount()).then((rowsCount) => {
       expect(rowsCount).to.lessThan(101);
     });
