@@ -381,9 +381,7 @@ export default {
     });
   },
   checkCreatedOrder(order) {
-    cy.getAdminSourceRecord().then((source) => {
-      this.checkOrderDetails({ vendor: order.vendor, source });
-    });
+    this.checkOrderDetails({ vendor: order.vendor });
   },
   checkCreatedOngoingOrder(order) {
     this.checkOrderDetails({ vendor: order.vendor, orderType: order.orderType });
@@ -416,6 +414,12 @@ export default {
       Button('Delete').click(),
       Button({ id: 'clickable-delete-order-confirmation-confirm' }).click(),
     ]);
+  },
+
+  deleteButtonInOrderIsAbsent: () => {
+    cy.wait(4000);
+    expandActionsDropdown();
+    cy.expect(Button('Delete').absent());
   },
 
   checkDeletedErrorMassage: () => {

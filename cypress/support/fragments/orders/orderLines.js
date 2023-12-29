@@ -130,6 +130,13 @@ const submitOrderLine = () => {
 const checkQuantityPhysical = (quantity) => {
   cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
 };
+const expandActionsDropdownInPOL = () => {
+  cy.do(
+    orderLineDetailsPane
+      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton))
+      .click(),
+  );
+};
 
 export default {
   submitOrderLine,
@@ -1374,6 +1381,12 @@ export default {
     ]);
     cy.wait(4000);
     submitOrderLine();
+  },
+
+  deleteButtonInOrderLineIsAbsent: () => {
+    cy.wait(4000);
+    expandActionsDropdownInPOL();
+    cy.expect(Button('Delete').absent());
   },
 
   editPOLineInfoAndChangeLocation(accountNumber, AUMethod, institutionName, quantity) {
