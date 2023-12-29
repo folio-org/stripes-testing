@@ -1,4 +1,4 @@
-import { Button, PaneHeader, Section } from '../../../../../interactors';
+import { Button, PaneHeader, Section, including } from '../../../../../interactors';
 import FinanceDetails from '../financeDetails';
 import LedgerDetails from '../ledgers/ledgerDetails';
 
@@ -35,5 +35,11 @@ export default {
   },
   closeFiscalYearDetails() {
     cy.do(fiscalYearDetailsHeader.find(Button({ icon: 'times' })).click());
+  },
+
+  verifyFiscalYearName: (title) => {
+    cy.expect(
+      fiscalYearDetailsSection.find(fiscalYearDetailsHeader).has({ text: including(title) }),
+    );
   },
 };

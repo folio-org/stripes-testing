@@ -246,7 +246,7 @@ export default {
   },
 
   selectBrowseCallNumbers() {
-    cy.do(browseButton.click());
+    this.switchToBrowseTab();
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(ONE_SECOND);
@@ -255,7 +255,7 @@ export default {
   },
 
   selectBrowseSubjects() {
-    cy.do(browseButton.click());
+    this.switchToBrowseTab();
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(ONE_SECOND);
@@ -263,7 +263,7 @@ export default {
   },
 
   selectBrowseContributors() {
-    cy.do(browseButton.click());
+    this.switchToBrowseTab();
     // cypress can not pick up an option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(ONE_SECOND);
@@ -271,7 +271,7 @@ export default {
   },
 
   selectBrowseOtherScheme() {
-    cy.do(browseButton.click());
+    this.switchToBrowseTab();
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(ONE_SECOND);
@@ -279,7 +279,7 @@ export default {
   },
 
   selectBrowseDeweyDecimal() {
-    cy.do(browseButton.click());
+    this.switchToBrowseTab();
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(ONE_SECOND);
@@ -355,7 +355,7 @@ export default {
   },
 
   switchToBrowseTab() {
-    cy.do(Button({ id: 'mode-navigation-browse' }).click());
+    cy.do(browseButton.click());
   },
 
   verifySpecificTabHighlighted(tab) {
@@ -734,6 +734,10 @@ export default {
     });
   },
 
+  verifySearchAndResetAllButtonsDisabled(state) {
+    cy.expect([searchButton.has({ disabled: state }), resetAllBtn.has({ disabled: state })]);
+  },
+
   verifyNoRecordsFound() {
     cy.expect([
       paneResultsSection.find(HTML(including('No results found for'))).exists(),
@@ -763,7 +767,7 @@ export default {
 
   browseOptionsDropdownIncludesOptions(options) {
     const browseOptionsDropdown = Select('Search field index');
-    cy.do(browseButton.click());
+    this.switchToBrowseTab();
     options.forEach((name) => {
       cy.expect(browseOptionsDropdown.has({ content: including(name) }));
     });
