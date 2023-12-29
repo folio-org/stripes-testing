@@ -16,14 +16,25 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('data-import', () => {
   describe('Log details', () => {
-    let user;
-    const filePathForCreate = 'marcFileForC389471.mrc';
-    const marcFileName = `C389471 autotestFileName${getRandomPostfix()}`;
-    const arrayOfHoldingsStatuses = ['Created (KU/CC/DI/M)', 'Created (E)', 'Created (KU/CC/DI/A)'];
-    const quantityOfCreatedHoldings = 3;
+    const testData = {
+      title:
+        'Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.',
+      filePathForCreate: 'marcFileForC389471.mrc',
+      marcFileName: `C389471 autotestFileName${getRandomPostfix()}`,
+      arrayOfHoldingsStatuses: ['Created (KU/CC/DI/M)', 'Created (KU/CC/DI/A)'],
+      quantityOfCreatedHoldings: 2,
+      jsonHoldingsData: [
+        'Import Log for Record 1 (Crossfire : a litany for survival : poems 1998-2019 / Staceyann Chin ; foreword by Jacqueline Woodson.)',
+        'KU/CC/DI/M',
+        'KU/CC/DI/A',
+      ],
+    };
     const mappingProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
       name: `C389471 Test multiple holdings${getRandomPostfix()}`,
@@ -44,9 +55,9 @@ describe('data-import', () => {
         Permissions.moduleDataImportEnabled.gui,
         Permissions.inventoryAll.gui,
       ]).then((userProperties) => {
-        user = userProperties;
+        testData.user = userProperties;
 
-        cy.login(userProperties.username, userProperties.password, {
+        cy.login(testData.user.username, testData.user.password, {
           path: SettingsMenu.mappingProfilePath,
           waiter: FieldMappingProfiles.waitLoading,
         });
@@ -55,16 +66,18 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        Users.deleteViaApi(user.userId);
+        Users.deleteViaApi(testData.user.userId);
         JobProfiles.deleteJobProfile(jobProfile.profileName);
         ActionProfiles.deleteActionProfile(actionProfile.name);
         FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-        // cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
-        //   (instance) => {
-        //     instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
-        //     InventoryInstance.deleteInstanceViaApi(instance.id);
-        //   },
-        // );
+        cy.getInstance({
+          limit: 1,
+          expandAll: true,
+          query: `"hrid"=="${testData.instanceHrid}"`,
+        }).then((instance) => {
+          instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
       });
     });
 
@@ -72,7 +85,11 @@ describe('data-import', () => {
       'C389471 Check the JSON screen for imported multiple holdings created from one instance (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
+        FieldMappingProfiles.openNewMappingProfileForm();
+        NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+        NewFieldMappingProfile.fillPermanentLocation(mappingProfile.permanentLocation);
+        NewFieldMappingProfile.save();
+        FieldMappingProfileView.closeViewMode(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
         cy.visit(SettingsMenu.actionProfilePath);
@@ -89,17 +106,24 @@ describe('data-import', () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile(filePathForCreate, marcFileName);
+        DataImport.uploadFile(testData.filePathForCreate, testData.marcFileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileName);
+        JobProfiles.waitFileIsImported(testData.marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
-        Logs.openFileDetails(marcFileName);
+        Logs.openFileDetails(testData.marcFileName);
         FileDetails.verifyMultipleHoldingsStatus(
-          arrayOfHoldingsStatuses,
-          quantityOfCreatedHoldings,
+          testData.arrayOfHoldingsStatuses,
+          testData.quantityOfCreatedHoldings,
         );
+        FileDetails.openJsonScreen(testData.title);
+        JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.getInstanceHrid().then((hrid) => {
+          testData.instanceHrid = hrid;
+          JsonScreenView.openHoldingsTab();
+          testData.jsonHoldingsData.forEach((value) => JsonScreenView.verifyContentInTab(value));
+        });
       },
     );
   });
