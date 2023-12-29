@@ -83,4 +83,17 @@ export default {
       notes.forEach(({ id: noteId }) => this.deleteViaApi(noteId));
     });
   },
+  getNotesForCoursesViaApi(coursesId) {
+    return cy
+      .okapiRequest({
+        path: `note-links/domain/courses/type/course/id/${coursesId}?limit=100000&order=desc&orderBy=updatedDate&status=assigned`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => response.body);
+  },
+  deleteNotesForCoursesViaApi(coursesId) {
+    this.getNotesForCoursesViaApi(coursesId).then(({ notes }) => {
+      notes.forEach(({ id: noteId }) => this.deleteViaApi(noteId));
+    });
+  },
 };

@@ -205,7 +205,7 @@ describe('Request Detail.TLR', () => {
       RequestDetail.clickReorderQueue();
       RequestDetail.verifyQueueInstance(instanceData.title);
       RequestDetail.verifyAccordionsPresence();
-      RequestDetail.verifyRequestQueueColumnsPresence();
+      RequestDetail.verifyRequestQueueColumnsPresence(true, false);
       Requests.closeRequestQueue();
       RequestDetail.verifyAccordionsPresence(false);
     },

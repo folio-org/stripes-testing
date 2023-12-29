@@ -2071,4 +2071,26 @@ export default {
         cy.log('No such status like ' + orderStatus + '. Please use Closed, Open or Pending');
     }
   },
+
+  verifyProductIdentifier: (productId, rowIndex = 0, productIdType) => {
+    if (productIdType) {
+      cy.expect([
+        MultiColumnList({ id: 'list-product-ids' })
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ columnIndex: 0 }))
+          .has({ content: productId }),
+        MultiColumnList({ id: 'list-product-ids' })
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: productIdType }),
+      ]);
+    } else {
+      cy.expect(
+        MultiColumnList({ id: 'list-product-ids' })
+          .find(MultiColumnListRow({ index: rowIndex }))
+          .find(MultiColumnListCell({ columnIndex: 0 }))
+          .has({ content: productId }),
+      );
+    }
+  },
 };
