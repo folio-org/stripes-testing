@@ -191,6 +191,17 @@ export default {
   checkWarningMessage(message) {
     cy.expect(orderLineDetailsSection.find(Warning()).has({ message }));
   },
+  checkContributorsSectionContent(contributors = []) {
+    contributors.forEach(({ name, type }) => {
+      cy.expect(
+        orderLineDetailsSection
+          .find(KeyValue('Contributors'))
+          .find(MultiColumnListRow({ isContainer: true, content: including(name) }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(type) }),
+      );
+    });
+  },
   checkFundDistibutionTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.name) {

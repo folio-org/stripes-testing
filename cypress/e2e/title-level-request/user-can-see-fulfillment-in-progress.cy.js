@@ -203,7 +203,7 @@ describe('Request queue. TLR', () => {
       RequestDetail.clickReorderQueue();
       RequestDetail.verifyQueueInstance(instanceData.title);
       RequestDetail.verifyAccordionsPresence();
-      RequestDetail.verifyRequestQueueColumnsPresence();
+      RequestDetail.verifyRequestQueueColumnsPresence(true, false);
     },
   );
 });
