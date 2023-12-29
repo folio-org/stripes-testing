@@ -22,7 +22,7 @@ import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Title Level Request', () => {
+describe('Request Detail.TLR', () => {
   let userData = {};
   let userForTLR = {};
   const requestIds = [];
@@ -117,15 +117,15 @@ describe('Title Level Request', () => {
 
     cy.createTempUser(
       [
-        permissions.uiRequestsCreate.gui,
         permissions.uiRequestsView.gui,
-        permissions.uiRequestsEdit.gui,
+        permissions.uiRequestsCreate.gui,
         permissions.requestsAll.gui,
-        permissions.uiNotesItemView.gui,
+        permissions.uiRequestsEdit.gui,
+        permissions.uiMoveRequest.gui,
+        permissions.uiRequestsReorderQueue.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
-      cy.log(JSON.stringify(userProperties));
       userData = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
@@ -194,7 +194,7 @@ describe('Title Level Request', () => {
 
   it(
     'C350563 Check that the user can click on the "Reorder queue" option (vega) (TaaS)',
-    { tags: ['extended', 'vega'] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);
@@ -205,7 +205,7 @@ describe('Title Level Request', () => {
       RequestDetail.clickReorderQueue();
       RequestDetail.verifyQueueInstance(instanceData.title);
       RequestDetail.verifyAccordionsPresence();
-      RequestDetail.verifyRequestQueueColumnsPresence();
+      RequestDetail.verifyRequestQueueColumnsPresence(true, false);
       Requests.closeRequestQueue();
       RequestDetail.verifyAccordionsPresence(false);
     },

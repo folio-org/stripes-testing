@@ -46,6 +46,7 @@ const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' });
 const cancelEditConfirmBtn = Button('Keep editing');
 const updateLinkedBibFieldsModal = Modal({ id: 'quick-marc-update-linked-bib-fields' });
+const confirmDeletingRecordModal = Modal({ id: 'confirm-delete-note' });
 const saveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-update-linked-bib-fields-confirm' }),
 );
@@ -72,6 +73,7 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const cancelUnlinkButtonInsideModal = Button({
   id: 'clickable-quick-marc-confirm-unlink-modal-cancel',
 });
+const confirmDeleteButton = Modal().find(Button({ id: 'clickable-confirm-delete-note-confirm' }));
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
@@ -726,8 +728,8 @@ export default {
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
   },
 
-  undoDeleteNotExist() {
-    cy.expect(undoButtonInRootSection.absent());
+  checkUndoDeleteAbsent() {
+    cy.get('#quick-marc-editor-pane').find('[class^=deletedRowPlaceholder-]').should('not.exist');
   },
 
   afterDeleteNotificationNoTag() {
@@ -788,6 +790,14 @@ export default {
     cy.expect(
       getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount() + 1)
         .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
+        .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
+    );
+  },
+
+  checkContentByTag(content, tag) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextArea())
         .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
     );
   },
@@ -1359,6 +1369,21 @@ export default {
     });
   },
 
+  verifyAllBoxesInARowAreEditable(tag) {
+    cy.expect([
+      getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: false }),
+    ]);
+  },
+
   checkLDRValue(ldrValue = validRecord.ldrValue) {
     cy.expect(
       getRowInteractorByTagName('LDR')
@@ -1686,6 +1711,10 @@ export default {
     ]);
   },
 
+  verifyRemoveLinkingModalAbsence() {
+    cy.expect([removeLinkingModal.absent()]);
+  },
+
   confirmRemoveAuthorityLinking() {
     cy.do(removeLinkingModal.find(removeLinkingButton).click());
     cy.expect([removeLinkingModal.absent(), rootSection.exists()]);
@@ -1902,7 +1931,10 @@ export default {
       rootSection.exists(),
     ]);
   },
-
+  confirmDeletingRecord() {
+    cy.do(confirmDeleteButton.click());
+    cy.expect([confirmDeletingRecordModal.absent()]);
+  },
   checkAfterSaveAndCloseAuthority() {
     cy.expect([calloutAfterSaveAndClose.exists(), rootSection.absent(), viewMarcSection.exists()]);
   },
