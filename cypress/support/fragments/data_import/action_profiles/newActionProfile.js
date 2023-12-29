@@ -8,7 +8,7 @@ import {
   Callout,
   Option,
 } from '../../../../../interactors';
-import SelectMappingProfile from './modals/selectMappingProfile';
+import SelectMappingProfile from '../../settings/dataImport/modals/selectProfileModal';
 import { FOLIO_RECORD_TYPE, PROFILE_TYPE_NAMES } from '../../../constants';
 
 const action = 'Create (all record types except MARC Authority or MARC Holdings)';
@@ -105,8 +105,8 @@ export default {
 
   linkMappingProfile: (specialMappingProfileName) => {
     cy.do(profileLinkButton.click());
-    SelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
-    SelectMappingProfile.selectMappingProfile(specialMappingProfileName);
+    SelectMappingProfile.searchProfile(specialMappingProfileName);
+    SelectMappingProfile.selectProfile(specialMappingProfileName);
     cy.expect(profileLinkSection.find(profileLinkButton).has({ disabled: true }));
     cy.do(Button('Save as profile & Close').click());
     cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
