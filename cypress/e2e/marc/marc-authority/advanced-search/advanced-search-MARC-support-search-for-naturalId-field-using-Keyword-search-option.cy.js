@@ -55,18 +55,16 @@ describe('MARC', () => {
       });
 
       it(
-        'C350617 Advanced search MARC: support search for "naturalId" field using "Keyword" search option (spitfire)',
+        'C350617 Advanced search MARC: support search for "naturalId" field using "Keyword" search option (spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           // Step 1: Click on the "Advanced search" button at the "Search & filter" pane.
           MarcAuthorities.clickAdvancedSearchButton();
-          // Verify "Advanced search" modal is displayed.
 
           // Step 2: Fill in 3 first rows with "naturalId" values of records which have "space" between prefix and identifier value in "001" or "010" fields.
           MarcAuthorities.fillAdvancedSearchField(0, 'n83169267', 'Keyword');
           MarcAuthorities.fillAdvancedSearchField(1, 'n80036674407668', 'Keyword', 'OR');
           MarcAuthorities.fillAdvancedSearchField(2, 'n20110491614076272', 'Keyword', 'OR');
-          // Verify entered values are displayed in input fields.
 
           // Step 3: Click on "Search" button.
           MarcAuthorities.clickSearchButton();
@@ -76,7 +74,6 @@ describe('MARC', () => {
             'Kerouac, Jack, 1922-1969',
             'Lentz, Mark',
           ]);
-          // Verify "Advanced search" modal is closed and matching records are displayed in the result list.
         },
       );
     });
