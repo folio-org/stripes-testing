@@ -133,7 +133,9 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib', () => {
       QuickMarcEditor.confirmUnlinkingField();
       QuickMarcEditor.verifyTagFieldAfterUnlinking(14, '700', '\\', '\\', '$a Sabino, J.');
       QuickMarcEditor.deleteField(13);
+      QuickMarcEditor.undoDeleteNotExist();
       QuickMarcEditor.deleteField(13);
+      QuickMarcEditor.undoDeleteNotExist();
     },
   );
 });

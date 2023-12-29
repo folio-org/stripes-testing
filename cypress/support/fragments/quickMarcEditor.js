@@ -720,6 +720,10 @@ export default {
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
   },
 
+  undoDeleteNotExist() {
+    cy.expect(Button('Undo').absent());
+  },
+
   afterDeleteNotificationNoTag() {
     cy.get('[class^=deletedRowPlaceholder-]').should(
       'include.text',
