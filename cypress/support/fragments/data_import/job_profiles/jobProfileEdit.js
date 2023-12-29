@@ -17,6 +17,10 @@ export default {
       .click();
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
   },
+  unlinkActionsProfile: (number) => {
+    cy.get('[id*="branch-ROOT-editable"]').eq(number).find('button[icon="unlink"]').click();
+    cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
+  },
   unlinkMatchProfile: (number) => {
     cy.get('[id*="branch-ROOT-MATCH-editable"]').eq(number).find('button[icon="unlink"]').click();
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
@@ -27,5 +31,24 @@ export default {
       .find('button[icon="unlink"]')
       .click();
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
+  },
+  verifyLinkedProfiles(arrayOfProfileNames, numberOfProfiles) {
+    const profileNames = [];
+
+    cy.get('[id*="branch-ROOT-editable"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            profileNames.push(name);
+          });
+      })
+      .then(() => {
+        // Iterate through each element in profileNames
+        for (let i = 0; i < profileNames.length; i++) {
+          expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+        }
+        expect(numberOfProfiles).to.equal(profileNames.length);
+      });
   },
 };

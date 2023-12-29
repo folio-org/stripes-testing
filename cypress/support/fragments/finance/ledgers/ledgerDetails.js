@@ -1,4 +1,4 @@
-import { Button, PaneHeader, Section } from '../../../../../interactors';
+import { Button, PaneHeader, Section, including } from '../../../../../interactors';
 import FinanceDetails from '../financeDetails';
 import LedgerRollovers from './ledgerRollovers';
 import LedgerRolloverDetails from './ledgerRolloverDetails';
@@ -63,5 +63,9 @@ export default {
     FundDetails.waitLoading();
 
     return FundDetails;
+  },
+
+  verifyLedgerName: (title) => {
+    cy.expect(ledgerDetailsPane.find(ledgerDetailsPaneHeader).has({ text: including(title) }));
   },
 };
