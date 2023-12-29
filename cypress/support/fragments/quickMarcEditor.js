@@ -27,6 +27,7 @@ import Institutions from './settings/tenant/location-setup/institutions';
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
 const cancelButton = Button('Cancel');
+const undoButtonInRootSection = Button('Undo');
 const closeWithoutSavingBtn = Button('Close without saving');
 const xButton = Button({ ariaLabel: 'Close ' });
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
@@ -726,7 +727,7 @@ export default {
   },
 
   undoDeleteNotExist() {
-    cy.expect(Button('Undo').absent());
+    cy.expect(undoButtonInRootSection.absent());
   },
 
   afterDeleteNotificationNoTag() {
