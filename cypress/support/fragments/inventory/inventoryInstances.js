@@ -37,7 +37,7 @@ const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-sele
 const singleRecordImportModal = Modal('Single record import');
 const filterSection = Section({ id: 'pane-filter' });
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
-const searchButton = Button('Search', { type: 'submit' });
+const searchButton = Button({ type: 'submit' });
 const paneHeaderSearch = PaneHeader('Inventory');
 
 const advSearchButton = Button('Advanced search');
