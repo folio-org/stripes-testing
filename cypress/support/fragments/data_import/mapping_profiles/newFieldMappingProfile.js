@@ -1327,4 +1327,12 @@ export default {
         .click(),
     );
   },
+
+  selectFundDistributionType: (type) => {
+    cy.do(
+      Accordion('Fund distribution')
+        .find(Button(`${type}`))
+        .click(),
+    );
+  },
 };
