@@ -1270,4 +1270,13 @@ export default {
     );
     cy.expect(Popover({ content: including(message) }).exists());
   },
+
+  verifyElectronicalResourcesCreateInventoryInfoMessage: (message) => {
+    cy.do(
+      Accordion({ id: 'e-resources-details' })
+        .find(Label('Create inventory').find(IconButton({ icon: 'info' })))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+  },
 };
