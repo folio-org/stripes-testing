@@ -264,6 +264,16 @@ export default {
   selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
   selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
   selectFirstRequest: (title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
+  selectRequest: (title, rowIndex) => cy.do(
+    requestsPane
+      .find(
+        MultiColumnListCell({
+          row: rowIndex,
+          content: title,
+        }),
+      )
+      .click(),
+  ),
   openTagsPane: () => cy.do(showTagsButton.click()),
   closePane: (title) => cy.do(
     Pane({ title })
@@ -567,6 +577,12 @@ export default {
 
   selectTheFirstRequest() {
     cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
+  },
+
+  verifyRequestIsAbsent(barcode) {
+    cy.expect(
+      requestsResultsSection.find(MultiColumnListRow({ content: including(barcode) })).absent(),
+    );
   },
 
   exportRequestToCsv: () => {
