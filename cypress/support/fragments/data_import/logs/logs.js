@@ -18,6 +18,7 @@ const viewAllLogsButton = Button('View all logs');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const searchResultList = MultiColumnList({ id: 'search-results-list' });
 const deleteSelectedLogsButton = Button('Delete selected logs');
+const times = Button({ icon: 'times' });
 
 const quantityRecordsInInvoice = {
   firstQuantity: '18',
@@ -102,4 +103,7 @@ export default {
   ),
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
+  closePane: () => {
+    cy.do(times.click());
+  },
 };
