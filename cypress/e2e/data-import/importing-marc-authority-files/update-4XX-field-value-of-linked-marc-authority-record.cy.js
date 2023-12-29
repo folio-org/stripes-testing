@@ -194,27 +194,6 @@ describe('data-import', () => {
       });
     });
 
-    function replace999SubfieldsInPreupdatedFile(
-      exportedFileName,
-      preUpdatedFileName,
-      finalFileName,
-    ) {
-      FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
-        const lines = actualContent.split('');
-        const field999data = lines[lines.length - 2];
-        FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`).then((updatedContent) => {
-          const content = updatedContent.split('\n');
-          let firstString = content[0].slice();
-          firstString = firstString.replace(
-            'ff000000000-0000-0000-0000-000000000000i00000000-0000-0000-0000-000000000000',
-            field999data,
-          );
-          content[0] = firstString;
-          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
-        });
-      });
-    }
-
     after('Delete test data', () => {
       cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
@@ -252,7 +231,7 @@ describe('data-import', () => {
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         // change exported file
-        replace999SubfieldsInPreupdatedFile(
+        DataImport.replace999SubfieldsInPreupdatedFile(
           testData.exportedMarcFile,
           testData.marcFileForModify,
           testData.modifiedMarcFile,

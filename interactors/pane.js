@@ -12,6 +12,7 @@ export const PaneHeader = HTML.extend('pane header')
   .locator(title)
   .filters({
     title,
+    id: (el) => el.getAttribute('id'),
     subtitle: (el) => el.querySelector('[class^=paneSub]')?.textContent || '',
   });
 

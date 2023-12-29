@@ -25,15 +25,11 @@ describe('export-manager', () => {
       permissions.bulkEditEdit.gui,
       permissions.inventoryAll.gui,
       permissions.exportManagerView.gui,
-    ])
-      .then((userProperties) => {
-        userWithPermissions = userProperties;
-      });
-    cy.createTempUser([
-      permissions.bulkEditView.gui,
-      permissions.exportManagerView.gui,
-    ])
-      .then((userProperties) => {
+    ]).then((userProperties) => {
+      userWithPermissions = userProperties;
+    });
+    cy.createTempUser([permissions.bulkEditView.gui, permissions.exportManagerView.gui]).then(
+      (userProperties) => {
         user = userProperties;
         cy.login(userWithPermissions.username, userWithPermissions.password, {
           path: TopMenu.bulkEditPath,
@@ -41,7 +37,8 @@ describe('export-manager', () => {
         });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
-      });
+      },
+    );
   });
 
   after('delete test data', () => {

@@ -1,4 +1,4 @@
-import { HTML, including } from '@interactors/html';
+import { HTML, including, not } from '@interactors/html';
 import {
   KeyValue,
   MultiColumnList,
@@ -479,6 +479,14 @@ export default {
           }),
         )
         .exists(),
+    );
+  },
+
+  verifyContributorNameWithoutMarcAppIcon: (row, value) => {
+    cy.expect(
+      Accordion('Contributor')
+        .find(MultiColumnListCell({ row, content: including(value) }))
+        .has({ content: not(including('Linked to MARC authority')) }),
     );
   },
 
