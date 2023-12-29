@@ -38,8 +38,8 @@ describe('data-import', () => {
       profileName: `C389590 Updating SRS by 035 to OCLC number${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '035',
-        in1: '',
-        in2: '',
+        in1: '*',
+        in2: '*',
         subfield: 'a',
       },
       matchCriterion: 'Exactly matches',
@@ -82,7 +82,7 @@ describe('data-import', () => {
     ];
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C389589 Updating Instance by 035 OCLC record${getRandomPostfix()}`,
+      profileName: `C389590 Updating Instance by 035 OCLC record${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
