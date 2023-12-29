@@ -24,7 +24,7 @@ export default {
     cy.expect(Section({ id: specialTitle.replaceAll(' ', '-').toLowerCase() }).exists());
   },
 
-  filterPackages: (selectionStatus = FILTER_STATUSES.NOT_SELECTED, packageName) => {
+  filterPackages(selectionStatus = FILTER_STATUSES.NOT_SELECTED, packageName) {
     this.openFilterPackagesModal();
 
     if (packageName) {
