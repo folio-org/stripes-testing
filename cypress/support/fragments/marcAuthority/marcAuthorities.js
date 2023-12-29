@@ -212,7 +212,12 @@ export default {
   },
 
   verifyNumberOfTitles(columnIndex, linkValue) {
-    cy.expect(MultiColumnListCell({ columnIndex, content: linkValue }).find(Link()).exists());
+    cy.expect(
+      MultiColumnListRow({ indexRow: 'row-0' })
+        .find(MultiColumnListCell({ columnIndex, content: linkValue }))
+        .find(Link())
+        .exists(),
+    );
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
