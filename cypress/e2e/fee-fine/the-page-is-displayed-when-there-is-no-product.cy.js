@@ -105,7 +105,9 @@ describe('Fees&Fines', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(testData.folioInstances[0].instanceId);
+    InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
+      testData.folioInstances[0].instanceId,
+    );
     NewFeeFine.getUserFeesFines(testData.user.userId).then((userFeesFines) => {
       userFeesFines.accounts.forEach(({ id }) => {
         cy.deleteFeesFinesApi(id);
