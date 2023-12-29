@@ -1315,4 +1315,16 @@ export default {
         .click(),
     );
   },
+
+  fillDiscountAmount: (amount) => {
+    cy.do(TextField('Discount').fillIn(amount));
+  },
+
+  selectDiscountType: (type) => {
+    cy.do(
+      Accordion('Cost details')
+        .find(Button(`${type}`))
+        .click(),
+    );
+  },
 };
