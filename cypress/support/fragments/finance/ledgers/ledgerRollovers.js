@@ -68,14 +68,15 @@ export default {
     ledger,
     fromFiscalYear,
     toFiscalYear,
+    budgetsRollover = [
+      { addAvailableTo: 'Allocation', rolloverBudgetValue: 'None', rolloverAllocation: true },
+    ],
     encumbrancesRollover = [{ orderType: 'Ongoing', basedOn: 'InitialAmount' }],
     needCloseBudgets = true,
   }) {
     return {
       ledgerId: ledger.id,
-      budgetsRollover: [
-        { addAvailableTo: 'Allocation', rolloverBudgetValue: 'None', rolloverAllocation: true },
-      ],
+      budgetsRollover,
       encumbrancesRollover,
       needCloseBudgets,
       fromFiscalYearId: fromFiscalYear.id,
