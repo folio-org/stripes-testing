@@ -1,6 +1,7 @@
 import { Pane, NavListItem } from '../../../../../interactors';
+import JobProfiles from './jobProfiles/jobProfiles';
+import ActionProfiles from './actionProfiles/actionProfiles';
 import FieldMappingProfiles from './fieldMappingProfile/fieldMappingProfiles';
-import SettingsJobProfiles from './settingsJobProfiles';
 
 const dataImportPane = Pane('Data import');
 
@@ -23,10 +24,12 @@ export default {
     cy.do(NavListItem(settingsTab).click());
 
     switch (settingsTab) {
+      case SETTINGS_TABS.JOB_PROFILE:
+        return JobProfiles;
+      case SETTINGS_TABS.ACTION_PROFILE:
+        return ActionProfiles;
       case SETTINGS_TABS.FIELD_MAPPING_PROFILE:
         return FieldMappingProfiles;
-      case SETTINGS_TABS.JOB_PROFILE:
-        return SettingsJobProfiles;
       default:
         return this;
     }
