@@ -1253,4 +1253,12 @@ export default {
     );
     cy.expect(Popover({ content: including(message) }).absent());
   },
+
+  verifyProductIdTypeDropdown: (...names) => {
+    cy.do(Button('Add product ID and product ID type').click());
+    cy.get('#item-details').find('button:contains("Accepted values"):last').click();
+    names.forEach((name) => {
+      cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
+    });
+  },
 };
