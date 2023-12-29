@@ -161,7 +161,7 @@ describe('Data Import', () => {
       cy.resetTenant();
       cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
-      InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+      InventoryInstance.deleteInstanceViaApi(testData.sharedInstanceId[0]);
       JobProfiles.deleteJobProfile(jobProfileName);
       MatchProfiles.deleteMatchProfile(matchProfile.profileName);
       ActionProfiles.deleteActionProfile(actionProfile.name);
@@ -255,8 +255,6 @@ describe('Data Import', () => {
         BrowseContributors.checkSearchResultRecord(testData.contributorName);
         BrowseContributors.browse(testData.absentContributorName);
         BrowseContributors.checkMissedMatchSearchResultRecord(testData.absentContributorName);
-        // Stelfreeze, Brian (to be deleted)
-        // would be here
       },
     );
   });
