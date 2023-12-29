@@ -416,6 +416,12 @@ export default {
     ]);
   },
 
+  deleteButtonInOrderIsAbsent: () => {
+    cy.wait(4000);
+    expandActionsDropdown();
+    cy.expect(Button('Delete').absent());
+  },
+
   checkDeletedErrorMassage: () => {
     InteractorsTools.checkCalloutErrorMessage(
       'This order or order line is linked to Invoice(s) and can not be deleted',
