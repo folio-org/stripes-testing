@@ -2072,7 +2072,7 @@ export default {
     }
   },
 
-  verifyProductIdentifier: (productId, productIdType, rowIndex = 0) => {
+  verifyProductIdentifier: (productId, rowIndex = 0, productIdType) => {
     if (productIdType) {
       cy.expect([
         MultiColumnList({ id: 'list-product-ids' })

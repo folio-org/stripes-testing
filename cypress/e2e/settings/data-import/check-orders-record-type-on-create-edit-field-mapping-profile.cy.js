@@ -64,9 +64,7 @@ describe('Data Import', () => {
           // In "Incoming record type" dropdown select option
           // In "Folio record type" dropdown list select option
           FieldMappingProfileEditForm.fillMappingProfileFields({
-            name: testData.profileName,
-            incomingRecordType,
-            existingRecordType,
+            summary: { name: testData.profileName, incomingRecordType, existingRecordType },
           });
 
           // Check the contents of the "FOLIO record type" dropdown list
@@ -123,9 +121,7 @@ describe('Data Import', () => {
           // In "Incoming record type" dropdown select option
           // In "Folio record type" dropdown list select option
           FieldMappingProfileEditForm.fillMappingProfileFields({
-            name: testData.profileName,
-            incomingRecordType,
-            existingRecordType,
+            summary: { name: testData.profileName, incomingRecordType, existingRecordType },
           });
 
           // Check the contents of the "FOLIO record type" dropdown list
