@@ -1192,12 +1192,83 @@ export default {
     cy.expect(Popover({ content: including(message) }).exists());
   },
 
+  verifyInfoIconClickable: (accordionName, fieldLabel) => {
+    cy.do(
+      Accordion(accordionName)
+        .find(Label(fieldLabel))
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().exists());
+  },
+
+  verifyFieldValue: (accordionName, fieldName, value) => {
+    cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ value }));
+  },
+
+  verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
+    cy.expect(
+      Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyAddLocationButtonEnabled: () => {
+    cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
+  },
+
+  addAdditionalProductInfo: (product) => {
+    cy.do([
+      Button('Add product ID and product ID type').click(),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.0.value',
+      }).fillIn(product.id),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.1.value',
+      }).fillIn(product.qualifier),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.2.value',
+      }).fillIn(`"${product.idType}"`),
+    ]);
+  },
+
   isPurchaseOrderStatusFieldFocused: (value) => {
     purchaseOrderStatus.has({ focused: value });
   },
 
   verifyDefaultPurchaseOrderLinesLimit(value) {
     cy.expect(purchaseOrderLinesLimit.has({ value }));
+  },
+
+  verifyPermanentFieldInfoMessage: (message) => {
+    cy.do(
+      Label('Permanent')
+        .find(Button({ icon: 'info' }))
+        .triggerClick(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+    cy.do(
+      Label('Permanent')
+        .find(Button({ icon: 'info' }))
+        .triggerClick(),
+    );
+    cy.expect(Popover({ content: including(message) }).absent());
+  },
+
+  verifyProductIdTypeDropdown: (...names) => {
+    cy.do(Button('Add product ID and product ID type').click());
+    cy.get('#item-details').find('button:contains("Accepted values"):last').click();
+    names.forEach((name) => {
+      cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
+    });
+  },
+
+  verifyPurchaseOrderStatusInfoMessage: (message) => {
+    cy.do(
+      Label('Purchase order status*')
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
   },
 
   verifyElectronicalResourcesCreateInventoryInfoMessage: (message) => {

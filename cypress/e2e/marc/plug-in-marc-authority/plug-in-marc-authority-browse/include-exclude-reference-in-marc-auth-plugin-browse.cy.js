@@ -8,45 +8,42 @@ import Logs from '../../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../../support/fragments/data_import/job_profiles/jobProfiles';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../../support/utils/stringTools';
 import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAuthorities';
-import { JOB_STATUS_NAMES } from '../../../../support/constants';
+import { JOB_STATUS_NAMES, REFERENCES_FILTER_CHECKBOXES } from '../../../../support/constants';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
-import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
-describe('plug-in MARC authority | Browse', () => {
+describe('plug-in MARC authority | Search', () => {
   const testData = {
-    searchQuery: 'Apple',
     headingTypes: ['Corporate Name', 'Conference Name'],
     tags: {
-      tag700: '700',
+      tag711: '711',
     },
-    instanceTitle: 'The data for C359184',
-    authSearchOption: {
-      CORPORATE_NAME: 'Corporate/Conference name',
+    instanceTitle:
+      'Clarinet concerto no. 1, op. 73 [sound recording] / Weber. Andante, K. 315 / Stravinsky. Theme & variations / Rossini.',
+    authTitles: ['Mostly Stravinsky Festival'],
+    authRows: {
+      stravinskyAuth: {
+        title: 'Mostly Stravinsky Festival',
+        tag: '111',
+      },
+      stravinskyRef: {
+        title: 'Mostly Stravinsky Festival Orchestra',
+        tag: '411',
+      },
     },
     instanceIDs: [],
     authorityIDs: [],
+    authorizedColumnName: 'Authorized/Reference',
     marcFiles: [
       {
-        marc: 'marcBibC359184.mrc',
-        fileName: `testMarcFileBibC359184.${getRandomPostfix()}.mrc`,
+        marc: 'marcBibC380434.mrc',
+        fileName: `testMarcFileBibC380434.${getRandomPostfix()}.mrc`,
         jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
         numberOfRecords: 1,
       },
       {
-        marc: 'marcAuthC359184_1.mrc',
-        fileName: `testMarcFileAuthC359184_1.${randomFourDigitNumber()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numberOfRecords: 2,
-      },
-      {
-        marc: 'marcAuthC359184_2.mrc',
-        fileName: `testMarcFileAuthC359184_2.${randomFourDigitNumber()}.mrc`,
-        jobProfileToRun: 'Default - Create SRS MARC Authority',
-        numberOfRecords: 3,
-      },
-      {
-        marc: 'marcAuthC359184_3.mrc',
-        fileName: `testMarcFileAuthC359184_2.${randomFourDigitNumber()}.mrc`,
+        marc: 'marcAuthC380434.mrc',
+        fileName: `testMarcFileAuthC380434.${randomFourDigitNumber()}.mrc`,
         jobProfileToRun: 'Default - Create SRS MARC Authority',
         numberOfRecords: 1,
       },
@@ -71,6 +68,18 @@ describe('plug-in MARC authority | Browse', () => {
             InventoryInstance.deleteInstanceViaApi(id);
           });
         }
+      });
+      testData.authTitles.forEach((query) => {
+        MarcAuthorities.getMarcAuthoritiesViaApi({
+          limit: 100,
+          query: `keyword="${query}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+        }).then((authorities) => {
+          if (authorities) {
+            authorities.forEach(({ id }) => {
+              MarcAuthority.deleteViaAPI(id);
+            });
+          }
+        });
       });
     });
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading })
@@ -103,10 +112,6 @@ describe('plug-in MARC authority | Browse', () => {
         });
         InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag700);
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.verifySelectMarcAuthorityModal();
       });
   });
 
@@ -122,69 +127,56 @@ describe('plug-in MARC authority | Browse', () => {
   });
 
   it(
-    'C359184 MARC Authority plug-in | Apply "Type of heading" facet to the browse result list (spitfire) (TaaS)',
+    'C380434 Include/exclude Reference records in MARC authority plug-in results list while browsing (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      MarcAuthorities.switchToBrowse();
+      InventoryInstance.editMarcBibliographicRecord();
+      InventoryInstance.verifyAndClickLinkIcon(testData.tags.tag711);
       MarcAuthorities.clickReset();
-      MarcAuthorities.searchByParameter(
-        testData.authSearchOption.CORPORATE_NAME,
-        testData.searchQuery,
-      );
-      // Need to wait, while data will be updated
-      cy.wait(1000);
+      MarcAuthorities.searchBy('Corporate/Conference name', 'Mostly Stravinsky');
       MarcAuthorities.verifySearchResultTabletIsAbsent(false);
       MarcAuthorities.verifyColumnValuesOnlyExist({
-        column: 'Type of heading',
-        expectedValues: testData.headingTypes,
+        column: testData.authorizedColumnName,
+        expectedValues: ['Authorized', 'Reference'],
         browsePane: true,
       });
 
-      MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[1]);
+      MarcAuthorities.verifyAllAuthorizedHaveLinks();
+
+      MarcAuthoritiesSearch.selectExcludeReferencesFilter(
+        REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM,
+      );
+      MarcAuthorities.verifyValueDoesntExistInColumn(testData.authorizedColumnName, 'Reference');
+      MarcAuthorities.verifyAllAuthorizedHaveLinks();
+
+      MarcAuthoritiesSearch.unselectExcludeReferencesFilter(
+        REFERENCES_FILTER_CHECKBOXES.EXCLUDE_SEE_FROM,
+      );
       MarcAuthorities.verifyColumnValuesOnlyExist({
-        column: 'Type of heading',
-        expectedValues: testData.headingTypes[1],
+        column: testData.authorizedColumnName,
+        expectedValues: ['Authorized', 'Reference'],
         browsePane: true,
       });
-      MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[1]);
 
-      MarcAuthorities.chooseTypeOfHeading(testData.headingTypes[0]);
-      MarcAuthorities.verifyColumnValuesOnlyExist({
-        column: 'Type of heading',
-        expectedValues: testData.headingTypes,
-        browsePane: true,
-      });
-      MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[1]);
-      MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[0]);
+      MarcAuthorities.selectItem(testData.authRows.stravinskyAuth.title, false);
+      MarcAuthorities.checkFieldAndContentExistence(
+        testData.authRows.stravinskyAuth.tag,
+        testData.authRows.stravinskyAuth.title,
+      );
+      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authRows.stravinskyAuth.title);
+      MarcAuthorities.verifyLinkButtonExistOnMarcViewPane();
 
-      MarcAuthorities.enterTypeOfHeading('Personal Name');
-      MarcAuthorities.verifyColumnValuesOnlyExist({
-        column: 'Type of heading',
-        expectedValues: testData.headingTypes,
-        browsePane: true,
-      });
-      MarcAuthorities.verifySelectedTypeOfHeading('Personal Name');
+      MarcAuthorities.closeMarcViewPane();
+      MarcAuthorities.verifySearchResultTabletIsAbsent(false);
 
-      MarcAuthorities.unselectHeadingType(testData.headingTypes[0]);
-      MarcAuthorities.verifyColumnValuesOnlyExist({
-        column: 'Type of heading',
-        expectedValues: [testData.headingTypes[1]],
-        browsePane: true,
-      });
-      MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[0], false);
+      MarcAuthorities.selectItem(testData.authRows.stravinskyRef.title, false);
+      MarcAuthorities.checkFieldAndContentExistence(
+        testData.authRows.stravinskyRef.tag,
+        testData.authRows.stravinskyRef.title,
+      );
 
-      MarcAuthorities.unselectHeadingType(testData.headingTypes[1]);
-      MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[1], false);
-      MarcAuthorityBrowse.checkResultWithNoValue(testData.searchQuery);
-
-      MarcAuthorities.resetTypeOfHeading();
-      MarcAuthorities.verifyColumnValuesOnlyExist({
-        column: 'Type of heading',
-        expectedValues: testData.headingTypes,
-        browsePane: true,
-      });
-      MarcAuthorities.verifySelectedTypeOfHeading(testData.headingTypes[0], false);
-      MarcAuthorities.verifySelectedTypeOfHeadingCount(0);
+      MarcAuthorities.checkRecordDetailPageMarkedValue(testData.authRows.stravinskyRef.title);
+      MarcAuthorities.verifyLinkButtonExistOnMarcViewPane();
     },
   );
 });
