@@ -7,11 +7,13 @@ import {
   PaneContent,
   Pane,
   including,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import FundDetails from './funds/fundDetails';
 import LedgerDetails from './ledgers/ledgerDetails';
 
 const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
 const chooseAFilterMessage = 'Choose a filter or enter a search query to show results.';
 const fiscalResultsList = PaneContent({ id: 'fiscal-year-results-pane-content' });
@@ -58,7 +60,13 @@ export default {
       Button('Search').click(),
     ]);
   },
-
+  selectFromLookUpView({ itemName }) {
+    cy.do([
+      searchField.fillIn(itemName),
+      searchButton.click(),
+      MultiColumnListCell({ content: itemName }).click(),
+    ]);
+  },
   selectFromResultsList: (rowNumber = 0) => {
     cy.do(MultiColumnListRow({ index: rowNumber }).click());
   },

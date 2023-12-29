@@ -11,7 +11,6 @@ import MarcAuthorities from '../../../../support/fragments/marcAuthority/marcAut
 import Users from '../../../../support/fragments/users/users';
 import MarcAuthority from '../../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorityBrowse from '../../../../support/fragments/marcAuthority/MarcAuthorityBrowse';
-import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import QuickMarcEditor from '../../../../support/fragments/quickMarcEditor';
 
 describe('MARC', () => {
@@ -58,6 +57,16 @@ describe('MARC', () => {
             if (instances) {
               instances.forEach(({ id }) => {
                 InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
+          });
+          MarcAuthorities.getMarcAuthoritiesViaApi({
+            limit: 100,
+            query: `keyword="${testData.authTitle}" and (authRefType==("Authorized" or "Auth/Ref"))`,
+          }).then((authorities) => {
+            if (authorities) {
+              authorities.forEach(({ id }) => {
+                MarcAuthority.deleteViaAPI(id);
               });
             }
           });
@@ -139,7 +148,6 @@ describe('MARC', () => {
 
           MarcAuthorities.verifyPagination();
 
-          MarcAuthoritiesSearch.selectExcludeReferencesFilter();
           MarcAuthorities.selectItem(testData.authTitle);
           MarcAuthority.waitLoading();
           MarcAuthorities.checkRecordDetailPageMarkedValue(testData.markedTitle);
