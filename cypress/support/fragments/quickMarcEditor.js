@@ -486,6 +486,10 @@ export default {
     cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: false }));
   },
 
+  verifyOnlyOne001FieldAreDisplayed() {
+    cy.expect(TextField({ name: 'records[2].tag' })).not.equal('001');
+  },
+
   verifyDisabledLinkHeadingsButton() {
     cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: true }));
   },
