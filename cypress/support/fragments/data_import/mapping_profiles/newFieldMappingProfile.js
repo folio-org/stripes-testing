@@ -48,6 +48,8 @@ const catalogedDateField = TextField('Cataloged date');
 const titleField = TextField('Title*');
 const incomingRecordTypeField = Select({ name: 'profile.incomingRecordType' });
 const currencyField = TextField('Currency*');
+const vendor = TextField('Vendor*');
+const purchaseOrderLinesLimit = TextField('Purchase order lines limit setting');
 const noteTypeField = TextField('Note type');
 const reEncumberField = TextField('Re-encumber');
 const purchaseOrderStatus = TextField('Purchase order status*');
@@ -58,6 +60,7 @@ const editionField = TextField('Edition');
 const internalNoteField = TextArea('Internal note');
 const acquisitionMethodField = TextField('Acquisition method*');
 const orderFormatField = TextField('Order format*');
+const orderTypetField = TextField('Order type*');
 const receiptStatusField = TextField('Receipt status');
 const paymentStatusField = TextField('Payment status');
 const selectorField = TextField('Selector');
@@ -79,6 +82,17 @@ const approvedCheckbox = Checkbox({
 const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
 const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 const closeButton = Button('Close');
+
+const requiredFields = {
+  'Purchase order status': purchaseOrderStatus,
+  Vendor: vendor,
+  'Order type': orderTypetField,
+  Title: titleField,
+  'Acquisition method': acquisitionMethodField,
+  'Order format': orderFormatField,
+  'Receiving workflow': receivingWorkflowField,
+  Currency: currencyField,
+};
 
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -996,6 +1010,22 @@ export default {
     ]);
   },
 
+  addFieldToMarcBibUpdate({ field, ind1, ind2, subfield }) {
+    cy.do([
+      Accordion({ id: 'edit-field-mappings-for-marc-updates' }).find(Button('Add field')).click(),
+      TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(field),
+      TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.indicator1' }).fillIn(
+        ind1,
+      ),
+      TextField({ name: 'profile.mappingDetails.marcMappingDetails[0].field.indicator2' }).fillIn(
+        ind2,
+      ),
+      TextField({
+        name: 'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield',
+      }).fillIn(subfield),
+    ]);
+  },
+
   fillMissingPieces: (value) => cy.do(TextField('Missing pieces').fillIn(value)),
 
   verifyExpenseClassesIsPresentedInDropdown: (value) => {
@@ -1141,6 +1171,12 @@ export default {
     ]);
   },
 
+  verifyFieldsMarkedWithAsterisks(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(requiredFields[label].has(conditions));
+    });
+  },
+
   verifyFOLIORecordTypeOptionExists(type) {
     cy.expect(recordTypeselect.find(Option(type)).exists());
   },
@@ -1154,6 +1190,68 @@ export default {
         .click(),
     );
     cy.expect(Popover({ content: including(message) }).exists());
+  },
+
+  verifyInfoIconClickable: (accordionName, fieldLabel) => {
+    cy.do(
+      Accordion(accordionName)
+        .find(Label(fieldLabel))
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().exists());
+  },
+
+  verifyFieldValue: (accordionName, fieldName, value) => {
+    cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ value }));
+  },
+
+  verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
+    cy.expect(
+      Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyAddLocationButtonEnabled: () => {
+    cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
+  },
+
+  addAdditionalProductInfo: (product) => {
+    cy.do([
+      Button('Add product ID and product ID type').click(),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.0.value',
+      }).fillIn(product.id),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.1.value',
+      }).fillIn(product.qualifier),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.2.value',
+      }).fillIn(`"${product.idType}"`),
+    ]);
+  },
+
+  isPurchaseOrderStatusFieldFocused: (value) => {
+    purchaseOrderStatus.has({ focused: value });
+  },
+
+  verifyDefaultPurchaseOrderLinesLimit(value) {
+    cy.expect(purchaseOrderLinesLimit.has({ value }));
+  },
+
+  verifyPermanentFieldInfoMessage: (message) => {
+    cy.do(
+      Label('Permanent')
+        .find(Button({ icon: 'info' }))
+        .triggerClick(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+    cy.do(
+      Label('Permanent')
+        .find(Button({ icon: 'info' }))
+        .triggerClick(),
+    );
+    cy.expect(Popover({ content: including(message) }).absent());
   },
 
   verifyProductIdTypeDropdown: (...names) => {

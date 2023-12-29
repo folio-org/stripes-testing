@@ -149,6 +149,27 @@ export default {
       });
   },
 
+  verifyLinkedProfilesNonMatches(arrayOfProfileNames, numberOfProfiles) {
+    waitLoading();
+    const profileNames = [];
+
+    cy.get('[id*="branch-ROOT-NON_MATCH"]')
+      .each(($element) => {
+        cy.wrap($element)
+          .invoke('text')
+          .then((name) => {
+            profileNames.push(name);
+          });
+      })
+      .then(() => {
+        // Iterate through each element in profileNames
+        for (let i = 0; i < profileNames.length; i++) {
+          expect(profileNames[i]).to.include(arrayOfProfileNames[i]);
+        }
+        expect(numberOfProfiles).to.equal(profileNames.length);
+      });
+  },
+
   verifyJobsUsingThisProfileSection(fileName) {
     cy.do(
       Accordion('Jobs using this profile')
