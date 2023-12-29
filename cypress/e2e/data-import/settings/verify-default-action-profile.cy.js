@@ -55,7 +55,7 @@ describe('data-import', () => {
         JobProfileView.edit();
         JobProfileEdit.unlinkActionsProfile(0);
         JobProfileEdit.saveAndClose();
-        JobProfileView.verifyLinkedProfilesEmpty();
+        JobProfileView.verifyNoLinkedProfiles();
         // #3-4 Create new job profile, link to default action profile, and save
         JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, defaultActionProfileName);
         JobProfiles.checkCalloutMessage('Record updated:');

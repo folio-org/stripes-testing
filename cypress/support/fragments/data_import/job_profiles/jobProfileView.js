@@ -170,7 +170,7 @@ export default {
       });
   },
 
-  verifyLinkedProfilesEmpty() {
+  verifyNoLinkedProfiles() {
     cy.get('[data-test-profile-link]').should('not.exist');
   },
 
