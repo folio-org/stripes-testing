@@ -28,27 +28,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
-    function replace999SubfieldsInPreupdatedFile(
-      exportedFileName,
-      preUpdatedFileName,
-      finalFileName,
-    ) {
-      FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
-        const lines = actualContent.split('');
-        const field999data = lines[lines.length - 2];
-        FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`).then((updatedContent) => {
-          const content = updatedContent.split('\n');
-          let firstString = content[0].slice();
-          firstString = firstString.replace(
-            'ff000000000-0000-0000-0000-000000000000i00000000-0000-0000-0000-000000000000',
-            field999data,
-          );
-          content[0] = firstString;
-          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
-        });
-      });
-    }
-
     const testData = {
       tag100: '100',
       tag010: '010',
@@ -226,7 +205,7 @@ describe('data-import', () => {
         cy.log('#####End Of Export#####');
 
         // add 999 subfield values from exported file to pre-updated file with field 100 deleted
-        replace999SubfieldsInPreupdatedFile(
+        DataImport.replace999SubfieldsInPreupdatedFile(
           nameForExportedMarcBibFile,
           nameForPreUpdatedMarcBibFile,
           nameForUpdatedMarcBibFile,

@@ -49,6 +49,7 @@ const titleField = TextField('Title*');
 const incomingRecordTypeField = Select({ name: 'profile.incomingRecordType' });
 const currencyField = TextField('Currency*');
 const vendor = TextField('Vendor*');
+const purchaseOrderLinesLimit = TextField('Purchase order lines limit setting');
 const noteTypeField = TextField('Note type');
 const reEncumberField = TextField('Re-encumber');
 const purchaseOrderStatus = TextField('Purchase order status*');
@@ -81,6 +82,7 @@ const approvedCheckbox = Checkbox({
 const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
 const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 const closeButton = Button('Close');
+const closeWithoutSavingButton = Button('Close without saving');
 
 const requiredFields = {
   'Purchase order status': purchaseOrderStatus,
@@ -652,6 +654,7 @@ export default {
   fillVendorInvoiceNumber: (number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
   fillQuantity: (quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal: (number) => cy.do(TextField('Sub-total*').fillIn(number)),
+  fillPurchaseOrderStatus: (orderStatus) => cy.do(purchaseOrderStatus.fillIn(`"${orderStatus}"`)),
 
   fillMappingProfileForUpdatesMarc: (specialMappingProfile = defaultMappingProfile) => {
     fillSummaryInMappingProfile(specialMappingProfile);
@@ -1182,6 +1185,8 @@ export default {
 
   clickClose: () => cy.do(closeButton.click()),
 
+  confirmCloseWithoutSaving: () => cy.do(closeWithoutSavingButton.click()),
+
   verifyAcquisitionsUnitsInfoMessage: (message) => {
     cy.do(
       Label('Acquisitions units')
@@ -1191,7 +1196,135 @@ export default {
     cy.expect(Popover({ content: including(message) }).exists());
   },
 
+  verifyFieldValue: (accordionName, fieldName, value) => {
+    cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ value }));
+  },
+
+  addAdditionalProductInfo: (product) => {
+    cy.do([
+      Button('Add product ID and product ID type').click(),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.0.value',
+      }).fillIn(product.id),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.1.value',
+      }).fillIn(product.qualifier),
+      TextField({
+        name: 'profile.mappingDetails.mappingFields[26].subfields.1.fields.2.value',
+      }).fillIn(`"${product.idType}"`),
+    ]);
+  },
+
   isPurchaseOrderStatusFieldFocused: (value) => {
     purchaseOrderStatus.has({ focused: value });
+  },
+
+  verifyInfoIconClickable: (accordionName, fieldLabel) => {
+    cy.do(
+      Accordion(accordionName)
+        .find(Label(fieldLabel))
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover().exists());
+  },
+
+  verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
+    cy.expect(
+      Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyAddLocationButtonEnabled: () => {
+    cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
+  },
+
+  verifyDefaultPurchaseOrderLinesLimit(value) {
+    cy.expect(purchaseOrderLinesLimit.has({ value }));
+  },
+
+  verifyPermanentFieldInfoMessage: (message) => {
+    cy.do(
+      Label('Permanent')
+        .find(Button({ icon: 'info' }))
+        .triggerClick(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+    cy.do(
+      Label('Permanent')
+        .find(Button({ icon: 'info' }))
+        .triggerClick(),
+    );
+    cy.expect(Popover({ content: including(message) }).absent());
+  },
+
+  verifyProductIdTypeDropdown: (...names) => {
+    cy.do(Button('Add product ID and product ID type').click());
+    cy.get('#item-details').find('button:contains("Accepted values"):last').click();
+    names.forEach((name) => {
+      cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
+    });
+  },
+
+  verifyPurchaseOrderStatusInfoMessage: (message) => {
+    cy.do(
+      Label('Purchase order status*')
+        .find(IconButton({ icon: 'info' }))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+  },
+
+  verifyElectronicalResourcesCreateInventoryInfoMessage: (message) => {
+    cy.do(
+      Accordion({ id: 'e-resources-details' })
+        .find(Label('Create inventory').find(IconButton({ icon: 'info' })))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+  },
+
+  verifyPhysicalResourceCreateInventoryInfoMessage: (message) => {
+    cy.do(
+      Accordion({ id: 'physical-resource-details' })
+        .find(Label('Create inventory').find(IconButton({ icon: 'info' })))
+        .click(),
+    );
+    cy.expect(Popover({ content: including(message) }).exists());
+  },
+
+  verifyPaymentStatusDropdownOptions: (...names) => {
+    cy.get('#po-line-details')
+      .find('label:contains("Payment status") + div button[aria-haspopup]')
+      .click();
+    names.forEach((name) => {
+      cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
+    });
+    cy.get('#po-line-details')
+      .find('label:contains("Payment status") + div button[aria-haspopup]')
+      .click();
+  },
+
+  selectPaymentStatusFromDropdown: (name) => {
+    cy.get('#po-line-details')
+      .find('label:contains("Payment status") + div button[aria-haspopup]')
+      .click();
+    cy.do(
+      DropdownMenu({ visible: true })
+        .find(Button(`${name}`))
+        .click(),
+    );
+  },
+
+  fillDiscountAmount: (amount) => {
+    cy.do(TextField('Discount').fillIn(amount));
+  },
+
+  selectDiscountType: (type) => {
+    cy.do(
+      Accordion('Cost details')
+        .find(Button(`${type}`))
+        .click(),
+    );
   },
 };
