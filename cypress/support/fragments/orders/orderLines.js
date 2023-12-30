@@ -2142,4 +2142,16 @@ export default {
       );
     }
   },
+
+  openDonorInformationSection() {
+    cy.do(Button({ id: 'accordion-toggle-button-donorsInformation' }).click());
+  },
+
+  checkAddDonorButtomisActive() {
+    cy.expect([
+      Section({ id: 'donorsInformation' })
+        .find(Button({ id: 'donorOrganizationIds-plugin' }))
+        .is({ disabled: false }),
+    ]);
+  },
 };
