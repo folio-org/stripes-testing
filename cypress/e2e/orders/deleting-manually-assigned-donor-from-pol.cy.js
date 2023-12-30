@@ -94,6 +94,10 @@ describe('Orders', () => {
         '40',
         location.institutionId,
       );
+      OrderLines.editPOLInOrder();
+      OrderLines.openDonorInformationSection();
+      OrderLines.addDonor(secondOrganization.name);
+      OrderLines.saveOrderLine();
     });
     cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
       user = userProperties;
@@ -110,7 +114,7 @@ describe('Orders', () => {
   });
 
   it(
-    'C423401: Removing donor record from PO line after removing fund distribution (thunderjet) (TaaS)',
+    'C423399: Deleting manually assigned donor from POL while assigned fund exists (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
@@ -118,10 +122,11 @@ describe('Orders', () => {
       OrderLines.selectPOLInOrder();
       OrderLines.editPOLInOrder();
       OrderLines.openDonorInformationSection();
-      OrderLines.checkAddDonorButtomisActive();
-      OrderLines.addDonorAndCancel(secondOrganization.name);
-      OrderLines.deleteFundInPOLwithoutSave();
       OrderLines.deleteDonor(firstOrganization.name);
+      OrderLines.saveOrderLine();
+      OrderLines.editPOLInOrder();
+      OrderLines.openDonorInformationSection();
+      OrderLines.deleteDonor(secondOrganization.name);
       OrderLines.saveOrderLine();
       OrderLines.editPOLInOrder();
       OrderLines.openDonorInformationSection();
