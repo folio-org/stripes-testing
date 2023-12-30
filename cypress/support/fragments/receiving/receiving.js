@@ -30,7 +30,7 @@ const unreceiveButton = Button('Unreceive');
 const addPieceModal = Modal({ id: 'add-piece-modal' });
 const addPieceButton = Button('Add piece');
 const openedRequestModal = Modal({ id: 'data-test-opened-requests-modal' });
-
+const editPieceModal = Modal('Edit piece');
 const filterOpenReceiving = () => {
   cy.do(Pane({ id: 'receiving-filters-pane' }).find(Button('Order status')).click());
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
@@ -304,11 +304,51 @@ export default {
   },
 
   selectConnectedInEditPiece: () => {
-    cy.do(Modal('Edit piece').find(Link('Connected')).click());
+    cy.do(editPieceModal.find(Link('Connected')).click());
   },
 
   receiveFromExpectedSection: () => {
     cy.do([Section({ id: 'expected' }).find(actionsButton).click(), receiveButton.click()]);
+  },
+
+  selectRecordInExpectedList: (rowNumber = 0) => {
+    cy.do(
+      Section({ id: 'expected' })
+        .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+        .click(),
+    );
+  },
+
+  varifyExpectedListIsEmpty: () => {
+    cy.expect(Section({ id: 'expected' }).find(MultiColumnListRow()).absent());
+  },
+
+  selectRecordInReceivedList: (rowNumber = 0) => {
+    cy.do(
+      Section({ id: 'received' })
+        .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+        .click(),
+    );
+  },
+
+  varifyReceivedListIsEmpty: () => {
+    cy.expect(Section({ id: 'received' }).find(MultiColumnListRow()).absent());
+  },
+
+  openDropDownInEditPieceModal: () => {
+    cy.do(editPieceModal.find(Button({ dataTestID: 'dropdown-trigger-button' })).click());
+  },
+
+  quickReceiveInEditPieceModal() {
+    this.openDropDownInEditPieceModal();
+    cy.do(Button('Quick receive').click());
+    InteractorsTools.checkCalloutMessage('The piece  was successfully received');
+  },
+
+  unreceiveInEditPieceModal() {
+    this.openDropDownInEditPieceModal();
+    cy.do(Button('Unreceive').click());
+    InteractorsTools.checkCalloutMessage('The piece was successfully saved');
   },
 
   receiveFromExpectedSectionWithClosePOL: () => {

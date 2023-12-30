@@ -32,40 +32,44 @@ const changedRecordsFileName = `*-Changed-Records-${holdingHRIDsFileName}`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditEdit.gui,
-        permissions.inventoryCRUDHoldings.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          item.holdingHRID = holdings[0].hrid;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            administrativeNotes: [notes.admin],
-            notes: [
-              { // Binding
-                holdingsNoteTypeId: 'e19eabab-a85c-4aef-a7b2-33bd9acef24e',
-                note: notes.binding,
-                staffOnly: false,
-              },
-              { // Provenance
-                holdingsNoteTypeId: 'db9b4787-95f0-4e78-becf-26748ce6bdeb',
-                note: notes.provenance,
-                staffOnly: false,
-              },
-            ],
+      cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryCRUDHoldings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
           });
-          FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
-        });
-      });
+          item.instanceId = InventoryInstances.createInstanceViaApi(
+            item.instanceName,
+            item.barcode,
+          );
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${item.instanceId}"`,
+          }).then((holdings) => {
+            item.holdingHRID = holdings[0].hrid;
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              administrativeNotes: [notes.admin],
+              notes: [
+                {
+                  // Binding
+                  holdingsNoteTypeId: 'e19eabab-a85c-4aef-a7b2-33bd9acef24e',
+                  note: notes.binding,
+                  staffOnly: false,
+                },
+                {
+                  // Provenance
+                  holdingsNoteTypeId: 'db9b4787-95f0-4e78-becf-26748ce6bdeb',
+                  note: notes.provenance,
+                  staffOnly: false,
+                },
+              ],
+            });
+            FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
+          });
+        },
+      );
     });
 
     after('delete test data', () => {

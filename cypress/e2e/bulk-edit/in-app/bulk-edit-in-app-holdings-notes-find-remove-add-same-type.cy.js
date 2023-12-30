@@ -30,47 +30,55 @@ const changedRecordsFileName = `*-Changed-Records-${holdingHRIDsFileName}`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditEdit.gui,
-        permissions.inventoryCRUDHoldings.gui,
-      ]).then((userProperties) => {
-        user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
-        item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-        cy.getHoldings({
-          limit: 1,
-          query: `"instanceId"="${item.instanceId}"`,
-        }).then((holdings) => {
-          item.holdingHRID = holdings[0].hrid;
-          cy.updateHoldingRecord(holdings[0].id, {
-            ...holdings[0],
-            administrativeNotes: [notes.admin],
-            notes: [
-              { // Action note
-                holdingsNoteTypeId: 'd6510242-5ec3-42ed-b593-3585d2e48fd6',
-                note: notes.action,
-                staffOnly: false,
-              },
-              { // Electronic bookplate note
-                holdingsNoteTypeId: '88914775-f677-4759-b57b-1a33b90b24e0',
-                note: notes.elbook,
-                staffOnly: false,
-              },
-            ],
+      cy.createTempUser([permissions.bulkEditEdit.gui, permissions.inventoryCRUDHoldings.gui]).then(
+        (userProperties) => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading,
           });
-          FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
-        });
-      });
+          item.instanceId = InventoryInstances.createInstanceViaApi(
+            item.instanceName,
+            item.barcode,
+          );
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${item.instanceId}"`,
+          }).then((holdings) => {
+            item.holdingHRID = holdings[0].hrid;
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              administrativeNotes: [notes.admin],
+              notes: [
+                {
+                  // Action note
+                  holdingsNoteTypeId: 'd6510242-5ec3-42ed-b593-3585d2e48fd6',
+                  note: notes.action,
+                  staffOnly: false,
+                },
+                {
+                  // Electronic bookplate note
+                  holdingsNoteTypeId: '88914775-f677-4759-b57b-1a33b90b24e0',
+                  note: notes.elbook,
+                  staffOnly: false,
+                },
+              ],
+            });
+            FileManager.createFile(`cypress/fixtures/${holdingHRIDsFileName}`, holdings[0].hrid);
+          });
+        },
+      );
     });
 
     after('delete test data', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${holdingHRIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName, changedRecordsFileName, previewFileName);
+      FileManager.deleteFileFromDownloadsByMask(
+        matchedRecordsFileName,
+        changedRecordsFileName,
+        previewFileName,
+      );
     });
 
     it(
@@ -100,14 +108,18 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyChangesInAreYouSureForm('Action note', ['']);
         BulkEditActions.verifyChangesInAreYouSureForm('Note', [notes.note]);
         BulkEditActions.downloadPreview();
-        ExportFile.verifyFileIncludes(previewFileName, [`,Electronic bookplate;${notes.elbook};false|Note;${notes.note};false,`]);
+        ExportFile.verifyFileIncludes(previewFileName, [
+          `,Electronic bookplate;${notes.elbook};false|Note;${notes.note};false,`,
+        ]);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyExactChangesUnderColumns('Action note', '');
         BulkEditSearchPane.verifyExactChangesUnderColumns('Note', notes.note);
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        ExportFile.verifyFileIncludes(changedRecordsFileName, [`,Electronic bookplate;${notes.elbook};false|Note;${notes.note};false,`]);
+        ExportFile.verifyFileIncludes(changedRecordsFileName, [
+          `,Electronic bookplate;${notes.elbook};false|Note;${notes.note};false,`,
+        ]);
 
         TopMenuNavigation.navigateToApp('Inventory');
         InventorySearchAndFilter.switchToHoldings();
