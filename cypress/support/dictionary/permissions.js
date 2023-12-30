@@ -262,12 +262,8 @@ export default {
     internal: 'data-import.upload.all',
     gui: 'Data Import File Upload - all permissions',
   },
-  dataImportCanUploadImportAndView: {
-    internal: 'ui-data-import.manage',
-    gui: 'Data import: Can upload files, import, and view logs',
-  },
   moduleDataImportEnabled: {
-    internal: 'ui-data-import.settings.manage',
+    internal: 'ui-data-import.manage',
     gui: 'Data import: Can upload files, import, and view logs',
   },
   dataImportDeleteLogs: {
@@ -452,6 +448,14 @@ export default {
   tlrEdit: {
     internal: 'ui-circulation.settings.titleLevelRequests',
     gui: 'Settings (Circulation): Title level request edit',
+  },
+  uiMoveRequest: {
+    internal: 'ui-requests.moveRequest',
+    gui: 'Requests: Move to new item, reorder queue',
+  },
+  uiRequestsReorderQueue: {
+    internal: 'ui-requests.reorderQueue',
+    gui: 'Requests: Requests: Reorder queue',
   },
   // Calendar
   calendarEdit: {
@@ -853,6 +857,10 @@ export default {
     internal: 'ui-inventory.settings.statistical-codes',
     gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
+  uiSettingsHRIDHandlingCreateEditDelete: {
+    internal: 'ui-inventory.settings.hridHandling',
+    gui: 'Settings (Inventory): Create, edit and delete HRID handling',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingsEHoldingsViewAccessStatusTypes: {
@@ -935,5 +943,9 @@ export default {
   coursesAll: {
     internal: 'ui-courses.all',
     gui: 'Courses: All permissions',
+  },
+  coursesReadAll: {
+    internal: 'ui-courses.read-all',
+    gui: 'Courses: Read all',
   },
 };
