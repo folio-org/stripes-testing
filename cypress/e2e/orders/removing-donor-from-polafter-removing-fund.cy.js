@@ -12,8 +12,9 @@ import NewLocation from '../../support/fragments/settings/tenant/locations/newLo
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Orders', () => {
+describe('ui-finance: Fiscal Year Rollover', () => {
   const firstFiscalYear = { ...FiscalYears.defaultRolloverFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
@@ -24,7 +25,19 @@ describe('Orders', () => {
     approved: true,
     reEncumber: true,
   };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const firstOrganization = {
+    ...NewOrganization.defaultUiOrganizations,
+    isDonor: true,
+    isVendor: true,
+  };
+  const secondOrganization = {
+    name: `autotest_name_${getRandomPostfix()}`,
+    status: 'Active',
+    code: `autotest_code_${getRandomPostfix()}`,
+    isDonor: true,
+    isVendor: false,
+    erpCode: `ERP-${getRandomPostfix()}`,
+  };
   const allocatedQuantity = '100';
   let user;
   let orderNumber;
@@ -33,23 +46,32 @@ describe('Orders', () => {
 
   before(() => {
     cy.getAdminToken();
-    FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
-      firstFiscalYear.id = firstFiscalYearResponse.id;
-      defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-      Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
-        defaultLedger.id = ledgerResponse.id;
-        defaultFund.ledgerId = defaultLedger.id;
+    Organizations.createOrganizationViaApi(firstOrganization).then((responseFirstOrganization) => {
+      firstOrganization.id = responseFirstOrganization;
+      Organizations.createOrganizationViaApi(secondOrganization).then(
+        (responseSecondOrganization) => {
+          secondOrganization.id = responseSecondOrganization;
+          FiscalYears.createViaApi(firstFiscalYear).then((firstFiscalYearResponse) => {
+            firstFiscalYear.id = firstFiscalYearResponse.id;
+            defaultLedger.fiscalYearOneId = firstFiscalYear.id;
+            Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
+              defaultLedger.id = ledgerResponse.id;
+              defaultFund.ledgerId = defaultLedger.id;
+              defaultFund.donorOrganizationIds = [firstOrganization.id];
+              Funds.createViaApi(defaultFund).then((fundResponse) => {
+                defaultFund.id = fundResponse.fund.id;
 
-        Funds.createViaApi(defaultFund).then((fundResponse) => {
-          defaultFund.id = fundResponse.fund.id;
-
-          cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
-          FinanceHelp.searchByName(defaultFund.name);
-          Funds.selectFund(defaultFund.name);
-          Funds.addBudget(allocatedQuantity);
-        });
-      });
+                cy.loginAsAdmin({ path: TopMenu.fundPath, waiter: Funds.waitLoading });
+                FinanceHelp.searchByName(defaultFund.name);
+                Funds.selectFund(defaultFund.name);
+                Funds.addBudget(allocatedQuantity);
+              });
+            });
+          });
+        },
+      );
     });
+
     ServicePoints.getViaApi().then((servicePoint) => {
       servicePointId = servicePoint[0].id;
       NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId)).then((res) => {
@@ -57,10 +79,7 @@ describe('Orders', () => {
       });
     });
 
-    Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
-      organization.id = responseOrganizations;
-    });
-    defaultOrder.vendor = organization.name;
+    defaultOrder.vendor = firstOrganization.name;
     cy.visit(TopMenu.ordersPath);
     Orders.createOrderForRollover(defaultOrder).then((firstOrderResponse) => {
       defaultOrder.id = firstOrderResponse.id;
@@ -75,14 +94,8 @@ describe('Orders', () => {
         '40',
         location.institutionId,
       );
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
     });
-    cy.createTempUser([
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersCancelOrderLines.gui,
-      permissions.uiOrdersCancelPurchaseOrders.gui,
-    ]).then((userProperties) => {
+    cy.createTempUser([permissions.uiOrdersEdit.gui]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
         path: TopMenu.ordersPath,
@@ -102,9 +115,17 @@ describe('Orders', () => {
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
-      Orders.cancelOrder();
-      Orders.selectClosedStatusFilter();
-      Orders.checkSearchResults(orderNumber);
+      OrderLines.selectPOLInOrder();
+      OrderLines.editPOLInOrder();
+      OrderLines.openDonorInformationSection();
+      OrderLines.checkAddDonorButtomisActive();
+      OrderLines.addDonorAndCancel(secondOrganization.name);
+      OrderLines.deleteFundInPOLwithoutSave();
+      OrderLines.deleteDonor(firstOrganization.name);
+      OrderLines.saveOrderLine();
+      OrderLines.editPOLInOrder();
+      OrderLines.openDonorInformationSection();
+      OrderLines.checkEmptyDonorList();
     },
   );
 });
