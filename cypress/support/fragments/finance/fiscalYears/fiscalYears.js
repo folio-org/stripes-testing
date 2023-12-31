@@ -14,6 +14,7 @@ import {
   TextArea,
   HTML,
   including,
+  SearchField,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
@@ -35,6 +36,8 @@ const editButton = Button('Edit');
 const deleteButton = Button('Delete');
 const fiscalYearButton = Button('Fiscal year');
 const resetButton = Button({ id: 'reset-fiscal-years-filters' });
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
 
 export default {
   defaultUiFiscalYear: {
@@ -74,11 +77,11 @@ export default {
   },
 
   waitLoading: () => {
-    cy.expect([fiscalYearFiltersSection.exists, fiscalYearResultsSection.exists]);
+    cy.expect([fiscalYearFiltersSection.exists(), fiscalYearResultsSection.exists()]);
   },
 
   waitForFiscalYearDetailsLoading: () => {
-    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists);
+    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists());
   },
 
   createDefaultFiscalYear(fiscalYear) {
@@ -289,5 +292,9 @@ export default {
   checkAcquisitionUnitIsAbsentToAssign(AUName) {
     cy.do(MultiSelect({ id: 'fy-acq-units' }).open());
     cy.expect(SelectionOption(AUName).absent());
+  },
+
+  searchByName: (name) => {
+    cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
   },
 };

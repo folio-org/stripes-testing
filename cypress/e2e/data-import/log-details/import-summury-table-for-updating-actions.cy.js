@@ -33,7 +33,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
+import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/jobProfiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
@@ -398,7 +398,7 @@ describe('data-import', () => {
             cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
           });
         });
-        SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+        SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
           (bodyWithjobProfile) => {
             testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
           },

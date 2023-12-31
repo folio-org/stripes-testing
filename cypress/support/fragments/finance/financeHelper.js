@@ -5,17 +5,25 @@ import {
   Link,
   SearchField,
   PaneContent,
+  Pane,
+  including,
+  MultiColumnListCell,
 } from '../../../../interactors';
 import FundDetails from './funds/fundDetails';
 import LedgerDetails from './ledgers/ledgerDetails';
 
 const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
 const chooseAFilterMessage = 'Choose a filter or enter a search query to show results.';
 const fiscalResultsList = PaneContent({ id: 'fiscal-year-results-pane-content' });
 const ledgerResultList = PaneContent({ id: 'ledger-results-pane-content' });
 const FundResultList = PaneContent({ id: 'fund-results-pane-content' });
-const FiscalYearResultList = PaneContent({ id: 'fiscal-year-results-pane-content' });
+const filtersPane = Pane({ id: including('filters-pane') });
+const fiscalYearButton = Button('Fiscal year');
+const ledgerButton = Button('Ledger');
+const groupButton = Button('Group');
+const fundButton = Button('Fund');
 
 export default {
   statusActive: 'Active',
@@ -52,7 +60,13 @@ export default {
       Button('Search').click(),
     ]);
   },
-
+  selectFromLookUpView({ itemName }) {
+    cy.do([
+      searchField.fillIn(itemName),
+      searchButton.click(),
+      MultiColumnListCell({ content: itemName }).click(),
+    ]);
+  },
   selectFromResultsList: (rowNumber = 0) => {
     cy.do(MultiColumnListRow({ index: rowNumber }).click());
   },
@@ -65,7 +79,7 @@ export default {
   },
   selectFirstLedger: (name) => {
     cy.do(ledgerResultList.find(Link(name)).click());
-    LedgerDetails.checkLedgeDetails({ information: [{ key: 'Name', value: name }] });
+    LedgerDetails.checkLedgerDetails({ information: [{ key: 'Name', value: name }] });
 
     return LedgerDetails;
   },
@@ -76,7 +90,7 @@ export default {
     return FundDetails;
   },
   selectFirstFiscalRecord: (name) => {
-    cy.do(FiscalYearResultList.find(Link(name)).click());
+    cy.do(fiscalResultsList.find(Link(name)).click());
   },
 
   checkZeroSearchResultsMessage: () => {
@@ -103,6 +117,21 @@ export default {
     return Math.floor(100000000 + Math.random() * 900000).toString();
   },
 
+  clickFiscalYearButton() {
+    cy.do(filtersPane.find(fiscalYearButton).click());
+  },
+
+  clickLedgerButton() {
+    cy.do(filtersPane.find(ledgerButton).click());
+  },
+
+  clickGroupButton() {
+    cy.do(filtersPane.find(groupButton).click());
+  },
+
+  clickFundButton() {
+    cy.do(filtersPane.find(fundButton).click());
+  },
   selectFiscalYearsNavigation: () => {
     cy.get('[data-test-finance-navigation-fiscalyear="true"]').click();
   },
