@@ -101,7 +101,7 @@ const trashButton = Button({ icon: 'trash' });
 const note = 'Edited by AQA team';
 const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
-
+const addDonorsModal = Modal('Add donors');
 // Results pane
 const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
 
@@ -1562,10 +1562,7 @@ export default {
   },
 
   deleteFundInPOLwithoutSave() {
-    cy.do([
-      Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
-      saveAndCloseButton.click(),
-    ]);
+    cy.do(Section({ id: 'fundDistributionAccordion' }).find(trashButton).click());
   },
 
   deleteFundsInPOL() {
@@ -2153,5 +2150,42 @@ export default {
         .find(Button({ id: 'donorOrganizationIds-plugin' }))
         .is({ disabled: false }),
     ]);
+  },
+
+  addDonor(donorName, rowNumber = 0) {
+    cy.do([
+      Button({ id: 'donorOrganizationIds-plugin' }).click(),
+      addDonorsModal.find(TextField({ name: 'query' })).fillIn(donorName),
+      addDonorsModal.find(searchButton).click(),
+      addDonorsModal.find(MultiColumnListRow({ index: rowNumber })).click(),
+      addDonorsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  addDonorAndCancel(donorName, rowNumber = 0) {
+    cy.do([
+      Button({ id: 'donorOrganizationIds-plugin' }).click(),
+      addDonorsModal.find(TextField({ id: 'input-record-search' })).fillIn(donorName),
+      addDonorsModal.find(searchButton).click(),
+      addDonorsModal.find(MultiColumnListRow({ index: rowNumber })).click(),
+      addDonorsModal.find(Button('Close')).click(),
+    ]);
+  },
+
+  deleteDonor(donorName) {
+    cy.get('#donorsInformation')
+      .find('div[class^="mclRowFormatterContainer-"]')
+      .each((row) => {
+        cy.wrap(row)
+          .contains(donorName)
+          .then(() => {
+            cy.wrap(row).find('button').click();
+            return false;
+          });
+      });
+  },
+
+  checkEmptyDonorList() {
+    cy.get('#donorsInformation').contains('The list contains no items');
   },
 };
