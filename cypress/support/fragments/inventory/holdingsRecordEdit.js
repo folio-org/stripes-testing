@@ -34,6 +34,8 @@ const callNumberType = rootForm.find(Select('Call number type'));
 const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
 const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
 const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
+const createAdministrativeNoteButton = Button('Add administrative note');
+const administrativeNoteTextArea = TextArea({ ariaLabel: 'Administrative note' });
 
 export default {
   saveAndClose: ({ holdingSaved = false } = {}) => {
@@ -136,6 +138,9 @@ export default {
       Select('Note type*').choose(type),
       TextArea({ ariaLabel: 'Note' }).fillIn(text),
     ]);
+  },
+  addAdministrativeNote: (note) => {
+    cy.do([createAdministrativeNoteButton.click(), administrativeNoteTextArea.fillIn(note)]);
   },
   editHoldingsNotes: (newType, newText) => {
     cy.do([Select('Note type*').choose(newType), TextArea({ ariaLabel: 'Note' }).fillIn(newText)]);

@@ -32,7 +32,10 @@ describe('bulk-edit', () => {
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
         InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.itemBarcode);
-        FileManager.createFile(`cypress/fixtures/${secondItemBarcodesFileName}`, secondItem.itemBarcode);
+        FileManager.createFile(
+          `cypress/fixtures/${secondItemBarcodesFileName}`,
+          secondItem.itemBarcode,
+        );
       });
     });
 

@@ -1,5 +1,6 @@
 import { HTML, including } from '@interactors/html';
 import { Button, Section, TableRow } from '../../../../interactors';
+import DateTools from '../../utils/dateTools';
 
 const instanceTitle = 'MARC bibliographic record';
 const holdingTitle = 'Holdings record';
@@ -95,5 +96,26 @@ export default {
           .absent(),
       );
     }
+  },
+
+  verifyFieldContent: (rowIndex, updatedDate) => {
+    cy.get('table')
+      .find('tr')
+      .eq(rowIndex)
+      .find('td')
+      .then((elems) => {
+        const dateFromField = DateTools.convertMachineReadableDateToHuman(elems.eq(2).text());
+        const convertedUpdatedDate = new Date(updatedDate).getTime();
+        const convertedDateFromField = new Date(dateFromField).getTime();
+        const timeDifference = (convertedDateFromField - convertedUpdatedDate) / 1000;
+
+        // check that difference in time is less than 2 minute
+        expect(timeDifference).to.be.lessThan(120000);
+      });
+  },
+
+  clickViewMarcAuthorityIcon() {
+    cy.get('#marc-view-pane').find('a').invoke('removeAttr', 'target').click();
+    cy.wait(2000);
   },
 };
