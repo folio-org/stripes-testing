@@ -2152,22 +2152,25 @@ export default {
     ]);
   },
 
-  addDonor(donorName, rowNumber = 0) {
-    cy.do([
-      Button({ id: 'donorOrganizationIds-plugin' }).click(),
-      addDonorsModal.find(TextField({ name: 'query' })).fillIn(donorName),
-      addDonorsModal.find(searchButton).click(),
-      addDonorsModal.find(MultiColumnListRow({ index: rowNumber })).click(),
-      addDonorsModal.find(Button('Save')).click(),
-    ]);
-  },
-
-  addDonorAndCancel(donorName, rowNumber = 0) {
+  addDonor(donorName) {
     cy.do([
       Button({ id: 'donorOrganizationIds-plugin' }).click(),
       addDonorsModal.find(TextField({ id: 'input-record-search' })).fillIn(donorName),
       addDonorsModal.find(searchButton).click(),
-      addDonorsModal.find(MultiColumnListRow({ index: rowNumber })).click(),
+    ]);
+    cy.wait(3000);
+    cy.do([
+      addDonorsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      addDonorsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  addDonorAndCancel(donorName) {
+    cy.do([
+      Button({ id: 'donorOrganizationIds-plugin' }).click(),
+      addDonorsModal.find(TextField({ id: 'input-record-search' })).fillIn(donorName),
+      addDonorsModal.find(searchButton).click(),
+      addDonorsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
       addDonorsModal.find(Button('Close')).click(),
     ]);
   },
@@ -2176,12 +2179,11 @@ export default {
     cy.get('#donorsInformation')
       .find('div[class^="mclRowFormatterContainer-"]')
       .each((row) => {
-        cy.wrap(row)
-          .contains(donorName)
-          .then(() => {
+        cy.wrap(row).then(() => {
+          if (row.text().includes(donorName)) {
             cy.wrap(row).find('button').click();
-            return false;
-          });
+          }
+        });
       });
   },
 
