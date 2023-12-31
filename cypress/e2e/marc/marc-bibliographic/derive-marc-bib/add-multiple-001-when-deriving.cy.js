@@ -65,7 +65,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       // #1 - #3 Open the "Instance" record view
-      InventoryInstance.searchByTitle(createdRecordIDs[0]);
+      InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
       // #4 Click on the "Actions" dropdown button and choose "Derive new MARC bibliographic record" option from the dropdown list.
       InventoryInstance.deriveNewMarcBib();

@@ -130,6 +130,13 @@ const submitOrderLine = () => {
 const checkQuantityPhysical = (quantity) => {
   cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
 };
+const expandActionsDropdownInPOL = () => {
+  cy.do(
+    orderLineDetailsPane
+      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton))
+      .click(),
+  );
+};
 
 export default {
   submitOrderLine,
@@ -1376,6 +1383,12 @@ export default {
     submitOrderLine();
   },
 
+  deleteButtonInOrderLineIsAbsent: () => {
+    cy.wait(4000);
+    expandActionsDropdownInPOL();
+    cy.expect(Button('Delete').absent());
+  },
+
   editPOLineInfoAndChangeLocation(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
       locationSection.find(trashButton).click(),
@@ -2089,6 +2102,23 @@ export default {
       default:
         cy.log('No such status like ' + orderStatus + '. Please use Closed, Open or Pending');
     }
+  },
+
+  claimingActiveAndSetInterval(interval) {
+    cy.do([
+      Checkbox({ name: 'claimingActive' }).click(),
+      TextField({ name: 'claimingInterval' }).fillIn(interval),
+    ]);
+  },
+
+  claimingActive() {
+    cy.do(Checkbox({ name: 'claimingActive' }).click());
+  },
+
+  checkClaimingIntervalInPOL(claimingInterval) {
+    cy.expect([
+      poLineInfoSection.find(KeyValue('Claiming interval')).has({ value: claimingInterval }),
+    ]);
   },
 
   verifyProductIdentifier: (productId, rowIndex = 0, productIdType) => {
