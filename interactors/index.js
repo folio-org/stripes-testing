@@ -31,6 +31,7 @@ export { Checkbox, CheckboxInTable } from './checkbox';
 export { default as CodeMirror, CodeMirrorHint } from './code-mirror';
 export { default as DataImportUploadFile } from './dataImportUploadFile';
 export { default as Datepicker, Calendar } from './datepicker';
+export { Decorator, DecoratorWrapper } from './decorator';
 export { default as Dropdown, DropdownMenu } from './dropdown';
 export { default as IconButton } from './icon-button';
 export { default as Image } from './image';
