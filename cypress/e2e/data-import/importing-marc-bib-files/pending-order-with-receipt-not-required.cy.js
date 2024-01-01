@@ -139,7 +139,7 @@ describe('data-import', () => {
           orderNumber = initialNumber.replace('-1', '');
         });
         OrderLineDetails.checkOrderLineDetails({
-          purchaseOrderLineInformation: [{ key: 'Receipt status', value: 'Receipt not required' }],
+          purchaseOrderLineInformation: [{ key: 'Receipt status', value: 'Receipt Not Required' }],
         });
       },
     );
