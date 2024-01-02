@@ -5,10 +5,9 @@ export default {
   thunderjet: 'thunderjet',
   folijet: 'folijet',
   prokopovych: 'prokopovych',
-  bama: 'bama'
+  bama: 'bama',
   volaris: 'volaris',
   ideaLabsTests: 'ideaLabsTests',
   erm: 'erm',
-  bama: 'bama',
   corsair: 'corsair',
 };

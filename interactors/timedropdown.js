@@ -4,11 +4,18 @@ import Button from './button';
 import TextField from './text-field';
 import Select from './select';
 
-const IncrementHourButton = HTML.extend('increment hour button').selector('button[id$="-next-hour"]');
-const DecrementHourButton = HTML.extend('decrement hour button').selector('button[id$="-prev-hour"]');
-const IncrementMinuteButton = HTML.extend('increment minute button').selector('button[id$="-next-minute"]');
-const DecrementMinuteButton = HTML.extend('decrement minute button').selector('button[id$="-prev-minute"]');
-
+const IncrementHourButton = HTML.extend('increment hour button').selector(
+  'button[id$="-next-hour"]',
+);
+const DecrementHourButton = HTML.extend('decrement hour button').selector(
+  'button[id$="-prev-hour"]',
+);
+const IncrementMinuteButton = HTML.extend('increment minute button').selector(
+  'button[id$="-next-minute"]',
+);
+const DecrementMinuteButton = HTML.extend('decrement minute button').selector(
+  'button[id$="-prev-minute"]',
+);
 
 export default HTML.extend('time dropdown')
   .selector('[class^="timepickerContainer-"]')
@@ -46,7 +53,6 @@ export default HTML.extend('time dropdown')
         hourFieldValue = intHour > 12 ? intHour - 12 : intHour;
       }
 
-
       const hourTextField = await interactor.find(TextField({ id: matching(/-hour-input$/) }));
       const minuteTextField = await interactor.find(TextField({ id: matching(/-minute-input$/) }));
 
@@ -55,10 +61,10 @@ export default HTML.extend('time dropdown')
       await minuteTextField.fillIn(minuteFieldValue.toString());
       minuteTextField.blur();
 
-
+      // eslint-disable-next-line no-console
       console.log(meridian);
       await interactor.find(Select({ id: matching(/-period-toggle$/) })).choose(meridian);
 
       await interactor.find(Button('Set time')).click();
-    }
+    },
   });
