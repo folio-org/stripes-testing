@@ -332,6 +332,24 @@ export default {
     });
   },
 
+  checkByInventorySingleRecordFileName(filter) {
+    // need to wait until selected data will be displayed
+    cy.wait(2000);
+    return cy.get('#list-data-import').then((element) => {
+      // only 100 records shows on every page
+      const resultCount =
+        element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+      // verify every string in result table
+      for (let i = 0; i < resultCount; i++) {
+        if (filter === 'Yes') {
+          cy.expect(MultiColumnListCell({ content: 'No file name', row: i }).exists());
+        } else {
+          cy.expect(MultiColumnListCell({ content: 'No file name', row: i }).absent());
+        }
+      }
+    });
+  },
+
   checkByErrorsInImportAndUser(status, userName) {
     waitUIToBeFiltered();
     checkByErrorsInImport(status);
