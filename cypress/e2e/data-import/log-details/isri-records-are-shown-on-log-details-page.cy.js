@@ -82,7 +82,8 @@ describe('data-import', () => {
         LogsViewAll.singleRecordImportsStatuses.forEach((filter) => {
           LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
           LogsViewAll.checkByInventorySingleRecordFileName(filter);
-          LogsViewAll.resetAllFilters();
+          LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
+          LogsViewAll.verifyFilterInactive(filter);
         });
       },
     );

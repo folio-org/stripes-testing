@@ -545,4 +545,12 @@ export default {
   clickFirstFileNameCell: () => {
     cy.do(dataImportList.find(MultiColumnListCell({ row: 0, columnIndex: 0 })).hrefClick());
   },
+
+  verifyFilterInactive(filter) {
+    cy.expect(
+      singleRecordImportsAccordion
+        .find(Checkbox({ name: filter.toLowerCase() }))
+        .has({ checked: false }),
+    );
+  },
 };
