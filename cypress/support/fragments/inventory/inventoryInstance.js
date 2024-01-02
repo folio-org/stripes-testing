@@ -139,6 +139,7 @@ const itemBarcodeField = TextField({ name: 'barcode' });
 const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
+const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -162,6 +163,9 @@ const validOCLC = {
     endDate: { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
   },
 };
+
+const sharedTextInDetailView = 'Shared instance • ';
+const localTextInDetailView = 'Local instance • ';
 
 const pressAddHoldingsButton = () => {
   cy.do(addHoldingButton.click());
@@ -1191,5 +1195,16 @@ export default {
     cy.get('div[data-test-updated-by="true"]')
       .find('a')
       .should('include.text', `${userLastName}, ${userFirsttName}`);
+  },
+
+  verifyRecordCreatedSource: (userFirsttName, userLastName) => {
+    cy.get('div[data-test-created-by="true"]')
+      .find('a')
+      .should('include.text', `${userLastName}, ${userFirsttName}`);
+  },
+
+  checkSharedTextInDetailView(isShared = true) {
+    const expectedText = isShared ? sharedTextInDetailView : localTextInDetailView;
+    cy.expect(detailsViewPaneheader.has({ title: including(expectedText) }));
   },
 };
