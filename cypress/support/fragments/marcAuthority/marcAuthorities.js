@@ -67,6 +67,7 @@ const sourceFileAccordion = Section({ id: 'sourceFileId' });
 const cancelButton = Button('Cancel');
 const closeLinkAuthorityModal = Button({ ariaLabel: 'Dismiss modal' });
 const exportSelectedRecords = Button('Export selected records (CSV/MARC)');
+const accordionShared = Section('Shared');
 
 export default {
   waitLoading() {
@@ -377,6 +378,10 @@ export default {
 
   clickActionsButton() {
     cy.do(actionsButton.click());
+  },
+
+  verifyAbsenceOfSharedAccordion: () => {
+    cy.expect(accordionShared.absent());
   },
 
   actionsSortBy(value) {

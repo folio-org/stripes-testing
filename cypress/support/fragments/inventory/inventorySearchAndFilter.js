@@ -421,11 +421,19 @@ export default {
   },
 
   verifySelectedRecords(selected) {
-    cy.expect(
-      Pane('Inventory').is({
-        subtitle: including(`records found${selected} records selected`),
-      }),
-    );
+    if (selected === 1) {
+      cy.expect(
+        Pane('Inventory').is({
+          subtitle: including(`record found${selected} record selected`),
+        }),
+      );
+    } else {
+      cy.expect(
+        Pane('Inventory').is({
+          subtitle: including(`records found${selected} records selected`),
+        }),
+      );
+    }
   },
 
   searchByParameter: (parameter, value) => {
