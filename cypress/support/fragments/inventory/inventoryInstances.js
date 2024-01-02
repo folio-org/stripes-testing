@@ -28,6 +28,7 @@ import getRandomPostfix from '../../utils/stringTools';
 import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
 
 const rootSection = Section({ id: 'pane-results' });
+const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
@@ -36,7 +37,7 @@ const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-sele
 const singleRecordImportModal = Modal('Single record import');
 const filterSection = Section({ id: 'pane-filter' });
 const inventorySearchInput = TextInput({ id: 'input-inventory-search' });
-const searchButton = Button('Search', { type: 'submit' });
+const searchButton = Button({ type: 'submit' });
 const paneHeaderSearch = PaneHeader('Inventory');
 
 const advSearchButton = Button('Advanced search');
@@ -314,6 +315,19 @@ export default {
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).focus());
     cy.do(Section({ id: 'instancesTags' }).find(TextField()).click());
     cy.do(Checkbox(tagName).click());
+  },
+
+  searchAndVerify(value) {
+    cy.do(filterSection.find(inventorySearchInput).fillIn(value));
+    cy.expect([
+      filterSection.find(inventorySearchInput).has({ value }),
+      filterSection.find(searchButton).has({ disabled: false }),
+    ]);
+    cy.do(filterSection.find(searchButton).click());
+    cy.expect([
+      inventoriesList.exists(),
+      inventoriesList.find(Button({ text: including(value) })).exists(),
+    ]);
   },
 
   createInstanceViaApi(
@@ -773,20 +787,32 @@ export default {
       });
   },
 
-  deleteInstanceViaApi({ instance, servicePoint, shouldCheckIn = false }) {
-    instance.items.forEach(({ id: itemId, barcode }) => {
-      if (shouldCheckIn) {
-        CheckinActions.checkinItemViaApi({
-          itemBarcode: barcode,
-          claimedReturnedResolution: 'Returned by patron',
-          servicePointId: servicePoint.id,
-        });
-      }
-      InventoryItems.deleteItemViaApi(itemId);
-    });
-    instance.holdings.forEach(({ id: holdingId }) => {
-      InventoryHoldings.deleteHoldingRecordViaApi(holdingId);
-    });
+  deleteInstanceViaApi({
+    instance,
+    servicePoint,
+    shouldDeleteItems = true,
+    shouldDeleteHoldings = true,
+    shouldCheckIn = false,
+  }) {
+    if (shouldDeleteItems) {
+      instance.items.forEach(({ id: itemId, barcode }) => {
+        if (shouldCheckIn) {
+          CheckinActions.checkinItemViaApi({
+            itemBarcode: barcode,
+            claimedReturnedResolution: 'Returned by patron',
+            servicePointId: servicePoint.id,
+          });
+        }
+        InventoryItems.deleteItemViaApi(itemId);
+      });
+    }
+
+    if (shouldDeleteHoldings) {
+      instance.holdings.forEach(({ id: holdingId }) => {
+        InventoryHoldings.deleteHoldingRecordViaApi(holdingId);
+      });
+    }
+
     InventoryInstance.deleteInstanceViaApi(instance.instanceId);
   },
 
@@ -1096,15 +1122,27 @@ export default {
     });
   },
 
+  verifySelectAllInstancesCheckbox(selected = false) {
+    cy.expect([
+      selectAllInstancesCheckbox.exists(),
+      selectAllInstancesCheckbox.has({ checked: selected }),
+    ]);
+  },
+
+  checkSearchResultCount(text) {
+    cy.expect(resultsPaneHeader.find(HTML(new RegExp(text))).exists());
+  },
+
   verifyInventoryLabelText(textLabel) {
     cy.wrap(Pane({ id: 'pane-results' }).subtitle()).then((element) => {
       cy.expect(element).contains(textLabel);
     });
   },
 
-  verifyAllCheckboxesAreUnchecked() {
+  verifyAllCheckboxesAreChecked(state) {
     cy.get(Checkbox({ ariaLabel: 'Select instance' })).each((checkbox) => {
-      cy.expect(!checkbox.checked);
+      const expectedState = state ? checkbox.checked : !checkbox.checked;
+      cy.expect(expectedState);
     });
   },
 

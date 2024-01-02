@@ -34,11 +34,13 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' }).then((servicePoints) => {
-          servicePointId = servicePoints[0].id;
-        }).then(() => {
-          UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
-        });
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+          .then((servicePoints) => {
+            servicePointId = servicePoints[0].id;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+          });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -49,10 +51,7 @@ describe('bulk-edit', () => {
           query: `"instanceId"="${instanceId}"`,
         }).then((holdings) => {
           item.holdingHRID = holdings[0].hrid;
-          FileManager.createFile(
-            `cypress/fixtures/${holdingsHRIDFileName}`,
-            item.holdingHRID,
-          );
+          FileManager.createFile(`cypress/fixtures/${holdingsHRIDFileName}`, item.holdingHRID);
         });
         InventoryInstances.createHoldingsNoteTypeViaApi(noteType).then((noteId) => {
           noteTypeId = noteId;
@@ -75,9 +74,7 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       cy.getAdminToken();
       Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-        item.itemBarcode,
-      );
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${holdingsHRIDFileName}`);
     });
 

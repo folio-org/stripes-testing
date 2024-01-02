@@ -10,11 +10,14 @@ import {
   Warning,
   including,
 } from '../../../../interactors';
+import CancelConfirmationModal from './modals/cancelConfirmationModal';
 import OrderLineEditForm from './orderLineEditForm';
 import InventoryInstance from '../inventory/inventoryInstance';
 import TransactionDetails from '../finance/transactions/transactionDetails';
 import ExportDetails from '../exportManager/exportDetails';
 import InteractorsTools from '../../utils/interactorsTools';
+import VersionHistory from './orderVersionHistory';
+import SelectInstanceModal from './modals/selectInstanceModal';
 
 const orderLineDetailsSection = Section({ id: 'order-lines-details' });
 const paneHeaderOrderLinesDetailes = orderLineDetailsSection.find(
@@ -29,8 +32,14 @@ const ongoingOrderSection = orderLineDetailsSection.find(Section({ id: 'ongoingO
 const fundDistributionsSection = orderLineDetailsSection.find(Section({ id: 'FundDistribution' }));
 const vendorDetailsSection = orderLineDetailsSection.find(Section({ id: 'Vendor' }));
 const costDetailsSection = orderLineDetailsSection.find(Section({ id: 'CostDetails' }));
+const physicalResourceDetailsSection = orderLineDetailsSection.find(Section({ id: 'physical' }));
 const locationDetailsSection = orderLineDetailsSection.find(Section({ id: 'location' }));
 const exportDetailsSection = orderLineDetailsSection.find(Section({ id: 'exportDetails' }));
+const headerLinesDetail = PaneHeader({ id: 'paneHeaderorder-lines-details' });
+const versionHistoryButton = Button({ id: 'version-history-btn' });
+const linkedInstancesDetailsSection = orderLineDetailsSection.find(
+  Section({ id: 'linkedInstances' }),
+);
 
 export default {
   waitLoading() {
@@ -55,25 +64,34 @@ export default {
     });
   },
   checkOrderLineDetails({
-    purchaseOrderLineInformation = [],
+    itemDetails,
+    poLineInformation,
     vendorDetails,
     costDetails,
     locationDetails,
+    physicalResourceDetails,
+    linkedInstances,
   } = {}) {
-    purchaseOrderLineInformation.forEach(({ key, value }) => {
-      cy.expect(purchaseOrderLineSection.find(KeyValue(key)).has({ value: including(value) }));
-    });
-
+    if (itemDetails) {
+      this.checkItemDetailsSection(itemDetails);
+    }
+    if (poLineInformation) {
+      this.checkPoLineInformationSection(poLineInformation);
+    }
     if (vendorDetails) {
       this.checkVendorDetailsSection(vendorDetails);
     }
-
     if (costDetails) {
       this.checkCostDetailsSection(costDetails);
     }
-
     if (locationDetails) {
       this.checkLocationsSection(locationDetails);
+    }
+    if (physicalResourceDetails) {
+      this.checkPhysicalResourceDetails(physicalResourceDetails);
+    }
+    if (linkedInstances) {
+      this.checkLinkedInstancesTableContent(linkedInstances);
     }
   },
   copyOrderNumber(poNumber) {
@@ -86,6 +104,36 @@ export default {
 
     InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
   },
+  expandActionsDropdown() {
+    cy.do(paneHeaderOrderLinesDetailes.find(actionsButton).click());
+  },
+  cancelOrderLine({ orderLineNumber, confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Cancel').click());
+
+    if (orderLineNumber) {
+      CancelConfirmationModal.verifyModalView({ orderLineNumber });
+    }
+
+    if (confirm) {
+      CancelConfirmationModal.clickCancelOrderLineButton();
+    }
+  },
+  checActionsMenuContent(actions = []) {
+    actions.forEach((action) => {
+      cy.expect(Button(action).exists());
+    });
+  },
+  changeInstanceConnection({ expand = true } = {}) {
+    if (expand) {
+      this.expandActionsDropdown();
+    }
+    cy.do(Button('Change instance connection').click());
+    SelectInstanceModal.waitLoading();
+    SelectInstanceModal.verifyModalView();
+
+    return SelectInstanceModal;
+  },
   openInventoryItem() {
     cy.do(itemDetailsSection.find(KeyValue('Title')).find(Link()).click());
 
@@ -94,7 +142,8 @@ export default {
     return InventoryInstance;
   },
   openOrderLineEditForm() {
-    cy.do([paneHeaderOrderLinesDetailes.find(actionsButton).click(), Button('Edit').click()]);
+    this.expandActionsDropdown();
+    cy.do(Button('Edit').click());
 
     OrderLineEditForm.waitLoading();
 
@@ -141,6 +190,17 @@ export default {
   },
   checkWarningMessage(message) {
     cy.expect(orderLineDetailsSection.find(Warning()).has({ message }));
+  },
+  checkContributorsSectionContent(contributors = []) {
+    contributors.forEach(({ name, type }) => {
+      cy.expect(
+        orderLineDetailsSection
+          .find(KeyValue('Contributors'))
+          .find(MultiColumnListRow({ isContainer: true, content: including(name) }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: including(type) }),
+      );
+    });
   },
   checkFundDistibutionTableContent(records = []) {
     records.forEach((record, index) => {
@@ -217,14 +277,62 @@ export default {
       }
     });
   },
-  checkOngoingOrderInformationSection({ ongoingOrderInformation = [] } = {}) {
+  checkLinkedInstancesTableContent(records = [], shouldExpand = true) {
+    if (shouldExpand) {
+      cy.do(linkedInstancesDetailsSection.find(Button('Linked instance')).click());
+    }
+
+    records.forEach((record, index) => {
+      if (record.title) {
+        cy.expect(
+          linkedInstancesDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Title' }))
+            .has({ content: including(record.title) }),
+        );
+      }
+      if (record.contributors) {
+        cy.expect(
+          linkedInstancesDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Contributors' }))
+            .has({ content: including(record.contributors) }),
+        );
+      }
+      if (record.publisher) {
+        cy.expect(
+          linkedInstancesDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Publishers' }))
+            .has({ content: including(record.publisher) }),
+        );
+      }
+      if (record.relation) {
+        cy.expect(
+          linkedInstancesDetailsSection
+            .find(MultiColumnListCell({ row: index, column: 'Relation' }))
+            .has({ content: including(record.relation) }),
+        );
+      }
+    });
+  },
+  checkItemDetailsSection(itemDEtails = []) {
+    this.checkSectionData({ details: itemDEtails, section: itemDetailsSection });
+  },
+  checkPoLineInformationSection(poLineInformation = []) {
+    this.checkSectionData({ details: poLineInformation, section: purchaseOrderLineSection });
+  },
+  checkOngoingOrderInformationSection(ongoingOrderInformation = []) {
     this.checkSectionData({ details: ongoingOrderInformation, section: ongoingOrderSection });
   },
-  checkVendorDetailsSection({ vendorDetails = [] } = {}) {
+  checkVendorDetailsSection(vendorDetails = []) {
     this.checkSectionData({ details: vendorDetails, section: vendorDetailsSection });
   },
-  checkCostDetailsSection({ costDetails = [] } = {}) {
+  checkCostDetailsSection(costDetails = []) {
     this.checkSectionData({ details: costDetails, section: costDetailsSection });
+  },
+  checkPhysicalResourceDetails(physicalResourceDetails = []) {
+    this.checkSectionData({
+      details: physicalResourceDetails,
+      section: physicalResourceDetailsSection,
+    });
   },
   checkSectionData({ details, section }) {
     details.forEach(({ key, value }) => {
@@ -242,5 +350,14 @@ export default {
         );
       });
     });
+  },
+  verifyLinesDetailTitle(title) {
+    cy.expect(orderLineDetailsSection.find(headerLinesDetail).has({ text: including(title) }));
+  },
+  openVersionHistory() {
+    cy.do(versionHistoryButton.click());
+    VersionHistory.waitLoading();
+
+    return VersionHistory;
   },
 };

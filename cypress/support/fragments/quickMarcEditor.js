@@ -1,3 +1,4 @@
+import { matching } from '@interactors/html';
 import {
   QuickMarcEditor,
   QuickMarcEditorRow,
@@ -44,6 +45,7 @@ const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' });
 const cancelEditConfirmBtn = Button('Keep editing');
 const updateLinkedBibFieldsModal = Modal({ id: 'quick-marc-update-linked-bib-fields' });
+const confirmDeletingRecordModal = Modal({ id: 'confirm-delete-note' });
 const saveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-update-linked-bib-fields-confirm' }),
 );
@@ -70,6 +72,7 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const cancelUnlinkButtonInsideModal = Button({
   id: 'clickable-quick-marc-confirm-unlink-modal-cancel',
 });
+const confirmDeleteButton = Modal().find(Button({ id: 'clickable-confirm-delete-note-confirm' }));
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
@@ -425,6 +428,17 @@ export default {
     cy.expect(Callout(including(calloutMsg)).exists());
   },
 
+  verifyAreYouSureModal(content) {
+    cy.expect(
+      updateLinkedBibFieldsModal.has({
+        content: including('Are you sure?'),
+      }),
+      updateLinkedBibFieldsModal.has({
+        content: including(content),
+      }),
+    );
+  },
+
   restoreDeletedFields: () => {
     cy.do(deleteFieldsModal.find(cancelButtonInDeleteFieldsModal).click());
   },
@@ -438,6 +452,7 @@ export default {
   },
 
   clickSaveAndCloseThenCheck(records) {
+    cy.wait(1000);
     cy.do(saveAndCloseButton.click());
     cy.expect([
       confirmationModal.exists(),
@@ -469,6 +484,10 @@ export default {
 
   verifyEnabledLinkHeadingsButton() {
     cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: false }));
+  },
+
+  verifyOnlyOne001FieldAreDisplayed() {
+    cy.expect(TextField({ name: 'records[2].tag' })).not.equal('001');
   },
 
   verifyDisabledLinkHeadingsButton() {
@@ -575,6 +594,11 @@ export default {
   cancelEditConformation() {
     cy.expect(cancelEditConformModel.exists());
     cy.do(cancelEditConfirmBtn.click());
+  },
+
+  closeWithoutSavingInEditConformation() {
+    cy.expect(cancelEditConformModel.exists());
+    cy.do(closeWithoutSavingBtn.click());
   },
 
   deleteConfirmationPresented() {
@@ -707,6 +731,10 @@ export default {
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
   },
 
+  checkUndoDeleteAbsent() {
+    cy.get('#quick-marc-editor-pane').find('[class^=deletedRowPlaceholder-]').should('not.exist');
+  },
+
   afterDeleteNotificationNoTag() {
     cy.get('[class^=deletedRowPlaceholder-]').should(
       'include.text',
@@ -739,6 +767,7 @@ export default {
   verifyDerivedMarcBibSave() {
     cy.expect(calloutOnDeriveFirst.exists());
   },
+
   verifyConfirmModal() {
     cy.expect(confirmationModal.exists());
     cy.expect(
@@ -764,6 +793,14 @@ export default {
     cy.expect(
       getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount() + 1)
         .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
+        .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
+    );
+  },
+
+  checkContentByTag(content, tag) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextArea())
         .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
     );
   },
@@ -1335,6 +1372,21 @@ export default {
     });
   },
 
+  verifyAllBoxesInARowAreEditable(tag) {
+    cy.expect([
+      getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: false }),
+    ]);
+  },
+
   checkLDRValue(ldrValue = validRecord.ldrValue) {
     cy.expect(
       getRowInteractorByTagName('LDR')
@@ -1641,6 +1693,14 @@ export default {
     ]);
   },
 
+  verifyZeroSubfieldInUnlinkedField(rowIndex, content) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ name: `records[${rowIndex}].content` }))
+        .has({ value: including(`$0 ${content}`) }),
+    );
+  },
+
   verifyRemoveLinkingModal() {
     cy.expect([
       removeLinkingModal.exists(),
@@ -1652,6 +1712,10 @@ export default {
         ),
       }),
     ]);
+  },
+
+  verifyRemoveLinkingModalAbsence() {
+    cy.expect([removeLinkingModal.absent()]);
   },
 
   confirmRemoveAuthorityLinking() {
@@ -1762,11 +1826,19 @@ export default {
   },
 
   checkUserNameInHeader(firstName, lastName) {
-    cy.expect(
-      PaneHeader()
-        .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
-        .exists(),
-    );
+    if (!firstName) {
+      cy.expect(
+        PaneHeader()
+          .find(HTML(matching(new RegExp(`Source: ${lastName}$`))))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        PaneHeader()
+          .find(HTML(including(`Source: ${lastName}, ${firstName}`)))
+          .exists(),
+      );
+    }
   },
 
   updateIndicatorValue(tag, newValue, indicatorIndex = 0) {
@@ -1862,7 +1934,10 @@ export default {
       rootSection.exists(),
     ]);
   },
-
+  confirmDeletingRecord() {
+    cy.do(confirmDeleteButton.click());
+    cy.expect([confirmDeletingRecordModal.absent()]);
+  },
   checkAfterSaveAndCloseAuthority() {
     cy.expect([calloutAfterSaveAndClose.exists(), rootSection.absent(), viewMarcSection.exists()]);
   },
@@ -1951,5 +2026,12 @@ export default {
     cy.get(`input[name*=".tag"][value="${tag}"]`).then(
       (elements) => elements.length === numOfFields,
     );
+  },
+
+  openLinkingAuthorityByIndex(rowIndex) {
+    cy.wrap(QuickMarcEditorRow({ index: rowIndex }).find(Link()).href()).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
   },
 };

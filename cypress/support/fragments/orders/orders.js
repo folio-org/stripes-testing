@@ -381,9 +381,7 @@ export default {
     });
   },
   checkCreatedOrder(order) {
-    cy.getAdminSourceRecord().then((source) => {
-      this.checkOrderDetails({ vendor: order.vendor, source });
-    });
+    this.checkOrderDetails({ vendor: order.vendor });
   },
   checkCreatedOngoingOrder(order) {
     this.checkOrderDetails({ vendor: order.vendor, orderType: order.orderType });
@@ -416,6 +414,12 @@ export default {
       Button('Delete').click(),
       Button({ id: 'clickable-delete-order-confirmation-confirm' }).click(),
     ]);
+  },
+
+  deleteButtonInOrderIsAbsent: () => {
+    cy.wait(4000);
+    expandActionsDropdown();
+    cy.expect(Button('Delete').absent());
   },
 
   checkDeletedErrorMassage: () => {
@@ -841,11 +845,15 @@ export default {
     ]);
   },
 
+  selectInvoiceInRelatedInvoices: (invoiceNumber) => {
+    cy.get(`div[class*=mclCell-]:contains("${invoiceNumber}")`)
+      .siblings('div[class*=mclCell-]')
+      .eq(0)
+      .find('a')
+      .click();
+  },
+
   verifyActiveBtnOrdersFilters: (btnName) => {
-    cy.expect(
-      ordersPane
-        .find(HTML(including(btnName, { class: including('primary') })))
-        .exists(),
-    );
+    cy.expect(ordersPane.find(HTML(including(btnName, { class: including('primary') }))).exists());
   },
 };

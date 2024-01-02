@@ -27,8 +27,12 @@ const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
+const userInformationSection = Accordion({ id: 'userInformationSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
+const requestsAccordion = Accordion({ id: 'requestsSection' });
+const openedRequestsLink = requestsAccordion.find(Link({ id: 'clickable-viewopenrequests' }));
+const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclosedrequests' }));
 const notesSection = Accordion('Notes');
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
@@ -42,6 +46,8 @@ const cancelButton = Button({ id: 'expirationDate-modal-cancel-btn' });
 const keepEditingButton = Button({ id: 'clickable-cancel-editing-confirmation-confirm' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const areYouSureModal = Modal('Are you sure?');
+const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
+const createRequestButton = Button('Create request');
 
 export default {
   errors,
@@ -67,6 +73,26 @@ export default {
     cy.do(notesSection.clickHeader());
 
     return details && this.verifyNoteDetails({ details });
+  },
+  expandRequestsSection(openRequests, closedRequests) {
+    cy.do(requestsAccordion.clickHeader());
+
+    return openRequests && this.verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests);
+  },
+  verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests) {
+    cy.expect(
+      openedRequestsLink.has({
+        text: `${openRequests} open requests`,
+      }),
+    );
+
+    if (closedRequests) {
+      cy.expect(
+        closedRequestsLink.has({
+          text: `${closedRequests} closed request`,
+        }),
+      );
+    }
   },
   verifyNoteDetails({ details = '' } = {}) {
     cy.expect([
@@ -102,6 +128,15 @@ export default {
 
   openCustomFieldsSection() {
     cy.do(Accordion({ id: 'customFields' }).clickHeader());
+  },
+
+  expandRequestSection() {
+    cy.do(Accordion({ id: 'requestsSection' }).clickHeader());
+    cy.expect([
+      Link({ id: 'clickable-viewopenrequests' }).exists(),
+      Link({ id: 'clickable-viewclosedrequests' }).exists(),
+      createRequestButton.exists(),
+    ]);
   },
 
   verifySponsorsAlphabeticalOrder() {
@@ -324,7 +359,11 @@ export default {
 
   startRequest: () => {
     cy.do(actionsButton.click());
-    cy.do(Button('Create request').click());
+    cy.do(createRequestButton.click());
+  },
+
+  createNewRequest: () => {
+    cy.do(createRequestButton.click());
   },
 
   startBlock: () => {
@@ -420,5 +459,13 @@ export default {
 
   openNoteForEdit(noteTitle) {
     cy.do(MultiColumnListCell(including(noteTitle)).find(Button('Edit')).click());
+  },
+
+  selectFeeFines(feeFines) {
+    cy.do([listFeesFines.find(MultiColumnListCell(including(feeFines))).click()]);
+  },
+
+  verifyUserInformationPresence() {
+    cy.expect(userInformationSection.exists());
   },
 };

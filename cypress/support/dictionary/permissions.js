@@ -263,7 +263,7 @@ export default {
     gui: 'Data Import File Upload - all permissions',
   },
   moduleDataImportEnabled: {
-    internal: 'ui-data-import.settings.manage',
+    internal: 'ui-data-import.manage',
     gui: 'Data import: Can upload files, import, and view logs',
   },
   dataImportDeleteLogs: {
@@ -449,15 +449,21 @@ export default {
     internal: 'ui-circulation.settings.titleLevelRequests',
     gui: 'Settings (Circulation): Title level request edit',
   },
+  uiMoveRequest: {
+    internal: 'ui-requests.moveRequest',
+    gui: 'Requests: Move to new item, reorder queue',
+  },
+  uiRequestsReorderQueue: {
+    internal: 'ui-requests.reorderQueue',
+    gui: 'Requests: Requests: Reorder queue',
+  },
   // Calendar
-  calendarEdit: {
-    internal: 'ui-calendar.edit',
-    gui: 'Settings (Calendar): Can create, view, and edit calendar events',
-  },
-  calendarAll: {
-    internal: 'ui-calendar.all',
-    gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events',
-  },
+  calendarEdit: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can create, view, and edit calendar events' },
+  calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
+  calendarView: { internal: 'ui-calendar.view', gui: 'Settings (Calendar): Can view existing calendars' },
+  calendarCreate: { internal: 'ui-calendar.create', gui: 'Settings (Calendar): Can create and assign new calendars' },
+  calendarDelete: { internal: 'ui-calendar.delete', gui: 'Settings (Calendar): Can delete existing calendars' },
+  calendarEditCalendars: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can edit and reassign existing calendars' },
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   dataExportEnableModule: {
@@ -849,11 +855,27 @@ export default {
     internal: 'ui-inventory.settings.statistical-codes',
     gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
+  uiSettingsHRIDHandlingCreateEditDelete: {
+    internal: 'ui-inventory.settings.hridHandling',
+    gui: 'Settings (Inventory): Create, edit and delete HRID handling',
+  },
   // Added the below permissions for custom label creation
 
+  uiSettingsEHoldingsViewAccessStatusTypes: {
+    internal: 'ui-eholdings.settings.access-types.view',
+    gui: 'Settings (eholdings): Can view access status types',
+  },
+  uiSettingsEHoldingsViewCustomLabel: {
+    internal: 'ui-eholdings.settings.custom-labels.view',
+    gui: 'Settings (eholdings): Can view custom labels',
+  },
   uiSettingseholdingsViewEditCreateDelete: {
     internal: 'ui-eholdings.settings.all',
     gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels',
+  },
+  uiSettingsEHoldingsViewSettings: {
+    internal: 'ui-eholdings.settings.enabled',
+    gui: 'Settings (eHoldings): View settings',
   },
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',
@@ -919,5 +941,9 @@ export default {
   coursesAll: {
     internal: 'ui-courses.all',
     gui: 'Courses: All permissions',
+  },
+  coursesReadAll: {
+    internal: 'ui-courses.read-all',
+    gui: 'Courses: Read all',
   },
 };
