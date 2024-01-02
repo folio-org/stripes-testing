@@ -6,6 +6,7 @@ import {
   ORDER_FORMAT_NAMES_IN_PROFILE,
   ORDER_STATUSES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -149,6 +150,10 @@ describe('data-import', () => {
         Logs.openFileDetails(marcFileName);
         FileDetails.checkOrderQuantityInSummaryTable('6', 2);
         FileDetails.verifyRecordColumnHasStandardSequentialNumberingForRecords();
+        FileDetails.checkStatusInColumn(
+          RECORD_STATUSES.NO_ACTION,
+          FileDetails.columnNameInResultList.order,
+        );
         cy.wrap(ordersData).each((order) => {
           FileDetails.verifyTitle(
             order.title,
@@ -158,8 +163,9 @@ describe('data-import', () => {
         });
         FileDetails.openJsonScreen(ordersData[0].title);
         JsonScreenView.verifyJsonScreenIsOpened();
+        JsonScreenView.verifyContentInTab('"recordType": "MARC_BIB",');
         JsonScreenView.openOrderTab();
-        // JsonScreenView.verifyContentInTab('No action');
+        JsonScreenView.verifyContentInTab('org.folio.rest.core.exceptions.HttpException:');
       },
     );
   });
