@@ -42,6 +42,7 @@ const loanAndAvailabilityAccordion = Accordion('Loan and availability');
 const orderInformationAccordion = Accordion('Order information');
 const locationAccordion = Accordion('Location');
 const physicalResourceDetailsAccordion = Accordion('Physical resource details');
+const electronicResourceDetailsAccordion = Accordion({ id: 'e-resources-details' });
 const eResourcesDetailsAccordion = Accordion('E-resources details');
 const nameField = TextField({ name: 'profile.name' });
 const searchField = TextField({ id: 'input-record-search' });
@@ -629,11 +630,25 @@ export default {
           .fillIn(`"${profile.createInventory}"`),
       );
     }
+    if (profile.createInventoryElectronic) {
+      cy.do(
+        electronicResourceDetailsAccordion
+          .find(TextField('Create inventory'))
+          .fillIn(`"${profile.createInventoryElectronic}"`),
+      );
+    }
     if (profile.materialType) {
       cy.do(
         physicalResourceDetailsAccordion
           .find(materialTypeField)
           .fillIn(`"${profile.materialType}"`),
+      );
+    }
+    if (profile.materialTypeElectronic) {
+      cy.do(
+        electronicResourceDetailsAccordion
+          .find(materialTypeField)
+          .fillIn(`"${profile.materialTypeElectronic}"`),
       );
     }
     addVolume(profile);
@@ -1311,7 +1326,7 @@ export default {
 
   verifyElectronicalResourcesCreateInventoryInfoMessage: (message) => {
     cy.do(
-      Accordion({ id: 'e-resources-details' })
+      electronicResourceDetailsAccordion
         .find(Label('Create inventory').find(IconButton({ icon: 'info' })))
         .click(),
     );
