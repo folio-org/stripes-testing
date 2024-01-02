@@ -1,16 +1,17 @@
-import { deleteServicePoint, createServicePoint,
-  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
+import {
+  createServicePoint,
+  deleteCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
-import PaneActions from '../../support/fragments/calendar/pane-actions';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
 const newCalendarInfo = calendarFixtures.data.newCalendar;
-
 
 let calendarID;
 
@@ -43,27 +44,28 @@ describe('Create calendars that are 24/7 (never close)', () => {
     }
   });
 
+  it(
+    'C360955 Create -> Create calendars that are 24/7 (never close) (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
+      PaneActions.allCalendarsPane.clickNewButton();
 
-  it('C360955 Create -> Create calendars that are 24/7 (never close) (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.allCalendarsPane.clickNewButton();
+      CreateCalendarForm.create247Calendar(newCalendarInfo, testServicePoint.name);
 
-    CreateCalendarForm.create247Calendar(newCalendarInfo, testServicePoint.name);
+      // intercept http request
+      cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars', (req) => {
+        if (req.method === 'POST') {
+          req.continue((res) => {
+            expect(res.statusCode).equals(201);
+            calendarID = res.body.id;
+          });
+        }
+      }).as('createCalendar');
 
-
-    // intercept http request
-    cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars', (req) => {
-      if (req.method === 'POST') {
-        req.continue((res) => {
-          expect(res.statusCode).equals(201);
-          calendarID = res.body.id;
-        });
-      }
-    }).as('createCalendar');
-
-
-    cy.wait('@createCalendar').then(() => {
-      openCalendarSettings();
-      PaneActions.individualCalendarPane.checkIfOpen247(newCalendarInfo.name);
-    });
-  });
+      cy.wait('@createCalendar').then(() => {
+        openCalendarSettings();
+        PaneActions.individualCalendarPane.checkIfOpen247(newCalendarInfo.name);
+      });
+    },
+  );
 });

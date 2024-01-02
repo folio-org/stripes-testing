@@ -1,15 +1,14 @@
-import { createCalendar,
-  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
+import {
+  createCalendar,
+  deleteCalendar,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
-import PaneActions from '../../support/fragments/calendar/pane-actions';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
 
 const testCalendar = calendarFixtures.calendar;
-
-
 
 describe('Duplicate an existing calendar to make a new one', () => {
   let testCalendarResponse;
@@ -32,34 +31,38 @@ describe('Duplicate an existing calendar to make a new one', () => {
     openCalendarSettings();
   });
 
-
-  it('C360953 Copy -> Duplicate an existing calendar to make a new one (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.allCalendarsPane.openAllCalendarsPane();
-    PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
-    PaneActions.individualCalendarPane.selectDuplicateAction({ calendarName: testCalendarResponse.name });
-    CreateCalendarForm.editNameAndSave({ newCalendarName: duplicateCalendarName });
-
-
-    // intercept http request
-    let duplicateCalendarID;
-    cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars', (req) => {
-      if (req.method === 'POST') {
-        req.continue((res) => {
-          expect(res.statusCode).equals(201);
-          duplicateCalendarID = res.body.id;
-        });
-      }
-    }).as('createDuplicateCalendar');
-
-    // check that duplicate calendar exists in list of calendars
-    cy.wait('@createDuplicateCalendar').then(() => {
-      deleteCalendar(testCalendarResponse.id);
-      openCalendarSettings();
+  it(
+    'C360953 Copy -> Duplicate an existing calendar to make a new one (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
       PaneActions.allCalendarsPane.openAllCalendarsPane();
-      PaneActions.allCalendarsPane.checkCalendarExists(duplicateCalendarName);
+      PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
+      PaneActions.individualCalendarPane.selectDuplicateAction({
+        calendarName: testCalendarResponse.name,
+      });
+      CreateCalendarForm.editNameAndSave({ newCalendarName: duplicateCalendarName });
 
-      // delete duplicate calendar
-      deleteCalendar(duplicateCalendarID);
-    });
-  });
+      // intercept http request
+      let duplicateCalendarID;
+      cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars', (req) => {
+        if (req.method === 'POST') {
+          req.continue((res) => {
+            expect(res.statusCode).equals(201);
+            duplicateCalendarID = res.body.id;
+          });
+        }
+      }).as('createDuplicateCalendar');
+
+      // check that duplicate calendar exists in list of calendars
+      cy.wait('@createDuplicateCalendar').then(() => {
+        deleteCalendar(testCalendarResponse.id);
+        openCalendarSettings();
+        PaneActions.allCalendarsPane.openAllCalendarsPane();
+        PaneActions.allCalendarsPane.checkCalendarExists(duplicateCalendarName);
+
+        // delete duplicate calendar
+        deleteCalendar(duplicateCalendarID);
+      });
+    },
+  );
 });

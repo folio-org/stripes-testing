@@ -1,16 +1,17 @@
-import { deleteServicePoint, createCalendar,
-  openCalendarSettings, deleteCalendar, createServicePoint } from '../../support/fragments/calendar/calendar';
+import {
+  createCalendar,
+  createServicePoint,
+  deleteCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 
-import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import permissions from '../../support/dictionary/permissions';
+import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
-
-
 
 describe('User with Settings (Calendar): Can create and assign new calendars', () => {
   let testCalendarResponse;
@@ -37,9 +38,7 @@ describe('User with Settings (Calendar): Can create and assign new calendars', (
     cy.logout();
 
     openCalendarSettings();
-    cy.createTempUser([
-      permissions.calendarCreate.gui,
-    ]).then(userProperties => {
+    cy.createTempUser([permissions.calendarCreate.gui]).then((userProperties) => {
       cy.login(userProperties.username, userProperties.password);
       openCalendarSettings();
     });
@@ -54,25 +53,30 @@ describe('User with Settings (Calendar): Can create and assign new calendars', (
     deleteCalendar(testCalendarResponse.id);
   });
 
+  it(
+    'C365116 Permissions -> User with Settings (Calendar): Can create and assign new calendars (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.checkActionMenuPresent();
+      PaneActions.allCalendarsPane.openActionMenu();
+      PaneActions.newButtonExists();
 
-  it('C365116 Permissions -> User with Settings (Calendar): Can create and assign new calendars (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.allCalendarsPane.openAllCalendarsPane();
-    PaneActions.allCalendarsPane.checkActionMenuPresent();
-    PaneActions.allCalendarsPane.openActionMenu();
-    PaneActions.newButtonExists();
+      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+      PaneActions.checkPaneExists(testCalendar.name);
+      PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
+      PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
+      PaneActions.duplicateButtonExists();
 
-    PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
-    PaneActions.checkPaneExists(testCalendar.name);
-    PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
-    PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
-    PaneActions.duplicateButtonExists();
+      PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+      PaneActions.currentCalendarAssignmentsPane.checkNewButtonExists();
 
-    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
-    PaneActions.currentCalendarAssignmentsPane.checkNewButtonExists();
-
-    PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(testServicePoint.name);
-    PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
-    PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
-    PaneActions.duplicateButtonExists();
-  });
+      PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(
+        testServicePoint.name,
+      );
+      PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
+      PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
+      PaneActions.duplicateButtonExists();
+    },
+  );
 });

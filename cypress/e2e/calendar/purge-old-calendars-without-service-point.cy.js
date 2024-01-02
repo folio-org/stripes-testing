@@ -1,10 +1,11 @@
-import { deleteServicePoint, createCalendar,
-  openCalendarSettings } from '../../support/fragments/calendar/calendar';
+import {
+  createCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
-import PaneActions from '../../support/fragments/calendar/pane-actions';
 import ModalFragments from '../../support/fragments/calendar/modal-fragments';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -13,8 +14,6 @@ const testCalendar = calendarFixtures.calendar;
 testCalendar.startDate = '2022-01-01';
 testCalendar.endDate = '2022-01-31';
 testCalendar.exceptions = [];
-
-
 
 describe('Purge calendars that are not assigned to any service points', () => {
   before(() => {
@@ -35,19 +34,24 @@ describe('Purge calendars that are not assigned to any service points', () => {
     openCalendarSettings();
   });
 
+  it(
+    'C360952 Delete -> Purge calendars that are not assigned to any service points (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.checkCalendarExists(testCalendar.name);
+      PaneActions.allCalendarsPane.clickPurgeOldCalendarsAction();
+      ModalFragments.checkPurgeOldCalendarsModalExists();
 
+      // check that all select field options are present
+      ModalFragments.purgeOldCalendars.checkSelectFields();
 
-  it('C360952 Delete -> Purge calendars that are not assigned to any service points (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.allCalendarsPane.openAllCalendarsPane();
-    PaneActions.allCalendarsPane.checkCalendarExists(testCalendar.name);
-    PaneActions.allCalendarsPane.clickPurgeOldCalendarsAction();
-    ModalFragments.checkPurgeOldCalendarsModalExists();
+      ModalFragments.purgeOldCalendars.purgeCalendarsMoreThanThreeMonthsOld({
+        calendarName: testCalendar.name,
+        hasServicePoint: false,
+      });
 
-    // check that all select field options are present
-    ModalFragments.purgeOldCalendars.checkSelectFields();
-
-    ModalFragments.purgeOldCalendars.purgeCalendarsMoreThanThreeMonthsOld({ calendarName: testCalendar.name, hasServicePoint: false });
-
-    PaneActions.allCalendarsPane.checkCalendarAbsent(testCalendar.name);
-  });
+      PaneActions.allCalendarsPane.checkCalendarAbsent(testCalendar.name);
+    },
+  );
 });

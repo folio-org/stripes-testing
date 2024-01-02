@@ -1,11 +1,13 @@
-import { deleteServicePoint, createServicePoint, createCalendar,
-  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
-
+import {
+  createCalendar,
+  createServicePoint,
+  deleteCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -22,7 +24,6 @@ describe('Checking the view of calendar on "Monthly calendar view" tab', () => {
     if (!Cypress.env('token')) {
       cy.getAdminToken();
     }
-
 
     // reset db state
     deleteServicePoint(testServicePoint.id, false);
@@ -44,13 +45,18 @@ describe('Checking the view of calendar on "Monthly calendar view" tab', () => {
     deleteCalendar(testCalendarResponse.id);
   });
 
+  it(
+    'C360944 Checking the view of calendar on "Monthly calendar view" tab (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
+      PaneActions.monthlyCalendarView.checkPrevAndNextButtons({
+        servicePointName: testServicePoint.name,
+      });
 
-  it('C360944 Checking the view of calendar on "Monthly calendar view" tab (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.monthlyCalendarView.checkPrevAndNextButtons({ servicePointName: testServicePoint.name });
-
-    PaneActions.monthlyCalendarView.checkCalendarCells({
-      calendar: testCalendar,
-      monthlyCalendarViewExpectedUIValues
-    });
-  });
+      PaneActions.monthlyCalendarView.checkCalendarCells({
+        calendar: testCalendar,
+        monthlyCalendarViewExpectedUIValues,
+      });
+    },
+  );
 });

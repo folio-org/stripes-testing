@@ -1,17 +1,17 @@
 import PaneActions from '../../support/fragments/calendar/pane-actions';
 
-
-import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
-import { deleteServicePoint, createServicePoint, createCalendar,
-  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import permissions from '../../support/dictionary/permissions';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import {
+  createCalendar,
+  createServicePoint,
+  deleteCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
+import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
-
-
 
 describe('User with Settings (Calendar): Can view existing calendars', () => {
   let testCalendarResponse;
@@ -38,9 +38,7 @@ describe('User with Settings (Calendar): Can view existing calendars', () => {
     cy.logout();
 
     openCalendarSettings();
-    cy.createTempUser([
-      permissions.calendarView.gui,
-    ]).then(userProperties => {
+    cy.createTempUser([permissions.calendarView.gui]).then((userProperties) => {
       cy.login(userProperties.username, userProperties.password);
       openCalendarSettings();
     });
@@ -55,15 +53,18 @@ describe('User with Settings (Calendar): Can view existing calendars', () => {
     deleteCalendar(testCalendarResponse.id);
   });
 
-
-  it('C361625 Permissions -> User with Settings (Calendar): Can view existing calendars (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.allCalendarsPane.openAllCalendarsPane();
-    PaneActions.allCalendarsPane.checkActionMenuAbsent();
-    PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
-    PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
-    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
-    PaneActions.currentCalendarAssignmentsPane.checkNewButtonAbsent();
-    PaneActions.currentCalendarAssignmentsPane.selectCalendarByCalendarName(testCalendar.name);
-    PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
-  });
+  it(
+    'C361625 Permissions -> User with Settings (Calendar): Can view existing calendars (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.checkActionMenuAbsent();
+      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+      PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
+      PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+      PaneActions.currentCalendarAssignmentsPane.checkNewButtonAbsent();
+      PaneActions.currentCalendarAssignmentsPane.selectCalendarByCalendarName(testCalendar.name);
+      PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
+    },
+  );
 });

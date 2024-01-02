@@ -1,17 +1,17 @@
-import { deleteServicePoint, createCalendar,
-  openCalendarSettings, deleteCalendar, createServicePoint } from '../../support/fragments/calendar/calendar';
+import {
+  createCalendar,
+  createServicePoint,
+  deleteCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 
-
-import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import permissions from '../../support/dictionary/permissions';
+import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
-
-
 
 describe('User with Settings (Calendar): Can edit and reassign existing calendars', () => {
   let testCalendarResponse;
@@ -38,9 +38,7 @@ describe('User with Settings (Calendar): Can edit and reassign existing calendar
     cy.logout();
 
     openCalendarSettings();
-    cy.createTempUser([
-      permissions.calendarEditCalendars.gui,
-    ]).then(userProperties => {
+    cy.createTempUser([permissions.calendarEditCalendars.gui]).then((userProperties) => {
       cy.login(userProperties.username, userProperties.password);
       openCalendarSettings();
     });
@@ -55,23 +53,28 @@ describe('User with Settings (Calendar): Can edit and reassign existing calendar
     deleteCalendar(testCalendarResponse.id);
   });
 
+  it(
+    'C365118 Permissions -> User with Settings (Calendar): Can edit and reassign existing calendars (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.checkActionMenuAbsent();
 
-  it('C365118 Permissions -> User with Settings (Calendar): Can edit and reassign existing calendars (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.allCalendarsPane.openAllCalendarsPane();
-    PaneActions.allCalendarsPane.checkActionMenuAbsent();
+      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+      PaneActions.checkPaneExists(testCalendar.name);
+      PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
+      PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
+      PaneActions.editButtonExists();
 
-    PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
-    PaneActions.checkPaneExists(testCalendar.name);
-    PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
-    PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
-    PaneActions.editButtonExists();
+      PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+      PaneActions.currentCalendarAssignmentsPane.checkNewButtonAbsent();
 
-    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
-    PaneActions.currentCalendarAssignmentsPane.checkNewButtonAbsent();
-
-    PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(testServicePoint.name);
-    PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
-    PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
-    PaneActions.editButtonExists();
-  });
+      PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(
+        testServicePoint.name,
+      );
+      PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
+      PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
+      PaneActions.editButtonExists();
+    },
+  );
 });

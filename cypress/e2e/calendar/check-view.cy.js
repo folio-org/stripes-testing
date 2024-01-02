@@ -1,16 +1,20 @@
-import { deleteServicePoint, createServicePoint, createCalendar,
-  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import {
-  checkCalendarFields, checkExpandButton, checkMenuAction
-} from '../../support/fragments/calendar/calendar-info-pane';
+  createCalendar,
+  createServicePoint,
+  deleteCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import {
+  checkCalendarFields,
+  checkExpandButton,
+  checkMenuAction,
+} from '../../support/fragments/calendar/calendar-info-pane';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
-
 
 describe('Checking the view of calendar on "All Calendars" tab', () => {
   let testCalendarResponse;
@@ -39,7 +43,6 @@ describe('Checking the view of calendar on "All Calendars" tab', () => {
     });
   });
 
-
   beforeEach(() => {
     openCalendarSettings();
     PaneActions.allCalendarsPane.openAllCalendarsPane();
@@ -50,20 +53,23 @@ describe('Checking the view of calendar on "All Calendars" tab', () => {
     deleteCalendar(testCalendarResponse.id);
   });
 
+  it(
+    'C360940 Checking the view of calendar on "All Calendars" tab (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
+      PaneActions.allCalendarsPane.checkNewAndPurgeMenuItemsExist();
 
-  it('C360940 Checking the view of calendar on "All Calendars" tab (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.allCalendarsPane.checkNewAndPurgeMenuItemsExist();
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
+      checkCalendarFields(testCalendar, testServicePoint);
 
-    PaneActions.allCalendarsPane.openAllCalendarsPane();
-    PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
-    checkCalendarFields(testCalendar, testServicePoint);
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
+      checkExpandButton();
 
-    PaneActions.allCalendarsPane.openAllCalendarsPane();
-    PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
-    checkExpandButton();
-
-    PaneActions.allCalendarsPane.openAllCalendarsPane();
-    PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
-    checkMenuAction(testCalendarResponse.name);
-  });
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
+      checkMenuAction(testCalendarResponse.name);
+    },
+  );
 });

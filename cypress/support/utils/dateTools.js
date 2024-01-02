@@ -329,7 +329,9 @@ export default {
 
     getLocalizedDate(date) {
       const [year, month, day] = date.split('-');
-      return `${month[0] === '0' ? month.slice(1) : month}/${day[0] === '0' ? day.slice(1) : day}/${year}`;
+      return `${month[0] === '0' ? month.slice(1) : month}/${
+        day[0] === '0' ? day.slice(1) : day
+      }/${year}`;
     },
 
     dateUTCFromHHMM,
@@ -345,7 +347,6 @@ export default {
         return 'Midnight';
       }
 
-
       let meridian = 'AM';
 
       let hours = date.getUTCHours();
@@ -358,19 +359,15 @@ export default {
         hours -= 12;
       }
 
-      return `${hours.toString(10)}:${('0' + date.getUTCMinutes().toString(10)).slice(-2)} ${meridian}`;
+      return `${hours.toString(10)}:${('0' + date.getUTCMinutes().toString(10)).slice(
+        -2,
+      )} ${meridian}`;
     },
 
     dateFromYYYYMMDDAndHHMM(d, t) {
       const dateParts = d.split('-').map((n) => parseInt(n, 10));
       const timeParts = t.split(':').map((n) => parseInt(n, 10));
-      return new Date(
-        dateParts[0],
-        dateParts[1] - 1,
-        dateParts[2],
-        timeParts[0],
-        timeParts[1]
-      );
+      return new Date(dateParts[0], dateParts[1] - 1, dateParts[2], timeParts[0], timeParts[1]);
     },
 
     getRelativeDateProximity(test, referenceDate) {
@@ -382,7 +379,7 @@ export default {
 
       // check day after (for tomorrow)
       const testNextDayReference = new Date(
-        toStartOfDay(referenceDate).setDate(testSameDayReference.getDate() + 1)
+        toStartOfDay(referenceDate).setDate(testSameDayReference.getDate() + 1),
       );
       if (testDate <= testNextDayReference) return 'nextDay';
 
@@ -390,7 +387,7 @@ export default {
       // does not check 7 as, for example, saying "closing Monday at 5:00"
       // is ambiguous if it currently is Monday.
       const testNextWeekReference = new Date(
-        toStartOfDay(referenceDate).setDate(testSameDayReference.getDate() + 6)
+        toStartOfDay(referenceDate).setDate(testSameDayReference.getDate() + 6),
       );
       if (testDate <= testNextWeekReference) return 'nextWeek';
 
@@ -399,15 +396,10 @@ export default {
 
     dateFromDateAndHHMM(d, t) {
       const timeParts = t.split(':').map((n) => parseInt(n, 10));
-      return new Date(
-        d.getFullYear(),
-        d.getMonth(),
-        d.getDate(),
-        timeParts[0],
-        timeParts[1]
-      );
-    }
-  }
+      return new Date(d.getFullYear(), d.getMonth(), d.getDate(), timeParts[0], timeParts[1]);
+    },
+  },
+
   getCurrentUTCTime() {
     const currentDate = new Date();
     const options = {

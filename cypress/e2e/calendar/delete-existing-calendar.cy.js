@@ -1,14 +1,15 @@
-import { deleteServicePoint, createServicePoint, createCalendar,
-  openCalendarSettings } from '../../support/fragments/calendar/calendar';
+import {
+  createCalendar,
+  createServicePoint,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
-import PaneActions from '../../support/fragments/calendar/pane-actions';
 import ModalFragments from '../../support/fragments/calendar/modal-fragments';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
-
 
 describe('Delete existing calendars', () => {
   before(() => {
@@ -36,23 +37,22 @@ describe('Delete existing calendars', () => {
     deleteServicePoint(testServicePoint.id, true);
   });
 
-
-  it('C360943 Delete -> Delete existing calendar (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+  it('C360943 Delete -> Delete existing calendar (bama)', { tags: ['smoke', 'bama'] }, () => {
     PaneActions.allCalendarsPane.openAllCalendarsPane();
     PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
     PaneActions.individualCalendarPane.selectDeleteAction({
-      calendarName: testCalendar.name
+      calendarName: testCalendar.name,
     });
     ModalFragments.checkCalendarDeletionModalWithCancelButton();
 
     PaneActions.individualCalendarPane.checkIndividualCalendarPaneExists(testCalendar.name);
     PaneActions.individualCalendarPane.selectDeleteAction({
-      calendarName: testCalendar.name
+      calendarName: testCalendar.name,
     });
     ModalFragments.checkCalendarDeletionModalWithDismiss();
 
     PaneActions.individualCalendarPane.selectDeleteAction({
-      calendarName: testCalendar.name
+      calendarName: testCalendar.name,
     });
     ModalFragments.checkCalendarDeletionModalExists();
     ModalFragments.clickDeleteButtonOnCalendarDeletionModal();

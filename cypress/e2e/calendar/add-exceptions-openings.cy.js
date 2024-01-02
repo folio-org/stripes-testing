@@ -1,20 +1,20 @@
-import { deleteServicePoint, createServicePoint, createCalendar,
-  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
-
+import {
+  createCalendar,
+  createServicePoint,
+  deleteCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
-import PaneActions from '../../support/fragments/calendar/pane-actions';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
 
 const addExceptionsOpeningData = calendarFixtures.data.addExceptionsOpening;
 const addExceptionsOpeningExpectedUIValues = calendarFixtures.expectedUIValues.addExceptionsOpening;
-
-
 
 describe('Add exceptions--closures to regular hours for service point', () => {
   let testCalendarResponse;
@@ -41,42 +41,47 @@ describe('Add exceptions--closures to regular hours for service point', () => {
     });
   });
 
-
   after(() => {
     // delete test calendar
     deleteCalendar(testCalendarResponse.id);
   });
 
+  it(
+    'C360951 Add exceptions--openings to regular hours for service point (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
+      PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+      PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(
+        testServicePoint.name,
+      );
+      PaneActions.currentCalendarAssignmentsPane.clickEditAction(testCalendar.name);
 
-  it('C360951 Add exceptions--openings to regular hours for service point (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
-    PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(testServicePoint.name);
-    PaneActions.currentCalendarAssignmentsPane.clickEditAction(testCalendar.name);
+      CreateCalendarForm.addOpeningExceptions(addExceptionsOpeningData);
 
-    CreateCalendarForm.addOpeningExceptions(addExceptionsOpeningData);
+      // intercept http request
+      cy.intercept(
+        Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id,
+        (req) => {
+          if (req.method === 'PUT') {
+            req.continue((res) => {
+              expect(res.statusCode).equals(200);
+            });
+          }
+        },
+      ).as('updateCalendar');
 
+      // check that new calendar exists in list of calendars
+      cy.wait('@updateCalendar').then(() => {
+        openCalendarSettings();
+        PaneActions.allCalendarsPane.openAllCalendarsPane();
+        PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
 
-
-    // intercept http request
-    cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id, (req) => {
-      if (req.method === 'PUT') {
-        req.continue((res) => {
-          expect(res.statusCode).equals(200);
+        PaneActions.individualCalendarPane.checkOpeningExceptions({
+          calendarName: testCalendar.name,
+          addExceptionsOpeningData,
+          addExceptionsOpeningExpectedUIValues,
         });
-      }
-    }).as('updateCalendar');
-
-    // check that new calendar exists in list of calendars
-    cy.wait('@updateCalendar').then(() => {
-      openCalendarSettings();
-      PaneActions.allCalendarsPane.openAllCalendarsPane();
-      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
-
-      PaneActions.individualCalendarPane.checkOpeningExceptions({
-        calendarName: testCalendar.name,
-        addExceptionsOpeningData,
-        addExceptionsOpeningExpectedUIValues
       });
-    });
-  });
+    },
+  );
 });

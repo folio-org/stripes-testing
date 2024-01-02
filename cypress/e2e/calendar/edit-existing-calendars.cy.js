@@ -1,10 +1,13 @@
-import { deleteServicePoint, createServicePoint, createCalendar,
-  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
+import {
+  createCalendar,
+  createServicePoint,
+  deleteCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
-import PaneActions from '../../support/fragments/calendar/pane-actions';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -13,7 +16,6 @@ const testCalendar = calendarFixtures.calendar;
 testCalendar.normalHours.splice(1);
 
 const editExistingCalendarsData = calendarFixtures.data.editExistingCalendars;
-
 
 describe('Edit existing calendars', () => {
   let testCalendarResponse;
@@ -45,8 +47,7 @@ describe('Edit existing calendars', () => {
     deleteCalendar(testCalendarResponse.id);
   });
 
-
-  it('C360950 Edit -> Edit existing calendars (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+  it('C360950 Edit -> Edit existing calendars (bama)', { tags: ['smoke', 'bama'] }, () => {
     PaneActions.allCalendarsPane.openAllCalendarsPane();
     PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
     PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
@@ -55,14 +56,16 @@ describe('Edit existing calendars', () => {
     CreateCalendarForm.editExistingCalendarsAndSave(editExistingCalendarsData);
 
     // intercept http request
-    cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id, (req) => {
-      if (req.method === 'PUT') {
-        req.continue((res) => {
-          expect(res.statusCode).equals(200);
-        });
-      }
-    }).as('editCalendar');
-
+    cy.intercept(
+      Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id,
+      (req) => {
+        if (req.method === 'PUT') {
+          req.continue((res) => {
+            expect(res.statusCode).equals(200);
+          });
+        }
+      },
+    ).as('editCalendar');
 
     cy.wait('@editCalendar').then(() => {
       openCalendarSettings();

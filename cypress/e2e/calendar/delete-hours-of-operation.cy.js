@@ -1,11 +1,13 @@
-import { deleteServicePoint, createServicePoint, createCalendar,
-  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
+import {
+  createCalendar,
+  createServicePoint,
+  deleteCalendar,
+  deleteServicePoint,
+  openCalendarSettings,
+} from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
-import PaneActions from '../../support/fragments/calendar/pane-actions';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-
+import PaneActions from '../../support/fragments/calendar/pane-actions';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -15,12 +17,9 @@ const testOpeningHours = {
   startDay: 'Monday',
   startTime: '09:00',
   endDay: 'Thursday',
-  endTime: '13:00'
+  endTime: '13:00',
 };
-testCalendar.normalHours = [
-  testOpeningHours
-];
-
+testCalendar.normalHours = [testOpeningHours];
 
 describe('Delete existing hours of operation for service point', () => {
   let testCalendarResponse;
@@ -52,35 +51,42 @@ describe('Delete existing hours of operation for service point', () => {
     deleteCalendar(testCalendarResponse.id);
   });
 
+  it(
+    'C2306 Delete -> Delete existing hours of operation for service point (bama)',
+    { tags: ['smoke', 'bama'] },
+    () => {
+      PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+      PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(
+        testServicePoint.name,
+      );
+      PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
+      PaneActions.individualCalendarPane.checkEditURLFromCurrentAssignmentsPage();
 
-  it('C2306 Delete -> Delete existing hours of operation for service point (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
-    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
-    PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(testServicePoint.name);
-    PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
-    PaneActions.individualCalendarPane.checkEditURLFromCurrentAssignmentsPage();
+      CreateCalendarForm.deleteHoursOfOperationAndSave();
 
-    CreateCalendarForm.deleteHoursOfOperationAndSave();
+      // intercept http request
+      cy.intercept(
+        Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id,
+        (req) => {
+          if (req.method === 'PUT') {
+            req.continue((res) => {
+              expect(res.statusCode).equals(200);
+            });
+          }
+        },
+      ).as('editCalendar');
 
-    // intercept http request
-    cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id, (req) => {
-      if (req.method === 'PUT') {
-        req.continue((res) => {
-          expect(res.statusCode).equals(200);
+      cy.wait('@editCalendar').then(() => {
+        openCalendarSettings();
+        PaneActions.allCalendarsPane.openAllCalendarsPane();
+        PaneActions.allCalendarsPane.checkCalendarExists(testCalendar.name);
+        PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+
+        PaneActions.individualCalendarPane.checkDeleteHoursOfOperation({
+          calendarName: testCalendar.name,
+          openingHoursData: testOpeningHours,
         });
-      }
-    }).as('editCalendar');
-
-
-    cy.wait('@editCalendar').then(() => {
-      openCalendarSettings();
-      PaneActions.allCalendarsPane.openAllCalendarsPane();
-      PaneActions.allCalendarsPane.checkCalendarExists(testCalendar.name);
-      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
-
-      PaneActions.individualCalendarPane.checkDeleteHoursOfOperation({
-        calendarName: testCalendar.name,
-        openingHoursData: testOpeningHours
       });
-    });
-  });
+    },
+  );
 });
