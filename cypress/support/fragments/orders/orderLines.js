@@ -101,7 +101,7 @@ const trashButton = Button({ icon: 'trash' });
 const note = 'Edited by AQA team';
 const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
-
+const addDonorsModal = Modal('Add donors');
 // Results pane
 const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
 
@@ -1562,10 +1562,7 @@ export default {
   },
 
   deleteFundInPOLwithoutSave() {
-    cy.do([
-      Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
-      saveAndCloseButton.click(),
-    ]);
+    cy.do(Section({ id: 'fundDistributionAccordion' }).find(trashButton).click());
   },
 
   deleteFundsInPOL() {
@@ -2141,5 +2138,56 @@ export default {
           .has({ content: productId }),
       );
     }
+  },
+
+  openDonorInformationSection() {
+    cy.do(Button({ id: 'accordion-toggle-button-donorsInformation' }).click());
+  },
+
+  checkAddDonorButtomisActive() {
+    cy.expect([
+      Section({ id: 'donorsInformation' })
+        .find(Button({ id: 'donorOrganizationIds-plugin' }))
+        .is({ disabled: false }),
+    ]);
+  },
+
+  addDonor(donorName) {
+    cy.do([
+      Button({ id: 'donorOrganizationIds-plugin' }).click(),
+      addDonorsModal.find(TextField({ id: 'input-record-search' })).fillIn(donorName),
+      addDonorsModal.find(searchButton).click(),
+    ]);
+    cy.wait(3000);
+    cy.do([
+      addDonorsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      addDonorsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  addDonorAndCancel(donorName) {
+    cy.do([
+      Button({ id: 'donorOrganizationIds-plugin' }).click(),
+      addDonorsModal.find(TextField({ id: 'input-record-search' })).fillIn(donorName),
+      addDonorsModal.find(searchButton).click(),
+      addDonorsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      addDonorsModal.find(Button('Close')).click(),
+    ]);
+  },
+
+  deleteDonor(donorName) {
+    cy.get('#donorsInformation')
+      .find('div[class^="mclRowFormatterContainer-"]')
+      .each((row) => {
+        cy.wrap(row).then(() => {
+          if (row.text().includes(donorName)) {
+            cy.wrap(row).find('button').click();
+          }
+        });
+      });
+  },
+
+  checkEmptyDonorList() {
+    cy.get('#donorsInformation').contains('The list contains no items');
   },
 };
