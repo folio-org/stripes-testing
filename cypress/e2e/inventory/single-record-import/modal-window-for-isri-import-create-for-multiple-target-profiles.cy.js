@@ -23,7 +23,7 @@ describe('inventory', () => {
     let createJobProfileId;
     let instanceHRID;
     const profile = {
-      createJobProfile: `Inventory Single Record - Default Create Instance.${getRandomPostfix()}`,
+      createJobProfile: Z3950TargetProfiles.jobProfileNameForCreating,
       createActionProfile: `autotest actionProfileForCreate${getRandomPostfix()}`,
       createMappingProfile: `autotest mappingProfileForCreate${getRandomPostfix()}`,
     };
