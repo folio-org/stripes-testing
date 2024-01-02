@@ -1,10 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
 
@@ -30,13 +28,14 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       Users.deleteViaApi(user.userId);
     });
 
     it(
       'C358134 Verify that Download matched records is hidden in case Errors only -- Local approach (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -23,10 +23,6 @@ describe('bulk-edit', () => {
         Permissions.bulkEditView.gui,
       ]).then((userProperties) => {
         userData = userProperties;
-        cy.login(userData.username, userData.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
         InventoryInstances.createInstanceViaApi(
           instanceData.instanceName,
           instanceData.itemBarcode,
@@ -35,10 +31,15 @@ describe('bulk-edit', () => {
           `cypress/fixtures/${itemBarcodesFileName}`,
           instanceData.itemBarcode,
         );
+        cy.login(userData.username, userData.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(userData.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.itemBarcode);
@@ -46,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353652 Verify item status to In-app bulk edit form (firebird) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         // #1 * Select the "Inventory - items", "Item barcode"
         BulkEditSearchPane.checkItemsRadio();

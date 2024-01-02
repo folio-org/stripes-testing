@@ -1,18 +1,16 @@
 import moment from 'moment';
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import getRandomPostfix from '../../support/utils/stringTools';
-import devTeams from '../../support/dictionary/devTeams';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Checkout from '../../support/fragments/checkout/checkout';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -72,6 +70,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     CheckInActions.checkinItemViaApi({
       itemBarcode: item.barcode,
       servicePointId: testData.userServicePoint.id,
@@ -84,7 +83,7 @@ describe('circulation-log', () => {
 
   it(
     'C17135 Filter circulation log by declared lost (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
       SearchPane.verifyResultCells();
@@ -104,7 +103,7 @@ describe('circulation-log', () => {
 
   it(
     'C45934 Check the Actions button from filtering Circulation log by declared lost (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SearchPane.setFilterOptionFromAccordion('loan', 'Declared lost');
       SearchPane.checkActionButtonAfterFiltering(user.firstName, item.barcode);

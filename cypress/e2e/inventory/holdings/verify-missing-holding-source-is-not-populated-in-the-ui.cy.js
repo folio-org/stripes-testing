@@ -1,11 +1,10 @@
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import { Permissions } from '../../../support/dictionary';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},
@@ -59,17 +58,18 @@ describe('Holdings', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
     Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C367931 Verify that missing holdings source is not populated in the UI with instances source (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       InventorySearchAndFilter.switchToHoldings();
       InventorySearchAndFilter.searchHoldingsByHRID(testData.item.holdingHRID);
-      InventoryInstance.openHoldingView();
+      InventorySearchAndFilter.selectViewHoldings();
       HoldingsRecordView.checkSource('-');
     },
   );

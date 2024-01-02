@@ -1,5 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -46,6 +44,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFileFromDownloadsByMask(matchedRecordsFileName);
@@ -53,7 +52,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353978 Verify that user can view data in Export Manager based on permissions (Negative) (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         cy.visit(TopMenu.exportManagerPath);
         ExportManagerSearchPane.searchByBulkEdit();

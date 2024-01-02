@@ -1,10 +1,8 @@
-import { Configurations } from '../../../support/fragments/settings/remote-storage';
-import Users from '../../../support/fragments/users/users';
-import testTypes from '../../../support/dictionary/testTypes';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import devTeams from '../../../support/dictionary/devTeams';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
+import { Configurations } from '../../../support/fragments/settings/remote-storage';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 
@@ -24,12 +22,13 @@ describe('remote-storage-configuration', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C343219 Check “Accession tables” page without configurations with CaiaSoft provider (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
@@ -54,7 +53,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C343287 Data synchronization settings field must be undefined for any provider except Dematic StagingDirector (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 

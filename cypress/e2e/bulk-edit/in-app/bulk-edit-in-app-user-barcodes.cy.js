@@ -1,14 +1,12 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../support/fragments/users/usersCard';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
@@ -29,6 +27,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
     });
@@ -41,7 +40,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359248 Verify "Email" option in bulk edit (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -54,7 +53,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359592 Verify updating Email in Bulk edit (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -78,7 +77,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359606 Negative -- Verify bulk edit Users emails (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

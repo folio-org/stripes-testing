@@ -1,16 +1,14 @@
 import uuid from 'uuid';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import TestType from '../../support/dictionary/testTypes';
-import Orders from '../../support/fragments/orders/orders';
-import TopMenu from '../../support/fragments/topMenu';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import getRandomPostfix from '../../support/utils/stringTools';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import DateTools from '../../support/utils/dateTools';
-import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Orders from '../../support/fragments/orders/orders';
+import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import DateTools from '../../support/utils/dateTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('orders: Test Po line filters', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -99,6 +97,7 @@ describe('orders: Test Po line filters', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
   });
@@ -121,7 +120,7 @@ describe('orders: Test Po line filters', () => {
   ].forEach((filter) => {
     it(
       'C6720 Test the POL filters [except tags] (thunderjet)',
-      { tags: [TestType.smoke, devTeams.thunderjet] },
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         filter.filterActions();
         Orders.checkOrderlineSearchResults(orderLineNumber);

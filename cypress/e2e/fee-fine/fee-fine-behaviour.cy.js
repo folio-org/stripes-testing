@@ -1,13 +1,13 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import { Permissions } from '../../support/dictionary';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import Users from '../../support/fragments/users/users';
+import TopMenu from '../../support/fragments/topMenu';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 
 describe('Manual Fees/Fines', () => {
   const testData = {
@@ -44,6 +44,7 @@ describe('Manual Fees/Fines', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UsersOwners.deleteViaApi(testData.ownerId);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
@@ -52,7 +53,7 @@ describe('Manual Fees/Fines', () => {
 
   it(
     'C449 Verify behavior when "Create fee/fine" button pressed within User Information (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // Find active user in FOLIO
       UsersSearchPane.searchByKeywords(testData.user.username);
@@ -74,7 +75,7 @@ describe('Manual Fees/Fines', () => {
 
   it(
     'C450 Verify behavior when "New fee/fine" button pressed within Fee/Fine History (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();

@@ -14,15 +14,20 @@ import {
   TextArea,
   HTML,
   including,
+  SearchField,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
+import FiscalYearDetails from './fiscalYearDetails';
 
 const createdFiscalYearNameXpath =
   '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfiscal-year-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 // TODO: move all same buttons to one place related to Finance module
+const fiscalYearFiltersSection = Section({ id: 'fiscal-year-filters-pane' });
+const fiscalYearResultsSection = Section({ id: 'fiscal-year-results-pane' });
+
 const saveAndClose = Button('Save & Close');
 const agreementsButton = Button('Agreements');
 const newButton = Button('New');
@@ -31,7 +36,8 @@ const editButton = Button('Edit');
 const deleteButton = Button('Delete');
 const fiscalYearButton = Button('Fiscal year');
 const resetButton = Button({ id: 'reset-fiscal-years-filters' });
-const fiscalYearFiltersSection = Section({ id: 'fiscal-year-filters-pane' });
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
 
 export default {
   defaultUiFiscalYear: {
@@ -64,18 +70,18 @@ export default {
     };
   },
   selectFisacalYear: (fiscalYear) => {
-    cy.do(Pane({ id: 'fiscal-year-results-pane' }).find(Link(fiscalYear)).click());
+    cy.do(fiscalYearResultsSection.find(Link(fiscalYear)).click());
+    FiscalYearDetails.waitLoading();
+
+    return FiscalYearDetails;
   },
 
   waitLoading: () => {
-    cy.expect([
-      Pane({ id: 'fiscal-year-filters-pane' }).exists,
-      Pane({ id: 'fiscal-year-results-pane' }).exists,
-    ]);
+    cy.expect([fiscalYearFiltersSection.exists(), fiscalYearResultsSection.exists()]);
   },
 
   waitForFiscalYearDetailsLoading: () => {
-    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists);
+    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists());
   },
 
   createDefaultFiscalYear(fiscalYear) {
@@ -126,9 +132,9 @@ export default {
   },
 
   editFiscalYearDetails: () => {
-    cy.wait(6000);
-    cy.do(actionsButton.click());
-    cy.wait(6000);
+    cy.wait(7000);
+    cy.do([actionsButton.focus(), actionsButton.click()]);
+    cy.wait(7000);
     cy.do(editButton.click());
   },
 
@@ -232,19 +238,20 @@ export default {
       body: fiscalYear,
     });
   },
-  deleteFiscalYearViaApi: (fiscalYearId) => cy.okapiRequest({
+  deleteFiscalYearViaApi: (fiscalYearId, failOnStatusCode) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/fiscal-years/${fiscalYearId}`,
     isDefaultSearchParamsRequired: false,
+    failOnStatusCode,
   }),
 
   selectFY: (FYName) => {
     cy.wait(4000);
-    cy.do(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).click());
+    cy.do(fiscalYearResultsSection.find(Link(FYName)).click());
   },
 
   expextFY: (FYName) => {
-    cy.expect(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).exists());
+    cy.expect(fiscalYearResultsSection.find(Link(FYName)).exists());
   },
 
   assignAU: (AUName) => {
@@ -257,11 +264,7 @@ export default {
   },
 
   checkNoResultsMessage(absenceMessage) {
-    cy.expect(
-      Section({ id: 'fiscal-year-results-pane' })
-        .find(HTML(including(absenceMessage)))
-        .exists(),
-    );
+    cy.expect(fiscalYearResultsSection.find(HTML(including(absenceMessage))).exists());
   },
 
   selectAcquisitionUnitFilter(AUName) {
@@ -269,7 +272,8 @@ export default {
   },
 
   clickActionsButtonInFY() {
-    cy.do(actionsButton.click());
+    cy.wait(4000);
+    cy.do([actionsButton.focus(), actionsButton.click()]);
   },
 
   clickNewFY() {
@@ -288,5 +292,9 @@ export default {
   checkAcquisitionUnitIsAbsentToAssign(AUName) {
     cy.do(MultiSelect({ id: 'fy-acq-units' }).open());
     cy.expect(SelectionOption(AUName).absent());
+  },
+
+  searchByName: (name) => {
+    cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
   },
 };

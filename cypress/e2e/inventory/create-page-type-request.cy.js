@@ -1,28 +1,34 @@
-import TestTypes from '../../support/dictionary/testTypes';
+import uuid from 'uuid';
+import { REQUEST_TYPES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import createPageTypeRequest from '../../support/fragments/inventory/createPageTypeRequest';
-import Requests from '../../support/fragments/requests/requests';
-import MarkItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
+import MarkItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
+import Requests from '../../support/fragments/requests/requests';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-inventory: Create page type request', () => {
   let user;
+  let addedRule;
   let instanceData = {};
   let createdItem;
-  let oldRulesText;
-  let requestPolicyId;
   const patronGroup = {
     name: `testGroup${getRandomPostfix()}`,
     id: '',
   };
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  const requestPolicyBody = {
+    requestTypes: Object.values(REQUEST_TYPES),
+    name: `request${getRandomPostfix()}`,
+    id: uuid(),
+  };
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -39,7 +45,7 @@ describe('ui-inventory: Create page type request', () => {
             permissions.uiInventoryViewInstances.gui,
             permissions.uiUsersView.gui,
             permissions.uiUserEdit.gui,
-            permissions.uiUserCreate.gui,
+            permissions.uiUsersCreate.gui,
             permissions.uiUsersEdituserservicepoints.gui,
             permissions.uiUserAccounts.gui,
             permissions.usersViewRequests.gui,
@@ -53,9 +59,6 @@ describe('ui-inventory: Create page type request', () => {
         UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
       })
       .then(() => {
-        cy.login(user.username, user.password);
-      })
-      .then(() => {
         MarkItemAsMissing.createItemsForGivenStatusesApi
           .call(createPageTypeRequest)
           .then(({ items, instanceRecordData }) => {
@@ -67,16 +70,25 @@ describe('ui-inventory: Create page type request', () => {
             cy.intercept('GET', '/inventory/items?').as('getItems');
             cy.intercept('GET', '/holdings-types?*').as('getHoldinsgTypes');
             cy.intercept('GET', '/instance-relationship-types?*').as('getInstanceRelTypes');
+          })
+          .then(() => {
+            cy.login(user.username, user.password);
           });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi({ g: patronGroup.id }, { r: requestPolicyBody.id }).then(
+          (newRule) => {
+            addedRule = newRule;
+          },
+        );
+        cy.login(user.username, user.password);
       });
-
-    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-      oldRulesText = oldRulesAsText;
-      requestPolicyId = policy.id;
-    });
   });
 
   afterEach(() => {
+    cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(addedRule);
     cy.getItemRequestsApi({
       query: `"requesterId"="${user.userId}"`,
     }).then(({ body }) => {
@@ -90,27 +102,22 @@ describe('ui-inventory: Create page type request', () => {
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]);
     Users.deleteViaApi(user.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
+    Requests.deleteRequestPolicyApi(requestPolicyBody.id);
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it(
-    'C546: Create new request for "Page" type (vega)',
-    { tags: [TestTypes.smoke, DevTeams.vega] },
-    () => {
-      cy.visit(TopMenu.inventoryPath);
-      createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
-      createPageTypeRequest.clickNewRequest(createdItem.barcode);
-      createPageTypeRequest.selectActiveFacultyUser(user.username, patronGroup.name);
-      createPageTypeRequest.saveAndClose(servicePoint.name, patronGroup.name);
-      cy.wait(['@postRequest']);
-      createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
-      createPageTypeRequest.verifyRequestsCountOnItemRecord();
-      createPageTypeRequest.clickRequestsCountLink();
-      createPageTypeRequest.clickRequesterBarcode(user.username);
-      createPageTypeRequest.verifyOpenRequestCounts();
-      createPageTypeRequest.clickOpenRequestsCountLink();
-    },
-  );
+  it('C546: Create new request for "Page" type (vega)', { tags: ['smoke', 'vega'] }, () => {
+    cy.visit(TopMenu.inventoryPath);
+    createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
+    createPageTypeRequest.clickNewRequest(createdItem.barcode);
+    createPageTypeRequest.selectActiveFacultyUser(user.username, patronGroup.name);
+    createPageTypeRequest.saveAndClose(servicePoint.name, patronGroup.name);
+    cy.wait(['@postRequest']);
+    createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
+    createPageTypeRequest.verifyRequestsCountOnItemRecord();
+    createPageTypeRequest.clickRequestsCountLink();
+    createPageTypeRequest.clickRequesterBarcode(user.username);
+    createPageTypeRequest.verifyOpenRequestCounts();
+    createPageTypeRequest.clickOpenRequestsCountLink();
+  });
 });

@@ -1,15 +1,13 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
-import Orders from '../../support/fragments/orders/orders';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('ui-finance: Orders', () => {
@@ -47,6 +45,7 @@ describe('ui-finance: Orders', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Orders.deleteOrderViaApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
     cy.loginAsAdmin({
@@ -62,7 +61,7 @@ describe('ui-finance: Orders', () => {
 
   it(
     'C163929 Test acquisition unit restrictions for Order records (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       cy.loginAsAdmin({
         path: SettingsMenu.acquisitionUnitsPath,

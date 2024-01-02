@@ -2,8 +2,6 @@ import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -41,6 +39,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
@@ -48,7 +47,7 @@ describe('bulk-edit', () => {
 
     it(
       'C347872 Populating preview of matched records (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -68,7 +67,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360556 Populating preview of matched records in case no matches (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();

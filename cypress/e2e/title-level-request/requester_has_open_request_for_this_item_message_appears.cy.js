@@ -1,19 +1,19 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../support/utils/stringTools';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import NewRequest from '../../support/fragments/requests/newRequest';
 import Requests from '../../support/fragments/requests/requests';
 import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
-import NewRequest from '../../support/fragments/requests/newRequest';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Title Level Request. Create Item or Title level request', () => {
   const tlrCheckboxExists = true;
@@ -108,7 +108,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       NewRequest.enterItemInfo(testData.itemBarcode);
       NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       cy.wait('@createRequest').then((intercept) => {
@@ -120,6 +120,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
@@ -136,7 +137,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
 
   it(
     'C1283 Check that "This requester already has an open request for this item" message appears (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       // second requester's request for same item
       NewRequest.openNewRequestPane();
@@ -144,7 +145,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       NewRequest.enterItemInfo(testData.itemBarcode);
       NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.HOLD);
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyErrorMessage('This request was not placed successfully');
       NewRequest.checkRequestIsNotAllowedModal();

@@ -383,14 +383,12 @@ export default {
   },
 
   unlinkProfile: (number) => {
-    cy.wait(5000);
     cy.get('[id*="branch-ROOT-MATCH-MATCH-MATCH-editable"]')
       .eq(number)
       .find('button[icon="unlink"]')
       .click();
-    cy.wait(1000);
     cy.do(Modal({ id: 'unlink-job-profile-modal' }).find(Button('Unlink')).click());
-    cy.wait(5000);
+    cy.wait(7000);
   },
 
   checkCalloutMessage: (message) => {

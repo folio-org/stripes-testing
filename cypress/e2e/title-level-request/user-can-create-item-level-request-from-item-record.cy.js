@@ -1,31 +1,27 @@
 import uuid from 'uuid';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import permissions from '../../support/dictionary/permissions';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
+import permissions from '../../support/dictionary/permissions';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../support/utils/stringTools';
-import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Requests from '../../support/fragments/requests/requests';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import FilterItems from '../../support/fragments/inventory/filterItems';
 import CreatePageTypeRequest from '../../support/fragments/inventory/createPageTypeRequest';
+import FilterItems from '../../support/fragments/inventory/filterItems';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Create Item or Title level request', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   let userData = {};
   const patronGroup = {
     name: 'groupToRequest' + getRandomPostfix(),
@@ -90,36 +86,20 @@ describe('Create Item or Title level request', () => {
         }).then((specialInstanceIds) => {
           testData.holdingId = specialInstanceIds.holdingIds[0].id;
         });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
+
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser(
       [
         permissions.uiUsersfeefinesCRUD.gui,
@@ -153,7 +133,7 @@ describe('Create Item or Title level request', () => {
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanType(testData.loanTypeId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
@@ -169,7 +149,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C350421 Check that user can create Item level request from Item record (vega)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(instanceData.title);
       FilterItems.toggleAccordionItemsButton(testData.holdingId);

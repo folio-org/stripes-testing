@@ -1,7 +1,7 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
 
 describe('Notes', () => {
   const testData = {
@@ -26,13 +26,14 @@ describe('Notes', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     NoteTypes.deleteNoteTypeViaApi(testData.noteType.id);
     Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C380447 Settings | View a note type (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       // * "New" button is disabled
       // * "Edit" (pencil) icon doesn't display under "Actions" column

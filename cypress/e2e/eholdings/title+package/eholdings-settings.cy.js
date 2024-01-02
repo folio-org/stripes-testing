@@ -1,12 +1,11 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
+import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
+import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import Users from '../../../support/fragments/users/users';
-import EHoldingsPackage from '../../../support/fragments/eholdings/eHoldingsPackage';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import EHoldingsResourceView from '../../../support/fragments/eholdings/eHoldingsResourceView';
-import Parallelization from '../../../support/dictionary/parallelization';
 
 describe('eHoldings', () => {
   describe('Title+Package', () => {
@@ -38,6 +37,8 @@ describe('eHoldings', () => {
     });
 
     after('Deleting user, data', () => {
+      cy.getAdminToken();
+      cy.loginAsAdmin();
       cy.visit(SettingsMenu.eHoldingsPath).then(() => {
         EHoldingsPackage.updateCustomLabelInSettings(testData.label1OriginalValue, 1);
         EHoldingsPackage.updateCustomLabelInSettings(testData.label2OriginalValue, 2);
@@ -52,7 +53,7 @@ describe('eHoldings', () => {
 
     it(
       'C9236 Settings: Add/Edit a custom label(spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
       () => {
         cy.visit(SettingsMenu.eHoldingsPath).then(() => {
           EHoldingsPackage.updateCustomLabelInSettings(testData.label1Value, 1);

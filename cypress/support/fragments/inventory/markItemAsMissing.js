@@ -7,7 +7,7 @@ import {
   MultiColumnListCell,
   PaneHeader,
   Section,
-  TextField,
+  TextArea,
 } from '../../../../interactors';
 import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
@@ -182,7 +182,7 @@ export default {
 
   findAndOpenInstance(instanceTitle) {
     cy.do([
-      TextField({ id: 'input-inventory-search' }).fillIn(instanceTitle),
+      TextArea({ id: 'input-inventory-search' }).fillIn(instanceTitle),
       Button({ type: 'submit' }).click(),
       MultiColumnListCell({ row: 0, content: instanceTitle }).click(),
     ]);

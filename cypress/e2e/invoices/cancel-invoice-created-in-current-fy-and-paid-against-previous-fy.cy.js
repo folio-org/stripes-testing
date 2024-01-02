@@ -1,15 +1,15 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Budgets, FiscalYears, LedgerRollovers } from '../../support/fragments/finance';
-import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragments/invoices';
-import { Transactions } from '../../support/fragments/finance/transactions';
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Users from '../../support/fragments/users/users';
-import { NewOrder, Orders, OrderLines } from '../../support/fragments/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import { StringTools, CodeTools, DateTools } from '../../support/utils';
 import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { Budgets, FiscalYears, LedgerRollovers } from '../../support/fragments/finance';
+import { Transactions } from '../../support/fragments/finance/transactions';
+import { InvoiceLineDetails, InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import { CodeTools, DateTools, StringTools } from '../../support/utils';
 
 describe('Invoices', () => {
   const date = new Date();
@@ -163,13 +163,14 @@ describe('Invoices', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C388563 Cancel invoice created in current FY and paid against previous FY (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click "Vendor invoice number" link for Invoice from Preconditions
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
@@ -203,7 +204,7 @@ describe('Invoices', () => {
       InvoiceLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,
-          encumbrance: '0.00',
+          currentEncumbrance: '0.00',
         },
       ]);
 

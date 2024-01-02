@@ -1,8 +1,6 @@
-import TopMenu from '../../support/fragments/topMenu';
-import TestType from '../../support/dictionary/testTypes';
-import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import devTeams from '../../support/dictionary/devTeams';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-organizations: Creating organization', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -14,6 +12,7 @@ describe('ui-organizations: Creating organization', () => {
   });
 
   afterEach(() => {
+    cy.getAdminToken();
     Organizations.getOrganizationViaApi({ query: `name="${organization.name}"` }).then(
       (returnedOrganization) => {
         Organizations.deleteOrganizationViaApi(returnedOrganization.id);
@@ -21,12 +20,8 @@ describe('ui-organizations: Creating organization', () => {
     );
   });
 
-  it(
-    'C675 Create new organization record (thunderjet)',
-    { tags: [TestType.smoke, devTeams.thunderjet] },
-    () => {
-      Organizations.createOrganizationViaUi(organization);
-      Organizations.checkCreatedOrganization(organization);
-    },
-  );
+  it('C675 Create new organization record (thunderjet)', { tags: ['smoke', 'thunderjet'] }, () => {
+    Organizations.createOrganizationViaUi(organization);
+    Organizations.checkOrganizationInfo(organization);
+  });
 });

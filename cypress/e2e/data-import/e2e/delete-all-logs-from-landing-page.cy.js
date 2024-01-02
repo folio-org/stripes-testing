@@ -1,12 +1,12 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -45,25 +45,28 @@ describe('data-import', () => {
             DataImport.verifyUploadState();
             DataImport.waitLoading();
             DataImport.uploadFile(filePath, fileNameToUpload);
+            JobProfiles.waitFileIsUploaded();
             JobProfiles.search(jobProfileToRun);
             JobProfiles.runImportFile();
             JobProfiles.waitFileIsImported(fileNameToUpload);
-            cy.wait(10000);
+            cy.wait(5000);
           });
         });
     });
 
     after('delete test data', () => {
-      Logs.selectAllLogs();
-      Logs.actionsButtonClick();
-      Logs.deleteLogsButtonClick();
-      DataImport.confirmDeleteImportLogs();
-      Users.deleteViaApi(userId);
+      cy.getAdminToken().then(() => {
+        Logs.selectAllLogs();
+        Logs.actionsButtonClick();
+        Logs.deleteLogsButtonClick();
+        DataImport.confirmDeleteImportLogs();
+        Users.deleteViaApi(userId);
+      });
     });
 
     it(
       'C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         Logs.openFileDetails(fileNameToUpload);
         Logs.clickOnHotLink();

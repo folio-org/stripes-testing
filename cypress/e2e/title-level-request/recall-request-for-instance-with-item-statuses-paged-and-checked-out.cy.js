@@ -1,36 +1,29 @@
 import uuid from 'uuid';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import permissions from '../../support/dictionary/permissions';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Requests from '../../support/fragments/requests/requests';
-import Checkout from '../../support/fragments/checkout/checkout';
+import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
-// test fails due to https://issues.folio.org/browse/MODINV-902
-// It is not possible to reproduce the 7th step of the test case
-// due to a bug, item details cannot be opened
 describe('Create Item or Title level request', () => {
-  let addedCirculationRule;
-  let originalCirculationRules;
   const users = [];
   const instanceData = {
     title: getTestEntityValue('Instance'),
@@ -75,7 +68,7 @@ describe('Create Item or Title level request', () => {
     NewRequest.enterItemInfo(itemBarcode);
     NewRequest.enterRequesterBarcode(user.barcode);
     NewRequest.chooseRequestType(requestType);
-    NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+    NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
     NewRequest.saveRequestAndClose();
     NewRequest.verifyRequestSuccessfullyCreated(user.username);
     RequestDetail.checkItemStatus(itemStatus);
@@ -136,32 +129,16 @@ describe('Create Item or Title level request', () => {
         }).then((specialInstanceIds) => {
           instanceData.instanceId = specialInstanceIds.instanceId;
         });
+      })
+      .then(() => {
+        RequestPolicy.createViaApi(requestPolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
-    RequestPolicy.createViaApi(requestPolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.r = requestPolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
     PatronGroups.createViaApi(testData.patronGroup.name)
       .then((patronGroupResponse) => {
         testData.patronGroup.id = patronGroupResponse;
@@ -234,7 +211,7 @@ describe('Create Item or Title level request', () => {
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instanceData.item1Barcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     users.forEach((user) => {
       UserEdit.changeServicePointPreferenceViaApi(user.userId, [testData.userServicePoint.id]);
       Users.deleteViaApi(user.userId);
@@ -252,7 +229,7 @@ describe('Create Item or Title level request', () => {
   });
   it(
     'C380490 Verify that user can create TLR: Recall request for instance with item statuses "Paged" and "Checked out" (vega) (Taas)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       createTLR(users[1], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
       createTLR(users[2], REQUEST_TYPES.PAGE, ITEM_STATUS_NAMES.PAGED);
@@ -261,7 +238,7 @@ describe('Create Item or Title level request', () => {
       ItemRecordView.createNewRequest();
       NewRequest.enterRequesterBarcode(users[4].barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
-      NewRequest.choosepickupServicePoint(testData.userServicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.userServicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyRequestSuccessfullyCreated(users[4].username);
       RequestDetail.checkRequestsOnItem('3');

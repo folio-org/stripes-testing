@@ -1,15 +1,15 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import usersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
 import getRandomPostfix, {
   getTestEntityValue,
   randomFourDigitNumber,
 } from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import usersSearchResultsPane from '../../support/fragments/users/usersSearchResultsPane';
 
 describe('Users', () => {
   let userData;
@@ -57,6 +57,7 @@ describe('Users', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     Users.deleteViaApi(newUserId);
     PatronGroups.deleteViaApi(patronGroup.id);
@@ -64,7 +65,7 @@ describe('Users', () => {
 
   it(
     'C410760 "User type" field is displayed on create user page (Poppy +) (Thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       usersSearchResultsPane.openNewUser();
       UserEdit.verifySaveAndColseIsDisabled(true);

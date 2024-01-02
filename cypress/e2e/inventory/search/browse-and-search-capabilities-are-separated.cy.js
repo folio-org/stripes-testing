@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 const testData = {
   user: {},
@@ -15,7 +15,7 @@ const Dropdowns = {
   EFFECTIVE_LOCATION: 'Effective location (item)',
   NAME_TYPE: 'Name type',
 };
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();
@@ -33,12 +33,13 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
     });
 
     it(
       'C368482 Browse and Search capabilities are separated\n (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.verifySearchAndFilterPane();
         InventoryInstances.verifyInstanceSearchOptions();

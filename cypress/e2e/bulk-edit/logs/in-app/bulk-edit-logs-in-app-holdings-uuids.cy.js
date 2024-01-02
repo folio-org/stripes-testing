@@ -1,5 +1,3 @@
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -32,10 +30,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
 
       const instanceId = InventoryInstances.createInstanceViaApi(
         item.instanceName,
@@ -48,10 +42,15 @@ describe('Bulk Edit - Logs', () => {
         uuid = holdings[0].id;
         FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
       });
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading,
+      });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
@@ -65,7 +64,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375289 Verify generated Logs files for Holdings In app -- only valid Holdings UUIDs (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);

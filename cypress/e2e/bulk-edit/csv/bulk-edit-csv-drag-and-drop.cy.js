@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -32,13 +32,14 @@ describe('bulk-edit', () => {
     });
 
     after('Delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     });
 
     it(
       'C353540 Verify that the "Drag and Drop" is enabled after file is uploaded (firebird) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDefaultFilterState();
         BulkEditSearchPane.checkUsersRadio();
@@ -61,7 +62,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353538 Verify link record identifier with the drag and drop area on the landing page (firebird) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.visit(TopMenu.bulkEditPath);
         BulkEditSearchPane.verifyDefaultFilterState();

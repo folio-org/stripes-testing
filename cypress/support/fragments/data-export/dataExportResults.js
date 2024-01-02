@@ -148,6 +148,15 @@ export default {
     cy.expect(result.fileName.has({ content: matching(regex) }));
   },
 
+  verifyLastItemCount(count) {
+    const result = {
+      total: MultiColumnListCell({ row: 0, columnIndex: 2 }),
+      exported: MultiColumnListCell({ row: 0, columnIndex: 3 }),
+    };
+
+    cy.expect([result.total.is({ content: count }), result.exported.is({ content: count })]);
+  },
+
   verifyFileNameIsDisabled(rowNum) {
     const cellLocator = `[data-row-inner="${rowNum}"]>div>span`;
 

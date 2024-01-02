@@ -1,19 +1,19 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import FileManager from '../../../support/utils/fileManager';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Holdings files', () => {
@@ -35,11 +35,12 @@ describe('data-import', () => {
       DataImport.verifyUploadState();
       // upload a marc file for creating of the new instance, holding and item
       DataImport.uploadFile(filePathForUpload, fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileForCreatingInstance);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileName);
       Logs.openFileDetails(fileName);
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         instanceHrid = initialInstanceHrId;
       });
@@ -62,6 +63,7 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
       cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
@@ -74,7 +76,7 @@ describe('data-import', () => {
 
     it(
       'C356820 Check the "Source" value of imported "MARC Holdings" record. (spitfire) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         InventoryInstances.searchBySource('MARC');
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
@@ -92,6 +94,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileForCreatingHoldings);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
@@ -101,9 +104,9 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.holdings,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
-        FileDetails.openHoldingsInInventory('Created');
+        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
         HoldingsRecordView.checkHoldingRecordViewOpened();
         HoldingsRecordView.checkInstanceTitle(instanceTitle);
         HoldingsRecordView.checkLastUpdatedDate(user.username);

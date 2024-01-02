@@ -102,7 +102,7 @@ export default {
     cy.expect(section.find(KeyValue(key)).has({ value: value || including('') }));
   },
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
-    cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
+    cy.expect(Callout({ textContent: text }).is({ type: calloutType }));
   },
   closeCalloutMessage: () => cy.do(
     Callout()

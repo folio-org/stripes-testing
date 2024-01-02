@@ -1,16 +1,16 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
-import { REQUEST_TYPES, FULFILMENT_PREFERENCES, REQUEST_LEVELS } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
+import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 import Requests from '../../support/fragments/requests/requests';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
-describe('Title Level Request. Request notice. Title level request -Settings', () => {
+describe('Title Level Request', () => {
   let userData = {};
   let requestId;
   const testData = {
@@ -61,6 +61,7 @@ describe('Title Level Request. Request notice. Title level request -Settings', (
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
@@ -78,7 +79,7 @@ describe('Title Level Request. Request notice. Title level request -Settings', (
 
   it(
     'C1285 Check that "Cannot change -Allow title level requests-" modal appears (vega) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.vega] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       TitleLevelRequests.clickOnTLRCheckbox();
       TitleLevelRequests.checkCannotChangeTLRModal();

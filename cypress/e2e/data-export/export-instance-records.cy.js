@@ -1,16 +1,13 @@
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import FileManager from '../../support/utils/fileManager';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import getRandomPostfix from '../../support/utils/stringTools';
-import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import parallelization from '../../support/dictionary/parallelization';
-import Users from '../../support/fragments/users/users';
+import DataExportResults from '../../support/fragments/data-export/dataExportResults';
+import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import { getLongDelay } from '../../support/utils/cypressTools';
+import FileManager from '../../support/utils/fileManager';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -27,17 +24,18 @@ describe('data-export', () => {
       permissions.dataExportEnableModule.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password);
-      cy.visit(TopMenu.dataExportPath);
       const instanceID = InventoryInstances.createInstanceViaApi(
         item.instanceName,
         item.itemBarcode,
       );
       FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
+      cy.login(user.username, user.password);
+      cy.visit(TopMenu.dataExportPath);
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
@@ -45,7 +43,7 @@ describe('data-export', () => {
 
   it(
     'C9288 Export small number of instance records - default instance mapping profile (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird, parallelization.nonParallel] },
+    { tags: ['smoke', 'firebird', 'nonParallel'] },
     () => {
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName);

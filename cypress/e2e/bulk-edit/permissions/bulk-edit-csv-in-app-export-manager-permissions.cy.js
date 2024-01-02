@@ -1,5 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
@@ -35,13 +33,15 @@ describe('bulk-edit', () => {
       ])
         .then((userProperties) => {
           user = userProperties;
+        })
+        .then(() => {
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
+          FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
           cy.login(user.username, user.password, {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading,
           });
-        })
-        .then(() => {
-          FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
           BulkEditSearchPane.checkUsersRadio();
           BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
           BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -49,8 +49,6 @@ describe('bulk-edit', () => {
         })
         .then(() => {
           cy.visit(TopMenu.bulkEditPath);
-          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-          FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
           BulkEditSearchPane.checkItemsRadio();
           BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -61,6 +59,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
@@ -72,8 +71,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C353972 Verify that user can view data in Export Manager(CSV and In-app approach) (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      'C353972 Verify that user can view data in Export Manager(Local and In-app approach) (firebird)',
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         ExportManagerSearchPane.waitLoading();
         ExportManagerSearchPane.searchByBulkEdit();

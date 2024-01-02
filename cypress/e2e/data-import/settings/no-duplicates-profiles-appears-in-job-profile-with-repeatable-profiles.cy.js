@@ -1,23 +1,23 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
-  EXISTING_RECORDS_NAMES,
-  ACCEPTED_DATA_TYPE_NAMES,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
-import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -178,19 +178,21 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-      });
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+        });
       });
     });
 
     it(
       'C385653 Verify that no duplicates of match and actions profiles appear after editing job profile with repeatable profiles (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const linkedProfileNames = [
           collectionOfMatchProfiles[1].matchProfile.profileName,
@@ -260,13 +262,15 @@ describe('data-import', () => {
         JobProfileView.verifyCalloutMessage(calloutMessage);
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfile.profileName);
+        });
       },
     );
 
     it(
       'C385629 Verify that no duplicates of match and actions profiles appear after saving job profile with repeatable match/action profiles (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const linkedProfileNames = [
           collectionOfMatchProfiles[1].matchProfile.profileName,
@@ -329,13 +333,15 @@ describe('data-import', () => {
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfile.profileName);
+        });
       },
     );
 
     it(
       'C385654 Verify that no duplicates of match and actions profiles appear after duplicating job profile with repeatable profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         const jobProfile = {
           ...NewJobProfile.defaultJobProfile,
@@ -406,8 +412,10 @@ describe('data-import', () => {
         JobProfileView.verifyJobProfileName(jobProfileNameForChanging);
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        JobProfiles.deleteJobProfile(jobProfileNameForChanging);
+        cy.getAdminToken().then(() => {
+          JobProfiles.deleteJobProfile(jobProfile.profileName);
+          JobProfiles.deleteJobProfile(jobProfileNameForChanging);
+        });
       },
     );
   });

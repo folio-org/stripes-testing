@@ -1,15 +1,16 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
+let servicePointId;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
@@ -30,10 +31,13 @@ describe('bulk-edit', () => {
         permissions.uiInventoryViewCreateEditItems.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 1"' })
+          .then((servicePoints) => {
+            servicePointId = servicePoints[0].id;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(servicePointId, user.userId, servicePointId);
+          });
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         InventoryInstances.createInstanceViaApi(
@@ -45,10 +49,15 @@ describe('bulk-edit', () => {
           `cypress/fixtures/${itemBarcodesFileName}`,
           `${item.itemBarcode}\r\n${invalidBarcode}\r\n${itemToBeDeleted.itemBarcode}`,
         );
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
@@ -56,7 +65,7 @@ describe('bulk-edit', () => {
 
     it(
       'C353230 Verify completion of the in-app bulk edit (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -69,10 +78,12 @@ describe('bulk-edit', () => {
         BulkEditActions.replaceTemporaryLocation();
         BulkEditActions.confirmChanges();
 
+        cy.getAdminToken();
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           itemToBeDeleted.itemBarcode,
         );
 
+        cy.getToken(user.username, user.password);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
 

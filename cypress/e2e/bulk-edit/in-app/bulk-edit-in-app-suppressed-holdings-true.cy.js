@@ -1,16 +1,14 @@
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import TopMenu from '../../../support/fragments/topMenu';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const holdingUUIDsFileName = `holdingUUIDs_${getRandomPostfix()}.csv`;
@@ -28,10 +26,6 @@ describe('bulk-edit', () => {
         permissions.bulkEditEdit.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -40,10 +34,15 @@ describe('bulk-edit', () => {
         cy.getHoldings({ query: `"instanceId"="${instanceId}"` }).then((holdings) => {
           FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
         });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
       });
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${holdingUUIDsFileName}`);
@@ -51,7 +50,7 @@ describe('bulk-edit', () => {
 
     it(
       'C398010 Verify "Suppress from discovery" (Set true) option in Bulk Editing Holdings (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
@@ -60,7 +59,7 @@ describe('bulk-edit', () => {
 
         const suppressFromDiscovery = true;
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Suppress from discovery');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Suppress from discovery');
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.editSuppressFromDiscovery(suppressFromDiscovery, 0, true);
         BulkEditActions.confirmChanges();

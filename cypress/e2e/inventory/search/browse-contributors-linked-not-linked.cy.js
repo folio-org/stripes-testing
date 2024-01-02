@@ -1,10 +1,5 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -12,9 +7,12 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import BrowseSubjects from '../../../support/fragments/inventory/search/browseSubjects';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory: Contributors Browse', () => {
   const testData = {
@@ -63,7 +61,7 @@ describe('Inventory: Contributors Browse', () => {
 
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.waitContentLoading();
-        InventoryInstance.searchByTitle(createdRecordIDs[0]);
+        InventoryInstances.searchByTitle(createdRecordIDs[0]);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIconByIndex(26);
@@ -72,7 +70,7 @@ describe('Inventory: Contributors Browse', () => {
         InventoryInstance.searchResults(testData.contributorName);
         MarcAuthorities.checkFieldAndContentExistence(
           testData.tag010,
-          `‡a ${marcFiles[1].naturalId}`,
+          `$a ${marcFiles[1].naturalId}`,
         );
         InventoryInstance.clickLinkButton();
         QuickMarcEditor.verifyAfterLinkingAuthorityByIndex(26, testData.tag700);
@@ -88,6 +86,7 @@ describe('Inventory: Contributors Browse', () => {
   });
 
   after('Deleting created user and data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     createdRecordIDs.forEach((id, index) => {
       if (index) MarcAuthority.deleteViaAPI(id);
@@ -97,7 +96,7 @@ describe('Inventory: Contributors Browse', () => {
 
   it(
     'C359595 Verify that contributors with the same "Name" and "Name type" and one has, and one has not "authorityID" will display in different rows in the response (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
       InventorySearchAndFilter.verifyKeywordsAsDefault();

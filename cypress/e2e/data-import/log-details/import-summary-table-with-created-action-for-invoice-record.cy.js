@@ -1,26 +1,28 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
-  BATCH_GROUP,
-  VENDOR_NAMES,
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
+  BATCH_GROUP,
+  FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
   PAYMENT_METHOD,
+  VENDOR_NAMES,
+  RECORD_STATUSES,
+  INVOICE_STATUSES,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { InvoiceView, Invoices } from '../../../support/fragments/invoices';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import { Invoices, InvoiceView } from '../../../support/fragments/invoices';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -66,19 +68,21 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.getInvoiceIdApi({
-        query: `vendorInvoiceNo="${vendorInvoiceNumber}"`,
-      }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
-      Users.deleteViaApi(user.userId);
+      cy.getAdminToken().then(() => {
+        // clean up generated profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.getInvoiceIdApi({
+          query: `vendorInvoiceNo="${vendorInvoiceNumber}"`,
+        }).then((id) => cy.deleteInvoiceFromStorageViaApi(id));
+        Users.deleteViaApi(user.userId);
+      });
     });
 
     it(
       'C353625 Check import summary table with "Created" action for invoice record (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         // create Field mapping profile
         FieldMappingProfiles.waitLoading();
@@ -102,6 +106,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathToUpload, fileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.selectJobProfile();
         JobProfiles.runImportFile();
@@ -110,7 +115,7 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.invoice,
         );
 
@@ -127,7 +132,7 @@ describe('data-import', () => {
         cy.visit(TopMenu.invoicesPath);
         Invoices.searchByNumber(vendorInvoiceNumber);
         Invoices.selectInvoice(vendorInvoiceNumber);
-        InvoiceView.verifyStatus('Open');
+        InvoiceView.verifyStatus(INVOICE_STATUSES.OPEN);
       },
     );
   });

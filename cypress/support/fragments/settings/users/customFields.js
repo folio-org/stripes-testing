@@ -44,11 +44,10 @@ export default {
     // Wait for changes to be saved and reflected
     cy.wait(15000);
   },
-
   deleteCustomField(name) {
+    this.editButton();
     cy.do([
-      editNewButton.click(),
-      Accordion(including(name))
+      Accordion({ label: including(name), isWrapper: false })
         .find(Button({ icon: 'trash' }))
         .click(),
       saveAndCloseButton.click(),
@@ -57,8 +56,8 @@ export default {
   },
 
   addCustomTextField(data) {
+    this.editButton();
     cy.do([
-      editNewButton.click(),
       addCustomFieldDropdown.choose('Text field'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
@@ -69,8 +68,8 @@ export default {
   },
 
   addCustomTextArea(data) {
+    this.editButton();
     cy.do([
-      editNewButton.click(),
       addCustomFieldDropdown.choose('Text area'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
@@ -81,8 +80,8 @@ export default {
   },
 
   addTextAreaCustomField(text) {
+    this.editButton();
     cy.do([
-      editNewButton.click(),
       addCustomFieldDropdown.choose('Text area'),
       TextField('Field label*').fillIn(text),
       saveAndCloseButton.click(),
@@ -90,8 +89,8 @@ export default {
   },
 
   addCustomCheckBox(data) {
+    this.editButton();
     cy.do([
-      editNewButton.click(),
       addCustomFieldDropdown.choose('Checkbox'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
@@ -102,8 +101,8 @@ export default {
   },
 
   addCustomRadioButton({ data }) {
+    this.editButton();
     cy.do([
-      editNewButton.click(),
       addCustomFieldDropdown.choose('Radio button set'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
@@ -116,8 +115,8 @@ export default {
   },
 
   addCustomSingleSelect({ data }) {
+    this.editButton();
     cy.do([
-      editNewButton.click(),
       addCustomFieldDropdown.choose('Single select'),
       fieldLabel.fillIn(data.fieldLabel),
       helpText.fillIn(data.helpText),
@@ -131,7 +130,9 @@ export default {
 
   editButton() {
     cy.expect(editNewButton.exists());
-    cy.do([editNewButton.click()]);
+    // wait needs to fill the fileds
+    cy.do([cy.wait(1000), editNewButton.click()]);
+    cy.expect(Pane('Edit custom fields').exists());
   },
 
   confirmDeletion() {

@@ -1,21 +1,19 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import getRandomPostfix from '../../support/utils/stringTools';
-import Helper from '../../support/fragments/finance/financeHelper';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
-import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
-import Checkout from '../../support/fragments/checkout/checkout';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../support/dictionary/devTeams';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import { ITEM_STATUS_NAMES } from '../../support/constants';
+import permissions from '../../support/dictionary/permissions';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
+import Helper from '../../support/fragments/finance/financeHelper';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Check Out', () => {
   let user = {};
@@ -98,6 +96,7 @@ describe('Check Out', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     cy.wrap(
       testItems.forEach((item) => {
         CheckInActions.checkinItemViaApi({
@@ -144,7 +143,7 @@ describe('Check Out', () => {
     );
   };
 
-  it('C591 Check out: multipiece items (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
+  it('C591 Check out: multipiece items (vega)', { tags: ['smoke', 'vega'] }, () => {
     cy.visit(TopMenu.checkOutPath);
     Checkout.waitLoading();
     CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);

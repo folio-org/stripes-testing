@@ -1,27 +1,28 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
-  ORDER_STATUSES,
-  ORDER_FORMAT_NAMES_IN_PROFILE,
   ACQUISITION_METHOD_NAMES,
+  FOLIO_RECORD_TYPE,
   JOB_STATUS_NAMES,
+  ORDER_FORMAT_NAMES_IN_PROFILE,
+  ORDER_STATUSES,
   VENDOR_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import TopMenu from '../../../support/fragments/topMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import OrderLines from '../../../support/fragments/orders/orderLines';
-import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileEdit';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -35,7 +36,7 @@ describe('data-import', () => {
     const fundAndExpenseClassData = [
       {
         fund: 'History(HIST)',
-        expenseClass: 'No value set-',
+        expenseClass: RECORD_STATUSES.DASH,
         value: '100%',
         amount: '$19.95',
       },
@@ -119,20 +120,22 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.wrap(orderNumbers).each((number) => {
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
-          Orders.deleteOrderViaApi(orderId[0].id);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        cy.wrap(orderNumbers).each((number) => {
+          Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
+            Orders.deleteOrderViaApi(orderId[0].id);
+          });
         });
       });
     });
 
     it(
       'C376975 Order field mapping profile: Check fund and expense class mappings (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profile
         FieldMappingProfiles.createOrderMappingProfile(mappingProfile);
@@ -154,13 +157,14 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, firstMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(firstMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstMarcFileName);
         // check Fund and Expense class populated in the first POL
-        FileDetails.openOrder('Created');
+        FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -170,7 +174,7 @@ describe('data-import', () => {
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
         cy.go('back');
         // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder('Created', 1);
+        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -189,23 +193,24 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, secondMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(secondMarcFileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.order,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
           1,
         );
 
         // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder('Created', 1);
+        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -224,22 +229,23 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, thirdMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(thirdMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(thirdMarcFileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
           1,
         );
         // check Fund and Expense class populated in the first POL
-        FileDetails.openOrder('Created');
+        FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -249,7 +255,7 @@ describe('data-import', () => {
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[0]);
         cy.go('back');
         // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder('Created', 1);
+        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -268,22 +274,23 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(filePathForCreateOrder, forthMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(forthMarcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(forthMarcFileName);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.order,
           1,
         );
         // check Fund and Expense class populated in the first POL
-        FileDetails.openOrder('Created');
+        FileDetails.openOrder(RECORD_STATUSES.CREATED);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');
@@ -293,7 +300,7 @@ describe('data-import', () => {
         OrderLines.checkFundAndExpenseClassPopulated(fundAndExpenseClassData[1]);
         cy.go('back');
         // check Fund and Expense class populated in the second POL
-        FileDetails.openOrder('Created', 1);
+        FileDetails.openOrder(RECORD_STATUSES.CREATED, 1);
         OrderLines.waitLoading();
         OrderLines.getAssignedPOLNumber().then((initialNumber) => {
           const orderNumber = initialNumber.replace('-1', '');

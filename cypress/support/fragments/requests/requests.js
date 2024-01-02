@@ -1,20 +1,25 @@
 import uuid from 'uuid';
+import { Keyboard } from '@interactors/keyboard';
 import { HTML, including } from '@interactors/html';
 import {
+  Accordion,
   Button,
   MultiColumnListCell,
+  MultiColumnListRow,
   MultiColumnListHeader,
   MultiSelect,
+  MultiSelectOption,
   Pane,
   IconButton,
   TextArea,
   ValueChipRoot,
   Checkbox,
   TextField,
-  Badge,
   Section,
   Heading,
   Spinner,
+  KeyValue,
+  Link,
 } from '../../../../interactors';
 import {
   REQUEST_TYPES,
@@ -28,21 +33,25 @@ import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
+const requestDetailsSection = Pane({ title: 'Request Detail' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 const requestsPane = Pane({ title: 'Requests' });
+const requestQueuePane = Pane({ id: 'request-queue' });
 const pageCheckbox = Checkbox({ name: 'Page' });
 const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
 const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
-const resultsPane = Pane({ id: 'pane-results' });
-const actionsButtonInResultsPane = resultsPane.find(Button('Actions'));
+const addTagInput = MultiSelect({ id: 'input-tag' });
+const actionsButtonInResultsPane = requestsResultsSection.find(Button('Actions'));
 const exportSearchResultsToCsvOption = Button({ id: 'exportToCsvPaneHeaderBtn' });
+const tagsAccordion = Accordion('Tags');
+const tagsSelect = MultiSelect({ ariaLabelledby: including('tags') });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id: 'pane-filter' }).exists());
   cy.expect(
-    resultsPane
+    requestsResultsSection
       .find(HTML(including('Choose a filter or enter a search query to show results.')))
       .exists(),
   );
@@ -219,42 +228,6 @@ function getRequestApi(searchParams) {
     });
 }
 
-function updateCirculationRulesApi(ruleText) {
-  return cy.okapiRequest({
-    method: 'PUT',
-    path: 'circulation/rules',
-    body: { rulesAsText: ruleText },
-    isDefaultSearchParamsRequired: false,
-  });
-}
-
-function setRequestPolicyApi(requestTypes = Object.values(REQUEST_TYPES)) {
-  /**
-   * rule comes in bespoke text format, and we need to update 'r <someId>' part.
-   * rulesAsText: "priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line\n
-                  fallback-policy: ... r 334e5a9e-94f9-4673-8d1d-ab552863886b ..."
-   */
-  const regexp = /(?<=\s)r\s+[a-zA-Z0-9-]+(?=\s)/;
-  let oldRulesAsText;
-
-  return cy
-    .okapiRequest({
-      path: 'circulation/rules',
-      isDefaultSearchParamsRequired: false,
-    })
-    .then(({ body: rule }) => {
-      oldRulesAsText = rule.rulesAsText;
-      cy.okapiRequest({
-        method: 'POST',
-        path: 'request-policy-storage/request-policies',
-        body: { id: uuid(), name: `test_all_${uuid().substring(0, 6)}`, requestTypes },
-      }).then(({ body: policy }) => {
-        rule.rulesAsText = rule.rulesAsText.replace(regexp, `r ${policy.id}`);
-        updateCirculationRulesApi(rule.rulesAsText).then(() => ({ oldRulesAsText, policy }));
-      });
-    });
-}
-
 function deleteRequestPolicyApi(policyId) {
   return cy.okapiRequest({
     method: 'DELETE',
@@ -273,6 +246,7 @@ function waitLoadingTags() {
   // eslint-disable-next-line cypress/no-unnecessary-waiting
   cy.wait(1000);
 }
+
 function selectSpecifiedRequestLevel(parameter) {
   return cy.do(Checkbox({ name: parameter }).click());
 }
@@ -280,9 +254,7 @@ function selectSpecifiedRequestLevel(parameter) {
 export default {
   createRequestApi,
   deleteRequestViaApi,
-  setRequestPolicyApi,
   deleteRequestPolicyApi,
-  updateCirculationRulesApi,
   getRequestApi,
   waitContentLoading,
   waitLoadingTags,
@@ -297,6 +269,16 @@ export default {
   selectItemRequestLevel: () => selectSpecifiedRequestLevel('Item'),
   selectTitleRequestLevel: () => selectSpecifiedRequestLevel('Title'),
   selectFirstRequest: (title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
+  selectRequest: (title, rowIndex) => cy.do(
+    requestsPane
+      .find(
+        MultiColumnListCell({
+          row: rowIndex,
+          content: title,
+        }),
+      )
+      .click(),
+  ),
   openTagsPane: () => cy.do(showTagsButton.click()),
   closePane: (title) => cy.do(
     Pane({ title })
@@ -309,10 +291,15 @@ export default {
   verifyNoResultMessage: (noResultMessage) => cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
   navigateToApp: (appName) => cy.do([appsButton.click(), Button(appName).click()]),
   verifyCreatedRequest: (title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
+  verifyColumnsPresence() {
+    cy.expect([
+      [...this.columns, this.sortingColumns].forEach(({ title }) => MultiColumnListHeader(title).exists()),
+    ]);
+  },
 
   cancelRequest() {
     cy.do([
-      Pane({ title: 'Request Detail' }).find(Button('Actions')).click(),
+      requestDetailsSection.find(Button('Actions')).click(),
       Button({ id: 'clickable-cancel-request' }).click(),
       TextArea('Additional information for patron  ').fillIn('test'),
       Button('Confirm').click(),
@@ -332,11 +319,21 @@ export default {
   },
 
   filterRequestsByTag(tag) {
+    cy.wait(2000);
     cy.do(
       Pane({ title: 'Search & filter' })
         .find(MultiSelect({ ariaLabelledby: 'tags' }))
-        .select(tag),
+        .choose(tag),
     );
+  },
+
+  enterTag: (tag) => {
+    cy.then(() => tagsAccordion.open()).then((isOpen) => {
+      if (!isOpen) {
+        cy.do(tagsAccordion.clickHeader());
+      }
+    });
+    cy.do([tagsSelect.focus(), Keyboard.type(tag), Keyboard.press({ code: 'Enter' })]);
   },
 
   addTag(tag) {
@@ -347,12 +344,19 @@ export default {
     cy.wait(2000);
   },
 
+  addNewTag(tag) {
+    cy.do([addTagInput.fillIn(tag), cy.wait(3000), MultiSelectOption(including(tag)).click()]);
+  },
+
+  clearSelectedTags() {
+    cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+  },
+
   verifyAssignedTags(tag) {
     cy.expect(Spinner().absent());
     // need to wait until number of tags is displayed
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
-    cy.expect(showTagsButton.find(Badge()).has({ value: '1' }));
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
 
@@ -390,6 +394,14 @@ export default {
     }
   },
 
+  checkRequestStatus(requestStatus) {
+    cy.expect(KeyValue('Request status').has({ value: requestStatus }));
+  },
+
+  checkActionDropdownHidden: () => {
+    cy.expect(requestDetailsSection.find(Button('Actions')).absent());
+  },
+
   verifyRequestTypeChecked(requestType) {
     if (requestType === REQUEST_TYPES.PAGE) {
       cy.expect(pageCheckbox.has({ checked: true }));
@@ -425,6 +437,34 @@ export default {
       title: 'Requester Barcode',
       id: 'requesterbarcode',
       columnIndex: 9,
+    },
+  ],
+
+  columns: [
+    {
+      title: 'Request Date',
+      id: 'requestdate',
+      columnIndex: 1,
+    },
+    {
+      title: 'Year',
+      id: 'year',
+      columnIndex: 3,
+    },
+    {
+      title: 'Request status',
+      id: 'requeststatus',
+      columnIndex: 6,
+    },
+    {
+      title: 'Queue position',
+      id: 'position',
+      columnIndex: 7,
+    },
+    {
+      title: 'Proxy',
+      id: 'proxy',
+      columnIndex: 10,
     },
   ],
 
@@ -590,6 +630,16 @@ export default {
     ]);
   },
 
+  selectTheFirstRequest() {
+    cy.do(requestsResultsSection.find(MultiColumnListRow({ index: 0 })).click());
+  },
+
+  verifyRequestIsAbsent(barcode) {
+    cy.expect(
+      requestsResultsSection.find(MultiColumnListRow({ content: including(barcode) })).absent(),
+    );
+  },
+
   exportRequestToCsv: () => {
     cy.wait(1000);
     cy.do([actionsButtonInResultsPane.click(), exportSearchResultsToCsvOption.click()]);
@@ -609,5 +659,13 @@ export default {
   deleteDownloadedFile(fileName) {
     const filePath = `cypress\\downloads\\${fileName}`;
     cy.exec(`del "${filePath}"`, { failOnNonZeroExit: false });
+  },
+
+  closeRequestQueue() {
+    cy.do(requestQueuePane.find(Button({ ariaLabel: 'Close New Request' })).click());
+  },
+
+  clickInstanceDescription() {
+    cy.do(requestQueuePane.find(Link({ text: including('Instance') })).click());
   },
 };

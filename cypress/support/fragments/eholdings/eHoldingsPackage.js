@@ -14,7 +14,10 @@ import {
   TextField,
   ValueChipRoot,
   including,
+  TextArea,
+  PaneHeader,
 } from '../../../../interactors';
+import { FILTER_STATUSES } from './eholdingsConstants';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix, { randomTwoDigitNumber } from '../../utils/stringTools';
 
@@ -25,11 +28,6 @@ const actionsButton = Button('Actions');
 const editButton = Button('Edit');
 const removeFromHoldingsButton = Button('Remove from holdings');
 const confirmButton = Button('Yes, remove');
-const filterStatuses = {
-  all: 'All',
-  selected: 'Selected',
-  notSelected: 'Not selected',
-};
 const packageHoldingStatusSection = Section({ id: 'packageShowHoldingStatus' });
 const titlesSection = Section({ id: 'packageShowTitles' });
 const confirmationModal = Modal({ id: 'eholdings-confirmation-modal' });
@@ -46,15 +44,16 @@ const waitTitlesLoading = () => cy.url().then((url) => {
   cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
   cy.wait('@getTitles', getLongDelay());
 });
+const providerTokenField = TextArea({ name: 'providerTokenValue' });
+const providerTokenValue = KeyValue('Provider token');
 
 export default {
-  filterStatuses,
   waitLoading: (specialPackage) => {
     cy.expect(Section({ id: getElementIdByName(specialPackage) }).exists());
     cy.expect(tagsSection.find(MultiSelect()).exists());
   },
 
-  filterTitles: (selectionStatus = filterStatuses.notSelected) => {
+  filterTitles: (selectionStatus = FILTER_STATUSES.NOT_SELECTED) => {
     cy.do(titlesSection.find(Button({ icon: 'search' })).click());
     cy.expect(titlesFilterModal.exists());
     const selectionStatusAccordion = titlesFilterModal.find(
@@ -72,7 +71,7 @@ export default {
     });
   },
 
-  verifyHoldingStatus: (expectedStatus = filterStatuses.selected) => {
+  verifyHoldingStatus: (expectedStatus = FILTER_STATUSES.SELECTED) => {
     cy.expect(packageHoldingStatusSection.find(HTML(including(expectedStatus))).exists());
     // TODO: request dynamic loading of titles
     // need to load changed state of titles
@@ -155,11 +154,8 @@ export default {
     return newTag;
   },
 
-  close: (packageName) => {
-    const packageId = getElementIdByName(packageName);
-    const section = Section({ id: packageId });
-    cy.do(section.find(Button({ icon: 'times', ariaLabel: `Close ${packageName}` })).click());
-    cy.expect(section.absent());
+  closePackage: () => {
+    cy.do(PaneHeader().find(closeButton).click());
   },
 
   verifyExistingTags: (...expectedTags) => {
@@ -212,7 +208,12 @@ export default {
         cy.do(proxySelect.choose(options[randomTwoDigitNumber()]));
       });
   },
-
+  changeToken(token) {
+    cy.do(providerTokenField.fillIn(token));
+  },
+  verifyToken(token) {
+    cy.expect(providerTokenValue.has({ value: including(token) }));
+  },
   saveAndClose: () => {
     cy.do(Button('Save & close').click());
   },

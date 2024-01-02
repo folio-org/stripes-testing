@@ -1,30 +1,31 @@
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
 import {
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import getRandomPostfix from '../../../support/utils/stringTools';
+import { Permissions } from '../../../support/dictionary';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import generateItemBarcode from '../../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -112,24 +113,26 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      // delete profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      Users.deleteViaApi(userId);
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
-        (instances) => {
-          instances.forEach(({ id }) => {
-            InventoryInstance.deleteInstanceViaApi(id);
-          });
-        },
-      );
+      cy.getAdminToken().then(() => {
+        // delete profiles
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        Users.deleteViaApi(userId);
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value).then(
+          (instances) => {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          },
+        );
+      });
     });
 
     it(
       'C347830 Match on Instance identifier match meets both the Identifier type and Data requirements Scenario 3 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['criticalPath', 'folijet', 'parallel'] },
       () => {
         DataImport.editMarcFile(
           filePathForCreateInstance,
@@ -147,12 +150,13 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForCreate, fileNameForCreateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
-        Logs.clickOnHotLink(0, 3, 'Created');
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[0].type,
           resourceIdentifiers[0].value,
@@ -164,7 +168,7 @@ describe('data-import', () => {
           4,
         );
         cy.go('back');
-        Logs.clickOnHotLink(1, 3, 'Created');
+        Logs.clickOnHotLink(1, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[2].type,
           resourceIdentifiers[2].value,
@@ -206,6 +210,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileNameForUpdate, fileNameForUpdateInstance);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
@@ -215,21 +220,21 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.checkStatusInColumn(
-          FileDetails.status.dash,
+          RECORD_STATUSES.DASH,
           FileDetails.columnNameInResultList.srsMarc,
           1,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.instance,
           1,
         );
 
         // check updated instance in Inventory
-        FileDetails.openInstanceInInventory('Updated');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);

@@ -277,7 +277,9 @@ export default {
     return momentObj.format('M/D/YYYY, h:mm A');
   },
 
-  getFormattedDateWithTime(date) {
+  getFormattedDateWithTime(date, spelling = { withoutComma: false, withSpace: false }) {
+    if (spelling.withoutComma) return moment.utc(date).format('M/D/YYYYh:mm A');
+    if (spelling.withSpace) return moment.utc(date).format('M/D/YYYY h:mm A');
     return moment.utc(date).format('M/D/YYYY, h:mm A');
   },
 
@@ -432,5 +434,18 @@ export default {
     return `${(currentEndDate.getMonth() + 1).toString().padStart(2, '0')}
                       ${currentEndDate.getDate().toString().padStart(2, '0')}/
                       ${currentEndDate.getFullYear()}`;
+  },
+
+  convertMachineReadableDateToHuman(dateString) {
+    const year = parseInt(dateString.substring(0, 4), 10);
+    const month = parseInt(dateString.substring(4, 6), 10) - 1; // Months are zero-based
+    const day = parseInt(dateString.substring(6, 8), 10);
+    const hours = parseInt(dateString.substring(8, 10), 10);
+    const minutes = parseInt(dateString.substring(10, 12), 10);
+    const seconds = parseInt(dateString.substring(12, 14), 10);
+    const milliseconds = parseInt(dateString.substring(15, 18), 10);
+
+    const dateObject = new Date(year, month, day, hours, minutes, seconds, milliseconds);
+    return dateObject;
   },
 };

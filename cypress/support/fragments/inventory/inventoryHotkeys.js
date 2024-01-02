@@ -13,5 +13,7 @@ export default {
     copy: '{ctrl}C',
     paste: '{ctrl}V',
     find: '{ctrl}F',
+    moveToPreviousSubfield: '{ctrl}[',
+    moveToNextSubfield: '{ctrl}]',
   },
 };

@@ -1,248 +1,218 @@
 import moment from 'moment';
 import uuid from 'uuid';
-import testTypes from '../../../support/dictionary/testTypes';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import UserEdit from '../../../support/fragments/users/userEdit';
-import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
-import { getNewItem } from '../../../support/fragments/inventory/item';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import permissions from '../../../support/dictionary/permissions';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import AppPaths from '../../../support/fragments/app-paths';
 import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
-import { CY_ENV } from '../../../support/constants';
 import checkInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import RequestPolicy from '../../../support/fragments/circulation/request-policy';
-import OverdueFinePolicy from '../../../support/fragments/circulation/overdue-fine-policy';
 import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
-import NoticePolicy from '../../../support/fragments/settings/circulation/patron-notices/noticePolicies';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import DevTeams from '../../../support/dictionary/devTeams';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import NewFeeFine from '../../../support/fragments/users/newFeeFine';
 import Users from '../../../support/fragments/users/users';
+import UserLoans from '../../../support/fragments/users/loans/userLoans';
+import LoansPage from '../../../support/fragments/loans/loansPage';
+import SearchPane from '../../../support/fragments/circulation-log/searchPane';
+import TopMenu from '../../../support/fragments/topMenu';
 
-describe('ui-users-loans: Manual anonymization in closed loans', () => {
-  const newOwnerData = UsersOwners.getDefaultNewOwner();
-  const newFirstItemData = getNewItem();
-  const newSecondItemData = getNewItem();
-  const feeFineType = uuid();
-  let servicePointId;
-  let servicePoints = [];
-  const testData = {};
-  const policyIds = {};
-  let originalCirculationRules;
-  let addedCirculationRule;
-  const userData = {};
+describe('Loans: Anonymization', () => {
+  let userData;
+  const ownerData = UsersOwners.getDefaultNewOwner();
+  const testData = {
+    servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
+  };
+  const lostItemFeePolicyBody = {
+    name: getTestEntityValue('1_lost'),
+    itemAgedLostOverdue: {
+      duration: 1,
+      intervalId: 'Minutes',
+    },
+    patronBilledAfterAgedLost: {
+      duration: 1,
+      intervalId: 'Minutes',
+    },
+    chargeAmountItem: {
+      amount: '0.00',
+      chargeType: 'actualCost',
+    },
+    lostItemProcessingFee: '10.00',
+    chargeAmountItemPatron: true,
+    chargeAmountItemSystem: true,
+    lostItemChargeFeeFine: {
+      duration: 6,
+      intervalId: 'Weeks',
+    },
+    returnedLostItemProcessingFee: false,
+    replacedLostItemProcessingFee: false,
+    replacementProcessingFee: '0.00',
+    replacementAllowed: false,
+    feesFinesShallRefunded: {
+      duration: 6,
+      intervalId: 'Months',
+    },
+    lostItemReturned: 'Charge',
+    id: uuid(),
+  };
 
   before(() => {
-    let source;
-
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.getViaApi().then((res) => {
-          servicePointId = res[0].id;
-          servicePoints = res;
+        cy.getAdminSourceRecord().then((record) => {
+          testData.adminSourceRecord = record;
         });
-        cy.getLocations({ limit: 1 }).then((locations) => {
-          testData.locationsId = locations.id;
-        });
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          testData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
-        });
+        ServicePoints.createViaApi(testData.servicePoint);
+        testData.defaultLocation = Locations.getDefaultLocation({
+          servicePointId: testData.servicePoint.id,
+        }).location;
         cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
+          name: getTestEntityValue('loanType'),
         }).then((loanType) => {
           testData.loanTypeId = loanType.id;
-        });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
+          testData.folioInstances = InventoryInstances.generateFolioInstances({
+            itemsProperties: { permanentLoanType: { id: testData.loanTypeId } },
+            itemsCount: 2,
+          });
         });
       })
       .then(() => {
-        RequestPolicy.createViaApi();
-        LostItemFeePolicy.createViaApi();
-        OverdueFinePolicy.createViaApi();
-        NoticePolicy.createApi();
-        cy.createLoanPolicy({
-          loanable: true,
-          loansPolicy: {
-            closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
-            period: {
-              duration: 5,
-              intervalId: 'Minutes',
-            },
-            profileId: 'Rolling',
-          },
-          renewable: true,
-          renewalsPolicy: {
-            numberAllowed: 0,
-            renewFromId: 'CURRENT_DUE_DATE',
-          },
-        }).then(() => {
-          policyIds.loan = Cypress.env(CY_ENV.LOAN_POLICY).id;
-          policyIds.request = Cypress.env(CY_ENV.REQUEST_POLICY).id;
-          policyIds.notice = Cypress.env(CY_ENV.NOTICE_POLICY).id;
-          policyIds.overdueFine = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY).id;
-          policyIds.lostItemFee = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY).id;
-          CirculationRules.getViaApi().then((circulationRule) => {
-            originalCirculationRules = circulationRule.rulesAsText;
-            const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-            ruleProps.i = policyIds.lostItemFee;
-            ruleProps.l = policyIds.loan;
-            ruleProps.r = policyIds.request;
-            ruleProps.o = policyIds.overdueFine;
-            ruleProps.n = policyIds.notice;
-            addedCirculationRule =
-              't ' +
-              testData.loanTypeId +
-              ': i ' +
-              ruleProps.i +
-              ' l ' +
-              ruleProps.l +
-              ' r ' +
-              ruleProps.r +
-              ' o ' +
-              ruleProps.o +
-              ' n ' +
-              ruleProps.n;
-            CirculationRules.addRuleViaApi(
-              originalCirculationRules,
-              ruleProps,
-              't ',
-              testData.loanTypeId,
-            );
+        Locations.createViaApi(testData.defaultLocation).then((location) => {
+          InventoryInstances.createFolioInstancesViaApi({
+            folioInstances: testData.folioInstances,
+            location,
           });
         });
-        source = InventoryHoldings.getHoldingSources({ limit: 1 });
+      })
+      .then(() => {
+        UsersOwners.createViaApi({
+          ...ownerData,
+          servicePointOwner: [
+            {
+              value: testData.servicePoint.id,
+              label: testData.servicePoint.name,
+            },
+          ],
+        }).then((ownerResponse) => {
+          testData.ownerId = ownerResponse.id;
+        });
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { i: lostItemFeePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       })
       .then(() => {
         cy.createTempUser([
           permissions.uiUsersViewLoans.gui,
-          permissions.uiUsersDeclareItemLost.gui,
           permissions.uiUserLoansAnonymize.gui,
-          permissions.uiFeeFines.gui,
-          permissions.uiInventoryViewInstances.gui,
-        ]).then(({ username, password, userId, barcode: userBarcode }) => {
-          userData.userId = userId;
-          UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
-            const servicePointOwner = servicePoints.map(({ id, name }) => ({
-              value: id,
-              label: name,
-            }));
-
-            InventoryInstances.createFolioInstanceViaApi({
-              instance: {
-                instanceTypeId: testData.instanceTypeId,
-                title: getTestEntityValue(),
-              },
-              holdings: [
-                {
-                  holdingsTypeId: testData.holdingTypeId,
-                  permanentLocationId: testData.locationsId,
-                  sourceId: source.id,
-                },
-              ],
-              items: [
-                {
-                  ...newFirstItemData,
-                  permanentLoanType: { id: testData.loanTypeId },
-                  materialType: { id: testData.materialTypeId },
-                },
-                {
-                  ...newSecondItemData,
-                  permanentLoanType: { id: testData.loanTypeId },
-                  materialType: { id: testData.materialTypeId },
-                },
-              ],
-            })
-              .then((specialInstanceIds) => {
-                testData.instanceId = specialInstanceIds.instanceId;
-                testData.holdingId = specialInstanceIds.holdingIds[0].id;
-                testData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
-              })
-              .then(() => {
-                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each(
-                  (itemBarcode) => {
-                    Checkout.checkoutItemViaApi({
-                      itemBarcode,
-                      userBarcode,
-                      servicePointId,
-                    });
-                  },
-                );
-
-                cy.wrap([newFirstItemData.barcode, newSecondItemData.barcode]).each(
-                  (itemBarcode) => {
-                    checkInActions.checkinItemViaApi({
-                      itemBarcode,
-                      servicePointId,
-                      checkInDate: moment.utc().format(),
-                    });
-                  },
-                );
-
-                cy.login(username, password, {
-                  path: AppPaths.getClosedLoansPath(userId),
-                  waiter: LoanDetails.waitLoading,
-                });
-
-                UsersOwners.createViaApi({
-                  ...newOwnerData,
-                  servicePointOwner,
-                }).then((resp) => {
-                  testData.userOwnerId = resp.id;
-                  cy.createFeesFinesTypeApi({
-                    feeFineType,
-                    ownerId: newOwnerData.id,
-                  });
-                });
-              });
+        ]).then((userProperties) => {
+          userData = userProperties;
+          UserEdit.addServicePointViaApi(
+            testData.servicePoint.id,
+            userData.userId,
+            testData.servicePoint.id,
+          );
+        });
+      })
+      .then(() => {
+        testData.itemBarcodes = testData.folioInstances[0].barcodes;
+        testData.itemIds = testData.folioInstances[0].itemIds;
+        cy.wrap(testData.itemBarcodes).each((itemBarcode) => {
+          Checkout.checkoutItemViaApi({
+            itemBarcode,
+            userBarcode: userData.barcode,
+            servicePointId: testData.servicePoint.id,
           });
+        });
+        UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
+          UserLoans.declareLoanLostViaApi(
+            {
+              servicePointId: testData.servicePoint.id,
+              declaredLostDateTime: moment.utc().format(),
+            },
+            userLoans.loans.filter(({ itemId }) => itemId === testData.itemIds[0])[0].id,
+          );
+        });
+        cy.wrap(testData.itemBarcodes).each((itemBarcode) => {
+          checkInActions.checkinItemViaApi({
+            itemBarcode,
+            servicePointId: testData.servicePoint.id,
+            checkInDate: moment.utc().format(),
+          });
+        });
+        cy.login(userData.username, userData.password, {
+          path: AppPaths.getClosedLoansPath(userData.userId),
+          waiter: LoanDetails.waitLoading,
         });
       });
   });
 
   after('Deleting created entities', () => {
-    cy.deleteFeesFinesTypeApi(Cypress.env('feesFinesType').id);
-    UsersOwners.deleteViaApi(testData.userOwnerId);
-    cy.wrap(testData.itemIds).each((item) => {
-      cy.deleteItemViaApi(item);
-    });
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
-    cy.deleteHoldingRecordViaApi(testData.holdingId);
-    InventoryInstance.deleteInstanceViaApi(testData.instanceId);
-    RequestPolicy.deleteViaApi(policyIds.request);
-    LostItemFeePolicy.deleteViaApi(policyIds.lostItemFee);
-    OverdueFinePolicy.deleteViaApi(policyIds.overdueFine);
-    NoticePolicy.deleteViaApi(policyIds.notice);
-    cy.deleteLoanPolicy(policyIds.loan);
-    cy.deleteLoanType(testData.loanTypeId);
+    cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
+    LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
     NewFeeFine.getUserFeesFines(userData.userId).then((userFeesFines) => {
       const feesFinesData = userFeesFines.accounts;
-      cy.wrap(feesFinesData).each(({ id }) => {
+      feesFinesData.forEach(({ id }) => {
         cy.deleteFeesFinesApi(id);
       });
     });
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePoint.id]);
+    ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.userId);
+    UsersOwners.deleteViaApi(ownerData.id);
+    InventoryInstances.deleteInstanceViaApi({
+      instance: testData.folioInstances[0],
+      servicePoint: testData.servicePoint,
+      shouldCheckIn: true,
+    });
+    cy.deleteLoanType(testData.loanTypeId);
+    Locations.deleteViaApi(testData.defaultLocation);
+  });
+
+  it('C9217 Manual anonymization in closed loans (volaris)', { tags: ['smoke', 'volaris'] }, () => {
+    LoanDetails.anonymizeAllLoans();
+    LoanDetails.checkAnonymizeAllLoansModalOpen();
+    LoanDetails.confirmAnonymizeAllLoans();
+    LoanDetails.checkAnonymizeModalOpen();
+    LoanDetails.closeAnonymizeModal();
+    LoansPage.verifyResultsInTheRow([
+      testData.itemBarcodes[0],
+      lostItemFeePolicyBody.lostItemProcessingFee,
+    ]);
   });
 
   it(
-    'C9217 Manual anonymization in closed loans (volaris)',
-    { tags: [testTypes.smoke, DevTeams.volaris] },
+    'C17136 Filter circulation log by Anonymized (volaris)',
+    { tags: ['criticalPath', 'volaris'] },
     () => {
-      LoanDetails.createFeeFine(newOwnerData.owner, feeFineType);
-      LoanDetails.anonymizeAllLoans();
-      LoanDetails.checkAnonymizeAllLoansModalOpen();
-      LoanDetails.confirmAnonymizeAllLoans();
-      LoanDetails.checkAnonymizeModalOpen();
-      LoanDetails.closeAnonymizeModal();
-      LoanDetails.checkLoanAbsent(newFirstItemData.barcode);
+      const searchResultsData = {
+        userBarcode: '-',
+        itemBarcode: testData.itemBarcodes[1],
+        object: 'Loan',
+        circAction: 'Anonymized',
+        source: 'System',
+      };
+      cy.loginAsAdmin({
+        path: TopMenu.circulationLogPath,
+        waiter: SearchPane.waitLoading,
+      });
+      SearchPane.setFilterOptionFromAccordion('loan', searchResultsData.circAction);
+      SearchPane.findResultRowIndexByContent(searchResultsData.circAction).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
+      SearchPane.resetResults();
+      SearchPane.searchByItemBarcode(testData.itemBarcodes[1]);
+      SearchPane.findResultRowIndexByContent(searchResultsData.circAction).then((rowIndex) => {
+        SearchPane.checkResultSearch(searchResultsData, rowIndex);
+      });
     },
   );
 });

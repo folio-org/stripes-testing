@@ -1,22 +1,20 @@
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../support/fragments/topMenu';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../support/fragments/users/users';
-import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Invoices from '../../support/fragments/invoices/invoices';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import DateTools from '../../support/utils/dateTools';
 
 describe('Invoices', () => {
@@ -143,12 +141,13 @@ describe('Invoices', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C366537: Approve & pay more than one invoice (thunderjet) (TaaS)',
-    { tags: [testType.extendedPath, devTeams.thunderjet] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Invoices.searchByNumber(firstInvoice.invoiceNumber);
       Invoices.selectInvoice(firstInvoice.invoiceNumber);

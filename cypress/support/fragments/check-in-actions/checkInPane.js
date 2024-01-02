@@ -1,5 +1,6 @@
 import { matching } from 'bigtest';
-import { MultiColumnListCell } from '../../../../interactors';
+import { HTML, including } from '@interactors/html';
+import { MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 export default {
@@ -79,6 +80,18 @@ export default {
   },
 
   checkResultsInTheRow(allContentToCheck, rowNumber = 0) {
-    allContentToCheck.forEach((contentToCheck) => cy.expect(MultiColumnListCell({ row: rowNumber, content: contentToCheck }).exists()));
+    allContentToCheck.forEach((contentToCheck) => cy.expect(
+      MultiColumnListCell({
+        row: rowNumber,
+        content: contentToCheck,
+      }).exists(),
+    ));
+  },
+
+  checkItemIsNotCheckedIn(itemBarcode) {
+    cy.expect([
+      MultiColumnListRow(including(itemBarcode)).absent(),
+      HTML(including('No items have been entered yet')),
+    ]);
   },
 };

@@ -1,12 +1,11 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -21,7 +20,6 @@ describe('data-import', () => {
 
     before('create test data', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
 
       // create Job profile
       cy.visit(SettingsMenu.jobProfilePath);
@@ -31,12 +29,13 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       JobProfiles.deleteJobProfile(jobProfile.profileName);
     });
 
     it(
       'C2331 Add tags to a job profile, then remove tags from it (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         JobProfiles.search(jobProfile.profileName);
         JobProfileView.addExistingTag(tag);

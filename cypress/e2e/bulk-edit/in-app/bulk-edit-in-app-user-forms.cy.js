@@ -1,13 +1,11 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -28,13 +26,14 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       Users.deleteViaApi(user.userId);
     });
 
     it(
       'C359605 Verify that columns on the "Are you sure form" the same as on the "Preview of the matched records " (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');

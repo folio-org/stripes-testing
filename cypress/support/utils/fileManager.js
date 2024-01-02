@@ -42,6 +42,48 @@ export default {
     });
   },
 
+  deleteFilesFromDownloadsByMask(...fileNameMasks) {
+    fileNameMasks.forEach((fileNameMask) => {
+      this.findDownloadedFilesByMask(fileNameMask).then((fileNames) => {
+        fileNames?.forEach((fileName) => cy.task('deleteFile', fileName));
+      });
+    });
+  },
+
+  convertCsvToJson(readFileName) {
+    cy.wait(Cypress.env('downloadTimeout'));
+
+    this.findDownloadedFilesByMask(readFileName).then((downloadedFileNames) => {
+      const lastDownloadedFileName = downloadedFileNames.sort()[downloadedFileNames.length - 1];
+
+      this.readFile(lastDownloadedFileName).then((content) => {
+        cy.task('convertCsvToJson', content).then((data) => {
+          cy.wrap(data).as('jsonData');
+        });
+      });
+    });
+
+    return cy.get('@jsonData');
+  },
+
+  writeToSeparateFile({ readFileName, writeFileName, lines = [] } = {}) {
+    cy.wait(Cypress.env('downloadTimeout'));
+
+    this.findDownloadedFilesByMask(readFileName).then((downloadedFileNames) => {
+      const lastDownloadedFileName = downloadedFileNames.sort()[downloadedFileNames.length - 1];
+
+      this.readFile(lastDownloadedFileName).then((content) => {
+        this.createFile(
+          `cypress/downloads/${writeFileName}`,
+          content
+            .split('\n')
+            .slice(...lines)
+            .join('\n'),
+        );
+      });
+    });
+  },
+
   verifyFile(verifyNameFunc, fileNameMask, verifyContentFunc, verifyContentFuncArgs = []) {
     /*
     verifyNameFunc: function for verifying file name
@@ -63,7 +105,7 @@ export default {
     });
   },
 
-  verifyFileIncludes(fileName, content) {
+  verifyFileIncludes(fileName, content, present = true) {
     cy.wait(Cypress.env('downloadTimeout'));
 
     recurse(
@@ -74,7 +116,11 @@ export default {
 
       this.readFile(lastDownloadedFilename).then((actualContent) => {
         content.forEach((element) => {
-          expect(actualContent).to.include(element);
+          if (present) {
+            expect(actualContent).to.include(element);
+          } else {
+            expect(actualContent).to.not.include(element);
+          }
         });
       });
     });

@@ -1,18 +1,20 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../support/fragments/users/usersCard';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 
 let user;
+const invalidUserUUID = getRandomPostfix();
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `Matched-Records-${userUUIDsFileName}`;
+const invalidUserUUIDsFileName = `invalidUserUUIDs_${getRandomPostfix()}.csv`;
+const errorsFromMatchingFileName = `*-Matching-Records-Errors-${invalidUserUUIDsFileName}`;
 
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
@@ -25,6 +27,7 @@ describe('bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading,
           });
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.userId);
+          FileManager.createFile(`cypress/fixtures/${invalidUserUUIDsFileName}`, invalidUserUUID);
         },
       );
     });
@@ -34,8 +37,13 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-      FileManager.deleteFileFromDownloadsByMask(`*${matchedRecordsFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${invalidUserUUIDsFileName}`);
+      FileManager.deleteFileFromDownloadsByMask(
+        `*${matchedRecordsFileName}`,
+        errorsFromMatchingFileName,
+      );
       Users.deleteViaApi(user.userId);
     });
 
@@ -45,7 +53,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357579 Bulk edit: In app - Update user records permission enabled - Preview of records matched (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -62,7 +70,7 @@ describe('bulk-edit', () => {
 
     it(
       'C357987 Verify Users Patron group bulk edit -- in app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -85,7 +93,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359213 Verify elements "Are you sure form?" -- Users-in app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -110,7 +118,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359214 Verify expiration date updates in In-app approach (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         const todayDate = new Date();
 
@@ -136,7 +144,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359237 Verify "Expiration date" option in the dropdown (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -151,7 +159,7 @@ describe('bulk-edit', () => {
 
     it(
       'C359585 Verify clicking on the "Commit changes" button (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -170,6 +178,24 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.verifySuccessBanner(1);
         BulkEditSearchPane.verifyChangedResults(user.username);
+      },
+    );
+
+    it(
+      'C359211 Verify upload file with invalid identifiers -- " -- Users-in app approach (firebird) (TaaS)',
+      { tags: ['extendedPath', 'firebird'] },
+      () => {
+        BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+        BulkEditSearchPane.uploadFile(invalidUserUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+        BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
+        BulkEditSearchPane.verifyErrorLabel(invalidUserUUIDsFileName, 0, 1);
+        BulkEditActions.openActions();
+        BulkEditActions.downloadErrors();
+        ExportFile.verifyFileIncludes(errorsFromMatchingFileName, [
+          invalidUserUUID,
+          'No match found',
+        ]);
       },
     );
   });

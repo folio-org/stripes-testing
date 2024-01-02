@@ -1,15 +1,15 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import DateTools from '../../../support/utils/dateTools';
-import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
-import Users from '../../../support/fragments/users/users';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('End to end scenarios', () => {
@@ -60,6 +60,7 @@ describe('data-import', () => {
           // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
           DataImport.verifyUploadState();
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
+          JobProfiles.waitFileIsUploaded();
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.search('Default - Create SRS MARC Authority');
@@ -71,14 +72,16 @@ describe('data-import', () => {
     });
 
     after(() => {
-      Users.deleteViaApi(firstUser.userId);
-      Users.deleteViaApi(secondUser.userId);
-      // TODO delete all created instances
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(firstUser.userId);
+        Users.deleteViaApi(secondUser.userId);
+        // TODO delete all created instances
+      });
     });
 
     it(
       'C358136 A user can filter and delete import logs from the "View all" page (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();

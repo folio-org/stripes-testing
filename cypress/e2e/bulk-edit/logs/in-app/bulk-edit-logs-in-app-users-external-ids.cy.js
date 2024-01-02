@@ -1,5 +1,3 @@
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
 import FileManager from '../../../../support/utils/fileManager';
@@ -36,6 +34,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     FileManager.deleteFile(`cypress/fixtures/${userExternalIDsFileName}`);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFileFromDownloadsByMask(
@@ -48,7 +47,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C375247 Verify genetated Logs files for Users In app -- only valid External IDs (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByUsername(user.username);

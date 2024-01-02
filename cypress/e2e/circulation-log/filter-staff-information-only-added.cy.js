@@ -1,25 +1,23 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import getRandomPostfix from '../../support/utils/stringTools';
+import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import SearchResults from '../../support/fragments/circulation-log/searchResults';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import SearchResults from '../../support/fragments/circulation-log/searchResults';
-import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../support/fragments/topMenu';
 import TopMenuNavigation from '../../support/fragments/topMenuNavigation';
+import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
+import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let userData = {};
 const ownerData = {};
@@ -109,6 +107,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     TransferAccounts.deleteViaApi(transferAccount.id);
     ManualCharges.deleteViaApi(feeFineType.id);
     PaymentMethods.deleteViaApi(paymentMethod.id);
@@ -120,7 +119,7 @@ describe('circulation-log', () => {
 
   it(
     'C17047 Filter circulation log by staff information only added (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const searchResultsData = {
         userBarcode: userData.barcode,
@@ -142,7 +141,7 @@ describe('circulation-log', () => {
 
   it(
     'C17048 Check the Actions button from filtering Circulation log by Staff only information added (volaris)',
-    { tags: [testTypes.criticalPath, devTeams.volaris] },
+    { tags: ['criticalPath', 'volaris'] },
     () => {
       cy.loginAsAdmin({ path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
       SearchPane.setFilterOptionFromAccordion('fee', 'Staff information only added');

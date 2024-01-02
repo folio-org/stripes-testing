@@ -1,13 +1,13 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import Users from '../../../support/fragments/users/users';
-import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
+import { Permissions } from '../../../support/dictionary';
 import ExpenseClasses from '../../../support/fragments/settings/finance/expenseClasses';
 import FundTypes from '../../../support/fragments/settings/finance/fundTypes';
+import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('Fund type view', () => {
   let userData;
@@ -42,6 +42,7 @@ describe('Fund type view', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     ExpenseClasses.deleteExpenseClassViaApi(newExpenseClass.id);
@@ -50,7 +51,7 @@ describe('Fund type view', () => {
 
   it(
     'C409416 A user with "Settings (Finance): View settings" permission can only view appropriate settings (Thunderjet)(TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       SettingsFinance.verifyItemInFinancePanel();
       SettingsFinance.verifyItemInDetailPanel();

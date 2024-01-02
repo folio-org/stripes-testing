@@ -1,15 +1,13 @@
-import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import FileManager from '../../support/utils/fileManager';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
-import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import getRandomPostfix from '../../support/utils/stringTools';
-import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
-import Users from '../../support/fragments/users/users';
+import DataExportResults from '../../support/fragments/data-export/dataExportResults';
+import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import { getLongDelay } from '../../support/utils/cypressTools';
+import FileManager from '../../support/utils/fileManager';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -28,17 +26,18 @@ describe('data-export', () => {
       permissions.dataExportEnableApp.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password);
-      cy.visit(TopMenu.dataExportPath);
       const instanceID = InventoryInstances.createInstanceViaApi(
         item.instanceName,
         item.itemBarcode,
       );
+      cy.login(user.username, user.password);
+      cy.visit(TopMenu.dataExportPath);
       FileManager.createFile(`cypress/fixtures/${fileName}`, instanceID);
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
@@ -46,7 +45,7 @@ describe('data-export', () => {
 
   it(
     'C350407 Verify that a user cannot trigger the DATA EXPORT using invalid job profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       ExportFileHelper.uploadFile(fileName);
       ExportFileHelper.exportWithDefaultJobProfile(fileName, 'holdings', 'Holdings');

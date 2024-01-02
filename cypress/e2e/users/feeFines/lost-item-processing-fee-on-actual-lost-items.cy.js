@@ -1,31 +1,28 @@
 import uuid from 'uuid';
-import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
-import TopMenu from '../../../support/fragments/topMenu';
-import UsersCard from '../../../support/fragments/users/usersCard';
-import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import NewFeeFine from '../../../support/fragments/users/newFeeFine';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import TestType from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import { getNewItem } from '../../../support/fragments/inventory/item';
-import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
-import Checkout from '../../../support/fragments/checkout/checkout';
 import permissions from '../../../support/dictionary/permissions';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
-import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
+import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
-import UserLoans from '../../../support/fragments/users/loans/userLoans';
+import { getNewItem } from '../../../support/fragments/inventory/item';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
+import TopMenu from '../../../support/fragments/topMenu';
+import UserLoans from '../../../support/fragments/users/loans/userLoans';
+import NewFeeFine from '../../../support/fragments/users/newFeeFine';
+import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import UsersSearchResultsPane from '../../../support/fragments/users/usersSearchResultsPane';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('ui-users-loans: Loans', () => {
-  let addedCirculationRule;
   const paymentMethod = {};
   const newOwnerData = UsersOwners.getDefaultNewOwner();
   const newFirstItemData = getNewItem();
@@ -34,7 +31,6 @@ describe('ui-users-loans: Loans', () => {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
   const itemsData = {};
-  let originalCirculationRules;
 
   const lostItemFeePolicyBody = {
     name: getTestEntityValue('1-minute-test'),
@@ -108,6 +104,15 @@ describe('ui-users-loans: Loans', () => {
           itemsData.holdingId = specialInstanceIds.holdingIds[0].id;
           itemsData.itemsId = specialInstanceIds.holdingIds[0].itemIds;
         });
+      })
+      .then(() => {
+        LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { i: lostItemFeePolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
+        });
       });
 
     UsersOwners.createViaApi({
@@ -125,32 +130,6 @@ describe('ui-users-loans: Loans', () => {
         paymentMethod.id = id;
       });
     });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    CirculationRules.getViaApi().then((circulationRule) => {
-      originalCirculationRules = circulationRule.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      ruleProps.i = lostItemFeePolicyBody.id;
-      addedCirculationRule =
-        't ' +
-        testData.loanTypeId +
-        ': i ' +
-        ruleProps.i +
-        ' l ' +
-        ruleProps.l +
-        ' r ' +
-        ruleProps.r +
-        ' o ' +
-        ruleProps.o +
-        ' n ' +
-        ruleProps.n;
-      CirculationRules.addRuleViaApi(
-        originalCirculationRules,
-        ruleProps,
-        't ',
-        testData.loanTypeId,
-      );
-    });
-
     cy.createTempUser([
       permissions.checkoutAll.gui,
       permissions.uiUsersfeefinesView.gui,
@@ -177,7 +156,8 @@ describe('ui-users-loans: Loans', () => {
   });
 
   after('Deleting created entities', () => {
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    cy.getAdminToken();
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     CheckInActions.checkinItemViaApi({
       itemBarcode: newFirstItemData.barcode,
       servicePointId: testData.userServicePoint.id,
@@ -209,7 +189,7 @@ describe('ui-users-loans: Loans', () => {
 
   it(
     'C365133 Verify ACTUAL COST lost items are being billed the "Lost item processing fee" when declared lost',
-    { tags: [TestType.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       UsersSearchPane.searchByKeywords(testData.userId);
       UsersSearchPane.openUser(testData.userId);

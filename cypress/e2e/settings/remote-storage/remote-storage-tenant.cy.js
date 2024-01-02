@@ -1,9 +1,9 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import settingsMenu from '../../../support/fragments/settingsMenu';
-import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
-import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
 import permissions from '../../../support/dictionary/permissions';
+import Locations from '../../../support/fragments/settings/tenant/location-setup/locations';
+import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
+import settingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 
@@ -16,9 +16,14 @@ describe('remote-storage-configuration', () => {
     });
   });
 
+  after('delete test data', () => {
+    cy.getAdminToken();
+    Users.deleteViaApi(user.userId);
+  });
+
   it(
     'C163922 Flag a location as remote storage (firebird)',
-    { tags: [TestTypes.smoke, DevTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       const locationName = `loc_${getRandomPostfix()}`;
 

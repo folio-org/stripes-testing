@@ -4,16 +4,14 @@ import getRandomPostfix from '../../../../utils/stringTools';
 import { NavListItem, Pane, Button, TextField, KeyValue } from '../../../../../../interactors';
 
 const servicePointsPane = Pane('Service points');
-const closeButton = Button({
-  icon: 'times',
-});
+const closeButton = Button({ icon: 'times' });
+const closeNewEditFormButton = Button({ id: 'clickable-close-service-point' });
 const collapseAllButton = Button('Collapse all');
-const generalInfo = Button({
-  id: 'accordion-toggle-button-generalInformation',
-});
-const locationSection = Button({
-  id: 'accordion-toggle-button-locationSection',
-});
+const generalInfo = Button({ id: 'accordion-toggle-button-generalInformation' });
+const locationSection = Button({ id: 'accordion-toggle-button-locationSection' });
+const newButton = Button('+ New');
+const editButton = Button('Edit');
+const saveAndCloseButton = Button('Save & close');
 
 const defaultServicePoint = {
   code: `autotest_code_${getRandomPostfix()}`,
@@ -66,6 +64,42 @@ export default {
     isDefaultSearchParamsRequired: false,
   }),
 
+  waitLoading() {
+    cy.expect(Pane('Service points').exists());
+  },
+
+  verifyNewButtonEnabled() {
+    cy.expect(newButton.has({ disabled: false }));
+  },
+
+  verifyEditAndCloseButtonEnabled() {
+    cy.expect([editButton.has({ disabled: false }), closeButton.has({ disabled: false })]);
+  },
+
+  openEditServicePointForm(name) {
+    cy.do(editButton.click());
+    cy.expect(Pane(`Edit: ${name}`).exists());
+  },
+
+  openNewServicePointForm() {
+    cy.do(newButton.click());
+    cy.expect([
+      Pane('New service point').exists(),
+      saveAndCloseButton.has({ disabled: true }),
+      editButton.has({ disabled: false }),
+    ]);
+  },
+
+  closeEditServicePointForm() {
+    cy.do(closeNewEditFormButton.click());
+    this.waitLoading();
+  },
+
+  closeNewServicePointForm() {
+    cy.do(closeNewEditFormButton.click());
+    this.waitLoading();
+  },
+
   goToServicePointsTab() {
     cy.do(NavListItem('Tenant').click());
     cy.expect(Pane('Tenant').exists());
@@ -74,7 +108,7 @@ export default {
   },
 
   createNewServicePoint({ name, code, displayName }) {
-    cy.do(Button('+ New').click());
+    cy.do(newButton.click());
     // UI renders 2 times. There is no way to create good waiter
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
@@ -82,7 +116,7 @@ export default {
       TextField({ name: 'name' }).fillIn(name),
       TextField({ name: 'code' }).fillIn(code),
       TextField({ name: 'discoveryDisplayName' }).fillIn(displayName),
-      Button('Save & close').click(),
+      saveAndCloseButton.click(),
     ]);
   },
 
@@ -93,12 +127,12 @@ export default {
   editServicePoint({ name, newName, newCode, newDisplayName }) {
     cy.do([
       Button(name).click(),
-      Pane(name).find(Button('Edit')).click(),
+      Pane(name).find(editButton).click(),
       TextField({ name: 'name' }).fillIn(newName || name),
     ]);
     if (newCode) cy.do(TextField({ name: 'code' }).fillIn(newCode));
     if (newDisplayName) cy.do(TextField({ name: 'discoveryDisplayName' }).fillIn(newDisplayName));
-    cy.do(Button('Save & close').click());
+    cy.do(saveAndCloseButton.click());
   },
 
   openServicePointDetails(name) {
@@ -110,7 +144,7 @@ export default {
     cy.expect([
       closeButton.exists(),
       collapseAllButton.exists(),
-      Button('Edit').absent(),
+      editButton.absent(),
       KeyValue('Name').has({ value: name }),
       KeyValue('Code').has({ value: code }),
       KeyValue('Discovery display name').has({ value: discoveryDisplayName }),

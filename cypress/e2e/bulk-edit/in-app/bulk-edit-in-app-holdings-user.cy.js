@@ -1,15 +1,13 @@
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 let holdingHRID;
@@ -28,10 +26,6 @@ describe('bulk-edit', () => {
         permissions.inventoryAll.gui,
       ]).then((userProperties) => {
         user = userProperties;
-        cy.login(user.username, user.password, {
-          path: TopMenu.bulkEditPath,
-          waiter: BulkEditSearchPane.waitLoading,
-        });
 
         const instanceId = InventoryInstances.createInstanceViaApi(
           item.instanceName,
@@ -42,7 +36,16 @@ describe('bulk-edit', () => {
           query: `"instanceId"="${instanceId}"`,
         }).then((holdings) => {
           holdingHRID = holdings[0].hrid;
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            // Popular Reading Collection
+            permanentLocationId: 'b241764c-1466-4e1d-a028-1a3684a5da87',
+          });
           FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
+        });
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
         });
       });
 
@@ -51,6 +54,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
@@ -58,7 +62,7 @@ describe('bulk-edit', () => {
 
     it(
       'C360114 Verify that User can upload file with Holdings UUIDs (firebird)',
-      { tags: [testTypes.smoke, devTeams.firebird] },
+      { tags: ['smoke', 'firebird'] },
       () => {
         BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
         BulkEditSearchPane.waitFileUploading();
@@ -86,7 +90,7 @@ describe('bulk-edit', () => {
 
     it(
       'C367984 Verify that visual clue on the "Are you sure?" form does not provide 0 records (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         cy.visit(TopMenu.bulkEditPath);
         BulkEditSearchPane.checkHoldingsRadio();
@@ -108,7 +112,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
 
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Permanent location');
         BulkEditSearchPane.verifyChangedResults(permLocation);
         BulkEditActions.verifySuccessBanner(1);
 

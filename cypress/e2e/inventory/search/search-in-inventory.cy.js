@@ -1,16 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Search in Inventory', () => {
   const testData = {};
@@ -40,6 +38,7 @@ describe('Search in Inventory', () => {
   });
 
   after('Deleting data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
     Users.deleteViaApi(testData.userPropertiesC358938.userId);
     createdInstanceIDs.forEach((id) => {
@@ -49,7 +48,7 @@ describe('Search in Inventory', () => {
 
   it(
     'C360548 Verify that operator "=" is used when user search for "Instance" by "Contributor" search option. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const searchQueries = [
         'Henri Sauguet',
@@ -58,6 +57,7 @@ describe('Search in Inventory', () => {
       ];
 
       DataImport.uploadFile('Sauguet_Henri_5_Bib_records.mrc', fileNameForC360548);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -92,11 +92,12 @@ describe('Search in Inventory', () => {
 
   it(
     'C360555 Verify that search for "Instance" records by "Keyword" option with "<ISBN with dashes>" query will only return the records with matched identifier value. (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       const searchQueries = ['978-92-8000-565-9', '978-92-8011-565-9'];
 
       DataImport.uploadFile('two_bib_records_with_isbn_search_by_keyword.mrc', fileNameForC360555);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -134,13 +135,13 @@ describe('Search in Inventory', () => {
 
   it(
     'C358938 Verify that "Instance" record will close when user switches to browse (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       cy.login(testData.userPropertiesC358938.username, testData.userPropertiesC358938.password, {
         path: TopMenu.inventoryPath,
         waiter: InventoryInstances.waitContentLoading,
       });
-      InventoryInstance.searchByTitle('*');
+      InventoryInstances.searchByTitle('*');
       InventoryInstances.waitLoading();
       InventoryInstances.selectInstance();
       InventorySearchAndFilter.verifyInstanceDetailsView();

@@ -1,16 +1,14 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import testTypes from '../../../support/dictionary/testTypes';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import TopMenu from '../../../support/fragments/topMenu';
 import CustomFields from '../../../support/fragments/settings/users/customFields';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FileManager from '../../../support/utils/fileManager';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import TopMenu from '../../../support/fragments/topMenu';
 import UserEdit from '../../../support/fragments/users/userEdit';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const testUsers = [];
@@ -58,6 +56,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       testUsers.forEach((testUser) => Users.deleteViaApi(testUser.userId));
       Users.deleteViaApi(user.userId);
@@ -70,7 +69,7 @@ describe('bulk-edit', () => {
 
     it(
       'C399098 Verify Previews for the number of Users records if the record has field with line break (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User Barcodes');

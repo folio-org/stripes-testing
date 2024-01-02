@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import Users from '../../../support/fragments/users/users';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -31,18 +31,18 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
     });
 
     it(
       'C353638 Verify proper system behavior for canceled import (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['extendedPath', 'folijet', 'nonParallel'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(firstFilePathForUpload, firstMarcFileName);
-        // TODO wait until file will be uploaded
-        cy.wait(5000);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(firstMarcFileName);
@@ -61,6 +61,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(secondFilePathForUpload, secondMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         Logs.checkFileIsRunning(secondMarcFileName);

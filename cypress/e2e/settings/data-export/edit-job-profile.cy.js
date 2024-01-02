@@ -1,16 +1,14 @@
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
-import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import ExportNewJobProfile from '../../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportNewJobProfile from '../../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
 import SingleJobProfile from '../../../support/fragments/data-export/exportJobProfile/singleJobProfile';
+import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
+import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 let user;
 let fieldMappingProfileId;
@@ -20,7 +18,7 @@ const jobProfileName = getTestEntityValue('jobProfile');
 const jobProfileNewName = getTestEntityValue('jobProfileNew');
 const secondNewJobProfileCalloutMessage = `Job profile ${jobProfileNewName} has been successfully edited`;
 
-describe('Job profile - setup', () => {
+describe('settings: data-export', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.dataExportEnableSettings.gui,
@@ -28,10 +26,7 @@ describe('Job profile - setup', () => {
       permissions.inventoryAll.gui,
     ]).then((userProperties) => {
       user = userProperties;
-      cy.login(user.username, user.password, {
-        path: TopMenu.settingsPath,
-        waiter: SettingsPane.waitLoading,
-      });
+
       ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(mappingProfileName).then(
         (response) => {
           fieldMappingProfileId = response.body.id;
@@ -41,10 +36,15 @@ describe('Job profile - setup', () => {
       cy.getAdminSourceRecord().then((record) => {
         adminSourceRecord = record;
       });
+      cy.login(user.username, user.password, {
+        path: TopMenu.settingsPath,
+        waiter: SettingsPane.waitLoading,
+      });
     });
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     ExportJobProfiles.getJobProfile({ query: `"name"=="${jobProfileNewName}"` }).then(
       (response) => {
         ExportJobProfiles.deleteJobProfileViaApi(response.id);
@@ -56,7 +56,7 @@ describe('Job profile - setup', () => {
 
   it(
     'C350671 Verify Job profile - edit existing profile (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       ExportJobProfiles.goToJobProfilesTab();
       ExportJobProfiles.waitLoading();

@@ -1,18 +1,18 @@
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import TopMenu from '../../support/fragments/topMenu';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import Users from '../../support/fragments/users/users';
 import { MultiColumnListCell } from '../../../interactors';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import { Permissions } from '../../support/dictionary';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import SearchResults from '../../support/fragments/circulation-log/searchResults';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import LoansPage from '../../support/fragments/loans/loansPage';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Loan date and time', () => {
   const testData = {
@@ -59,6 +59,7 @@ describe('Loan date and time', () => {
   });
 
   after('Delete all data', () => {
+    cy.getAdminToken();
     CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.servicePoint.id,
@@ -93,7 +94,7 @@ describe('Loan date and time', () => {
 
   it(
     'C350710 Check date and time -- loans (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       navigateToCircLogAndSearchItem(ITEM_BARCODE);
       SearchPane.verifyResultCells(true);

@@ -1,9 +1,9 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Permissions } from '../../../support/dictionary';
 import { Configurations } from '../../../support/fragments/settings/remote-storage';
+import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import RemoteStorage from '../../../support/fragments/settings/remote-storage/remoteStorage';
 
 let user;
 const caiaSoft = Configurations.configurations.CaiaSoft;
@@ -19,12 +19,13 @@ describe('remote-storage-configuration', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C367964 Verify text of success toast when creating remote storage configurations (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       // #1 Go to the "Settings" app
@@ -73,7 +74,7 @@ describe('remote-storage-configuration', () => {
 
   it(
     'C367965 Verify text of success toast when editing remote storage configurations (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
       const editedConfiguration = {

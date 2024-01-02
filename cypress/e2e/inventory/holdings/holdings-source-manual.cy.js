@@ -1,14 +1,14 @@
 import { including } from '@interactors/html';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
+import { Permissions } from '../../../support/dictionary';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},
@@ -39,15 +39,16 @@ describe('Holdings', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.item.itemBarcode);
     Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C367932 Verify holdings source added holdings manually (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
-      InventoryInstance.searchByTitle(testData.item.instanceName);
+      InventoryInstances.searchByTitle(testData.item.instanceName);
       InventorySearchAndFilter.verifyInstanceDisplayed(testData.item.instanceName);
       InventorySearchAndFilter.checkRowsCount(1);
 

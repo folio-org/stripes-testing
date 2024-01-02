@@ -1,12 +1,12 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import { Invoices, InvoiceView, InvoiceLineDetails } from '../../support/fragments/invoices';
-import { Budgets } from '../../support/fragments/finance';
-import TopMenu from '../../support/fragments/topMenu';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Users from '../../support/fragments/users/users';
-import { NewOrder, BasicOrderLine, Orders, OrderLines } from '../../support/fragments/orders';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import { INVOICE_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { Budgets } from '../../support/fragments/finance';
+import { InvoiceLineDetails, InvoiceView, Invoices } from '../../support/fragments/invoices';
+import { BasicOrderLine, NewOrder, OrderLines, Orders } from '../../support/fragments/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('Invoices', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -75,13 +75,14 @@ describe('Invoices', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Organizations.deleteOrganizationViaApi(testData.organization.id);
     Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C399084 Invoice can be approved when balance is close to the encumbrance available balance (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Click invoice line record on invoice
       Invoices.searchByNumber(testData.invoice.vendorInvoiceNo);
@@ -92,7 +93,7 @@ describe('Invoices', () => {
       InvoiceLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,
-          encumbrance: '98.00',
+          currentEncumbrance: '98.00',
         },
       ]);
 
@@ -128,23 +129,25 @@ describe('Invoices', () => {
       InvoiceLineDetails.checkFundDistibutionTableContent([
         {
           name: testData.fund.name,
-          encumbrance: '0.00',
+          currentEncumbrance: '0.00',
         },
       ]);
 
       // Click "Current encumbrance" link in "Fund distribution" accordion
       const TransactionDetails = InvoiceLineDetails.openEncumbrancePane();
-      TransactionDetails.checkTransactionDetails([
-        { key: 'Fiscal year', value: testData.fiscalYear.code },
-        { key: 'Amount', value: '0.00' },
-        { key: 'Source', value: testData.orderLine.poLineNumber },
-        { key: 'Type', value: 'Encumbrance' },
-        { key: 'From', value: testData.fund.name },
-        { key: 'Initial encumbrance', value: '98.00' },
-        { key: 'Awaiting payment', value: '96.00' },
-        { key: 'Expended', value: '0.00' },
-        { key: 'Status', value: 'Released' },
-      ]);
+      TransactionDetails.checkTransactionDetails({
+        information: [
+          { key: 'Fiscal year', value: testData.fiscalYear.code },
+          { key: 'Amount', value: '0.00' },
+          { key: 'Source', value: testData.orderLine.poLineNumber },
+          { key: 'Type', value: 'Encumbrance' },
+          { key: 'From', value: testData.fund.name },
+          { key: 'Initial encumbrance', value: '98.00' },
+          { key: 'Awaiting payment', value: '96.00' },
+          { key: 'Expended', value: '0.00' },
+          { key: 'Status', value: 'Released' },
+        ],
+      });
     },
   );
 });

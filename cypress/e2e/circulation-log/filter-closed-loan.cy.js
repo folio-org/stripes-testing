@@ -1,15 +1,13 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import UserEdit from '../../support/fragments/users/userEdit';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Users from '../../support/fragments/users/users';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import uuid from 'uuid';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
@@ -56,6 +54,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
@@ -64,7 +63,7 @@ describe('circulation-log', () => {
 
   it(
     'C16999 Filter circulation log by Closed loan(firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       const searchResultsData = {
         userBarcode: user.barcode,

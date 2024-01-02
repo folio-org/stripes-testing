@@ -1,13 +1,13 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
+import AgreementsDetails from '../../support/fragments/agreements/agreementViewDetails';
+import NoteTypes from '../../support/fragments/settings/notes/noteTypes';
 import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import NoteTypes from '../../support/fragments/settings/notes/noteTypes';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import usersCard from '../../support/fragments/users/usersCard';
-import AgreementsDetails from '../../support/fragments/agreements/agreementViewDetails';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import { randomFourDigitNumber } from '../../support/utils/stringTools';
 
 const fourDigits = randomFourDigitNumber();
@@ -33,6 +33,7 @@ describe('Notes', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(testData.userId, [servicePoint.id]);
     ServicePoints.deleteViaApi(servicePoint.id);
     Users.deleteViaApi(testData.userId);
@@ -40,7 +41,7 @@ describe('Notes', () => {
 
   it(
     'C357554 Verify that user cant delete a "Note type" when the "Note" was created (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       const noteType = `Note type ${fourDigits}`;
       const note1 = { title: 'Note 1', details: 'This is Note 1' };

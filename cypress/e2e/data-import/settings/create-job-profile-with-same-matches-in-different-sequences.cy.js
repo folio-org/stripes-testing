@@ -1,14 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -63,16 +63,18 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMatchProfiles.forEach((profile) => {
-        MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        collectionOfMatchProfiles.forEach((profile) => {
+          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+        });
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
     });
 
     it(
       'C399081 Verify the ability to create job profile with the same matches in different sequences (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(collectionOfMatchProfiles[0].matchProfile);

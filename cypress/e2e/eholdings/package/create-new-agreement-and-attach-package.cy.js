@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
-import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import { Permissions } from '../../../support/dictionary';
+import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
+import NewAgreement from '../../../support/fragments/agreements/newAgreement';
+import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
 import EHoldingsPackages from '../../../support/fragments/eholdings/eHoldingsPackages';
 import EHoldingsPackagesSearch from '../../../support/fragments/eholdings/eHoldingsPackagesSearch';
-import EHoldingsPackageView from '../../../support/fragments/eholdings/eHoldingsPackageView';
+import EHoldingSearch from '../../../support/fragments/eholdings/eHoldingsSearch';
+import EHoldingsTitlesSearch from '../../../support/fragments/eholdings/eHoldingsTitlesSearch';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import NewAgreement from '../../../support/fragments/agreements/newAgreement';
-import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
 
 describe('eHoldings', () => {
   describe('Package', () => {
@@ -36,13 +36,14 @@ describe('eHoldings', () => {
     });
 
     after('Deleting user, data', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
       EHoldingsPackages.deletePackageViaAPI(testData.defaultPackage.data.attributes.name);
     });
 
     it(
       'C1295 Create a new Agreement and attach a package (spitfire)',
-      { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+      { tags: ['extendedPath', 'spitfire'] },
       () => {
         EHoldingSearch.switchToPackages();
         cy.wait(10000);

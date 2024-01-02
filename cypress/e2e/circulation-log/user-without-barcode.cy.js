@@ -1,16 +1,16 @@
 import uuid from 'uuid';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Circulation log', () => {
   const testData = {
@@ -85,6 +85,7 @@ describe('Circulation log', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(userData.id, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(userData.id);
@@ -99,7 +100,7 @@ describe('Circulation log', () => {
 
   it(
     'C360554 Verify that "-" shown if User does not have barcode (volaris) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       const itemBarcode = testData.folioInstances[0].barcodes[0];
       // Navigate to the "Check in" app and check in the Item (step 2)

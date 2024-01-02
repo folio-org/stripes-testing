@@ -1,19 +1,17 @@
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import getRandomPostfix from '../../support/utils/stringTools';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
-import devTeams from '../../support/dictionary/devTeams';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Checkout from '../../support/fragments/checkout/checkout';
-import LoansPage from '../../support/fragments/loans/loansPage';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
 import InventoryItems from '../../support/fragments/inventory/item/inventoryItems';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 let servicePointId;
@@ -50,6 +48,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     InventoryItems.markItemAsMissingByUserIdViaApi(user.userId).then(() => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.ITEM_BARCODE);
       Users.deleteViaApi(user.userId);
@@ -58,7 +57,7 @@ describe('circulation-log', () => {
 
   it(
     'C16997 Filter circulation log by Claimed returned (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       UsersSearchPane.searchByStatus('Active');
       UsersSearchPane.searchByKeywords(user.userId);
@@ -90,7 +89,7 @@ describe('circulation-log', () => {
 
   it(
     'C16998 Check the Actions button from filtering Circulation log by claimed returned (firebird)',
-    { tags: [TestTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       SearchPane.setFilterOptionFromAccordion('loan', 'Claimed returned');
       SearchPane.checkActionButtonAfterFiltering(user.firstName, item.ITEM_BARCODE);

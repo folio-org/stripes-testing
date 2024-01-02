@@ -38,12 +38,17 @@ Cypress.Commands.add('getCirculationRules', () => {
   });
 });
 
-Cypress.Commands.add('updateCirculationRules', (body) => cy.okapiRequest({
-  method: REQUEST_METHOD.PUT,
-  path: 'circulation/rules',
-  body,
-  isDefaultSearchParamsRequired: false,
-}));
+Cypress.Commands.add('updateCirculationRules', (body) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.PUT,
+    path: 'circulation/rules',
+    body,
+    isDefaultSearchParamsRequired: false,
+    failOnStatusCode: false,
+  }).then((response) => {
+    return response;
+  });
+});
 
 Cypress.Commands.add('createLoanPolicy', (policy) => {
   cy.okapiRequest({

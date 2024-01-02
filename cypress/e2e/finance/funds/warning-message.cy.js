@@ -1,9 +1,7 @@
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Funds from '../../../support/fragments/finance/funds/funds';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-finance: Funds', () => {
   const defaultFund = { ...Funds.defaultUiFund };
@@ -29,6 +27,7 @@ describe('ui-finance: Funds', () => {
   });
 
   after(() => {
+    cy.getAdminToken();
     Funds.deleteFundViaApi(defaultFund.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
@@ -36,7 +35,7 @@ describe('ui-finance: Funds', () => {
 
   it(
     'C357528 Warning message for already existing field appears when after filling duplicated field user clicks on the dropdown with filter options list (thunderjet)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Funds.createFundForWarningMessage(defaultFund);
       Funds.checkWarningMessageFundCodeUsed();

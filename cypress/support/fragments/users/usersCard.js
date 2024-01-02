@@ -16,21 +16,38 @@ import {
   and,
   Badge,
   ListItem,
+  Modal,
+  MultiSelect,
+  MultiSelectOption,
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
+import NewNote from '../notes/newNote';
 
 const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
+const userInformationSection = Accordion({ id: 'userInformationSection' });
 const patronBlocksSection = Accordion({ id: 'patronBlocksSection' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
+const requestsAccordion = Accordion({ id: 'requestsSection' });
+const openedRequestsLink = requestsAccordion.find(Link({ id: 'clickable-viewopenrequests' }));
+const closedRequestsLink = requestsAccordion.find(HTML({ id: 'clickable-viewclosedrequests' }));
 const notesSection = Accordion('Notes');
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
   patronHasBlocksInPlace: 'Patron has block(s) in place',
 };
 const feesFinesAccordion = rootSection.find(Accordion({ id: 'accountsSection' }));
+const newNoteButton = notesSection.find(Button({ id: 'note-create-button' }));
+const newBlockPane = Pane('New Block');
+const saveAndCloseButton = Button({ id: 'patron-block-save-close' });
+const cancelButton = Button({ id: 'expirationDate-modal-cancel-btn' });
+const keepEditingButton = Button({ id: 'clickable-cancel-editing-confirmation-confirm' });
+const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
+const areYouSureModal = Modal('Are you sure?');
+const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
+const createRequestButton = Button('Create request');
 
 export default {
   errors,
@@ -56,6 +73,26 @@ export default {
     cy.do(notesSection.clickHeader());
 
     return details && this.verifyNoteDetails({ details });
+  },
+  expandRequestsSection(openRequests, closedRequests) {
+    cy.do(requestsAccordion.clickHeader());
+
+    return openRequests && this.verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests);
+  },
+  verifyQuantityOfOpenAndClosedRequests(openRequests, closedRequests) {
+    cy.expect(
+      openedRequestsLink.has({
+        text: `${openRequests} open requests`,
+      }),
+    );
+
+    if (closedRequests) {
+      cy.expect(
+        closedRequestsLink.has({
+          text: `${closedRequests} closed request`,
+        }),
+      );
+    }
   },
   verifyNoteDetails({ details = '' } = {}) {
     cy.expect([
@@ -93,6 +130,26 @@ export default {
     cy.do(Accordion({ id: 'customFields' }).clickHeader());
   },
 
+  expandRequestSection() {
+    cy.do(Accordion({ id: 'requestsSection' }).clickHeader());
+    cy.expect([
+      Link({ id: 'clickable-viewopenrequests' }).exists(),
+      Link({ id: 'clickable-viewclosedrequests' }).exists(),
+      createRequestButton.exists(),
+    ]);
+  },
+
+  verifySponsorsAlphabeticalOrder() {
+    cy.do(Accordion({ id: 'proxySection' }).clickHeader());
+    cy.get('#proxySection h3 a').then(($elements) => {
+      const users = [];
+      cy.wrap($elements).each(($el) => {
+        users.push($el.text());
+      });
+      cy.wrap(users).should('equal', users.sort());
+    });
+  },
+
   showOpenedLoans() {
     return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
@@ -103,6 +160,62 @@ export default {
 
   createPatronBlock() {
     cy.do(Button({ id: 'create-patron-block' }).click());
+  },
+
+  verifyNewBlockForm(saveBtnDisabled = true) {
+    cy.expect([
+      newBlockPane.exists(),
+      saveAndCloseButton.has({ disabled: saveBtnDisabled }),
+      cancelButton.has({ disabled: false }),
+    ]);
+  },
+
+  cancelNewBlock() {
+    cy.do(cancelButton.click());
+    cy.expect([
+      areYouSureModal.exists(),
+      HTML(including('There are unsaved changes')),
+      closeWithoutSavingButton.exists(),
+      keepEditingButton.has({ focused: true }),
+    ]);
+  },
+
+  keepEditingNewBlockForm() {
+    cy.do(keepEditingButton.click());
+    cy.expect(areYouSureModal.absent());
+    this.verifyNewBlockForm(false);
+  },
+
+  closeWithoutSavingBlockForm() {
+    cy.do(closeWithoutSavingButton.click());
+    cy.expect(areYouSureModal.absent());
+  },
+
+  verifyCreatedPatronBlock(content) {
+    cy.expect([
+      newBlockPane.absent(),
+      patronBlocksSection
+        .find(
+          MultiColumnListCell({
+            column: 'Display description',
+            row: 0,
+          }),
+        )
+        .has({ content }),
+    ]);
+  },
+
+  openPatronBlockByDescription(text) {
+    cy.do(patronBlocksSection.find(MultiColumnListCell(including(text))).click());
+  },
+
+  verifyBlockInfo() {
+    cy.expect([
+      Accordion('Block information'),
+      Button('Delete').has({ disabled: false }),
+      saveAndCloseButton.has({ disabled: true }),
+      cancelButton.has({ disabled: false }),
+    ]);
   },
 
   createAndSaveNewPatronBlock(text) {
@@ -197,6 +310,12 @@ export default {
 
   fillDescription(text) {
     cy.do(TextArea({ name: 'desc' }).fillIn(text));
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
+  },
+
+  fillDate(date) {
+    cy.do(TextField('Expiration date').fillIn(date));
+    cy.expect(saveAndCloseButton.has({ disabled: false }));
   },
 
   selectTemplate(templateName) {
@@ -204,8 +323,8 @@ export default {
   },
 
   saveAndClose() {
-    cy.do(Button({ id: 'patron-block-save-close' }).click());
-    cy.expect(Button({ id: 'patron-block-save-close' }).absent());
+    cy.do(saveAndCloseButton.click());
+    cy.expect(saveAndCloseButton.absent());
   },
 
   getApi(userId) {
@@ -224,6 +343,13 @@ export default {
     });
   },
 
+  verifyPermissionsNotExist(permissions) {
+    cy.do(permissionAccordion.clickHeader());
+    permissions.forEach((permission) => {
+      cy.expect(permissionAccordion.find(HTML(including(permission))).absent());
+    });
+  },
+
   waitLoading: () => cy.expect(rootSection.exists()),
 
   startFeeFine: () => {
@@ -233,7 +359,51 @@ export default {
 
   startRequest: () => {
     cy.do(actionsButton.click());
-    cy.do(Button('Create request').click());
+    cy.do(createRequestButton.click());
+  },
+
+  createNewRequest: () => {
+    cy.do(createRequestButton.click());
+  },
+
+  startBlock: () => {
+    cy.do(actionsButton.click());
+    cy.do(Button('Create block').click());
+  },
+
+  openTagsPane: () => {
+    cy.do(Button({ id: 'clickable-show-tags' }).click());
+    cy.expect(Pane('Tags').exists());
+    cy.wait(2000);
+  },
+
+  addTag: (tag) => {
+    cy.do([
+      MultiSelect({ id: 'input-tag' }).fillIn(tag),
+      MultiSelect({ id: 'input-tag' }).open(),
+      MultiSelectOption(including(tag)).click(),
+    ]);
+  },
+
+  deleteTag: (tag) => {
+    cy.do(
+      MultiSelect({ id: 'input-tag' })
+        .find(Button({ icon: 'times' }))
+        .click(),
+    );
+    cy.expect(
+      MultiSelect({ id: 'input-tag' })
+        .find(HTML(including(tag)))
+        .absent(),
+    );
+  },
+
+  verifyTagsNumber: (tagsNum) => {
+    cy.expect(
+      Button({ icon: 'tag' })
+        .find(HTML(including(tagsNum)))
+        .exists(),
+    );
   },
 
   hasSaveError(errorMessage) {
@@ -280,5 +450,22 @@ export default {
         .find(ListItem(including('open')))
         .has({ text: including(`${count.toString()} open` && `Total: ${totalAmount.toString()}`) }),
     );
+  },
+
+  clickNewNoteButton() {
+    cy.do(newNoteButton.click());
+    NewNote.verifyNewNoteIsDisplayed();
+  },
+
+  openNoteForEdit(noteTitle) {
+    cy.do(MultiColumnListCell(including(noteTitle)).find(Button('Edit')).click());
+  },
+
+  selectFeeFines(feeFines) {
+    cy.do([listFeesFines.find(MultiColumnListCell(including(feeFines))).click()]);
+  },
+
+  verifyUserInformationPresence() {
+    cy.expect(userInformationSection.exists());
   },
 };

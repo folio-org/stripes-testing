@@ -1,12 +1,10 @@
 import permissions from '../../../support/dictionary/permissions';
-import testType from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 import {
+  Budgets,
+  FinanceHelper,
   FiscalYears,
   Funds,
-  Budgets,
   Ledgers,
-  FinanceHelper,
 } from '../../../support/fragments/finance';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -68,6 +66,7 @@ describe('Finance: Funds', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     testData.budgets.forEach(({ id }) => Budgets.deleteViaApi(id));
     testData.funds.forEach(({ id }) => Funds.deleteFundViaApi(id));
     Ledgers.deleteledgerViaApi(testData.ledger.id);
@@ -77,7 +76,7 @@ describe('Finance: Funds', () => {
 
   it(
     'C374166 Moving allocation between funds is NOT successful if it results in negative available amount (thunderjet) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       FinanceHelper.searchByName(fromFund.name);
       Funds.selectFund(fromFund.name);

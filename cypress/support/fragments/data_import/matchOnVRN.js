@@ -23,7 +23,7 @@ import NewJobProfile from './job_profiles/newJobProfile';
 import InventoryViewSource from '../inventory/inventoryViewSource';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
-import { ITEM_STATUS_NAMES, ORDER_FORMAT_NAMES_IN_PROFILE } from '../../constants';
+import { ITEM_STATUS_NAMES, ORDER_FORMAT_NAMES_IN_PROFILE, RECORD_STATUSES } from '../../constants';
 
 const poLineData = {
   title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
@@ -329,7 +329,7 @@ function clickOnUpdatedHotlink(columnIndex = 3, row = 0) {
           columnIndex,
         }),
       )
-      .find(Link('Updated'))
+      .find(Link(RECORD_STATUSES.UPDATED))
       .click(),
   );
 }
@@ -341,7 +341,7 @@ function verifyInstanceStatusNotUpdated() {
         MultiColumnListCell({
           row: 1,
           columnIndex: 3,
-          content: not('Updated'),
+          content: not(RECORD_STATUSES.UPDATED),
         }),
       )
       .exists(),
@@ -363,7 +363,12 @@ function verifyHoldingsUpdated() {
 }
 
 function verifyItemUpdated(itemBarcode) {
-  cy.do(Link(itemBarcode).click());
+  cy.do(
+    Section({ id: 'pane-instancedetails' })
+      .find(MultiColumnListCell({ columnIndex: 0, content: itemBarcode }))
+      .find(Button(including(itemBarcode)))
+      .click(),
+  );
   cy.expect(itemStatusKeyValue.has({ value: ITEM_STATUS_NAMES.AVAILABLE }));
   cy.expect(itemBarcodeKeyValue.has({ value: itemBarcode }));
 

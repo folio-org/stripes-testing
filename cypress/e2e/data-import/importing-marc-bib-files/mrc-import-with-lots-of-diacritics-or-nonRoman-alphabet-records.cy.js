@@ -1,13 +1,16 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
+import {
+  INSTANCE_SOURCE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import { INSTANCE_SOURCE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -59,18 +62,18 @@ describe('data-import', () => {
     };
     const nameMarcFileForCreate = `C6709 autotestFile.${getRandomPostfix()}.mrc`;
 
-    beforeEach(() => {
+    before('login', () => {
       cy.loginAsAdmin();
-      cy.getAdminToken();
     });
 
     it(
       'C6709 Import a file with lots of diacritics or non-Roman alphabet records (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // upload a marc file for creating of the new instance
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('marcFileForC6709.mrc', nameMarcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -78,12 +81,12 @@ describe('data-import', () => {
         Logs.openFileDetails(nameMarcFileForCreate);
         rowNumbers.forEach((rowNumber) => {
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.srsMarc,
             rowNumber,
           );
           FileDetails.checkStatusInColumn(
-            FileDetails.status.created,
+            RECORD_STATUSES.CREATED,
             FileDetails.columnNameInResultList.instance,
             rowNumber,
           );
@@ -91,51 +94,86 @@ describe('data-import', () => {
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
 
-        FileDetails.openInstanceInInventory('Created', rowNumbers[0]);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumbers[0]);
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstance.verifyInstanceTitle(firstRecord.title);
         InventoryInstance.verifyAlternativeTitle(0, 1, firstRecord.firstAlternativeTitle);
         InventoryInstance.verifyAlternativeTitle(1, 1, firstRecord.secondAlternativeTitle);
         InventoryInstance.verifyContributor(0, 1, firstRecord.firstContributerName);
         InventoryInstance.verifyContributor(1, 1, firstRecord.secondContributerName);
-        InventoryInstance.verifyInstancePublisher(0, 0, firstRecord.firstPublisher);
-        InventoryInstance.verifyInstancePublisher(1, 0, firstRecord.secondPublisher);
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: firstRecord.firstPublisher,
+          },
+          0,
+        );
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: firstRecord.secondPublisher,
+          },
+          1,
+        );
         InventoryInstance.verifyInstanceLanguage(firstRecord.language);
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[1]);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumbers[1]);
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstance.verifyInstanceTitle(secondRecord.title);
         InventoryInstance.verifyAlternativeTitle(0, 1, secondRecord.firstAlternativeTitle);
         InventoryInstance.verifyAlternativeTitle(1, 1, secondRecord.secondAlternativeTitle);
         InventoryInstance.verifyContributor(0, 1, secondRecord.contributerName);
-        InventoryInstance.verifyInstancePublisher(0, 0, secondRecord.firstPublisher);
-        InventoryInstance.verifyInstancePublisher(1, 0, secondRecord.secondPublisher);
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: secondRecord.firstPublisher,
+          },
+          0,
+        );
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: secondRecord.secondPublisher,
+          },
+          1,
+        );
         InventoryInstance.verifyInstanceLanguage(secondRecord.language);
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[2]);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumbers[2]);
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstance.verifyInstanceTitle(thirdRecord.title);
         InventoryInstance.verifyAlternativeTitle(0, 1, thirdRecord.firstAlternativeTitle);
         InventoryInstance.verifyAlternativeTitle(3, 1, thirdRecord.secondAlternativeTitle);
         InventoryInstance.verifyContributor(0, 1, thirdRecord.firstContributerName);
         InventoryInstance.verifyContributor(2, 1, thirdRecord.secondContributerName);
-        InventoryInstance.verifyInstancePublisher(0, 0, thirdRecord.firstPublisher);
-        InventoryInstance.verifyInstancePublisher(1, 0, thirdRecord.secondPublisher);
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: thirdRecord.firstPublisher,
+          },
+          0,
+        );
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: thirdRecord.secondPublisher,
+          },
+          1,
+        );
         InventoryInstance.verifyInstanceLanguage(thirdRecord.language);
 
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForCreate);
-        FileDetails.openInstanceInInventory('Created', rowNumbers[3]);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED, rowNumbers[3]);
         InstanceRecordView.verifyInstanceSource(INSTANCE_SOURCE_NAMES.MARC);
         InventoryInstance.verifyInstanceTitle(fourthRecord.title);
         InventoryInstance.verifyAlternativeTitle(0, 1, fourthRecord.firstAlternativeTitle);
         InventoryInstance.verifyAlternativeTitle(1, 1, fourthRecord.secondAlternativeTitle);
         InventoryInstance.verifyContributor(0, 1, fourthRecord.contributerName);
-        InventoryInstance.verifyInstancePublisher(0, 0, fourthRecord.publisher);
+        InventoryInstance.verifyInstancePublisher(
+          {
+            publisher: fourthRecord.publisher,
+          },
+          0,
+        );
         InventoryInstance.verifyInstanceLanguage(fourthRecord.language);
       },
     );

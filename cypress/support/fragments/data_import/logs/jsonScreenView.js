@@ -21,12 +21,25 @@ export default {
       });
   },
 
+  getOrderNumber: () => {
+    return cy
+      .contains('"poLineNumber":')
+      .should('exist')
+      .invoke('parent')
+      .find('[class*="string--"]')
+      .invoke('text')
+      .then((text) => {
+        const orderNumber = text.match(/"(\d+-\d+)""/);
+        return orderNumber[1].replace('-1', '');
+      });
+  },
+
   openInstanceTab: () => {
     cy.do(Button(including('Instance')).click());
   },
 
   openHoldingsTab: () => {
-    cy.do(Button(including('Holdings')).click());
+    cy.get('div[class^="buttonGroup-"]').find('[data-test-logs-filter-option="2"]').click();
   },
 
   openItemTab: () => {
@@ -34,7 +47,7 @@ export default {
   },
 
   openOrderTab: () => {
-    cy.do(Button('Order*').click());
+    cy.get('div[class^="buttonGroup-"]').find('button[data-test-logs-filter-option="5"]').click();
   },
 
   verifyContentInTab: (value) => {

@@ -1,14 +1,14 @@
-import TopMenu from '../../support/fragments/topMenu';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import EditRequest from '../../support/fragments/requests/edit-request';
-import getRandomPostfix from '../../support/utils/stringTools';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-requests: Request: Create a New Request with Patron Comment.', () => {
   const folioInstances = InventoryInstances.generateFolioInstances();
@@ -60,6 +60,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
   });
 
   after('Deleting created entities', () => {
+    cy.getAdminToken();
     UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.servicePoint.id]);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     InventoryInstances.deleteInstanceViaApi({
@@ -79,7 +80,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
 
   it(
     'C199704 Request: Patron comments field is not editable after request is created (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       NewRequest.openNewRequestPane();

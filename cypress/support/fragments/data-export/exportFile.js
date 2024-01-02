@@ -85,13 +85,15 @@ const waitLandingPageOpened = () => {
   cy.expect(PaneHeader({ id: 'paneHeader8' }).find(Button('View all')).exists());
 };
 
+const uploadFile = (fileName) => {
+  cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
+};
+
 export default {
   downloadCSVFile,
   downloadExportedMarcFile,
   waitLandingPageOpened,
-  uploadFile: (fileName) => {
-    cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
-  },
+  uploadFile,
 
   exportWithDefaultJobProfile: (
     fileName,
@@ -142,7 +144,7 @@ export default {
       });
   },
 
-  verifyFileIncludes(fileName, content) {
+  verifyFileIncludes(fileName, content, include = true) {
     // Wait until file has been downloaded
     recurse(
       () => FileManager.findDownloadedFilesByMask(fileName),
@@ -152,7 +154,17 @@ export default {
 
       FileManager.readFile(lastDownloadedFilename).then((actualContent) => {
         content.forEach((element) => {
-          expect(actualContent).to.include(element);
+          if (include) {
+            if (Array.isArray(element)) {
+              // Check for nested array
+              element.forEach((nestedElement) => {
+                expect(actualContent).to.include(nestedElement);
+              });
+            } else {
+              // Check for regular element
+              expect(actualContent).to.include(element);
+            }
+          } else expect(actualContent).to.not.include(element);
         });
       });
     });
@@ -168,5 +180,15 @@ export default {
 
   clickCancelButton() {
     cy.do(Button('Cancel').click());
+  },
+
+  uploadRecentlyDownloadedFile(downloadedFile) {
+    FileManager.findDownloadedFilesByMask('*.*').then((downloadedFilenames) => {
+      const firstDownloadedFilename = downloadedFilenames[0];
+      FileManager.readFile(firstDownloadedFilename).then((actualContent) => {
+        FileManager.createFile(`cypress/fixtures/${downloadedFile}`, actualContent);
+      });
+    });
+    uploadFile(downloadedFile);
   },
 };

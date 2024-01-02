@@ -1,9 +1,9 @@
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import NoteTypes from '../../../support/fragments/settings/notes/noteTypes';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('Notes', () => {
   let user;
@@ -23,12 +23,13 @@ describe('Notes', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(user.userId);
   });
 
   it(
     'C1205 Settings (Notes): Edit and View General settings (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       NoteTypes.checkNewNoteButtonEnabled();
       NoteTypes.checkNoteTypeIsDisplayed(generalNote);

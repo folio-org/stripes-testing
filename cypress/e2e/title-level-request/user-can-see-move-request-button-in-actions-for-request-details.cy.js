@@ -1,23 +1,23 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import Requests from '../../support/fragments/requests/requests';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import UserEdit from '../../support/fragments/users/userEdit';
 import {
   FULFILMENT_PREFERENCES,
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
 } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
-import getRandomPostfix from '../../support/utils/stringTools';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Title Level Request', () => {
   let requestId;
@@ -111,6 +111,7 @@ describe('Title Level Request', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Requests.deleteRequestViaApi(requestId);
     UserEdit.changeServicePointPreferenceViaApi(testData.user.userId, [
       testData.userServicePoint.id,
@@ -129,7 +130,7 @@ describe('Title Level Request', () => {
 
   it(
     'C353975 Check that user can see Move request action in Action dropdown for request with connected item (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       Requests.waitContentLoading();
       Requests.findCreatedRequest(testData.itemBarcode);

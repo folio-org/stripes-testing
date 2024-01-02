@@ -1,11 +1,11 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Users from '../../../support/fragments/users/users';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import { Permissions } from '../../../support/dictionary';
 import Localication, {
   LANGUAGES,
   NUMBERS,
 } from '../../../support/fragments/settings/tenant/general/localication';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -27,12 +27,13 @@ describe('Settings: Tenant', () => {
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Users.deleteViaApi(testData.user.userId);
   });
 
   it(
     'C377044 Verify that the interface language is changed if user choose Numbering system has a value (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       // Select "Language and localization" option
       TenantPane.selectTenant(TENANTS.LANGUAGE_AND_LOCALIZATION);

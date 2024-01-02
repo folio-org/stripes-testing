@@ -1,15 +1,15 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
-import FileManager from '../../../support/utils/fileManager';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Holdings files', () => {
@@ -32,11 +32,12 @@ describe('data-import', () => {
         waiter: DataImport.waitLoading,
       });
       DataImport.uploadFile(filePathForUpload, fileNameForCreateInstance);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(fileNameForCreateInstance);
       Logs.openFileDetails(fileNameForCreateInstance);
-      FileDetails.openInstanceInInventory('Created');
+      FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
       InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
         instanceHrid = initialInstanceHrId;
       });
@@ -59,18 +60,20 @@ describe('data-import', () => {
     });
 
     after('delete user', () => {
+      cy.getAdminToken();
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     });
 
     it(
       'C359245 Checking the error displayed when the import used a "Job Profile" that does not support the "MARC Holding" record type (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         cy.visit(TopMenu.dataImportPath);
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, fileNameForImportForMarcAuthority);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search('Default - Create SRS MARC Authority');
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileNameForImportForMarcAuthority);
@@ -78,11 +81,11 @@ describe('data-import', () => {
         Logs.openFileDetails(fileNameForImportForMarcAuthority);
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.error,
+          RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
         FileDetails.openJsonScreen(title);
@@ -93,6 +96,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
@@ -100,11 +104,11 @@ describe('data-import', () => {
         Logs.openFileDetails(editedMarcFileName);
         FileDetails.verifyLogDetailsPageIsOpened();
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.srsMarc,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.error,
+          RECORD_STATUSES.ERROR,
           FileDetails.columnNameInResultList.error,
         );
         FileDetails.verifyLogDetailsPageIsOpened();

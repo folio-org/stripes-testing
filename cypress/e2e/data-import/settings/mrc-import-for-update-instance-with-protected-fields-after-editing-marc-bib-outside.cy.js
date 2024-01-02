@@ -1,30 +1,31 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
-  INSTANCE_STATUS_TERM_NAMES,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  INSTANCE_STATUS_TERM_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import FileManager from '../../../support/utils/fileManager';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import Users from '../../../support/fragments/users/users';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -96,33 +97,35 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      // delete created files
-      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-      Users.deleteViaApi(user.userId);
-      MarcFieldProtection.getListViaApi({
-        query: `"data"=="${firstProtectedFieldsData.data}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
+      cy.getAdminToken().then(() => {
+        JobProfiles.deleteJobProfile(jobProfile.profileName);
+        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        ActionProfiles.deleteActionProfile(actionProfile.name);
+        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        Users.deleteViaApi(user.userId);
+        MarcFieldProtection.getListViaApi({
+          query: `"data"=="${firstProtectedFieldsData.data}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        MarcFieldProtection.getListViaApi({
+          query: `"field"=="${secondProtectedFieldData.field}"`,
+        }).then((field) => {
+          MarcFieldProtection.deleteViaApi(field[0].id);
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      MarcFieldProtection.getListViaApi({
-        query: `"field"=="${secondProtectedFieldData.field}"`,
-      }).then((field) => {
-        MarcFieldProtection.deleteViaApi(field[0].id);
-      });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
       'C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         MarcFieldProtection.createViaApi(firstProtectedFieldsData);
         MarcFieldProtection.createViaApi(secondProtectedFieldData);
@@ -159,6 +162,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile('marcFileForC356830.mrc', nameMarcFileForCreate);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -167,11 +171,11 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 0);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 0);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
 
         // in cypress we can't delete fields in the file that's why using already created file
         // need to get instance hrid and uuids for 999 field for changing file
@@ -196,6 +200,7 @@ describe('data-import', () => {
         DataImport.verifyUploadState();
         DataImport.checkIsLandingPageOpened();
         DataImport.uploadFile(editedMarcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(editedMarcFileName);
@@ -205,16 +210,16 @@ describe('data-import', () => {
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
         FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
-        FileDetails.openInstanceInInventory('Updated');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED);
         InstanceRecordView.viewSource();
         InventoryViewSource.verifyFieldInMARCBibSource(
           '650\t',
-          'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb',
+          'Drawing, Dutch $y 21st century $v Exhibitions. $5 amb',
         );
         InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
       },

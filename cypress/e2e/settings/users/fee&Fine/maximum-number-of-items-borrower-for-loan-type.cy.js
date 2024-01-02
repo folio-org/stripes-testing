@@ -1,30 +1,26 @@
-import TestTypes from '../../../../support/dictionary/testTypes';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import { ITEM_STATUS_NAMES } from '../../../../support/constants';
 import permissions from '../../../../support/dictionary/permissions';
-import Helper from '../../../../support/fragments/finance/financeHelper';
-import NewServicePoint from '../../../../support/fragments/settings/tenant/servicePoints/newServicePoint';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
+import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 import LimitCheckOut from '../../../../support/fragments/checkout/modals/limitCheckOut';
-import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
+import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
+import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
+import Helper from '../../../../support/fragments/finance/financeHelper';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
+import NewServicePoint from '../../../../support/fragments/settings/tenant/servicePoints/newServicePoint';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import TopMenu from '../../../../support/fragments/topMenu';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../../../support/dictionary/devTeams';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
-import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
-import { ITEM_STATUS_NAMES } from '../../../../support/constants';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('ui-users: Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', () => {
   let user = {};
   const instanceTitle = `autotest title ${getRandomPostfix()}`;
   let servicePoint;
-  let addedCirculationRule;
-  let originalCirculationRules;
   let limitTestInstanceIds;
   let testInstanceIds;
   let loanPolicyForCourseReserves;
@@ -35,6 +31,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
   const limitTestItems = [];
   const testItems = [];
   const limitOfItem = 2;
+  const addedRules = [];
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -93,15 +90,18 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
             (secondLoanPolicy) => {
               loanPolicyForReadingRoom = secondLoanPolicy;
 
-              CirculationRules.getViaApi().then((circulationRule) => {
-                originalCirculationRules = circulationRule.rulesAsText;
-                const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-                const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
+              CirculationRules.addRuleViaApi(
+                { t: limitLoanTypeId },
+                { l: loanPolicyForCourseReserves.id },
+              ).then((newRule) => {
+                addedRules.push(newRule);
+              });
 
-                addedCirculationRule = `\nt ${limitLoanTypeId}: l ${loanPolicyForCourseReserves.id} ${defaultProps} \nt ${loanTypeId}: l ${loanPolicyForReadingRoom.id} ${defaultProps}`;
-                cy.updateCirculationRules({
-                  rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
-                });
+              CirculationRules.addRuleViaApi(
+                { t: loanTypeId },
+                { l: loanPolicyForReadingRoom.id },
+              ).then((newRule) => {
+                addedRules.push(newRule);
               });
             },
           );
@@ -144,6 +144,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
   });
 
   after(() => {
+    cy.getAdminToken();
     limitTestItems.forEach((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -186,7 +187,9 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
     });
     cy.deleteLoanPolicy(loanPolicyForCourseReserves.id);
     cy.deleteLoanPolicy(loanPolicyForReadingRoom.id);
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    cy.wrap(addedRules).each((rule) => {
+      CirculationRules.deleteRuleViaApi(rule);
+    });
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
       ServicePoints.deleteViaApi(servicePoint.id);
       Users.deleteViaApi(user.userId);
@@ -195,7 +198,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
 
   it(
     'C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (volaris)',
-    { tags: [TestTypes.smoke, DevTeams.volaris] },
+    { tags: ['smoke', 'volaris'] },
     () => {
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);

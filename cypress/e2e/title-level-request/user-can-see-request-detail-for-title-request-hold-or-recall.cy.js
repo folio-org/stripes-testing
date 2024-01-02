@@ -1,31 +1,29 @@
-import uuid from 'uuid';
 import moment from 'moment';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import permissions from '../../support/dictionary/permissions';
+import uuid from 'uuid';
 import {
   FULFILMENT_PREFERENCES,
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
 } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Requests from '../../support/fragments/requests/requests';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../support/fragments/checkout/checkout';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Request Detail. TLR', () => {
   const users = {
@@ -106,29 +104,11 @@ describe('Request Detail. TLR', () => {
       })
       .then(() => {
         RequestPolicy.createViaApi(requestPolicyBody);
-        CirculationRules.getViaApi().then((circulationRule) => {
-          testData.originalCirculationRules = circulationRule.rulesAsText;
-          const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-          ruleProps.r = requestPolicyBody.id;
-          testData.addedCirculationRule =
-            't ' +
-            testData.loanTypeId +
-            ': i ' +
-            ruleProps.i +
-            ' l ' +
-            ruleProps.l +
-            ' r ' +
-            ruleProps.r +
-            ' o ' +
-            ruleProps.o +
-            ' n ' +
-            ruleProps.n;
-          CirculationRules.addRuleViaApi(
-            testData.originalCirculationRules,
-            ruleProps,
-            't ',
-            testData.loanTypeId,
-          );
+        CirculationRules.addRuleViaApi(
+          { t: testData.loanTypeId },
+          { r: requestPolicyBody.id },
+        ).then((newRule) => {
+          testData.addedRule = newRule;
         });
       })
       .then(() => {
@@ -223,7 +203,7 @@ describe('Request Detail. TLR', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(testData.addedCirculationRule);
+    CirculationRules.deleteRuleViaApi(testData.addedRule);
     cy.deleteLoanType(testData.loanTypeId);
     UserEdit.changeServicePointPreferenceViaApi(users.mainUser.userId, [
       testData.userServicePoint.id,
@@ -249,7 +229,7 @@ describe('Request Detail. TLR', () => {
 
   it(
     'C350516 Check that the user can see "Request Detail" for Title request (Hold or Recall) (vega) (TaaS)',
-    { tags: [testTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       Requests.selectTitleRequestLevel();
       Requests.findCreatedRequest(itemsData.itemsWithSeparateInstance[0].instanceTitle);

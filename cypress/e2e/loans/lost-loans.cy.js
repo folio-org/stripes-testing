@@ -1,32 +1,30 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Users from '../../support/fragments/users/users';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import UserEdit from '../../support/fragments/users/userEdit';
-import getRandomPostfix from '../../support/utils/stringTools';
-import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import { Permissions } from '../../support/dictionary';
 import AppPaths from '../../support/fragments/app-paths';
-import Checkout from '../../support/fragments/checkout/checkout';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import ManualCharges from '../../support/fragments/settings/users/manualCharges';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
+import Checkout from '../../support/fragments/checkout/checkout';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ManualCharges from '../../support/fragments/settings/users/manualCharges';
+import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 const ownerData = {};
 const feeFineType = {};
 let materialTypes;
 let testData;
 let userData;
-let originalCirculationRules;
-let addedCirculationRule;
 let totalAmount;
 const lostItemFeePolicies = [
   {
@@ -94,7 +92,7 @@ describe('Lost loan', () => {
             testData = {
               folioInstances: InventoryInstances.generateFolioInstances({
                 count: 4,
-                properties: materialTypes.map(({ id }) => ({ materialType: { id } })),
+                itemsProperties: materialTypes.map(({ id }) => ({ materialType: { id } })),
               }),
               servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
               requestsId: '',
@@ -112,24 +110,14 @@ describe('Lost loan', () => {
             UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
           })
           .then(() => {
+            testData.addedRules = [];
             lostItemFeePolicies.forEach((policy) => LostItemFeePolicy.createViaApi(policy));
-            CirculationRules.getViaApi().then((circulationRule) => {
-              originalCirculationRules = circulationRule.rulesAsText;
-              const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-              const defaultProps = [];
-
-              for (let i = 0; i < lostItemFeePolicies.length; i++) {
-                defaultProps[
-                  i
-                ] = ` i ${lostItemFeePolicies[i].id} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n} l ${ruleProps.l}`;
-              }
-              addedCirculationRule = materialTypes
-                .map((materialType, index) => {
-                  return `\nm ${materialType.id}: ${defaultProps[index]}`;
-                })
-                .join('');
-              CirculationRules.updateCirculationRules({
-                rulesAsText: `${originalCirculationRules}${addedCirculationRule}`,
+            materialTypes.forEach((materialType, index) => {
+              CirculationRules.addRuleViaApi(
+                { m: materialType.id },
+                { i: lostItemFeePolicies[index].id },
+              ).then((newRule) => {
+                testData.addedRules.push(newRule);
               });
             });
 
@@ -169,7 +157,10 @@ describe('Lost loan', () => {
   });
 
   after('Delete test data', () => {
-    CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    cy.getAdminToken();
+    cy.wrap(testData.addedRules).each((rule) => {
+      CirculationRules.deleteRuleViaApi(rule);
+    });
     testData.folioInstances.forEach((instance) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: instance.barcodes[0],
@@ -203,7 +194,7 @@ describe('Lost loan', () => {
 
   it(
     'C10949: Close declared lost loan (set cost lost item fees) (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       const comment = 'Declare lost';
       // Navigate to open loan "A".

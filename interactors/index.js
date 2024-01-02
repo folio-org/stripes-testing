@@ -32,6 +32,7 @@ export { Checkbox, CheckboxInTable } from './checkbox';
 export { default as CodeMirror, CodeMirrorHint } from './code-mirror';
 export { default as DataImportUploadFile } from './dataImportUploadFile';
 export { default as Datepicker, Calendar } from './datepicker';
+export { Decorator, DecoratorWrapper } from './decorator';
 export { default as Dropdown, DropdownMenu } from './dropdown';
 export { default as Headline } from './headline';
 export { default as IconButton } from './icon-button';
@@ -60,8 +61,10 @@ export {
 } from './multi-select';
 export { default as NavList, NavListItem } from './navlist';
 export { default as NoValue } from './no-value';
-export { default as Option } from './option';
+export { default as Option, OptionGroup } from './option';
 export { default as Pane, PaneHeader, PaneSet, PaneContent } from './pane';
+export { default as Progress } from './progress';
+export { default as Popover } from './popover';
 export { default as RadioButton } from './radio-button';
 export { default as RadioButtonGroup } from './radio-button-group';
 export {
@@ -77,6 +80,7 @@ export { default as Select } from './select';
 export { default as Selection, SelectionList, SelectionOption } from './selection';
 export { default as Spinner } from './spinner';
 export { default as TableRow } from './tableRow';
+export { TableCell } from './tableRow';
 export { default as TextField, TextFieldIcon } from './text-field';
 export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';

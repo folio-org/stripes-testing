@@ -1,15 +1,21 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
-const getDefaultOrganization = ({ id = uuid(), accounts = 0 } = {}) => {
+const getDefaultOrganization = ({
+  id = uuid(),
+  isDonor = false,
+  isVendor = true,
+  accounts = 0,
+} = {}) => {
   const defaultUiOrganizations = {
     id,
     name: `autotest_name_${getRandomPostfix()}`,
     status: 'Active',
     code: `autotest_code_${getRandomPostfix()}`,
     erpCode: getRandomPostfix(),
-    isVendor: true,
-    accounts: [...Array(accounts)].map(() => ({
+    isDonor,
+    isVendor,
+    accounts: [...Array(accounts).keys()].map((index) => ({
       accountNo: getRandomPostfix(),
       accountStatus: 'Active',
       acqUnitIds: [],
@@ -17,7 +23,7 @@ const getDefaultOrganization = ({ id = uuid(), accounts = 0 } = {}) => {
       description: 'Main library account',
       libraryCode: 'COB',
       libraryEdiCode: getRandomPostfix(),
-      name: 'TestAccout1',
+      name: `autotest_account_${index + 1}`,
       notes: '',
       paymentMethod: 'Cash',
     })),

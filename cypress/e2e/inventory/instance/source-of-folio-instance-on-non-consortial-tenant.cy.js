@@ -1,11 +1,11 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import Helper from '../../../support/fragments/finance/financeHelper';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Instance', () => {
@@ -15,10 +15,6 @@ describe('inventory', () => {
     const itemBarcode = Helper.getRandomBarcode();
 
     before('create test data and login', () => {
-      cy.getAdminToken().then(() => {
-        InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
-      });
-
       cy.createTempUser([Permissions.uiInventoryViewCreateEditInstances.gui]).then(
         (userProperties) => {
           user = userProperties;
@@ -27,18 +23,21 @@ describe('inventory', () => {
             path: TopMenu.inventoryPath,
             waiter: InventoryInstances.waitContentLoading,
           });
+          InventoryInstances.createInstanceViaApi(instanceTitle, itemBarcode);
         },
       );
     });
 
     after('delete test data', () => {
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      });
     });
 
     it(
       'C402776 (NON-CONSORTIA) Verify the Source of a FOLIO Instance on non-consortial tenant (folijet) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         InventorySearchAndFilter.verifyPanesExist();
         InventorySearchAndFilter.instanceTabIsDefault();

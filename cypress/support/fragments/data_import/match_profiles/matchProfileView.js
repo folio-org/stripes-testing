@@ -1,10 +1,11 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import moment from 'moment';
 import { HTML, including } from '@interactors/html';
 import { Button, Pane, Accordion } from '../../../../../interactors';
-import DateTools from '../../../utils/dateTools';
 
 const viewPane = Pane({ id: 'view-match-profile-pane' });
 const actionsButton = Button('Actions');
+const accordionProfileDetails = Accordion({ id: 'view-match-profile-details' });
 
 export default {
   edit: () => {
@@ -95,15 +96,15 @@ export default {
     if (incomingStaticRecordValue === 'Date') {
       cy.contains('Incoming Static value (submatch only) record')
         .parent()
-        .should('include.text', DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY'));
+        .should('include.text', moment(new Date()).format('MM/D/YYYY'));
     }
     if (incomingStaticRecordValue === 'Date range') {
       cy.contains('Incoming Static value (submatch only) record')
         .parent()
         .invoke('text')
         .then((text) => {
-          const startDate = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
-          const endDate = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+          const startDate = moment(new Date()).format('MM/D/YYYY');
+          const endDate = moment(new Date()).format('MM/D/YYYY');
           const expectedText = `From${startDate}To${endDate}`;
 
           cy.wrap(text).should('include', expectedText);
@@ -117,5 +118,9 @@ export default {
     cy.contains('Existing Holdings record field')
       .parent()
       .should('include.text', existingRecordOption);
+  },
+
+  verifyExistingDetails: (recordItem) => {
+    cy.expect(accordionProfileDetails.find(Button({ dataId: recordItem })).exists());
   },
 };

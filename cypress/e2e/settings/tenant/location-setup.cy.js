@@ -1,10 +1,10 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import { ServicePoints, Locations } from '../../../support/fragments/settings/tenant';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
+import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
 import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
 
-describe('Settings: Location', () => {
+describe('Settings: Tenant', () => {
   const testData = {
     servicePoint: ServicePoints.getDefaultServicePoint(),
     user: {},
@@ -12,27 +12,27 @@ describe('Settings: Location', () => {
   };
 
   before('Create test data', () => {
-    cy.getAdminToken().then(() => {
-      ServicePoints.createViaApi(testData.servicePoint);
-      const { institution, location } = Locations.getDefaultLocation({
-        servicePointId: testData.servicePoint.id,
-      });
-      testData.institution = institution;
-      testData.location = location;
-      Locations.createViaApi(testData.location);
-    });
-
     cy.createTempUser([Permissions.settingsTenantViewLocation.gui]).then((userProperties) => {
       testData.user = userProperties;
+      cy.getAdminToken().then(() => {
+        ServicePoints.createViaApi(testData.servicePoint);
+        const { institution, location } = Locations.getDefaultLocation({
+          servicePointId: testData.servicePoint.id,
+        });
+        testData.institution = institution;
+        testData.location = location;
+        Locations.createViaApi(testData.location);
+      });
 
       cy.login(testData.user.username, testData.user.password);
-      cy.wait(1000);
+      cy.wait(2000);
       TopMenuNavigation.navigateToApp('Settings');
       TenantPane.goToTenantTab();
     });
   });
 
   after('Delete test data', () => {
+    cy.getAdminToken();
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);
@@ -40,7 +40,7 @@ describe('Settings: Location', () => {
 
   it(
     'C365628 Settings (tenant): View locations (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: [testData.institution] });
       // Select "Institutions" option on the "Location setup" subsection

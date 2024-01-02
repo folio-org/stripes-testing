@@ -2,8 +2,6 @@ import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
 import TopMenu from '../../../../support/fragments/topMenu';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../../support/dictionary/devTeams';
-import testTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -39,6 +37,7 @@ describe('Bulk Edit - Logs', () => {
   });
 
   after('delete test data', () => {
+    cy.getAdminToken();
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
     Users.deleteViaApi(user.userId);
@@ -46,14 +45,13 @@ describe('Bulk Edit - Logs', () => {
       userUUIDsFileName,
       `*${matchedRecordsFileName}`,
       previewOfProposedChangesFileName.first,
-      previewOfProposedChangesFileName.second,
       updatedRecordsFileName,
     );
   });
 
   it(
     'C375214 Verify generated Logs files for Users CSV -- only valid (firebird)',
-    { tags: [testTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       BulkEditSearchPane.verifyDragNDropUsersUUIDsArea();
       BulkEditSearchPane.uploadFile(userUUIDsFileName);

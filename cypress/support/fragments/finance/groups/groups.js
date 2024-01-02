@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
   Button,
@@ -16,12 +17,15 @@ import {
   Link,
   SearchField,
 } from '../../../../../interactors';
+import GroupDetails from './groupDetails';
 
 const newButton = Button('New');
 const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const fundModal = Modal('Select funds');
 const resetButton = Button({ id: 'reset-groups-filters' });
+const searchField = SearchField({ id: 'input-record-search' });
+const searchButton = Button('Search');
 
 export default {
   defaultUiGroup: {
@@ -29,7 +33,14 @@ export default {
     code: getRandomPostfix(),
     status: 'Active',
   },
-
+  getDefaultGroup() {
+    return {
+      id: uuid(),
+      name: `autotest_group_${getRandomPostfix()}`,
+      code: getRandomPostfix(),
+      status: 'Active',
+    };
+  },
   createViaApi: (groupProperties) => {
     return cy
       .okapiRequest({
@@ -161,6 +172,14 @@ export default {
     );
   },
 
+  checkFYInGroup: (fiscalYear) => {
+    cy.expect(
+      Accordion({ id: 'information' })
+        .find(KeyValue({ value: fiscalYear }))
+        .exists(),
+    );
+  },
+
   deleteGroupViaApi: (groupId) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/groups/${groupId}`,
@@ -173,5 +192,16 @@ export default {
 
   checkCreatedInList: (GroupName) => {
     cy.expect(Section({ id: 'group-results-pane' }).find(Link(GroupName)).exists());
+  },
+
+  searchByName: (name) => {
+    cy.do([searchField.selectIndex('Name'), searchField.fillIn(name), searchButton.click()]);
+  },
+
+  selectGroupByName: (GroupName) => {
+    cy.do(Section({ id: 'group-results-pane' }).find(Link(GroupName)).click());
+    GroupDetails.waitLoading();
+
+    return GroupDetails;
   },
 };

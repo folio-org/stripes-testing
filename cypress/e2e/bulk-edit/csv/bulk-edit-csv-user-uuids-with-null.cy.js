@@ -1,10 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
@@ -45,6 +43,7 @@ describe('bulk-edit', () => {
     });
 
     after('delete test data', () => {
+      cy.getAdminToken();
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
       Users.deleteViaApi(user.userId);
@@ -53,7 +52,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380590 Verify bulk edit of User record that contains NULL values in reference data - CSV (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkUsersRadio();
         BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
