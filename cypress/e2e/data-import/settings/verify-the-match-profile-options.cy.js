@@ -47,7 +47,7 @@ describe('Data Import', () => {
       'C421992 - (NON-CONSORTIA) Verify the match profile options (Folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
 
         NewMatchProfile.verifyExistingRecordSection();
 

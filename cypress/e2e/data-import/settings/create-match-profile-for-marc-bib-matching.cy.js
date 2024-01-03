@@ -42,7 +42,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.verifyExistingRecordSection();
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
@@ -87,7 +87,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.verifyExistingRecordSection();
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
@@ -125,7 +125,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.verifyExistingRecordSection();
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
@@ -161,7 +161,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
@@ -196,7 +196,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
@@ -231,7 +231,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);

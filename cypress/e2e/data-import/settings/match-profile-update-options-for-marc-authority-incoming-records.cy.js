@@ -35,7 +35,7 @@ describe('data-import', () => {
         });
         SettingsDataImport.goToSettingsDataImport();
         DataImport.selectDataImportProfile('Match profiles');
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
 
         // #2 Click on "MARC Authority" option as the "Existing records" type
         // The "MARC Authority" option appears on the "Existing records" column and highlights
