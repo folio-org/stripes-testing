@@ -31,7 +31,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
@@ -181,18 +180,24 @@ describe('data-import', () => {
         },
       },
     ];
+
     const collectionOfMatchProfiles = [
       {
         matchProfile: {
           profileName: `C356791 MARC-to-MARC 001 to 001.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '001',
+            in1: '',
+            in2: '',
+            subfield: '',
           },
           existingRecordFields: {
             field: '001',
+            in1: '',
+            in2: '',
+            subfield: '',
           },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
+          recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
         },
       },
       {
@@ -200,11 +205,13 @@ describe('data-import', () => {
           profileName: `C356791 MARC-to-Holdings 901h to Holdings HRID.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '901',
+            in1: '',
+            in2: '',
             subfield: 'h',
           },
-          matchCriterion: 'Exactly matches',
+          recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
           existingRecordType: EXISTING_RECORDS_NAMES.HOLDINGS,
-          holdingsOption: NewMatchProfile.optionsList.holdingsHrid,
+          existingMatchExpressionValue: 'holdingsrecord.hrid',
         },
       },
       {
@@ -212,11 +219,13 @@ describe('data-import', () => {
           profileName: `C356791 MARC-to-Item 902i to Item HRID.${getRandomPostfix()}`,
           incomingRecordFields: {
             field: '902',
+            in1: '',
+            in2: '',
             subfield: 'i',
           },
-          matchCriterion: 'Exactly matches',
+          recordType: EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC,
           existingRecordType: EXISTING_RECORDS_NAMES.ITEM,
-          itemOption: NewMatchProfile.optionsList.itemHrid,
+          existingMatchExpressionValue: 'item.hrid',
         },
       },
     ];
@@ -470,10 +479,15 @@ describe('data-import', () => {
 
         // create match profiles for updating
         cy.visit(SettingsMenu.matchProfilePath);
-        collectionOfMatchProfiles.forEach((profile) => {
-          MatchProfiles.createMatchProfile(profile.matchProfile);
-          MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
-        });
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingRecordsViaApi(
+          collectionOfMatchProfiles[0].matchProfile,
+        );
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+          collectionOfMatchProfiles[1].matchProfile,
+        );
+        NewMatchProfile.createMatchProfileWithIncomingAndExistingMatchExpressionViaApi(
+          collectionOfMatchProfiles[2].matchProfile,
+        );
 
         // create job profile for updating
         cy.visit(SettingsMenu.jobProfilePath);
