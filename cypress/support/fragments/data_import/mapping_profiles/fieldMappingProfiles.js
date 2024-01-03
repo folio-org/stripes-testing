@@ -118,7 +118,7 @@ export default {
   },
   selectMappingProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   checkMappingProfilePresented: (mappingProfileName) => {
-    // search(mappingProfileName);
+    search(mappingProfileName);
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
   checkListOfExistingProfilesIsDisplayed: () => {

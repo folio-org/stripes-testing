@@ -72,7 +72,6 @@ describe('data-import', () => {
         FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
 
         FieldMappingProfiles.verifyActionMenu();
-        FieldMappingProfiles.checkMappingProfilePresented(mappingProfileC365634.name);
 
         FieldMappingProfileView.checkSummaryFieldsConditions([
           { label: 'Name', conditions: { value: mappingProfileC365634.name } },
