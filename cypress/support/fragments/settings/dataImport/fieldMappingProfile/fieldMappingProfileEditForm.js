@@ -198,9 +198,13 @@ export default {
       cy.expect(formButtons[label].has(conditions));
     });
   },
-  checkFieldValidationError({ orderInformation }) {
+  checkFieldValidationError({ orderInformation, shouldBlur = false }) {
     if (orderInformation?.length) {
       orderInformation.forEach(({ label, error }) => {
+        if (shouldBlur) {
+          cy.do(orderDetails.orderInformation.find(TextField({ label: including(label) })).blur());
+        }
+
         cy.expect(
           orderDetails.orderInformation.find(TextField({ label: including(label) })).has({ error }),
         );
@@ -287,34 +291,39 @@ export default {
       );
     }
   },
-  fillOrderInformationProfileFields({ status, overridePoLineLimit, vendor, organizationLookUp }) {
-    if (status) {
+  fillOrderInformationProfileFields({
+    status,
+    overridePoLineLimit,
+    vendor,
+    organizationLookUp,
+    useQuates = true,
+  }) {
+    if (status !== undefined) {
+      const value = useQuates ? `"${status}"` : status;
+
       cy.do([
         orderInformationFields.orderStatus.focus(),
-        orderInformationFields.orderStatus.fillIn(`"${status}"`),
+        orderInformationFields.orderStatus.fillIn(value),
       ]);
-      cy.expect(orderInformationFields.orderStatus.has({ value: `"${status}"` }));
+      cy.expect(orderInformationFields.orderStatus.has({ value }));
     }
 
-    if (overridePoLineLimit) {
+    if (overridePoLineLimit !== undefined) {
+      const value = useQuates ? `"${overridePoLineLimit}"` : overridePoLineLimit;
       cy.do([
         orderInformationFields.overridePoLineLimit.focus(),
-        orderInformationFields.overridePoLineLimit.fillIn(`"${overridePoLineLimit}"`),
+        orderInformationFields.overridePoLineLimit.fillIn(value),
       ]);
-      cy.expect(
-        orderInformationFields.overridePoLineLimit.has({ value: `"${overridePoLineLimit}"` }),
-      );
+      cy.expect(orderInformationFields.overridePoLineLimit.has({ value }));
     }
 
-    if (vendor) {
-      cy.do([
-        orderInformationFields.vendor.focus(),
-        orderInformationFields.vendor.fillIn(`"${vendor}"`),
-      ]);
-      cy.expect(orderInformationFields.vendor.has({ value: `"${vendor}"` }));
+    if (vendor !== undefined) {
+      const value = useQuates ? `"${vendor}"` : vendor;
+      cy.do([orderInformationFields.vendor.focus(), orderInformationFields.vendor.fillIn(value)]);
+      cy.expect(orderInformationFields.vendor.has({ value }));
     }
 
-    if (organizationLookUp) {
+    if (organizationLookUp !== undefined) {
       cy.do([orderInformationFields.vendor.focus(), orderInformationFields.vendorLookUp.click()]);
       FinanceHelper.selectFromLookUpView({ itemName: organizationLookUp });
       cy.expect(orderInformationFields.vendor.has({ value: `"${organizationLookUp}"` }));
