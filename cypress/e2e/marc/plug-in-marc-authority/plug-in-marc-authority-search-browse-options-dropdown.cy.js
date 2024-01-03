@@ -14,7 +14,7 @@ import {
   JOB_STATUS_NAMES,
 } from '../../../support/constants';
 
-describe('plug-in MARC authority | Search | Browse', () => {
+describe('plug-in MARC authority', () => {
   const user = {};
   const marcFile = {
     marc: 'oneMarcBib.mrc',
@@ -22,7 +22,6 @@ describe('plug-in MARC authority | Search | Browse', () => {
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
     numOfRecords: 1,
   };
-
   let createdAuthorityID;
 
   before('Creating user and test data', () => {
