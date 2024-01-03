@@ -15,7 +15,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 
-describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () => {
+describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Manual linking -> Consortia', () => {
   const testData = {
     tags: {
       tag245: '245',

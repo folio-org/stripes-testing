@@ -13,7 +13,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
 
-describe('MARC Bibliographic -> Manual linking -> Consortia', () => {
+describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Consortia', () => {
   const testData = {
     sharedBibSourcePaheheaderText: 'Shared MARC bibliographic record',
     tag245: '245',
