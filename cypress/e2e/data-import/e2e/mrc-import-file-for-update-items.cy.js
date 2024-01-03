@@ -323,6 +323,7 @@ describe('data-import', () => {
     };
 
     beforeEach('create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
 
       const jobProfile = {

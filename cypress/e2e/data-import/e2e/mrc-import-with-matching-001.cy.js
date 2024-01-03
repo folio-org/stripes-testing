@@ -119,6 +119,7 @@ describe('data-import', () => {
         cy.visit(TopMenu.dataExportPath);
 
         // download exported marc file
+        cy.getAdminToken();
         ExportFile.uploadFile(nameForCSVFile);
         ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
         ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
