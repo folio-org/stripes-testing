@@ -101,6 +101,12 @@ export default {
       ),
     });
   },
+  checkPhysicalResourceDetailsFieldsConditions(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderDetailsViews.pResourceDetails });
+  },
+  checkElectronicResourceDetailsFieldsConditions(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderDetailsViews.eResourceDetails });
+  },
   expandActionsDropdown() {
     cy.do(actionsButton.click());
   },
