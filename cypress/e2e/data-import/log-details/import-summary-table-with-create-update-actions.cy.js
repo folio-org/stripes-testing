@@ -13,6 +13,12 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
@@ -244,18 +250,22 @@ describe('data-import', () => {
       FileManager.deleteFile(`cypress/fixtures/${fileNameWithUpdatedContent}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
-          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
         });
         collectionOfProfilesForCreate.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
         collectionOfProfilesForUpdate.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
         Users.deleteViaApi(user.userId);
         cy.wrap(instanceHrids).each((hrid) => {

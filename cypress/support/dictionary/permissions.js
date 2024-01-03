@@ -458,14 +458,12 @@ export default {
     gui: 'Requests: Requests: Reorder queue',
   },
   // Calendar
-  calendarEdit: {
-    internal: 'ui-calendar.edit',
-    gui: 'Settings (Calendar): Can create, view, and edit calendar events',
-  },
-  calendarAll: {
-    internal: 'ui-calendar.all',
-    gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events',
-  },
+  calendarEdit: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can create, view, and edit calendar events' },
+  calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
+  calendarView: { internal: 'ui-calendar.view', gui: 'Settings (Calendar): Can view existing calendars' },
+  calendarCreate: { internal: 'ui-calendar.create', gui: 'Settings (Calendar): Can create and assign new calendars' },
+  calendarDelete: { internal: 'ui-calendar.delete', gui: 'Settings (Calendar): Can delete existing calendars' },
+  calendarEditCalendars: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can edit and reassign existing calendars' },
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   dataExportEnableModule: {
@@ -857,6 +855,10 @@ export default {
     internal: 'ui-inventory.settings.statistical-codes',
     gui: 'Settings (Inventory): Create, edit, delete statistical codes',
   },
+  uiSettingsHRIDHandlingCreateEditDelete: {
+    internal: 'ui-inventory.settings.hridHandling',
+    gui: 'Settings (Inventory): Create, edit and delete HRID handling',
+  },
   // Added the below permissions for custom label creation
 
   uiSettingsEHoldingsViewAccessStatusTypes: {
@@ -939,5 +941,9 @@ export default {
   coursesAll: {
     internal: 'ui-courses.all',
     gui: 'Courses: All permissions',
+  },
+  coursesReadAll: {
+    internal: 'ui-courses.read-all',
+    gui: 'Courses: Read all',
   },
 };

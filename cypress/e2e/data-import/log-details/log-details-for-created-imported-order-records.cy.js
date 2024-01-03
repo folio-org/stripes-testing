@@ -9,13 +9,17 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Orders from '../../../support/fragments/orders/orders';
@@ -121,9 +125,9 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         cy.wrap(orderNumbers).each((number) => {
           Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` }).then((orderId) => {
             Orders.deleteOrderViaApi(orderId[0].id);

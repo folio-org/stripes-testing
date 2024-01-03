@@ -5,6 +5,12 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -101,11 +107,13 @@ describe('data-import', () => {
         cy.wrap(fieldProtectionIds).each((id) => {
           MarcFieldProtection.deleteViaApi(id);
         });
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(
           (instance) => {

@@ -7,12 +7,16 @@ import {
   VENDOR_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InvoiceView from '../../../support/fragments/invoices/invoiceView';
@@ -111,9 +115,11 @@ describe('data-import', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         collectionOfProfiles.forEach((profile) => {
-          JobProfiles.deleteJobProfile(profile.jobProfile.profileName);
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.jobProfile.profileName);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
       });
     });

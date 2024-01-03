@@ -25,6 +25,7 @@ import NewNote from '../notes/newNote';
 
 const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
+const requestsSection = rootSection.find(Accordion({ id: 'requestsSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
 const userInformationSection = Accordion({ id: 'userInformationSection' });
@@ -46,7 +47,10 @@ const cancelButton = Button({ id: 'expirationDate-modal-cancel-btn' });
 const keepEditingButton = Button({ id: 'clickable-cancel-editing-confirmation-confirm' });
 const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirmation-cancel' });
 const areYouSureModal = Modal('Are you sure?');
+const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
 const createRequestButton = Button('Create request');
+const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
+const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
 
 export default {
   errors,
@@ -117,8 +121,28 @@ export default {
     this.expandLoansSection(openLoans, returnedLoans);
     this.clickCurrentLoansLink();
   },
-  openFeeFines() {
+  openFeeFines(openFeesFines, closedFeesFines) {
     cy.do(feesFinesAccordion.clickHeader());
+
+    return (
+      openFeesFines && this.verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines)
+    );
+  },
+
+  verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines) {
+    cy.expect(
+      openedFeesFinesLink.has({
+        text: `${openFeesFines} open fee/fine `,
+      }),
+    );
+
+    if (closedFeesFines) {
+      cy.expect(
+        closedFeesFinesLink.has({
+          text: `${closedFeesFines} closed fee/fine`,
+        }),
+      );
+    }
   },
 
   openNotesSection() {
@@ -411,6 +435,9 @@ export default {
   startFeeFineAdding() {
     cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
   },
+  startRequestAdding() {
+    cy.do(requestsSection.find(Button('Create request')).click());
+  },
   viewAllFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewallaccounts' })).click());
   },
@@ -458,6 +485,10 @@ export default {
 
   openNoteForEdit(noteTitle) {
     cy.do(MultiColumnListCell(including(noteTitle)).find(Button('Edit')).click());
+  },
+
+  selectFeeFines(feeFines) {
+    cy.do([listFeesFines.find(MultiColumnListCell(including(feeFines))).click()]);
   },
 
   verifyUserInformationPresence() {

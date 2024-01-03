@@ -11,6 +11,12 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -108,11 +114,13 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         // delete generated profiles
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {

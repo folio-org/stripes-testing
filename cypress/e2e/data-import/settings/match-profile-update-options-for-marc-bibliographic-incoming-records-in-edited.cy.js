@@ -1,11 +1,12 @@
 import { Permissions } from '../../../support/dictionary';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import SettingsDataImport from '../../../support/fragments/data_import/settingsDataImport';
+import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
 import MatchProfileEdit from '../../../support/fragments/data_import/match_profiles/matchProfileEdit';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
@@ -46,7 +47,7 @@ describe('data-import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         Users.deleteViaApi(user.userId);
       });
     });

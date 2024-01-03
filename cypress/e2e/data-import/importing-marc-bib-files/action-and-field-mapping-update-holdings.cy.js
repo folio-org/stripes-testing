@@ -8,6 +8,12 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -208,15 +214,17 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfileForCreate.profileName);
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         collectionOfMappingAndActionProfilesForCreate.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);

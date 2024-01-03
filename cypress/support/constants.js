@@ -365,3 +365,28 @@ export const REFERENCES_FILTER_CHECKBOXES = {
   EXCLUDE_SEE_FROM: 'Exclude see from',
   EXCLUDE_SEE_FROM_ALSO: 'Exclude see from also',
 };
+
+export const MARC_AUTHORITY_SEARCH_OPTIONS = {
+  KEYWORD: 'Keyword',
+  IDENTIFIER_ALL: 'Identifier (all)',
+  LCCN: 'LCCN',
+  PERSONAL_NAME: 'Personal name',
+  CORPORATE_CONFERENCE_NAME: 'Corporate/Conference name',
+  GEOGRAPHIC_NAME: 'Geographic name',
+  NAME_TITLE: 'Name-title',
+  UNIFORM_TITLE: 'Uniform title',
+  SUBJECT: 'Subject',
+  CHILDRENS_SUBJECT_HEADING: "Children's subject heading",
+  GENRE: 'Genre',
+  ADVANCED_SEARCH: 'Advanced search',
+};
+
+export const MARC_AUTHORITY_BROWSE_OPTIONS = {
+  PERSONAL_NAME: 'Personal name',
+  CORPORATE_CONFERENCE_NAME: 'Corporate/Conference name',
+  GEOGRAPHIC_NAME: 'Geographic name',
+  NAME_TITLE: 'Name-title',
+  UNIFORM_TITLE: 'Uniform title',
+  SUBJECT: 'Subject',
+  GENRE: 'Genre',
+};

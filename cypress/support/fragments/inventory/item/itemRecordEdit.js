@@ -10,9 +10,11 @@ import {
   PaneHeader,
   SelectionList,
   SelectionOption,
+  Checkbox,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import InstanceStates from '../instanceStates';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const itemEditForm = HTML({ className: including('itemForm-') });
 const administrativeDataSection = itemEditForm.find(Accordion('Administrative data'));
@@ -32,6 +34,7 @@ const itemDataFields = {
 const loanDataFields = {
   loanType: itemEditForm.find(Select({ id: 'additem_loanTypePerm' })),
 };
+const addNoteBtn = Accordion('Item notes').find(Button('Add note'));
 
 const temporaryLocationDropdown = Button({ id: 'additem_temporarylocation' });
 const temporaryLocationList = SelectionList({ id: 'sl-container-additem_temporarylocation' });
@@ -55,9 +58,24 @@ export default {
       TextArea({ ariaLabel: 'Administrative note' }).fillIn(note),
     ]);
   },
+  addNotes: (
+    notes = [{ text: `Note ${getRandomPostfix()}`, noteType: 'Action note', staffOnly: false }],
+  ) => {
+    notes.forEach((note, index) => {
+      cy.do([
+        addNoteBtn.click(),
+        Select({ name: `notes[${index}].itemNoteTypeId` }).choose(note.noteType),
+        TextArea({ name: `notes[${index}].note` }).fillIn(note.text),
+      ]);
+      if (note.staffOnly) cy.do(Checkbox({ name: `notes[${index}].staffOnly` }).click());
+    });
+  },
+  deleteNote: () => {
+    cy.do([Button({ icon: 'trash' }).click()]);
+  },
   addItemsNotes: (text, type = 'Action note') => {
     cy.do([
-      Accordion('Item notes').find(Button('Add note')).click(),
+      addNoteBtn.click(),
       Select('Note type*').choose(type),
       TextArea({ ariaLabel: 'Note' }).fillIn(text),
     ]);
