@@ -8,6 +8,12 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
@@ -374,13 +380,15 @@ describe('data-import', () => {
           '*SearchInstanceUUIDs*',
         );
         cy.getAdminToken().then(() => {
-          JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileWithMatch.profileName);
           cy.wrap(collectionOfMatchProfiles).each((profile) => {
-            MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+            SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
           });
           cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
-            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
           });
           cy.getInstance({
             limit: 1,
@@ -594,13 +602,15 @@ describe('data-import', () => {
           '*SearchInstanceUUIDs*',
         );
         cy.getAdminToken().then(() => {
-          JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileWithoutMatch.profileName);
           cy.wrap(collectionOfMatchProfiles).each((profile) => {
-            MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+            SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
           });
           cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
-            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
           });
           cy.getInstance({
             limit: 1,

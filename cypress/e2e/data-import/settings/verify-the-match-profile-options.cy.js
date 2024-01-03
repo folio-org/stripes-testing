@@ -1,4 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -38,7 +39,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       Users.deleteViaApi(user.userId);
     });
 

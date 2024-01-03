@@ -8,6 +8,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import {
   ACCEPTED_DATA_TYPE_NAMES,
   JOB_STATUS_NAMES,
@@ -60,7 +61,7 @@ describe('data-import', () => {
         MarcAuthority.deleteViaAPI(id);
       });
 
-      JobProfiles.deleteJobProfile(createdJobProfile.profileName);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(createdJobProfile.profileName);
       Users.deleteViaApi(testData.userProperties.userId);
     });
 

@@ -57,6 +57,7 @@ export default {
     });
   },
   goToOpenFeeFines: () => cy.do(Button({ id: 'open-accounts' }).click()),
+  goToClosedFeesFines: () => cy.do(Button({ id: 'closed-accounts' }).click()),
   goToAllFeeFines: () => cy.do(Button({ id: 'all-accounts' }).click()),
   createFeeFine: () => {
     cy.do(Button('Actions').click());
@@ -139,5 +140,8 @@ export default {
         .has({ content: status }),
     );
   },
-  openClosedFeesFines: () => cy.do(Button({ id: 'closed-accounts' }).click()),
+  verifyFeeFineCount: (rowCount) => {
+    cy.expect(feeFinesList.has({ rowCount }));
+  },
+  closeFeesFinesDetails: () => cy.do(Button({ icon: 'times' }).click()),
 };

@@ -6,6 +6,12 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -180,17 +186,21 @@ describe('data-import', () => {
         MarcFieldProtection.deleteViaApi(firstFieldId);
         MarcFieldProtection.deleteViaApi(secondFieldId);
         // delete profiles
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-        JobProfiles.deleteJobProfile(jobProfileForOverride.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
-        ActionProfiles.deleteActionProfile(instanceActionProfile.name);
-        ActionProfiles.deleteActionProfile(marcBibActionProfileOverride.name);
-        ActionProfiles.deleteActionProfile(instanceActionProfileOverride.name);
-        FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
-        FieldMappingProfileView.deleteViaApi(marcBibMappingProfileOverride.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfileOverride.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForOverride.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(marcBibActionProfile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(instanceActionProfile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(marcBibActionProfileOverride.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(instanceActionProfileOverride.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(marcBibMappingProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(instanceMappingProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          marcBibMappingProfileOverride.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          instanceMappingProfileOverride.name,
+        );
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
         FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);

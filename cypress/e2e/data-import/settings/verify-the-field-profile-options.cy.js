@@ -1,8 +1,11 @@
 import { Permissions } from '../../../support/dictionary';
+import {
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -45,8 +48,8 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      ActionProfiles.deleteActionProfile(actionProfileName);
-      FieldMappingProfileView.deleteViaApi(mappingProfileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileName);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileName);
       Users.deleteViaApi(user.userId);
     });
 
