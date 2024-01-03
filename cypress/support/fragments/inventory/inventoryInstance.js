@@ -139,6 +139,7 @@ const itemBarcodeField = TextField({ name: 'barcode' });
 const itemStatusKeyValue = KeyValue('Item status');
 const viewHoldingsButtonByID = (holdingsID) => Section({ id: holdingsID }).find(viewHoldingsButton);
 const marcAuthorityAppIcon = Link({ href: including('/marc-authorities/authorities/') });
+const detailsViewPaneheader = PaneHeader({ id: 'paneHeaderpane-instancedetails' });
 
 const messages = {
   itemMovedSuccessfully: '1 item has been successfully moved.',
@@ -162,6 +163,9 @@ const validOCLC = {
     endDate: { interactor: TextField('End date'), defaultValue: '\\\\\\\\' },
   },
 };
+
+const sharedTextInDetailView = 'Shared instance • ';
+const localTextInDetailView = 'Local instance • ';
 
 const pressAddHoldingsButton = () => {
   cy.do(addHoldingButton.click());
@@ -603,6 +607,10 @@ export default {
       buttonPrevPageDisabled.exists(),
       or(buttonNextPageDisabled.exists(), buttonNextPageEnabled.exists()),
     ]);
+  },
+
+  verifyNoResultFoundMessage(absenceMessage) {
+    cy.expect(paneResultsSection.find(HTML(including(absenceMessage))).exists());
   },
 
   selectRecord() {
@@ -1061,14 +1069,27 @@ export default {
     );
   },
 
-  checkContributor: (text) => {
+  checkContributor: (name, index = 0, contributorType) => {
     cy.expect(section.find(Button(including('Contributor'))).exists());
-    cy.expect(
-      Accordion('Contributor')
-        .find(contributorsList)
-        .find(MultiColumnListCell(including(text)))
-        .exists(),
-    );
+    if (contributorType) {
+      cy.expect([
+        Accordion('Contributor')
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: name }),
+        Accordion('Contributor')
+          .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: contributorType }),
+      ]);
+    } else {
+      cy.expect(
+        Accordion('Contributor')
+          .find(contributorsList)
+          .find(MultiColumnListCell(including(name)))
+          .exists(),
+      );
+    }
   },
 
   checkDetailViewOfInstance(accordion, value) {
@@ -1191,5 +1212,26 @@ export default {
     cy.get('div[data-test-updated-by="true"]')
       .find('a')
       .should('include.text', `${userLastName}, ${userFirsttName}`);
+  },
+
+  verifyRecordCreatedSource: (userFirsttName, userLastName) => {
+    cy.get('div[data-test-created-by="true"]')
+      .find('a')
+      .should('include.text', `${userLastName}, ${userFirsttName}`);
+  },
+
+  checkSharedTextInDetailView(isShared = true) {
+    const expectedText = isShared ? sharedTextInDetailView : localTextInDetailView;
+    cy.expect(detailsViewPaneheader.has({ title: including(expectedText) }));
+  },
+
+  verifyContributorAbsent: (text) => {
+    cy.expect(section.find(Button(including('Contributor'))).exists());
+    cy.expect(
+      Accordion('Contributor')
+        .find(contributorsList)
+        .find(MultiColumnListCell(including(text)))
+        .absent(),
+    );
   },
 };

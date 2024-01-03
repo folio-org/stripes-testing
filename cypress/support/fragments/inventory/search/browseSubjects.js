@@ -223,4 +223,10 @@ export default {
         .click(),
     );
   },
+
+  checkSearchResultRecord(record) {
+    cy.expect(
+      MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) }),
+    );
+  },
 };
