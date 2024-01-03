@@ -657,6 +657,9 @@ export default {
     }
   },
 
+  fillTextFieldInAccordion: (accordionName, fieldName, value) => {
+    cy.do(Accordion(accordionName).find(TextField(fieldName)).fillIn(value));
+  },
   addName: (name) => cy.do(nameField.fillIn(name)),
   addIncomingRecordType: (type) => cy.do(incomingRecordTypeField.choose(type)),
   addFolioRecordType: (folioType) => cy.do(existingRecordType.choose(folioType)),
@@ -1247,6 +1250,15 @@ export default {
   verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
     cy.expect(
       Accordion(accordionName).find(TextField(fieldName)).has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyRowFieldValue: (rowIndex, accordionName, fieldName, value) => {
+    cy.expect(
+      Accordion(accordionName)
+        .find(ListItem({ index: rowIndex }))
+        .find(TextField(fieldName))
+        .has({ value }),
     );
   },
 
