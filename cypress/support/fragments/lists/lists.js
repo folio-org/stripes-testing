@@ -8,9 +8,13 @@ import {
   TextArea,
   Callout,
   calloutTypes,
+  MultiColumnList,
   MultiColumnListRow,
   MultiColumnListCell,
   Modal,
+  Checkbox,
+  Accordion,
+  PaneContent,
 } from '../../../../interactors';
 
 const closeModal = Modal();
@@ -21,10 +25,71 @@ const closeWithoutSavingButton = Button('Close without saving');
 const keepEditingButton = closeModal.find(Button('Keep editing'));
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
+const resetAllButton = Button({ id: 'clickable-reset-all' });
+const statusAccordion = Accordion({ id: 'Status-0' });
+const visibilityAccordion = Accordion({ id: 'Visibility-1' });
+const recordTypesAccordion = Accordion({ id: 'Record types-2' });
+const butt = Button({ icon: 'times-circle-solid' });
+const searchResult = PaneContent({ id: '8-content' });
+const accordeons = {
+  status: statusAccordion,
+  visibility: visibilityAccordion,
+  recordTypes: recordTypesAccordion,
+};
 
 export default {
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
+  },
+
+  verifyAccordionHasXIcon: (accord, presence = true) => {
+    if (presence) {
+      accord.forEach((accordeon) => {
+        cy.expect(accordeons[`${accordeon}`].find(butt).exists());
+      });
+    } else {
+      accord.forEach((accordeon) => {
+        cy.expect(accordeons[`${accordeon}`].find(butt).absent());
+      });
+    }
+  },
+
+  verifyResetAllAccordeonsExists: () => {
+    cy.expect([
+      statusAccordion.exists(),
+      visibilityAccordion.exists(),
+      recordTypesAccordion.exists(),
+    ]);
+  },
+
+  selectCheckbox: (checkBoxNames) => {
+    checkBoxNames.forEach((box) => {
+      cy.do(Checkbox(`${box}`).click());
+    });
+  },
+
+  resetAll: () => {
+    cy.do(resetAllButton.click());
+  },
+
+  verifyResetAllIsDisabled: (status = true) => {
+    cy.expect(resetAllButton.has({ disabled: status }));
+  },
+
+  verifyCheckBoxIsSelected: (checkBoxNames, status = true) => {
+    cy.expect(
+      checkBoxNames.forEach((box) => {
+        Checkbox(`${box}`).has({ checked: status });
+      }),
+    );
+  },
+
+  verifyResultsListExists(presence = true) {
+    if (presence) {
+      cy.expect(searchResult.find(MultiColumnList()).exists());
+    } else {
+      cy.expect(searchResult.find(MultiColumnList()).absent());
+    }
   },
 
   actionButton() {
