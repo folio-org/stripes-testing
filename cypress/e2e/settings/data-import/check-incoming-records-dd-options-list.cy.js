@@ -58,6 +58,28 @@ describe('Data Import', () => {
     );
 
     it(
+      'C411855 Match profile: update options for MARC Bibliographic "Incoming records" (folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet'] },
+      () => {
+        // Go to Settings application-> Data import-> Match profiles
+        SettingsDataImport.selectSettingsTab(SETTINGS_TABS.MATCH_PROFILE);
+
+        const MatchProfileEditForm = MatchProfiles.clickCreateNewMatchProfile();
+
+        // Click on "MARC Bibliographic" option as the "Existing records" type
+        MatchProfileEditForm.selectExistingRecordType(EXISTING_RECORDS_NAMES.MARC_BIBLIOGRAPHIC);
+
+        // Dropdown list opens and correct options appears
+        MatchProfileEditForm.verifyIncomingRecordsDropdown(
+          'MARC Bibliographic',
+          'Static value (submatch only)',
+        );
+        // MARC Authority is NOT present in available options
+        MatchProfileEditForm.verifyIncomingRecordsItemDoesNotExist('MARC Authority');
+      },
+    );
+
+    it(
       'C411857 Match profile: update options for Item "Incoming records" (folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
