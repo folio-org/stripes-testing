@@ -109,6 +109,10 @@ export default {
       .and('include', 'underline');
   },
 
+  verifyFirstFileNameInLogList: (fileName) => {
+    cy.get('#job-logs-list [class*="mclCell-"]:nth-child(1) a').eq(0).should('have.text', fileName);
+  },
+
   clickFirstFileNameCell: () => {
     cy.do(
       MultiColumnList({ id: 'job-logs-list' })
