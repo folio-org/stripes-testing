@@ -94,7 +94,7 @@ describe('MARC', () => {
 
       cy.visit(TopMenu.inventoryPath).then(() => {
         InventoryInstances.waitContentLoading();
-        InventoryInstance.searchByTitle(testData.instanceTitle);
+        InventoryInstances.searchByTitle(testData.instanceTitle);
         InventoryInstances.selectInstance();
         InventoryInstance.editMarcBibliographicRecord();
         InventoryInstance.verifyAndClickLinkIcon(testData.tag);

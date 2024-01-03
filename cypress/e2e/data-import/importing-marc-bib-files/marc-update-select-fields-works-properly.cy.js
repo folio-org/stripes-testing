@@ -6,6 +6,12 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -76,12 +82,12 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(instanceActionProfile.name);
-        ActionProfiles.deleteActionProfile(marcBibActionProfile.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfile.name);
-        FieldMappingProfileView.deleteViaApi(marcBibMappingProfile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(instanceActionProfile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(marcBibActionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(instanceMappingProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(marcBibMappingProfile.name);
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
