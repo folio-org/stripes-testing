@@ -3,31 +3,28 @@ import Affiliations, { tenantNames } from '../../support/dictionary/affiliations
 import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
-import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import { JOB_STATUS_NAMES } from '../../support/constants';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import getRandomPostfix from '../../support/utils/stringTools';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
   const testData = {
-    tags: {
-      // tag245: '245',
-      // tagLDR: 'LDR',
-    },
-    fieldContents: {
-      // tag245Content: 'C405547 Created Shared Instance',
-      // tagLDRContent: '00000naa\\a2200000uu\\4500',
-    },
-    // contributor: 'Dante Alighieri 1265-1321',
+    tag245: '245',
+    tag245DerivedContent: '$a C402769 The Riviera house (derived record) / $c Natasha Lester.',
+    tag245EditedContent:
+      '$a C402769 The Riviera house (derived and edited record) / $c Natasha Lester.',
     instanceTitle: 'C402769 The Riviera house / Natasha Lester.',
+    instanceDerivedTitle: 'C402769 The Riviera house (derived record) / Natasha Lester.',
+    instanceEditedTitle: 'C402769 The Riviera house (derived and edited record) / Natasha Lester.',
+    deriveLocalPaneheaderText: 'Derive a new local MARC bib record',
+    sourceViewLocalText: 'Local MARC bibliographic record',
   };
 
   const marcFile = {
@@ -38,7 +35,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
 
   const users = {};
 
-  let createdInstanceID;
+  const createdInstanceIDs = [];
 
   before('Create user, data', () => {
     cy.getAdminToken();
@@ -80,7 +77,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(marcFile.fileNameImported);
           Logs.getCreatedItemsID().then((link) => {
-            createdInstanceID = link.split('/')[5];
+            createdInstanceIDs.push(link.split('/')[5]);
           });
         });
 
@@ -88,9 +85,9 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         }).then(() => {
-          ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+          ConsortiumManager.switchActiveAffiliation(tenantNames.university);
           InventoryInstances.waitContentLoading();
-          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+          ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
         });
       });
   });
@@ -99,58 +96,59 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib -> Consortia', () => {
     cy.resetTenant();
     cy.getAdminToken();
     Users.deleteViaApi(users.userProperties.userId);
-    InventoryInstance.deleteInstanceViaApi(createdInstanceID);
+    createdInstanceIDs.forEach((instanceID) => {
+      InventoryInstance.deleteInstanceViaApi(instanceID);
+    });
   });
 
   it(
     'C402769 Derive new Local MARC bib record from Shared Instance in Member tenant (consortia) (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(createdInstanceID);
-      InventoryInstances.selectInstance();
-
+      cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
+      InventoryInstance.waitLoading();
       InventoryInstance.checkPresentedText(testData.instanceTitle);
 
-      // InventoryInstance.newMarcBibRecord();
-      // QuickMarcEditor.updateExistingField(
-      //   testData.tags.tag245,
-      //   `$a ${testData.fieldContents.tag245Content}`,
-      // );
-      // QuickMarcEditor.updateExistingField(
-      //   testData.tags.tagLDR,
-      //   testData.fieldContents.tagLDRContent,
-      // );
-      // MarcAuthority.addNewField(4, newField.tag, newField.content);
-      // QuickMarcEditor.updateIndicatorValue(newField.tag, '2', 0);
-      // QuickMarcEditor.updateIndicatorValue(newField.tag, '0', 1);
-      // QuickMarcEditor.pressSaveAndClose();
-      // QuickMarcEditor.checkAfterSaveAndClose();
-      // InventoryInstance.getId().then((id) => {
-      //   createdInstanceID.push(id);
-      // });
-      // InventoryInstance.checkPresentedText(testData.fieldContents.tag245Content);
-      // InventoryInstance.checkExpectedMARCSource();
-      // InventoryInstance.checkContributor(testData.contributor);
+      InventoryInstance.deriveNewMarcBib();
+      QuickMarcEditor.checkPaneheaderContains(testData.deriveLocalPaneheaderText);
+      QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
+      QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.checkAfterSaveAndCloseDerive();
+      InventoryInstance.checkSharedTextInDetailView(false);
+      InventoryInstance.checkExpectedMARCSource();
+      InventoryInstance.checkPresentedText(testData.instanceDerivedTitle);
+      InventoryInstance.getId().then((id) => {
+        createdInstanceIDs.push(id);
 
-      // cy.login(users.userBProperties.username, users.userBProperties.password, {
-      //   path: TopMenu.inventoryPath,
-      //   waiter: InventoryInstances.waitContentLoading,
-      // });
-      // ConsortiumManager.switchActiveAffiliation(tenantNames.college);
-      // InventoryInstance.searchByTitle(testData.fieldContents.tag245Content);
-      // InventoryInstances.selectInstance();
-      // InventoryInstance.verifySharedIcon();
-      // InventoryInstance.checkPresentedText(testData.fieldContents.tag245Content);
-      // InventoryInstance.checkExpectedMARCSource();
-      // InventoryInstance.checkContributor(testData.contributor);
+        InventoryInstance.editMarcBibliographicRecord();
+        QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
+        QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245EditedContent);
+        QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245EditedContent);
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.checkAfterSaveAndClose();
+        InventoryInstance.checkSharedTextInDetailView(false);
+        InventoryInstance.checkExpectedMARCSource();
+        InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
 
-      // InventoryInstance.viewSource();
-      // InventoryViewSource.contains(
-      //   `\t${testData.tags.tag245}\t   \t$a ${testData.fieldContents.tag245Content}`,
-      // );
-      // InventoryViewSource.contains(
-      //   `\t${newField.tag}\t2 0\t$a Dante Alighieri $d 1265-1321 $e Poet, Writer, Philosopher`,
-      // );
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains(testData.tag245EditedContent);
+        InventoryViewSource.contains(testData.sourceViewLocalText);
+
+        ConsortiumManager.switchActiveAffiliation(tenantNames.college);
+        InventoryInstances.waitContentLoading();
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+
+        InventoryInstance.searchByTitle(createdInstanceIDs[1]);
+        InventorySearchAndFilter.verifyNoRecordsFound();
+
+        ConsortiumManager.switchActiveAffiliation(tenantNames.central);
+        InventoryInstances.waitContentLoading();
+        ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+
+        InventoryInstance.searchByTitle(createdInstanceIDs[1]);
+        InventorySearchAndFilter.verifyNoRecordsFound();
+      });
     },
   );
 });
