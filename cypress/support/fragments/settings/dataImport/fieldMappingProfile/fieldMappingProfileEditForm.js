@@ -110,6 +110,9 @@ const orderLineInformationFields = {
   materialSupplier: orderLineDetails.physicalResourceDetails.find(
     TextField({ label: including('Material supplier') }),
   ),
+  pMaterialType: orderLineDetails.physicalResourceDetails.find(
+    TextField({ label: including('Material type') }),
+  ),
   materialSupplierLookUp: orderLineDetails.physicalResourceDetails.find(
     Button('Organization look-up'),
   ),
@@ -120,6 +123,9 @@ const orderLineInformationFields = {
     TextField({ label: including('Access provider') }),
   ),
   accessProviderLookUp: orderLineDetails.eResourceDetails.find(Button('Organization look-up')),
+  eMaterialType: orderLineDetails.eResourceDetails.find(
+    TextField({ label: including('Material type') }),
+  ),
 };
 
 const electronicAccessFields = {
@@ -166,8 +172,14 @@ const electronicAccessOptions = {
   'Find and remove these': 'DELETE_INCOMING',
 };
 const formButtons = {
+  'Add location': orderDetails.orderLineInformation.find(Button('Add location')),
   Close: closeButton,
   'Save as profile & Close': saveAndCloseButton,
+};
+
+const formFields = {
+  'Physical resource details -> Material type': orderLineInformationFields.pMaterialType,
+  'E-resources details -> Material type': orderLineInformationFields.eMaterialType,
 };
 
 export default {
@@ -196,6 +208,11 @@ export default {
   checkButtonsConditions(buttons = []) {
     buttons.forEach(({ label, conditions }) => {
       cy.expect(formButtons[label].has(conditions));
+    });
+  },
+  checkFieldsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(formFields[label].has(conditions));
     });
   },
   checkFieldValidationError({ orderInformation, shouldBlur = false }) {
@@ -335,6 +352,7 @@ export default {
     productIds,
     poLineDetails,
     costDetails,
+    locations,
     physicalResourceDetails,
     eResourceDetails,
   }) {
@@ -427,6 +445,10 @@ export default {
       this.fillCostDetailsProfileFields(costDetails);
     }
 
+    if (locations?.length) {
+      this.fillLocationsDetailsProfileFields(locations);
+    }
+
     if (physicalResourceDetails) {
       this.fillPhysicalResourceDetailsPfofileFields(physicalResourceDetails);
     }
@@ -483,8 +505,56 @@ export default {
       cy.expect(orderLineInformationFields.currency.has({ value: `"${currency}"` }));
     }
   },
+  fillLocationsDetailsProfileFields(locations = []) {
+    locations.forEach((location, index) => {
+      const nameField = `profile.mappingDetails.mappingFields[57].subfields.${index}.fields.0.value`;
+      const quantityPhysicalField = `profile.mappingDetails.mappingFields[57].subfields.${index}.fields.1.value`;
+      const quantityElectronicField = `profile.mappingDetails.mappingFields[57].subfields.${index}.fields.2.value`;
+      cy.do(formButtons['Add location'].click());
+
+      if (location.name) {
+        cy.do(
+          orderDetails.orderLineInformation
+            .find(TextField({ name: nameField }))
+            .fillIn(`"${location.name}"`),
+        );
+        cy.expect(
+          orderDetails.orderLineInformation
+            .find(TextField({ name: nameField }))
+            .has({ value: `"${location.name}"` }),
+        );
+      }
+
+      if (location.quantityPhysical) {
+        cy.do(
+          orderDetails.orderLineInformation
+            .find(TextField({ name: quantityPhysicalField }))
+            .fillIn(`"${location.quantityPhysical}"`),
+        );
+        cy.expect(
+          orderDetails.orderLineInformation
+            .find(TextField({ name: quantityPhysicalField }))
+            .has({ value: `"${location.quantityPhysical}"` }),
+        );
+      }
+
+      if (location.quantityElectronic) {
+        cy.do(
+          orderDetails.orderLineInformation
+            .find(TextField({ name: quantityElectronicField }))
+            .fillIn(`"${location.quantityElectronic}"`),
+        );
+        cy.expect(
+          orderDetails.orderLineInformation
+            .find(TextField({ name: quantityElectronicField }))
+            .has({ value: `"${location.quantityElectronic}"` }),
+        );
+      }
+    });
+  },
   fillPhysicalResourceDetailsPfofileFields({
     materialSupplier,
+    materialType,
     organizationLookUp,
     createInventory,
   }) {
@@ -496,6 +566,14 @@ export default {
       cy.expect(
         orderLineInformationFields.materialSupplier.has({ value: `"${materialSupplier}"` }),
       );
+    }
+
+    if (materialType) {
+      cy.do([
+        orderLineInformationFields.pMaterialType.focus(),
+        orderLineInformationFields.pMaterialType.fillIn(`"${materialType}"`),
+      ]);
+      cy.expect(orderLineInformationFields.pMaterialType.has({ value: `"${materialType}"` }));
     }
 
     if (organizationLookUp) {
@@ -517,7 +595,7 @@ export default {
       cy.expect(orderLineInformationFields.createInventory.has({ value: `"${createInventory}"` }));
     }
   },
-  fillElectronicResourceDetailsPfofileFields({ accessProvider, organizationLookUp }) {
+  fillElectronicResourceDetailsPfofileFields({ accessProvider, organizationLookUp, materialType }) {
     if (accessProvider) {
       cy.do([
         orderLineInformationFields.accessProvider.focus(),
@@ -535,6 +613,14 @@ export default {
       cy.expect(
         orderLineInformationFields.accessProvider.has({ value: `"${organizationLookUp}"` }),
       );
+    }
+
+    if (materialType) {
+      cy.do([
+        orderLineInformationFields.eMaterialType.focus(),
+        orderLineInformationFields.eMaterialType.fillIn(`"${materialType}"`),
+      ]);
+      cy.expect(orderLineInformationFields.eMaterialType.has({ value: `"${materialType}"` }));
     }
   },
   fillElectronicAccessProfileFields({ value }) {
