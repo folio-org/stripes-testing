@@ -7,6 +7,7 @@ import {
   TextField,
   Accordion,
   TextFieldIcon,
+  Pane,
 } from '../../../../../../interactors';
 import FieldMappingProfileEditForm from './fieldMappingProfileEditForm';
 
@@ -21,6 +22,9 @@ const actionProfilesSection = mappingProfileView.find(
 const instancesTagsSection = Section({ id: including('Tags') });
 const searchField = '[class^=formControl]';
 const searchIcon = TextFieldIcon();
+const settingsPane = Pane('settings-nav-pane');
+const paneResult = Pane('pane-results');
+const settingsApp = Pane('app-settings-nav-pane');
 
 const itemDetailsViews = {
   administrativeData: adminDataSection,
@@ -97,6 +101,9 @@ export default {
       cy.expect(section.find(KeyValue(label)).has(conditions));
     });
   },
+  verifyPageAfterClickingX() {
+    cy.expect([settingsApp.exists(), paneResult.exists(), settingsPane.exists()]);
+  },
   verifyLinkedActionProfile: () => {
     cy.expect(Accordion('Associated action profiles').exists());
     cy.get(searchField).should('be.visible');
@@ -139,12 +146,6 @@ export default {
         Section({ id: matching('view-(?:holdings|item)-electronic-access') }),
       ),
     });
-  },
-  checkPhysicalResourceDetailsFieldsConditions(fields = []) {
-    this.checkFieldsConditions({ fields, section: orderDetailsViews.pResourceDetails });
-  },
-  checkElectronicResourceDetailsFieldsConditions(fields = []) {
-    this.checkFieldsConditions({ fields, section: orderDetailsViews.eResourceDetails });
   },
   expandActionsDropdown() {
     cy.do(actionsButton.click());
