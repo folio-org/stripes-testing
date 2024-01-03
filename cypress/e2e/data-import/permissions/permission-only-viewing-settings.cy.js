@@ -1,4 +1,10 @@
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
@@ -63,10 +69,10 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         // delete generated profiles
-        JobProfiles.deleteJobProfile(jobProfileName);
-        MatchProfiles.deleteMatchProfile(matchProfileName);
-        ActionProfiles.deleteActionProfile(actionProfileName);
-        FieldMappingProfileView.deleteViaApi(mappingProfileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileName);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileName);
         Users.deleteViaApi(user.userId);
       });
     });

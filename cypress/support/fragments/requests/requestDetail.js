@@ -9,6 +9,7 @@ import {
   MultiColumnListCell,
   MultiColumnListHeader,
   Pane,
+  PaneContent,
   Section,
   Select,
   TextArea,
@@ -87,6 +88,15 @@ export default {
     cy.expect(requestInfoSection.find(KeyValue('Request status', { value: status })).exists());
   },
 
+  verifySectionsVisibility() {
+    cy.expect([
+      titleInformationSection.visible(),
+      itemInformationSection.visible(),
+      requestInfoSection.visible(),
+      requesterInfoSection.visible(),
+    ]);
+  },
+
   checkRequestsOnItem: (requests) => {
     cy.expect(
       itemInformationSection.find(KeyValue('Requests on item', { value: requests })).exists(),
@@ -138,6 +148,7 @@ export default {
     InteractorsTools.checkKeyValue(requestInfoSection, 'Position in queue', data.position);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Request level', data.level);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
+    if (data.reason) InteractorsTools.checkKeyValue(requestInfoSection, 'Cancellation reason', data.reason);
   },
 
   checkItemBarcode: (barcode) => {
@@ -312,10 +323,17 @@ export default {
     },
   ],
 
-  verifyRequestQueueColumnsPresence() {
-    cy.expect([
-      this.requestQueueColumns.forEach(({ title }) => MultiColumnListHeader(title).exists()),
-    ]);
+  verifyRequestQueueColumnsPresence(
+    inProgressAccordionOption = true,
+    notYetFilledAccordionOption = true,
+  ) {
+    if (inProgressAccordionOption) {
+      this.requestQueueColumns.forEach(({ title }) => cy.expect(fulfillmentInProgressAccordion.find(MultiColumnListHeader(title)).exists()));
+    }
+    if (notYetFilledAccordionOption) {
+      this.requestQueueColumns.splice(1, 1);
+      this.requestQueueColumns.forEach(({ title }) => cy.expect(notYetFilledAccordion.find(MultiColumnListHeader(title)).exists()));
+    }
   },
 
   openMoveRequest() {
@@ -344,24 +362,24 @@ export default {
   },
 
   verifyAccordionsPresence(presence = true) {
-    const visibilityption = presence ? 'exists' : 'absent';
+    const visibilityOption = presence ? 'exists' : 'absent';
     cy.expect([
-      fulfillmentInProgressAccordion[visibilityption](),
-      notYetFilledAccordion[visibilityption](),
+      fulfillmentInProgressAccordion[visibilityOption](),
+      notYetFilledAccordion[visibilityOption](),
     ]);
   },
 
-  checkRequestMovedToFulfillmentInProgress(itemBarcode, moved = true) {
-    if (moved) {
+  checkRequestMovedToFulfillmentInProgress(itemBarcode, data = { moved: true, rowIndex: 0 }) {
+    if (data.moved) {
       cy.expect(
         fulfillmentInProgressAccordion
-          .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+          .find(MultiColumnListCell({ row: data.rowIndex, content: itemBarcode }))
           .exists(),
       );
     } else {
       cy.expect(
         fulfillmentInProgressAccordion
-          .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+          .find(MultiColumnListCell({ row: data.rowIndex, content: itemBarcode }))
           .absent(),
       );
     }
@@ -376,12 +394,29 @@ export default {
     );
   },
 
+  verifyHeaders(instanceTitle) {
+    cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
+    cy.expect(
+      PaneContent({ id: 'request-queue-content' })
+        .find(HTML(including(`Instance: ${instanceTitle} /.`)))
+        .exists(),
+    );
+  },
+
   clickRequesterBarcode(itemBarcode) {
     cy.do(
       fulfillmentInProgressAccordion
         .find(MultiColumnListCell({ row: 0, columnIndex: 7 }))
         .find(Link(itemBarcode))
         .click(),
+    );
+  },
+
+  checkRequestIsNotYetFilled(itemBarcode, rowIndex = 0) {
+    cy.expect(
+      notYetFilledAccordion
+        .find(MultiColumnListCell({ row: rowIndex, content: itemBarcode }))
+        .exists(),
     );
   },
 
@@ -392,5 +427,14 @@ export default {
 
   viewRequestsInQueue() {
     cy.do(requestInfoSection.find(KeyValue('Position in queue').find(Link())).click());
+  },
+
+  verifyPositionInQueue(value) {
+    cy.expect(
+      requestInfoSection.find(KeyValue('Position in queue')).has({ value: including(value) }),
+    );
+  },
+  openRequesterByBarcode(barcode = '') {
+    cy.do(requesterInfoSection.find(Link(including(barcode))).click());
   },
 };

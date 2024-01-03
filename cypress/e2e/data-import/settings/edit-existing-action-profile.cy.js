@@ -1,5 +1,6 @@
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import { ActionProfiles as SettingsActionProfiles } from '../../../support/fragments/settings/dataImport';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -34,7 +35,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
       });
     });
 

@@ -9,6 +9,12 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
@@ -161,13 +167,15 @@ describe('data-import', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         // delete generated profiles
-        JobProfiles.deleteJobProfile(createJobProfile.profileName);
-        JobProfiles.deleteJobProfile(updateJobProfile.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfileItemHrid.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfileItemStatus.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(createJobProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(updateJobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileItemHrid.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileItemStatus.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
       });
       // delete created files in fixtures
