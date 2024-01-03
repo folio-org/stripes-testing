@@ -25,6 +25,7 @@ import NewNote from '../notes/newNote';
 
 const rootSection = Section({ id: 'pane-userdetails' });
 const loansSection = rootSection.find(Accordion({ id: 'loansSection' }));
+const requestsSection = rootSection.find(Accordion({ id: 'requestsSection' }));
 const currentLoansLink = loansSection.find(Link({ id: 'clickable-viewcurrentloans' }));
 const returnedLoansSpan = loansSection.find(HTML({ id: 'claimed-returned-count' }));
 const userInformationSection = Accordion({ id: 'userInformationSection' });
@@ -433,6 +434,9 @@ export default {
   },
   startFeeFineAdding() {
     cy.do(feesFinesAccordion.find(Button('Create fee/fine')).click());
+  },
+  startRequestAdding() {
+    cy.do(requestsSection.find(Button('Create request')).click());
   },
   viewAllFeesFines() {
     cy.do(feesFinesAccordion.find(Button({ id: 'clickable-viewallaccounts' })).click());
