@@ -29,7 +29,6 @@ describe('plug-in MARC authority | Search | Browse', () => {
     cy.createTempUser([
       Permissions.inventoryAll.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
     ])
@@ -50,10 +49,6 @@ describe('plug-in MARC authority | Search | Browse', () => {
         Logs.openFileDetails(marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityID = link.split('/')[5];
-          cy.login(user.userProperties.username, user.userProperties.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventoryInstances.waitContentLoading,
-          });
         });
       })
       .then(() => {
