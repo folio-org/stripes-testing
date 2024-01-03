@@ -156,7 +156,14 @@ describe('orders: Unopen order', () => {
       Funds.selectFund(secondFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkOrderInTransactionList(`${secondFund.code}`, '$0.00');
+      Funds.selectTransactionInList('Encumbrance');
+      Funds.varifyDetailsInTransaction(
+        defaultFiscalYear.code,
+        '$0.00',
+        `${orderNumber}-1`,
+        'Encumbrance',
+        `${secondFund.name} (${secondFund.code})`,
+      );
       cy.visit(TopMenu.invoicesPath);
       Invoices.searchByNumber(invoice.invoiceNumber);
       Invoices.selectInvoice(invoice.invoiceNumber);
@@ -166,8 +173,8 @@ describe('orders: Unopen order', () => {
       Funds.selectFund(firstFund.name);
       Funds.selectBudgetDetails();
       Funds.viewTransactions();
-      Funds.checkTransactionDetails(
-        1,
+      Funds.selectTransactionInList('Payment');
+      Funds.varifyDetailsInTransaction(
         defaultFiscalYear.code,
         '($20.00)',
         invoice.invoiceNumber,
