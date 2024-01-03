@@ -1,28 +1,21 @@
 import {
   Button,
   MultiColumnListCell,
-  Section,
   Pane,
-  DropdownMenu,
   HTML,
   Callout,
   TextField,
   MultiColumnList,
   including,
 } from '../../../../../../interactors';
+import ResultsPane from '../resultsPane';
+import MatchProfileEditForm from './matchProfileEditForm';
 import NewMatchProfile from './newMatchProfile';
 import getRandomPostfix from '../../../../utils/stringTools';
 
 const actionsButton = Button('Actions');
 const viewPane = Pane({ id: 'view-match-profile-pane' });
 const resultsPane = Pane({ id: 'pane-results' });
-
-const openNewMatchProfileForm = () => {
-  cy.do(Section({ id: 'pane-results' }).find(actionsButton).click());
-  cy.do(DropdownMenu().find(HTML('New match profile')).exists());
-  cy.do(Button('New match profile').click());
-  cy.expect(Pane('New match profile').exists());
-};
 
 const waitCreatingMatchProfile = () => {
   cy.expect(resultsPane.find(actionsButton).exists());
@@ -97,60 +90,68 @@ const marcAuthorityMatchBy010TagProfile = {
 };
 
 export default {
-  openNewMatchProfileForm,
+  ...ResultsPane,
+  clickCreateNewMatchProfile() {
+    ResultsPane.expandActionsDropdown();
+    cy.do(Button('New match profile').click());
+    MatchProfileEditForm.waitLoading();
+    MatchProfileEditForm.verifyFormView();
+
+    return MatchProfileEditForm;
+  },
   search,
-  clearSearchField: () => {
+  clearSearchField() {
     cy.do(TextField({ id: 'input-search-match-profiles-field' }).focus());
     cy.do(Button({ id: 'input-match-profiles-search-field-clear-button' }).click());
   },
   createMatchProfile(profile) {
-    openNewMatchProfileForm();
+    this.clickCreateNewMatchProfile();
     NewMatchProfile.fillMatchProfileForm(profile);
     NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithExistingPart: (profile) => {
-    openNewMatchProfileForm();
+  createMatchProfileWithExistingPart(profile) {
+    this.clickCreateNewMatchProfile();
     NewMatchProfile.fillMatchProfileWithExistingPart(profile);
     NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithQualifier: (profile) => {
-    openNewMatchProfileForm();
+  createMatchProfileWithQualifier(profile) {
+    this.clickCreateNewMatchProfile();
     NewMatchProfile.fillMatchProfileWithQualifierInIncomingAndExistingRecords(profile);
     NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithQualifierAndComparePart: (profile) => {
-    openNewMatchProfileForm();
+  createMatchProfileWithQualifierAndComparePart(profile) {
+    this.clickCreateNewMatchProfile();
     NewMatchProfile.fillMatchProfileWithStaticValueAndComparePartValue(profile);
     NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithQualifierAndExistingRecordField: (profile) => {
-    openNewMatchProfileForm();
+  createMatchProfileWithQualifierAndExistingRecordField(profile) {
+    this.clickCreateNewMatchProfile();
     NewMatchProfile.fillMatchProfileWithQualifierInIncomingRecordsAndValueInExistingRecord(profile);
     NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithStaticValue: (profile) => {
-    openNewMatchProfileForm();
+  createMatchProfileWithStaticValue(profile) {
+    this.clickCreateNewMatchProfile();
     NewMatchProfile.fillMatchProfileWithStaticValue(profile);
     NewMatchProfile.saveAndClose();
     waitCreatingMatchProfile();
   },
 
-  checkMatchProfilePresented: (profileName) => {
+  checkMatchProfilePresented(profileName) {
     search(profileName);
     cy.expect(MultiColumnListCell(profileName).exists());
   },
 
-  checkCalloutMessage: (message) => {
+  checkCalloutMessage(message) {
     cy.expect(
       Callout({
         textContent: including(message),

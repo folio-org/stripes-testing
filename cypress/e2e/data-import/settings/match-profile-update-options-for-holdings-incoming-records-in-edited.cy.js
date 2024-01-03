@@ -8,7 +8,7 @@ import MatchProfiles from '../../../support/fragments/settings/dataImport/matchP
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import SettingsDataImport from '../../../support/fragments/settings/dataImport/settingsDataImport';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
-import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEdit';
+import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 
 let user;

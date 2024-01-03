@@ -34,7 +34,7 @@ describe('data-import', () => {
         // #1 Go to "Settings" application-> "Data import" section-> "Match profiles" section-> Click "Actions" button -> Click "New match profile" option
         SettingsDataImport.goToSettingsDataImport();
         DataImport.selectDataImportProfile('Match profiles');
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
 
         // #2 Click on "Instance" in "Details" accordion
         NewMatchProfile.clickOnExistingRecordByName('Instance');

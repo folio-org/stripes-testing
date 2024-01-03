@@ -1,7 +1,7 @@
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
-import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEdit';
+import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
 import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
@@ -54,7 +54,7 @@ describe('data-import', () => {
         MatchProfileView.edit();
         MatchProfileEdit.verifyScreenName(matchProfile.profileName);
         MatchProfileEdit.changeExistingInstanceRecordField();
-        MatchProfileEdit.save();
+        MatchProfileEdit.clickSaveAndCloseButton();
         MatchProfiles.checkCalloutMessage(calloutMessage);
         MatchProfileView.verifyExistingInstanceRecordField();
       },
