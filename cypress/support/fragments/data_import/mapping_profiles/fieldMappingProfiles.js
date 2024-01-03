@@ -20,6 +20,9 @@ const actionsButton = Button('Actions');
 const searchButton = Button('Search');
 const resultsPane = Pane({ id: 'pane-results' });
 const searchField = TextField({ id: 'input-search-mapping-profiles-field' });
+const deleteButton = Button('Delete');
+const editButton = Button('Edit');
+const dublicateButton = Button('Duplicate');
 
 const openNewMappingProfileForm = () => {
   cy.do([actionsButton.click(), Button('New field mapping profile').click()]);
@@ -59,6 +62,10 @@ export default {
     NewFieldMappingProfile.fillMappingProfile(mappingProfile);
     FieldMappingProfileView.closeViewMode(mappingProfile.name);
     cy.expect(actionsButton.exists());
+  },
+  verifyActionMenu: () => {
+    cy.do([Pane({ id: 'full-screen-view' }).find(actionsButton).click()]);
+    cy.expect([editButton.exists(), deleteButton.exists(), dublicateButton.exists()]);
   },
   createInvoiceMappingProfile: (mappingProfile, defaultProfile) => {
     search(defaultProfile);
@@ -111,7 +118,7 @@ export default {
   },
   selectMappingProfileFromList: (profileName) => cy.do(MultiColumnListCell(profileName).click()),
   checkMappingProfilePresented: (mappingProfileName) => {
-    search(mappingProfileName);
+    // search(mappingProfileName);
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
   checkListOfExistingProfilesIsDisplayed: () => {

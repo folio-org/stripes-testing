@@ -1,4 +1,14 @@
-import { Button, KeyValue, Section, matching } from '../../../../../../interactors';
+import { including } from '@interactors/html';
+import {
+  Button,
+  KeyValue,
+  Section,
+  matching,
+  TextField,
+  Accordion,
+  TextFieldIcon,
+  Pane,
+} from '../../../../../../interactors';
 import FieldMappingProfileEditForm from './fieldMappingProfileEditForm';
 
 const mappingProfileView = Section({ id: 'full-screen-view' });
@@ -9,6 +19,12 @@ const adminDataSection = detailsSection.find(Section({ id: 'view-administrative-
 const actionProfilesSection = mappingProfileView.find(
   Section({ id: 'view-mappingProfileFormAssociatedActionProfileAccordion' }),
 );
+const instancesTagsSection = Section({ id: including('Tags') });
+const searchField = '[class^=formControl]';
+const searchIcon = TextFieldIcon();
+const settingsPane = Pane('settings-nav-pane');
+const paneResult = Pane('pane-results');
+const settingsApp = Pane('app-settings-nav-pane');
 
 const itemDetailsViews = {
   administrativeData: adminDataSection,
@@ -58,6 +74,7 @@ const orderDetailsViews = {
 const actionsButton = mappingProfileView.find(Button('Actions'));
 
 export default {
+  orderDetailsViews,
   waitLoading() {
     cy.expect(mappingProfileView.exists());
   },
@@ -76,10 +93,39 @@ export default {
       Object.values(invoiceDetailsViews).forEach((view) => cy.expect(view.exists()));
     }
   },
+  verifyAccordionByNameExpanded(accordionName, status = true) {
+    cy.expect(Accordion(accordionName).has({ open: status }));
+  },
   checkFieldsConditions({ fields, section } = {}) {
     fields.forEach(({ label, conditions }) => {
       cy.expect(section.find(KeyValue(label)).has(conditions));
     });
+  },
+  verifyPageAfterClickingX() {
+    cy.expect([settingsApp.exists(), paneResult.exists(), settingsPane.exists()]);
+  },
+  verifyLinkedActionProfile: () => {
+    cy.expect(Accordion('Associated action profiles').exists());
+    cy.get(searchField).should('be.visible');
+    cy.get(searchField).then((el) => {
+      cy.expect(el.find(searchIcon));
+    });
+  },
+  collapseAll() {
+    cy.do(Button('Collapse all').click());
+    cy.wrap(['Order information', 'Order line information']).each((accordion) => {
+      cy.expect(Button(accordion).has({ ariaExpanded: 'false' }));
+    });
+  },
+  expandAll() {
+    cy.do(Button('Expand all').click());
+    cy.wrap(['Order information', 'Order line information']).each((accordion) => {
+      cy.expect(Button(accordion).has({ ariaExpanded: 'true' }));
+    });
+  },
+  clickX() {
+    cy.do(Button({ icon: 'times' }).click());
+    cy.wait(1000);
   },
   checkSummaryFieldsConditions(fields = []) {
     this.checkFieldsConditions({ fields, section: summarySection });
@@ -112,6 +158,12 @@ export default {
     FieldMappingProfileEditForm.verifyFormView();
 
     return FieldMappingProfileEditForm;
+  },
+  clickTagsAccordion() {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-tag-accordion' }).click(),
+      instancesTagsSection.find(TextField()).exists,
+    ]);
   },
   clickDuplicateButton() {
     this.expandActionsDropdown();
