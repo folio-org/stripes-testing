@@ -102,29 +102,26 @@ export default {
   },
 
   createViaUiIncomplete: (userData) => {
-    return cy
-      .do([
-        Dropdown('Actions').find(Button()).click(),
-        Button({ id: 'clickable-newuser' }).click(),
-        TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
-        TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),
-        TextField({ id: 'adduser_firstname' }).fillIn(userData.personal.firstName),
-        TextField({ id: 'adduser_preferredname' }).fillIn(userData.personal.preferredFirstName),
-        Select({ id: 'adduser_group' }).choose(userData.patronGroup),
-        Select({ id: 'type' }).choose(userData.userType),
-        TextField({ name: 'barcode' }).fillIn(userData.barcode),
-        TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
-        TextField({ id: 'adduser_username' }).fillIn(userData.username),
-        Button({ id: 'clickable-save' }).click(),
-        Dropdown('Actions').absent(),
-      ]);
+    return cy.do([
+      Dropdown('Actions').find(Button()).click(),
+      Button({ id: 'clickable-newuser' }).click(),
+      TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
+      TextField({ id: 'adduser_middlename' }).fillIn(userData.personal.middleName),
+      TextField({ id: 'adduser_firstname' }).fillIn(userData.personal.firstName),
+      TextField({ id: 'adduser_preferredname' }).fillIn(userData.personal.preferredFirstName),
+      Select({ id: 'adduser_group' }).choose(userData.patronGroup),
+      Select({ id: 'type' }).choose(userData.userType),
+      TextField({ name: 'barcode' }).fillIn(userData.barcode),
+      TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
+      TextField({ id: 'adduser_username' }).fillIn(userData.username),
+      Button({ id: 'clickable-save' }).click(),
+      Dropdown('Actions').absent(),
+    ]);
   },
 
   verifyUsernameMandatory(mandatory = true) {
     if (mandatory) {
-      cy.expect(
-        TextField('Username*').exists(),
-      );
+      cy.expect(TextField('Username*').exists());
     } else {
       cy.expect(TextField('Username').exists());
     }

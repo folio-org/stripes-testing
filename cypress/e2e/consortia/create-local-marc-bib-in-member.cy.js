@@ -111,7 +111,7 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib -> Consortia', () =>
       });
       InventoryInstance.searchByTitle(testData.fieldContents.tag245Content, false);
       InventoryInstance.verifyNoResultFoundMessage(
-        `No results found for "${testData.fieldContents.tag245Content}". Please check your spelling and filters.`
+        `No results found for "${testData.fieldContents.tag245Content}". Please check your spelling and filters.`,
       );
     },
   );

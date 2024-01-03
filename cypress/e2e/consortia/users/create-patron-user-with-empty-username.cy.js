@@ -18,7 +18,7 @@ const testUser = {
     email: 'test@folio.org',
   },
   patronGroup: 'undergrad (Undergraduate Student)',
-  userType: 'Staff' // select staff
+  userType: 'Staff', // select staff
 };
 const newUsername = getTestEntityValue('username');
 
@@ -43,7 +43,8 @@ describe('Users (Consortia)', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C418647 Creating new patron user with empty "Username" field (thunderjet) (consortia)',
+  it(
+    'C418647 Creating new patron user with empty "Username" field (thunderjet) (consortia)',
     { tags: [testTypes.criticalPath, devTeams.thunderjet] },
     () => {
       Users.createViaUiIncomplete(testUser).then((id) => {
@@ -63,5 +64,6 @@ describe('Users (Consortia)', () => {
       UserEdit.saveEditedUser();
       Users.verifyUserTypeOnUserDetailsPane('staff');
       Users.verifyUsernameOnUserDetailsPane(newUsername);
-    });
+    },
+  );
 });
