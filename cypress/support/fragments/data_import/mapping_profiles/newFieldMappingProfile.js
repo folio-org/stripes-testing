@@ -21,6 +21,7 @@ import {
   IconButton,
   Popover,
   Label,
+  ListItem,
 } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import {
@@ -41,6 +42,8 @@ const loanAndAvailabilityAccordion = Accordion('Loan and availability');
 const orderInformationAccordion = Accordion('Order information');
 const locationAccordion = Accordion('Location');
 const physicalResourceDetailsAccordion = Accordion('Physical resource details');
+const electronicResourceDetailsAccordion = Accordion({ id: 'e-resources-details' });
+const eResourcesDetailsAccordion = Accordion('E-resources details');
 const nameField = TextField({ name: 'profile.name' });
 const searchField = TextField({ id: 'input-record-search' });
 const permanentLocationField = TextField('Permanent');
@@ -82,6 +85,7 @@ const approvedCheckbox = Checkbox({
 const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
 const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 const closeButton = Button('Close');
+const closeWithoutSavingButton = Button('Close without saving');
 
 const requiredFields = {
   'Purchase order status': purchaseOrderStatus,
@@ -626,11 +630,25 @@ export default {
           .fillIn(`"${profile.createInventory}"`),
       );
     }
+    if (profile.createInventoryElectronic) {
+      cy.do(
+        electronicResourceDetailsAccordion
+          .find(TextField('Create inventory'))
+          .fillIn(`"${profile.createInventoryElectronic}"`),
+      );
+    }
     if (profile.materialType) {
       cy.do(
         physicalResourceDetailsAccordion
           .find(materialTypeField)
           .fillIn(`"${profile.materialType}"`),
+      );
+    }
+    if (profile.materialTypeElectronic) {
+      cy.do(
+        electronicResourceDetailsAccordion
+          .find(materialTypeField)
+          .fillIn(`"${profile.materialTypeElectronic}"`),
       );
     }
     addVolume(profile);
@@ -653,6 +671,14 @@ export default {
   fillVendorInvoiceNumber: (number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
   fillQuantity: (quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal: (number) => cy.do(TextField('Sub-total*').fillIn(number)),
+  fillPurchaseOrderStatus: (orderStatus) => cy.do(purchaseOrderStatus.fillIn(`"${orderStatus}"`)),
+  fillCreateInventoryForElectronicResource: (inventory) => {
+    cy.do(eResourcesDetailsAccordion.find(TextField('Create inventory')).fillIn(inventory));
+  },
+  fillOrderFormat: (format) => cy.do(orderFormatField.fillIn(format)),
+  fillCreateInventoryForPhysicalResource: (inventory) => {
+    cy.do(physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(inventory));
+  },
 
   fillMappingProfileForUpdatesMarc: (specialMappingProfile = defaultMappingProfile) => {
     fillSummaryInMappingProfile(specialMappingProfile);
@@ -1183,6 +1209,8 @@ export default {
 
   clickClose: () => cy.do(closeButton.click()),
 
+  confirmCloseWithoutSaving: () => cy.do(closeWithoutSavingButton.click()),
+
   verifyAcquisitionsUnitsInfoMessage: (message) => {
     cy.do(
       Label('Acquisitions units')
@@ -1204,6 +1232,10 @@ export default {
 
   verifyFieldValue: (accordionName, fieldName, value) => {
     cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ value }));
+  },
+
+  verifyFieldEnabled: (accordionName, fieldName) => {
+    cy.expect(Accordion(accordionName).find(TextField(fieldName)).has({ disabled: false }));
   },
 
   verifyFieldEmptyAndDisabled: (accordionName, fieldName) => {
@@ -1233,6 +1265,27 @@ export default {
 
   isPurchaseOrderStatusFieldFocused: (value) => {
     purchaseOrderStatus.has({ focused: value });
+  },
+
+  verifyRowFieldEmptyAndDisabled: (rowIndex, accordionName, fieldName) => {
+    cy.expect(
+      Accordion(accordionName)
+        .find(ListItem({ index: rowIndex }))
+        .find(TextField(fieldName))
+        .has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyAddVolumeButtonDisabled: () => {
+    cy.expect(physicalResourceDetailsAccordion.find(Button('Add volume')).has({ disabled: true }));
+  },
+
+  verifyOrganizationLookUpButtonDisabled: (accordionName) => {
+    cy.expect(Accordion(accordionName).find(organizationLookUpButton).has({ disabled: true }));
+  },
+
+  clickAddLocationButton: () => {
+    cy.do([locationAccordion.find(Button('Add location')).click()]);
   },
 
   verifyDefaultPurchaseOrderLinesLimit(value) {
@@ -1273,7 +1326,7 @@ export default {
 
   verifyElectronicalResourcesCreateInventoryInfoMessage: (message) => {
     cy.do(
-      Accordion({ id: 'e-resources-details' })
+      electronicResourceDetailsAccordion
         .find(Label('Create inventory').find(IconButton({ icon: 'info' })))
         .click(),
     );
@@ -1287,5 +1340,48 @@ export default {
         .click(),
     );
     cy.expect(Popover({ content: including(message) }).exists());
+  },
+
+  verifyPaymentStatusDropdownOptions: (...names) => {
+    cy.get('#po-line-details')
+      .find('label:contains("Payment status") + div button[aria-haspopup]')
+      .click();
+    names.forEach((name) => {
+      cy.expect([DropdownMenu({ visible: true }).find(HTML(name)).exists()]);
+    });
+    cy.get('#po-line-details')
+      .find('label:contains("Payment status") + div button[aria-haspopup]')
+      .click();
+  },
+
+  selectPaymentStatusFromDropdown: (name) => {
+    cy.get('#po-line-details')
+      .find('label:contains("Payment status") + div button[aria-haspopup]')
+      .click();
+    cy.do(
+      DropdownMenu({ visible: true })
+        .find(Button(`${name}`))
+        .click(),
+    );
+  },
+
+  fillDiscountAmount: (amount) => {
+    cy.do(TextField('Discount').fillIn(amount));
+  },
+
+  selectDiscountType: (type) => {
+    cy.do(
+      Accordion('Cost details')
+        .find(Button(`${type}`))
+        .click(),
+    );
+  },
+
+  selectFundDistributionType: (type) => {
+    cy.do(
+      Accordion('Fund distribution')
+        .find(Button(`${type}`))
+        .click(),
+    );
   },
 };

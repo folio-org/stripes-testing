@@ -101,7 +101,7 @@ const trashButton = Button({ icon: 'trash' });
 const note = 'Edited by AQA team';
 const currencyButton = Button({ id: 'currency' });
 const orderLineList = MultiColumnList({ id: 'order-line-list' });
-
+const addDonorsModal = Modal('Add donors');
 // Results pane
 const searchResultsPane = Pane({ id: 'order-lines-results-pane' });
 
@@ -129,6 +129,13 @@ const submitOrderLine = () => {
 };
 const checkQuantityPhysical = (quantity) => {
   cy.expect(Accordion('Cost details').find(KeyValue('Quantity physical')).has({ value: quantity }));
+};
+const expandActionsDropdownInPOL = () => {
+  cy.do(
+    orderLineDetailsPane
+      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton))
+      .click(),
+  );
 };
 
 export default {
@@ -1376,6 +1383,12 @@ export default {
     submitOrderLine();
   },
 
+  deleteButtonInOrderLineIsAbsent: () => {
+    cy.wait(4000);
+    expandActionsDropdownInPOL();
+    cy.expect(Button('Delete').absent());
+  },
+
   editPOLineInfoAndChangeLocation(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
       locationSection.find(trashButton).click(),
@@ -1549,10 +1562,7 @@ export default {
   },
 
   deleteFundInPOLwithoutSave() {
-    cy.do([
-      Section({ id: 'fundDistributionAccordion' }).find(trashButton).click(),
-      saveAndCloseButton.click(),
-    ]);
+    cy.do(Section({ id: 'fundDistributionAccordion' }).find(trashButton).click());
   },
 
   deleteFundsInPOL() {
@@ -2091,6 +2101,23 @@ export default {
     }
   },
 
+  claimingActiveAndSetInterval(interval) {
+    cy.do([
+      Checkbox({ name: 'claimingActive' }).click(),
+      TextField({ name: 'claimingInterval' }).fillIn(interval),
+    ]);
+  },
+
+  claimingActive() {
+    cy.do(Checkbox({ name: 'claimingActive' }).click());
+  },
+
+  checkClaimingIntervalInPOL(claimingInterval) {
+    cy.expect([
+      poLineInfoSection.find(KeyValue('Claiming interval')).has({ value: claimingInterval }),
+    ]);
+  },
+
   verifyProductIdentifier: (productId, rowIndex = 0, productIdType) => {
     if (productIdType) {
       cy.expect([
@@ -2111,5 +2138,56 @@ export default {
           .has({ content: productId }),
       );
     }
+  },
+
+  openDonorInformationSection() {
+    cy.do(Button({ id: 'accordion-toggle-button-donorsInformation' }).click());
+  },
+
+  checkAddDonorButtomisActive() {
+    cy.expect([
+      Section({ id: 'donorsInformation' })
+        .find(Button({ id: 'donorOrganizationIds-plugin' }))
+        .is({ disabled: false }),
+    ]);
+  },
+
+  addDonor(donorName) {
+    cy.do([
+      Button({ id: 'donorOrganizationIds-plugin' }).click(),
+      addDonorsModal.find(TextField({ id: 'input-record-search' })).fillIn(donorName),
+      addDonorsModal.find(searchButton).click(),
+    ]);
+    cy.wait(3000);
+    cy.do([
+      addDonorsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      addDonorsModal.find(Button('Save')).click(),
+    ]);
+  },
+
+  addDonorAndCancel(donorName) {
+    cy.do([
+      Button({ id: 'donorOrganizationIds-plugin' }).click(),
+      addDonorsModal.find(TextField({ id: 'input-record-search' })).fillIn(donorName),
+      addDonorsModal.find(searchButton).click(),
+      addDonorsModal.find(Checkbox({ ariaLabel: 'Select all' })).click(),
+      addDonorsModal.find(Button('Close')).click(),
+    ]);
+  },
+
+  deleteDonor(donorName) {
+    cy.get('#donorsInformation')
+      .find('div[class^="mclRowFormatterContainer-"]')
+      .each((row) => {
+        cy.wrap(row).then(() => {
+          if (row.text().includes(donorName)) {
+            cy.wrap(row).find('button').click();
+          }
+        });
+      });
+  },
+
+  checkEmptyDonorList() {
+    cy.get('#donorsInformation').contains('The list contains no items');
   },
 };

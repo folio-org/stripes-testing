@@ -86,6 +86,9 @@ const orderInformationFields = {
   orderStatus: orderDetails.orderInformation.find(
     DecoratorWrapper({ label: including('Purchase order status') }).find(TextField()),
   ),
+  overridePoLineLimit: orderDetails.orderInformation.find(
+    TextField({ label: including('Override purchase order lines limit setting') }),
+  ),
   vendor: orderDetails.orderInformation.find(TextField({ label: including('Vendor') })),
   vendorLookUp: orderDetails.orderInformation.find(Button('Organization look-up')),
 };
@@ -195,6 +198,15 @@ export default {
       cy.expect(formButtons[label].has(conditions));
     });
   },
+  checkFieldValidationError({ orderInformation }) {
+    if (orderInformation?.length) {
+      orderInformation.forEach(({ label, error }) => {
+        cy.expect(
+          orderDetails.orderInformation.find(TextField({ label: including(label) })).has({ error }),
+        );
+      });
+    }
+  },
   getDropdownOptionsList({ label }) {
     return cy.then(() => summarySection.find(Select({ label: including(label) })).allOptionsText());
   },
@@ -275,13 +287,23 @@ export default {
       );
     }
   },
-  fillOrderInformationProfileFields({ status, vendor, organizationLookUp }) {
+  fillOrderInformationProfileFields({ status, overridePoLineLimit, vendor, organizationLookUp }) {
     if (status) {
       cy.do([
         orderInformationFields.orderStatus.focus(),
         orderInformationFields.orderStatus.fillIn(`"${status}"`),
       ]);
       cy.expect(orderInformationFields.orderStatus.has({ value: `"${status}"` }));
+    }
+
+    if (overridePoLineLimit) {
+      cy.do([
+        orderInformationFields.overridePoLineLimit.focus(),
+        orderInformationFields.overridePoLineLimit.fillIn(`"${overridePoLineLimit}"`),
+      ]);
+      cy.expect(
+        orderInformationFields.overridePoLineLimit.has({ value: `"${overridePoLineLimit}"` }),
+      );
     }
 
     if (vendor) {

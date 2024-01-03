@@ -48,6 +48,8 @@ const closeWithoutSavingButton = Button({ id: 'clickable-cancel-editing-confirma
 const areYouSureModal = Modal('Are you sure?');
 const listFeesFines = MultiColumnList({ id: 'list-accounts-history-view-feesfines' });
 const createRequestButton = Button('Create request');
+const openedFeesFinesLink = feesFinesAccordion.find(Link({ id: 'clickable-viewcurrentaccounts' }));
+const closedFeesFinesLink = feesFinesAccordion.find(HTML({ id: 'clickable-viewclosedaccounts' }));
 
 export default {
   errors,
@@ -118,8 +120,28 @@ export default {
     this.expandLoansSection(openLoans, returnedLoans);
     this.clickCurrentLoansLink();
   },
-  openFeeFines() {
+  openFeeFines(openFeesFines, closedFeesFines) {
     cy.do(feesFinesAccordion.clickHeader());
+
+    return (
+      openFeesFines && this.verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines)
+    );
+  },
+
+  verifyQuantityOfOpenAndClosedFeeFines(openFeesFines, closedFeesFines) {
+    cy.expect(
+      openedFeesFinesLink.has({
+        text: `${openFeesFines} open fee/fine `,
+      }),
+    );
+
+    if (closedFeesFines) {
+      cy.expect(
+        closedFeesFinesLink.has({
+          text: `${closedFeesFines} closed fee/fine`,
+        }),
+      );
+    }
   },
 
   openNotesSection() {
