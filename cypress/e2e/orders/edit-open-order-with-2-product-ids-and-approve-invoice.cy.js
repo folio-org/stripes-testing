@@ -102,7 +102,7 @@ describe('ui-orders: Orders', () => {
       Orders.selectFromResultsList(orderNumber);
 
       OrderLines.addPOLine();
-      OrderLines.selectRandomInstanceInTitleLookUP('375220 Variations / Ludwig Van Beethoven.', 0);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 0);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         firstFund,
         '50',
