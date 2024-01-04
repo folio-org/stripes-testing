@@ -182,4 +182,12 @@ export default {
         .exists(),
     );
   },
+
+  verifyLocationFieldValue: (rowIndex, columnName, value) => {
+    cy.expect(
+      Accordion('Location')
+        .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
+        .has({ content: value }),
+    );
+  },
 };

@@ -92,7 +92,7 @@ describe('data-import', () => {
         );
 
         // #4 Navigate to the "Material type" field in the "E-resources details" accordion -> select any value from the dropdown list
-        NewFieldMappingProfile.fillMaterialTypeForElectornicResource(
+        NewFieldMappingProfile.fillMaterialTypeForElectronicResource(
           mappingProfile.materialTypeName,
         );
         NewFieldMappingProfile.verifyFieldValue(
