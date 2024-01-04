@@ -4,12 +4,17 @@ import {
   Button,
   Checkbox,
   Link,
+  MultiSelect,
+  MultiSelectOption,
   MultiColumnListCell,
   Pane,
   PaneHeader,
   Select,
   TextField,
 } from '../../../../interactors';
+
+const resetAllButton = Button({ id: 'clickable-reset-all' });
+const tagsAccordion = Accordion({ id: 'users-filter-accordion-tags' });
 
 // Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => {
@@ -69,5 +74,18 @@ export default {
   verifyLostItemsRequiringActualCostOptionNotDisplayed() {
     cy.do(Button('Actions').click());
     cy.expect(Button('Lost items requiring actual cost').absent());
+  },
+
+  verifyTagOption(tagName) {
+    cy.do(tagsAccordion.find(MultiSelectOption(including(tagName))).click());
+  },
+  chooseTagOption: (tagName) => {
+    cy.do([
+      MultiSelect({ ariaLabelledby: 'users-filter-accordion-tags' }).select([including(tagName)]),
+    ]);
+  },
+
+  resetAllFilters() {
+    cy.do(resetAllButton.click());
   },
 };
