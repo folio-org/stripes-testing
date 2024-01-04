@@ -41,7 +41,7 @@ describe('Settings: Tenant', () => {
 
   after('Delete test data', () => {
     cy.getAdminToken();
-    Addresses.deleteAddress(addressId);
+    Addresses.deleteAddressViaApi({ id: addressId });
     Locations.deleteViaApi(testData.location);
     ServicePoints.deleteViaApi(testData.servicePoint.id);
     Users.deleteViaApi(testData.user.userId);
