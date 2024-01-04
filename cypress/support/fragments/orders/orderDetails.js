@@ -13,6 +13,7 @@ import {
   MultiColumnList,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
 import OrderLineDetails from './orderLineDetails';
 import OrderLineEditForm from './orderLineEditForm';
@@ -109,6 +110,13 @@ export default {
     );
 
     InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
+  },
+  openOrderEditForm() {
+    this.expandActionsDropdown();
+    cy.do(Button('Edit').click());
+    OrderEditForm.waitLoading();
+
+    return OrderEditForm;
   },
   closeOrder({ orderNumber, confirm = true } = {}) {
     this.expandActionsDropdown();
