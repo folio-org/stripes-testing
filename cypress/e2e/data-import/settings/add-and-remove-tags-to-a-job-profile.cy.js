@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -30,7 +31,7 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
     });
 
     it(

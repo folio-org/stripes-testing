@@ -202,10 +202,11 @@ describe('Lost items requiring actual cost', () => {
       // Success toast "A lost item fee will not be charged to <insert patron-last-name, patron-first-name patron-middle-name>" displayed
       DoNotBillModal.verifyCalloutMessage(testData.user);
       // Click on "..." button
-      LostItemsRequiringActualCostPage.checkDropdownOptionsDisabled(instanceTitle, [
-        'Bill actual cost',
-        'Do not bill',
-      ]);
+      LostItemsRequiringActualCostPage.checkDropdownOptions(
+        instanceTitle,
+        ['Bill actual cost', 'Do not bill'],
+        true,
+      );
     },
   );
 });

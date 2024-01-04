@@ -296,6 +296,16 @@ export default {
     );
   },
 
+  openErrorInSummaryTable: (row) => {
+    cy.do(
+      jobSummaryTable
+        .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+        .find(MultiColumnListCell({ columnIndex: 8 }))
+        .find(Link())
+        .click(),
+    );
+  },
+
   openOrder: (itemStatus, rowNumber = 0) => {
     cy.do(
       resultsList
@@ -344,10 +354,10 @@ export default {
     cy.wait(2000);
   },
 
-  openJsonScreenByStatus: (importStatus, title) => {
+  openJsonScreenByStatus: (importStatus, title, columnNumber = 2) => {
     cy.do(
       resultsList
-        .find(MultiColumnListCell({ content: importStatus, columnIndex: 2 }))
+        .find(MultiColumnListCell({ content: importStatus, columnIndex: columnNumber }))
         .perform((element) => {
           const rowNumber = element.parentElement.getAttribute('data-row-inner');
 

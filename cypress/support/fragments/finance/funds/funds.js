@@ -966,9 +966,8 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+    cy.wait(4000);
     FundDetails.waitLoading();
-
-    return FundDetails;
   },
 
   closeMenu: () => {
@@ -1026,5 +1025,9 @@ export default {
 
   varifyCanNotCreatePlannedBudget: () => {
     cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
+  },
+
+  verifyFundLinkNameExists: (FundName) => {
+    cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
   },
 };

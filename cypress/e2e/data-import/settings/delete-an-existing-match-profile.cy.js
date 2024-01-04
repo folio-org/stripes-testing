@@ -1,6 +1,9 @@
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -53,8 +56,8 @@ describe('data-import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(profile.createJobProfile);
-        MatchProfiles.deleteMatchProfile(profile.createMatchProfile);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.createJobProfile);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.createMatchProfile);
         Users.deleteViaApi(user.userId);
       });
     });

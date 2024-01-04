@@ -24,6 +24,12 @@ import {
   EXISTING_RECORDS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import MarcAuthoritiesSearch from '../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
@@ -194,33 +200,12 @@ describe('data-import', () => {
       });
     });
 
-    function replace999SubfieldsInPreupdatedFile(
-      exportedFileName,
-      preUpdatedFileName,
-      finalFileName,
-    ) {
-      FileManager.readFile(`cypress/fixtures/${exportedFileName}`).then((actualContent) => {
-        const lines = actualContent.split('');
-        const field999data = lines[lines.length - 2];
-        FileManager.readFile(`cypress/fixtures/${preUpdatedFileName}`).then((updatedContent) => {
-          const content = updatedContent.split('\n');
-          let firstString = content[0].slice();
-          firstString = firstString.replace(
-            'ff000000000-0000-0000-0000-000000000000i00000000-0000-0000-0000-000000000000',
-            field999data,
-          );
-          content[0] = firstString;
-          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
-        });
-      });
-    }
-
     after('Delete test data', () => {
       cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       Users.deleteViaApi(testData.user.userId);
       InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
       testData.createdRecordIDs.forEach((id, index) => {
@@ -252,7 +237,7 @@ describe('data-import', () => {
         ExportFile.downloadExportedMarcFile(testData.exportedMarcFile);
 
         // change exported file
-        replace999SubfieldsInPreupdatedFile(
+        DataImport.replace999SubfieldsInPreupdatedFile(
           testData.exportedMarcFile,
           testData.marcFileForModify,
           testData.modifiedMarcFile,

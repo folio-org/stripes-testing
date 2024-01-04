@@ -49,4 +49,12 @@ export default {
   verifyFOLIORecordTypeOptionExists(type) {
     cy.expect(recordTypeselect.find(Option(type)).exists());
   },
+
+  verifyValueBySection: (sectionName, value, isRequired) => {
+    if (isRequired) {
+      cy.expect(TextField(`${sectionName}*`).has({ value: `"${value}"` }));
+    } else {
+      cy.expect(TextField(sectionName).has({ value: `"${value}"` }));
+    }
+  },
 };

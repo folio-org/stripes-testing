@@ -52,52 +52,11 @@ const checkOverrideSectionOfMappingProfile = (field, status) => {
     }),
   );
 };
-const getProfileIdViaApi = (profileName) => {
-  // get all mapping profiles
-  return cy
-    .okapiRequest({
-      path: 'data-import-profiles/mappingProfiles',
-      searchParams: {
-        query: '(cql.allRecords=1) sortby name',
-        limit: 1000,
-      },
-    })
-    .then(({ body: { mappingProfiles } }) => {
-      // find profile to delete
-      const profile = mappingProfiles.find((mapProfile) => mapProfile.name === profileName);
-      return profile.id;
-    });
-};
-const deleteViaApi = (profileName) => {
-  // get all mapping profiles
-  cy.okapiRequest({
-    path: 'data-import-profiles/mappingProfiles',
-    searchParams: {
-      query: '(cql.allRecords=1) sortby name',
-      limit: 1000,
-    },
-  })
-    .then(({ body: { mappingProfiles } }) => {
-      // find profile to delete
-      const profileToDelete = mappingProfiles.find((profile) => profile.name === profileName);
-
-      // delete profile with its id
-      cy.okapiRequest({
-        method: 'DELETE',
-        path: `data-import-profiles/mappingProfiles/${profileToDelete.id}`,
-      });
-    })
-    .then(({ status }) => {
-      if (status === 204) cy.log('###DELETED MAPPING PROFILE###');
-    });
-};
 
 export default {
   checkUpdatesSectionOfMappingProfile,
   checkOverrideSectionOfMappingProfile,
   closeViewMode,
-  deleteViaApi,
-  getProfileIdViaApi,
 
   checkCreatedMappingProfile: (
     profileName,
@@ -172,11 +131,17 @@ export default {
     );
   },
 
+  verifyValueBySection: (sectionName, value) => cy.expect(KeyValue(sectionName).has({ value: `"${value}"` })),
+  verifyValueByAccordionAndSection: (accordion, sectionName, value) => {
+    cy.expect(Accordion(accordion).find(KeyValue(sectionName)).has({ value }));
+  },
   verifyInstanceStatusTerm: (status) => cy.expect(KeyValue('Instance status term').has({ value: status })),
   verifyActionMenuAbsent: () => cy.expect(fullScreenView.find(actionsButton).absent()),
   verifyMappingProfileOpened: () => cy.expect(fullScreenView.exists()),
   verifyVendorName: (vendorName) => cy.expect(KeyValue('Vendor name').has({ value: vendorName })),
   verifyCurrency: (value) => cy.expect(KeyValue('Currency').has({ value })),
+  verifyDefaultPurchaseOrderLinesLimit: (value) => cy.expect(KeyValue('Purchase order lines limit setting').has({ value })),
+  verifyPaymentStatus: (value) => cy.expect(KeyValue('Payment status').has({ value })),
   verifyMappingProfileTitleName: (profileName) => cy.get('#full-screen-view-content h2').should('have.text', profileName),
   verifyCannotDeleteModalOpened: () => cy.expect(cannotDeleteModal.exists()),
   verifyEnabledIndicatorSetToTrueViaApi: (profileId) => {
@@ -204,5 +169,25 @@ export default {
 
       expect(existingValues).to.eql(expectedValues);
     });
+  },
+
+  verifyDiscount: (discount) => {
+    cy.expect(KeyValue('Discount').has({ value: discount }));
+  },
+
+  verifyFundDistributionValue: (val) => {
+    cy.expect(
+      Accordion('Fund distribution')
+        .find(MultiColumnListCell({ content: val }))
+        .exists(),
+    );
+  },
+
+  verifyLocationFieldValue: (rowIndex, columnName, value) => {
+    cy.expect(
+      Accordion('Location')
+        .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
+        .has({ content: value }),
+    );
   },
 };

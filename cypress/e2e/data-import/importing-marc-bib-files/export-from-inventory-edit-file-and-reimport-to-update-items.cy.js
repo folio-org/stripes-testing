@@ -7,6 +7,12 @@ import {
   PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -23,7 +29,6 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
@@ -232,7 +237,7 @@ describe('data-import', () => {
           cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
         });
       });
-      SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+      SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
         (bodyWithjobProfile) => {
           testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
         },
@@ -269,17 +274,31 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          instanceActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          holdingsActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          itemActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(itemActionProfileForUpdate.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          instanceMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          holdingsMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          itemMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          itemMappingProfileForUpdate.name,
+        );
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (initialInstance) => {
             cy.deleteItemViaApi(initialInstance.items[0].id);

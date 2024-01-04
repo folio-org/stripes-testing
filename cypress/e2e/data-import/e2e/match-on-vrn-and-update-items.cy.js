@@ -9,14 +9,17 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import MatchOnVRN from '../../../support/fragments/data_import/matchOnVRN';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
@@ -156,16 +159,16 @@ describe('data-import', () => {
         Users.deleteViaApi(user.userId);
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         // delete generated profiles
-        JobProfiles.deleteJobProfile(jobProfilesData.name);
-        MatchProfiles.deleteMatchProfile(instanceMatchProfileName);
-        MatchProfiles.deleteMatchProfile(holdingsMatchProfileName);
-        MatchProfiles.deleteMatchProfile(itemMatchProfileName);
-        ActionProfiles.deleteActionProfile(instanceActionProfileName);
-        ActionProfiles.deleteActionProfile(holdingsActionProfileName);
-        ActionProfiles.deleteActionProfile(itemActionProfileName);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfileName);
-        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileName);
-        FieldMappingProfileView.deleteViaApi(itemMappingProfileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfilesData.name);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(instanceMatchProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(holdingsMatchProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(itemMatchProfileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(instanceActionProfileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(holdingsActionProfileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(itemActionProfileName);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(instanceMappingProfileName);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(holdingsMappingProfileName);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(itemMappingProfileName);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
       });
     });
