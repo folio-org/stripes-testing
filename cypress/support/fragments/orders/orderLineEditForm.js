@@ -36,6 +36,8 @@ const edition = TextField({ name: 'edition' });
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
   receivingNote: itemDetailsSection.find(TextArea({ name: 'details.receivingNote' })),
+  subscriptionFrom: itemDetailsSection.find(TextField({ name: 'details.subscriptionFrom' })),
+  subscriptionTo: itemDetailsSection.find(TextField({ name: 'details.subscriptionTo' })),
 };
 
 const orderLineFields = {
@@ -82,6 +84,9 @@ export default {
     fields.forEach(({ label, conditions }) => {
       cy.expect(section[label].has(conditions));
     });
+  },
+  checkItemDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: itemDetailsFields });
   },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });

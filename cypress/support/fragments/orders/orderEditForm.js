@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   KeyValue,
   MultiSelect,
   Section,
@@ -17,6 +18,7 @@ import InteractorsTools from '../../utils/interactorsTools';
 const orderEditFormRoot = Section({ id: 'pane-poForm' });
 
 const orderInfoSection = orderEditFormRoot.find(Section({ id: 'purchaseOrder' }));
+const ongoingInformationSection = orderEditFormRoot.find(Section({ id: 'ongoing' }));
 const orderSummarySection = orderEditFormRoot.find(Section({ id: 'poSummary' }));
 
 const collapseAllButton = orderEditFormRoot.find(Button('Collapse all'));
@@ -35,6 +37,11 @@ const infoSectionFields = {
   billTo: orderInfoSection.find(Selection('Bill to')),
   shipTo: orderInfoSection.find(Selection('Ship to')),
   tags: orderInfoSection.find(MultiSelect({ label: 'Tags' })),
+};
+
+const ongoingInformationFields = {
+  subscription: ongoingInformationSection.find(Checkbox({ name: 'ongoing.isSubscription' })),
+  renewalDate: ongoingInformationSection.find(TextField({ name: 'ongoing.renewalDate' })),
 };
 
 const sections = {
@@ -60,6 +67,11 @@ export default {
   checkSectionsConditions(areas = []) {
     areas.forEach(({ sectionName, conditions }) => {
       cy.expect(sections[sectionName].has(conditions));
+    });
+  },
+  checkFieldsConditions({ fields, section }) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(section[label].has(conditions));
     });
   },
   checkOrderFormContent() {
@@ -88,6 +100,9 @@ export default {
       cy.expect(infoSectionFields.orderType.has({ error: 'Required!' }));
     }
   },
+  checkOngoingOrderInformationSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: ongoingInformationFields });
+  },
   getOrderNumber() {
     return cy.then(() => infoSectionFields.poNumber.value());
   },
@@ -103,6 +118,12 @@ export default {
 
     if (orderType) {
       cy.do(infoSectionFields.orderType.choose(orderType));
+    }
+  },
+  fillOngoingInformationSectionFields({ renewalDate }) {
+    if (renewalDate) {
+      cy.do(ongoingInformationFields.renewalDate.fillIn(renewalDate));
+      cy.expect(ongoingInformationFields.renewalDate.has({ value: renewalDate }));
     }
   },
   selectOrderTemplate(templateName) {
