@@ -9,6 +9,12 @@ import {
   HOLDINGS_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -139,14 +145,16 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-        ActionProfiles.deleteActionProfile(holdingsActionProfile.name);
-        FieldMappingProfileView.deleteViaApi(holdingsMappingProfile.name);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(holdingsActionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(holdingsMappingProfile.name);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         collectionOfMappingAndActionProfilesForUpdate.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
@@ -207,8 +215,7 @@ describe('data-import', () => {
         InventoryInstance.getAssignedHRID().then((hrId) => {
           instanceHrid = hrId;
         });
-        cy.go('back');
-        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
+        InventoryInstance.openHoldingView();
         HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
           const holdingsHrId = initialHrId;
 

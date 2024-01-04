@@ -1,4 +1,5 @@
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -39,7 +40,7 @@ describe('data-import', () => {
       JobProfileEdit.unlinkActionsProfile(0);
       NewJobProfile.linkActionProfileByName(defaultActionProfileName);
       JobProfileEdit.saveAndClose();
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
     });
 
     it(

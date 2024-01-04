@@ -15,6 +15,12 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -144,19 +150,9 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        // delete generated profiles
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        collectionOfProfiles.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
-        });
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
           Orders.deleteOrderViaApi(orderId[0].id);
         });
-        Users.deleteViaApi(user.userId);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
         cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
           (instance) => {
@@ -165,6 +161,18 @@ describe('data-import', () => {
             }
           },
         );
+        // delete generated profiles
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        collectionOfProfiles.forEach((profile) => {
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
+        });
+        // delete created files
+        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+        Users.deleteViaApi(user.userId);
       });
     });
 
@@ -267,6 +275,8 @@ describe('data-import', () => {
         Orders.createOrder(order, true).then((orderId) => {
           Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((res) => {
             orderNumber = res[0].poNumber;
+
+            cy.wait(4000);
             Orders.checkIsOrderCreated(orderNumber);
             OrderLines.addPolToOrder({
               title: pol.title,

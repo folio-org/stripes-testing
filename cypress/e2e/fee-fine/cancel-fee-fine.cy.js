@@ -129,7 +129,7 @@ describe('Fees&Fines', () => {
         PayFeeFine.checkConfirmModalClosed();
         UserAllFeesFines.verifyPageHeader(testData.user.username);
         // Switch to "Closed" tab
-        UserAllFeesFines.openClosedFeesFines();
+        UserAllFeesFines.goToClosedFeesFines();
         // Select just paid fee/fine and click "Refund" button
         UserAllFeesFines.clickOnRowByIndex(0);
         // Select Refund reason and click "Refund" button
@@ -149,7 +149,7 @@ describe('Fees&Fines', () => {
         CancelFeeFine.waitLoading();
         // Fill in "Additional information for staff*" field and click "Confirm" button
         CancelFeeFine.fillInAdditionalInformationAndConfirm(getTestEntityValue('comment'));
-        UserAllFeesFines.openClosedFeesFines();
+        UserAllFeesFines.goToClosedFeesFines();
         UserAllFeesFines.verifyPaymentStatus(0, 'Cancelled as error');
       },
     );

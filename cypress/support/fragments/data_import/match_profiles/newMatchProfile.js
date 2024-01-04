@@ -446,6 +446,147 @@ export default {
       });
   },
 
+  createMatchProfileWithIncomingAndExistingRecordsViaApi: ({
+    profileName,
+    incomingRecordFields,
+    existingRecordFields,
+    recordType,
+  }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/matchProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            description: '',
+            incomingRecordType: recordType,
+            matchDetails: [
+              {
+                incomingRecordType: recordType,
+                incomingMatchExpression: {
+                  fields: [
+                    {
+                      label: 'field',
+                      value: incomingRecordFields.field,
+                    },
+                    {
+                      label: 'indicator1',
+                      value: incomingRecordFields.in1,
+                    },
+                    {
+                      label: 'indicator2',
+                      value: incomingRecordFields.in2,
+                    },
+                    {
+                      label: 'recordSubfield',
+                      value: incomingRecordFields.subfield,
+                    },
+                  ],
+                  staticValueDetails: null,
+                  dataValueType: 'VALUE_FROM_RECORD',
+                },
+                existingRecordType: recordType,
+                existingMatchExpression: {
+                  fields: [
+                    {
+                      label: 'field',
+                      value: existingRecordFields.field,
+                    },
+                    {
+                      label: 'indicator1',
+                      value: existingRecordFields.in1,
+                    },
+                    { label: 'indicator2', value: existingRecordFields.in2 },
+                    {
+                      label: 'recordSubfield',
+                      value: existingRecordFields.subfield,
+                    },
+                  ],
+                  staticValueDetails: null,
+                  dataValueType: 'VALUE_FROM_RECORD',
+                },
+                matchCriterion: 'EXACTLY_MATCHES',
+              },
+            ],
+            existingRecordType: recordType,
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
+  createMatchProfileWithIncomingAndExistingMatchExpressionViaApi: ({
+    profileName,
+    incomingRecordFields,
+    existingRecordType,
+    existingMatchExpressionValue,
+    recordType,
+  }) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/matchProfiles',
+        body: {
+          profile: {
+            name: profileName,
+            description: '',
+            incomingRecordType: recordType,
+            matchDetails: [
+              {
+                incomingRecordType: recordType,
+                incomingMatchExpression: {
+                  fields: [
+                    {
+                      label: 'field',
+                      value: incomingRecordFields.field,
+                    },
+                    {
+                      label: 'indicator1',
+                      value: incomingRecordFields.in1,
+                    },
+                    {
+                      label: 'indicator2',
+                      value: incomingRecordFields.in2,
+                    },
+                    {
+                      label: 'recordSubfield',
+                      value: incomingRecordFields.subfield,
+                    },
+                  ],
+                  staticValueDetails: null,
+                  dataValueType: 'VALUE_FROM_RECORD',
+                },
+                existingRecordType,
+                existingMatchExpression: {
+                  fields: [
+                    {
+                      label: 'field',
+                      value: existingMatchExpressionValue,
+                    },
+                  ],
+                  dataValueType: 'VALUE_FROM_RECORD',
+                },
+                matchCriterion: 'EXACTLY_MATCHES',
+              },
+            ],
+            existingRecordType,
+          },
+          addedRelations: [],
+          deletedRelations: [],
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  },
+
   createMatchProfileViaApiMarc: ({
     profileName,
     incomingRecordFields,

@@ -13,6 +13,12 @@ import {
   PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
@@ -29,7 +35,6 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/jobProfiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
@@ -323,6 +328,7 @@ describe('data-import', () => {
     };
 
     beforeEach('create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
 
       const jobProfile = {
@@ -354,23 +360,25 @@ describe('data-import', () => {
     afterEach('delete test data', () => {
       cy.getAdminToken().then(() => {
         // delete generated profiles
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
-          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
         });
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
-        JobProfiles.deleteJobProfile(jobProfileNameCreate);
-        ActionProfiles.deleteActionProfile(nameMarcBibActionProfile);
-        ActionProfiles.deleteActionProfile(nameInstanceActionProfile);
-        ActionProfiles.deleteActionProfile(nameHoldingsActionProfile);
-        ActionProfiles.deleteActionProfile(nameItemActionProfile);
-        FieldMappingProfileView.deleteViaApi(nameMarcBibMappingProfile);
-        FieldMappingProfileView.deleteViaApi(nameInstanceMappingProfile);
-        FieldMappingProfileView.deleteViaApi(nameHoldingsMappingProfile);
-        FieldMappingProfileView.deleteViaApi(nameItemMappingProfile);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileNameCreate);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(nameMarcBibActionProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(nameInstanceActionProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(nameHoldingsActionProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(nameItemActionProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(nameMarcBibMappingProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(nameInstanceMappingProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(nameHoldingsMappingProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(nameItemMappingProfile);
         // delete created files in fixtures
         FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

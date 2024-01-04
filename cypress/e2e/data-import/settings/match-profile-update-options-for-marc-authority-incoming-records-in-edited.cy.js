@@ -1,5 +1,7 @@
 import { Permissions } from '../../../support/dictionary';
+import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -28,6 +30,7 @@ describe('data-import', () => {
         in2: 'f',
         subfield: 's',
       },
+      recordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
     };
 
     before('Create test data', () => {
@@ -42,7 +45,7 @@ describe('data-import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         Users.deleteViaApi(user.userId);
       });
     });

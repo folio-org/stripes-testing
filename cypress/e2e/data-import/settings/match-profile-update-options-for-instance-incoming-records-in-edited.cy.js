@@ -1,5 +1,6 @@
 import { Permissions } from '../../../support/dictionary';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -46,7 +47,7 @@ describe('data-import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         Users.deleteViaApi(user.userId);
       });
     });

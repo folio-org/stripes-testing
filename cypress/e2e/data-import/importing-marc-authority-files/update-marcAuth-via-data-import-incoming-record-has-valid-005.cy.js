@@ -5,7 +5,6 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -18,7 +17,12 @@ import {
   EXISTING_RECORDS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -97,10 +101,10 @@ describe('data-import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       Users.deleteViaApi(testData.user.userId);
       MarcAuthority.deleteViaAPI(testData.createdRecordIDs[0]);
       FileManager.deleteFile(`cypress/fixtures/${testData.editedFileNameForCreate}`);
