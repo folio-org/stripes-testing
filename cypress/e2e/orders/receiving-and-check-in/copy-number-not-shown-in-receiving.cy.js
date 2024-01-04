@@ -76,7 +76,7 @@ describe('Orders', () => {
         Orders.deleteOrderViaApi(testData.order.id);
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
         Locations.deleteViaApi(testData.location);
-        MaterialTypes.deleteMaterialTypeViaApi(testData.materialType.id);
+        MaterialTypes.deleteViaApi(testData.materialType.id);
         ServicePoints.deleteViaApi(testData.servicePoint.id);
         Users.deleteViaApi(testData.user.userId);
       });

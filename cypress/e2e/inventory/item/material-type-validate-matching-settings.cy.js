@@ -13,103 +13,103 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import MaterialTypes from '../../../support/fragments/settings/inventory/materialTypes';
 
 describe('inventory', () => {
-  const itemData = {
-    barcode: generateItemBarcode(),
-    instanceTitle: `Instance ${getRandomPostfix()}`,
-    materialTypes: [
-      {
-        title: `materialType ${getRandomPostfix()}`,
-      },
-      {
-        title: `materialType ${getRandomPostfix()}`,
-      },
-      {
-        title: `materialType ${getRandomPostfix()}`,
-      },
-    ],
-  };
-  let location;
-  const service = ServicePoints.getDefaultServicePointWithPickUpLocation();
+  describe('Item', () => {
+    const itemData = {
+      barcode: generateItemBarcode(),
+      instanceTitle: `Instance ${getRandomPostfix()}`,
+      materialTypes: [
+        {
+          title: `materialType ${getRandomPostfix()}`,
+        },
+        {
+          title: `materialType ${getRandomPostfix()}`,
+        },
+        {
+          title: `materialType ${getRandomPostfix()}`,
+        },
+      ],
+    };
+    let location;
+    const service = ServicePoints.getDefaultServicePointWithPickUpLocation();
 
-  before('Create test data', () => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          itemData.instanceTypeId = instanceTypes[0].id;
+    before('Create test data', () => {
+      cy.getAdminToken()
+        .then(() => {
+          cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+            itemData.instanceTypeId = instanceTypes[0].id;
+          });
+          cy.getHoldingTypes({ limit: 1 }).then((res) => {
+            itemData.holdingTypeId = res[0].id;
+          });
+          ServicePoints.createViaApi(service);
+          location = Location.getDefaultLocation(service.id);
+          Location.createViaApi(location);
+          cy.getLoanTypes({ limit: 1 }).then((res) => {
+            itemData.loanTypeId = res[0].id;
+          });
+          [...Array(3)].forEach((_, index) => {
+            const materialType = MaterialTypes.getDefaultMaterialType();
+            MaterialTypes.createMaterialTypeViaApi(materialType);
+            itemData.materialTypes[index].materialType = materialType;
+          });
+        })
+        .then(() => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: itemData.instanceTypeId,
+              title: itemData.instanceTitle,
+            },
+            holdings: [
+              {
+                holdingsTypeId: itemData.holdingTypeId,
+                permanentLocationId: location.id,
+              },
+            ],
+            items: [
+              {
+                barcode: itemData.barcode,
+                status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                permanentLoanType: { id: itemData.loanTypeId },
+                materialType: { id: itemData.materialTypes[0].materialType.id },
+              },
+            ],
+          });
         });
-        cy.getHoldingTypes({ limit: 1 }).then((res) => {
-          itemData.holdingTypeId = res[0].id;
-        });
-        ServicePoints.createViaApi(service);
-        location = Location.getDefaultLocation(service.id);
-        Location.createViaApi(location);
-        cy.getLoanTypes({ limit: 1 }).then((res) => {
-          itemData.loanTypeId = res[0].id;
-        });
+
+      cy.loginAsAdmin({
+        path: TopMenu.inventoryPath,
+        waiter: InventoryInstances.waitContentLoading,
+      });
+    });
+
+    after('Delete  test data', () => {
+      cy.getAdminToken();
+      ServicePoints.deleteViaApi(service.id);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+      Location.deleteViaApi(location.id);
+      [...Array(3)].forEach((_, index) => {
+        MaterialTypes.deleteViaApi(itemData.materialTypes[index].materialType.id);
+      });
+    });
+
+    it(
+      'C628 Item Data --> Material Type --> (Validate matching settings) (folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet'] },
+      () => {
+        InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
+        InventoryInstance.openHoldingsAccordion(location.name);
+        InventoryInstance.openItemByBarcodeAndIndex(itemData.barcode);
+        InventoryItems.edit();
         [...Array(3)].forEach((_, index) => {
-          const materialType = MaterialTypes.getDefaultMaterialType();
-          MaterialTypes.createMaterialTypeViaApi(materialType);
-          itemData.materialTypes[index].materialType = materialType;
+          ItemRecordView.verifyMaterialType(itemData.materialTypes[index].materialType.name);
         });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: itemData.instanceTypeId,
-            title: itemData.instanceTitle,
-          },
-          holdings: [
-            {
-              holdingsTypeId: itemData.holdingTypeId,
-              permanentLocationId: location.id,
-            },
-          ],
-          items: [
-            {
-              barcode: itemData.barcode,
-              status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-              permanentLoanType: { id: itemData.loanTypeId },
-              materialType: { id: itemData.materialTypes[0].materialType.id },
-            },
-          ],
+
+        cy.visit(settingsMenu.materialTypePath);
+        MaterialTypes.checkAvailableOptions();
+        [...Array(3)].forEach((_, index) => {
+          MaterialTypes.isPresented(itemData.materialTypes[index].materialType.name);
         });
-      });
-
-    cy.loginAsAdmin({
-      path: TopMenu.inventoryPath,
-      waiter: InventoryInstances.waitContentLoading,
-    });
+      },
+    );
   });
-
-  after('Delete  test data', () => {
-    cy.getAdminToken();
-    ServicePoints.deleteViaApi(service.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
-    Location.deleteViaApi(location.id);
-    [...Array(3)].forEach((_, index) => {
-      MaterialTypes.deleteApi(itemData.materialTypes[index].materialType.id);
-    });
-  });
-
-  it(
-    'C628 - Item Data --> Material Type --> (Validate matching settings) (Folijet)(TaaS)',
-    {
-      tags: ['extendedPath', 'folijet'],
-    },
-    () => {
-      InventorySearchAndFilter.searchInstanceByTitle(itemData.instanceTitle);
-      InventoryInstance.openHoldingsAccordion(location.name);
-      InventoryInstance.openItemByBarcodeAndIndex(itemData.barcode);
-      InventoryItems.edit();
-      [...Array(3)].forEach((_, index) => {
-        ItemRecordView.verifyMaterialType(itemData.materialTypes[index].materialType.name);
-      });
-
-      cy.visit(settingsMenu.materialTypePath);
-      MaterialTypes.checkAvailableOptions();
-      [...Array(3)].forEach((_, index) => {
-        MaterialTypes.isPresented(itemData.materialTypes[index].materialType.name);
-      });
-    },
-  );
 });

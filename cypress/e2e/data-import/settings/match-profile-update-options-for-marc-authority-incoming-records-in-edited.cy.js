@@ -1,4 +1,5 @@
 import { Permissions } from '../../../support/dictionary';
+import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -29,6 +30,7 @@ describe('data-import', () => {
         in2: 'f',
         subfield: 's',
       },
+      recordType: EXISTING_RECORDS_NAMES.MARC_AUTHORITY,
     };
 
     before('Create test data', () => {

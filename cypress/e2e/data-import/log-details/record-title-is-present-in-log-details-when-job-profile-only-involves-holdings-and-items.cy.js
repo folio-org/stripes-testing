@@ -61,6 +61,7 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -328,6 +329,7 @@ describe('data-import', () => {
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
+        cy.getAdminToken();
         ExportFile.uploadFile(csvFileName);
         ExportFile.exportWithCreatedJobProfile(csvFileName, exportJobProfileName);
         ExportFile.downloadExportedMarcFile(marcFileNameForUpdate);
@@ -399,6 +401,7 @@ describe('data-import', () => {
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         });
       },
     );
@@ -407,8 +410,8 @@ describe('data-import', () => {
       'C422064 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITHOUT instance match item (folijet)',
       { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
-        const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
-        const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
+        const marcFileNameForUpdate = `C422064 secondmarcFile.${getRandomPostfix()}.mrc`;
+        const csvFileName = `C422064 secondAutotestFile${getRandomPostfix()}.csv`;
         const quantityOfItems = '1';
         const collectionOfMappingAndActionProfiles = [
           {
@@ -598,7 +601,7 @@ describe('data-import', () => {
         FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${csvFileName}`);
         FileManager.deleteFileFromDownloadsByMask(
-          '*C375109 firstmarcFile*',
+          '*C422064 secondmarcFile*',
           '*SearchInstanceUUIDs*',
         );
         cy.getAdminToken().then(() => {

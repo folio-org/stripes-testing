@@ -151,15 +151,16 @@ describe('data-import', () => {
           InventorySearchAndFilter.saveUUIDs();
           ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
           FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-          cy.visit(TopMenu.dataExportPath);
 
           // download exported marc file
-          ExportFile.uploadFile(nameForCSVFile);
-          ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-          ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
-          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-
-          cy.log('#####End Of Export#####');
+          cy.visit(TopMenu.dataExportPath);
+          cy.getAdminToken().then(() => {
+            ExportFile.uploadFile(nameForCSVFile);
+            ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+            ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
+            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+            cy.log('#####End Of Export#####');
+          });
 
           // create Match profile
           cy.visit(SettingsMenu.matchProfilePath);

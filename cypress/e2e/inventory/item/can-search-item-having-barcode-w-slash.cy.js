@@ -9,7 +9,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Item', () => {
     const barcode = `${randomFourDigitNumber()}/${randomFourDigitNumber()}`;
     const testData = {

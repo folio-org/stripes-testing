@@ -308,9 +308,9 @@ export default {
   },
 
   getFormattedDateWithTime(date, spelling = { withoutComma: false, withSpace: false }) {
-    if (spelling.withoutComma) return moment.utc(date).format('M/D/YYYYh:mm A');
-    if (spelling.withSpace) return moment.utc(date).format('M/D/YYYY h:mm A');
-    return moment.utc(date).format('M/D/YYYY, h:mm A');
+    if (spelling.withoutComma) return moment.utc(date).format('M/D/YYYYh');
+    if (spelling.withSpace) return moment.utc(date).format('M/D/YYYY h');
+    return moment.utc(date).format('M/D/YYYY, h');
   },
 
   getCurrentEndOfDay() {

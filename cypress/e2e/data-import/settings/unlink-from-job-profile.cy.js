@@ -88,7 +88,7 @@ describe('data-import', () => {
         JobProfiles.createJobProfile(jobProfile);
         NewJobProfile.linkMatchProfile(matchProfile.profileName);
         NewJobProfile.linkActionProfileForMatches(collectionOfActionProfiles[0].name);
-        NewJobProfile.linkActionProfileForMatches(collectionOfActionProfiles[1].name);
+        NewJobProfile.linkActionProfileForMatches(collectionOfActionProfiles[1].name, 1);
         NewJobProfile.linkActionProfileForNonMatches(collectionOfActionProfiles[2].name);
         NewJobProfile.saveAndClose();
         JobProfileView.edit();
