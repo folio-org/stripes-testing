@@ -2,7 +2,6 @@ import uuid from 'uuid';
 import {
   Button,
   TextField,
-  Pane,
   MultiColumnList,
   PaneContent,
   PaneHeader,
@@ -81,7 +80,7 @@ export default {
   },
 
   waitForFiscalYearDetailsLoading: () => {
-    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists());
+    cy.do(fiscalYearResultsSection.exists());
   },
 
   createDefaultFiscalYear(fiscalYear) {

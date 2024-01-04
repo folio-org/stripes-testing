@@ -98,7 +98,7 @@ describe('Finance', () => {
       Funds.verifyFundLinkNameExists(defaultFund.name);
 
       Funds.selectFund(defaultFund.name);
-      FundDetails.verifyGroupName(defaultFund.name);
+      FundDetails.verifyFundName(defaultFund.name);
     },
   );
 });
