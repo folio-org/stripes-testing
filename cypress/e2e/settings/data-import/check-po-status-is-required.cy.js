@@ -91,8 +91,8 @@ describe('Data Import', () => {
 
         // Delete value from the "Purchase order status" field
         FieldMappingProfileEditForm.fillOrderInformationProfileFields({
-          status: '',
-          useQuates: false,
+          status: null,
+          clearField: true,
         });
 
         // Click "Save as profile & Close" button
