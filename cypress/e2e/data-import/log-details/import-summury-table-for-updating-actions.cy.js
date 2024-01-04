@@ -411,6 +411,7 @@ describe('data-import', () => {
       { tags: ['criticalPath', 'folijet', 'parallel'] },
       () => {
         // create profiles via API
+        cy.getAdminToken();
         testData.jobProfileForCreate = jobProfileForCreate;
 
         testData.forEach((specialPair) => {
@@ -468,9 +469,11 @@ describe('data-import', () => {
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
-        ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-        ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+        cy.getAdminToken().then(() => {
+          ExportFile.uploadFile(nameForCSVFile);
+          ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
+          ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+        });
 
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);

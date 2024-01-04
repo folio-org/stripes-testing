@@ -106,7 +106,7 @@ describe('data-import', () => {
     ];
 
     before('login', () => {
-      cy.loginAsAdmin();
+      cy.getAdminToken();
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value).then(
         (instances) => {
           if (instances) {

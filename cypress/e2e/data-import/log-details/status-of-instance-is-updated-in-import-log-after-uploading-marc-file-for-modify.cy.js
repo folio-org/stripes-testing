@@ -134,6 +134,7 @@ describe('data-import', () => {
 
           // download exported marc file
           cy.visit(TopMenu.dataExportPath);
+          cy.getAdminToken();
           ExportFile.getExportedFileNameViaApi().then((name) => {
             exportedFileName = name;
 

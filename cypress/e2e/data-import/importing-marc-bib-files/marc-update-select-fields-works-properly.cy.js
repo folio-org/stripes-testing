@@ -102,6 +102,7 @@ describe('data-import', () => {
       'C17019 Check that MARC Update select fields works properly (folijet)',
       { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
+        cy.getAdminToken();
         DataImport.uploadFileViaApi('oneMarcBib.mrc', marcFileForCreate);
         JobProfiles.waitFileIsImported(marcFileForCreate);
         Logs.openFileDetails(marcFileForCreate);

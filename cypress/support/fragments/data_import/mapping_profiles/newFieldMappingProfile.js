@@ -675,6 +675,12 @@ export default {
   fillCreateInventoryForElectronicResource: (inventory) => {
     cy.do(eResourcesDetailsAccordion.find(TextField('Create inventory')).fillIn(inventory));
   },
+  fillMaterialTypeForElectronicResource: (type) => {
+    cy.do(eResourcesDetailsAccordion.find(TextField('Material type')).fillIn(type));
+  },
+  fillMaterialTypeForPhysicalResource: (type) => {
+    cy.do(physicalResourceDetailsAccordion.find(TextField('Material type')).fillIn(type));
+  },
   fillOrderFormat: (format) => cy.do(orderFormatField.fillIn(format)),
   fillCreateInventoryForPhysicalResource: (inventory) => {
     cy.do(physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(inventory));
@@ -1060,7 +1066,8 @@ export default {
 
   markFieldForProtection: (field) => {
     cy.get('div[class^="mclRow--"]')
-      .contains('div[class^="mclCell-"]', field)
+      .find('div[class^="mclCell-"]')
+      .contains(field)
       .then((elem) => {
         elem.parent()[0].querySelector('input[type="checkbox"]').click();
       });
