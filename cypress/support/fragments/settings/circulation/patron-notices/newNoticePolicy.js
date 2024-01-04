@@ -106,7 +106,7 @@ export default {
             }).choose(patronNoticePolicy.sendEvery.interval),
           ]);
         }
-      } else if (patronNoticePolicy.send === 'Upon/At') {
+      } else if (patronNoticePolicy.send === 'Upon/At' && patronNoticePolicy.realTimeOption) {
         cy.do(
           RadioButton({
             name: `${patronNoticePolicy.noticeId}Notices[${index}].realTime`,
