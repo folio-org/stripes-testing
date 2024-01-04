@@ -40,7 +40,7 @@ describe('orders: Unreceive piece from Order', () => {
   });
 
   it(
-    'C10925 Unreceive piece (thunderjet)',
+    'C10925 Unreceive piece using "Actions" button (thunderjet)',
     { tags: ['smoke', 'thunderjet', 'nonParallel'] },
     () => {
       const barcode = Helper.getRandomBarcode();
@@ -60,7 +60,7 @@ describe('orders: Unreceive piece from Order', () => {
         Receiving.checkReceivedPiece(0, caption, barcode);
         // Unreceive piece
         Receiving.unreceivePiece();
-        Receiving.checkUnreceivedPiece(1, caption);
+        Receiving.checkUnreceivedPiece(0, caption);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
