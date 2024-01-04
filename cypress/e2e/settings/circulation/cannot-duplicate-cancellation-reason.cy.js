@@ -10,7 +10,7 @@ describe('Cancel item level request', () => {
     id: uuid(),
     name: uuid(),
     description: 'description',
-    publicDescription: 'publicDescription',
+    publicDescription: 'public description',
   };
 
   before('Prepare test data', () => {
