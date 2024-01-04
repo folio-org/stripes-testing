@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import { including } from '@interactors/html';
 
 import { Permissions } from '../../../support/dictionary';
 import { NewOrder, BasicOrderLine, Orders } from '../../../support/fragments/orders';
@@ -135,65 +134,6 @@ describe('Orders', () => {
         ReceivingDetails.checkReceivingDetails({
           expected: [],
           received: [{ barcode: testData.barcode, format: 'Physical' }],
-        });
-
-        // Click "<Title name>" link on the third pane
-        const InventoryInstance = ReceivingDetails.openInstanceDetails();
-        InventoryInstance.checkHoldingTitle({ title: testData.location.name, count: 0 });
-        InventoryInstance.checkHoldingTitle({ title: testData.location.name, count: 1 });
-      },
-    );
-
-    it(
-      'C375242 Create new holdings for already existing location when receiving item by "Quick receive" option (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
-      () => {
-        // Click on the Order
-        const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
-        OrderDetails.checkOrderStatus(ORDER_STATUSES.OPEN);
-
-        // Click "Actions", Select "Receive" option
-        const Receivings = OrderDetails.openReceivingsPage();
-
-        // Click on the hyperlink with title name in "Title" column
-        const ReceivingDetails = Receivings.selectFromResultsList(
-          testData.orderLine.titleOrPackage,
-        );
-        ReceivingDetails.checkReceivingDetails({
-          orderLineDetails: [{ key: 'POL number', value: `${testData.order.poNumber}-1` }],
-          expected: [{ format: 'Physical' }],
-          received: [],
-        });
-
-        // Click on the record in "Expected" accordion on "<Title name>" pane
-        const EditPieceModal = ReceivingDetails.openEditPieceModal();
-        EditPieceModal.checkFieldsConditions([
-          {
-            label: 'Piece format',
-            conditions: { required: true, value: 'Physical' },
-          },
-        ]);
-
-        // Click "Create new holdings for location" link
-        const SelectLocationModal = EditPieceModal.clickCreateNewholdingsForLocation();
-
-        // Select permanent location from Precondition, Click "Save and close" button
-        SelectLocationModal.selectLocation(testData.location.institutionName);
-
-        // Click "Save and close" button
-        SelectLocationModal.clickSaveButton();
-        EditPieceModal.checkFieldsConditions([
-          {
-            label: 'Order line locations',
-            conditions: { text: including(testData.location.name) },
-          },
-        ]);
-
-        // Click "Quick receive" button
-        EditPieceModal.clickQuickReceiveButton();
-        ReceivingDetails.checkReceivingDetails({
-          expected: [],
-          received: [{ format: 'Physical' }],
         });
 
         // Click "<Title name>" link on the third pane

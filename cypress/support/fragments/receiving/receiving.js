@@ -154,7 +154,7 @@ export default {
   },
 
   quickReceivePiece: (enumeration) => {
-    cy.do(addPieceModal.find(Button('Quick receive')).click());
+    cy.do(Button('Quick receive').click());
     InteractorsTools.checkCalloutMessage(`The piece ${enumeration} was successfully received`);
   },
 
@@ -381,7 +381,8 @@ export default {
   },
 
   quickReceivePieceAdd: () => {
-    cy.do(addPieceModal.find(Button('Quick receive')).click());
+    cy.do(Button('Quick receive').click());
+    cy.wait(4000);
   },
 
   fillInCopyNumberInAddPieceModal: (copynumber) => {

@@ -100,6 +100,7 @@ describe('Orders: Receiving and Check-in', () => {
         firstPiece.chronology,
       );
       Receiving.selectPiece(firstPiece.caption);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(firstPiece.enumeration);
       Receiving.addPiece(
         secondPiece.caption,
@@ -108,6 +109,7 @@ describe('Orders: Receiving and Check-in', () => {
         secondPiece.chronology,
       );
       Receiving.selectPiece(secondPiece.caption);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(secondPiece.enumeration);
       Receiving.addPiece(
         thirdPiece.caption,
@@ -116,6 +118,7 @@ describe('Orders: Receiving and Check-in', () => {
         thirdPiece.chronology,
       );
       Receiving.selectPiece(thirdPiece.caption);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(thirdPiece.enumeration);
       Receiving.addPiece(
         fourthPiece.caption,
@@ -124,6 +127,7 @@ describe('Orders: Receiving and Check-in', () => {
         fourthPiece.chronology,
       );
       Receiving.selectPiece(fourthPiece.caption);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(fourthPiece.enumeration);
       Receiving.selectInstanceInReceive(orderLineTitle);
       // inventory part

@@ -24,7 +24,7 @@ import {
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './modals/selectInstanceModal';
-import SelectOrganizationModal from './modals/selectOrganizationModal';
+import SearchHelper from '../finance/financeHelper';
 import OrderLineDetails from './orderLineDetails';
 import {
   ORDER_FORMAT_NAMES,
@@ -984,6 +984,7 @@ export default {
   },
   selectOrderLineByPolNumber(poLineNumber) {
     this.searchByParameter('Keyword', poLineNumber);
+    cy.wait(4000);
     this.selectOrderline(poLineNumber);
 
     return OrderLineDetails;
@@ -1479,8 +1480,13 @@ export default {
   },
 
   selectFilterVendorPOL: (invoice) => {
-    cy.do([buttonFVendorFilter.click(), Button({ id: 'purchaseOrder.vendor-button' }).click()]);
-    SelectOrganizationModal.findOrganization(invoice.vendorName);
+    cy.do([
+      buttonFVendorFilter.click(),
+      Button({ id: 'purchaseOrder.vendor-button' }).click(),
+      Modal('Select Organization').find(searchField).fillIn(invoice.vendorName),
+      searchButton.click(),
+    ]);
+    SearchHelper.selectFromResultsList();
     cy.do(buttonFVendorFilter.click());
   },
 
