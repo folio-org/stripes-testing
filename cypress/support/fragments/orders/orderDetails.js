@@ -28,6 +28,7 @@ const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
 
 const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }));
+const ongoingOrderInfoSection = orderDetailsPane.find(Section({ id: 'ongoing' }));
 const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
 
@@ -67,7 +68,23 @@ export default {
       );
     });
   },
-  checkOrderDetails({ summary = [] } = {}) {
+  checkOrderDetails({ orderInformation = [], ongoingInformation = [], summary = [] } = {}) {
+    orderInformation.forEach(({ key, value, checkbox }) => {
+      if (checkbox) {
+        cy.expect(orderInfoSection.find(Checkbox(key)).has(value));
+      } else {
+        cy.expect(orderInfoSection.find(KeyValue(key)).has({ value: including(value) }));
+      }
+    });
+
+    ongoingInformation.forEach(({ key, value, checkbox }) => {
+      if (checkbox) {
+        cy.expect(ongoingOrderInfoSection.find(Checkbox(key)).has(value));
+      } else {
+        cy.expect(ongoingOrderInfoSection.find(KeyValue(key)).has({ value: including(value) }));
+      }
+    });
+
     summary.forEach(({ key, value, checkbox }) => {
       if (checkbox) {
         cy.expect(poSummarySection.find(Checkbox(key)).has(value));
