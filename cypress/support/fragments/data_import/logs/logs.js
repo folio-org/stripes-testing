@@ -20,6 +20,7 @@ const viewAllLogsButton = Button('View all logs');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const searchResultList = MultiColumnList({ id: 'search-results-list' });
 const deleteSelectedLogsButton = Button('Delete selected logs');
+const times = Button({ icon: 'times' });
 const visitedLinkColor = 'rgb(47, 96, 159)';
 
 const quantityRecordsInInvoice = {
@@ -101,6 +102,9 @@ export default {
   checkFileIsRunning: (fileName) => cy.expect(runningAccordion.find(HTML(including(fileName))).exists()),
   verifyCheckboxForMarkingLogsAbsent: () => cy.expect(MultiColumnList({ id: 'job-logs-list' }).find(selectAllCheckbox).absent()),
   verifyDeleteSelectedLogsButtonAbsent: () => cy.expect(deleteSelectedLogsButton.absent()),
+  closePane: () => {
+    cy.do(times.click());
+  },
 
   verifyFirstFileNameStyle: () => {
     cy.get('#job-logs-list [class*="mclCell-"]:nth-child(1) a')
