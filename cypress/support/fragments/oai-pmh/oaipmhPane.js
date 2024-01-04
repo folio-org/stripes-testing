@@ -46,4 +46,7 @@ export default {
 
     return oaiPmhSections[section];
   },
+  checkSectionListItemDoesNotExist(section) {
+    cy.expect(navPaneSection.find(NavListItem(section)).absent());
+  },
 };

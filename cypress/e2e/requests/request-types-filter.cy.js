@@ -1,14 +1,12 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import Requests from '../../support/fragments/requests/requests';
-import TopMenu from '../../support/fragments/topMenu';
 import { Pane } from '../../../interactors';
 import { ITEM_STATUS_NAMES, REQUEST_TYPES } from '../../support/constants';
-import Users from '../../support/fragments/users/users';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../support/dictionary/devTeams';
-import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import Requests from '../../support/fragments/requests/requests';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-requests: Make sure that request type filters are working properly', () => {
@@ -77,7 +75,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
 
   it(
     'C540 Make sure that request type filters are working properly (vega)',
-    { tags: [TestTypes.smoke, DevTeams.vega] },
+    { tags: ['smoke', 'vega'] },
     () => {
       cy.visit(TopMenu.requestsPath);
       // Apply filters and test that the appropriate results display

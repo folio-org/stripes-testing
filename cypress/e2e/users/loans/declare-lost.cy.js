@@ -1,24 +1,22 @@
 import uuid from 'uuid';
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import TestType from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
-import AppPaths from '../../../support/fragments/app-paths';
-import { getNewItem } from '../../../support/fragments/inventory/item';
-import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
-import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
-import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
-import Checkout from '../../../support/fragments/checkout/checkout';
-import UsersCard from '../../../support/fragments/users/usersCard';
 import permissions from '../../../support/dictionary/permissions';
-import UserEdit from '../../../support/fragments/users/userEdit';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
-import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
-import Users from '../../../support/fragments/users/users';
+import AppPaths from '../../../support/fragments/app-paths';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
+import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import { getNewItem } from '../../../support/fragments/inventory/item';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
+import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
+import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 describe('ui-users-loans: Loans', () => {
   const newOwnerData = UsersOwners.getDefaultNewOwner();
@@ -174,7 +172,7 @@ describe('ui-users-loans: Loans', () => {
     );
   });
 
-  it('C9191 Loans: Declare lost (vega)', { tags: [TestType.smoke, DevTeams.vega] }, () => {
+  it('C9191 Loans: Declare lost (vega)', { tags: ['smoke', 'vega'] }, () => {
     UsersCard.getApi(testData.userId).then((user) => {
       Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);
       Loans.startDeclareLost(SECOND_LOAN_ROW_INDEX);

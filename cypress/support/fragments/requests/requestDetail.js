@@ -1,17 +1,21 @@
-import { HTML, including, Select, TextField } from '@interactors/html';
-import ItemRecordView from '../inventory/item/itemRecordView';
-import InteractorsTools from '../../utils/interactorsTools';
+import { HTML, including, TextField } from '@interactors/html';
 import {
-  Pane,
-  Section,
+  Accordion,
+  Button,
   Heading,
   KeyValue,
-  Button,
-  Accordion,
-  MultiColumnListCell,
   Link,
   Modal,
+  MultiColumnListCell,
+  MultiColumnListHeader,
+  Pane,
+  PaneContent,
+  Section,
+  Select,
+  TextArea,
 } from '../../../../interactors';
+import InteractorsTools from '../../utils/interactorsTools';
+import ItemRecordView from '../inventory/item/itemRecordView';
 
 const requestDetailsSection = Pane({ id: 'instance-details' });
 const titleInformationSection = Section({ id: 'title-info' });
@@ -22,15 +26,32 @@ const staffNotesInfoSection = Section({ id: 'staff-notes' });
 const actionsButton = requestDetailsSection.find(Button('Actions'));
 const moveRequestButton = Button('Move request');
 const duplicateRequestButton = Button('Duplicate');
+const reorderQueueButton = Button('Reorder queue');
+const editRequestButton = Button('Edit');
 const fulfillmentInProgressAccordion = Accordion({
   id: 'fulfillment-in-progress',
+});
+const notYetFilledAccordion = Accordion({
+  id: 'not-yet-filled',
 });
 const cancelRequestButton = Button({ id: 'clickable-cancel-request' });
 const confirmButton = Button('Confirm');
 const confirmRequestCancellationModal = Modal('Confirm request cancellation');
-const reasonDropdown = Select('Reason for cancellation');
+const cancellationReasonSelect = Select({ dataTestID: 'selectCancelationReason' });
 const additionalInfoOptionalInput = TextField('Additional information for patron');
 const additionalInfoRequiredInput = TextField('Additional information for patron *');
+
+const additionalInfoForCancellation = TextArea({ dataTestID: 'additionalInfo' });
+const confirmCancellationButton = Button({ dataTestID: 'cancelRequestDialogCancel' });
+const editButton = Button({ id: 'clickable-edit-request' });
+
+const availableOptions = {
+  Edit: editButton,
+  'Cancel request': cancelRequestButton,
+  Duplicate: duplicateRequestButton,
+  'Move request': moveRequestButton,
+  'Reorder queue': reorderQueueButton,
+};
 
 export default {
   waitLoading: (type = 'staff') => {
@@ -65,6 +86,15 @@ export default {
 
   checkRequestStatus: (status) => {
     cy.expect(requestInfoSection.find(KeyValue('Request status', { value: status })).exists());
+  },
+
+  verifySectionsVisibility() {
+    cy.expect([
+      titleInformationSection.visible(),
+      itemInformationSection.visible(),
+      requestInfoSection.visible(),
+      requesterInfoSection.visible(),
+    ]);
   },
 
   checkRequestsOnItem: (requests) => {
@@ -118,6 +148,7 @@ export default {
     InteractorsTools.checkKeyValue(requestInfoSection, 'Position in queue', data.position);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Request level', data.level);
     InteractorsTools.checkKeyValue(requestInfoSection, 'Patron comments', data.comments);
+    if (data.reason) InteractorsTools.checkKeyValue(requestInfoSection, 'Cancellation reason', data.reason);
   },
 
   checkItemBarcode: (barcode) => {
@@ -139,7 +170,22 @@ export default {
     InteractorsTools.checkKeyValue(requesterInfoSection, 'Pickup service point', data.pickupSP);
   },
 
+  checkCreatedDate(date) {
+    cy.do(Button(including('Record last updated')).click());
+    cy.expect(requestInfoSection.find(HTML(including(`Record created: ${date}`))).exists());
+  },
+
   openActions() {
+    cy.do(actionsButton.click());
+  },
+
+  verifyActionsAvailableOptions(
+    options = ['Edit', 'Cancel request', 'Duplicate', 'Move request', 'Reorder queue'],
+  ) {
+    cy.do(actionsButton.click());
+    options.forEach((option) => {
+      cy.expect(availableOptions[option].exists());
+    });
     cy.do(actionsButton.click());
   },
 
@@ -149,6 +195,10 @@ export default {
 
   openCancelRequest() {
     cy.do(cancelRequestButton.click());
+  },
+
+  openCancelRequestForm() {
+    cy.do([actionsButton.click(), cancelRequestButton.click()]);
   },
 
   verifyCancelRequestModalDisplayed() {
@@ -161,26 +211,129 @@ export default {
   },
 
   checkRequestCancellationModalInfo() {
-    cy.do(reasonDropdown.choose('INN-Reach'));
+    cy.do(cancellationReasonSelect.choose('INN-Reach'));
     cy.expect(additionalInfoOptionalInput.exists());
-    cy.do(reasonDropdown.choose('Item Not Available'));
+    cy.do(cancellationReasonSelect.choose('Item Not Available'));
     cy.expect(additionalInfoOptionalInput.exists());
-    cy.do(reasonDropdown.choose('Needed For Course Reserves'));
+    cy.do(cancellationReasonSelect.choose('Needed For Course Reserves'));
     cy.expect(additionalInfoOptionalInput.exists());
-    cy.do(reasonDropdown.choose('Patron Cancelled'));
+    cy.do(cancellationReasonSelect.choose('Patron Cancelled'));
     cy.expect(additionalInfoOptionalInput.exists());
-    cy.do(reasonDropdown.choose('Other'));
+    cy.do(cancellationReasonSelect.choose('Other'));
     cy.expect([additionalInfoRequiredInput.exists(), confirmButton.has({ disabled: true })]);
   },
 
   confirmRequestCancellation() {
-    cy.do([reasonDropdown.choose('INN-Reach'), confirmButton.click()]);
+    cy.do([cancellationReasonSelect.choose('INN-Reach'), confirmButton.click()]);
+  },
+
+  selectCancellationReason(reason) {
+    cy.do(cancellationReasonSelect.choose(reason));
+  },
+
+  provideAdditionalInformationForCancelation(info) {
+    cy.do(additionalInfoForCancellation.fillIn(info));
+  },
+
+  cancelRequest() {
+    cy.do(confirmCancellationButton.click());
   },
 
   verifyEditButtonAbsent() {
-    cy.expect(Button('Edit').absent());
+    cy.expect(editRequestButton.absent());
     this.openActions();
-    cy.expect(Button('Edit').absent());
+    cy.expect(editRequestButton.absent());
+  },
+
+  verifyActionButtonsPresence() {
+    cy.expect([
+      editRequestButton.visible(),
+      cancelRequestButton.visible(),
+      duplicateRequestButton.visible(),
+      moveRequestButton.visible(),
+      reorderQueueButton.visible(),
+    ]);
+  },
+
+  requestQueueColumns: [
+    {
+      title: 'Order',
+      id: 'position',
+      columnIndex: 1,
+    },
+    {
+      title: 'Status',
+      id: 'fulfillmentstatus',
+      columnIndex: 2,
+    },
+    {
+      title: 'Item barcode',
+      id: 'itembarcode',
+      columnIndex: 3,
+    },
+    {
+      title: 'Request date',
+      id: 'requestdate',
+      columnIndex: 4,
+    },
+    {
+      title: 'Pickup/Delivery',
+      id: 'pickupdelivery',
+      columnIndex: 5,
+    },
+    {
+      title: 'Requester',
+      id: 'requester',
+      columnIndex: 6,
+    },
+    {
+      title: 'Requester barcode',
+      id: 'requesterbarcode',
+      columnIndex: 7,
+    },
+    {
+      title: 'Patron group',
+      id: 'patrongroup',
+      columnIndex: 8,
+    },
+    {
+      title: 'Type',
+      id: 'requesttype',
+      columnIndex: 9,
+    },
+    {
+      title: 'Enumeration',
+      id: 'enumeration',
+      columnIndex: 10,
+    },
+    {
+      title: 'Chronology',
+      id: 'chronology',
+      columnIndex: 11,
+    },
+    {
+      title: 'Volume',
+      id: 'volume',
+      columnIndex: 12,
+    },
+    {
+      title: 'Patron comments',
+      id: 'patroncomments',
+      columnIndex: 13,
+    },
+  ],
+
+  verifyRequestQueueColumnsPresence(
+    inProgressAccordionOption = true,
+    notYetFilledAccordionOption = true,
+  ) {
+    if (inProgressAccordionOption) {
+      this.requestQueueColumns.forEach(({ title }) => cy.expect(fulfillmentInProgressAccordion.find(MultiColumnListHeader(title)).exists()));
+    }
+    if (notYetFilledAccordionOption) {
+      this.requestQueueColumns.splice(1, 1);
+      this.requestQueueColumns.forEach(({ title }) => cy.expect(notYetFilledAccordion.find(MultiColumnListHeader(title)).exists()));
+    }
   },
 
   openMoveRequest() {
@@ -191,19 +344,78 @@ export default {
     cy.do(duplicateRequestButton.click());
   },
 
+  clickReorderQueue() {
+    cy.do(reorderQueueButton.click());
+  },
+
   verifyMoveRequestButtonExists() {
     cy.expect(moveRequestButton.exists());
   },
 
-  requestQueueOnInstance(instanceTitle) {
-    cy.do([actionsButton.click(), Button('Reorder queue').click()]);
+  verifyQueueInstance(instanceTitle) {
     cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
   },
 
-  checkRequestMovedToFulfillmentInProgress(itemBarcode) {
-    cy.expect(
+  requestQueueOnInstance(instanceTitle) {
+    cy.do([actionsButton.click(), reorderQueueButton.click()]);
+    this.verifyQueueInstance(instanceTitle);
+  },
+
+  verifyAccordionsPresence(presence = true) {
+    const visibilityOption = presence ? 'exists' : 'absent';
+    cy.expect([
+      fulfillmentInProgressAccordion[visibilityOption](),
+      notYetFilledAccordion[visibilityOption](),
+    ]);
+  },
+
+  checkRequestMovedToFulfillmentInProgress(itemBarcode, data = { moved: true, rowIndex: 0 }) {
+    if (data.moved) {
+      cy.expect(
+        fulfillmentInProgressAccordion
+          .find(MultiColumnListCell({ row: data.rowIndex, content: itemBarcode }))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        fulfillmentInProgressAccordion
+          .find(MultiColumnListCell({ row: data.rowIndex, content: itemBarcode }))
+          .absent(),
+      );
+    }
+  },
+
+  clickBarcodeTitle(itemBarcode) {
+    cy.do(
       fulfillmentInProgressAccordion
-        .find(MultiColumnListCell({ row: 0, content: itemBarcode }))
+        .find(MultiColumnListCell({ row: 0, columnIndex: 2 }))
+        .find(Link(itemBarcode))
+        .click(),
+    );
+  },
+
+  verifyHeaders(instanceTitle) {
+    cy.expect(HTML(`Request queue on instance • ${instanceTitle} /.`).exists());
+    cy.expect(
+      PaneContent({ id: 'request-queue-content' })
+        .find(HTML(including(`Instance: ${instanceTitle} /.`)))
+        .exists(),
+    );
+  },
+
+  clickRequesterBarcode(itemBarcode) {
+    cy.do(
+      fulfillmentInProgressAccordion
+        .find(MultiColumnListCell({ row: 0, columnIndex: 7 }))
+        .find(Link(itemBarcode))
+        .click(),
+    );
+  },
+
+  checkRequestIsNotYetFilled(itemBarcode, rowIndex = 0) {
+    cy.expect(
+      notYetFilledAccordion
+        .find(MultiColumnListCell({ row: rowIndex, content: itemBarcode }))
         .exists(),
     );
   },
@@ -215,5 +427,14 @@ export default {
 
   viewRequestsInQueue() {
     cy.do(requestInfoSection.find(KeyValue('Position in queue').find(Link())).click());
+  },
+
+  verifyPositionInQueue(value) {
+    cy.expect(
+      requestInfoSection.find(KeyValue('Position in queue')).has({ value: including(value) }),
+    );
+  },
+  openRequesterByBarcode(barcode = '') {
+    cy.do(requesterInfoSection.find(Link(including(barcode))).click());
   },
 };

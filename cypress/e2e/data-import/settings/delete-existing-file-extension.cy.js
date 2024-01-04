@@ -1,8 +1,8 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
+import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -27,7 +27,7 @@ describe('data-import', () => {
 
     it(
       'C2336 Delete an existing file extension (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const calloutMessage = `The file extension "${fileExtensionName}" was successfully deleted`;
 

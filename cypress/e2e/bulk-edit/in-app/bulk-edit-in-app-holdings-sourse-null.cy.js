@@ -1,16 +1,14 @@
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 
 let user;
 const holdingHRIDsFileName = `holdingHRIDs-${getRandomPostfix()}.csv`;
@@ -63,7 +61,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380592 Verify that Holdings without "Source" populated can be updated (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         InventorySearchAndFilter.switchToHoldings();
         InventorySearchAndFilter.searchByParameter('Holdings HRID', item.holdingHRID);

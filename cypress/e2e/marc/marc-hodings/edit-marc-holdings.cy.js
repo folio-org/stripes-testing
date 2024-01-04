@@ -1,20 +1,20 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('MARC -> MARC Holdings', () => {
   let user;
@@ -47,7 +47,7 @@ describe('MARC -> MARC Holdings', () => {
     JobProfiles.waitFileIsImported(testData.fileNameForCreateInstance);
     Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
     Logs.openFileDetails(testData.fileNameForCreateInstance);
-    FileDetails.openInstanceInInventory('Created');
+    FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
     InstanceRecordView.verifyInstancePaneExists();
     InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
       instanceHrid = initialInstanceHrId;
@@ -102,7 +102,7 @@ describe('MARC -> MARC Holdings', () => {
 
   it(
     'C359241 Edit MARC Holdings | Displaying of placeholder message when user deletes a row (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       HoldingsRecordView.editInQuickMarc();
       QuickMarcEditor.waitLoading();

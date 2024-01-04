@@ -1,30 +1,30 @@
 import { including, Link } from '@interactors/html';
 
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
-import Users from '../../support/fragments/users/users';
-import Checkout from '../../support/fragments/checkout/checkout';
-import Requests from '../../support/fragments/requests/requests';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import UserEdit from '../../support/fragments/users/userEdit';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import { getTestEntityValue } from '../../support/utils/stringTools';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import TopMenu from '../../support/fragments/topMenu';
-import NewRequest from '../../support/fragments/requests/newRequest';
 import { REQUEST_TYPES } from '../../support/constants';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import EditRequest from '../../support/fragments/requests/edit-request';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
-import UsersCard from '../../support/fragments/users/usersCard';
-import UserLoans from '../../support/fragments/users/loans/userLoans';
-import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ItemRecordView from '../../support/fragments/inventory/item/itemRecordView';
+import EditRequest from '../../support/fragments/requests/edit-request';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Title Level Request', () => {
   const testData = {
@@ -117,7 +117,7 @@ describe('Title Level Request', () => {
   it(
     'C380500: Editing recall request does not change recalled item (vega) (TaaS)',
     {
-      tags: [TestTypes.criticalPath, DevTeams.vega],
+      tags: ['criticalPath', 'vega'],
     },
     () => {
       // Enter patron id or choose patron with "Patron look-up" function.
@@ -174,7 +174,15 @@ describe('Title Level Request', () => {
         UsersCard.viewCurrentLoans();
         UserLoans.openLoanDetails(firstItemBarcode);
         UserLoans.renewItem(firstItemBarcode, true);
-        RenewConfirmationModal.verifyRenewConfirmationModal('Item not renewed:');
+        RenewConfirmationModal.verifyRenewConfirmationModal(
+          [
+            {
+              itemBarcode: firstItemBarcode,
+              status: 'Item not renewed:',
+            },
+          ],
+          true,
+        );
       });
     },
   );

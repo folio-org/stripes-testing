@@ -1,19 +1,23 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
-import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import Users from '../../../support/fragments/users/users';
 import { FOLIO_RECORD_TYPE, JOB_STATUS_NAMES } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -78,16 +82,16 @@ describe('data-import', () => {
 
     after('delete user', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
       });
     });
 
     it(
       'C358534 Check the values in the Job profile filter after deleting the logs on the View all page (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         Logs.openViewAllLogs();
         LogsViewAll.filterJobsByJobProfile(jobProfile.profileName);

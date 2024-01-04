@@ -1,8 +1,6 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
@@ -62,7 +60,7 @@ describe('bulk-edit', () => {
 
     it(
       'C388491 Verify that User with "Bulk Edit: Local View" and "Bulk Edit: In app - Edit inventory" permissions CAN\'T edit user records (firebird)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyItemIdentifiersDefaultState();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

@@ -29,6 +29,7 @@ import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 import OrderDetails from './orderDetails';
 import OrderEditForm from './orderEditForm';
+import ExportSettingsModal from './modals/exportSettingsModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import OrderLines from './orderLines';
 
@@ -57,6 +58,7 @@ const purchaseOrderSection = Section({ id: 'purchaseOrder' });
 const purchaseOrderLineLimitReachedModal = Modal({ id: 'data-test-lines-limit-modal' });
 const resetButton = Button('Reset all');
 const submitButton = Button('Submit');
+const ordersPane = PaneContent({ id: 'order-lines-filters-pane-content' });
 const expandActionsDropdown = () => {
   cy.do(
     orderDetailsPane
@@ -186,6 +188,14 @@ export default {
     expandActionsDropdown();
     cy.do([Button('Close order').click(), Select('Reason').choose(reason), submitButton.click()]);
     InteractorsTools.checkCalloutMessage('Order was closed');
+  },
+
+  reOpenOrder: (orderNumber) => {
+    expandActionsDropdown();
+    cy.do(Button('Reopen').click());
+    InteractorsTools.checkCalloutMessage(
+      `The Purchase order - ${orderNumber} has been successfully reopened`,
+    );
   },
 
   cancelOrder: () => {
@@ -371,9 +381,7 @@ export default {
     });
   },
   checkCreatedOrder(order) {
-    cy.getAdminSourceRecord().then((source) => {
-      this.checkOrderDetails({ vendor: order.vendor, source });
-    });
+    this.checkOrderDetails({ vendor: order.vendor });
   },
   checkCreatedOngoingOrder(order) {
     this.checkOrderDetails({ vendor: order.vendor, orderType: order.orderType });
@@ -408,9 +416,21 @@ export default {
     ]);
   },
 
+  deleteButtonInOrderIsAbsent: () => {
+    cy.wait(4000);
+    expandActionsDropdown();
+    cy.expect(Button('Delete').absent());
+  },
+
   checkDeletedErrorMassage: () => {
     InteractorsTools.checkCalloutErrorMessage(
       'This order or order line is linked to Invoice(s) and can not be deleted',
+    );
+  },
+
+  checkOrderIsNotOpened: (fundCode) => {
+    InteractorsTools.checkCalloutErrorMessage(
+      `One or more fund distributions on this order can not be encumbered, because there is not enough money in [${fundCode}].`,
     );
   },
 
@@ -567,7 +587,7 @@ export default {
     cy.do(Button('Order lines').click());
   },
   selectOrders: () => {
-    cy.do(Button('Orders').click());
+    cy.do(ordersPane.find(Button('Orders')).click());
   },
   createPOLineViaActions: () => {
     cy.wait(4000);
@@ -678,13 +698,18 @@ export default {
     cy.expect(ordersList.find(HTML(including(orderNumber))).exists());
   },
 
-  exportResoultsCSV: () => {
-    cy.do([
-      actionsButton.click(),
-      Button({ id: 'clickable-export-csv' }).click(),
-      // Modal('Export settings').find(RadioButton({ ariaLabel: 'Export all line fields' })).click(),
-      Button('Export').click(),
-    ]);
+  clickExportResultsToCsvButton() {
+    cy.do([actionsButton.click(), Button('Export results (CSV)').click()]);
+    ExportSettingsModal.verifyModalView();
+
+    return ExportSettingsModal;
+  },
+  exportResultsToCsv({ confirm = true } = {}) {
+    this.clickExportResultsToCsvButton();
+
+    if (confirm) {
+      ExportSettingsModal.clickExportButton();
+    }
   },
 
   verifySaveCSVQueryFileName(actualName) {
@@ -818,5 +843,17 @@ export default {
       Button('New invoice').click(),
       Button('Cancel').click(),
     ]);
+  },
+
+  selectInvoiceInRelatedInvoices: (invoiceNumber) => {
+    cy.get(`div[class*=mclCell-]:contains("${invoiceNumber}")`)
+      .siblings('div[class*=mclCell-]')
+      .eq(0)
+      .find('a')
+      .click();
+  },
+
+  verifyActiveBtnOrdersFilters: (btnName) => {
+    cy.expect(ordersPane.find(HTML(including(btnName, { class: including('primary') }))).exists());
   },
 };

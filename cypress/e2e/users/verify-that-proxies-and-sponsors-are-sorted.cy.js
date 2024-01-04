@@ -1,13 +1,11 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
-import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../support/fragments/users/usersCard';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import UsersCard from '../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
 
 describe('Users', () => {
   const testData = {};
@@ -62,7 +60,7 @@ describe('Users', () => {
 
   it(
     'C410869 Verify that proxies and sponsors are sorted (volaris)',
-    { tags: [TestTypes.extendedPath, devTeams.volaris] },
+    { tags: ['extendedPath', 'volaris'] },
     () => {
       UsersSearchPane.searchByKeywords(testData.mainUsername);
       UserEdit.openEdit();

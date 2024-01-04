@@ -1,18 +1,18 @@
 import uuid from 'uuid';
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Requests from '../../support/fragments/requests/requests';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { Locations } from '../../support/fragments/settings/tenant/location-setup';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import { REQUEST_TYPES } from '../../support/constants';
-import getRandomPostfix from '../../support/utils/stringTools';
+import { Permissions } from '../../support/dictionary';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewRequest from '../../support/fragments/requests/newRequest';
+import Requests from '../../support/fragments/requests/requests';
+import { Locations } from '../../support/fragments/settings/tenant/location-setup';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Create Item or Title level request', () => {
   const testData = {
@@ -93,7 +93,7 @@ describe('Create Item or Title level request', () => {
   it(
     'C1286 Check error message when item already checked out (vega) (TaaS)',
     {
-      tags: [TestTypes.extendedPath, DevTeams.vega],
+      tags: ['extendedPath', 'vega'],
     },
     () => {
       // Navigate to new request page

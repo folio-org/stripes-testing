@@ -1,29 +1,34 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import {
-  LOCATION_NAMES,
   FOLIO_RECORD_TYPE,
-  JOB_STATUS_NAMES,
   INSTANCE_STATUS_TERM_NAMES,
-  MATERIAL_TYPE_NAMES,
-  LOAN_TYPE_NAMES,
   ITEM_STATUS_NAMES,
+  JOB_STATUS_NAMES,
+  LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
+  MATERIAL_TYPE_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -94,24 +99,27 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
       });
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     it(
       'C11107 Action and field mapping: Create an instance, holdings, and item (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // create field mapping profiles
         FieldMappingProfiles.openNewMappingProfileForm();
@@ -214,7 +222,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 

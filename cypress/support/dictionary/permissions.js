@@ -136,6 +136,10 @@ export default {
     internal: 'ui-inventory.single-record-import',
     gui: 'Inventory: Import single bibliographic records',
   },
+  uiInventoryCreateOrderFromInstance: {
+    internal: 'ui-inventory.instance.createOrder',
+    gui: 'Inventory: Create order from instance',
+  },
   uiInventoryMarkItemsWithdrawn: {
     internal: 'ui-inventory.items.mark-items-withdrawn',
     gui: 'Inventory: Mark items withdrawn',
@@ -209,6 +213,10 @@ export default {
     internal: 'ui-inventory.holdings.delete',
     gui: 'Inventory: View, create, edit, delete holdings',
   },
+  inventoryCRUDHoldingsNoteTypes: {
+    internal: 'ui-inventory.settings.holdings-note-types',
+    gui: 'Settings (Inventory): Create, edit, delete holdings note types',
+  },
   inventoryCRUDItemNoteTypes: {
     internal: 'ui-inventory.settings.item-note-types',
     gui: 'Settings (Inventory): Create, edit, delete item note types',
@@ -255,7 +263,7 @@ export default {
     gui: 'Data Import File Upload - all permissions',
   },
   moduleDataImportEnabled: {
-    internal: 'ui-data-import.settings.manage',
+    internal: 'ui-data-import.manage',
     gui: 'Data import: Can upload files, import, and view logs',
   },
   dataImportDeleteLogs: {
@@ -441,15 +449,21 @@ export default {
     internal: 'ui-circulation.settings.titleLevelRequests',
     gui: 'Settings (Circulation): Title level request edit',
   },
+  uiMoveRequest: {
+    internal: 'ui-requests.moveRequest',
+    gui: 'Requests: Move to new item, reorder queue',
+  },
+  uiRequestsReorderQueue: {
+    internal: 'ui-requests.reorderQueue',
+    gui: 'Requests: Requests: Reorder queue',
+  },
   // Calendar
-  calendarEdit: {
-    internal: 'ui-calendar.edit',
-    gui: 'Settings (Calendar): Can create, view, and edit calendar events',
-  },
-  calendarAll: {
-    internal: 'ui-calendar.all',
-    gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events',
-  },
+  calendarEdit: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can create, view, and edit calendar events' },
+  calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
+  calendarView: { internal: 'ui-calendar.view', gui: 'Settings (Calendar): Can view existing calendars' },
+  calendarCreate: { internal: 'ui-calendar.create', gui: 'Settings (Calendar): Can create and assign new calendars' },
+  calendarDelete: { internal: 'ui-calendar.delete', gui: 'Settings (Calendar): Can delete existing calendars' },
+  calendarEditCalendars: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can edit and reassign existing calendars' },
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   dataExportEnableModule: {
@@ -489,9 +503,21 @@ export default {
   // Checkin
   checkinAll: { internal: 'ui-checkin.all', gui: 'Check in: All permissions' },
   // Receiving
+  uiReceivingView: {
+    internal: 'ui-receiving.view',
+    gui: 'Receiving: View',
+  },
   uiReceivingViewEditCreate: {
     internal: 'ui-receiving.create',
     gui: 'Receiving: View, edit, create',
+  },
+  uiReceivingViewEditDelete: {
+    internal: 'ui-receiving.delete',
+    gui: 'Receiving: View, edit, delete',
+  },
+  uiReceivingExportSearchResults: {
+    internal: 'ui-receiving.exportCSV',
+    gui: 'Receiving: Export search results',
   },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine: {
@@ -821,11 +847,35 @@ export default {
     internal: 'ui-tenant-settings.settings.addresses',
     gui: 'Settings (tenant): Can manage tenant addresses',
   },
+  uiSettingsInstanceStatusesCreateEditDelete: {
+    internal: 'ui-inventory.settings.instance-statuses',
+    gui: 'Settings (Inventory): Create, edit, delete instance status types',
+  },
+  uiSettingsStatisticalCodesCreateEditDelete: {
+    internal: 'ui-inventory.settings.statistical-codes',
+    gui: 'Settings (Inventory): Create, edit, delete statistical codes',
+  },
+  uiSettingsHRIDHandlingCreateEditDelete: {
+    internal: 'ui-inventory.settings.hridHandling',
+    gui: 'Settings (Inventory): Create, edit and delete HRID handling',
+  },
   // Added the below permissions for custom label creation
 
+  uiSettingsEHoldingsViewAccessStatusTypes: {
+    internal: 'ui-eholdings.settings.access-types.view',
+    gui: 'Settings (eholdings): Can view access status types',
+  },
+  uiSettingsEHoldingsViewCustomLabel: {
+    internal: 'ui-eholdings.settings.custom-labels.view',
+    gui: 'Settings (eholdings): Can view custom labels',
+  },
   uiSettingseholdingsViewEditCreateDelete: {
     internal: 'ui-eholdings.settings.all',
     gui: 'Settings (eholdings): Can create, edit, view, and delete custom labels',
+  },
+  uiSettingsEHoldingsViewSettings: {
+    internal: 'ui-eholdings.settings.enabled',
+    gui: 'Settings (eHoldings): View settings',
   },
   uiSettingsDeveloperSessionLocale: {
     internal: 'ui-developer.settings.locale',
@@ -844,6 +894,10 @@ export default {
   exportManagerDownloadAndResendFiles: {
     internal: 'ui-export-manager.jobs.downloadAndResend',
     gui: 'Export manager: Download and re-send files',
+  },
+  exportManagerView: {
+    internal: 'ui-export-manager.export-manager.view',
+    gui: 'Export manager: View',
   },
   transferExports: {
     internal: 'ui-plugin-bursar-export.bursar-exports.all',
@@ -875,5 +929,21 @@ export default {
   listsAll: {
     internal: 'module.lists.all',
     gui: 'Lists (Admin): All permissions',
+  },
+
+  // Licenses
+  licensesSearchAndView: {
+    internal: 'ui-licenses.licenses.view',
+    gui: 'Licenses: Search & view licenses',
+  },
+
+  // Courses
+  coursesAll: {
+    internal: 'ui-courses.all',
+    gui: 'Courses: All permissions',
+  },
+  coursesReadAll: {
+    internal: 'ui-courses.read-all',
+    gui: 'Courses: Read all',
   },
 };

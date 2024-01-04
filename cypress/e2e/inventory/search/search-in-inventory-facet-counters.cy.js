@@ -1,16 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Search in Inventory', () => {
   const testData = {
@@ -71,9 +69,9 @@ describe('Search in Inventory', () => {
 
   it(
     'C415263 Counters in expanded facet accordions updated when another facet is applied (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
-      InventoryInstance.searchByTitle(testData.searchQuery);
+      InventoryInstances.searchByTitle(testData.searchQuery);
       InventorySearchAndFilter.checkRowsCount(2);
       InventorySearchAndFilter.clickAccordionByName(testData.languageAccordionName);
       InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.languageAccordionName);

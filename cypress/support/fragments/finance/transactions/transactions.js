@@ -15,6 +15,25 @@ export default {
   waitLoading() {
     cy.expect(transactionResultsPane.exists());
   },
+  checkTransactionsList({ records = [], present = true } = {}) {
+    records.forEach(({ type, amount }) => {
+      const content = amount ? `${type}(${amount})` : type;
+
+      if (present) {
+        cy.expect(
+          transactionResultsList
+            .find(MultiColumnListRow({ content: including(content), isContainer: true }))
+            .exists(),
+        );
+      } else {
+        cy.expect(
+          transactionResultsList
+            .find(MultiColumnListRow({ content: including(content), isContainer: true }))
+            .absent(),
+        );
+      }
+    });
+  },
   selectTransaction(type) {
     cy.do(
       transactionResultsList

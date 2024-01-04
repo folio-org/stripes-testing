@@ -1,10 +1,10 @@
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../support/dictionary';
-import { Orders, OrderLineDetails, OrderDetails } from '../../support/fragments/orders';
+import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_FORMAT_NAMES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
+import { OrderDetails, OrderLineDetails, Orders } from '../../support/fragments/orders';
 import { NewOrganization, Organizations } from '../../support/fragments/organizations';
 import { OpenOrder, OrderTemplates } from '../../support/fragments/settings/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ACQUISITION_METHOD_NAMES_IN_PROFILE, ORDER_FORMAT_NAMES } from '../../support/constants';
 
 describe('Orders', () => {
   const isOpenOrderEnabled = true;
@@ -46,7 +46,7 @@ describe('Orders', () => {
 
   it(
     'C353575 Renewal note field is prefilled in POL when create order from specific template (thunderjet) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.thunderjet, Parallelization.nonParallel] },
+    { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
     () => {
       // Click "Actions" button on "Orders" pane and select "New" option
       const OrderEditForm = Orders.clickCreateNewOrder();

@@ -9,6 +9,8 @@ import {
   including,
   Link,
   Checkbox,
+  Accordion,
+  MultiColumnList,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import OrderLines from './orderLines';
@@ -19,14 +21,23 @@ import CreateInvoiceModal from './modals/createInvoiceModal';
 import OpenConfirmationModal from './modals/openConfirmationModal';
 import UnopenConfirmationModal from './modals/unopenConfirmationModal';
 import ExportDetails from '../exportManager/exportDetails';
+import Receivings from '../receiving/receiving';
+import CloseConfirmationModal from './modals/closeConfirmationModal';
 
 const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
 
+const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }));
 const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
 
 const exportDetailsSection = orderDetailsPane.find(Section({ id: 'exportDetails' }));
+
+const headerDetail = orderDetailsPane.find(PaneHeader({ id: 'paneHeaderorder-details' }));
+
+const iconTimes = Button({ icon: 'times' });
+
+const invoicesList = MultiColumnList({ id: 'orderInvoices' });
 
 const openPolDetails = (title) => {
   cy.do(polListingAccordion.find(MultiColumnListCell({ content: title })).click());
@@ -40,6 +51,21 @@ export default {
   openPolDetails,
   checkOrderStatus(orderStatus) {
     cy.expect(poSummarySection.find(KeyValue('Workflow status')).has({ value: orderStatus }));
+  },
+  checkFieldsConditions(fields = []) {
+    fields.forEach(({ label, conditions }) => {
+      cy.expect(orderDetailsPane.find(KeyValue(label)).has(conditions));
+    });
+  },
+  checkFieldsHasCopyIcon(fields = []) {
+    fields.forEach(({ label }) => {
+      cy.expect(
+        orderDetailsPane
+          .find(KeyValue(label))
+          .find(Button({ icon: 'clipboard' }))
+          .exists(),
+      );
+    });
   },
   checkOrderDetails({ summary = [] } = {}) {
     summary.forEach(({ key, value, checkbox }) => {
@@ -56,6 +82,28 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(actionsButton))
         .click(),
     );
+  },
+  copyOrderNumber(poNumber) {
+    cy.do(
+      orderInfoSection
+        .find(KeyValue('PO number'))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
+  },
+  closeOrder({ orderNumber, confirm = true } = {}) {
+    this.expandActionsDropdown();
+    cy.do(Button('Cancel').click());
+
+    if (orderNumber) {
+      CloseConfirmationModal.verifyModalView({ orderNumber });
+    }
+
+    if (confirm) {
+      CloseConfirmationModal.clickSubmitButton();
+    }
   },
   openOrder({ orderNumber, confirm = true } = {}) {
     this.expandActionsDropdown();
@@ -93,6 +141,13 @@ export default {
       );
     }
   },
+  openReceivingsPage() {
+    this.expandActionsDropdown();
+    cy.do(Button('Receive').click());
+    Receivings.waitLoading();
+
+    return Receivings;
+  },
   createNewInvoice({ confirm = true } = {}) {
     this.expandActionsDropdown();
     cy.do(Button('New invoice').click());
@@ -102,14 +157,6 @@ export default {
     if (confirm) {
       CreateInvoiceModal.confirm();
     }
-  },
-  openReceive() {
-    cy.do([
-      Pane({ id: 'order-details' })
-        .find(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button('Actions')))
-        .click(),
-      Button('Receive').click(),
-    ]);
   },
   openExportJobDetails({ rowIndex = 0, columnIndex = 0 } = {}) {
     cy.do(
@@ -156,16 +203,14 @@ export default {
       if (record.poLineNumber) {
         cy.expect(
           polListingAccordion
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 0 }))
+            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
             .has({ content: including(record.poLineNumber) }),
         );
       }
       if (record.poLineTitle) {
         cy.expect(
           polListingAccordion
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .find(MultiColumnListCell({ row: index, column: 'Title or package name' }))
             .has({ content: including(record.poLineTitle) }),
         );
       }
@@ -190,5 +235,36 @@ export default {
     OrderLineEditForm.waitLoading();
 
     return OrderLineEditForm;
+  },
+  verifyPOLCount(ordersCount) {
+    if (ordersCount === 0) {
+      cy.expect(
+        Accordion({ label: including('PO lines') })
+          .find(MultiColumnList({ id: 'POListing' }))
+          .absent(),
+      );
+    } else {
+      cy.expect(
+        Accordion({ label: including('PO lines') })
+          .find(MultiColumnList({ id: 'POListing' }))
+          .has({ rowCount: ordersCount }),
+      );
+    }
+  },
+
+  verifyOrderTitle(title) {
+    cy.expect(headerDetail.has({ text: including(title) }));
+  },
+
+  closeOrderDetails: () => {
+    cy.do(orderDetailsPane.find(iconTimes).click());
+  },
+
+  verifyAccordionExists(name) {
+    cy.expect(Accordion({ label: including(name) }).exists());
+  },
+
+  openInvoice(number) {
+    cy.do(invoicesList.find(Link({ href: including(`${number}`) })).click());
   },
 };

@@ -1,5 +1,3 @@
-import testTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import BulkEditActions from '../../../../support/fragments/bulk-edit/bulk-edit-actions';
@@ -14,7 +12,6 @@ import InventorySearchAndFilter from '../../../../support/fragments/inventory/in
 import ItemRecordView from '../../../../support/fragments/inventory/item/itemRecordView';
 import TopMenuNavigation from '../../../../support/fragments/topMenuNavigation';
 import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -86,7 +83,7 @@ describe('Bulk Edit - Logs', () => {
 
   it(
     'C402326 Verify "Suppress from discovery" option is set to False when Holdings are suppressed and Items are not (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Instance HRIDs');
@@ -142,7 +139,7 @@ describe('Bulk Edit - Logs', () => {
       );
 
       TopMenuNavigation.navigateToApp('Inventory');
-      InventoryInstance.searchByTitle(item.instanceName);
+      InventoryInstances.searchByTitle(item.instanceName);
       InventoryInstances.selectInstance();
       InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
 

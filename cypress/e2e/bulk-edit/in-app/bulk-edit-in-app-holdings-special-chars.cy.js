@@ -1,15 +1,13 @@
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
@@ -70,7 +68,10 @@ describe('bulk-edit', () => {
             formerIds: ['former-id;special&characters'],
             numberOfItems: 'number-items;special&characters',
           });
-          FileManager.createFile(`cypress/fixtures/${secondValidHoldingHRIDsFileName}`, holdings[0].hrid);
+          FileManager.createFile(
+            `cypress/fixtures/${secondValidHoldingHRIDsFileName}`,
+            holdings[0].hrid,
+          );
         });
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,
@@ -92,7 +93,7 @@ describe('bulk-edit', () => {
 
     it(
       'C366548 Verify that Holdings with special characters in title can be bulk edited (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkHoldingsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
@@ -117,7 +118,7 @@ describe('bulk-edit', () => {
 
     it(
       'C368481 Verify that there no errors during bulk editing Holdings with special characters (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,

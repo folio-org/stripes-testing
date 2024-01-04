@@ -1,22 +1,20 @@
+import { ITEM_STATUS_NAMES } from '../../support/constants';
 import permissions from '../../support/dictionary/permissions';
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import UserEdit from '../../support/fragments/users/userEdit';
+import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import { getTestEntityValue } from '../../support/utils/stringTools';
-import Users from '../../support/fragments/users/users';
-import devTeams from '../../support/dictionary/devTeams';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
-import Checkout from '../../support/fragments/checkout/checkout';
-import { ITEM_STATUS_NAMES } from '../../support/constants';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 
 describe('Check Out - Actions ', () => {
   const userData = {
@@ -136,7 +134,7 @@ describe('Check Out - Actions ', () => {
 
   it(
     'C356772 An active user with barcode can Check out item (vega)',
-    { tags: [TestTypes.smoke, devTeams.vega] },
+    { tags: ['smoke', 'vega'] },
     () => {
       OtherSettings.selectPatronIdsForCheckoutScanning(['Username'], '3');
       cy.visit(TopMenu.usersPath);

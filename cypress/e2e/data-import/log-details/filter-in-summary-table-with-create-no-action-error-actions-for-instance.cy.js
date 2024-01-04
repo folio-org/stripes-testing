@@ -1,12 +1,12 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import TopMenu from '../../../support/fragments/topMenu';
-import Logs from '../../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -41,7 +41,7 @@ describe('data-import', () => {
 
     it(
       'C357015 Check the filter in summary table with "create + no action + error" actions for the Instance column (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

@@ -1,16 +1,16 @@
-import { DevTeams, Permissions, TestTypes } from '../../support/dictionary';
 import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Requests from '../../support/fragments/requests/requests';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import AwaitingPickupForARequest from '../../support/fragments/checkin/modals/awaitingPickupForARequest';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
 import { Locations } from '../../support/fragments/settings/tenant';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Title Level Request', () => {
   let itemData;
@@ -76,52 +76,48 @@ describe('Title Level Request', () => {
     });
   });
 
-  it(
-    'C3533 Cancel request (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
-    () => {
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemGui(itemData.barcodes[0]);
-      AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-      AwaitingPickupForARequest.closeModal();
-      CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
-      cy.visit(TopMenu.requestsPath);
-      Requests.waitLoading();
-      Requests.findCreatedRequest(itemData.instanceTitle);
-      Requests.selectFirstRequest(itemData.instanceTitle);
-      RequestDetail.checkRequestStatus('Open - Awaiting pickup');
-      RequestDetail.checkItemStatus('Awaiting pickup');
-      RequestDetail.openActions();
-      RequestDetail.verifyCancelRequestOptionDisplayed();
+  it('C3533 Cancel request (vega) (TaaS)', { tags: ['criticalPath', 'vega'] }, () => {
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemGui(itemData.barcodes[0]);
+    AwaitingPickupForARequest.unselectCheckboxPrintSlip();
+    AwaitingPickupForARequest.closeModal();
+    CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
+    cy.visit(TopMenu.requestsPath);
+    Requests.waitLoading();
+    Requests.findCreatedRequest(itemData.instanceTitle);
+    Requests.selectFirstRequest(itemData.instanceTitle);
+    RequestDetail.checkRequestStatus('Open - Awaiting pickup');
+    RequestDetail.checkItemStatus('Awaiting pickup');
+    RequestDetail.openActions();
+    RequestDetail.verifyCancelRequestOptionDisplayed();
 
-      RequestDetail.openCancelRequest();
-      RequestDetail.verifyCancelRequestModalDisplayed();
+    RequestDetail.openCancelRequest();
+    RequestDetail.verifyCancelRequestModalDisplayed();
 
-      RequestDetail.clickOnBackButton();
+    RequestDetail.clickOnBackButton();
 
-      RequestDetail.openActions();
-      RequestDetail.openCancelRequest();
-      RequestDetail.checkRequestCancellationModalInfo();
+    RequestDetail.openActions();
+    RequestDetail.openCancelRequest();
+    RequestDetail.checkRequestCancellationModalInfo();
 
-      RequestDetail.confirmRequestCancellation();
-      RequestDetail.checkRequestStatus('Closed - Cancelled');
+    RequestDetail.confirmRequestCancellation();
+    RequestDetail.checkRequestStatus('Closed - Cancelled');
 
-      cy.visit(TopMenu.checkInPath);
-      CheckInActions.checkInItemGui(itemData.barcodes[0]);
-      CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
-      cy.visit(TopMenu.requestsPath);
-      Requests.waitLoading();
-      Requests.findCreatedRequest(itemData.instanceTitle);
-      Requests.selectFirstRequest(itemData.instanceTitle);
-      RequestDetail.checkItemStatus('Available');
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemGui(itemData.barcodes[0]);
+    CheckInActions.verifyLastCheckInItem(itemData.barcodes[0]);
+    cy.visit(TopMenu.requestsPath);
+    Requests.waitLoading();
+    Requests.findCreatedRequest(itemData.instanceTitle);
+    Requests.selectFirstRequest(itemData.instanceTitle);
+    RequestDetail.checkItemStatus('Available');
 
-      RequestDetail.verifyEditButtonAbsent();
+    RequestDetail.verifyEditButtonAbsent();
 
-      RequestDetail.checkRequestInformation({
-        type: REQUEST_TYPES.PAGE,
-        status: 'Closed - Cancelled',
-        level: REQUEST_LEVELS.TITLE,
-      });
-    },
-  );
+    RequestDetail.checkRequestInformation({
+      type: REQUEST_TYPES.PAGE,
+      status: 'Closed - Cancelled',
+      level: REQUEST_LEVELS.TITLE,
+    });
+  });
 });

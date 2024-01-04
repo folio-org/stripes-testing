@@ -19,6 +19,7 @@ import PayInvoiceModal from './modal/payInvoiceModal';
 import CancelInvoiceModal from './modal/cancelInvoiceModal';
 import SelectOrderLinesModal from './modal/selectOrderLinesModal';
 import InvoiceStates from './invoiceStates';
+import interactorsTools from '../../utils/interactorsTools';
 
 const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
@@ -39,6 +40,7 @@ const linksAndDocumentsSection = Section({ id: 'documents' });
 // voucher details
 const voucherExportDetailsSection = invoiceDetailsPane.find(Section({ id: 'batchVoucherExport' }));
 const voucherInformationSection = invoiceDetailsPane.find(Section({ id: 'voucher' }));
+const vendorDetailsSection = invoiceDetailsPane.find(Section({ id: 'vendorDetails' }));
 
 export default {
   expandActionsDropdown() {
@@ -88,13 +90,12 @@ export default {
 
     return InvoiceLineEditForm;
   },
-  checkTableContent(records = []) {
+  checkInvoiceLinesTableContent(records = []) {
     records.forEach((record, index) => {
       if (record.poNumber) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 1 }))
+            .find(MultiColumnListCell({ row: index, column: 'POL number' }))
             .has({ content: including(record.poNumber) }),
         );
       }
@@ -102,17 +103,23 @@ export default {
       if (record.description) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 2 }))
+            .find(MultiColumnListCell({ row: index, column: 'Description' }))
             .has({ content: including(record.description) }),
+        );
+      }
+
+      if (record.fundCode) {
+        cy.expect(
+          invoiceLinesSection
+            .find(MultiColumnListCell({ row: index, column: 'Fund code' }))
+            .has({ content: including(record.fundCode) }),
         );
       }
 
       if (record.receiptStatus) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 5 }))
+            .find(MultiColumnListCell({ row: index, column: 'Receipt status' }))
             .has({ content: including(record.receiptStatus) }),
         );
       }
@@ -120,8 +127,7 @@ export default {
       if (record.paymentStatus) {
         cy.expect(
           invoiceLinesSection
-            .find(MultiColumnListRow({ rowIndexInParent: `row-${index}` }))
-            .find(MultiColumnListCell({ columnIndex: 6 }))
+            .find(MultiColumnListCell({ row: index, column: 'Payment status' }))
             .has({ content: including(record.paymentStatus) }),
         );
       }
@@ -131,8 +137,10 @@ export default {
     title,
     invoiceInformation = [],
     invoiceLines,
+    vendorDetails = [],
     voucherExport = [],
     voucherInformation = [],
+    vendorDetailsInformation = [],
   } = {}) {
     if (title) {
       cy.expect(invoiceDetailsPane.has({ title: `Vendor invoice number - ${title}` }));
@@ -140,6 +148,10 @@ export default {
 
     invoiceInformation.forEach(({ key, value }) => {
       cy.expect(informationSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
+    vendorDetails.forEach(({ key, value }) => {
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
     voucherExport.forEach(({ key, value }) => {
@@ -150,14 +162,38 @@ export default {
       cy.expect(voucherInformationSection.find(KeyValue(key)).has({ value: including(value) }));
     });
 
+    vendorDetailsInformation.forEach(({ key, value }) => {
+      cy.expect(vendorDetailsSection.find(KeyValue(key)).has({ value: including(value) }));
+    });
+
     if (invoiceLines) {
       cy.expect(
         invoiceLinesSection.has({
           text: including(`Total number of invoice lines: ${invoiceLines.length}`),
         }),
       );
-      this.checkTableContent(invoiceLines);
+      this.checkInvoiceLinesTableContent(invoiceLines);
     }
+  },
+  checkFieldsHasCopyIcon(fields = []) {
+    fields.forEach(({ label }) => {
+      cy.expect(
+        invoiceDetailsPane
+          .find(KeyValue(label))
+          .find(Button({ icon: 'clipboard' }))
+          .exists(),
+      );
+    });
+  },
+  copyOrderNumber(vendorInvoiceNo) {
+    cy.do(
+      invoiceDetailsPane
+        .find(KeyValue('Vendor invoice number'))
+        .find(Button({ icon: 'clipboard' }))
+        .click(),
+    );
+
+    interactorsTools.checkCalloutMessage(`Successfully copied "${vendorInvoiceNo}" to clipboard.`);
   },
   approveInvoice({ isApprovePayEnabled = false } = {}) {
     cy.do([
@@ -247,5 +283,29 @@ export default {
         .find(Button({ className: including('invoiceDocumentButton') }))
         .click(),
     );
+  },
+  verifyInvoicesList() {
+    cy.expect(MultiColumnList({ id: 'invoices-list' }).exists());
+  },
+  verifyInvoiceLinkExists(linkName) {
+    cy.expect(
+      MultiColumnList({ id: 'invoices-list' })
+        .find(MultiColumnListCell({ content: linkName }))
+        .find(Link())
+        .exists(),
+    );
+  },
+  selectInvoiceLineByName(linkName) {
+    cy.do(
+      MultiColumnList({ id: 'invoices-list' })
+        .find(MultiColumnListCell({ content: linkName }))
+        .find(Link())
+        .click(),
+    );
+
+    return InvoiceLineDetails;
+  },
+  verifyWarningMessage(message) {
+    cy.expect(HTML(including(message)).exists());
   },
 };

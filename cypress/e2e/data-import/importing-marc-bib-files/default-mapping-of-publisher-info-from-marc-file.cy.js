@@ -1,6 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -33,22 +33,23 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+      });
     });
 
     it(
       'C6691 Check the default mapping of publisher info (260/264) from the MARC record to the Inventory Instance Publication fields (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const publisherInfo = {
           publisher: 'Crown House Publishing',
-          role: 'No value set-',
+          role: RECORD_STATUSES.DASH,
           place: 'Carmarthen, Wales ; Bethel, Conn.',
           date: 'c2009',
         };
@@ -61,7 +62,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
 

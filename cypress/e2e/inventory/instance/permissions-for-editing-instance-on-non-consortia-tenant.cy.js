@@ -1,13 +1,13 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
 import { INSTANCE_STATUS_TERM_NAMES } from '../../../support/constants';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Instance', () => {
@@ -33,14 +33,15 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+      });
     });
 
     it(
       'C407752 (NON-CONSORTIA) Verify the permission for editing instance on Non-consortia tenant (folijet) (TaaS)',
-      { tags: [TestTypes.smoke, DevTeams.folijet] },
+      { tags: ['smoke', 'folijet'] },
       () => {
         InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
         InstanceRecordView.verifyInstancePaneExists();

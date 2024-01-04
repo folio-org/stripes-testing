@@ -1,11 +1,10 @@
-import Agreements from '../../../support/fragments/agreements/agreements';
-import TopMenu from '../../../support/fragments/topMenu';
 import AgreementViewDetails from '../../../support/fragments/agreements/agreementViewDetails';
+import Agreements from '../../../support/fragments/agreements/agreements';
 import EditAgreement from '../../../support/fragments/agreements/editAgreement';
-import Users from '../../../support/fragments/users/users';
+import TopMenu from '../../../support/fragments/topMenu';
 import SelectUser from '../../../support/fragments/users/modal/selectUser';
+import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import { TestTypes, DevTeams } from '../../../support/dictionary';
 
 let agreementId;
 const firstUser = {
@@ -64,7 +63,7 @@ describe('Agreement Internal Contacts', () => {
 
   it(
     'C1314 Assign a library staff member to an Agreement (erm) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.erm] },
+    { tags: ['extendedPath', 'erm'] },
     () => {
       AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
       AgreementViewDetails.gotoEdit();

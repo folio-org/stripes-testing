@@ -1,13 +1,11 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { LOCATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory -> Advanced search', () => {
   const randomCallNumber = `001MYCN2225858${getRandomPostfix()}`;
@@ -127,7 +125,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400622 Search Items using advanced search with "AND" operator (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToItem();
       InventoryInstances.clickAdvSearchButton();

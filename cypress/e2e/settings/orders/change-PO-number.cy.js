@@ -1,15 +1,13 @@
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
-import TestType from '../../../support/dictionary/testTypes';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Organizations from '../../../support/fragments/organizations/organizations';
-import NewOrganization from '../../../support/fragments/organizations/newOrganization';
-import Users from '../../../support/fragments/users/users';
-import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
-import TopMenu from '../../../support/fragments/topMenu';
-import Orders from '../../../support/fragments/orders/orders';
-import NewOrder from '../../../support/fragments/orders/newOrder';
 import Helper from '../../../support/fragments/finance/financeHelper';
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import Orders from '../../../support/fragments/orders/orders';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import Organizations from '../../../support/fragments/organizations/organizations';
+import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('orders: Settings', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -58,7 +56,7 @@ describe('orders: Settings', () => {
 
   it(
     'C670 Change the PO number setting from editable to non-editable, then create a couple POs to test it (thunderjet)',
-    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.createOrderWithPONumber(orderNumber, order, false).then((orderId) => {
         order.id = orderId;
@@ -68,7 +66,7 @@ describe('orders: Settings', () => {
   );
   it(
     'C15493 Allow users to edit PO number (thunderjet)',
-    { tags: [TestType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Orders.createOrderWithPONumber(orderNumber, order, false).then((orderId) => {
         order.id = orderId;

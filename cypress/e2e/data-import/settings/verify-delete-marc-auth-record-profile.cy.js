@@ -1,13 +1,13 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import { Permissions } from '../../../support/dictionary';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -38,7 +38,7 @@ describe('data-import', () => {
 
     it(
       'C350645 Suppress the data import profiles, being used for deleting MARC Authority record, from the Data Import settings UI (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         cy.visit(SettingsMenu.dataImportSettingsPath);
         profiles.forEach((profile) => {

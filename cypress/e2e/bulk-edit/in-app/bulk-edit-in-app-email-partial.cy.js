@@ -1,14 +1,12 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import UsersCard from '../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../support/fragments/users/usersCard';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
@@ -16,20 +14,21 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create test data', () => {
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUsersView.gui,
-        permissions.uiUsersCreate.gui
-      ], 'staff').then(
-        (userProperties) => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading,
-          });
-          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-        },
-      );
+      cy.createTempUser(
+        [
+          permissions.bulkEditUpdateRecords.gui,
+          permissions.uiUsersView.gui,
+          permissions.uiUsersCreate.gui,
+        ],
+        'staff',
+      ).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+      });
     });
 
     after('delete test data', () => {
@@ -39,8 +38,8 @@ describe('bulk-edit', () => {
     });
 
     it(
-      'C365590 Verify that User\'s Email can be edited partially (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      "C365590 Verify that User's Email can be edited partially (firebird) (TaaS)",
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
@@ -68,7 +67,7 @@ describe('bulk-edit', () => {
         UsersSearchPane.openUser(user.username);
         UsersCard.openContactInfo();
         UsersCard.verifyEmail(`test@${newEmailDomain}`);
-      }
+      },
     );
   });
 });

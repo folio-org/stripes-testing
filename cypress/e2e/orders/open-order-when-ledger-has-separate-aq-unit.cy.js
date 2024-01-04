@@ -1,12 +1,12 @@
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
+import { ORDER_STATUSES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import { Budgets } from '../../support/fragments/finance';
-import { NewOrder, BasicOrderLine, Orders } from '../../support/fragments/orders';
-import Organizations from '../../support/fragments/organizations/organizations';
+import { BasicOrderLine, NewOrder, Orders } from '../../support/fragments/orders';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
+import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import { ORDER_STATUSES } from '../../support/constants';
 
 describe('Orders', () => {
   const organization = NewOrganization.getDefaultOrganization();
@@ -66,7 +66,7 @@ describe('Orders', () => {
 
   it(
     'C407655 Open order when ledger has separate acquisition unit (thunderjet) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       // Open Order
       const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
@@ -84,7 +84,7 @@ describe('Orders', () => {
       ]);
 
       // Click "Add fund distribution" button, Select "Fund A"
-      OrderLineEditForm.addFundDistribution();
+      OrderLineEditForm.clickAddFundDistributionButton();
       OrderLineEditForm.selectFundDistribution(testData.fund.name);
 
       // Click "Save & close" button

@@ -1,15 +1,13 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { ITEM_STATUS_NAMES, LOCATION_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
+import InventoryHotkeys from '../../../support/fragments/inventory/inventoryHotkeys';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryKeyboardShortcuts from '../../../support/fragments/inventory/inventoryKeyboardShortcuts';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { LOCATION_NAMES, ITEM_STATUS_NAMES } from '../../../support/constants';
-import InventoryKeyboardShortcuts from '../../../support/fragments/inventory/inventoryKeyboardShortcuts';
-import InventoryHotkeys from '../../../support/fragments/inventory/inventoryHotkeys';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory -> Advanced search', () => {
   let user;
@@ -106,7 +104,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C422017 Search Holdings using advanced search with "AND" operator (spitfire) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToHoldings();
       InventoryInstances.clickAdvSearchButton();

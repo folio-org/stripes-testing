@@ -1,10 +1,10 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
-import NewTargetProfile from '../../../support/fragments/settings/inventory/integrations/newTargetProfile';
+import { Permissions } from '../../../support/dictionary';
 import EditTargetProfile from '../../../support/fragments/settings/inventory/integrations/editTargetProfile';
+import NewTargetProfile from '../../../support/fragments/settings/inventory/integrations/newTargetProfile';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Settings', () => {
@@ -33,18 +33,19 @@ describe('inventory', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      Z3950TargetProfiles.getTargetProfileIdViaApi({
-        query: `name="${newTargetProfileName}"`,
-      }).then((profileId) => {
-        Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        Z3950TargetProfiles.getTargetProfileIdViaApi({
+          query: `name="${newTargetProfileName}"`,
+        }).then((profileId) => {
+          Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
+        });
       });
     });
 
     it(
       'C374178 Verify the create/edit mode for ISRI profiles (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         cy.visit(SettingsMenu.targetProfilesPath);
         Z3950TargetProfiles.create();

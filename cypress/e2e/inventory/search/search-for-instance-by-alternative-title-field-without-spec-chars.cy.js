@@ -1,14 +1,14 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import { randomFourDigitNumber } from '../../../support/utils/stringTools';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import Users from '../../../support/fragments/users/users';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 const testData = {
   user: {},
@@ -85,10 +85,10 @@ describe('inventory', () => {
 
     it(
       'C368045 Search for "Instance" by "Alternative title" field without special characters using "Keyword" search option (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         testData.positiveSearchQueries.forEach((query) => {
-          InventoryInstance.searchByTitle(query);
+          InventoryInstances.searchByTitle(query);
           InventorySearchAndFilter.checkRowsCount(3);
           testData.searchResults.forEach((result) => {
             InventorySearchAndFilter.verifyInstanceDisplayed(result, true);
@@ -97,12 +97,12 @@ describe('inventory', () => {
         });
 
         testData.negativeSearchQueries.forEach((query) => {
-          InventoryInstance.searchByTitle(query, false);
+          InventoryInstances.searchByTitle(query, false);
           InventorySearchAndFilter.verifyNoRecordsFound();
           InventoryInstances.resetAllFilters();
         });
 
-        InventoryInstance.searchByTitle('A History Of Richard Linklater Dazed And Confused');
+        InventoryInstances.searchByTitle('A History Of Richard Linklater Dazed And Confused');
         InventorySearchAndFilter.checkRowsCount(1);
         InventorySearchAndFilter.verifyInstanceDisplayed(testData.searchResults[2], true);
       },

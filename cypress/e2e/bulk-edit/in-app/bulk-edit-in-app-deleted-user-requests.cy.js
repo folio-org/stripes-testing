@@ -1,14 +1,12 @@
-import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
-import testTypes from '../../../support/dictionary/testTypes';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import { getLongDelay } from '../../../support/utils/cypressTools';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user1;
 let user2;
@@ -25,14 +23,14 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
         permissions.bulkEditView.gui,
-        permissions.bulkEditEdit.gui
+        permissions.bulkEditEdit.gui,
       ]).then((userProperties) => {
         user1 = userProperties;
       });
-      cy.createTempUser([
-        permissions.bulkEditUpdateRecords.gui,
-        permissions.uiUserEdit.gui,
-      ], 'faculty').then((userProperties) => {
+      cy.createTempUser(
+        [permissions.bulkEditUpdateRecords.gui, permissions.uiUserEdit.gui],
+        'faculty',
+      ).then((userProperties) => {
         user2 = userProperties;
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
 
@@ -56,7 +54,7 @@ describe('bulk-edit', () => {
 
     it(
       'C380394 Verify that bulk edit jobs run by correct user in case deleting one of them (firebird) (TaaS)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.login(user1.username, user1.password, {
           path: TopMenu.bulkEditPath,

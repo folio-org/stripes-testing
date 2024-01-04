@@ -1,14 +1,14 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import { Permissions } from '../../../support/dictionary';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/integrations/z39.50TargetProfiles';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('MARC -> MARC Holdings', () => {
@@ -59,7 +59,7 @@ describe('MARC -> MARC Holdings', () => {
 
   it(
     'C350756 Create a new "MARC Holdings" record for imported "Instance" record from "OCLC" (spitfire) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.spitfire] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.searchByParameter('Identifier (all)', `(OCoLC)${testData.oclc}`);
       InstanceRecordView.verifyInstancePaneExists();

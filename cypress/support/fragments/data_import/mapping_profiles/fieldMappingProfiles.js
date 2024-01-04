@@ -14,6 +14,7 @@ import FieldMappingProfileEdit from './fieldMappingProfileEdit';
 import NewFieldMappingProfile from './newFieldMappingProfile';
 import FieldMappingProfileView from './fieldMappingProfileView';
 import Callout from '../../../../../interactors/callout';
+import ArrayUtils from '../../../utils/arrays';
 
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
@@ -28,6 +29,7 @@ const mappingProfileForDuplicate = {
   harrassowitz: 'Default - Harrassowitz serials invoice',
   ebsco: 'Default - EBSCO serials invoice',
   erasmus: 'Default - Erasmus monograph invoice',
+  hein: 'Default - Hein serials invoice',
 };
 
 const search = (nameForSearch) => {
@@ -135,5 +137,20 @@ export default {
         ),
       }).exists(),
     );
+  },
+
+  verifyProfilesIsSortedInAlphabeticalOrder: () => {
+    const cells = [];
+    cy.get('div[class^="mclRowContainer--"]')
+      .find('[data-row-index]')
+      .each(($row) => {
+        cy.get('[class*="mclCell-"]:nth-child(1)', { withinSubject: $row })
+          .invoke('text')
+          .then((cellValue) => {
+            cells.push(cellValue);
+            cy.log(cellValue);
+          });
+      })
+      .then(() => cy.expect(ArrayUtils.checkIsSortedAlphabetically({ array: cells })).to.equal(true));
   },
 };

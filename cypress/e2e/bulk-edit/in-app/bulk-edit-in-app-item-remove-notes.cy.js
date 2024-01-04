@@ -1,16 +1,14 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import devTeams from '../../../support/dictionary/devTeams';
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import FileManager from '../../../support/utils/fileManager';
-import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
+import TopMenu from '../../../support/fragments/topMenu';
+import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
+import Users from '../../../support/fragments/users/users';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 let user;
 const notes = {
@@ -86,7 +84,7 @@ describe('bulk-edit', () => {
 
     it(
       'C411645 Verify separating notes in different columns - remove notes (firebird)',
-      { tags: [testTypes.criticalPath, devTeams.firebird] },
+      { tags: ['criticalPath', 'firebird'] },
       () => {
         BulkEditSearchPane.checkItemsRadio();
         BulkEditSearchPane.selectRecordIdentifier('Item barcode');

@@ -1,8 +1,6 @@
-import TopMenu from '../../support/fragments/topMenu';
-import TestType from '../../support/dictionary/testTypes';
-import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import devTeams from '../../support/dictionary/devTeams';
+import Organizations from '../../support/fragments/organizations/organizations';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-organizations: Search organization', () => {
   const organization = { ...NewOrganization.specialOrganization };
@@ -31,7 +29,7 @@ describe('ui-organizations: Search organization', () => {
   ].forEach((searcher) => {
     it(
       'C6712 Test the Organizations app searches (thunderjet)',
-      { tags: [TestType.smoke, devTeams.thunderjet] },
+      { tags: ['smoke', 'thunderjet'] },
       () => {
         cy.visit(TopMenu.organizationsPath);
         Organizations.searchByParameters(searcher.parameter, searcher.value);

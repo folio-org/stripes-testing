@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import { JOB_STATUS_NAMES } from '../../../support/constants';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
@@ -53,20 +53,21 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      instanceHrids.forEach((hrid) => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        instanceHrids.forEach((hrid) => {
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
+            (instance) => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+        });
       });
     });
 
     it(
       'C6690 Check the default mapping of the Index title from the MARC record to the Inventory Instance Index title field (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();

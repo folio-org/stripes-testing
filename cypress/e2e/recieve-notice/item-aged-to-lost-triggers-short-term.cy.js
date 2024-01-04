@@ -1,28 +1,28 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../support/dictionary';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
+import { Permissions } from '../../support/dictionary';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicies from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
-import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import LoanPolicy from '../../support/fragments/circulation/loan-policy';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NewNoticePolicy from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicy';
 import NewNoticePolicyTemplate, {
   createNoticeTemplate,
 } from '../../support/fragments/settings/circulation/patron-notices/newNoticePolicyTemplate';
+import NoticePolicies from '../../support/fragments/settings/circulation/patron-notices/noticePolicies';
+import NoticePolicyTemplateApi from '../../support/fragments/settings/circulation/patron-notices/noticeTemplates';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import { getTestEntityValue } from '../../support/utils/stringTools';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
-import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import Checkout from '../../support/fragments/checkout/checkout';
-import LoanPolicy from '../../support/fragments/circulation/loan-policy';
-import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import { getTestEntityValue } from '../../support/utils/stringTools';
 
 // Test is skipped because implementation is not completed
 describe.skip('Loan notice triggers', () => {
@@ -243,7 +243,7 @@ describe.skip('Loan notice triggers', () => {
 
   it(
     'C347864: Loan due date/time triggers: short term (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       noticeTemplates.forEach((template, index) => {
         NewNoticePolicyTemplate.createPatronNoticeTemplate(template, !!index);

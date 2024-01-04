@@ -7,8 +7,22 @@ currentStartDate.setDate(currentStartDate.getDate());
 const currentEndDate = new Date();
 currentEndDate.setDate(currentEndDate.getDate() + 4);
 
+const dateUTCFromHHMM = (t) => {
+  const timeParts = t.split(':').map((n) => parseInt(n, 10));
+  return new Date(Date.UTC(0, 0, 0, timeParts[0], timeParts[1]));
+};
+
+const toStartOfDay = (d) => {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+};
+
+const padWithZeroDay = (value) => {
+  return value < 10 ? `0${value}` : value;
+};
+
 export default {
   padWithZero,
+  padWithZeroDay,
   getCurrentDate: () => {
     const currentDate = new Date();
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
@@ -126,9 +140,16 @@ export default {
 
   getPreviousDayDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
-      currentDate.getDate() - 1,
-    )}/${currentDate.getFullYear()}`;
+    let day = currentDate.getDate() - 1;
+    let month = currentDate.getMonth() + 1;
+    let year = currentDate.getFullYear();
+    if (day <= 0) {
+      const lastMonth = new Date(year, month - 2, 1);
+      year = lastMonth.getFullYear();
+      month = lastMonth.getMonth() + 1;
+      day = lastMonth.getDate() + day;
+    }
+    return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
   getTwoPreviousDaysDateForFiscalYear: () => {
@@ -140,9 +161,16 @@ export default {
 
   getTwoPreviousDaysDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
-      currentDate.getDate() - 2,
-    )}/${currentDate.getFullYear()}`;
+    let day = currentDate.getDate() - 2;
+    let month = currentDate.getMonth() + 1;
+    let year = currentDate.getFullYear();
+    if (day <= 0) {
+      const lastMonth = new Date(year, month - 2, 1);
+      year = lastMonth.getFullYear();
+      month = lastMonth.getMonth() + 1;
+      day = lastMonth.getDate() + day;
+    }
+    return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
   getThreePreviousDaysDateForFiscalYear: () => {
@@ -154,9 +182,20 @@ export default {
 
   getThreePreviousDaysDateForFiscalYearOnUIEdit: () => {
     const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(
-      currentDate.getDate() - 3,
-    )}/${currentDate.getFullYear()}`;
+    let day = currentDate.getDate();
+    let month = currentDate.getMonth() + 1;
+    let year = currentDate.getFullYear();
+
+    if (day <= 3) {
+      const lastMonth = new Date(year, month - 2, 1);
+      year = lastMonth.getFullYear();
+      month = lastMonth.getMonth() + 1;
+      day = 30;
+    } else {
+      day -= 3;
+    }
+
+    return `${padWithZeroDay(month)}/${padWithZeroDay(day)}/${year}`;
   },
 
   getPreviousFiscalYearCode: () => {
@@ -268,7 +307,9 @@ export default {
     return momentObj.format('M/D/YYYY, h:mm A');
   },
 
-  getFormattedDateWithTime(date) {
+  getFormattedDateWithTime(date, spelling = { withoutComma: false, withSpace: false }) {
+    if (spelling.withoutComma) return moment.utc(date).format('M/D/YYYYh:mm A');
+    if (spelling.withSpace) return moment.utc(date).format('M/D/YYYY h:mm A');
     return moment.utc(date).format('M/D/YYYY, h:mm A');
   },
 
@@ -298,6 +339,99 @@ export default {
     return hours + ':' + minutes + ' ' + ampm;
     // return value in format HH:MM AM/PM
   },
+
+  uiCalendar: {
+    dateToTimeOnly(d) {
+      return new Date(0, 0, 0, d.getHours(), d.getMinutes());
+    },
+
+    dateFromHHMM(t) {
+      const timeParts = t.split(':').map((n) => parseInt(n, 10));
+      return new Date(0, 0, 0, timeParts[0], timeParts[1]);
+    },
+
+    toStartOfDay(d) {
+      return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    },
+
+    dateFromYYYYMMDD(d) {
+      const parts = d.split('-').map((n) => parseInt(n, 10));
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    },
+
+    getLocalizedDate(date) {
+      const [year, month, day] = date.split('-');
+      return `${month[0] === '0' ? month.slice(1) : month}/${
+        day[0] === '0' ? day.slice(1) : day
+      }/${year}`;
+    },
+
+    dateUTCFromHHMM,
+
+    getLocalizedTime(time) {
+      // forcibly use UTC for local time-ness
+      const date = dateUTCFromHHMM(time);
+
+      if (
+        (date.getUTCHours() === 23 && date.getUTCMinutes() === 59) ||
+        (date.getUTCHours() === 0 && date.getUTCMinutes() === 0)
+      ) {
+        return 'Midnight';
+      }
+
+      let meridian = 'AM';
+
+      let hours = date.getUTCHours();
+
+      if (hours > 11) {
+        meridian = 'PM';
+      }
+
+      if (hours > 12) {
+        hours -= 12;
+      }
+
+      return `${hours.toString(10)}:${('0' + date.getUTCMinutes().toString(10)).slice(
+        -2,
+      )} ${meridian}`;
+    },
+
+    dateFromYYYYMMDDAndHHMM(d, t) {
+      const dateParts = d.split('-').map((n) => parseInt(n, 10));
+      const timeParts = t.split(':').map((n) => parseInt(n, 10));
+      return new Date(dateParts[0], dateParts[1] - 1, dateParts[2], timeParts[0], timeParts[1]);
+    },
+
+    getRelativeDateProximity(test, referenceDate) {
+      // ensure every time is midnight
+      const testDate = toStartOfDay(test);
+      // same day
+      const testSameDayReference = toStartOfDay(referenceDate);
+      if (testDate <= testSameDayReference) return 'sameDay';
+
+      // check day after (for tomorrow)
+      const testNextDayReference = new Date(
+        toStartOfDay(referenceDate).setDate(testSameDayReference.getDate() + 1),
+      );
+      if (testDate <= testNextDayReference) return 'nextDay';
+
+      // check next six days
+      // does not check 7 as, for example, saying "closing Monday at 5:00"
+      // is ambiguous if it currently is Monday.
+      const testNextWeekReference = new Date(
+        toStartOfDay(referenceDate).setDate(testSameDayReference.getDate() + 6),
+      );
+      if (testDate <= testNextWeekReference) return 'nextWeek';
+
+      return 'sameElse';
+    },
+
+    dateFromDateAndHHMM(d, t) {
+      const timeParts = t.split(':').map((n) => parseInt(n, 10));
+      return new Date(d.getFullYear(), d.getMonth(), d.getDate(), timeParts[0], timeParts[1]);
+    },
+  },
+
   getCurrentUTCTime() {
     const currentDate = new Date();
     const options = {
@@ -330,5 +464,18 @@ export default {
     return `${(currentEndDate.getMonth() + 1).toString().padStart(2, '0')}
                       ${currentEndDate.getDate().toString().padStart(2, '0')}/
                       ${currentEndDate.getFullYear()}`;
+  },
+
+  convertMachineReadableDateToHuman(dateString) {
+    const year = parseInt(dateString.substring(0, 4), 10);
+    const month = parseInt(dateString.substring(4, 6), 10) - 1; // Months are zero-based
+    const day = parseInt(dateString.substring(6, 8), 10);
+    const hours = parseInt(dateString.substring(8, 10), 10);
+    const minutes = parseInt(dateString.substring(10, 12), 10);
+    const seconds = parseInt(dateString.substring(12, 14), 10);
+    const milliseconds = parseInt(dateString.substring(15, 18), 10);
+
+    const dateObject = new Date(year, month, day, hours, minutes, seconds, milliseconds);
+    return dateObject;
   },
 };

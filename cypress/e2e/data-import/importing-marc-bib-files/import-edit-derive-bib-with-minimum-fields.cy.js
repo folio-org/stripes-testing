@@ -1,15 +1,15 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
+import { JOB_STATUS_NAMES, RECORD_STATUSES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
+import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -53,7 +53,7 @@ describe('data-import', () => {
 
     it(
       'C387435 Import and edit/derive "MARC Bib" record having only required fields (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         DataImport.uploadFile(testData.marcFile.marc, testData.marcFile.fileName);
         JobProfiles.waitFileIsUploaded();
@@ -65,7 +65,7 @@ describe('data-import', () => {
         Logs.openFileDetails(testData.marcFile.fileName);
         Logs.getCreatedItemsID().then((link) => {
           createdRecordIDs.push(link.split('/')[5]);
-          Logs.goToTitleLink('Created');
+          Logs.goToTitleLink(RECORD_STATUSES.CREATED);
           InventoryInstance.checkInstanceTitle(testData.initialTitle);
 
           InventoryInstance.editMarcBibliographicRecord();

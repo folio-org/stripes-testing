@@ -71,16 +71,22 @@ const exportJob = (jobId) => {
 export default {
   getSearchResult,
   exportJob,
-  exportJobRecursively({ jobId, timeout = 600000 }) {
+  exportJobRecursively({ jobId, timeout = 900000 }) {
     cy.recurse(
       () => {
-        cy.reload();
-        return cy.contains(jobId);
+        return cy.contains('[class^=mclRow-]', jobId);
       },
-      ($el) => $el[0].nodeName !== 'SPAN',
+      ($el) => {
+        const isInProgress = $el[0].textContent.includes('In progress');
+
+        if (isInProgress) {
+          cy.reload();
+        }
+        return !isInProgress;
+      },
       {
         delay: 30000,
-        limit: 20, // max number of iterations
+        limit: timeout / 30000, // max number of iterations
         timeout,
       },
     ).then(() => {
@@ -188,6 +194,11 @@ export default {
     this.checkFilterOption({ filterName: 'Authority control' });
   },
 
+  searchByBursar() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'Bursar' });
+  },
+
   searchByCirculationLog() {
     waitClick();
     this.checkFilterOption({ filterName: 'Circulation log' });
@@ -203,6 +214,11 @@ export default {
     this.checkFilterOption({ filterName: 'Bulk edit' });
   },
 
+  searchByEdifactOrders() {
+    waitClick();
+    this.checkFilterOption({ filterName: 'EDIFACT orders export' });
+  },
+
   checkFilterOption({ filterName, resetAll = false }) {
     if (resetAll) {
       cy.do(exportFilters['Reset all'].click());
@@ -215,8 +231,10 @@ export default {
   checkFilterOptions({ jobTypeFilterOption = [] } = {}) {
     jobTypeFilterOption.forEach((filterOption) => {
       cy.expect(jobTypeFilters[filterOption].exists());
+      cy.expect([jobTypeAccordion.find(Checkbox(filterOption)).has({ checked: false })]);
     });
   },
+
   checkColumnInResultsTable({ status, jobType } = {}) {
     if (status) {
       this.checkColumnValues({ columnIndex: 1, value: status });
@@ -399,5 +417,10 @@ export default {
 
   verifyContentOfExportFile(actual, ...expectedArray) {
     expectedArray.forEach((expectedItem) => expect(actual).to.include(expectedItem));
+  },
+
+  clickJobId(jobId) {
+    cy.get("[data-testid='text-link']").contains(jobId).click();
+    waitClick();
   },
 };

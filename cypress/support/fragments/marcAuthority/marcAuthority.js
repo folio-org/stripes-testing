@@ -10,13 +10,20 @@ import {
   Callout,
   Modal,
   TableRow,
+  DropdownMenu,
+  PaneHeader,
+  TableCell,
+  matching,
 } from '../../../../interactors';
 import QuickMarcEditorWindow from '../quickMarcEditor';
+import DateTools from '../../utils/dateTools';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
 const rootSection = Section({ id: 'marc-view-pane' });
+const rootHeader = rootSection.find(PaneHeader());
 
+const buttonClose = rootHeader.find(Button({ icon: 'times' }));
 const addFieldButton = Button({ ariaLabel: 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel: 'trash' });
 const infoButton = Button({ ariaLabel: 'info' });
@@ -28,6 +35,8 @@ const buttonLink = Button({ icon: 'unlink' });
 const calloutUpdatedRecordSuccess = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
+const searchPane = Section({ id: 'pane-authorities-filters' });
+const closeButton = Button({ icon: 'times' });
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = {
@@ -95,6 +104,10 @@ export default {
     cy.do(Button('Edit').click());
     QuickMarcEditorWindow.waitLoading();
   },
+  delete: () => {
+    cy.do(rootSection.find(Button('Actions')).click());
+    cy.do(Button('Delete').click());
+  },
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
   notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
   checkTagInRow: (rowIndex, tag) => {
@@ -113,7 +126,7 @@ export default {
     cy.okapiRequest({
       method: 'DELETE',
       isDefaultSearchParamsRequired: false,
-      path: `records-editor/records/${internalAuthorityId}`,
+      path: `authority-storage/authorities/${internalAuthorityId}`,
     });
   },
   addNewField: (rowIndex, tag, content, indicator0 = '\\', indicator1 = '\\') => {
@@ -292,5 +305,65 @@ export default {
   checkLinkingAuthority: () => {
     cy.expect(buttonLink.exists());
     cy.expect(Callout('Field 655 has been linked to a MARC authority record.').exists());
+  },
+
+  createAuthoritySource: (body) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'authority-source-files',
+      body,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  checkActionDropdownContent() {
+    const actualResArray = [];
+    const expectedContent = ['Edit', 'Print', 'Delete'];
+    cy.do(rootSection.find(Button('Actions')).click());
+    cy.expect([
+      Button('Edit').has({ svgClass: including('edit') }),
+      Button('Print').has({ svgClass: including('print') }),
+      Button('Delete').has({ svgClass: including('trash') }),
+    ]);
+    cy.then(() => DropdownMenu().buttons()).then((buttons) => {
+      buttons.forEach((button) => actualResArray.push(button.innerText));
+      cy.expect(actualResArray).to.deep.equal(expectedContent);
+    });
+  },
+
+  verifyHeader(titleValue) {
+    cy.expect([
+      buttonClose.exists(),
+      rootHeader.has({ title: including(titleValue) }),
+      rootHeader.has({ subtitle: including('Last updated') }),
+    ]);
+  },
+
+  verifySearchPanesIsAbsent() {
+    cy.expect([searchPane.absent(), rootSection.find(closeButton).exists()]);
+  },
+
+  verifyFieldContent: (rowIndex, updatedDate) => {
+    cy.get('table')
+      .find('tr')
+      .eq(rowIndex)
+      .find('td')
+      .then((elems) => {
+        const dateFromField = DateTools.convertMachineReadableDateToHuman(elems.eq(2).text());
+        const convertedUpdatedDate = new Date(updatedDate).getTime();
+        const convertedDateFromField = new Date(dateFromField).getTime();
+        const timeDifference = (convertedDateFromField - convertedUpdatedDate) / 1000;
+
+        // check that difference in time is less than 1 minute
+        expect(timeDifference).to.be.lessThan(120000);
+      });
+  },
+
+  verify005FieldInMarc21AuthFormat() {
+    cy.expect(
+      TableRow({ innerText: including('005') })
+        .find(TableCell({ innerText: matching(/^[0-9]{8}[0-9]{6}\.[0-9]$/) }))
+        .exists(),
+    );
   },
 };

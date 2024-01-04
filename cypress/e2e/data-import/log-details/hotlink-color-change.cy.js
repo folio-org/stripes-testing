@@ -1,10 +1,10 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import Users from '../../../support/fragments/users/users';
+import { Permissions } from '../../../support/dictionary';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 
 describe('data-import', () => {
   describe('Log details', () => {
@@ -28,7 +28,7 @@ describe('data-import', () => {
 
     it(
       'C353986 Check the change Import log hotlinks to textLink: View all page (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         // #1 Click on the "Actions" -> select "View all"
         // User is on the View all Log page. At the top of the page, there should be an indication of how many import jobs there are.

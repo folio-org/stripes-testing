@@ -1,16 +1,16 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
-import { ITEM_STATUS_NAMES, REQUEST_TYPES, REQUEST_LEVELS } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Requests from '../../support/fragments/requests/requests';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
+import { ITEM_STATUS_NAMES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import RequestsSearchResultsPane from '../../support/fragments/requests/requestsSearchResultsPane';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
 
 describe('Request', () => {
   let userData = {};
@@ -79,7 +79,7 @@ describe('Request', () => {
 
   it(
     'C545 Create new request for "Hold" type and check links to/from user and item (vega) (TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       // Create new request with item barcode and requester barcode
       NewRequest.openNewRequestPane();
