@@ -215,8 +215,7 @@ describe('data-import', () => {
         InventoryInstance.getAssignedHRID().then((hrId) => {
           instanceHrid = hrId;
         });
-        cy.go('back');
-        FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
+        InventoryInstance.openHoldingView();
         HoldingsRecordView.getHoldingsHrId().then((initialHrId) => {
           const holdingsHrId = initialHrId;
 
