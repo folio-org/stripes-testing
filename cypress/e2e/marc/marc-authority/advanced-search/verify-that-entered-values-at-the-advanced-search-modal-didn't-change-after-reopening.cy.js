@@ -62,7 +62,7 @@ describe('MARC', () => {
       });
 
       it(
-        'C350617 Advanced search MARC: support search for "naturalId" field using "Keyword" search option (spitfire) (TaaS)',
+        'C358937 Verify that entered values at the "Advanced search" modal didn\'t change after reopening (Spitfire) (TaaS)',
         { tags: ['extendedPath', 'spitfire'] },
         () => {
           // Step 1: Click on the "Advanced search" button at the "Search & filter" pane.
@@ -84,16 +84,15 @@ describe('MARC', () => {
             testData.matchOption,
           );
 
-          // Step 3: Click on "Search" button.
+          // Step 6: Click on "Search" button.
           MarcAuthorities.clickSearchButton();
-          MarcAuthorities.clickAdvancedSearchButton();
           MarcAuthorities.checkAdvancedSearchModalAbsence();
           MarcAuthorities.checkResultList([
             'María de Jesús, de Agreda, sister, 1602-1665',
             'Montessori method of education',
           ]);
 
-          // Step 6 Click on the "Advanced search" button again.
+          // Step 7: Click on the "Advanced search" button again.
           MarcAuthorities.clickAdvancedSearchButton();
           MarcAuthorities.checkAdvancedSearchModalFields(
             0,
