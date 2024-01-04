@@ -1,4 +1,4 @@
-import getRandomPostfix from '../../../utils/stringTools';
+import getRandomPostfix from '../../../../utils/stringTools';
 
 const marcAuthorityMatchBy010TagProfile = {
   profile: {
@@ -63,16 +63,35 @@ const marcAuthorityMatchBy010TagProfile = {
 };
 
 export default {
-  marcAuthorityMatchBy010TagProfile,
-  createMatchProfileApi: (matchProfile = marcAuthorityMatchBy010TagProfile) => cy.okapiRequest({
-    method: 'POST',
-    path: 'data-import-profiles/matchProfiles',
-    body: matchProfile,
-    isDefaultSearchParamsRequired: false,
-  }),
-  deleteMatchProfileApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `data-import-profiles/matchProfiles/${id}`,
-    isDefaultSearchParamsRequired: false,
-  }),
+  createMatchProfileViaApi(matchProfile = marcAuthorityMatchBy010TagProfile) {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'data-import-profiles/matchProfiles',
+      body: matchProfile,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+  getMatchProfilesViaApi(searchParams) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'data-import-profiles/matchProfiles',
+        isDefaultSearchParamsRequired: false,
+        searchParams,
+      })
+      .then(({ body }) => body);
+  },
+  deleteMatchProfileViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `data-import-profiles/matchProfiles/${id}`,
+    });
+  },
+  deleteMatchProfileByNameViaApi(profileName) {
+    this.getMatchProfilesViaApi({ query: `name="${profileName}"` }).then(({ matchProfiles }) => {
+      matchProfiles.forEach((matchProfile) => {
+        this.deleteMatchProfileViaApi(matchProfile.id);
+      });
+    });
+  },
 };

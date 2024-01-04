@@ -1,10 +1,12 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
@@ -73,9 +75,9 @@ describe('inventory', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(profile.createJobProfile);
-        ActionProfiles.deleteActionProfile(profile.createActionProfile);
-        FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.createJobProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.createActionProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(profile.createMappingProfile);
         Users.deleteViaApi(user.userId);
         Z3950TargetProfiles.deleteTargetProfileViaApi(profileId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` }).then(

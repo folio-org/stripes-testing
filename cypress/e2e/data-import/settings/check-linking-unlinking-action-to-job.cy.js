@@ -1,6 +1,9 @@
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -62,9 +65,9 @@ describe('Settings', () => {
 
   after('Delete test data', () => {
     Users.deleteViaApi(testData.user.userId);
-    JobProfiles.deleteJobProfile(jobProfile.profileName);
+    SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
     actionProfiles.forEach((profile) => {
-      ActionProfiles.deleteActionProfile(profile.name);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.name);
     });
   });
 

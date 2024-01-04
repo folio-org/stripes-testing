@@ -8,6 +8,12 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -24,7 +30,6 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/jobProfiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -222,18 +227,28 @@ describe('data-import', () => {
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
-        MatchProfiles.deleteMatchProfile(instanceMatchProfile.profileName);
-        MatchProfiles.deleteMatchProfile(holdingsMatchProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(instanceMatchProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(holdingsMatchProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
-        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          instanceActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          holdingsActionProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          instanceMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          holdingsMappingProfileForCreate.profile.name,
+        );
         Users.deleteViaApi(user.userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {

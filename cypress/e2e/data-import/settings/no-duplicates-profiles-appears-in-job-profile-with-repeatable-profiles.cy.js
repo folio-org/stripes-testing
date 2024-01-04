@@ -5,6 +5,12 @@ import {
   INSTANCE_STATUS_TERM_NAMES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
@@ -181,11 +187,13 @@ describe('data-import', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
         collectionOfMatchProfiles.forEach((profile) => {
-          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
         });
         collectionOfMappingAndActionProfiles.forEach((profile) => {
-          ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-          FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
       });
     });
@@ -263,7 +271,7 @@ describe('data-import', () => {
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
         cy.getAdminToken().then(() => {
-          JobProfiles.deleteJobProfile(jobProfile.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         });
       },
     );
@@ -334,7 +342,7 @@ describe('data-import', () => {
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
         cy.getAdminToken().then(() => {
-          JobProfiles.deleteJobProfile(jobProfile.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         });
       },
     );
@@ -413,8 +421,8 @@ describe('data-import', () => {
         JobProfileView.verifyLinkedProfiles(linkedProfileNames, linkedProfileNames.length);
 
         cy.getAdminToken().then(() => {
-          JobProfiles.deleteJobProfile(jobProfile.profileName);
-          JobProfiles.deleteJobProfile(jobProfileNameForChanging);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileNameForChanging);
         });
       },
     );

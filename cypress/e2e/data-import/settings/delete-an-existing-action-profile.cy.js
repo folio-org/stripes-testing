@@ -1,13 +1,16 @@
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import ConfirmDelete from '../../../support/fragments/data_import/action_profiles/modals/confirmDelete';
 import ExceptionDelete from '../../../support/fragments/data_import/action_profiles/modals/exceptionDelete';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
@@ -57,9 +60,9 @@ describe('data-import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(profile.createJobProfile);
-        ActionProfiles.deleteActionProfile(profile.createActionProfile);
-        FieldMappingProfileView.deleteViaApi(profile.createMappingProfile);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(profile.createJobProfile);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.createActionProfile);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(profile.createMappingProfile);
         Users.deleteViaApi(user.userId);
       });
     });

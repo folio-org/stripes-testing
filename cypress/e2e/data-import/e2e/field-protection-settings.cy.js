@@ -6,6 +6,12 @@ import {
   JOB_STATUS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -112,13 +118,13 @@ describe('data-import', () => {
       cy.getAdminToken().then(() => {
         marcFieldProtectionId.forEach((field) => MarcFieldProtection.deleteViaApi(field));
         // delete profiles
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        JobProfiles.deleteJobProfile(jobProfileUpdate.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        ActionProfiles.deleteActionProfile(actionProfileUpdate.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfileUpdate.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileUpdate.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileUpdate.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileUpdate.name);
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);

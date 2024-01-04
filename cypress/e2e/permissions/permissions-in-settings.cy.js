@@ -94,4 +94,13 @@ describe('Users', () => {
       });
     },
   );
+
+  it(
+    'C402341 Verify that display name for "Settings (Users): Can create, edit and remove manual charges" permission is correct (volaris)',
+    { tags: ['extendedPath', 'volaris'] },
+    () => {
+      UsersSearchPane.searchByUsername(userData.username);
+      UserEdit.addPermissions(['Settings (Users): Can create, edit and remove manual charges']);
+    },
+  );
 });

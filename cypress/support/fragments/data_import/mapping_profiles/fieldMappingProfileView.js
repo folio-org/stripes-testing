@@ -52,52 +52,11 @@ const checkOverrideSectionOfMappingProfile = (field, status) => {
     }),
   );
 };
-const getProfileIdViaApi = (profileName) => {
-  // get all mapping profiles
-  return cy
-    .okapiRequest({
-      path: 'data-import-profiles/mappingProfiles',
-      searchParams: {
-        query: '(cql.allRecords=1) sortby name',
-        limit: 1000,
-      },
-    })
-    .then(({ body: { mappingProfiles } }) => {
-      // find profile to delete
-      const profile = mappingProfiles.find((mapProfile) => mapProfile.name === profileName);
-      return profile.id;
-    });
-};
-const deleteViaApi = (profileName) => {
-  // get all mapping profiles
-  cy.okapiRequest({
-    path: 'data-import-profiles/mappingProfiles',
-    searchParams: {
-      query: '(cql.allRecords=1) sortby name',
-      limit: 1000,
-    },
-  })
-    .then(({ body: { mappingProfiles } }) => {
-      // find profile to delete
-      const profileToDelete = mappingProfiles.find((profile) => profile.name === profileName);
-
-      // delete profile with its id
-      cy.okapiRequest({
-        method: 'DELETE',
-        path: `data-import-profiles/mappingProfiles/${profileToDelete.id}`,
-      });
-    })
-    .then(({ status }) => {
-      if (status === 204) cy.log('###DELETED MAPPING PROFILE###');
-    });
-};
 
 export default {
   checkUpdatesSectionOfMappingProfile,
   checkOverrideSectionOfMappingProfile,
   closeViewMode,
-  deleteViaApi,
-  getProfileIdViaApi,
 
   checkCreatedMappingProfile: (
     profileName,
@@ -221,6 +180,14 @@ export default {
       Accordion('Fund distribution')
         .find(MultiColumnListCell({ content: val }))
         .exists(),
+    );
+  },
+
+  verifyLocationFieldValue: (rowIndex, columnName, value) => {
+    cy.expect(
+      Accordion('Location')
+        .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
+        .has({ content: value }),
     );
   },
 };
