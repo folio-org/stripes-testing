@@ -150,6 +150,17 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
+        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
+          Orders.deleteOrderViaApi(orderId[0].id);
+        });
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
+          (instance) => {
+            if (instance) {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            }
+          },
+        );
         // delete generated profiles
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
@@ -161,18 +172,7 @@ describe('data-import', () => {
         });
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-        Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` }).then((orderId) => {
-          Orders.deleteOrderViaApi(orderId[0].id);
-        });
         Users.deleteViaApi(user.userId);
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` }).then(
-          (instance) => {
-            if (instance) {
-              InventoryInstance.deleteInstanceViaApi(instance.id);
-            }
-          },
-        );
       });
     });
 
@@ -275,6 +275,8 @@ describe('data-import', () => {
         Orders.createOrder(order, true).then((orderId) => {
           Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` }).then((res) => {
             orderNumber = res[0].poNumber;
+
+            cy.wait(4000);
             Orders.checkIsOrderCreated(orderNumber);
             OrderLines.addPolToOrder({
               title: pol.title,

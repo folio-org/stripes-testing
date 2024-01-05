@@ -226,7 +226,7 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
-      cy.loginAsAdmin();
+      cy.getAdminToken();
       testData.jobProfileForCreate = jobProfileForCreate;
 
       testData.forEach((specialPair) => {
@@ -251,6 +251,7 @@ describe('data-import', () => {
         [uniqSubject],
       );
 
+      cy.loginAsAdmin();
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -336,6 +337,7 @@ describe('data-import', () => {
 
             // download exported marc file
             cy.visit(TopMenu.dataExportPath);
+            cy.getAdminToken();
             ExportFile.uploadFile(nameForCSVFile);
             ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
             ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
