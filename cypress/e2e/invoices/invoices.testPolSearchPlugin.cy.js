@@ -58,7 +58,7 @@ describe('ui-invoices: test POL search plugin', () => {
     cy.getProductIdTypes({ query: 'name=="ISBN"' }).then((productIdType) => {
       orderLine.details.productIds[0].productIdType = productIdType.id;
     });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
 
     Orders.createOrderWithOrderLineViaApi(order, orderLine).then(({ poNumber }) => {
       createdOrderNumber = poNumber;
