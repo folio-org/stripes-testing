@@ -3,7 +3,7 @@ import TopMenu from '../../support/fragments/topMenu';
 
 describe('circulation-log', () => {
   beforeEach('login', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
   });
 
   // TODO: think about redesign and moving checking inside another test

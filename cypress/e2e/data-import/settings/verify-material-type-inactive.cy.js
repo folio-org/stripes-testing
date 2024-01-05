@@ -63,7 +63,7 @@ describe('data-import', () => {
       Users.deleteViaApi(testData.user.userId);
       Locations.deleteViaApi(testData.defaultLocation);
       ServicePoints.deleteViaApi(testData.servicePoint.id);
-      MaterialTypes.deleteMaterialTypeViaApi(testData.materialTypeId);
+      MaterialTypes.deleteViaApi(testData.materialTypeId);
     });
 
     it(

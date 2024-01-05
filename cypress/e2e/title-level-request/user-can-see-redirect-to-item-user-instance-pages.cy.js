@@ -189,7 +189,7 @@ describe('Title Level Request. Request Detail', () => {
   });
   it(
     'C350424 Check that user is redirect to Item page, User page and Instance page (vega) (TaaS)',
-    { tags: ['extended', 'vega'] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);

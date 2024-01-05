@@ -24,8 +24,8 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -174,7 +174,7 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
-      cy.loginAsAdmin();
+      cy.getAdminToken();
       testData.jobProfileForCreate = jobProfileForCreate;
 
       testData.forEach((specialPair) => {
@@ -190,6 +190,7 @@ describe('data-import', () => {
           testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
         },
       );
+      cy.loginAsAdmin();
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
@@ -271,6 +272,7 @@ describe('data-import', () => {
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
+        cy.getAdminToken();
         ExportFile.getExportedFileNameViaApi().then((name) => {
           exportedFileName = name;
 

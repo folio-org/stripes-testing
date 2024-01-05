@@ -20,8 +20,8 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -125,15 +125,15 @@ describe('data-import', () => {
         SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileUpdate.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileUpdate.name);
-        // delete created files
-        FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-        FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
         cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
           (instance) => {
             InventoryInstance.deleteInstanceViaApi(instance.id);
           },
         );
       });
+      // delete created files
+      FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
     });
 
     const createInstanceMappingProfileForCreate = (instanceMappingProfile) => {
