@@ -9,6 +9,9 @@ import {
   HTML,
 } from '../../../../../interactors';
 
+const myProfileButton = Button({ ariaLabel: 'My profile' });
+const switchActiveAffiliationButton = Button('Switch active affiliation');
+
 export default {
   waitLoading() {
     cy.expect(Section({ id: 'app-settings-nav-pane' }).exists());
@@ -60,8 +63,8 @@ export default {
   switchActiveAffiliation(tenantName) {
     cy.wait(8000);
     cy.do([
-      Button({ ariaLabel: 'My profile' }).click(),
-      Button('Switch active affiliation').click(),
+      myProfileButton.click(),
+      switchActiveAffiliationButton.click(),
       Modal('Select affiliation')
         .find(Button({ id: 'consortium-affiliations-select' }))
         .click(),
@@ -71,11 +74,21 @@ export default {
     cy.wait(8000);
   },
 
+  switchActiveAffiliationIsAbsent() {
+    cy.wait(8000);
+    cy.do(myProfileButton.click());
+    cy.expect(switchActiveAffiliationButton.absent());
+    cy.do(myProfileButton.click());
+  },
+
+  switchActiveAffiliationExists() {
+    cy.wait(8000);
+    cy.do(myProfileButton.click());
+    cy.expect(switchActiveAffiliationButton.exists());
+    cy.do(myProfileButton.click());
+  },
+
   checkCurrentTenantInTopMenu(tenantName) {
-    cy.expect(
-      Button({ ariaLabel: 'My profile' })
-        .find(HTML({ text: including(tenantName) }))
-        .exists(),
-    );
+    cy.expect(myProfileButton.find(HTML({ text: including(tenantName) })).exists());
   },
 };
