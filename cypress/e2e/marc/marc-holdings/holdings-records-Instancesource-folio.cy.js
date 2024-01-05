@@ -8,7 +8,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('marc', { retries: 2 }, () => {
   describe('MARC Holdings', () => {
     beforeEach(() => {
-      cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+      cy.loginAsAdmin();
       cy.visit(TopMenu.inventoryPath);
       const InventoryNewInstance = InventoryInstances.addNewInventory();
       InventoryNewInstance.fillRequiredValues();

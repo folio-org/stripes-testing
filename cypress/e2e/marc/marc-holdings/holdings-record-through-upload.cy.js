@@ -10,7 +10,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 describe('marc', () => {
   describe('MARC Holdings', () => {
     beforeEach(() => {
-      cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+      cy.loginAsAdmin();
       // required with special tests, but when step into test I see 403 some time in /metadata-provider/jobExecutions request
       cy.getAdminToken();
     });
