@@ -113,7 +113,7 @@ export default {
       .and('include', 'underline');
   },
 
-  verifyNoFileNameFileAbsent: () => {
+  verifyNoFileNameLogAbsent: () => {
     cy.do(
       MultiColumnList({ id: 'job-logs-list' })
         .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: 'No file name' }))

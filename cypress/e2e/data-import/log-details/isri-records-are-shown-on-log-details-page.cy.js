@@ -78,7 +78,7 @@ describe('data-import', () => {
         });
 
         cy.visit(TopMenu.dataImportPath);
-        Logs.verifyNoFileNameFileAbsent();
+        Logs.verifyNoFileNameLogAbsent();
         Logs.openViewAllLogs();
         LogsViewAll.viewAllIsOpened();
         LogsViewAll.checkByReverseChronologicalOrder();
