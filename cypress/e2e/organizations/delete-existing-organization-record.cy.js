@@ -41,7 +41,7 @@ describe('Organizations', () => {
       Organizations.selectOrganization(organization.name);
 
       // Step 2: Click "Actions" button on organization from "Preconditions" details pane and select "Delete" option
-      Organizations.deleteOrganization(true);
+      Organizations.deleteOrganization(false);
       ConfirmDeleteOrganizationModal.waitLoading();
       ConfirmDeleteOrganizationModal.verifyModalView(organization.name);
 
@@ -50,7 +50,7 @@ describe('Organizations', () => {
       ConfirmDeleteOrganizationModal.isNotDisplayed();
 
       // Step 4: Click "Actions" button on organization from "Preconditions" details pane and select "Delete" option
-      Organizations.deleteOrganization(true);
+      Organizations.deleteOrganization(false);
       ConfirmDeleteOrganizationModal.waitLoading();
       ConfirmDeleteOrganizationModal.verifyModalView(organization.name);
 

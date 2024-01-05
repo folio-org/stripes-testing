@@ -650,12 +650,12 @@ export default {
     );
   },
 
-  deleteOrganization: (confirm = false) => {
+  deleteOrganization: (confirm = true) => {
     cy.do([
       PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(actionsButton).click(),
       Button('Delete').click(),
     ]);
-    if (confirm === false) {
+    if (confirm) {
       cy.do(
         Button({
           id: 'clickable-delete-organization-confirmation-confirm',

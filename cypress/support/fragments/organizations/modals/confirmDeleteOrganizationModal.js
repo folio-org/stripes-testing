@@ -14,8 +14,8 @@ export default {
   },
 
   verifyModalView(organizationName) {
-    cy.expect(Modal({ header: `Delete ${organizationName}?` }).exists());
-    cy.expect(Modal({ message: 'Delete organization?' }).exists());
+    cy.expect(confirmDeleteItemModal.has({ header: `Delete ${organizationName}?` }));
+    cy.expect(confirmDeleteItemModal.has({ message: 'Delete organization?' }));
     cy.expect(cancelButton.exists());
     cy.expect(deleteButton.exists());
   },
