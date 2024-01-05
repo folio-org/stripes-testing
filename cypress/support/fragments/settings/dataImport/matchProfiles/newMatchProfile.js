@@ -14,8 +14,8 @@ import {
   DropdownMenu,
   Pane,
   TextArea,
-} from '../../../../../interactors';
-import { EXISTING_RECORDS_NAMES } from '../../../constants';
+} from '../../../../../../interactors';
+import { EXISTING_RECORDS_NAMES } from '../../../../constants';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id: 'criterion-value-type' });

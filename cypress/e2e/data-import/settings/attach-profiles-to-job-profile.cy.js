@@ -12,8 +12,8 @@ import JobProfileView from '../../../support/fragments/data_import/job_profiles/
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';

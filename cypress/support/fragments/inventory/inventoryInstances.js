@@ -14,6 +14,7 @@ import {
   TextInput,
   TextArea,
   PaneHeader,
+  PaneContent,
   MultiColumnListHeader,
   MultiColumnListRow,
 } from '../../../../interactors';
@@ -30,6 +31,7 @@ import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advan
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
+const resultsPaneContent = PaneContent({ id: 'pane-results-content' });
 const actionsButton = rootSection.find(Button('Actions'));
 const selectAllInstancesCheckbox = MultiColumnListHeader({ id: 'list-column-select' }).find(
   Checkbox({ ariaLabel: 'Select instance' }),
@@ -1201,5 +1203,13 @@ export default {
       // wait for sort to apply
       cy.wait(2000),
     ]);
+  },
+
+  checkResultsPaneContainsRecordWithContributor(contributorName) {
+    cy.expect(
+      resultsPaneContent
+        .find(MultiColumnListRow({ index: 0 }))
+        .has({ text: including(contributorName) }),
+    );
   },
 };

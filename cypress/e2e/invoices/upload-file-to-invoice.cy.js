@@ -79,7 +79,7 @@ describe('Invoices', () => {
       // Click "Save & close" button on "Create vendor invoice" form
       InvoiceEditForm.clickSaveButton();
       // Expand "Links & documents" accordion on created invoice pane
-      InvoiceView.verifyLinksDocumentsSection(linkName, linkExample, fileName);
+      InvoiceView.checkDocumentsSection({ linkName, linkExample, fileName });
       InvoiceView.downloadDocument();
       FileManager.verifyFileIncludes(fileName, [], true);
     },
