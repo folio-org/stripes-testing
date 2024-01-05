@@ -28,13 +28,13 @@ describe('Filter lists', () => {
     {
       name: `C411805-${getTestEntityValue('test_list')}-2`,
       recordType: 'Loans',
-      status: 'Inactive',
+      status: 'Active',
       visibility: 'Private',
     },
     {
       name: `C411806-${getTestEntityValue('test_list')}-1`,
       recordType: 'Users',
-      status: 'Inactive',
+      status: 'Active',
       visibility: 'Private',
     },
     {
@@ -46,10 +46,29 @@ describe('Filter lists', () => {
     {
       name: `C411806-${getTestEntityValue('test_list')}-3`,
       recordType: 'Items',
-      status: 'Inactive',
+      status: 'Active',
+      visibility: 'Private',
+    },
+    {
+      name: `C411806-${getTestEntityValue('test_list')}-3`,
+      recordType: 'Purchase order Lines',
+      status: 'Active',
       visibility: 'Private',
     },
   ];
+
+  const statusFilters = {
+    accordionName: 'Status',
+    filters: ['Active', 'Inactive'],
+  };
+  const visibilityFilter = {
+    accordionName: 'Visibility',
+    filters: ['Private', 'Shared'],
+  };
+  const recordTypesFilters = {
+    accordionName: 'Record types',
+    filters: ['Loans', 'Items', 'Users', 'Purchase order Lines'],
+  };
 
   before('Create test data', () => {
     cy.getAdminToken();
@@ -77,6 +96,13 @@ describe('Filter lists', () => {
     });
   });
 
+  beforeEach('Reset all filters', () => {
+    // #1 Click on "Lists" in app navigation bar
+    cy.visit(TopMenu.listsPath);
+    Lists.waitLoading();
+    Lists.resetAll();
+  });
+
   after('Delete test data', () => {
     cy.getUserToken(userData.username, userData.password);
     createdLists.forEach((list) => {
@@ -93,27 +119,21 @@ describe('Filter lists', () => {
     'C411804 Filter section: Statuses (corsair) (TaaS)',
     { tags: ['criticalPath', 'corsair'] },
     () => {
-      // #1 Click on "Lists" in app navigation bar
-      // Opens "Lists" landing page.
       // #2 Click on "Status" accordion on the "Filter" pane
-      // The accordion collapses
+      Lists.clickOnAccordionInFilter(statusFilters.accordionName);
+      Lists.verifyAccordionCollapsedInFilter(statusFilters.accordionName);
       // #3 Click on "Statuses" accordion again
-      // - The "Status" accordion is expanded
-      // - Displays 2 statuses:
-      //    - Active
-      //    - Inactive
-      // Active status is selected by default.
-      // Displays small "x" next to the "Status"
-      //  ![](index.php?/attachments/get/e397822a-4f34-49f1-8251-c9916a469283)
+      Lists.clickOnAccordionInFilter(statusFilters.accordionName);
+      Lists.verifyAccordionExpandedInFilter(statusFilters.accordionName);
+      Lists.verifyStatusAccordionDefaultContent();
       // #4 Click on "Active" status to uncheck it
-      // - The status "Active" unchecks
-      // - The button "X" disappears
-      // - The button "Reset all" becomes active.
+      Lists.clickOnCheckbox('Active');
+      Lists.verifyCheckboxUnchecked('Active');
+      Lists.verifyClearFilterButtonAbsent(statusFilters.accordionName);
+      Lists.verifyResetAllButtonEnabled();
       // #5 Click on "Reset all"
-      // - The button "Reset all" becomes inactive.
-      // - The status "Active" is checked.
-      // - Displays "x" button next to the "Status"
-      // - Lists landing page updates based on the "Active" status.
+      Lists.resetAll();
+      Lists.verifyListsFileredByStatus(['Active']);
     },
   );
 
@@ -121,28 +141,38 @@ describe('Filter lists', () => {
     'C411805 Filter section: Visibility (corsair) (TaaS)',
     { tags: ['criticalPath', 'corsair'] },
     () => {
-      // #1 Click on "Lists" in app navigation bar
-      // Opens "Lists" landing page.
       // #2 Click on "Visibility" accordion on the "Filter" pane
-      // The accordion collapses
+      Lists.clickOnAccordionInFilter(visibilityFilter.accordionName);
+      Lists.verifyAccordionCollapsedInFilter(visibilityFilter.accordionName);
       // #3 Click on "Visibility" accordion again
-      // - The "Visibility" accordion is expanded
-      // - The "Visibility" accordion consists of "Shared" and "Private" options with unchecked checkboxes
+      Lists.clickOnAccordionInFilter(visibilityFilter.accordionName);
+      Lists.verifyAccordionExpandedInFilter(visibilityFilter.accordionName);
+      Lists.verifyVisibilityAccordionDefaultContent();
       // #4 Select all options by marking the checkboxes as active
-      // - Appears "x" button next to the title "Visibility"
-      // - "Reset all" button becomes active
-      // - The result table is updated with all visibilities
+      visibilityFilter.filters.forEach((filter) => {
+        Lists.clickOnCheckbox(filter);
+      });
+      Lists.verifyClearFilterButton(visibilityFilter.accordionName);
+      Lists.verifyResetAllButtonEnabled();
+      Lists.verifyListsFileredByVisiblity(visibilityFilter.filters);
       // #5 Click on "x"
-      // - Resets Visibility filters
-      // - The button "Reset all" becomes inactive
+      Lists.clickOnClearFilterButton(visibilityFilter.accordionName);
+      Lists.verifyVisibilityAccordionDefaultContent();
+      Lists.verifyResetAllButtonDisabled();
       // #6 Click on "Private" checkbox
-      // - Appears "x" button next to the title "Visibility"
-      // - "Reset all" button becomes active
-      // - The lists table updates with "Private" Visibility
+      Lists.clickOnCheckbox('Private');
+      Lists.verifyCheckboxChecked('Private');
+      Lists.verifyClearFilterButton(visibilityFilter.accordionName);
+      Lists.verifyResetAllButtonEnabled();
+      Lists.verifyListsFileredByVisiblity(['Private']);
       // #7 Uncheck the "Private" visibility and click on "Shared" checkbox
-      // - Appears "x" button next to the title "Visibility"
-      // - "Reset all" button becomes active
-      // - The lists table updates with "Shared" Visibility
+      Lists.clickOnCheckbox('Private');
+      Lists.verifyCheckboxUnchecked('Private');
+      Lists.clickOnCheckbox('Shared');
+      Lists.verifyCheckboxChecked('Shared');
+      Lists.verifyClearFilterButton(visibilityFilter.accordionName);
+      Lists.verifyResetAllButtonEnabled();
+      Lists.verifyListsFileredByVisiblity(['Shared']);
     },
   );
 
@@ -150,43 +180,43 @@ describe('Filter lists', () => {
     'C411806 Filter section: Record types (corsair) (TaaS)',
     { tags: ['criticalPath', 'corsair'] },
     () => {
-      // #1 Click on "Lists" in app navigation bar
-      // Opens "Lists" landing page.
       // #2 Click on "Record types" accordion on the 'Filter' pane
-      // The accordion collapses
+      Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
+      Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);
       // #3 Click on "Record types" accordion again
-      // - The "Record types" accordion is expanded
-      // - The "Record types" accordion consists of statuses with unchecked checkboxes
+      Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
+      Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);
       // #4 Check the list of record types
-      // Displays
-      // - Items
-      // - Loans
-      // - Users
-      // - Purchase order Lines
+      Lists.verifyRecordTypesAccordionDefaultContent();
       // #5 Select all record types by marking the checkboxes as active
-      // - Appears "x" button next to the title "Record types"
-      // - "Reset all" button becomes active
-      // - The lists table updates with all record types.
+      recordTypesFilters.filters.forEach((filter) => {
+        Lists.clickOnCheckbox(filter);
+      });
+      Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+      Lists.verifyResetAllButtonEnabled();
+      Lists.verifyListsFileredByRecordType(recordTypesFilters.filters);
       // #6 Click on "x"
-      // - Resets record types filters
-      // - Clears the result list
+      Lists.clickOnClearFilterButton(recordTypesFilters.accordionName);
+      Lists.verifyRecordTypesAccordionDefaultContent();
       // #7 Click on "Loans" checkbox
-      // - Appears "x" button next to the title "Record types"
-      // - "Reset all" button becomes active
-      // - The lists table updates with "Loans" record type
+      Lists.clickOnCheckbox('Loans');
+      Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+      Lists.verifyResetAllButtonEnabled();
+      Lists.verifyListsFileredByRecordType(['Loans']);
       // #8 Click on "Items" checkbox
-      // - Appears "x" button next to the title "Record types"
-      // - "Reset all" button becomes active
-      // - The lists table updates with "Items" record type
+      Lists.clickOnCheckbox('Items');
+      Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+      Lists.verifyResetAllButtonEnabled();
+      Lists.verifyListsFileredByRecordType(['Loans', 'Items']);
       // #9 Click on "Users" checkbox
-      // - Appears "x" button next to the title "Record types"
-      // - "Reset all" button becomes active
-      // - The lists table updates with "Users" record type
+      Lists.clickOnCheckbox('Users');
+      Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
+      Lists.verifyResetAllButtonEnabled();
+      Lists.verifyListsFileredByRecordType(['Loans', 'Items', 'Users']);
       // #10 Click on "Reset all"
-      // - The checkboxes unchecked on the "Record types" section
-      // - The "x" button disappears.
-      // - The button "Reset all" becomes inactive.
-      // - "Active" status is selected by default.
+      Lists.resetAll();
+      Lists.verifyRecordTypesAccordionDefaultContent();
+      Lists.verifyClearFilterButtonAbsent(recordTypesFilters.accordionName);
     },
   );
 });
