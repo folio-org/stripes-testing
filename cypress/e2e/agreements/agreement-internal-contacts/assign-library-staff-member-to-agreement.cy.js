@@ -34,79 +34,82 @@ const secondUser = {
 let firstUserId;
 let secondUserId;
 const userRole = 'Subject specialist';
-describe('Agreement Internal Contacts', () => {
-  before('Create test data', () => {
-    cy.getAdminToken();
-    Users.createViaApi(firstUser).then((userData) => {
-      firstUserId = userData.id;
-    });
-    Users.createViaApi(secondUser)
-      .then((userData) => {
-        secondUserId = userData.id;
-      })
-      .then(() => {
-        Agreements.createViaApi().then((agr) => {
-          agreementId = agr.id;
+
+describe('agreements', () => {
+  describe('Agreement Internal Contacts', () => {
+    before('Create test data', () => {
+      cy.getAdminToken();
+      Users.createViaApi(firstUser).then((userData) => {
+        firstUserId = userData.id;
+      });
+      Users.createViaApi(secondUser)
+        .then((userData) => {
+          secondUserId = userData.id;
+        })
+        .then(() => {
+          Agreements.createViaApi().then((agr) => {
+            agreementId = agr.id;
+          });
         });
+      cy.loginAsAdmin({
+        path: TopMenu.agreementsPath,
+        waiter: Agreements.waitLoading,
       });
-    cy.loginAsAdmin({
-      path: TopMenu.agreementsPath,
-      waiter: Agreements.waitLoading,
     });
+
+    after('Delete test data', () => {
+      Users.deleteViaApi(firstUserId);
+      Users.deleteViaApi(secondUserId);
+      Agreements.deleteViaApi(agreementId);
+    });
+
+    it(
+      'C1314 Assign a library staff member to an Agreement (erm) (TaaS)',
+      { tags: ['extendedPath', 'erm'] },
+      () => {
+        AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
+        AgreementViewDetails.gotoEdit();
+        EditAgreement.clickAddInternalContact();
+        EditAgreement.clickLinkUser();
+        SelectUser.verifyModalIsShown();
+
+        SelectUser.findAndSelectUser(firstUser.username);
+        EditAgreement.verifyInternalContactIsShown(firstUser.personal.lastName);
+
+        EditAgreement.setRoleByName(firstUser.personal.lastName, userRole);
+        EditAgreement.saveAndClose();
+        AgreementViewDetails.verifyInternalContactsCount('1');
+
+        AgreementViewDetails.openInternalContactsSection();
+        AgreementViewDetails.verifyInternalContactsRow({
+          username: firstUser.personal.lastname,
+          email: firstUser.personal.email,
+        });
+
+        AgreementViewDetails.gotoEdit();
+        EditAgreement.clickAddInternalContact();
+        EditAgreement.clickLinkUser();
+        SelectUser.verifyModalIsShown();
+
+        SelectUser.findAndSelectUser(secondUser.username);
+        EditAgreement.verifyInternalContactIsShown(secondUser.personal.lastName);
+
+        EditAgreement.setRoleByName(secondUser.personal.lastName, userRole);
+        EditAgreement.saveAndClose();
+        AgreementViewDetails.verifyInternalContactsCount('2');
+
+        AgreementViewDetails.openInternalContactsSection();
+        AgreementViewDetails.verifyInternalContactsRow({
+          username: firstUser.personal.lastname,
+          email: firstUser.personal.email,
+        });
+
+        AgreementViewDetails.openInternalContactsSection();
+        AgreementViewDetails.verifyInternalContactsRow({
+          username: secondUser.personal.lastname,
+          email: secondUser.personal.email,
+        });
+      },
+    );
   });
-
-  after('Delete test data', () => {
-    Users.deleteViaApi(firstUserId);
-    Users.deleteViaApi(secondUserId);
-    Agreements.deleteViaApi(agreementId);
-  });
-
-  it(
-    'C1314 Assign a library staff member to an Agreement (erm) (TaaS)',
-    { tags: ['extendedPath', 'erm'] },
-    () => {
-      AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
-      AgreementViewDetails.gotoEdit();
-      EditAgreement.clickAddInternalContact();
-      EditAgreement.clickLinkUser();
-      SelectUser.verifyModalIsShown();
-
-      SelectUser.findAndSelectUser(firstUser.username);
-      EditAgreement.verifyInternalContactIsShown(firstUser.personal.lastName);
-
-      EditAgreement.setRoleByName(firstUser.personal.lastName, userRole);
-      EditAgreement.saveAndClose();
-      AgreementViewDetails.verifyInternalContactsCount('1');
-
-      AgreementViewDetails.openInternalContactsSection();
-      AgreementViewDetails.verifyInternalContactsRow({
-        username: firstUser.personal.lastname,
-        email: firstUser.personal.email,
-      });
-
-      AgreementViewDetails.gotoEdit();
-      EditAgreement.clickAddInternalContact();
-      EditAgreement.clickLinkUser();
-      SelectUser.verifyModalIsShown();
-
-      SelectUser.findAndSelectUser(secondUser.username);
-      EditAgreement.verifyInternalContactIsShown(secondUser.personal.lastName);
-
-      EditAgreement.setRoleByName(secondUser.personal.lastName, userRole);
-      EditAgreement.saveAndClose();
-      AgreementViewDetails.verifyInternalContactsCount('2');
-
-      AgreementViewDetails.openInternalContactsSection();
-      AgreementViewDetails.verifyInternalContactsRow({
-        username: firstUser.personal.lastname,
-        email: firstUser.personal.email,
-      });
-
-      AgreementViewDetails.openInternalContactsSection();
-      AgreementViewDetails.verifyInternalContactsRow({
-        username: secondUser.personal.lastname,
-        email: secondUser.personal.email,
-      });
-    },
-  );
 });
