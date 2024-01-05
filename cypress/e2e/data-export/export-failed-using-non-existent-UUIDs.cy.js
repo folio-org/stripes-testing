@@ -57,6 +57,7 @@ describe('data-export: failed using non-existent UUIDs', () => {
     () => {
       MarcAuthorities.searchBy('Keyword', 'Peplum films');
       MarcAuthorities.downloadSelectedRecordWithRowIdx();
+      MarcAuthorities.selectRecordByIndex(0);
       MarcAuthoritiesDelete.clickDeleteButton();
       MarcAuthoritiesDelete.confirmDelete();
       cy.visit(TopMenu.dataExportPath);

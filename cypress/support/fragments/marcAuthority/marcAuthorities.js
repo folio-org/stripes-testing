@@ -530,8 +530,12 @@ export default {
     cy.do(Checkbox(value).click());
   },
 
-  downloadSelectedRecordWithRowIdx(checkBoxNumber = 1) {
-    cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
+  downloadSelectedRecordWithRowIdx(checkBoxNumber = 0) {
+    cy.do(
+      MultiColumnListRow({ index: checkBoxNumber })
+        .find(Checkbox({ ariaLabel: 'Select Authority record' }))
+        .click(),
+    );
     cy.do([actionsButton.click(), exportSelectedRecords.click()]);
   },
 
