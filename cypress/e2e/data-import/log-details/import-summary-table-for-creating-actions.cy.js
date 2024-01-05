@@ -182,7 +182,6 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFile);
-        Logs.openFileDetails('C356801autotestFile.872.6729919974913588.mrc');
         // check created instance
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {

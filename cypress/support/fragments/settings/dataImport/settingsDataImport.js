@@ -1,5 +1,6 @@
 import { Pane, NavListItem } from '../../../../../interactors';
 import JobProfiles from './jobProfiles/jobProfiles';
+import MatchProfiles from './matchProfiles/matchProfiles';
 import ActionProfiles from './actionProfiles/actionProfiles';
 import FieldMappingProfiles from './fieldMappingProfile/fieldMappingProfiles';
 
@@ -26,6 +27,8 @@ export default {
     switch (settingsTab) {
       case SETTINGS_TABS.JOB_PROFILE:
         return JobProfiles;
+      case SETTINGS_TABS.MATCH_PROFILE:
+        return MatchProfiles;
       case SETTINGS_TABS.ACTION_PROFILE:
         return ActionProfiles;
       case SETTINGS_TABS.FIELD_MAPPING_PROFILE:

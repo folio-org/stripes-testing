@@ -29,8 +29,8 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import FileManager from '../../../support/utils/fileManager';
 
 describe('data-import', () => {

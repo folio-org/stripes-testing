@@ -80,6 +80,7 @@ describe('Orders: Receiving and Check-in', () => {
       Receiving.selectPOLInReceive(orderLineTitle);
       Receiving.addPiece(caption, copyNumber, enumeration, chronology);
       Receiving.selectPiece(caption);
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePiece(enumeration);
       Receiving.selectInstanceInReceive(orderLineTitle);
       // inventory part
