@@ -23,68 +23,70 @@ const customAgreement = {
   agreementStatus: 'active',
 };
 
-describe('Agreement Notes', () => {
-  before(() => {
-    cy.getAdminToken();
-    Agreements.createViaApi().then((agreement) => {
-      firstAgreementId = agreement.id;
-    });
-    Agreements.createViaApi(customAgreement).then((agreement) => {
-      secondAgreementId = agreement.id;
-    });
-    NoteTypes.createNoteTypeViaApi({ name: noteType })
-      .then((note) => {
-        noteTypeId = note.id;
-      })
-      .then(() => {
-        defaultTwoAssignedNote = Notes.defaultTwoAssignedNote({
-          typeId: noteTypeId,
-          firstAgreementId,
-          secondAgreementId,
-        });
-        Notes.createViaApi(defaultTwoAssignedNote).then((note) => {
-          noteId = note.id;
-        });
+describe('agreements', () => {
+  describe('Agreement Notes', () => {
+    before(() => {
+      cy.getAdminToken();
+      Agreements.createViaApi().then((agreement) => {
+        firstAgreementId = agreement.id;
       });
-    cy.loginAsAdmin({
-      path: TopMenu.agreementsPath,
-      waiter: Agreements.waitLoading,
-    });
-  });
-
-  after(() => {
-    Notes.deleteViaApi(noteId);
-    NoteTypes.deleteNoteTypeViaApi(noteTypeId);
-    Agreements.deleteViaApi(firstAgreementId);
-    Agreements.deleteViaApi(secondAgreementId);
-  });
-
-  it(
-    'C1311 Unassign a note from an Agreement record (erm) (TaaS)',
-    { tags: ['extendedPath', 'erm'] },
-    () => {
-      AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
-      AgreementViewDetails.openNotesSection();
-      AgreementViewDetails.verifySpecialNotesRow({
-        title: defaultTwoAssignedNote.title,
-        details: defaultTwoAssignedNote.content,
-        type: noteType,
+      Agreements.createViaApi(customAgreement).then((agreement) => {
+        secondAgreementId = agreement.id;
       });
+      NoteTypes.createNoteTypeViaApi({ name: noteType })
+        .then((note) => {
+          noteTypeId = note.id;
+        })
+        .then(() => {
+          defaultTwoAssignedNote = Notes.defaultTwoAssignedNote({
+            typeId: noteTypeId,
+            firstAgreementId,
+            secondAgreementId,
+          });
+          Notes.createViaApi(defaultTwoAssignedNote).then((note) => {
+            noteId = note.id;
+          });
+        });
+      cy.loginAsAdmin({
+        path: TopMenu.agreementsPath,
+        waiter: Agreements.waitLoading,
+      });
+    });
 
-      AgreementViewDetails.clickOnAssignUnassignButton();
-      AssignNote.verifyModalIsShown();
+    after(() => {
+      Notes.deleteViaApi(noteId);
+      NoteTypes.deleteNoteTypeViaApi(noteTypeId);
+      Agreements.deleteViaApi(firstAgreementId);
+      Agreements.deleteViaApi(secondAgreementId);
+    });
 
-      AssignNote.selectAssignedNoteStatusCheckbox();
-      AssignNote.verifyDesiredNoteIsShown(defaultTwoAssignedNote.title);
+    it(
+      'C1311 Unassign a note from an Agreement record (erm) (TaaS)',
+      { tags: ['extendedPath', 'erm'] },
+      () => {
+        AgreementViewDetails.agreementListClick(Agreements.defaultAgreement.name);
+        AgreementViewDetails.openNotesSection();
+        AgreementViewDetails.verifySpecialNotesRow({
+          title: defaultTwoAssignedNote.title,
+          details: defaultTwoAssignedNote.content,
+          type: noteType,
+        });
 
-      AssignNote.clickCheckboxForNote(defaultTwoAssignedNote.title);
-      AssignNote.verifyNoteCheckbox(defaultTwoAssignedNote.title, false);
+        AgreementViewDetails.clickOnAssignUnassignButton();
+        AssignNote.verifyModalIsShown();
 
-      AssignNote.clickSaveButton();
-      AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
-        Agreements.defaultAgreement.name,
-      );
-      AgreementViewDetails.verifyNotesIsEmpty();
-    },
-  );
+        AssignNote.selectAssignedNoteStatusCheckbox();
+        AssignNote.verifyDesiredNoteIsShown(defaultTwoAssignedNote.title);
+
+        AssignNote.clickCheckboxForNote(defaultTwoAssignedNote.title);
+        AssignNote.verifyNoteCheckbox(defaultTwoAssignedNote.title, false);
+
+        AssignNote.clickSaveButton();
+        AgreementViewDetails.verifyAgreementDetailsIsDisplayedByTitle(
+          Agreements.defaultAgreement.name,
+        );
+        AgreementViewDetails.verifyNotesIsEmpty();
+      },
+    );
+  });
 });

@@ -12,6 +12,7 @@ import {
   Link,
   Callout,
   KeyValue,
+  PaneHeader,
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -131,6 +132,7 @@ export default {
     );
   },
 
+  verifyProfileName: (profileName) => cy.expect(PaneHeader(profileName).exists()),
   verifyValueBySection: (sectionName, value) => cy.expect(KeyValue(sectionName).has({ value: `"${value}"` })),
   verifyValueByAccordionAndSection: (accordion, sectionName, value) => {
     cy.expect(Accordion(accordion).find(KeyValue(sectionName)).has({ value }));
@@ -180,6 +182,14 @@ export default {
       Accordion('Fund distribution')
         .find(MultiColumnListCell({ content: val }))
         .exists(),
+    );
+  },
+
+  verifyLocationFieldValue: (rowIndex, columnName, value) => {
+    cy.expect(
+      Accordion('Location')
+        .find(MultiColumnListCell({ row: rowIndex, column: columnName }))
+        .has({ content: value }),
     );
   },
 };

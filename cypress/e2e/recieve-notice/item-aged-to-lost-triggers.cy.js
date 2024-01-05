@@ -258,8 +258,9 @@ describe('Loan notice triggers', () => {
     CheckOutActions.checkOutItem(instanceData.itemBarcode);
     Checkout.verifyResultsInTheRow([instanceData.itemBarcode]);
     CheckOutActions.endCheckOutSession();
+    cy.getAdminToken();
     UserLoans.changeDueDateForAllOpenPatronLoans(testData.user.userId, -1);
-
+    cy.getToken(testData.user.username, testData.user.password);
     cy.visit(TopMenu.circulationLogPath);
     // wait to get "Item aged to lost - after - once" and "Item aged to lost - after - recurring" notices
     // eslint-disable-next-line cypress/no-unnecessary-waiting

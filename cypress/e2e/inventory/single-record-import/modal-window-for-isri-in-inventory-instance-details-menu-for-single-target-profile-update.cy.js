@@ -37,6 +37,7 @@ describe('inventory', () => {
     const instanceTitle = 'The Gospel according to Saint Mark : Evangelistib Markusib aglangit.';
 
     before('login', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
       JobProfiles.waitFileIsImported(fileName);

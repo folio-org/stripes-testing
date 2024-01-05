@@ -19,13 +19,16 @@ const getDefaultOrder = ({ vendorId, poNumber, manualPo, orderType = 'One-Time' 
   return defaultOrder;
 };
 
-const getDefaultOngoingOrder = ({ vendorId = '' }) => ({
-  id: uuid(),
-  vendor: vendorId,
-  ongoing: {
+const getDefaultOngoingOrder = ({
+  vendorId = '',
+  ongoing = {
     isSubscription: false,
     manualRenewal: false,
   },
+}) => ({
+  id: uuid(),
+  vendor: vendorId,
+  ongoing,
   orderType: 'Ongoing',
 });
 

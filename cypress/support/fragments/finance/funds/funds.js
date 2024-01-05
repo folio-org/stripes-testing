@@ -725,7 +725,7 @@ export default {
           ...ledger,
         });
         fund.ledgerName = ledger.name;
-        cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+        cy.loginAsAdmin();
         cy.visit(TopMenu.fundPath);
         this.createFund(fund);
         this.checkCreatedFund(fund.name);
@@ -966,9 +966,8 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+    cy.wait(4000);
     FundDetails.waitLoading();
-
-    return FundDetails;
   },
 
   closeMenu: () => {

@@ -18,6 +18,7 @@ import { ORDER_STATUSES, INVOICE_STATUSES } from '../../support/constants';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
+import Receiving from '../../support/fragments/receiving/receiving';
 
 describe('Orders', () => {
   const testData = {
@@ -135,7 +136,7 @@ describe('Orders', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.barcode);
       InventoryHoldings.deleteHoldingRecordByLocationIdViaApi(testData.location.id);
       Locations.deleteViaApi(testData.location);
-      MaterialTypes.deleteMaterialTypeViaApi(testData.materialType.id);
+      MaterialTypes.deleteViaApi(testData.materialType.id);
       ServicePoints.deleteViaApi(testData.servicePoint.id);
       Users.deleteViaApi(testData.user.userId);
     });
@@ -173,6 +174,7 @@ describe('Orders', () => {
       ]);
 
       // Click "Delete" button
+      Receiving.openDropDownInEditPieceModal();
       const DeletePieceModal = EditPieceModal.clickDeleteButton();
 
       // Click "Delete item" button
@@ -244,6 +246,7 @@ describe('Orders', () => {
       ]);
 
       // Click "Delete" button
+      Receiving.openDropDownInEditPieceModal();
       const DeletePieceModal = EditPieceModal.clickDeleteButton();
 
       // Click "Delete item" button

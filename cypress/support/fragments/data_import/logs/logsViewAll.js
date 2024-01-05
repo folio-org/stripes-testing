@@ -18,6 +18,7 @@ import {
 } from '../../../../../interactors';
 import UrlParams from '../url-params';
 import InteractorsTools from '../../../utils/interactorsTools';
+import Z3950TargetProfiles from '../../settings/inventory/integrations/z39.50TargetProfiles';
 
 const singleRecordImportsAccordion = Accordion('Inventory single record imports');
 const dataImportList = MultiColumnList({ id: 'list-data-import' });
@@ -313,6 +314,7 @@ export default {
               content: or(
                 'Inventory Single Record - Default Create Instance',
                 'Inventory Single Record - Default Update Instance',
+                Z3950TargetProfiles.jobProfileNameForCreating,
               ),
               row: i,
             }).exists(),
@@ -323,10 +325,29 @@ export default {
               content: or(
                 'Inventory Single Record - Default Create Instance',
                 'Inventory Single Record - Default Update Instance',
+                Z3950TargetProfiles.jobProfileNameForCreating,
               ),
               row: i,
             }).absent(),
           );
+        }
+      }
+    });
+  },
+
+  checkByInventorySingleRecordFileName(filter) {
+    // need to wait until selected data will be displayed
+    cy.wait(2000);
+    return cy.get('#list-data-import').then((element) => {
+      // only 100 records shows on every page
+      const resultCount =
+        element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+      // verify every string in result table
+      for (let i = 0; i < resultCount; i++) {
+        if (filter === 'Yes') {
+          cy.expect(MultiColumnListCell({ content: 'No file name', row: i }).exists());
+        } else {
+          cy.expect(MultiColumnListCell({ content: 'No file name', row: i }).absent());
         }
       }
     });
@@ -526,5 +547,13 @@ export default {
 
   clickFirstFileNameCell: () => {
     cy.do(dataImportList.find(MultiColumnListCell({ row: 0, columnIndex: 0 })).hrefClick());
+  },
+
+  verifyFilterInactive(filter) {
+    cy.expect(
+      singleRecordImportsAccordion
+        .find(Checkbox({ name: filter.toLowerCase() }))
+        .has({ checked: false }),
+    );
   },
 };

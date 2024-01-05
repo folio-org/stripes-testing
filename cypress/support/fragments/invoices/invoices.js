@@ -964,6 +964,10 @@ export default {
     ]);
   },
 
+  selectInvoiceByNumber(invoiceNumber) {
+    this.searchByNumber(invoiceNumber);
+    this.selectInvoice(invoiceNumber);
+  },
   selectInvoice: (invoiceNumber) => {
     cy.wait(4000);
     cy.do(invoiceResultsPane.find(Link(invoiceNumber)).click());

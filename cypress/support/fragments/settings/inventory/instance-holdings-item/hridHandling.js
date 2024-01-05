@@ -54,7 +54,7 @@ export default {
   },
 
   checkRemoveLeadingZeroesAndSave() {
-    cy.do(removeLeadingZeroesCheckbox.checkIfNotSelected());
+    cy.do(hridHandlingPane.find(removeLeadingZeroesCheckbox).click());
     this.clickSaveAndCloseButton();
     cy.do(confirmEditHridModal.exists());
     this.clickUpdateButtonInConfirmEditHridModal();
@@ -62,7 +62,7 @@ export default {
   },
 
   uncheckRemoveLeadingZeroesAndSave() {
-    cy.do(removeLeadingZeroesCheckbox.uncheckIfSelected());
+    cy.do(hridHandlingPane.find(removeLeadingZeroesCheckbox).click());
     this.clickSaveAndCloseButton();
     cy.do(confirmEditHridModal.exists());
     this.clickUpdateButtonInConfirmEditHridModal();
@@ -71,7 +71,7 @@ export default {
 
   uncheckRemoveLeadingZeroesIfCheckedAndSave() {
     if (!removeLeadingZeroesCheckbox.checked) {
-      cy.do(removeLeadingZeroesCheckbox.uncheckIfSelected());
+      cy.do(hridHandlingPane.find(removeLeadingZeroesCheckbox).click());
       this.clickSaveAndCloseButton();
       cy.do(confirmEditHridModal.exists());
       this.clickUpdateButtonInConfirmEditHridModal();
