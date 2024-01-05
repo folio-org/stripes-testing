@@ -4,6 +4,7 @@ import {
   TextInput,
   Heading,
   PaneHeader,
+  Pane,
   Button,
   Option,
   Section,
@@ -57,6 +58,7 @@ const browseButton = Button({ id: 'mode-navigation-browse' });
 const searchButton = Button({ type: 'submit' });
 const resetAllButton = Button('Reset all');
 const resultsPaneHeaderBrowse = PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' });
+const browseContributorsResultsList = Pane({ id: 'browse-inventory-results-pane' });
 
 const typeSelect = Section({ id: 'nameType' });
 const nameTypeButton = typeSelect.find(Button('Name type'));
@@ -361,5 +363,9 @@ export default {
           .exists(),
       );
     });
+  },
+
+  checkBrowseContributorsResulstListVisible(isVisible) {
+    cy.expect(browseContributorsResultsList.has({ visible: isVisible }));
   },
 };

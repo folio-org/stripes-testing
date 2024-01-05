@@ -46,20 +46,6 @@ export default {
   expandActionsDropdown() {
     cy.do(invoiceDetailsPaneHeader.find(actionsButton).click());
   },
-  verifyLinksDocumentsSection(linkName, externalUrl, documentName) {
-    cy.do(Button('Links & documents').click());
-    cy.expect([
-      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Link name' })).has({
-        content: linkName,
-      }),
-      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'External URL' })).has({
-        content: externalUrl,
-      }),
-      linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Document name' })).has({
-        content: documentName,
-      }),
-    ]);
-  },
   selectFirstInvoice() {
     cy.do(
       MultiColumnList({ id: 'invoices-list' })
@@ -184,6 +170,33 @@ export default {
           .exists(),
       );
     });
+  },
+  checkDocumentsSection({ linkName, externalUrl, documentName, shouldExpand = true } = {}) {
+    if (shouldExpand) {
+      cy.do(linksAndDocumentsSection.toggle());
+    }
+
+    if (linkName) {
+      cy.expect(
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Link name' })).has({
+          content: linkName,
+        }),
+      );
+    }
+    if (externalUrl) {
+      cy.expect(
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'External URL' })).has({
+          content: externalUrl,
+        }),
+      );
+    }
+    if (documentName) {
+      cy.expect(
+        linksAndDocumentsSection.find(MultiColumnListCell({ column: 'Document name' })).has({
+          content: documentName,
+        }),
+      );
+    }
   },
   copyOrderNumber(vendorInvoiceNo) {
     cy.do(
