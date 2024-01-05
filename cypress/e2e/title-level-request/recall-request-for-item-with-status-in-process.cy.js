@@ -88,10 +88,10 @@ describe('Title level request', () => {
     () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       InventoryInstance.checkNewRequestAtNewPane();
-      NewRequest.verifyTitleLevelRequestsCheckbox('checked');
+      NewRequest.verifyTitleLevelRequestsCheckbox(true);
       NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.RECALL);
-      NewRequest.choosepickupServicePoint(testData.servicePoint.name);
+      NewRequest.choosePickupServicePoint(testData.servicePoint.name);
       NewRequest.saveRequestAndClose();
       NewRequest.verifyRequestSuccessfullyCreated(userData.username);
       RequestDetail.checkItemStatus(ITEM_STATUS_NAMES.IN_PROCESS);

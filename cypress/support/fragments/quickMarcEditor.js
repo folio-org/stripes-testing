@@ -24,6 +24,8 @@ import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
 import Institutions from './settings/tenant/location-setup/institutions';
 
+const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
+const actionsButton = Button('Actions');
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
 const cancelButton = Button('Cancel');
@@ -754,7 +756,11 @@ export default {
   checkAfterSaveAndClose() {
     cy.expect([calloutAfterSaveAndClose.exists(), instanceDetailsPane.exists()]);
   },
-
+  checkAfterSaveAndCloseAndReturnHoldingsDetailsPage() {
+    cy.expect(calloutAfterSaveAndClose.exists());
+    Button({ icon: 'times' }).click();
+    cy.expect([holdingsRecordViewSection.exists(), actionsButton.exists()]);
+  },
   verifyAfterDerivedMarcBibSave() {
     cy.expect([
       calloutOnDeriveFirst.exists(),
