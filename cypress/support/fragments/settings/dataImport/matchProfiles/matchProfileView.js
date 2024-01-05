@@ -1,7 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import moment from 'moment';
 import { HTML, including } from '@interactors/html';
-import { Button, Pane, Accordion } from '../../../../../interactors';
+import { Button, Pane, Accordion } from '../../../../../../interactors';
 
 const viewPane = Pane({ id: 'view-match-profile-pane' });
 const actionsButton = Button('Actions');
