@@ -53,6 +53,9 @@ const continueWithSaveButton = Modal().find(
 const restoreDeletedFieldsBtn = Modal().find(
   Button({ id: 'clickable-quick-marc-confirm-modal-cancel' }),
 );
+const keepEditingButton = updateLinkedBibFieldsModal.find(
+  Button({ id: 'clickable-quick-marc-update-linked-bib-fields-cancel' }),
+);
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
 const instanceDetailsPane = Pane({ id: 'pane-instancedetails' });
 const unlinkModal = Modal({ id: 'quick-marc-confirm-unlink-modal' });
@@ -1720,5 +1723,18 @@ export default {
         .find(TextArea({ name: including('.content') }))
         .has({ value: content }),
     );
+  },
+
+  verifyUpdateLinkedBibsKeepEditingModal(linkedRecordsNumber) {
+    cy.expect(updateLinkedBibFieldsModal.exists());
+    cy.expect(
+      updateLinkedBibFieldsModal.has({
+        content: including(
+          `${linkedRecordsNumber} bibliographic record is linked to this authority record and will be updated by clicking the Save button.`,
+        ),
+      }),
+    );
+    cy.expect(saveButton.exists());
+    cy.expect(keepEditingButton.exists());
   },
 };
