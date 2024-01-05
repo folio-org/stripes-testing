@@ -86,6 +86,10 @@ export default {
     cy.expect(Callout({ type: calloutTypes.info }).is({ textContent: message }));
   },
 
+  verifyCalloutMessage: (message) => {
+    cy.expect(Callout(including(message)).exists());
+  },
+
   cancelListPopup: () => {
     cy.expect(Modal({ header: 'Are you sure?' }).exists());
     cy.expect(Modal({ message: 'There are unsaved changes' }).exists());
