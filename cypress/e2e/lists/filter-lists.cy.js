@@ -198,21 +198,26 @@ describe('Filter lists', () => {
       // #6 Click on "x"
       Lists.clickOnClearFilterButton(recordTypesFilters.accordionName);
       Lists.verifyRecordTypesAccordionDefaultContent();
+      Lists.verifyListsFileredByRecordType(recordTypesFilters.filters);
       // #7 Click on "Loans" checkbox
       Lists.clickOnCheckbox('Loans');
       Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
       Lists.verifyResetAllButtonEnabled();
       Lists.verifyListsFileredByRecordType(['Loans']);
       // #8 Click on "Items" checkbox
+      Lists.clickOnCheckbox('Loans');
+      Lists.verifyCheckboxUnchecked('Loans');
       Lists.clickOnCheckbox('Items');
       Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
       Lists.verifyResetAllButtonEnabled();
-      Lists.verifyListsFileredByRecordType(['Loans', 'Items']);
+      Lists.verifyListsFileredByRecordType(['Items']);
       // #9 Click on "Users" checkbox
+      Lists.clickOnCheckbox('Items');
+      Lists.verifyCheckboxUnchecked('Items');
       Lists.clickOnCheckbox('Users');
       Lists.verifyClearFilterButton(recordTypesFilters.accordionName);
       Lists.verifyResetAllButtonEnabled();
-      Lists.verifyListsFileredByRecordType(['Loans', 'Items', 'Users']);
+      Lists.verifyListsFileredByRecordType(['Users']);
       // #10 Click on "Reset all"
       Lists.resetAll();
       Lists.verifyRecordTypesAccordionDefaultContent();
