@@ -14,7 +14,10 @@ import {
   including,
   MultiColumnListRow,
   TextField,
+  TextInput,
   Image,
+  SelectionList,
+  SelectionOption,
 } from '../../../../interactors';
 import { ListRow } from '../../../../interactors/multi-column-list';
 
@@ -44,6 +47,9 @@ const setCriteriaPane = Pane('Set criteria');
 const searchButton = Button('Search');
 const resetAllButton = Button('Reset all');
 const logsStatusesAccordion = Accordion('Statuses');
+const logsUsersAccordion = Accordion('User');
+const clearAccordionButton = Button({ icon: 'times-circle-solid' });
+const usersSelectionList = SelectionList({ id: 'sl-container-stripes-selection-18' });
 const saveAndClose = Button('Save and close');
 const textFieldTo = TextField('To');
 const textFieldFrom = TextField('From');
@@ -440,6 +446,13 @@ export default {
       bulkEditPane.find(HTML('Bulk edit logs')).exists(),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter to show results.')).exists(),
+    ]);
+  },
+
+  verifyLogsPaneHeader() {
+    cy.expect([
+      bulkEditPane.find(HTML('Bulk edit logs')).exists(),
+      bulkEditPane.find(HTML(including('records found'))).exists(),
     ]);
   },
 
@@ -1006,6 +1019,51 @@ export default {
   //       .find(Button({ icon: 'times-circle-solid', ariaLabel: including('Clear selected filters') }))[verification]()
   //   );
   // },
+
+  clickUserAccordion() {
+    cy.do(logsUsersAccordion.clickHeader());
+  },
+
+  selectUserFromDropdown(name) {
+    cy.do([usersSelectionList.select(including(name))]);
+  },
+
+  fillUserFilterInput(userName) {
+    cy.do([usersSelectionList.find(TextInput()).fillIn(userName)]);
+  },
+
+  verifyDropdown(userName) {
+    cy.then(() => usersSelectionList.optionList()).then((options) => {
+      options.forEach((option) => cy.expect(option).to.include(userName));
+    });
+  },
+
+  verifyUserIsNotInUserList(name) {
+    cy.do([usersSelectionList.find(SelectionOption(including(name))).absent()]);
+  },
+
+  verifyEmptyUserDropdown() {
+    cy.expect([
+      usersSelectionList.find(HTML('-List is empty-')).exists(),
+      usersSelectionList.find(HTML('No matching options')).exists(),
+    ]);
+  },
+
+  clickChooseUserUnderUserAccordion() {
+    cy.do(logsUsersAccordion.find(Button(including('Select control'))).click());
+  },
+
+  verifyClearSelectedButtonExists(accordion, presence = true) {
+    if (presence) {
+      cy.expect(Accordion(accordion).find(clearAccordionButton).exists());
+    } else {
+      cy.expect(Accordion(accordion).find(clearAccordionButton).absent());
+    }
+  },
+
+  clickClearSelectedButton(accordion) {
+    cy.do(Accordion(accordion).find(clearAccordionButton).click());
+  },
 
   verifyClearSelectedDateButtonExists(accordion, textField) {
     cy.expect(
