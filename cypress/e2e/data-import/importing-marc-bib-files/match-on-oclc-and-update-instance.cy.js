@@ -116,6 +116,10 @@ describe('data-import', () => {
           }
         },
       );
+      cy.loginAsAdmin({
+        path: SettingsMenu.mappingProfilePath,
+        waiter: FieldMappingProfiles.waitLoading,
+      });
     });
 
     after('delete test data', () => {

@@ -22,7 +22,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 import { getTestEntityValue } from '../../support/utils/stringTools';
 
-describe('Loan Details', () => {
+describe('Loans', () => {
   const feeFineType = {};
   const ownerData = {};
   const patronGroup = {
