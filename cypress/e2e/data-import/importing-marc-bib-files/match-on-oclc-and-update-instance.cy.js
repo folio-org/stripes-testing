@@ -150,7 +150,6 @@ describe('data-import', () => {
       { tags: ['criticalPath', 'folijet', 'parallel'] },
       () => {
         // create mapping profile for creating instance
-        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(
           collectionOfMappingAndActionProfiles[0].mappingProfile,
