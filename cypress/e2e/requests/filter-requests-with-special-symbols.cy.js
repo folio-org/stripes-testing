@@ -85,7 +85,7 @@ describe('Requests -> Filter Requests with Special Symbols', () => {
         requestData.itemId = specialInstanceIds.holdingIds[0].itemIds[0];
       })
       .then(() => {
-        cy.createTempUser([Permissions.requestsAll.gui])
+        cy.createTempUser([Permissions.uiRequestsAll.gui])
           .then((userProperties) => {
             userData.username = userProperties.username;
             userData.password = userProperties.password;

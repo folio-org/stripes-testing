@@ -95,7 +95,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
         Permissions.uiRequestsCreate.gui,
         Permissions.uiRequestsView.gui,
         Permissions.uiRequestsEdit.gui,
-        Permissions.requestsAll.gui,
+        Permissions.uiRequestsAll.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
