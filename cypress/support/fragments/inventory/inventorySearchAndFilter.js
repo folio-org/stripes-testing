@@ -523,6 +523,18 @@ export default {
     cy.do(searchButton.click());
   },
 
+  clickMarcAuthIcon() {
+    cy.window().then((win) => {
+      cy.stub(win, 'open')
+        .callsFake((url) => {
+          cy.visit(url);
+        })
+        .as('windowOpen');
+    });
+
+    cy.get("[data-link='authority-app']").eq(0).click();
+  },
+
   checkContributorRequest() {
     cy.intercept('GET', '/search/instances?*').as('getInstances');
     this.clickSearch();
@@ -550,10 +562,14 @@ export default {
 
   checkContributorsColumResult(cellContent) {
     cy.expect(
-      MultiColumnList({ id: 'list-inventory' })
+      MultiColumnList({ id: 'browse-inventory-results-pane-content' })
         .find(MultiColumnListCell(including(cellContent)))
         .exists(),
     );
+  },
+
+  checkMarcAuthAppIconInSearchResult() {
+    cy.get('[alt="MARC Authorities module"]').should('have.length.at.least', 1);
   },
 
   checkMissingSearchResult(cellContent) {
@@ -577,6 +593,14 @@ export default {
   verifyTagIsAbsent(tag) {
     this.searchTag(tag);
     cy.expect(HTML('No matching options').exists());
+  },
+
+  verifyContributorsColumResult(cellContent) {
+    cy.expect(
+      MultiColumnList({ id: 'browse-results-list-contributors' })
+        .find(MultiColumnListCell(including(cellContent)))
+        .exists(),
+    );
   },
 
   verifyResultPaneEmpty({ noResultsFound = false, searchQuery = '(?:\\S+)' } = {}) {
