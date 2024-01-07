@@ -24,6 +24,8 @@ import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
 import Institutions from './settings/tenant/location-setup/institutions';
 
+const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
+const actionsButton = Button('Actions');
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
 const cancelButton = Button('Cancel');
@@ -45,6 +47,7 @@ const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' });
 const cancelEditConfirmBtn = Button('Keep editing');
 const updateLinkedBibFieldsModal = Modal({ id: 'quick-marc-update-linked-bib-fields' });
+const confirmDeletingRecordModal = Modal({ id: 'confirm-delete-note' });
 const saveButton = Modal().find(
   Button({ id: 'clickable-quick-marc-update-linked-bib-fields-confirm' }),
 );
@@ -71,6 +74,7 @@ const unlinkButtonInsideModal = Button({ id: 'clickable-quick-marc-confirm-unlin
 const cancelUnlinkButtonInsideModal = Button({
   id: 'clickable-quick-marc-confirm-unlink-modal-cancel',
 });
+const confirmDeleteButton = Modal().find(Button({ id: 'clickable-confirm-delete-note-confirm' }));
 const calloutAfterSaveAndClose = Callout(
   'This record has successfully saved and is in process. Changes may not appear immediately.',
 );
@@ -484,6 +488,10 @@ export default {
     cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: false }));
   },
 
+  verifyOnlyOne001FieldAreDisplayed() {
+    cy.expect(TextField({ name: 'records[2].tag' })).not.equal('001');
+  },
+
   verifyDisabledLinkHeadingsButton() {
     cy.expect(paneHeader.find(linkHeadingsButton).has({ disabled: true }));
   },
@@ -588,6 +596,11 @@ export default {
   cancelEditConformation() {
     cy.expect(cancelEditConformModel.exists());
     cy.do(cancelEditConfirmBtn.click());
+  },
+
+  closeWithoutSavingInEditConformation() {
+    cy.expect(cancelEditConformModel.exists());
+    cy.do(closeWithoutSavingBtn.click());
   },
 
   deleteConfirmationPresented() {
@@ -720,6 +733,10 @@ export default {
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
   },
 
+  checkUndoDeleteAbsent() {
+    cy.get('#quick-marc-editor-pane').find('[class^=deletedRowPlaceholder-]').should('not.exist');
+  },
+
   afterDeleteNotificationNoTag() {
     cy.get('[class^=deletedRowPlaceholder-]').should(
       'include.text',
@@ -739,7 +756,11 @@ export default {
   checkAfterSaveAndClose() {
     cy.expect([calloutAfterSaveAndClose.exists(), instanceDetailsPane.exists()]);
   },
-
+  checkAfterSaveAndCloseAndReturnHoldingsDetailsPage() {
+    cy.expect(calloutAfterSaveAndClose.exists());
+    Button({ icon: 'times' }).click();
+    cy.expect([holdingsRecordViewSection.exists(), actionsButton.exists()]);
+  },
   verifyAfterDerivedMarcBibSave() {
     cy.expect([
       calloutOnDeriveFirst.exists(),
@@ -778,6 +799,14 @@ export default {
     cy.expect(
       getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount() + 1)
         .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
+        .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
+    );
+  },
+
+  checkContentByTag(content, tag) {
+    cy.expect(
+      QuickMarcEditorRow({ tagValue: tag })
+        .find(TextArea())
         .has({ value: content ?? defaultFieldValues.contentWithSubfield }),
     );
   },
@@ -1349,6 +1378,21 @@ export default {
     });
   },
 
+  verifyAllBoxesInARowAreEditable(tag) {
+    cy.expect([
+      getRowInteractorByTagName(tag).find(TextField('Field')).has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextArea({ ariaLabel: 'Subfield' }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[0]') }))
+        .has({ disabled: false }),
+      getRowInteractorByTagName(tag)
+        .find(TextField('Indicator', { name: including('.indicators[1]') }))
+        .has({ disabled: false }),
+    ]);
+  },
+
   checkLDRValue(ldrValue = validRecord.ldrValue) {
     cy.expect(
       getRowInteractorByTagName('LDR')
@@ -1676,6 +1720,10 @@ export default {
     ]);
   },
 
+  verifyRemoveLinkingModalAbsence() {
+    cy.expect([removeLinkingModal.absent()]);
+  },
+
   confirmRemoveAuthorityLinking() {
     cy.do(removeLinkingModal.find(removeLinkingButton).click());
     cy.expect([removeLinkingModal.absent(), rootSection.exists()]);
@@ -1892,7 +1940,10 @@ export default {
       rootSection.exists(),
     ]);
   },
-
+  confirmDeletingRecord() {
+    cy.do(confirmDeleteButton.click());
+    cy.expect([confirmDeletingRecordModal.absent()]);
+  },
   checkAfterSaveAndCloseAuthority() {
     cy.expect([calloutAfterSaveAndClose.exists(), rootSection.absent(), viewMarcSection.exists()]);
   },

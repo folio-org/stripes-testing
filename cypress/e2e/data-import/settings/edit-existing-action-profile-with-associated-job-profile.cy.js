@@ -1,12 +1,16 @@
 import { ACCEPTED_DATA_TYPE_NAMES, FOLIO_RECORD_TYPE } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import ConfirmChanges from '../../../support/fragments/data_import/action_profiles/modals/confirmChanges';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -61,9 +65,9 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       });
     });
 

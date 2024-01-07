@@ -1,8 +1,9 @@
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import DateTools from '../../../support/utils/dateTools';
@@ -41,7 +42,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.verifyExistingRecordSection();
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
@@ -57,7 +58,7 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileWithFolioRecordValue(matchProfile, incomingRecordType);
 
         cy.getAdminToken().then(() => {
-          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         });
       },
     );
@@ -86,7 +87,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.verifyExistingRecordSection();
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
@@ -104,7 +105,7 @@ describe('data-import', () => {
         );
 
         cy.getAdminToken().then(() => {
-          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         });
       },
     );
@@ -124,7 +125,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.verifyExistingRecordSection();
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
@@ -140,7 +141,7 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
         cy.getAdminToken().then(() => {
-          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         });
       },
     );
@@ -160,7 +161,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
@@ -175,7 +176,7 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
         cy.getAdminToken().then(() => {
-          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         });
       },
     );
@@ -195,7 +196,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
@@ -210,7 +211,7 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
         cy.getAdminToken().then(() => {
-          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         });
       },
     );
@@ -230,7 +231,7 @@ describe('data-import', () => {
 
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
         NewMatchProfile.fillName(matchProfile.profileName);
         NewMatchProfile.selectExistingRecordType(matchProfile.existingRecordType);
         NewMatchProfile.verifyExistingRecordTypeIsSelected(matchProfile.existingRecordType);
@@ -245,7 +246,7 @@ describe('data-import', () => {
         MatchProfileView.verifyMatchProfileWithStaticValueAndFolioRecordValue(matchProfile);
 
         cy.getAdminToken().then(() => {
-          MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         });
       },
     );

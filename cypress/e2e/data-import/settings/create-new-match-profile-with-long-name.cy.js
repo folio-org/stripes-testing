@@ -1,7 +1,8 @@
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
@@ -32,7 +33,7 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(user.userId);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       });
     });
 

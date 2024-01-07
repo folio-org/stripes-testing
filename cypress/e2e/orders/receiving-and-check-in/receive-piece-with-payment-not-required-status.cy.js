@@ -134,6 +134,7 @@ describe('Orders: Receiving and Check-in', () => {
       Orders.receiveOrderViaActions();
       Receiving.selectLinkFromResultsList();
       Receiving.selectPiece('Physical');
+      Receiving.openDropDownInEditPieceModal();
       Receiving.quickReceivePieceAdd();
       Receiving.clickOnPOLnumber(`${orderNumber}-1`);
       Orders.selectFundIDFromthelist();

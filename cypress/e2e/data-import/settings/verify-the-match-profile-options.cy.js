@@ -1,11 +1,12 @@
 import { Permissions } from '../../../support/dictionary';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
 
 describe('Data Import', () => {
   describe('Settings', () => {
@@ -38,7 +39,7 @@ describe('Data Import', () => {
 
     after('Delete test data', () => {
       cy.getAdminToken();
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
       Users.deleteViaApi(user.userId);
     });
 
@@ -46,7 +47,7 @@ describe('Data Import', () => {
       'C421992 - (NON-CONSORTIA) Verify the match profile options (Folijet) (TaaS)',
       { tags: ['extendedPath', 'folijet'] },
       () => {
-        MatchProfiles.openNewMatchProfileForm();
+        MatchProfiles.clickCreateNewMatchProfile();
 
         NewMatchProfile.verifyExistingRecordSection();
 

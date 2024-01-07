@@ -75,7 +75,7 @@ describe('MARC -> MARC Bibliographic -> Derive MARC bib', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       // #1 Input query in search input filed which will return "Instance" record with source "MARC".
-      InventoryInstance.searchByTitle(createdInstanceIDs[0]);
+      InventoryInstances.searchByTitle(createdInstanceIDs[0]);
       // #2 Click on a row with the result of search from step 1.
       InventoryInstances.selectInstance();
       // #3 Click on the "Actions" button → select "Derive new MARC bibliographic record" option from the expanded menu.

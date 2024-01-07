@@ -1,6 +1,11 @@
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -23,8 +28,7 @@ import {
   EXISTING_RECORDS_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 
 describe('data-import', () => {
@@ -167,10 +171,10 @@ describe('data-import', () => {
         if (index) MarcAuthority.deleteViaAPI(id);
       });
       // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);

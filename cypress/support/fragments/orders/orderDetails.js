@@ -13,6 +13,7 @@ import {
   MultiColumnList,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import OrderEditForm from './orderEditForm';
 import OrderLines from './orderLines';
 import OrderLineDetails from './orderLineDetails';
 import OrderLineEditForm from './orderLineEditForm';
@@ -28,6 +29,7 @@ const orderDetailsPane = Pane({ id: 'order-details' });
 const actionsButton = Button('Actions');
 
 const orderInfoSection = orderDetailsPane.find(Section({ id: 'purchaseOrder' }));
+const ongoingOrderInfoSection = orderDetailsPane.find(Section({ id: 'ongoing' }));
 const poSummarySection = orderDetailsPane.find(Section({ id: 'POSummary' }));
 const polListingAccordion = Section({ id: 'POListing' });
 
@@ -67,7 +69,23 @@ export default {
       );
     });
   },
-  checkOrderDetails({ summary = [] } = {}) {
+  checkOrderDetails({ orderInformation = [], ongoingInformation = [], summary = [] } = {}) {
+    orderInformation.forEach(({ key, value, checkbox }) => {
+      if (checkbox) {
+        cy.expect(orderInfoSection.find(Checkbox(key)).has(value));
+      } else {
+        cy.expect(orderInfoSection.find(KeyValue(key)).has({ value: including(value) }));
+      }
+    });
+
+    ongoingInformation.forEach(({ key, value, checkbox }) => {
+      if (checkbox) {
+        cy.expect(ongoingOrderInfoSection.find(Checkbox(key)).has(value));
+      } else {
+        cy.expect(ongoingOrderInfoSection.find(KeyValue(key)).has({ value: including(value) }));
+      }
+    });
+
     summary.forEach(({ key, value, checkbox }) => {
       if (checkbox) {
         cy.expect(poSummarySection.find(Checkbox(key)).has(value));
@@ -92,6 +110,13 @@ export default {
     );
 
     InteractorsTools.checkCalloutMessage(`Successfully copied "${poNumber}" to clipboard.`);
+  },
+  openOrderEditForm() {
+    this.expandActionsDropdown();
+    cy.do(Button('Edit').click());
+    OrderEditForm.waitLoading();
+
+    return OrderEditForm;
   },
   closeOrder({ orderNumber, confirm = true } = {}) {
     this.expandActionsDropdown();

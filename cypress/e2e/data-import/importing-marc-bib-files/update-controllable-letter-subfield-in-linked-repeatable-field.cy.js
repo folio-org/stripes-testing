@@ -6,13 +6,18 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -24,8 +29,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
@@ -191,10 +195,10 @@ describe('data-import', () => {
       InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
       MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
       // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${testData.modifiedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${testData.exportedFileName}`);

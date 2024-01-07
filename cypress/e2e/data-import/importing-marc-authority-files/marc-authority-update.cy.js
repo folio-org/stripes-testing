@@ -12,7 +12,7 @@ import QuickMarcEditor from '../../../support/fragments/quickMarcEditor';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import FileManager from '../../../support/utils/fileManager';
@@ -23,6 +23,12 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 
 describe('data-import', () => {
@@ -35,22 +41,22 @@ describe('data-import', () => {
       exportedMarcFile: `exportedMarcFile${getRandomPostfix()}.mrc`,
       modifiedMarcFile: `modifiedMarcFile${getRandomPostfix()}.mrc`,
       uploadModifiedMarcFile: `testMarcFile.${getRandomPostfix()}.mrc`,
-      jobProfileName: 'Update MARC authority records by matching 999 ff $s subfield value',
+      jobProfileName: `C374186 Update MARC authority records by matching 999 ff $s subfield value${getRandomPostfix()}`,
     };
 
     const mappingProfile = {
-      name: 'Update MARC authority records by matching 999 ff $s subfield value',
+      name: `C374186 Update MARC authority records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
       update: true,
       permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCAUTHORITY,
-      name: 'Update MARC authority records by matching 999 ff $s subfield value',
+      name: `C374186 Update MARC authority records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const matchProfile = {
-      profileName: 'Update MARC authority records by matching 999 ff $s subfield value',
+      profileName: `C374186 Update MARC authority records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -68,7 +74,7 @@ describe('data-import', () => {
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: 'Update MARC authority records by matching 999 ff $s subfield value',
+      profileName: `C374186 Update MARC authority records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
 
@@ -152,10 +158,10 @@ describe('data-import', () => {
     after(() => {
       cy.getAdminToken();
       Users.deleteViaApi(testData.userProperties.userId);
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+      SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
 
       if (createdAuthorityIDs[0]) InventoryInstance.deleteInstanceViaApi(createdAuthorityIDs[0]);
       createdAuthorityIDs.forEach((id, index) => {

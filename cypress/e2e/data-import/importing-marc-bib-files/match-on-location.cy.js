@@ -8,6 +8,12 @@ import {
   PROFILE_TYPE_NAMES,
   RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -17,13 +23,12 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/item/itemRecordView';
-import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
@@ -252,7 +257,7 @@ describe('data-import', () => {
           cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
         });
       });
-      SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate).then(
+      SettingsJobProfiles.createJobProfileViaApi(testData.jobProfileForCreate).then(
         (bodyWithjobProfile) => {
           testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
         },
@@ -307,21 +312,37 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         // delete profiles
-        JobProfiles.deleteJobProfile(jobProfileForCreate.profile.name);
-        JobProfiles.deleteJobProfile(jobProfileForUpdate.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForCreate.profile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForUpdate.profileName);
         collectionOfMatchProfiles.forEach((profile) => {
-          MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+          SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
         });
-        ActionProfiles.deleteActionProfile(instanceActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(holdingsActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(itemActionProfileForCreate.profile.name);
-        ActionProfiles.deleteActionProfile(holdingsActionProfileForUpdate.name);
-        ActionProfiles.deleteActionProfile(itemActionProfileForUpdate.name);
-        FieldMappingProfileView.deleteViaApi(instanceMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(itemMappingProfileForCreate.profile.name);
-        FieldMappingProfileView.deleteViaApi(holdingsMappingProfileForUpdate.name);
-        FieldMappingProfileView.deleteViaApi(itemMappingProfileForUpdate.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          instanceActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          holdingsActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(
+          itemActionProfileForCreate.profile.name,
+        );
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(holdingsActionProfileForUpdate.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(itemActionProfileForUpdate.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          instanceMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          holdingsMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          itemMappingProfileForCreate.profile.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          holdingsMappingProfileForUpdate.name,
+        );
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+          itemMappingProfileForUpdate.name,
+        );
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
         FileManager.deleteFile(`cypress/fixtures/${fileNameAfterUpdate}`);

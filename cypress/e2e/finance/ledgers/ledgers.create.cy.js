@@ -6,7 +6,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Ledgers', () => {
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(TopMenu.ledgerPath);
   });
 

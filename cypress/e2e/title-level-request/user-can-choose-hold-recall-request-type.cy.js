@@ -118,7 +118,7 @@ describe('Title Level Request', () => {
       NewRequest.openNewRequestPane();
       NewRequest.enterHridInfo(testData.instanceHRID);
       NewRequest.enterRequesterBarcode(testData.user.barcode);
-      NewRequest.verifyTitleLevelRequestsCheckbox('checked');
+      NewRequest.verifyTitleLevelRequestsCheckbox(true);
       NewRequest.verifyRequestTypeHasOptions('Hold', 'Recall');
     },
   );

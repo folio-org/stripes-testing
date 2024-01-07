@@ -725,7 +725,7 @@ export default {
           ...ledger,
         });
         fund.ledgerName = ledger.name;
-        cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+        cy.loginAsAdmin();
         cy.visit(TopMenu.fundPath);
         this.createFund(fund);
         this.checkCreatedFund(fund.name);
@@ -884,11 +884,11 @@ export default {
       })
       .then(({ body }) => body);
   },
-  createViaApi: (fundProperties) => {
+  createViaApi: (fundProperties, groupIds) => {
     return cy
       .okapiRequest({
         path: 'finance/funds',
-        body: { fund: fundProperties },
+        body: { fund: fundProperties, groupIds },
         method: 'POST',
         isDefaultSearchParamsRequired: false,
       })
@@ -966,9 +966,8 @@ export default {
   selectFund: (FundName) => {
     cy.wait(4000);
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+    cy.wait(4000);
     FundDetails.waitLoading();
-
-    return FundDetails;
   },
 
   closeMenu: () => {
@@ -1026,5 +1025,9 @@ export default {
 
   varifyCanNotCreatePlannedBudget: () => {
     cy.expect(cy.expect(Section({ id: 'plannedBudget' }).find(Button('New')).absent()));
+  },
+
+  verifyFundLinkNameExists: (FundName) => {
+    cy.expect(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).exists());
   },
 };

@@ -21,6 +21,19 @@ export default {
       });
   },
 
+  getOrderNumber: () => {
+    return cy
+      .contains('"poLineNumber":')
+      .should('exist')
+      .invoke('parent')
+      .find('[class*="string--"]')
+      .invoke('text')
+      .then((text) => {
+        const orderNumber = text.match(/"(\d+-\d+)""/);
+        return orderNumber[1].replace('-1', '');
+      });
+  },
+
   openInstanceTab: () => {
     cy.do(Button(including('Instance')).click());
   },
