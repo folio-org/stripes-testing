@@ -128,7 +128,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
   });
 
   it(
-    'C388537 Edit subfield "$0" in the unlinked fields before clicking on "Link headings" button when edit "MARC bib" (spitfire) (TaaS)',
+    'C388552 Add subfield "$9" in the fields before clicking on "Link headings" button when edit "MARC bib" with saved linked fields (spitfire) (TaaS)',
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.searchByTitle(createdRecordIDs[0]);
