@@ -48,7 +48,7 @@ export default {
     cy.expect(
       tagsAccordion
         .find(MultiSelectOption(including(specialTag)))
-        .absent() 
+        .absent()
     );
   },
   resetTagFilter: () => {
