@@ -35,23 +35,22 @@ describe('Users', () => {
     Users.deleteViaApi(existingUser.userId);
   });
 
-  it('C343214 Filter users by tags (volaris) (TaaS)', { tags: ['extendedPath', 'volaris'] }, () => {
-    // 1
+  it('C343214 Filter users by tags (volaris) (TaaS)', { tags: ['criticalPath', 'volaris'] }, () => {
     cy.login(userData.username, userData.password);
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.waitLoading();
     UsersSearchPane.searchByKeywords(existingUser.userId);
     UsersCard.waitLoading();
     UsersCard.verifyTagsNumber('0');
-    // 2
+
     UsersCard.openTagsPane();
-    // 4
+
     UsersCard.addTag(newTag);
     UsersCard.verifyTagsNumber('1');
-    // 5
+
     UsersSearchPane.resetAllFilters();
     UsersSearchResultsPane.verifySearchPaneIsEmpty();
-    // 6
+
     UsersSearchPane.chooseTagOption(newTag);
     UsersSearchResultsPane.verifySearchPaneIsEmpty(false);
     UsersSearchResultsPane.verifyResultsListHasUserWithName(existingUser.username);
