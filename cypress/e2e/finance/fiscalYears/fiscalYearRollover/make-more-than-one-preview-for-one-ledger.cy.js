@@ -14,8 +14,6 @@ import Orders from '../../../../support/fragments/orders/orders';
 import OrderLines from '../../../../support/fragments/orders/orderLines';
 import Organizations from '../../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../../../support/fragments/invoices/newInvoice';
-import Invoices from '../../../../support/fragments/invoices/invoices';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../../support/fragments/settings/tenant/locations/newLocation';
 
@@ -31,24 +29,18 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const defaultFund = { ...Funds.defaultUiFund };
-  const secondOrder = {
+  const firstOrder = {
     ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: { isSubscription: false, manualRenewal: false },
     approved: true,
     reEncumber: true,
   };
-  const firstOrder = {
-    approved: true,
-    reEncumber: true,
-  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
-  const allocatedQuantity = '100';
+  const allocatedQuantity = '1000';
   const todayDate = DateTools.getCurrentDate();
   const fileNameDate = DateTools.getCurrentDateForFileNaming();
   let user;
-  let firstOrderNumber;
   let servicePointId;
   let location;
 
@@ -83,60 +75,31 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       secondFiscalYear.id = secondFiscalYearResponse.id;
     });
 
-    // Prepare 2 Open Orders for Rollover
     Organizations.createOrganizationViaApi(organization).then((responseOrganizations) => {
       organization.id = responseOrganizations;
-      invoice.accountingCode = organization.erpCode;
-      firstOrder.orderType = 'One-time';
     });
-    secondOrder.vendor = organization.name;
     firstOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderForRollover(secondOrder).then((firstOrderResponse) => {
-      secondOrder.id = firstOrderResponse.id;
-      firstOrderNumber = firstOrderResponse.poNumber;
-      Orders.checkCreatedOrder(secondOrder);
+    Orders.createApprovedOrderForRollover(firstOrder, true).then((firstOrderResponse) => {
+      firstOrder.id = firstOrderResponse.id;
+      Orders.checkCreatedOrder(firstOrder);
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 25);
       OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
         defaultFund,
-        '40',
+        '10',
         '1',
-        '40',
+        '10',
         location.institutionId,
       );
       OrderLines.backToEditingOrder();
       Orders.openOrder();
-      cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(firstOrder).then((secondOrderResponse) => {
-        firstOrder.id = secondOrderResponse.id;
-        Orders.checkCreatedOrder(firstOrder);
-        OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(
-          defaultFund,
-          '10',
-          '1',
-          '10',
-          location.institutionId,
-        );
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
-      });
-      cy.visit(TopMenu.invoicesPath);
-      Invoices.createRolloverInvoice(invoice, organization.name);
-      Invoices.createInvoiceLineFromPol(firstOrderNumber);
-      // Need to wait, while data will be loaded
-      cy.wait(4000);
-      Invoices.approveInvoice();
-      Invoices.payInvoice();
     });
     cy.createTempUser([
       permissions.uiFinanceExecuteFiscalYearRollover.gui,
       permissions.uiFinanceViewFiscalYear.gui,
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiFinanceViewLedger.gui,
-      permissions.uiOrdersView.gui,
     ]).then((userProperties) => {
       user = userProperties;
       cy.login(userProperties.username, userProperties.password, {
@@ -152,25 +115,27 @@ describe('ui-finance: Fiscal Year Rollover', () => {
   });
 
   it(
-    'C359604 Make more than one preview for one ledger and same fiscal year with "Test rollover", check test rollover results (thunderjet) (TaaS)',
+    'C359604: Make more than one preview for one ledger and same fiscal year with "Test rollover", check test rollover results (thunderjet) (TaaS)',
     { tags: [testType.criticalPath, devTeams.thunderjet] },
     () => {
       FinanceHelp.searchByName(defaultLedger.name);
       Ledgers.selectLedger(defaultLedger.name);
       Ledgers.rollover();
-      Ledgers.fillInTestRolloverInfoCashBalance(
+      Ledgers.fillInTestRolloverInfoForOngoingOrdersWithAllocations(
         secondFiscalYear.code,
-        'Cash balance',
-        'Allocation',
+        'None',
+        'Transfer',
+        'Initial encumbrance',
       );
       Ledgers.rolloverLogs();
       Ledgers.exportRollover(todayDate);
+      cy.pause();
       Ledgers.checkDownloadedFile(
         `${fileNameDate}-result.csv`,
         defaultFund,
         secondFiscalYear,
-        '100',
-        '100',
+        '1000',
+        '1000',
         '160',
         '160',
         '160',
@@ -180,7 +145,12 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
       Ledgers.closeOpenedPage();
       Ledgers.rollover();
-      Ledgers.fillInRolloverForCashBalance(secondFiscalYear.code, 'Cash balance', 'Allocation');
+      Ledgers.fillInRolloverInfoForOngoingOrdersWithAllocations(
+        secondFiscalYear.code,
+        'None',
+        'Transfer',
+        'Initial encumbrance',
+      );
       Ledgers.closeRolloverInfo();
       Ledgers.selectFundInLedger(defaultFund.name);
       Funds.selectPlannedBudgetDetails();
