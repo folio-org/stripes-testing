@@ -1,30 +1,36 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
-  JOB_STATUS_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import TopMenu from '../../../support/fragments/topMenu';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import JsonScreenView from '../../../support/fragments/data_import/logs/jsonScreenView';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -77,22 +83,23 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      cy.wrap(instanceHrids).each((hrid) => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
-          (instance) => {
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          },
-        );
+      cy.getAdminToken().then(() => {
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        cy.wrap(instanceHrids).each((hrid) => {
+          cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` }).then(
+            (instance) => {
+              InventoryInstance.deleteInstanceViaApi(instance.id);
+            },
+          );
+        });
       });
     });
 
     it(
       'C11087 Instance field mapping: Confirm the "suppress" checkboxes when creating (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const marcFileName = `C11087 autotestFile_${getRandomPostfix()}.mrc`;
 
@@ -130,7 +137,7 @@ describe('data-import', () => {
 
     it(
       'C11088 Instance field mapping: Confirm the "suppress" checkboxes when updating (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         const marcFileName = `C11088 autotestFile_${getRandomPostfix()}.mrc`;
         const editedFileName = `C11088 editedAutotestFile_${getRandomPostfix()}.mrc`;
@@ -174,7 +181,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InstanceRecordView.verifyInstancePaneExists();
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHrid = initialInstanceHrId;
@@ -245,10 +252,10 @@ describe('data-import', () => {
         });
 
         // delete profiles
-        JobProfiles.deleteJobProfile(jobProfileUpdate.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfileUpdate.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfileUpdate.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileUpdate.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileUpdate.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileUpdate.name);
         FileManager.deleteFile(`cypress/fixtures/${editedFileName}`);
       },
     );

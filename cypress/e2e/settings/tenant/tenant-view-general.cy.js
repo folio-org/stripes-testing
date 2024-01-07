@@ -1,12 +1,12 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import { Permissions } from '../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Addresses from '../../../support/fragments/settings/tenant/general/addresses';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import SSOSettings from '../../../support/fragments/settings/tenant/general/ssoSettings';
 import Localication from '../../../support/fragments/settings/tenant/general/localication';
+import SSOSettings from '../../../support/fragments/settings/tenant/general/ssoSettings';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Settings: Tenant', () => {
   const testData = {
@@ -49,7 +49,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C410753 Settings (tenant): View -- General (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       // Click on "Addresses" in the General subsection.
       TenantPane.selectTenant(TENANTS.ADDRESSES);

@@ -1,5 +1,6 @@
 import {
   Button,
+  RepeatableFieldItem,
   Section,
   Select,
   Selection,
@@ -11,6 +12,8 @@ import {
   matching,
 } from '../../../../interactors';
 import OrderStates from './orderStates';
+import SelectInstanceModal from './modals/selectInstanceModal';
+import SelectLocationModal from './modals/selectLocationModal';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const orderLineEditFormRoot = Section({ id: 'pane-poLineForm' });
@@ -19,15 +22,22 @@ const orderLineDetailsSection = orderLineEditFormRoot.find(Section({ id: 'lineDe
 const vendorDetailsSection = orderLineEditFormRoot.find(Section({ id: 'vendor' }));
 const ongoingOrderSection = orderLineEditFormRoot.find(Section({ id: 'ongoingOrder' }));
 const costDetailsSection = orderLineEditFormRoot.find(Section({ id: 'costDetails' }));
+const fundDistributionDetailsSection = orderLineEditFormRoot.find(
+  Section({ id: 'fundDistributionAccordion' }),
+);
 const locationSection = orderLineEditFormRoot.find(Section({ id: 'location' }));
-
-const cancelButtom = Button('Cancel');
-const saveButtom = Button('Save & close');
-const saveAndOpenOrderButtom = Button('Save & open order');
+const cancelButton = Button('Cancel');
+const saveButton = Button('Save & close');
+const saveAndOpenOrderButton = Button('Save & open order');
+const publicationDate = TextField({ name: 'publicationDate' });
+const publicher = TextField({ name: 'publisher' });
+const edition = TextField({ name: 'edition' });
 
 const itemDetailsFields = {
   title: itemDetailsSection.find(TextField({ name: 'titleOrPackage' })),
   receivingNote: itemDetailsSection.find(TextArea({ name: 'details.receivingNote' })),
+  subscriptionFrom: itemDetailsSection.find(TextField({ name: 'details.subscriptionFrom' })),
+  subscriptionTo: itemDetailsSection.find(TextField({ name: 'details.subscriptionTo' })),
 };
 
 const orderLineFields = {
@@ -50,9 +60,15 @@ const costDetailsFields = {
 };
 
 const buttons = {
-  Cancel: cancelButtom,
-  'Save & close': saveButtom,
-  'Save & open order': saveAndOpenOrderButtom,
+  Cancel: cancelButton,
+  'Save & close': saveButton,
+  'Save & open order': saveAndOpenOrderButton,
+};
+const disabledButtons = {
+  Title: itemDetailsFields.title,
+  'Publication date': publicationDate,
+  Publisher: publicher,
+  Edition: edition,
 };
 
 export default {
@@ -69,8 +85,23 @@ export default {
       cy.expect(section[label].has(conditions));
     });
   },
+  checkItemDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: itemDetailsFields });
+  },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
+  },
+  checkNotAvailableInstanceData(fields = []) {
+    this.checkFieldsConditions({ fields, section: disabledButtons });
+  },
+  checkLocationDetailsSection({ rows = [] } = {}) {
+    if (!rows.length) {
+      cy.expect([
+        locationSection.find(Selection({ name: 'locations[0].locationId' })).exists(),
+        locationSection.find(TextField({ name: 'locations[0].quantityPhysical' })).exists(),
+        locationSection.find(TextField({ name: 'locations[0].quantityElectronic' })).exists(),
+      ]);
+    }
   },
   fillOrderLineFields(orderLine) {
     if (orderLine.itemDetails) {
@@ -78,6 +109,9 @@ export default {
     }
     if (orderLine.poLineDetails) {
       this.fillPoLineDetails(orderLine.poLineDetails);
+    }
+    if (orderLine.ongoingOrder) {
+      this.fillOngoingOrderInformation(orderLine.ongoingOrder);
     }
     if (orderLine.vendorDetails) {
       this.fillVendorDetails(orderLine.vendorDetails);
@@ -95,6 +129,25 @@ export default {
       cy.do(orderLineFields.paymentStatus.choose(orderLine.paymentStatus));
     }
   },
+  clickTitleLookUpButton() {
+    cy.do(itemDetailsSection.find(Button('Title look-up')).click());
+    SelectInstanceModal.waitLoading();
+    SelectInstanceModal.verifyModalView();
+
+    return SelectInstanceModal;
+  },
+  clickLocationLookUpButton() {
+    cy.do(locationSection.find(Button('Location look-up')).click());
+    SelectLocationModal.waitLoading();
+    SelectLocationModal.verifyModalView();
+
+    return SelectLocationModal;
+  },
+  fillItemDetailsTitle({ instanceTitle }) {
+    this.clickTitleLookUpButton();
+    SelectInstanceModal.searchByName(instanceTitle);
+    SelectInstanceModal.selectInstance(instanceTitle);
+  },
   fillItemDetails(itemDetails) {
     Object.entries(itemDetails).forEach(([key, value]) => {
       cy.do(itemDetailsFields[key].fillIn(value));
@@ -107,6 +160,11 @@ export default {
     }
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
+    }
+  },
+  fillOngoingOrderInformation({ renewalNote }) {
+    if (renewalNote) {
+      cy.do(ongoingInformationFields['Renewal note'].fillIn(renewalNote));
     }
   },
   fillVendorDetails(vendorDetails) {
@@ -128,21 +186,68 @@ export default {
       });
     });
   },
-  addFundDistribution() {
+  searchLocationByName({ name, checkOptions = true }) {
+    this.filterDropDownValue('Name (code)', name);
+
+    if (checkOptions) {
+      cy.then(() => SelectionList().optionList()).then((options) => {
+        options.forEach((option) => cy.expect(option).to.include(name));
+      });
+    }
+  },
+  clickAddLocationButton() {
+    cy.do(Button('Add location').click());
+  },
+  clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
   },
-  selectDropDownValue(label, option) {
+  addFundDistribution({ fund, index, amount }) {
+    this.clickAddFundDistributionButton();
+    this.selectFundDistribution(fund, index);
+    this.setFundDistributionValue(amount, index);
+    cy.wait(2000);
+  },
+  updateFundDistribution({ fund, index }) {
+    this.selectFundDistribution(fund, index);
+  },
+  deleteFundDistribution({ index = 0 } = {}) {
+    cy.do(
+      fundDistributionDetailsSection
+        .find(RepeatableFieldItem({ index }))
+        .find(Button({ icon: 'trash' }))
+        .click(),
+    );
+    cy.wait(2000);
+  },
+  filterDropDownValue(label, option, index = 0) {
     cy.do([
-      Selection(including(label)).open(),
+      RepeatableFieldItem({ index })
+        .find(Selection(including(label)))
+        .open(),
+      SelectionList().filter(option),
+    ]);
+  },
+  selectDropDownValue(label, option, index = 0) {
+    cy.do([
+      RepeatableFieldItem({ index })
+        .find(Selection(including(label)))
+        .open(),
       SelectionList().filter(option),
       SelectionList().select(including(option)),
     ]);
   },
-  selectFundDistribution(fund) {
-    this.selectDropDownValue('Fund ID', fund);
+  selectFundDistribution(fund, index) {
+    this.selectDropDownValue('Fund ID', fund, index);
   },
-  selectExpenseClass(expenseClass) {
-    this.selectDropDownValue('Expense class', expenseClass);
+  selectExpenseClass(expenseClass, index) {
+    this.selectDropDownValue('Expense class', expenseClass, index);
+  },
+  setFundDistributionValue(value, index) {
+    cy.do(
+      RepeatableFieldItem({ index })
+        .find(TextField({ label: including('Value') }))
+        .fillIn(value),
+    );
   },
   checkValidatorError({ locationDetails } = {}) {
     if (locationDetails) {
@@ -153,13 +258,17 @@ export default {
       );
     }
   },
-  clickCancelButton() {
-    cy.do(cancelButtom.click());
-    cy.expect(orderLineEditFormRoot.absent());
+  clickCancelButton(shouldModalExsist = false) {
+    cy.expect(cancelButton.has({ disabled: false }));
+    cy.do(cancelButton.click());
+
+    if (!shouldModalExsist) {
+      cy.expect(orderLineEditFormRoot.absent());
+    }
   },
   clickSaveButton({ orderLineCreated = false, orderLineUpdated = true } = {}) {
-    cy.expect(saveButtom.has({ disabled: false }));
-    cy.do(saveButtom.click());
+    cy.expect(saveButton.has({ disabled: false }));
+    cy.do(saveButton.click());
 
     if (orderLineCreated) {
       InteractorsTools.checkCalloutMessage(
@@ -175,8 +284,8 @@ export default {
     cy.wait(2000);
   },
   clickSaveAndOpenOrderButton({ orderOpened = true, orderLineCreated = true } = {}) {
-    cy.expect(saveAndOpenOrderButtom.has({ disabled: false }));
-    cy.do(saveAndOpenOrderButtom.click());
+    cy.expect(saveAndOpenOrderButton.has({ disabled: false }));
+    cy.do(saveAndOpenOrderButton.click());
 
     if (orderOpened) {
       InteractorsTools.checkCalloutMessage(
@@ -192,5 +301,8 @@ export default {
 
     // wait for changes to be applied
     cy.wait(2000);
+  },
+  verifyOrderLineEditFormClosed() {
+    cy.expect(orderLineEditFormRoot.absent());
   },
 };

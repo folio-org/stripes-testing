@@ -1,8 +1,8 @@
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import TopMenu from '../../../support/fragments/topMenu';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
 describe('inventory', () => {
@@ -10,10 +10,14 @@ describe('inventory', () => {
     const firstCallNumber = 'QS 11 .GA1 E99 2005';
     const secondCallNumber = 'D15.H63 A3 2002';
     const testData = {
-      folioInstances: InventoryInstances.generateFolioInstances({
-        count: 2,
-        callNumbers: [firstCallNumber, secondCallNumber],
-      }),
+      folioInstances: [
+        InventoryInstances.generateFolioInstances({
+          holdings: [{ callNumber: firstCallNumber }],
+        })[0],
+        InventoryInstances.generateFolioInstances({
+          holdings: [{ callNumber: secondCallNumber }],
+        })[0],
+      ],
       servicePoint: ServicePoints.getDefaultServicePoint(),
     };
 
@@ -55,7 +59,7 @@ describe('inventory', () => {
 
     it(
       'C407697 Browse for Call number without specified call number type, which match with any call number type format (spitfire) (TaaS)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         // Click on the "Select a browse option" dropdown and select "Call numbers (all)" browse option.
         InventorySearchAndFilter.selectBrowseCallNumbers();

@@ -1,4 +1,3 @@
-import testTypes from '../../support/dictionary/testTypes';
 import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import marcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import marcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
@@ -33,7 +32,7 @@ describe.skip('Feature MARC Authority', () => {
 
   it(
     'C376987 User can print ""MARC authority"" record (spitfire)',
-    { tags: [testTypes.ideaLabsTests] },
+    { tags: ['ideaLabsTests'] },
     () => {
       cy.visit(topMenu.marcAuthorities);
       marcAuthorities.searchBeats(testData.marcRecord);

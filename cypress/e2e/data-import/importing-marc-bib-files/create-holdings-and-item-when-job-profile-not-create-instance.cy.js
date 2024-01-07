@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
@@ -9,16 +9,23 @@ import {
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -97,7 +104,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileName);
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           instanceHrid = initialInstanceHrId;
         });
@@ -105,24 +112,27 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // delete generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      collectionOfMappingAndActionProfiles.forEach((profile) => {
-        ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+      cy.getAdminToken().then(() => {
+        // delete generated profiles
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        collectionOfMappingAndActionProfiles.forEach((profile) => {
+          SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
+        });
+        cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
+          (instance) => {
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          },
+        );
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` }).then(
-        (instance) => {
-          cy.deleteItemViaApi(instance.items[0].id);
-          cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-          InventoryInstance.deleteInstanceViaApi(instance.id);
-        },
-      );
     });
 
     const createItemMappingProfile = (itemMappingProfile) => {
@@ -145,7 +155,7 @@ describe('data-import', () => {
 
     it(
       'C368009 Verify that no created SRS is present when job profile does not have create instance action: Case 2: Create holdings and item (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.parallel] },
+      { tags: ['criticalPath', 'folijet+', 'parallel'] },
       () => {
         // create mapping profiles
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -211,17 +221,17 @@ describe('data-import', () => {
             FileDetails.columnNameInResultList.holdings,
             FileDetails.columnNameInResultList.item,
           ].forEach((columnName) => {
-            FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+            FileDetails.checkStatusInColumn(RECORD_STATUSES.CREATED, columnName);
           });
           FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 0);
           FileDetails.checkItemQuantityInSummaryTable(quantityOfItems, 0);
 
           // check created items
-          FileDetails.openHoldingsInInventory('Created');
+          FileDetails.openHoldingsInInventory(RECORD_STATUSES.CREATED);
           HoldingsRecordView.checkPermanentLocation(LOCATION_NAMES.ANNEX_UI);
           cy.wait(2000);
           cy.go('back');
-          FileDetails.openItemInInventory('Created');
+          FileDetails.openItemInInventory(RECORD_STATUSES.CREATED);
           ItemRecordView.verifyMaterialType(MATERIAL_TYPE_NAMES.ELECTRONIC_RESOURCE);
           ItemRecordView.verifyPermanentLoanType(LOAN_TYPE_NAMES.CAN_CIRCULATE);
           ItemRecordView.verifyItemStatus(

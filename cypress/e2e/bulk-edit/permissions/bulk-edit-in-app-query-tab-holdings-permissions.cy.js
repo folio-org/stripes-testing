@@ -1,7 +1,5 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
-import devTeams from '../../../support/dictionary/devTeams';
 import Users from '../../../support/fragments/users/users';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
@@ -36,7 +34,7 @@ describe('bulk-edit', () => {
 
     it(
       'C413373 Verify Query tab permissions (In app holdings) (firebird)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query', 'Logs');

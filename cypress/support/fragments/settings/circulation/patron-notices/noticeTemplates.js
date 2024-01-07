@@ -36,13 +36,13 @@ export default {
   },
   collapseAll() {
     cy.do(Button('Collapse all').click());
-    cy.wrap(['General information', 'Email']).each((accordion) => {
+    cy.wrap(['General information', 'Email or print']).each((accordion) => {
       cy.expect(Button(accordion).has({ ariaExpanded: 'false' }));
     });
   },
   expandAll() {
     cy.do(Button('Expand all').click());
-    cy.wrap(['General information', 'Email']).each((accordion) => {
+    cy.wrap(['General information', 'Email or print']).each((accordion) => {
       cy.expect(Button(accordion).has({ ariaExpanded: 'true' }));
     });
   },

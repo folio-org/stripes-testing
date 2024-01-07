@@ -1,11 +1,12 @@
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import getRandomStringCode from '../../../support/utils/genereteTextCode';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -41,15 +42,16 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      MatchProfiles.deleteMatchProfile(duplicatedMatchProfile.profileName);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(duplicatedMatchProfile.profileName);
+      });
     });
 
     it(
       'C2340 Duplicate an existing match profile (folijet) (TaaS)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         MatchProfileView.duplicate();
         NewMatchProfile.selectMatchCriterion(duplicatedMatchProfile.matchCriterion);

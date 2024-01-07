@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
+import { Permissions } from '../../../support/dictionary';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import MarcAuthority from '../../../support/fragments/marcAuthority/marcAuthority';
@@ -8,7 +8,12 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import { ACCEPTED_DATA_TYPE_NAMES, JOB_STATUS_NAMES } from '../../../support/constants';
+import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
+import {
+  ACCEPTED_DATA_TYPE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
+} from '../../../support/constants';
 
 describe('data-import', () => {
   describe('Importing MARC Authority files', { retries: 2 }, () => {
@@ -56,13 +61,13 @@ describe('data-import', () => {
         MarcAuthority.deleteViaAPI(id);
       });
 
-      JobProfiles.deleteJobProfile(createdJobProfile.profileName);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(createdJobProfile.profileName);
       Users.deleteViaApi(testData.userProperties.userId);
     });
 
     it(
       'C350666 Create a MARC authority record via data import (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         DataImport.uploadFile('test-auth-file.mrc', fileName);
         JobProfiles.waitFileIsUploaded();
@@ -75,14 +80,14 @@ describe('data-import', () => {
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityIDs.push(link.split('/')[5]);
         });
-        Logs.goToTitleLink('Created');
+        Logs.goToTitleLink(RECORD_STATUSES.CREATED);
         MarcAuthority.contains(ACCEPTED_DATA_TYPE_NAMES.MARC);
       },
     );
 
     it(
       'C350668 Update a MARC authority record via data import. Record match with 999 ff $s (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         DataImport.uploadFile('test-auth-file.mrc', fileName);
         JobProfiles.waitFileIsUploaded();
@@ -95,7 +100,7 @@ describe('data-import', () => {
         Logs.getCreatedItemsID().then((link) => {
           createdAuthorityIDs.push(link.split('/')[5]);
         });
-        Logs.goToTitleLink('Created');
+        Logs.goToTitleLink(RECORD_STATUSES.CREATED);
         MarcAuthority.contains(ACCEPTED_DATA_TYPE_NAMES.MARC);
       },
     );

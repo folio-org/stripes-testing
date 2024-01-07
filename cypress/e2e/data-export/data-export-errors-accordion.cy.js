@@ -1,13 +1,12 @@
-import TopMenu from '../../support/fragments/topMenu';
-import FileManager from '../../support/utils/fileManager';
-import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportViewAllLogs from '../../support/fragments/data-export/dataExportViewAllLogs';
-import devTeams from '../../support/dictionary/devTeams';
+import ExportFileHelper from '../../support/fragments/data-export/exportFile';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import FileManager from '../../support/utils/fileManager';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 let user;
 const item = {
@@ -59,7 +58,7 @@ describe.skip('Data-export', () => {
 
   it(
     'C404374 Verify "Errors" accordion in the Search & filter pane on the "View all" screen (firebird) (TaaS)',
-    { tags: [devTeams.firebird] },
+    { tags: ['firebird'] },
     () => {
       DataExportViewAllLogs.openAllJobLogs();
 

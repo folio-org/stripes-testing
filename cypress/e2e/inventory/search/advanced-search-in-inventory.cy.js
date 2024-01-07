@@ -1,19 +1,16 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
-import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
-import Parallelization from '../../../support/dictionary/parallelization';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Inventory -> Advanced search', () => {
   const testData = {
@@ -77,7 +74,7 @@ describe('Inventory -> Advanced search', () => {
           cy.visit(TopMenu.dataImportPath);
         });
         cy.visit(TopMenu.inventoryPath).then(() => {
-          InventoryInstance.searchByTitle(createdRecordIDs[3]);
+          InventoryInstances.searchByTitle(createdRecordIDs[3]);
           InventoryInstances.selectInstance();
           InventoryInstance.pressAddHoldingsButton();
           InventoryNewHoldings.fillRequiredFields();
@@ -113,7 +110,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400610 Search Instances using advanced search with "AND" operator (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.checkAdvSearchInstancesModalFields(0);
@@ -158,7 +155,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C400616 Search Instances using advanced search with a combination of operators (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(
@@ -225,7 +222,7 @@ describe('Inventory -> Advanced search', () => {
 
   it(
     'C414977 Searching Instances using advanced search with "Exact phrase" option returns correct results (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire, Parallelization.nonParallel] },
+    { tags: ['criticalPath', 'spitfire', 'nonParallel'] },
     () => {
       InventoryInstances.clickAdvSearchButton();
       InventoryInstances.fillAdvSearchRow(

@@ -1,13 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import Users from '../../../support/fragments/users/users';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
-import MatchProfileEdit from '../../../support/fragments/data_import/match_profiles/matchProfileEdit';
-import InteractorsTools from '../../../support/utils/interactorsTools';
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
+import MatchProfileEdit from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileEditForm';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -37,14 +38,15 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      Users.deleteViaApi(user.userId);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      cy.getAdminToken().then(() => {
+        Users.deleteViaApi(user.userId);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+      });
     });
 
     it(
       'C2339 Edit an existing match profile (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         MatchProfiles.verifyListOfExistingProfilesIsDisplayed();
         MatchProfiles.search(matchProfile.profileName);
@@ -52,7 +54,7 @@ describe('data-import', () => {
         MatchProfileView.edit();
         MatchProfileEdit.verifyScreenName(matchProfile.profileName);
         MatchProfileEdit.changeExistingInstanceRecordField();
-        MatchProfileEdit.save();
+        MatchProfileEdit.clickSaveAndCloseButton();
         MatchProfiles.checkCalloutMessage(calloutMessage);
         MatchProfileView.verifyExistingInstanceRecordField();
       },

@@ -1,26 +1,25 @@
-import { TestTypes, DevTeams, Permissions } from '../../support/dictionary';
-import { REQUEST_TYPES, FULFILMENT_PREFERENCES, REQUEST_LEVELS } from '../../support/constants';
-import UserEdit from '../../support/fragments/users/userEdit';
+import { FULFILMENT_PREFERENCES, REQUEST_LEVELS, REQUEST_TYPES } from '../../support/constants';
+import { Permissions } from '../../support/dictionary';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import TopMenu from '../../support/fragments/topMenu';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import getRandomPostfix from '../../support/utils/stringTools';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
-import Requests from '../../support/fragments/requests/requests';
-import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
-import RequestDetail from '../../support/fragments/requests/requestDetail';
 import MoveRequest from '../../support/fragments/requests/move-request';
+import RequestDetail from '../../support/fragments/requests/requestDetail';
+import Requests from '../../support/fragments/requests/requests';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import UserEdit from '../../support/fragments/users/userEdit';
+import Users from '../../support/fragments/users/users';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Title Level Request', () => {
   let userData = {};
   let requestId;
   const testData = {
     folioInstances: InventoryInstances.generateFolioInstances({
-      barcodes: [generateUniqueItemBarcodeWithShift(1), generateUniqueItemBarcodeWithShift(2)],
+      itemsCount: 2,
     }),
     servicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(),
   };
@@ -92,7 +91,7 @@ describe('Title Level Request', () => {
 
   it(
     'C353976: Check that user can move Title Level Request from one Item to another (vega)(TaaS)',
-    { tags: [TestTypes.criticalPath, DevTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       testData.folioInstances.forEach((item) => {
         item.barcodes.forEach((barcode) => {

@@ -2,8 +2,6 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
 
 let user;
 let userWithQueryView;
@@ -35,7 +33,7 @@ describe('bulk-edit', () => {
 
     it(
       'C347868 Verify that user without Bulk Edit: View permissions cannot access Bulk Edit app (firebird)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.login(user.username, user.password);
         cy.visit(TopMenu.bulkEditPath);
@@ -45,7 +43,7 @@ describe('bulk-edit', () => {
 
     it(
       'C413372 Verify Query tab permissions without Inventory and Users permissions (firebird)',
-      { tags: [testTypes.extendedPath, devTeams.firebird] },
+      { tags: ['extendedPath', 'firebird'] },
       () => {
         cy.login(userWithQueryView.username, userWithQueryView.password, {
           path: TopMenu.bulkEditPath,

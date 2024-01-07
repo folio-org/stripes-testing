@@ -1,29 +1,34 @@
-import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import DataImport from '../../../support/fragments/data_import/dataImport';
-import Logs from '../../../support/fragments/data_import/logs/logs';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
-import FileManager from '../../../support/utils/fileManager';
-import getRandomPostfix from '../../../support/utils/stringTools';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import TopMenu from '../../../support/fragments/topMenu';
-import { DevTeams, TestTypes, Parallelization } from '../../../support/dictionary';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import {
-  LOCATION_NAMES,
-  FOLIO_RECORD_TYPE,
   ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
+  FOLIO_RECORD_TYPE,
+  LOCATION_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('data-import', () => {
+describe('data-import', { retries: 3 }, () => {
   describe('End to end scenarios', () => {
     // unique file name to upload
     const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
@@ -82,15 +87,16 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      // clean up generated profiles
-      JobProfiles.deleteJobProfile(jobProfile.profileName);
-      JobProfiles.deleteJobProfile(jobProfileForExport.profileName);
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-      ActionProfiles.deleteActionProfile(actionProfile.name);
-      ActionProfiles.deleteActionProfile(actionProfileForExport.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfile.name);
-      FieldMappingProfileView.deleteViaApi(mappingProfileForExport.name);
+      cy.getAdminToken().then(() => {
+        // clean up generated profiles
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileForExport.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileForExport.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileForExport.name);
+      });
       // delete created files in fixtures
       FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
       FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
@@ -98,7 +104,7 @@ describe('data-import', () => {
 
     it(
       'C343343 MARC file import with matching for 999 ff field (folijet)',
-      { tags: [TestTypes.smoke, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['smoke', 'folijet', 'nonParallel'] },
       () => {
         // create Field mapping profile for export
         cy.visit(SettingsMenu.mappingProfilePath);
@@ -129,12 +135,12 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameForMarcFile);
         Logs.openFileDetails(nameForMarcFile);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.created,
+          RECORD_STATUSES.CREATED,
           FileDetails.columnNameInResultList.instance,
         );
 
         // open Instance for getting hrid
-        FileDetails.openInstanceInInventory('Created');
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
         InventoryInstance.getAssignedHRID().then((initialInstanceHrId) => {
           const instanceHRID = initialInstanceHrId;
 
@@ -145,15 +151,16 @@ describe('data-import', () => {
           InventorySearchAndFilter.saveUUIDs();
           ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
           FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-          cy.visit(TopMenu.dataExportPath);
 
           // download exported marc file
-          ExportFile.uploadFile(nameForCSVFile);
-          ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
-          ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
-          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-
-          cy.log('#####End Of Export#####');
+          cy.visit(TopMenu.dataExportPath);
+          cy.getAdminToken().then(() => {
+            ExportFile.uploadFile(nameForCSVFile);
+            ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+            ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
+            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+            cy.log('#####End Of Export#####');
+          });
 
           // create Match profile
           cy.visit(SettingsMenu.matchProfilePath);
@@ -188,7 +195,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsImported(nameForExportedMarcFile);
           Logs.openFileDetails(nameForExportedMarcFile);
           FileDetails.checkStatusInColumn(
-            FileDetails.status.updated,
+            RECORD_STATUSES.UPDATED,
             FileDetails.columnNameInResultList.instance,
           );
 

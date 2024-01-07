@@ -1,26 +1,24 @@
 import permissions from '../../support/dictionary/permissions';
-import testType from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import getRandomPostfix from '../../support/utils/stringTools';
-import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import TopMenu from '../../support/fragments/topMenu';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
-import Users from '../../support/fragments/users/users';
-import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
-import DateTools from '../../support/utils/dateTools';
-import NewOrder from '../../support/fragments/orders/newOrder';
-import Orders from '../../support/fragments/orders/orders';
-import OrderLines from '../../support/fragments/orders/orderLines';
-import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Funds from '../../support/fragments/finance/funds/funds';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Invoices from '../../support/fragments/invoices/invoices';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Orders from '../../support/fragments/orders/orders';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import Organizations from '../../support/fragments/organizations/organizations';
 import NewExpenceClass from '../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../support/fragments/settings/finance/settingsFinance';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
+import Users from '../../support/fragments/users/users';
+import DateTools from '../../support/utils/dateTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Invoices', () => {
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
@@ -187,7 +185,7 @@ describe('Invoices', () => {
 
   it(
     'C388645 Save invoice fiscal year after fund distribution change if FY was undefined and pay invoice against previous FY (thunderjet) (TaaS)',
-    { tags: [testType.criticalPath, devTeams.thunderjet] },
+    { tags: ['criticalPath', 'thunderjet'] },
     () => {
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);

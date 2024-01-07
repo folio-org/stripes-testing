@@ -1,17 +1,15 @@
-import TopMenu from '../../support/fragments/topMenu';
-import TestTypes from '../../support/dictionary/testTypes';
 import { Pane } from '../../../interactors';
-import devTeams from '../../support/dictionary/devTeams';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('circulation-log', () => {
   beforeEach('login', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
   });
 
   // TODO: think about redesign and moving checking inside another test
   it(
     'C15483 Select and open the Circulation log app (firebird)',
-    { tags: [TestTypes.smoke, devTeams.firebird] },
+    { tags: ['smoke', 'firebird'] },
     () => {
       cy.visit(TopMenu.circulationLogPath);
 

@@ -1,12 +1,12 @@
 import uuid from 'uuid';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
-import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
-import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
-import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
+import { Permissions } from '../../../support/dictionary';
 import { Locations, ServicePoints } from '../../../support/fragments/settings/tenant';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Campuses from '../../../support/fragments/settings/tenant/location-setup/campuses';
 import Institutions from '../../../support/fragments/settings/tenant/location-setup/institutions';
+import Libraries from '../../../support/fragments/settings/tenant/location-setup/libraries';
+import TenantPane, { TENANTS } from '../../../support/fragments/settings/tenant/tenantPane';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Settings: Tenant', () => {
@@ -124,7 +124,7 @@ describe('Settings: Tenant', () => {
 
   it(
     'C399080 Verify that hyperlink  "# of Libraries" navigates to a list of Libraries (firebird) (TaaS)',
-    { tags: [TestTypes.extendedPath, DevTeams.firebird] },
+    { tags: ['extendedPath', 'firebird'] },
     () => {
       cy.intercept('/location-units/institutions*', { locinsts: testData.institutions });
       cy.visit(SettingsMenu.tenantCampusesPath);

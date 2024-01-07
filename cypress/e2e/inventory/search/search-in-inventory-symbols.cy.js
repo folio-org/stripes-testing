@@ -1,16 +1,14 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import TestTypes from '../../../support/dictionary/testTypes';
-import DevTeams from '../../../support/dictionary/devTeams';
+import { JOB_STATUS_NAMES } from '../../../support/constants';
 import Permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import { JOB_STATUS_NAMES } from '../../../support/constants';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('Search in Inventory', () => {
   const testData = {
@@ -133,10 +131,10 @@ describe('Search in Inventory', () => {
 
   it(
     'C369042 Search for "Instance" with "diacritic - Korean" symbol in the "Resource title" field using "Keyword" search option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       testData.searchQueries.forEach((query, index) => {
-        InventoryInstance.searchByTitle(query);
+        InventoryInstances.searchByTitle(query);
         // wait for search results to be updated
         cy.wait(1500);
         expectedTitles[index].forEach((expectedTitle) => {
@@ -149,11 +147,11 @@ describe('Search in Inventory', () => {
 
   it(
     'C368038 Search for "Instance" by "Alternative title" field with special characters using "Keyword" search option (spitfire)',
-    { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+    { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventoryInstances.waitContentLoading();
       expectedTitlesC368038.forEach((expectedTitlesSet, index) => {
-        InventoryInstance.searchByTitle(testData.searchQueriesC368038[index]);
+        InventoryInstances.searchByTitle(testData.searchQueriesC368038[index]);
         // wait for search results to be updated
         cy.wait(1500);
         expectedTitlesSet.forEach((expectedTitle) => {
@@ -161,7 +159,7 @@ describe('Search in Inventory', () => {
         });
         InventorySearchAndFilter.checkRowsCount(expectedTitlesSet.length);
       });
-      InventoryInstance.searchByTitle(testData.searchQueriesC368038[8]);
+      InventoryInstances.searchByTitle(testData.searchQueriesC368038[8]);
       // wait for search results to be updated
       cy.wait(1500);
       InventorySearchAndFilter.verifyNoRecordsFound();

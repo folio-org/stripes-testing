@@ -1,15 +1,13 @@
-import { getTestEntityValue } from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
-import devTeams from '../../../support/dictionary/devTeams';
-import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
 import ModalSelectTransformations from '../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
-import DeleteFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/deleteFieldMappingProfile';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import { getTestEntityValue } from '../../../support/utils/stringTools';
 
 let user;
 const fieldMappingProfileName = getTestEntityValue('fieldMappingProfile');
@@ -42,7 +40,7 @@ describe('settings: data-export', () => {
 
   it(
     'C15821 Create a new mapping profile for MARC bib record with holdings and items data inluded (firebird)',
-    { tags: [testTypes.criticalPath, devTeams.firebird] },
+    { tags: ['criticalPath', 'firebird'] },
     () => {
       ExportFieldMappingProfiles.goToFieldMappingProfilesTab();
       ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, [

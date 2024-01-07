@@ -89,7 +89,7 @@ export default {
   selectFundDistribution(fund) {
     this.selectDropDownValue('Fund ID', fund);
   },
-  addFundDistribution() {
+  clickAddFundDistributionButton() {
     cy.do(Button('Add fund distribution').click());
   },
   fillInvoiceLineFields(invoiceLine) {
@@ -122,11 +122,11 @@ export default {
     cy.do(cancelButtom.click());
     cy.expect(invoiceLineEditFormRoot.absent());
   },
-  clickSaveButton({ checkCalloutMessage = true } = {}) {
+  clickSaveButton({ invoiceLineSaved = true } = {}) {
     cy.expect(saveButton.has({ disabled: false }));
     cy.do(saveButton.click());
 
-    if (checkCalloutMessage) {
+    if (invoiceLineSaved) {
       InteractorsTools.checkCalloutMessage(InvoiceStates.invoiceLineCreatedMessage);
     }
     // wait for changes to be applied

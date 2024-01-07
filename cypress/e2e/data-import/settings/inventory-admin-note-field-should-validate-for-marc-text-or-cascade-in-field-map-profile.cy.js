@@ -1,17 +1,18 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
   FOLIO_RECORD_TYPE,
-  LOCATION_NAMES,
   ITEM_STATUS_NAMES,
   LOAN_TYPE_NAMES,
+  LOCATION_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Permissions } from '../../../support/dictionary';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -66,16 +67,17 @@ describe('data-import', () => {
     });
 
     after('delete test data', () => {
-      cy.getAdminToken();
-      collectionOfMappingProfiles.forEach((profile) => {
-        FieldMappingProfileView.deleteViaApi(profile.name);
+      cy.getAdminToken().then(() => {
+        collectionOfMappingProfiles.forEach((profile) => {
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(profile.name);
+        });
+        Users.deleteViaApi(user.userId);
       });
-      Users.deleteViaApi(user.userId);
     });
 
     it(
       'C356832 Inventory Admin note field should validate for MARC, text, or cascade in the field mapping profile (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet] },
+      { tags: ['criticalPath', 'folijet'] },
       () => {
         // create mapping profile for instance
         FieldMappingProfiles.openNewMappingProfileForm();

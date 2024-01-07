@@ -1,4 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -33,17 +32,13 @@ describe.skip('ui-organizations: Organizations creation', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 
-  it(
-    'C732 Assign categories to contact person (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
-      organizations.selectOrganization(newOrganization.name);
-      organizations.editOrganization();
-      organizations.openContactPeopleSection();
-      organizations.selectContact(addContactPeople);
-      organizations.editOrganization();
-      organizations.selectAndVerifyCategories(addCategory);
-    },
-  );
+  it('C732 Assign categories to contact person (thunderjet)', { tags: ['ideaLabsTests'] }, () => {
+    organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
+    organizations.selectOrganization(newOrganization.name);
+    organizations.editOrganization();
+    organizations.openContactPeopleSection();
+    organizations.selectContact(addContactPeople);
+    organizations.editOrganization();
+    organizations.selectAndVerifyCategories(addCategory);
+  });
 });

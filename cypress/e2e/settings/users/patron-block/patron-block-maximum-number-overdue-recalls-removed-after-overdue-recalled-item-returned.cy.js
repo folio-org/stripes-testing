@@ -1,36 +1,34 @@
-import uuid from 'uuid';
 import moment from 'moment';
+import uuid from 'uuid';
 import {
   FULFILMENT_PREFERENCES,
   ITEM_STATUS_NAMES,
   REQUEST_LEVELS,
   REQUEST_TYPES,
 } from '../../../../support/constants';
-import TestTypes from '../../../../support/dictionary/testTypes';
-import devTeams from '../../../../support/dictionary/devTeams';
 import permissions from '../../../../support/dictionary/permissions';
-import UserEdit from '../../../../support/fragments/users/userEdit';
-import TopMenu from '../../../../support/fragments/topMenu';
-import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import generateUniqueItemBarcodeWithShift from '../../../../support/utils/generateUniqueItemBarcodeWithShift';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
-import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
-import Users from '../../../../support/fragments/users/users';
-import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../../../support/fragments/checkout/checkout';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
 import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
+import RequestPolicy from '../../../../support/fragments/circulation/request-policy';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import Requests from '../../../../support/fragments/requests/requests';
+import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
-import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-import UsersCard from '../../../../support/fragments/users/usersCard';
-import Requests from '../../../../support/fragments/requests/requests';
-import RequestPolicy from '../../../../support/fragments/circulation/request-policy';
+import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import TopMenu from '../../../../support/fragments/topMenu';
 import UserLoans from '../../../../support/fragments/users/loans/userLoans';
+import UserEdit from '../../../../support/fragments/users/userEdit';
+import Users from '../../../../support/fragments/users/users';
+import UsersCard from '../../../../support/fragments/users/usersCard';
+import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import generateUniqueItemBarcodeWithShift from '../../../../support/utils/generateUniqueItemBarcodeWithShift';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Patron Block: Maximum number of overdue recalls', () => {
   const checkedOutBlockMessage = `You have reached maximum number of overdue recalls as set by patron group${getRandomPostfix()}`;
@@ -263,7 +261,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
   });
   it(
     'C350650 Verify automated patron block "Maximum number of overdue recalls" removed after overdue recalled item returned (vega)',
-    { tags: [TestTypes.criticalPath, devTeams.vega] },
+    { tags: ['criticalPath', 'vega'] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();

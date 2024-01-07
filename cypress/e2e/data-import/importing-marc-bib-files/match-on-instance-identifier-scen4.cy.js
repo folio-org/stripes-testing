@@ -1,31 +1,38 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions, Parallelization } from '../../../support/dictionary';
-import TopMenu from '../../../support/fragments/topMenu';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import DataImport from '../../../support/fragments/data_import/dataImport';
 import {
-  JOB_STATUS_NAMES,
+  ACCEPTED_DATA_TYPE_NAMES,
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   INSTANCE_STATUS_TERM_NAMES,
-  ACCEPTED_DATA_TYPE_NAMES,
+  JOB_STATUS_NAMES,
+  RECORD_STATUSES,
 } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
-import FileManager from '../../../support/utils/fileManager';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import FileManager from '../../../support/utils/fileManager';
+import GenerateIdentifierCode from '../../../support/utils/generateIdentifierCode';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Importing MARC Bib files', () => {
@@ -109,10 +116,10 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        JobProfiles.deleteJobProfile(jobProfile.profileName);
-        MatchProfiles.deleteMatchProfile(matchProfile.profileName);
-        ActionProfiles.deleteActionProfile(actionProfile.name);
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
         // delete created files
         FileManager.deleteFile(`cypress/fixtures/${editedMarcFileNameForCreate}`);
@@ -129,7 +136,7 @@ describe('data-import', () => {
 
     it(
       'C347831 MODDICORE-231 "Match on Instance identifier match meets both the Identifier type and Data requirements" Scenario 4 (folijet)',
-      { tags: [TestTypes.criticalPath, DevTeams.folijet, Parallelization.nonParallel] },
+      { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         // change files for create and update instance using random identifier code
         DataImport.editMarcFile(
@@ -154,7 +161,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(fileNameForCreateInstance);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForCreateInstance);
-        Logs.clickOnHotLink(0, 3, 'Created');
+        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyInstanceTitle(firstInstanceTitle);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[0].type,
@@ -168,7 +175,7 @@ describe('data-import', () => {
         );
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(fileNameForCreateInstance);
-        Logs.clickOnHotLink(1, 3, 'Created');
+        Logs.clickOnHotLink(1, 3, RECORD_STATUSES.CREATED);
         InventoryInstance.verifyInstanceTitle(secondInstaneTitle);
         InventoryInstance.verifyResourceIdentifier(
           resourceIdentifiers[2].type,
@@ -218,22 +225,22 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdateInstance);
         FileDetails.checkStatusInColumn(
-          FileDetails.status.dash,
+          RECORD_STATUSES.DASH,
           FileDetails.columnNameInResultList.srsMarc,
         );
         FileDetails.checkStatusInColumn(
-          FileDetails.status.noAction,
+          RECORD_STATUSES.NO_ACTION,
           FileDetails.columnNameInResultList.instance,
         );
         [
           FileDetails.columnNameInResultList.srsMarc,
           FileDetails.columnNameInResultList.instance,
         ].forEach((columnName) => {
-          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName, 1);
+          FileDetails.checkStatusInColumn(RECORD_STATUSES.UPDATED, columnName, 1);
         });
 
         // check updated instance in Inventory
-        FileDetails.openInstanceInInventory('Updated', 1);
+        FileDetails.openInstanceInInventory(RECORD_STATUSES.UPDATED, 1);
         InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
         InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
         InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);

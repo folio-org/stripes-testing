@@ -1,16 +1,17 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
-import { DevTeams, TestTypes, Permissions } from '../../../support/dictionary';
 import {
-  FOLIO_RECORD_TYPE,
   BATCH_GROUP,
-  VENDOR_NAMES,
+  FOLIO_RECORD_TYPE,
   PAYMENT_METHOD,
+  VENDOR_NAMES,
 } from '../../../support/constants';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
+import { Permissions } from '../../../support/dictionary';
+import { FieldMappingProfiles as SettingsFieldMappingProfiles } from '../../../support/fragments/settings/dataImport';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -41,19 +42,22 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
-        FieldMappingProfileView.deleteViaApi(mappingProfile.name);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfile.name);
         Users.deleteViaApi(user.userId);
       });
     });
 
     it(
       'C358133 Confirm that a duplicated import profile has enabled indicator set to TRUE (folijet)',
-      { tags: [TestTypes.extendedPath, DevTeams.folijet] },
+      { tags: ['extendedPath', 'folijet'] },
       () => {
         FieldMappingProfiles.waitLoading();
         FieldMappingProfiles.createInvoiceMappingProfile(mappingProfile, profileForDuplicate);
         cy.getAdminToken().then(() => {
-          FieldMappingProfileView.getProfileIdViaApi(mappingProfile.name).then((profileId) => {
+          SettingsFieldMappingProfiles.getMappingProfilesViaApi({
+            query: `name="${mappingProfile.name}"`,
+          }).then(({ mappingProfiles }) => {
+            const { id: profileId } = mappingProfiles[0];
             FieldMappingProfileView.verifyEnabledIndicatorSetToTrueViaApi(profileId);
           });
         });

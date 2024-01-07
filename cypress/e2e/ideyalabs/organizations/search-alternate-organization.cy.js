@@ -1,4 +1,3 @@
-import testTypes from '../../../support/dictionary/testTypes';
 import organizations from '../../../support/fragments/organizations/organizations';
 import topMenu from '../../../support/fragments/topMenu';
 import getRandomStringCode from '../../../support/utils/genereteTextCode';
@@ -28,14 +27,10 @@ describe.skip('ui-organizations: Organizations creation', () => {
     organizations.checkZeroSearchResultsHeader();
   });
 
-  it(
-    'C677 Search an alternate organization name (thunderjet)',
-    { tags: [testTypes.ideaLabsTests] },
-    () => {
-      cy.visit(topMenu.organizationsPath);
-      organizations.createOrganizationViaUi(newOrganization);
-      organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
-      organizations.checkOrganizationNameSearchResults(newOrganization.code);
-    },
-  );
+  it('C677 Search an alternate organization name (thunderjet)', { tags: ['ideaLabsTests'] }, () => {
+    cy.visit(topMenu.organizationsPath);
+    organizations.createOrganizationViaUi(newOrganization);
+    organizations.searchByParameters(searchByCode.dropdown, searchByCode.code);
+    organizations.checkOrganizationNameSearchResults(newOrganization.code);
+  });
 });

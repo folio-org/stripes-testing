@@ -1,15 +1,15 @@
 import uuid from 'uuid';
-import { DevTeams, Permissions, TestTypes } from '../../../support/dictionary';
-import Users from '../../../support/fragments/users/users';
-import TopMenu from '../../../support/fragments/topMenu';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
+import { BROWSE_CALL_NUMBER_OPTIONS, CALL_NUMBER_TYPE_NAMES } from '../../../support/constants';
+import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
-import { CALL_NUMBER_TYPE_NAMES, BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 
 describe('inventory', () => {
   describe('Call Number Browse', () => {
@@ -170,7 +170,7 @@ describe('inventory', () => {
 
     it(
       'C396366 Browsing call number types when call number, type specified in "Holdings" or "Item" (spitfire)',
-      { tags: [TestTypes.criticalPath, DevTeams.spitfire] },
+      { tags: ['criticalPath', 'spitfire'] },
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.verifyBrowseOptions();
