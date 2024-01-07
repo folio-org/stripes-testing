@@ -129,7 +129,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Automated linking', () 
 
   it(
     'C388552 Add subfield "$9" in the fields before clicking on "Link headings" button when edit "MARC bib" with saved linked fields (spitfire) (TaaS)',
-    { tags: ['criticalPath', 'spitfire'] },
+    { tags: ['extendedPath', 'spitfire'] },
     () => {
       InventoryInstances.searchByTitle(createdRecordIDs[0]);
       InventoryInstances.selectInstance();
