@@ -353,4 +353,8 @@ export default {
       saveAndCloseButton.has({ disabled: true, visible: true }),
     ]);
   },
+
+  openTitleLookUp() {
+    cy.do(rootSection.find(Button({ id: 'find-instance-trigger' })).click());
+  },
 };
