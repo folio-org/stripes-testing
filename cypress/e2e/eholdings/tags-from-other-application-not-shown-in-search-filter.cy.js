@@ -82,7 +82,7 @@ describe('eHoldings', () => {
       InventorySearchAndFilter.verifyTagCount();
       InventorySearchAndFilter.addTag(testData.tag);
       InteractorsTools.checkCalloutMessage(testData.successCallout);
-      
+
       cy.visit(TopMenu.eholdingsPath);
       EHoldingsPackagesSearch.verifyTagAbsent(testData.tag);
       EHoldingSearch.switchToPackages();

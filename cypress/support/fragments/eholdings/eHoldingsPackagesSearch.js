@@ -48,7 +48,8 @@ export default {
     cy.expect(
       tagsAccordion
         .find(MultiSelectOption(including(specialTag)))
-        .absent());
+        .absent() 
+    );
   },
   resetTagFilter: () => {
     cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());
