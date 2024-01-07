@@ -2001,6 +2001,22 @@ export default {
     cy.expect(getRowInteractorByTagName(tag).absent());
   },
 
+  checkValueAbsent(rowIndex, valueToCheck) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ value: including(valueToCheck) }))
+        .absent()
+    );
+  },
+
+  checkValueExist(rowIndex, valueToCheck) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ value: including(valueToCheck) }))
+        .exists()
+    );
+  },
+
   checkLinkingAuthorityByTag: (tag) => {
     cy.expect(buttonLink.exists());
     cy.expect(Callout(`Field ${tag} has been linked to a MARC authority record.`).exists());
