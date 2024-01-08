@@ -148,12 +148,10 @@ describe('MARC -> MARC Authority -> Reporting MARC authority', () => {
   });
 
   after('Deleting user and data', () => {
-    // cy.getAdminToken();
+    cy.getAdminToken();
+    InventoryInstance.deleteInstanceViaApi(testData.createdRecordIDs[0]);
+    MarcAuthority.deleteViaAPI(testData.createdRecordIDs[1]);
     Users.deleteViaApi(testData.userProperties.userId);
-    testData.createdRecordIDs.forEach((id, index) => {
-      if (index) MarcAuthority.deleteViaAPI(id);
-      else InventoryInstance.deleteInstanceViaApi(id);
-    });
   });
   it(
     'C380532 Data for "MARC authority headings updates (CSV)" report does NOT include data on deleted "MARC authority" record (spitfire) (TaaS)',
