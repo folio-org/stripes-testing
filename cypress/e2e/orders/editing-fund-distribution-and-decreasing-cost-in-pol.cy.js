@@ -128,7 +128,7 @@ describe('Orders', () => {
 
   it(
     'C375291: Editing fund distribution and decreasing cost in PO line when related Paid invoice exists ("Release encumbrance" option in invoice line is active) (thunderjet) (TaaS)',
-    { tags: ['extended', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
