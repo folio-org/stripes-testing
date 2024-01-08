@@ -23,4 +23,10 @@ export default {
       body: config,
     });
   },
+  deleteConfigViaApi(config) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `configurations/entries/${config.id}`,
+    });
+  },
 };

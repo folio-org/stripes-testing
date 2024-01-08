@@ -5,6 +5,7 @@ import {
   Decorator,
   DecoratorWrapper,
   Form,
+  KeyValue,
   Section,
   Select,
   TextArea,
@@ -93,6 +94,14 @@ const orderInformationFields = {
   ),
   vendor: orderDetails.orderInformation.find(TextField({ label: including('Vendor') })),
   vendorLookUp: orderDetails.orderInformation.find(Button('Organization look-up')),
+  billToName: orderDetails.orderInformation.find(
+    DecoratorWrapper({ label: 'Bill to name' }).find(TextField()),
+  ),
+  billToAddress: orderDetails.orderInformation.find(KeyValue('Bill to address')),
+  shipToName: orderDetails.orderInformation.find(
+    DecoratorWrapper({ label: 'Ship to name' }).find(TextField()),
+  ),
+  shipToAddress: orderDetails.orderInformation.find(KeyValue('Ship to address')),
 };
 const orderLineInformationFields = {
   title: orderDetails.orderLineInformation.find(TextField({ label: including('Title') })),
@@ -202,6 +211,8 @@ const formButtons = {
 };
 
 const formFields = {
+  'Order information -> Bill to address': orderInformationFields.billToAddress,
+  'Order information -> Ship to address': orderInformationFields.shipToAddress,
   'Physical resource details -> Material type': orderLineInformationFields.pMaterialType,
   'Cost details -> Electronic unit price': orderLineInformationFields.electronicUnitPrice,
   'Cost details -> Quantity electronic': orderLineInformationFields.quantityElectronic,
@@ -296,11 +307,24 @@ export default {
     }
     cy.wait(300);
   },
-  fillSummaryProfileFields({ name, incomingRecordType, existingRecordType, description }) {
-    if (name) {
-      cy.do(summaryFields.name.fillIn(name));
-      cy.expect(summaryFields.name.has({ value: name }));
-    }
+  fillSummaryProfileFields({
+    name,
+    incomingRecordType,
+    existingRecordType,
+    description,
+    clearField = false,
+  }) {
+    [
+      { textField: summaryFields.name, fieldValue: name },
+      { textField: summaryFields.description, fieldValue: description },
+    ].forEach(({ textField, fieldValue }) => {
+      InteractorsTools.setTextFieldValue({
+        textField,
+        clearField,
+        fieldValue: fieldValue && `"${fieldValue}"`,
+      });
+    });
+
     if (incomingRecordType) {
       cy.do(summaryFields.incomingRecordType.choose(incomingRecordType));
       cy.expect(
@@ -312,10 +336,6 @@ export default {
       cy.expect(
         summaryFields.existingRecordType.has({ value: existingRecordTypes[existingRecordType] }),
       );
-    }
-    if (description) {
-      cy.do(summaryFields.description.fillIn(description));
-      cy.expect(summaryFields.description.has({ value: description }));
     }
     cy.wait(2000);
   },
@@ -349,32 +369,23 @@ export default {
     overridePoLineLimit,
     vendor,
     organizationLookUp,
-    useQuates = true,
+    billToName,
+    shipToName,
+    clearField = false,
   }) {
-    if (status !== undefined) {
-      const value = useQuates ? `"${status}"` : status;
-
-      cy.do([
-        orderInformationFields.orderStatus.focus(),
-        orderInformationFields.orderStatus.fillIn(value),
-      ]);
-      cy.expect(orderInformationFields.orderStatus.has({ value }));
-    }
-
-    if (overridePoLineLimit !== undefined) {
-      const value = useQuates ? `"${overridePoLineLimit}"` : overridePoLineLimit;
-      cy.do([
-        orderInformationFields.overridePoLineLimit.focus(),
-        orderInformationFields.overridePoLineLimit.fillIn(value),
-      ]);
-      cy.expect(orderInformationFields.overridePoLineLimit.has({ value }));
-    }
-
-    if (vendor !== undefined) {
-      const value = useQuates ? `"${vendor}"` : vendor;
-      cy.do([orderInformationFields.vendor.focus(), orderInformationFields.vendor.fillIn(value)]);
-      cy.expect(orderInformationFields.vendor.has({ value }));
-    }
+    [
+      { textField: orderInformationFields.orderStatus, fieldValue: status },
+      { textField: orderInformationFields.overridePoLineLimit, fieldValue: overridePoLineLimit },
+      { textField: orderInformationFields.vendor, fieldValue: vendor },
+      { textField: orderInformationFields.billToName, fieldValue: billToName },
+      { textField: orderInformationFields.shipToName, fieldValue: shipToName },
+    ].forEach(({ textField, fieldValue }) => {
+      InteractorsTools.setTextFieldValue({
+        textField,
+        clearField,
+        fieldValue: fieldValue && `"${fieldValue}"`,
+      });
+    });
 
     if (organizationLookUp !== undefined) {
       cy.do([orderInformationFields.vendor.focus(), orderInformationFields.vendorLookUp.click()]);
