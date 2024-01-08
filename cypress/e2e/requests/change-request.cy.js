@@ -101,7 +101,7 @@ describe('Title Level Request', () => {
         });
       });
 
-    cy.createTempUser([permissions.requestsAll.gui, permissions.inventoryAll.gui])
+    cy.createTempUser([permissions.uiRequestsAll.gui, permissions.inventoryAll.gui])
       .then((userProperties) => {
         testData.user = userProperties;
       })

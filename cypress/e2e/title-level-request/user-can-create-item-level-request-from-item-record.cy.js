@@ -105,7 +105,7 @@ describe('Create Item or Title level request', () => {
         permissions.uiUsersfeefinesCRUD.gui,
         permissions.uiUsersfeefinesView.gui,
         permissions.inventoryAll.gui,
-        permissions.requestsAll.gui,
+        permissions.uiRequestsAll.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {

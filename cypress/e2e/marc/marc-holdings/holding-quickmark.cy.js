@@ -138,11 +138,6 @@ describe('marc', () => {
             calloutTypes.error,
           );
           QuickMarcEditor.closeWithoutSavingAfterChange();
-          // TODO: Delete below four lines of code after Actions -> View source of Holding's view works as expected.
-          HoldingsRecordView.close();
-          HoldingsRecordView.waitLoading();
-          HoldingsRecordView.close();
-          InventoryInstance.openHoldingView();
           HoldingsRecordView.viewSource();
           InventoryViewSource.contains(QuickMarcEditor.getSourceContent(initialTagContent));
         });
