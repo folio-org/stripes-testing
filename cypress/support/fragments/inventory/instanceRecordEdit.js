@@ -50,6 +50,7 @@ const checkboxes = {
 function addNatureOfContent() {
   cy.do(addNatureOfContentButton.click());
 }
+
 function addStatisticalCode() {
   cy.do(Button('Add statistical code').click());
 }
@@ -141,6 +142,12 @@ export default {
       TextArea({ name: `${fieldNamePref}.title` }).fillIn(precedingTitle),
       TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn),
       TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn),
+    ]);
+  },
+  addAdministrativeNote: (note) => {
+    cy.do([
+      Button('Add administrative note').click(),
+      TextArea({ ariaLabel: 'Administrative note' }).fillIn(note),
     ]);
   },
   addExistingPrecedingTitle: (precedingTitle) => {
