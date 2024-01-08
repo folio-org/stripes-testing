@@ -38,7 +38,7 @@ describe('Circulation log', () => {
     cy.createTempUser([
       Permissions.circulationLogAll.gui,
       Permissions.inventoryAll.gui,
-      Permissions.requestsAll.gui,
+      Permissions.uiRequestsAll.gui,
       Permissions.uiUsersView.gui,
       Permissions.usersViewRequests.gui,
     ])

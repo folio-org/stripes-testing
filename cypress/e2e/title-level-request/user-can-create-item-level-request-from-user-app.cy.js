@@ -43,7 +43,7 @@ describe('Title Level Request', () => {
       cy.createTempUser([
         permissions.usersViewRequests.gui,
         permissions.uiUsersView.gui,
-        permissions.requestsAll.gui,
+        permissions.uiRequestsAll.gui,
       ]).then((userProperties) => {
         testData.user = userProperties;
         instanceData = testData.folioInstances[0];

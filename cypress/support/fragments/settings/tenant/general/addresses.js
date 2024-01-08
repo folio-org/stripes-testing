@@ -1,4 +1,4 @@
-import { HTML, including, Link } from '@interactors/html';
+import uuid from 'uuid';
 
 import {
   Button,
@@ -7,9 +7,13 @@ import {
   MultiColumnListCell,
   MultiColumnListRow,
   Pane,
+  HTML,
+  including,
+  Link,
 } from '../../../../../../interactors';
 import SettingsPane, { rootPane } from '../../settingsPane';
 import LocationDetails from '../locations/locationDetails';
+import Configs from '../../configs';
 import { randomFourDigitNumber } from '../../../../utils/stringTools';
 
 const addButton = Button('New');
@@ -40,28 +44,6 @@ export default {
   verifyNoPermissionWarning() {
     cy.expect(HTML("You don't have permission to view this app/record").exists());
   },
-  setAddress(body) {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'configurations/entries',
-        body: {
-          module: `TENANT_${randomFourDigitNumber()}`,
-          configName: 'tenant.addresses',
-          value: JSON.stringify(body),
-        },
-        isDefaultSearchParamsRequired: false,
-      })
-      .then((response) => {
-        return response.body;
-      });
-  },
-  deleteAddress(addressId) {
-    return cy.okapiRequest({
-      path: `configurations/entries/${addressId}`,
-      method: 'DELETE',
-    });
-  },
   clickDeleteButtonForAddressValue(addressValue) {
     cy.do(MultiColumnListRow(including(addressValue)).find(deleteAddressButton).click());
   },
@@ -86,5 +68,30 @@ export default {
   },
   addressRowWithValueIsAbsent(addressValue) {
     cy.expect(MultiColumnListRow(including(addressValue)).absent());
+  },
+  setAddress(body) {
+    return Configs.createConfigViaApi({
+      module: `TENANT_${randomFourDigitNumber()}`,
+      configName: 'tenant.addresses',
+      value: JSON.stringify(body),
+    });
+  },
+  createAddressViaApi(config) {
+    Configs.createConfigViaApi(config);
+  },
+  deleteAddressViaApi(config) {
+    return Configs.deleteConfigViaApi(config);
+  },
+  generateAddressConfig({
+    name = `autotest_address_name_${randomFourDigitNumber()}`,
+    address = `autotest_address_value_${randomFourDigitNumber()}`,
+  } = {}) {
+    return {
+      value: JSON.stringify({ name, address }),
+      module: 'TENANT',
+      configName: 'tenant.addresses',
+      code: `ADDRESS_${randomFourDigitNumber()}`,
+      id: uuid(),
+    };
   },
 };

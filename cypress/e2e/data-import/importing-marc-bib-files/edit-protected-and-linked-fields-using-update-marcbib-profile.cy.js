@@ -3,7 +3,6 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
-  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -307,7 +306,9 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
-        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
+
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
           17,

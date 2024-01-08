@@ -26,7 +26,6 @@ const tagsAccordion = Button({ id: 'accordion-toggle-button-providerShowTags' })
 const providerAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderSettings',
 });
-const notesAccordion = Button({ id: 'accordion-toggle-button-providerShowNotes' });
 const providerInfAccordion = Button({
   id: 'accordion-toggle-button-providerShowProviderInformation',
 });
@@ -116,7 +115,6 @@ export default {
       packagesAccordion.has({ ariaExpanded: open }),
       tagsAccordion.has({ ariaExpanded: open }),
       providerAccordion.has({ ariaExpanded: open }),
-      notesAccordion.has({ ariaExpanded: open }),
       providerInfAccordion.has({ ariaExpanded: open }),
     ]);
   },

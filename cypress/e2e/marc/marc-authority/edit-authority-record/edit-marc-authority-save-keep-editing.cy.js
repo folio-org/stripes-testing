@@ -11,22 +11,29 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('MARC -> MARC Authority -> Edit Authority record', () => {
   const testData = {
-    authority: {
-      searchInput: 'Jackson, Peter',
+    authorityC360092: {
+      searchInput: 'C360092 Jackson, Peter',
       searchOption: 'Keyword',
     },
-    editedFields: [
+    authorityC360093: {
+      searchInput: 'C360093 Jackson, Peter',
+      searchOption: 'Keyword',
+    },
+    editedFieldsC360092: [
       {
         tag: '100',
-        content: 'Jackson, Peter - edited',
+        content: 'C360092 Jackson, Peter - edited',
       },
       {
         tag: '010',
         content: '010 - edited',
-        secondContent: '010 - edited twice',
-        thirdContent: '010 - edited three times',
       },
     ],
+    editedFieldC360093: {
+      tag: '010',
+      content: '010 - edited',
+      secondContent: '010 - edited twice',
+    },
     newField: {
       tag: '555',
       content: 'Added row',
@@ -38,9 +45,9 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const headerContent = {
     initialHeaderContent: {
-      source: { firstName: 'ADMINISTRATOR', name: 'Diku_admin' },
+      source: { firstName: 'ADMINISTRATOR', name: 'DIKU' },
       marcData: {
-        headingTypeFrom1XX: 'Jackson, Peter,',
+        headingTypeFrom1XX: 'C360092 Jackson, Peter,',
         headingType: 'Personal name',
         status: 'Current',
       },
@@ -48,7 +55,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
     editedHeaderContent: {
       source: { name: 'testPermFirst' },
       marcData: {
-        headingTypeFrom1XX: 'Jackson, Peter - edited',
+        headingTypeFrom1XX: 'C360092 Jackson, Peter - edited',
         headingType: 'Personal name',
         status: 'Current',
       },
@@ -56,7 +63,12 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
   };
   const marcFiles = [
     {
-      marc: 'marcAuthFileForC360092-C360093.mrc',
+      marc: 'marcAuthFileForC360092.mrc',
+      fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+      numOfRecords: 1,
+    },
+    {
+      marc: 'marcAuthFileForC360093.mrc',
       fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
       numOfRecords: 1,
     },
@@ -66,6 +78,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
   before('Upload files', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
       marcFiles.forEach((marcFile) => {
+        cy.visit(TopMenu.dataImportPath);
         DataImport.verifyUploadState();
         DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
         JobProfiles.waitFileIsUploaded();
@@ -98,9 +111,6 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
   beforeEach('Visit MARC Authorities', () => {
     cy.visit(TopMenu.marcAuthorities);
     MarcAuthorities.waitLoading();
-    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.searchInput);
-    MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);
-    MarcAuthority.edit();
   });
 
   after('Delete test data', () => {
@@ -115,6 +125,12 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
     'C360092 Verify that click on the "Save & keep editing" button doesnt close the editing window of "MARC Authority" record (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
+      MarcAuthorities.searchBy(
+        testData.authorityC360092.searchOption,
+        testData.authorityC360092.searchInput,
+      );
+      MarcAuthorities.select(`${createdAuthorityIDs[0]}${authorityPostfix}`);
+      MarcAuthority.edit();
       // Verify initial state of edit view
       QuickMarcEditor.checkHeaderFirstLine(
         headerContent.initialHeaderContent.marcData,
@@ -124,8 +140,8 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
 
       // Edit record and verify button states updated
       MarcAuthority.changeField(
-        testData.editedFields[0].tag,
-        `${subfieldPrefix}${testData.editedFields[0].content}`,
+        testData.editedFieldsC360092[0].tag,
+        `${subfieldPrefix}${testData.editedFieldsC360092[0].content}`,
       );
       QuickMarcEditor.checkButtonsEnabled();
 
@@ -188,16 +204,16 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
       // Edit 010 field and verify states updated
       cy.wait(2000);
       MarcAuthority.changeField(
-        testData.editedFields[1].tag,
-        `${subfieldPrefix} ${testData.editedFields[1].content}`,
+        testData.editedFieldsC360092[1].tag,
+        `${subfieldPrefix} ${testData.editedFieldsC360092[1].content}`,
       );
       QuickMarcEditor.checkButtonsEnabled();
 
       // Save and close edit view
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.checkAfterSaveAndCloseAuthority();
-      MarcAuthority.contains(testData.editedFields[0].content);
-      MarcAuthority.contains(testData.editedFields[1].content);
+      MarcAuthority.contains(testData.editedFieldsC360092[0].content);
+      MarcAuthority.contains(testData.editedFieldsC360092[1].content);
       MarcAuthority.checkTagInRow(4, '016');
     },
   );
@@ -206,37 +222,41 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
     'C360093 Verify that updates are saved after clicking "Save & keep editing" button in the editing window of "MARC Authority" (spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
+      MarcAuthorities.searchBy(
+        testData.authorityC360092.searchOption,
+        testData.authorityC360093.searchInput,
+      );
+      MarcAuthorities.select(`${createdAuthorityIDs[1]}${authorityPostfix}`);
+      MarcAuthority.edit();
+
       // Add text to subfield, click Save and keep editing
       MarcAuthority.changeField(
-        testData.editedFields[1].tag,
-        `${subfieldPrefix} ${testData.editedFields[1].secondContent}`,
+        testData.editedFieldC360093.tag,
+        `${subfieldPrefix} ${testData.editedFieldC360093.content}`,
       );
       QuickMarcEditor.clickSaveAndKeepEditing();
-      QuickMarcEditor.checkContent(
-        `${subfieldPrefix} ${testData.editedFields[1].secondContent}`,
-        5,
-      );
+      QuickMarcEditor.checkContent(`${subfieldPrefix} ${testData.editedFieldC360093.content}`, 4);
 
       // Close editor and reopen, verify previous edits present
       QuickMarcEditor.closeAuthorityEditorPane();
       MarcAuthority.edit();
-      QuickMarcEditor.checkContent(
-        `${subfieldPrefix} ${testData.editedFields[1].secondContent}`,
-        5,
-      );
+      QuickMarcEditor.checkContent(`${subfieldPrefix} ${testData.editedFieldC360093.content}`, 4);
 
       // Change field again, click Save and keep editing
       MarcAuthority.changeField(
-        testData.editedFields[1].tag,
-        `${subfieldPrefix}${testData.editedFields[1].thirdContent}`,
+        testData.editedFieldC360093.tag,
+        `${subfieldPrefix}${testData.editedFieldC360093.secondContent}`,
       );
       QuickMarcEditor.clickSaveAndKeepEditing();
-      QuickMarcEditor.checkContent(`${subfieldPrefix} ${testData.editedFields[1].thirdContent}`, 5);
+      QuickMarcEditor.checkContent(
+        `${subfieldPrefix} ${testData.editedFieldC360093.secondContent}`,
+        4,
+      );
 
       // Click on the "Back to the previous page" browser button, verify changes in marc view pane.
       cy.wait(3000);
       cy.go('back');
-      MarcAuthority.contains(testData.editedFields[1].thirdContent);
+      MarcAuthority.contains(testData.editedFieldC360093.secondContent);
     },
   );
 });

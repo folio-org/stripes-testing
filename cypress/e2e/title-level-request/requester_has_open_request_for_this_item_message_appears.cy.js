@@ -87,7 +87,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
         Permissions.uiRequestsCreate.gui,
         Permissions.uiRequestsView.gui,
         Permissions.uiRequestsEdit.gui,
-        Permissions.requestsAll.gui,
+        Permissions.uiRequestsAll.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
@@ -104,7 +104,7 @@ describe('Title Level Request. Create Item or Title level request', () => {
       // create item-level request for user
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(tlrCheckboxExists);
-      NewRequest.verifyTitleLevelRequestsCheckbox();
+      NewRequest.verifyTitleLevelRequestsCheckbox(false);
       NewRequest.enterItemInfo(testData.itemBarcode);
       NewRequest.enterRequesterBarcode(userData.barcode);
       NewRequest.chooseRequestType(REQUEST_TYPES.PAGE);
