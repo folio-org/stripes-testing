@@ -834,7 +834,8 @@ export default {
     cy.expect(
       nameTypeAccordion
         .find(MultiSelectOption(including(option)))
-        .exists());
+        .exists()
+    );
   },
 
   selectOptionInExpandedFilter(accordionName, optionName, selected = true) {
