@@ -39,29 +39,61 @@ describe('Bulk Edits › Bulk Edit logs - search and filters pane', () => {
     ).then((userProperties) => {
       users[2] = userProperties;
     });
-    cy.wait(2000);
+
     InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-    cy.wait(2000);
+    cy.wait(1000);
     cy.getInstance({
       limit: 1,
       expandAll: true,
       query: `"items.barcode"=="${item.itemBarcode}"`,
-    }).then((instance) => {
-      item.itemId = instance.items[0].id;
-      FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
-      FileManager.createFile(
-        `cypress/fixtures/${userBarcodesFileName}`,
-        `${users[1].barcode}\n${users[2].barcode}`,
-      );
-    });
+    })
+      .then((instance) => {
+        item.itemId = instance.items[0].id;
+        FileManager.createFile(`cypress/fixtures/${validItemUUIDsFileName}`, item.itemId);
+        FileManager.createFile(
+          `cypress/fixtures/${userBarcodesFileName}`,
+          `${users[1].barcode}\n${users[2].barcode}`,
+        );
+      })
+      .then(() => {
+        cy.login(users[1].username, users[1].password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        BulkEditSearchPane.checkItemsRadio();
+        BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
+        BulkEditSearchPane.uploadFile(validItemUUIDsFileName);
+        BulkEditSearchPane.waitFileUploading();
+
+        cy.login(users[2].username, users[2].password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+        BulkEditSearchPane.checkUsersRadio();
+        BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+        BulkEditSearchPane.uploadFile(userBarcodesFileName);
+        BulkEditSearchPane.waitFileUploading();
+
+        BulkEditActions.openActions();
+        BulkEditActions.openInAppStartBulkEditFrom();
+        BulkEditActions.fillPatronGroup('staff (Staff Member)');
+        BulkEditActions.confirmChanges();
+        BulkEditActions.commitChanges();
+        BulkEditSearchPane.waitFileUploading();
+
+        cy.login(users[0].username, users[0].password, {
+          path: TopMenu.bulkEditPath,
+          waiter: BulkEditSearchPane.waitLoading,
+        });
+      });
   });
 
   after('delete test data', () => {
     cy.getAdminToken();
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    Users.deleteViaApi(users[0].userId);
-    Users.deleteViaApi(users[1].userId);
-    Users.deleteViaApi(users[2].userId);
+    users.forEach((user) => {
+      Users.deleteViaApi(user.userId);
+    });
     FileManager.deleteFile(`cypress/fixtures/${validItemUUIDsFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
   });
@@ -70,36 +102,6 @@ describe('Bulk Edits › Bulk Edit logs - search and filters pane', () => {
     'C409495 Filters section: Users filter (firebird) (TaaS)',
     { tags: ['criticalPath', 'firebird'] },
     () => {
-      cy.login(users[1].username, users[1].password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
-      BulkEditSearchPane.checkItemsRadio();
-      BulkEditSearchPane.selectRecordIdentifier('Item UUIDs');
-      BulkEditSearchPane.uploadFile(validItemUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-
-      cy.login(users[2].username, users[2].password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-
-      BulkEditActions.openActions();
-      BulkEditActions.openInAppStartBulkEditFrom();
-      BulkEditActions.fillPatronGroup('staff (Staff Member)');
-      BulkEditActions.confirmChanges();
-      BulkEditActions.commitChanges();
-      BulkEditSearchPane.waitFileUploading();
-
-      cy.login(users[0].username, users[0].password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading,
-      });
-
       BulkEditSearchPane.openLogsSearch();
       BulkEditSearchPane.verifyLogsPane();
 
