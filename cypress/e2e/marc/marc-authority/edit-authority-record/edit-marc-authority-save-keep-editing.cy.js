@@ -45,7 +45,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const headerContent = {
     initialHeaderContent: {
-      source: { firstName: 'ADMINISTRATOR', name: 'DIKU' },
+      source: { firstName: 'ADMINISTRATOR', name: 'Diku_admin' },
       marcData: {
         headingTypeFrom1XX: 'C360092 Jackson, Peter,',
         headingType: 'Personal name',
@@ -223,7 +223,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
     { tags: ['extendedPath', 'spitfire'] },
     () => {
       MarcAuthorities.searchBy(
-        testData.authorityC360092.searchOption,
+        testData.authorityC360093.searchOption,
         testData.authorityC360093.searchInput,
       );
       MarcAuthorities.select(`${createdAuthorityIDs[1]}${authorityPostfix}`);
