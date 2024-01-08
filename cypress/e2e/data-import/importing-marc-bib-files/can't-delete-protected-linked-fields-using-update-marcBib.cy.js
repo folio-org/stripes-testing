@@ -324,7 +324,8 @@ describe('data-import', () => {
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
 
-        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterUnlinking(...testData.updated245Field);
         QuickMarcEditor.verifyTagFieldAfterLinking(...testData.updated100Field);
