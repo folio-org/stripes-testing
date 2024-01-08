@@ -33,18 +33,18 @@ describe('data-import', () => {
     const filePath = 'oneMarcBib.mrc';
     const fileName = `C353587 autotestFile${getRandomPostfix()}.mrc`;
     const mappingProfile = {
-      name: `C353587 holdings mapping profile ${getRandomPostfix()}`,
+      name: `C353587 holdings mapping profile${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
       permanentLocation: `"${LOCATION_NAMES.ONLINE}"`,
       permanentLocationUI: LOCATION_NAMES.ONLINE_UI,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.HOLDINGS,
-      name: `C353587 holdings action profile ${getRandomPostfix()}`,
+      name: `C353587 holdings action profile${getRandomPostfix()}`,
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: `C353587 job profile ${getRandomPostfix()}`,
+      profileName: `C353587 job profile${getRandomPostfix()}`,
     };
 
     before('create user and login', () => {
