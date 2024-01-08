@@ -48,7 +48,7 @@ describe('ui-requests: Request: Create a New Request with Patron Comment.', () =
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
+    cy.createTempUser([Permissions.uiRequestsAll.gui], patronGroup.name).then((userProperties) => {
       requestUserData = userProperties;
       UserEdit.addServicePointViaApi(
         testData.servicePoint.id,

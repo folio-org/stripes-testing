@@ -24,7 +24,7 @@ describe('ui-invoices: Invoice Line creation', () => {
     cy.getBatchGroups().then((batchGroup) => {
       invoice.batchGroup = batchGroup.name;
     });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(TopMenu.invoicesPath);
   });
 

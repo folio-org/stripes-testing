@@ -34,7 +34,7 @@ describe('loan dates', () => {
     cy.createTempUser([
       Permissions.loansAll.gui,
       Permissions.checkoutAll.gui,
-      Permissions.requestsAll.gui,
+      Permissions.uiRequestsAll.gui,
     ]).then((userProperties) => {
       checkOutUser = userProperties;
       cy.getAdminToken()

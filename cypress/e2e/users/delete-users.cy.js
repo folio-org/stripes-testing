@@ -27,7 +27,7 @@ describe('Deleting user', () => {
   }
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken();
     ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then((servicePoints) => {
       servicePoint = servicePoints[0];

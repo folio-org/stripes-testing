@@ -444,7 +444,6 @@ export default {
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   uiRequestsEdit: { internal: 'ui-requests.edit', gui: 'Requests: View, edit, cancel' },
-  requestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
   tlrEdit: {
     internal: 'ui-circulation.settings.titleLevelRequests',
     gui: 'Settings (Circulation): Title level request edit',
@@ -458,12 +457,30 @@ export default {
     gui: 'Requests: Requests: Reorder queue',
   },
   // Calendar
-  calendarEdit: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can create, view, and edit calendar events' },
-  calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
-  calendarView: { internal: 'ui-calendar.view', gui: 'Settings (Calendar): Can view existing calendars' },
-  calendarCreate: { internal: 'ui-calendar.create', gui: 'Settings (Calendar): Can create and assign new calendars' },
-  calendarDelete: { internal: 'ui-calendar.delete', gui: 'Settings (Calendar): Can delete existing calendars' },
-  calendarEditCalendars: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can edit and reassign existing calendars' },
+  calendarEdit: {
+    internal: 'ui-calendar.edit',
+    gui: 'Settings (Calendar): Can create, view, and edit calendar events',
+  },
+  calendarAll: {
+    internal: 'ui-calendar.all',
+    gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events',
+  },
+  calendarView: {
+    internal: 'ui-calendar.view',
+    gui: 'Settings (Calendar): Can view existing calendars',
+  },
+  calendarCreate: {
+    internal: 'ui-calendar.create',
+    gui: 'Settings (Calendar): Can create and assign new calendars',
+  },
+  calendarDelete: {
+    internal: 'ui-calendar.delete',
+    gui: 'Settings (Calendar): Can delete existing calendars',
+  },
+  calendarEditCalendars: {
+    internal: 'ui-calendar.edit',
+    gui: 'Settings (Calendar): Can edit and reassign existing calendars',
+  },
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   dataExportEnableModule: {
@@ -822,6 +839,10 @@ export default {
   settingsTenantView: {
     internal: 'ui-tenant-settings.settings.view',
     gui: 'Settings (Tenant): View',
+  },
+  settingsCircView: {
+    internal: 'ui-circulation.settings.cancellation-reasons',
+    gui: 'Settings (Circ): Can create, edit and remove cancellation reasons',
   },
   settingsTenantEditLanguageLocationAndCurrency: {
     internal: 'ui-tenant-settings.settings.locale',

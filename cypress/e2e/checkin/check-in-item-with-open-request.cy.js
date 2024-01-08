@@ -130,7 +130,7 @@ describe('Check In - Actions', () => {
           testData.servicePointS.id,
         );
 
-        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then(
+        cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then(
           (userProperties) => {
             requestUserData.username = userProperties.username;
             requestUserData.userId = userProperties.userId;

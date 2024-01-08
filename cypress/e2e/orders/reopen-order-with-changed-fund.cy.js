@@ -138,7 +138,7 @@ describe('Orders', () => {
 
   it(
     'C375226: Reopen order with changed Fund distribution when related paid invoice exists (thunderjet) (TaaS)',
-    { tags: ['extended', 'thunderjet'] },
+    { tags: ['extendedPath', 'thunderjet'] },
     () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList(orderNumber);
