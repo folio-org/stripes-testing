@@ -80,7 +80,7 @@ describe('Loan Details', () => {
 
     cy.createTempUser(
       [
-        Permissions.requestsAll.gui,
+        Permissions.uiRequestsAll.gui,
         Permissions.inventoryAll.gui,
         Permissions.settingsLoanPoliciesAll.gui,
         Permissions.uiFeeFines.gui,
@@ -98,7 +98,7 @@ describe('Loan Details', () => {
       .then(() => {
         UserEdit.addServicePointViaApi(testData.servicePoint.id, userData.userId);
 
-        cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then(
+        cy.createTempUser([Permissions.uiRequestsAll.gui], patronGroup.name).then(
           (userProperties) => {
             userForRequest = userProperties;
             UserEdit.addServicePointViaApi(testData.servicePoint.id, userForRequest.userId);
