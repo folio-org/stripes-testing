@@ -56,86 +56,90 @@ const marcFiles = [
 
 const createdRecordIDs = [];
 
-describe('MARC -> MARC Authority -> Reporting MARC authority', () => {
-  before('Creating user and uploading files', () => {
-    cy.createTempUser([
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-    ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
+describe('marc', () => {
+  describe('MARC Authority', () => {
+    describe('Reporting MARC authority', () => {
+      before('Creating user and uploading files', () => {
+        cy.createTempUser([
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdRecordIDs.push(link.split('/')[5]);
-            });
-          },
-        );
+          marcFiles.forEach((marcFile) => {
+            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+              () => {
+                DataImport.verifyUploadState();
+                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+                JobProfiles.waitLoadingList();
+                JobProfiles.search(marcFile.jobProfileToRun);
+                JobProfiles.runImportFile();
+                JobProfiles.waitFileIsImported(marcFile.fileName);
+                Logs.checkStatusOfJobProfile('Completed');
+                Logs.openFileDetails(marcFile.fileName);
+                Logs.getCreatedItemsID().then((link) => {
+                  createdRecordIDs.push(link.split('/')[5]);
+                });
+              },
+            );
+          });
+
+          cy.visit(TopMenu.inventoryPath).then(() => {
+            InventoryInstances.waitContentLoading();
+            InventoryInstances.searchByTitle(createdRecordIDs[0]);
+            InventoryInstances.selectInstance();
+            // wait for detail view to be fully loaded
+            cy.wait(1500);
+            InventoryInstance.editMarcBibliographicRecord();
+            InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
+            MarcAuthorities.switchToSearch();
+            InventoryInstance.verifySelectMarcAuthorityModal();
+            InventoryInstance.searchResults(testData.marcValue);
+            MarcAuthoritiesSearch.selectAuthorityByIndex(0);
+            InventoryInstance.clickLinkButton();
+            QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 18);
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+            InventoryInstance.waitLoading();
+          });
+
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
+        });
       });
 
-      cy.visit(TopMenu.inventoryPath).then(() => {
-        InventoryInstances.waitContentLoading();
-        InventoryInstances.searchByTitle(createdRecordIDs[0]);
-        InventoryInstances.selectInstance();
-        // wait for detail view to be fully loaded
-        cy.wait(1500);
-        InventoryInstance.editMarcBibliographicRecord();
-        InventoryInstance.verifyAndClickLinkIcon(testData.tag240);
-        MarcAuthorities.switchToSearch();
-        InventoryInstance.verifySelectMarcAuthorityModal();
-        InventoryInstance.searchResults(testData.marcValue);
-        MarcAuthoritiesSearch.selectAuthorityByIndex(0);
-        InventoryInstance.clickLinkButton();
-        QuickMarcEditor.verifyAfterLinkingUsingRowIndex(testData.tag240, 18);
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
-        InventoryInstance.waitLoading();
+      after('Deleting user and data', () => {
+        cy.getAdminToken();
+        InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
+        MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
+        Users.deleteViaApi(testData.userProperties.userId);
       });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.marcAuthorities,
-        waiter: MarcAuthorities.waitLoading,
-      });
+      it(
+        'C380530 No data for "MARC authority headings updates (CSV)" report gathered for time range when no header updates were made to "MARC authority" records (spitfire) (TaaS)',
+        { tags: ['extendedPath', 'spitfire'] },
+        () => {
+          MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
+          MarcAuthoritiesSearch.selectAuthorityByIndex(0);
+          MarcAuthority.edit();
+          QuickMarcEditor.waitLoading();
+
+          cy.wait(2000);
+          QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
+          QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
+          QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+
+          cy.wait(2000);
+          QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
+          QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
+          QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+
+          MarcAuthorities.verifyNoHeadingsUpdatesDataViaAPI(twoPreviousDay, yesterday);
+        },
+      );
     });
   });
-
-  after('Deleting user and data', () => {
-    cy.getAdminToken();
-    InventoryInstance.deleteInstanceViaApi(createdRecordIDs[0]);
-    MarcAuthority.deleteViaAPI(createdRecordIDs[1]);
-    Users.deleteViaApi(testData.userProperties.userId);
-  });
-
-  it(
-    'C380530 No data for "MARC authority headings updates (CSV)" report gathered for time range when no header updates were made to "MARC authority" records (spitfire) (TaaS)',
-    { tags: ['extendedPath', 'spitfire'] },
-    () => {
-      MarcAuthorities.searchBy(testData.searchOption, marcFiles[1].authorityHeading);
-      MarcAuthoritiesSearch.selectAuthorityByIndex(0);
-      MarcAuthority.edit();
-      QuickMarcEditor.waitLoading();
-
-      cy.wait(2000);
-      QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
-      QuickMarcEditor.saveAndKeepEditingUpdatedLinkedBibField();
-      QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
-
-      cy.wait(2000);
-      QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
-      QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
-      QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
-
-      MarcAuthorities.verifyNoHeadingsUpdatesDataViaAPI(twoPreviousDay, yesterday);
-    },
-  );
 });

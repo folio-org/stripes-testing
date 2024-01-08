@@ -1,8 +1,6 @@
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
-import {
-  JobProfiles as SettingsJobProfiles,
-} from '../../../support/fragments/settings/dataImport';
+import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
