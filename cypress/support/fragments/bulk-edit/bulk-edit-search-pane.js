@@ -275,6 +275,9 @@ export default {
       fileButton.has({ disabled: false }),
     ]);
   },
+  verifyCheckboxIsSelected(checkbox, isChecked = false) {
+    cy.expect(Checkbox({ name: checkbox }).has({ checked: isChecked }));
+  },
 
   verifyDragNDropItemFormerIdentifierArea() {
     this.checkItemsRadio();
