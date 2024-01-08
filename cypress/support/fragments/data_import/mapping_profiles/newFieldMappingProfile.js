@@ -86,6 +86,7 @@ const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
 const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 const closeButton = Button('Close');
 const closeWithoutSavingButton = Button('Close without saving');
+const linkProfileButton = Button('Link Profile');
 
 const requiredFields = {
   'Purchase order status': purchaseOrderStatus,
@@ -1069,7 +1070,8 @@ export default {
 
   markFieldForProtection: (field) => {
     cy.get('div[class^="mclRow--"]')
-      .contains('div[class^="mclCell-"]', field)
+      .find('div[class^="mclCell-"]')
+      .contains(field)
       .then((elem) => {
         elem.parent()[0].querySelector('input[type="checkbox"]').click();
       });
@@ -1413,5 +1415,9 @@ export default {
         .find(Button(`${type}`))
         .click(),
     );
+  },
+
+  clickLinkProfileButton() {
+    cy.do(linkProfileButton.click());
   },
 };

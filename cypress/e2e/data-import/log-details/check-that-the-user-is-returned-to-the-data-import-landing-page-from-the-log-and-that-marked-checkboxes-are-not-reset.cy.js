@@ -8,7 +8,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('Data Import', () => {
+describe('data-import', () => {
   describe('Log details', () => {
     const testData = {};
     const createdRecordsIDs = [];

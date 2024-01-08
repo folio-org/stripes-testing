@@ -4,7 +4,7 @@ import NewAgreement from '../../../support/fragments/agreements/newAgreement';
 import TopMenu from '../../../support/fragments/topMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-describe('Agreements', () => {
+describe('agreements', () => {
   describe('Agreements Creation and Management', () => {
     const defaultAgreement = { ...NewAgreement.getdefaultAgreement() };
     const calloutMessage = `Agreement created: ${defaultAgreement.name}`;

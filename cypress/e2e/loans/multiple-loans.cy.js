@@ -56,7 +56,7 @@ describe('Multiple loans', () => {
           servicePointId: testData.servicePoint.id,
           userBarcode: userData.barcode,
         });
-        cy.createTempUser([Permissions.requestsAll.gui]).then((userProperties) => {
+        cy.createTempUser([Permissions.uiRequestsAll.gui]).then((userProperties) => {
           userForRequest = userProperties;
           UserEdit.addServicePointViaApi(testData.servicePoint.id, userForRequest.userId);
           Checkout.checkoutItemViaApi({

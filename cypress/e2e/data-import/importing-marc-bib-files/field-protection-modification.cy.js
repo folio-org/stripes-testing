@@ -87,6 +87,7 @@ describe('data-import', () => {
       'C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
       { tags: ['criticalPath', 'folijet'] },
       () => {
+        cy.getAdminToken();
         // create protection fields
         MarcFieldProtection.createViaApi({
           field: '*',

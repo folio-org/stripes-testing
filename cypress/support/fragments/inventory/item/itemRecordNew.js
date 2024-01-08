@@ -11,6 +11,8 @@ import {
   RepeatableFieldItem,
   HTML,
   matching,
+  Selection,
+  SelectionList,
 } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 import InstanceStates from '../instanceStates';
@@ -41,6 +43,7 @@ const noteFieldSet = itemNotesSection.find(FieldSet('Note type*'));
 const checkInCheckOutFieldSet = loanAndAvailabilitySection.find(FieldSet('Note type*'));
 const electronicAccessFieldSet = electronicAccessSection.find(FieldSet('Electronic access'));
 const itemEditForm = HTML({ className: including('itemForm-') });
+const statisticalCodeSelectionList = statisticalCodeFieldSet.find(SelectionList());
 
 function addBarcode(barcode) {
   cy.do(
@@ -190,5 +193,48 @@ export default {
         .find(Button({ icon: 'trash' }))
         .exists(),
     ]);
+  },
+
+  openStatisticalCodeDropdown() {
+    cy.do([statisticalCodeFieldSet.find(Selection()).find(Button()).click()]);
+  },
+
+  verifyStatisticalCodeDropdown() {
+    cy.expect([statisticalCodeSelectionList.has({ placeholder: 'Filter options list' })]);
+    cy.then(() => statisticalCodeSelectionList.optionCount()).then((count) => {
+      expect(count).to.greaterThan(0);
+    });
+  },
+
+  filterStatisticalCodeByName(name) {
+    cy.do([statisticalCodeSelectionList.filter(name)]);
+  },
+
+  verifyStatisticalCodeListOptionsFilteredBy(name) {
+    cy.then(() => statisticalCodeSelectionList.optionList()).then((list) => {
+      list.forEach((option) => expect(option).to.include(name));
+    });
+  },
+
+  chooseStatisticalCode(code, rowIndex = 1) {
+    cy.do([
+      statisticalCodeFieldSet
+        .find(RepeatableFieldItem({ index: rowIndex }))
+        .find(Selection())
+        .choose(including(code)),
+    ]);
+  },
+
+  checkErrorMessageForStatisticalCode: (isPresented = true) => {
+    if (isPresented) {
+      cy.expect(statisticalCodeFieldSet.has({ error: 'Please select to continue' }));
+    } else {
+      cy.expect(
+        FieldSet({
+          buttonIds: [including('stripes-selection')],
+          error: 'Please select to continue',
+        }).absent(),
+      );
+    }
   },
 };

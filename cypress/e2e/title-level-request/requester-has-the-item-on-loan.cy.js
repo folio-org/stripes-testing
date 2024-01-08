@@ -45,7 +45,7 @@ describe('Create Item or Title level request', () => {
       cy.createTempUser([
         Permissions.uiRequestsView.gui,
         Permissions.uiRequestsCreate.gui,
-        Permissions.requestsAll.gui,
+        Permissions.uiRequestsAll.gui,
         Permissions.uiRequestsEdit.gui,
         Permissions.checkoutAll.gui,
       ]).then((userProperties) => {

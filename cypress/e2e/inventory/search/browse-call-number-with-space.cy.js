@@ -178,7 +178,6 @@ describe('Inventory -> Call Number Browse', () => {
       InventoryInstance.addEnumerationData(item.volume, item.enumeration, item.chronology);
       InventoryInstance.saveItemDataAndVerifyExistence(item.copyNumber);
       BrowseCallNumber.clickBrowseBtn();
-      InventorySearchAndFilter.clickResetAllButton();
       InventorySearchAndFilter.verifyKeywordsAsDefault();
       InventorySearchAndFilter.selectBrowseCallNumbers();
       InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
@@ -197,7 +196,6 @@ describe('Inventory -> Call Number Browse', () => {
     { tags: ['criticalPath', 'spitfire'] },
     () => {
       InventorySearchAndFilter.switchToBrowseTab();
-      InventorySearchAndFilter.clickResetAllButton();
       InventorySearchAndFilter.verifyBrowseOptions();
       InventorySearchAndFilter.selectBrowseCallNumbers();
       InventorySearchAndFilter.byEffectiveLocation();
