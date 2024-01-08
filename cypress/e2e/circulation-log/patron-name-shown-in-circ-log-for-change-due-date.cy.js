@@ -96,14 +96,16 @@ describe('Circulation log', () => {
         userA.userId,
         testData.userServicePoint.id,
       );
-      cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userBProperties) => {
-        userB = userBProperties;
-        UserEdit.addServicePointViaApi(
-          testData.userServicePoint.id,
-          userB.userId,
-          testData.userServicePoint.id,
-        );
-      });
+      cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then(
+        (userBProperties) => {
+          userB = userBProperties;
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            userB.userId,
+            testData.userServicePoint.id,
+          );
+        },
+      );
       cy.login(userA.username, userA.password, {
         path: TopMenu.checkOutPath,
         waiter: Checkout.waitLoading,

@@ -68,7 +68,7 @@ describe('Title Level Request', () => {
     cy.createTempUser(
       [
         Permissions.checkoutAll.gui,
-        Permissions.requestsAll.gui,
+        Permissions.uiRequestsAll.gui,
         Permissions.inventoryAll.gui,
         Permissions.circulationLogAll.gui,
         Permissions.uiUsersView.gui,

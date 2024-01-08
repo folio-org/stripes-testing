@@ -47,7 +47,7 @@ describe('Title Level Request', () => {
     Requests.getRequestApi({ query: '(requestLevel=="Title")' }).then((requestResponse) => {
       requestResponse.forEach((response) => Requests.deleteRequestViaApi(response.id));
     });
-    cy.createTempUser([Permissions.requestsAll.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiRequestsAll.gui]).then((userProperties) => {
       testData.userForTLR = userProperties;
       UserEdit.addServicePointViaApi(
         testData.servicePoint.id,
@@ -55,7 +55,7 @@ describe('Title Level Request', () => {
         testData.servicePoint.id,
       );
     });
-    cy.createTempUser([Permissions.requestsAll.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiRequestsAll.gui]).then((userProperties) => {
       testData.userForItemLevelRequest = userProperties;
       UserEdit.addServicePointViaApi(
         testData.servicePoint.id,
@@ -63,7 +63,7 @@ describe('Title Level Request', () => {
         testData.servicePoint.id,
       );
     });
-    cy.createTempUser([Permissions.requestsAll.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiRequestsAll.gui]).then((userProperties) => {
       testData.userForTLR2 = userProperties;
       UserEdit.addServicePointViaApi(
         testData.servicePoint.id,
@@ -71,7 +71,7 @@ describe('Title Level Request', () => {
         testData.servicePoint.id,
       );
     });
-    cy.createTempUser([Permissions.requestsAll.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiRequestsAll.gui]).then((userProperties) => {
       testData.user = userProperties;
       UserEdit.addServicePointViaApi(
         testData.servicePoint.id,
