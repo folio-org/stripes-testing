@@ -285,6 +285,11 @@ export default {
     });
   },
 
+  checkJobProfileNameByRow(rowIndex, jobProfileName) {
+    waitUIToBeFiltered();
+    cy.expect(MultiColumnListCell({ content: jobProfileName, row: rowIndex }).exists());
+  },
+
   checkByJobProfileName(jobProfileName) {
     waitUIToBeFiltered();
     return cy.get('#list-data-import').then((element) => {
