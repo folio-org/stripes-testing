@@ -1,4 +1,10 @@
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
@@ -8,9 +14,9 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfileView from '../../../support/fragments/data_import/match_profiles/matchProfileView';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfileView from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfileView';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import FileExtensionView from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensionView';
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions/fileExtensions';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
@@ -63,10 +69,10 @@ describe('data-import', () => {
     after('delete test data', () => {
       cy.getAdminToken().then(() => {
         // delete generated profiles
-        JobProfiles.deleteJobProfile(jobProfileName);
-        MatchProfiles.deleteMatchProfile(matchProfileName);
-        ActionProfiles.deleteActionProfile(actionProfileName);
-        FieldMappingProfileView.deleteViaApi(mappingProfileName);
+        SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileName);
+        SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfileName);
+        SettingsActionProfiles.deleteActionProfileByNameViaApi(actionProfileName);
+        SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(mappingProfileName);
         Users.deleteViaApi(user.userId);
       });
     });

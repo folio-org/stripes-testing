@@ -16,6 +16,9 @@ export default {
   waitLoading() {
     cy.expect(organizationDetailsSection.exists());
   },
+  organizationDetailsSectionIsAbsent() {
+    cy.expect(organizationDetailsSection.absent());
+  },
   addIntegration() {
     cy.do([integrationDetailsSection.click(), addOrganizationIntegrationButton.click()]);
   },

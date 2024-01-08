@@ -1,11 +1,12 @@
 import { EXISTING_RECORDS_NAMES } from '../../../support/constants';
+import { MatchProfiles as SettingsMatchProfiles } from '../../../support/fragments/settings/dataImport';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -39,7 +40,7 @@ describe('data-import', () => {
       JobProfileEdit.unlinkActionsProfile(0);
       NewJobProfile.linkActionProfileByName(defaultActionProfileName);
       JobProfileEdit.saveAndClose();
-      MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+      SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
     });
 
     it(

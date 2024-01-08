@@ -31,6 +31,7 @@ import {
   Tooltip,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import { MARC_AUTHORITY_SEARCH_OPTIONS, MARC_AUTHORITY_BROWSE_OPTIONS } from '../../constants';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const actionsButton = rootSection.find(Button('Actions'));
@@ -218,6 +219,43 @@ export default {
         .find(Link())
         .exists(),
     );
+  },
+
+  verifyNumberOfTitlesForRowWithValue(value, itemCount) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(value),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles' }))
+        .has({ content: itemCount.toString() }),
+    );
+  },
+
+  verifyEmptyNumberOfTitlesForRowWithValue(value) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(value),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles' }))
+        .has({ content: '' }),
+    );
+  },
+
+  clickOnNumberOfTitlesForRowWithValue(value, itemCount) {
+    cy.wrap(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(value),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles', content: itemCount.toString() }))
+        .find(Link())
+        .href(),
+    ).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
   },
 
   verifyFirstValueSaveSuccess(successMsg, txt) {
@@ -1201,4 +1239,24 @@ export default {
   checkRowByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).exists()),
 
   checkRowAbsentByContent: (rowContent) => cy.expect(authoritiesList.find(MultiColumnListRow(including(rowContent))).absent()),
+
+  selectSearchOptionInDropdown(searchOption) {
+    cy.do(selectField.choose(searchOption));
+  },
+
+  checkSearchOptionsInDropdownInOrder() {
+    cy.wrap(selectField.allOptionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(MARC_AUTHORITY_SEARCH_OPTIONS));
+    });
+  },
+
+  checkBrowseOptionsInDropdownInOrder() {
+    cy.wrap(selectField.optionsText()).should((arrayOfOptions) => {
+      expect(arrayOfOptions).to.deep.equal(Object.values(MARC_AUTHORITY_BROWSE_OPTIONS));
+    });
+  },
+
+  checkSelectOptionFieldContent(option) {
+    cy.expect(selectField.has({ checkedOptionText: option }));
+  },
 };

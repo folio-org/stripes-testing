@@ -8,6 +8,12 @@ import {
   RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
+import {
+  JobProfiles as SettingsJobProfiles,
+  MatchProfiles as SettingsMatchProfiles,
+  ActionProfiles as SettingsActionProfiles,
+  FieldMappingProfiles as SettingsFieldMappingProfiles,
+} from '../../../support/fragments/settings/dataImport';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
@@ -20,8 +26,8 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
+import NewMatchProfile from '../../../support/fragments/settings/dataImport/matchProfiles/newMatchProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -55,6 +61,7 @@ describe('data-import', () => {
     };
 
     before('create test data', () => {
+      cy.getAdminToken();
       cy.loginAsAdmin()
         .then(() => {
           cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
@@ -322,6 +329,7 @@ describe('data-import', () => {
 
         // download exported marc file
         cy.visit(TopMenu.dataExportPath);
+        cy.getAdminToken();
         ExportFile.uploadFile(csvFileName);
         ExportFile.exportWithCreatedJobProfile(csvFileName, exportJobProfileName);
         ExportFile.downloadExportedMarcFile(marcFileNameForUpdate);
@@ -374,13 +382,15 @@ describe('data-import', () => {
           '*SearchInstanceUUIDs*',
         );
         cy.getAdminToken().then(() => {
-          JobProfiles.deleteJobProfile(jobProfileWithMatch.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileWithMatch.profileName);
           cy.wrap(collectionOfMatchProfiles).each((profile) => {
-            MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+            SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
           });
           cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
-            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
           });
           cy.getInstance({
             limit: 1,
@@ -391,6 +401,7 @@ describe('data-import', () => {
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         });
       },
     );
@@ -399,8 +410,8 @@ describe('data-import', () => {
       'C422064 When MARC Bib job profile only involves holdings and items, verify that the record title is present in the log details WITHOUT instance match item (folijet)',
       { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
-        const marcFileNameForUpdate = `C375109 firstmarcFile.${getRandomPostfix()}.mrc`;
-        const csvFileName = `C375109 firstautotestFile${getRandomPostfix()}.csv`;
+        const marcFileNameForUpdate = `C422064 secondmarcFile.${getRandomPostfix()}.mrc`;
+        const csvFileName = `C422064 secondAutotestFile${getRandomPostfix()}.csv`;
         const quantityOfItems = '1';
         const collectionOfMappingAndActionProfiles = [
           {
@@ -590,17 +601,19 @@ describe('data-import', () => {
         FileManager.deleteFile(`cypress/fixtures/${marcFileNameForUpdate}`);
         FileManager.deleteFile(`cypress/fixtures/${csvFileName}`);
         FileManager.deleteFileFromDownloadsByMask(
-          '*C375109 firstmarcFile*',
+          '*C422064 secondmarcFile*',
           '*SearchInstanceUUIDs*',
         );
         cy.getAdminToken().then(() => {
-          JobProfiles.deleteJobProfile(jobProfileWithoutMatch.profileName);
+          SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileWithoutMatch.profileName);
           cy.wrap(collectionOfMatchProfiles).each((profile) => {
-            MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+            SettingsMatchProfiles.deleteMatchProfileByNameViaApi(profile.matchProfile.profileName);
           });
           cy.wrap(collectionOfMappingAndActionProfiles).each((profile) => {
-            ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-            FieldMappingProfileView.deleteViaApi(profile.mappingProfile.name);
+            SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
+            SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+              profile.mappingProfile.name,
+            );
           });
           cy.getInstance({
             limit: 1,

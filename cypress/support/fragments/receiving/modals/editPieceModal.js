@@ -1,6 +1,5 @@
 import {
   Button,
-  Checkbox,
   KeyValue,
   Label,
   Modal,
@@ -20,10 +19,9 @@ const createNewHoldingForLocationButton = editPieceModal.find(
   Button('Create new holdings for location'),
 );
 const cancelButton = editPieceModal.find(Button('Cancel'));
-const deleteButton = editPieceModal.find(Button('Delete'));
-const quickReceiveButton = editPieceModal.find(Button('Quick receive'));
+const deleteButton = Button('Delete');
+const quickReceiveButton = Button('Quick receive');
 const saveAndCloseButton = editPieceModal.find(Button('Save & close'));
-const createAnotherCheckbox = editPieceModal.find(Checkbox('Create another'));
 
 const editPieceFields = {
   Caption: editPieceModal.find(TextField({ name: 'caption' })),
@@ -47,16 +45,12 @@ export default {
         header: 'Edit piece',
       }),
       cancelButton.has({ disabled: false, visible: true }),
-      deleteButton.has({ disabled: false, visible: true }),
-      createAnotherCheckbox.has({ checked: false }),
       saveAndCloseButton.has({ disabled: false, visible: true }),
+      Button({ dataTestID: 'dropdown-trigger-button' }).has({ disabled: false, visible: true }),
     ]);
 
     if (isExpected) {
-      cy.expect([
-        editPieceModal.find(Selection({ name: 'holdingId' })).exists(),
-        quickReceiveButton.has({ disabled: false, visible: true }),
-      ]);
+      cy.expect([editPieceModal.find(Selection({ name: 'holdingId' })).exists()]);
     } else {
       cy.expect(editPieceModal.find(KeyValue('Select holdings')).exists());
     }
@@ -88,7 +82,6 @@ export default {
     return DeletePieceModal;
   },
   clickQuickReceiveButton({ peiceReceived = true } = {}) {
-    cy.expect(quickReceiveButton.has({ disabled: false }));
     cy.do(quickReceiveButton.click());
 
     if (peiceReceived) {

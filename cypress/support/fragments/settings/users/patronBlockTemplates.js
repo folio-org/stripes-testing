@@ -28,6 +28,10 @@ export default {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
 
+  verifyAddNewNotAvailable() {
+    cy.expect(Button({ id: 'clickable-create-entry' }).absent());
+  },
+
   fillInPatronTemlateInformation(name, description) {
     cy.do([
       TextField({ name: 'name' }).fillIn(name),

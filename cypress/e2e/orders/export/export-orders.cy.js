@@ -41,7 +41,7 @@ describe('Orders', () => {
       });
       cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
         orderLine.physical.materialType = materialType.id;
-        cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+        cy.loginAsAdmin();
         cy.createOrderApi(order).then((response) => {
           orderNumber = response.body.poNumber;
           cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {

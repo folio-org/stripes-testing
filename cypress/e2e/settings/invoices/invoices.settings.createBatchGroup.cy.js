@@ -6,7 +6,7 @@ describe('ui-invoices-settings: Batch Group creation', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const newBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
   });
 

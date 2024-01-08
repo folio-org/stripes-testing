@@ -64,7 +64,7 @@ export default {
         return response;
       });
   },
-  deleteMaterialTypeViaApi(materialTypeId) {
+  deleteViaApi(materialTypeId) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `material-types/${materialTypeId}`,

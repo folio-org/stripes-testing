@@ -193,7 +193,7 @@ describe('Title Level Request. Request Detail', () => {
 
   it(
     'C350414 Check that user can see "Requests" columns (vega) (TaaS)',
-    { tags: ['extended', 'vega'] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.waitUIFilteredByRequestType();
