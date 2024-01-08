@@ -12,7 +12,9 @@ import {
   MultiColumnListRow,
   Callout,
 } from '../../../../../../interactors';
+import getRandomPostfix from '../../../../utils/stringTools';
 
+const jobProfileNameForCreating = `Inventory Single Record - Default Create Instance.${getRandomPostfix()}`;
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
 const targetProfileName = Pane('Z39.50 target profiles');
 const newPane = Pane('New');
@@ -113,6 +115,7 @@ function verifyJobProfilesForOverlayUpdateAscendingOrder() {
 }
 
 export default {
+  jobProfileNameForCreating,
   edit,
   save,
   create,

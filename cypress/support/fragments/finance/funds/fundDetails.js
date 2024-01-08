@@ -121,7 +121,7 @@ export default {
     cy.do(fundDetailsPaneHeader.find(Button({ icon: 'times' })).click());
   },
 
-  verifyGroupName: (title) => {
-    cy.expect(fundDetailsPane.find(fundDetailsPaneHeader).has({ text: including(title) }));
+  verifyFundName: (title) => {
+    cy.expect(fundDetailsPaneHeader.has({ text: including(title) }));
   },
 };

@@ -204,8 +204,10 @@ describe('data-import', () => {
         ).then((order) => {
           orderNumber = order.poNumber;
 
+          Orders.resetFilters();
           Orders.checkIsOrderCreated(orderNumber);
           // open the first PO with POL
+          Orders.resetFilters();
           Orders.searchByParameter('PO number', orderNumber);
           Orders.selectFromResultsList(orderNumber);
           Orders.openOrder();

@@ -221,6 +221,43 @@ export default {
     );
   },
 
+  verifyNumberOfTitlesForRowWithValue(value, itemCount) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(value),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles' }))
+        .has({ content: itemCount.toString() }),
+    );
+  },
+
+  verifyEmptyNumberOfTitlesForRowWithValue(value) {
+    cy.expect(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(value),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles' }))
+        .has({ content: '' }),
+    );
+  },
+
+  clickOnNumberOfTitlesForRowWithValue(value, itemCount) {
+    cy.wrap(
+      MultiColumnListRow({
+        isContainer: true,
+        content: including(value),
+      })
+        .find(MultiColumnListCell({ column: 'Number of titles', content: itemCount.toString() }))
+        .find(Link())
+        .href(),
+    ).as('link');
+    cy.get('@link').then((link) => {
+      cy.visit(link);
+    });
+  },
+
   verifyFirstValueSaveSuccess(successMsg, txt) {
     cy.expect([
       Callout(successMsg).exists(),
@@ -493,8 +530,12 @@ export default {
     cy.do(Checkbox(value).click());
   },
 
-  downloadSelectedRecordWithRowIdx(checkBoxNumber = 1) {
-    cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
+  downloadSelectedRecordWithRowIdx(checkBoxNumber = 0) {
+    cy.do(
+      MultiColumnListRow({ index: checkBoxNumber })
+        .find(Checkbox({ ariaLabel: 'Select Authority record' }))
+        .click(),
+    );
     cy.do([actionsButton.click(), exportSelectedRecords.click()]);
   },
 

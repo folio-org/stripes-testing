@@ -4,7 +4,7 @@ import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-inventory: selecting / changing records', () => {
   beforeEach('navigates to Inventory', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(TopMenu.inventoryPath);
   });
 

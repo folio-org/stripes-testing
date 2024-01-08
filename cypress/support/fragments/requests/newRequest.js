@@ -302,7 +302,7 @@ export default {
   checkRequestIsNotAllowedModal() {
     cy.expect(
       Modal('Request not allowed').has({
-        message: 'Not allowed to move title level page request to the same item',
+        message: 'This requester already has an open request for this item',
       }),
     );
   },
@@ -352,5 +352,9 @@ export default {
       cancelButton.has({ disabled: false, visible: true }),
       saveAndCloseButton.has({ disabled: true, visible: true }),
     ]);
+  },
+
+  openTitleLookUp() {
+    cy.do(rootSection.find(Button({ id: 'find-instance-trigger' })).click());
   },
 };

@@ -108,7 +108,7 @@ describe('Title Level Request. Request Detail', () => {
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
+    cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then((userProperties) => {
       userForTLR = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
@@ -118,7 +118,7 @@ describe('Title Level Request. Request Detail', () => {
     });
 
     cy.createTempUser(
-      [permissions.requestsAll.gui, permissions.inventoryAll.gui, permissions.uiUsersView.gui],
+      [permissions.uiRequestsAll.gui, permissions.inventoryAll.gui, permissions.uiUsersView.gui],
       patronGroup.name,
     ).then((userProperties) => {
       cy.log(JSON.stringify(userProperties));
@@ -189,7 +189,7 @@ describe('Title Level Request. Request Detail', () => {
   });
   it(
     'C350424 Check that user is redirect to Item page, User page and Instance page (vega) (TaaS)',
-    { tags: ['extended', 'vega'] },
+    { tags: ['extendedPath', 'vega'] },
     () => {
       Requests.selectItemRequestLevel();
       Requests.findCreatedRequest(instanceData.title);

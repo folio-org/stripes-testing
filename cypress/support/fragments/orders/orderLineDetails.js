@@ -313,8 +313,8 @@ export default {
       }
     });
   },
-  checkItemDetailsSection(itemDEtails = []) {
-    this.checkSectionData({ details: itemDEtails, section: itemDetailsSection });
+  checkItemDetailsSection(itemDetails = []) {
+    this.checkSectionData({ details: itemDetails, section: itemDetailsSection });
   },
   checkPoLineInformationSection(poLineInformation = []) {
     this.checkSectionData({ details: poLineInformation, section: purchaseOrderLineSection });

@@ -21,39 +21,41 @@ const user = {
 };
 let userId;
 
-describe('Agreement Internal Contacts', () => {
-  before('Create test data', () => {
-    cy.getAdminToken();
-    Users.createViaApi(user)
-      .then((userData) => {
-        userId = userData.id;
-      })
-      .then(() => {
-        agreement = Agreements.agreementWithLinkedUser(userId);
-        Agreements.createViaApi(agreement).then((agr) => {
-          agreementId = agr.id;
+describe('agreements', () => {
+  describe('Agreement Internal Contacts', () => {
+    before('Create test data', () => {
+      cy.getAdminToken();
+      Users.createViaApi(user)
+        .then((userData) => {
+          userId = userData.id;
+        })
+        .then(() => {
+          agreement = Agreements.agreementWithLinkedUser(userId);
+          Agreements.createViaApi(agreement).then((agr) => {
+            agreementId = agr.id;
+          });
         });
+      cy.loginAsAdmin({
+        path: TopMenu.agreementsPath,
+        waiter: Agreements.waitLoading,
       });
-    cy.loginAsAdmin({
-      path: TopMenu.agreementsPath,
-      waiter: Agreements.waitLoading,
     });
-  });
 
-  after('Delete test data', () => {
-    Users.deleteViaApi(userId);
-    Agreements.deleteViaApi(agreementId);
-  });
+    after('Delete test data', () => {
+      Users.deleteViaApi(userId);
+      Agreements.deleteViaApi(agreementId);
+    });
 
-  it(
-    'C3460 Filter agreements by library staff member assigned (erm) (TaaS)',
-    { tags: ['extendedPath', 'erm'] },
-    () => {
-      SearchAndFilterAgreements.openInternalContactsFilter();
-      SearchAndFilterAgreements.clickSelectInternalContactButton();
-      SearchAndFilterAgreements.filterContactByName(user.personal.lastName);
-      SearchAndFilterAgreements.selectContactName(including(user.personal.lastName));
-      Agreements.checkAgreementPresented(agreement.name);
-    },
-  );
+    it(
+      'C3460 Filter agreements by library staff member assigned (erm) (TaaS)',
+      { tags: ['extendedPath', 'erm'] },
+      () => {
+        SearchAndFilterAgreements.openInternalContactsFilter();
+        SearchAndFilterAgreements.clickSelectInternalContactButton();
+        SearchAndFilterAgreements.filterContactByName(user.personal.lastName);
+        SearchAndFilterAgreements.selectContactName(including(user.personal.lastName));
+        Agreements.checkAgreementPresented(agreement.name);
+      },
+    );
+  });
 });

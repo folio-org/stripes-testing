@@ -86,6 +86,7 @@ const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
 const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 const closeButton = Button('Close');
 const closeWithoutSavingButton = Button('Close without saving');
+const linkProfileButton = Button('Link Profile');
 
 const requiredFields = {
   'Purchase order status': purchaseOrderStatus,
@@ -657,6 +658,9 @@ export default {
     }
   },
 
+  fillTextFieldInAccordion: (accordionName, fieldName, value) => {
+    cy.do(Accordion(accordionName).find(TextField(fieldName)).fillIn(value));
+  },
   addName: (name) => cy.do(nameField.fillIn(name)),
   addIncomingRecordType: (type) => cy.do(incomingRecordTypeField.choose(type)),
   addFolioRecordType: (folioType) => cy.do(existingRecordType.choose(folioType)),
@@ -672,10 +676,16 @@ export default {
   fillQuantity: (quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal: (number) => cy.do(TextField('Sub-total*').fillIn(number)),
   fillPurchaseOrderStatus: (orderStatus) => cy.do(purchaseOrderStatus.fillIn(`"${orderStatus}"`)),
+  fillMaterialTypeForElectronicResource: (type) => {
+    cy.do(eResourcesDetailsAccordion.find(TextField('Material type')).fillIn(type));
+  },
+  fillMaterialTypeForPhysicalResource: (type) => {
+    cy.do(physicalResourceDetailsAccordion.find(TextField('Material type')).fillIn(type));
+  },
+  fillOrderFormat: (format) => cy.do(orderFormatField.fillIn(format)),
   fillCreateInventoryForElectronicResource: (inventory) => {
     cy.do(eResourcesDetailsAccordion.find(TextField('Create inventory')).fillIn(inventory));
   },
-  fillOrderFormat: (format) => cy.do(orderFormatField.fillIn(format)),
   fillCreateInventoryForPhysicalResource: (inventory) => {
     cy.do(physicalResourceDetailsAccordion.find(TextField('Create inventory')).fillIn(inventory));
   },
@@ -1060,7 +1070,8 @@ export default {
 
   markFieldForProtection: (field) => {
     cy.get('div[class^="mclRow--"]')
-      .contains('div[class^="mclCell-"]', field)
+      .find('div[class^="mclCell-"]')
+      .contains(field)
       .then((elem) => {
         elem.parent()[0].querySelector('input[type="checkbox"]').click();
       });
@@ -1244,6 +1255,40 @@ export default {
     );
   },
 
+  verifyRowFieldValue: (rowIndex, accordionName, fieldName, value) => {
+    cy.expect(
+      Accordion(accordionName)
+        .find(ListItem({ index: rowIndex }))
+        .find(TextField(fieldName))
+        .has({ value }),
+    );
+  },
+
+  verifyRowFieldEmptyAndDisabled: (rowIndex, accordionName, fieldName) => {
+    cy.expect(
+      Accordion(accordionName)
+        .find(ListItem({ index: rowIndex }))
+        .find(TextField(fieldName))
+        .has({ value: '', disabled: true }),
+    );
+  },
+
+  verifyCheckboxEnabled: (accordionName, fieldName) => {
+    cy.expect(Accordion(accordionName).find(Checkbox(fieldName)).has({ disabled: false }));
+  },
+
+  verifyCheckboxEmptyAndDisabled: (accordionName, fieldName) => {
+    cy.expect(Accordion(accordionName).find(Checkbox(fieldName)).has({ disabled: true }));
+  },
+
+  verifyOrganizationLookUpButtonEnabled: (accordionName) => {
+    cy.expect(Accordion(accordionName).find(organizationLookUpButton).has({ disabled: false }));
+  },
+
+  verifyOrganizationLookUpButtonDisabled: (accordionName) => {
+    cy.expect(Accordion(accordionName).find(organizationLookUpButton).has({ disabled: true }));
+  },
+
   verifyAddLocationButtonEnabled: () => {
     cy.expect(locationAccordion.find(Button('Add location')).has({ disabled: false }));
   },
@@ -1263,29 +1308,16 @@ export default {
     ]);
   },
 
+  clickAddLocationButton: () => {
+    cy.do([locationAccordion.find(Button('Add location')).click()]);
+  },
+
   isPurchaseOrderStatusFieldFocused: (value) => {
     purchaseOrderStatus.has({ focused: value });
   },
 
-  verifyRowFieldEmptyAndDisabled: (rowIndex, accordionName, fieldName) => {
-    cy.expect(
-      Accordion(accordionName)
-        .find(ListItem({ index: rowIndex }))
-        .find(TextField(fieldName))
-        .has({ value: '', disabled: true }),
-    );
-  },
-
   verifyAddVolumeButtonDisabled: () => {
     cy.expect(physicalResourceDetailsAccordion.find(Button('Add volume')).has({ disabled: true }));
-  },
-
-  verifyOrganizationLookUpButtonDisabled: (accordionName) => {
-    cy.expect(Accordion(accordionName).find(organizationLookUpButton).has({ disabled: true }));
-  },
-
-  clickAddLocationButton: () => {
-    cy.do([locationAccordion.find(Button('Add location')).click()]);
   },
 
   verifyDefaultPurchaseOrderLinesLimit(value) {
@@ -1383,5 +1415,9 @@ export default {
         .find(Button(`${type}`))
         .click(),
     );
+  },
+
+  clickLinkProfileButton() {
+    cy.do(linkProfileButton.click());
   },
 };

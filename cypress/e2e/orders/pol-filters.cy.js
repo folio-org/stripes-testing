@@ -81,7 +81,7 @@ describe('orders: Test Po line filters', () => {
     });
     cy.getFundsApi({ query: 'code="USHIST"' }).then((funds) => {
       orderLine.fundDistribution[0].fundId = funds[0]?.id;
-      cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+      cy.loginAsAdmin();
       cy.createOrderApi(order).then(() => {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
           orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
