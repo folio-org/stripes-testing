@@ -72,7 +72,7 @@ describe.skip('inventory', () => {
         });
       });
 
-      cy.createTempUser([permissions.checkoutAll.gui, permissions.requestsAll.gui]).then(
+      cy.createTempUser([permissions.checkoutAll.gui, permissions.uiRequestsAll.gui]).then(
         (userProperties) => {
           userForDeliveryRequest = userProperties;
 

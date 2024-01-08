@@ -5,7 +5,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 
-describe('Data Import', () => {
+describe('data-import', () => {
   describe('Log details', () => {
     let user;
 

@@ -113,7 +113,7 @@ describe('Request Detail. TLR', () => {
       })
       .then(() => {
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
-        cy.createTempUser([permissions.requestsAll.gui]).then((userProperties) => {
+        cy.createTempUser([permissions.uiRequestsAll.gui]).then((userProperties) => {
           users.holdUser = userProperties;
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
@@ -121,7 +121,7 @@ describe('Request Detail. TLR', () => {
             testData.userServicePoint.id,
           );
         });
-        cy.createTempUser([permissions.requestsAll.gui]).then((userProperties) => {
+        cy.createTempUser([permissions.uiRequestsAll.gui]).then((userProperties) => {
           users.recallUser = userProperties;
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
@@ -133,7 +133,7 @@ describe('Request Detail. TLR', () => {
           permissions.uiRequestsCreate.gui,
           permissions.uiRequestsView.gui,
           permissions.uiRequestsEdit.gui,
-          permissions.requestsAll.gui,
+          permissions.uiRequestsAll.gui,
           permissions.uiNotesItemView.gui,
         ]).then((userProperties) => {
           users.mainUser = userProperties;

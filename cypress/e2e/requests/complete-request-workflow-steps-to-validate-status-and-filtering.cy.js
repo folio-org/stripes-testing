@@ -44,7 +44,7 @@ describe('Requests', () => {
       });
     });
     cy.createTempUser([
-      Permissions.requestsAll.gui,
+      Permissions.uiRequestsAll.gui,
       Permissions.inventoryAll.gui,
       Permissions.checkoutAll.gui,
       Permissions.checkinAll.gui,

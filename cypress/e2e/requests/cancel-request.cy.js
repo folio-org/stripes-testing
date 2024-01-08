@@ -32,7 +32,7 @@ describe('Title Level Request', () => {
 
         itemData = testData.folioInstances[0];
       });
-      cy.createTempUser([Permissions.requestsAll.gui, Permissions.checkinAll.gui])
+      cy.createTempUser([Permissions.uiRequestsAll.gui, Permissions.checkinAll.gui])
         .then((userProperties) => {
           testData.user = userProperties;
         })

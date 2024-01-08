@@ -1,4 +1,5 @@
 import { ACCEPTED_DATA_TYPE_NAMES } from '../../../support/constants';
+import { JobProfiles as SettingsJobProfiles } from '../../../support/fragments/settings/dataImport';
 import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -30,7 +31,7 @@ describe('data-import', () => {
 
     after('delete test data', () => {
       cy.getAdminToken();
-      JobProfiles.deleteJobProfile(jobProfileLongName);
+      SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfileLongName);
     });
 
     it(

@@ -261,7 +261,10 @@ export default {
     cy.wait(ONE_SECOND);
     cy.do(Select('Search field index').choose('Subjects'));
   },
-
+  searchBySourceHolding: (source) => {
+    cy.do(Button({ id: 'accordion-toggle-button-holdingsSource' }).click());
+    cy.do(Checkbox(source).click());
+  },
   selectBrowseContributors() {
     this.switchToBrowseTab();
     // cypress can not pick up an option without wait

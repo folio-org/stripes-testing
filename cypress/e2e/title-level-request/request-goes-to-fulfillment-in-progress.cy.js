@@ -41,7 +41,7 @@ describe('Check in and Request handling', () => {
     Requests.getRequestApi({ query: '(requestLevel=="Title")' }).then((requestResponse) => {
       requestResponse.forEach((response) => Requests.deleteRequestViaApi(response.id));
     });
-    cy.createTempUser([Permissions.requestsAll.gui]).then((userProperties) => {
+    cy.createTempUser([Permissions.uiRequestsAll.gui]).then((userProperties) => {
       testData.user = userProperties;
       UserEdit.addServicePointViaApi(
         testData.servicePoint.id,

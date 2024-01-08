@@ -85,7 +85,7 @@ describe('orders: Test Po line search', () => {
     cy.getMaterialTypes({ query: 'name="book"' }).then((materialType) => {
       orderLine.physical.materialType = materialType.id;
     });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.createOrderApi(order).then(() => {
       cy.getAcquisitionMethodsApi({ query: 'value="Other"' }).then((params) => {
         orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
