@@ -1197,6 +1197,9 @@ export default {
   },
 
   verifyLogsTableHeaders() {
+    if (cy.get('div.mclScrollable---JvHuN')) {
+      cy.get('div.mclScrollable---JvHuN').scrollTo('right');
+    }
     cy.expect([
       MultiColumnListHeader('Record type').exists(),
       MultiColumnListHeader('Status').exists(),
