@@ -790,7 +790,13 @@ export default {
     InventoryNewHoldings.saveAndClose();
     waitLoading();
   },
-
+  createHoldingsRecordForTemporaryLocation: (permanentLocation, temporaryLocation) => {
+    pressAddHoldingsButton();
+    InventoryNewHoldings.fillRequiredFields(permanentLocation);
+    InventoryNewHoldings.fillRequiredFieldsForTemporaryLocation(temporaryLocation);
+    InventoryNewHoldings.saveAndClose();
+    waitLoading();
+  },
   checkHoldingsTable: (
     locationName,
     rowNumber,
