@@ -166,11 +166,16 @@ export default {
   },
   filterByTags(option) {
     cy.do([
-      tagsAccordion.clickHeader(),
-      tagsAccordion.find(MultiSelect()).filter(option),
-      tagsAccordion.find(MultiSelectOption(option)).click(),
+      selectInstanceModal.find(tagsAccordion).clickHeader(),
+      selectInstanceModal.find(tagsAccordion).find(MultiSelect()).filter(option),
+      selectInstanceModal.find(tagsAccordion).find(MultiSelectOption(option)).click(),
     ]);
-    cy.expect(MultiSelect({ selected: including(option) }).exists());
+    cy.expect(
+      selectInstanceModal
+        .find(tagsAccordion)
+        .find(MultiSelect({ selected: including(option) }))
+        .exists(),
+    );
     cy.wait(2000);
   },
   verifyListResults(title) {

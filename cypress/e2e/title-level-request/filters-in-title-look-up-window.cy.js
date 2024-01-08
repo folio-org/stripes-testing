@@ -236,7 +236,7 @@ describe('Title Level Request', () => {
         SelectInstanceModal.verifyListResults(testData.instanceData.title);
         SelectInstanceModal.clickResetAllButton();
 
-        SelectInstanceModal.filterByTags(testData.instanceData.tag);
+        SelectInstanceModal.filterByTags(testData.tag.label);
         SelectInstanceModal.verifyListResults(testData.instanceData.title);
         SelectInstanceModal.clickResetAllButton();
       },
