@@ -2,8 +2,7 @@ import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-// import ItemRecordNew from '../../../support/fragments/inventory/item/itemRecordNew';
-// import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
+import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { randomFourDigitNumber } from '../../../support/utils/stringTools';
@@ -62,8 +61,6 @@ describe('Inventory', () => {
     });
 
     after('Delete test data', () => {
-      cy.log(testData.folioInstances[0].instanceId);
-
       cy.getAdminToken();
       Users.deleteViaApi(testData.userId);
       testData.folioInstances.forEach(({ instanceId }) => {
@@ -77,33 +74,25 @@ describe('Inventory', () => {
       () => {
         InventorySearchAndFilter.switchToBrowseTab();
         InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.CALL_NUMBERS_ALL);
+        InventorySearchAndFilter.browseSearch(`test ${testData.randomPostfix} 305`);
+        BrowseCallNumber.valueInResultTableIsHighlighted(`test ${testData.randomPostfix} 305`);
+        for (let i = 1; i <= 23; i++) {
+          BrowseCallNumber.checkValuePresentInResults(`test ${testData.randomPostfix} ${300 + i}`);
+        }
         InventorySearchAndFilter.browseSearch(`test ${testData.randomPostfix}`);
-        cy.wait(5000);
-
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[5].dewey);
-        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('dewey', 5));
-
-        // InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_CONGRESS);
-        // InventorySearchAndFilter.browseSearch(callNumbers[6].lc);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].lc);
-        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('lc', 6));
-
-        // InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LOCAL);
-        // InventorySearchAndFilter.browseSearch(callNumbers[6].local);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[6].local);
-        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('local', 6));
-
-        // InventorySearchAndFilter.selectBrowseOption(BROWSE_CALL_NUMBER_OPTIONS.LIBRARY_OF_MEDICINE);
-        // InventorySearchAndFilter.browseSearch(callNumbers[2].nlm);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[2].nlm);
-        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('nlm', 2));
-
-        // InventorySearchAndFilter.selectBrowseOption(
-        //   BROWSE_CALL_NUMBER_OPTIONS.SUPERINTENDENT_OF_DOCUMENTS,
-        // );
-        // InventorySearchAndFilter.browseSearch(callNumbers[4].sudoc);
-        // BrowseCallNumber.valueInResultTableIsHighlighted(callNumbers[4].sudoc);
-        // BrowseCallNumber.verifyCallNumbersNotFound(filterCNsExcluding('sudoc', 4));
+        BrowseCallNumber.checkNonExactSearchResult(`test ${testData.randomPostfix}`);
+        for (let i = 1; i <= 23; i++) {
+          BrowseCallNumber.checkValuePresentInResults(`test ${testData.randomPostfix} ${300 + i}`);
+        }
+        BrowseCallNumber.checkPreviousPaginationButtonActive();
+        BrowseCallNumber.clickPreviousPaginationButton();
+        BrowseCallNumber.checkSearchResultsTable();
+        for (let i = 1; i <= 23; i++) {
+          BrowseCallNumber.checkValuePresentInResults(
+            `test ${testData.randomPostfix} ${300 + i}`,
+            false,
+          );
+        }
       },
     );
   });
