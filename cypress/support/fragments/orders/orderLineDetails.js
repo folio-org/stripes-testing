@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   InfoRow,
   KeyValue,
   Link,
@@ -335,8 +336,12 @@ export default {
     });
   },
   checkSectionData({ details, section }) {
-    details.forEach(({ key, value }) => {
-      cy.expect(section.find(KeyValue(key)).has({ value: including(value) }));
+    details.forEach(({ key, value, checkbox }) => {
+      if (checkbox) {
+        cy.expect(section.find(Checkbox(key)).has(value));
+      } else {
+        cy.expect(section.find(KeyValue(key)).has({ value: including(value) }));
+      }
     });
   },
   checkLocationsSection({ locations = [] } = {}) {
