@@ -79,7 +79,7 @@ describe('Title level request for aged to lost item', () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       // Open new request dialog
       InventoryInstance.checkNewRequestAtNewPane();
-      NewRequest.verifyTitleLevelRequestsCheckbox('checked');
+      NewRequest.verifyTitleLevelRequestsCheckbox(true);
       // Enter requester barcode
       NewRequest.enterRequesterBarcode(userData.barcode);
       // Error message should be displayed
