@@ -105,7 +105,7 @@ describe('Check In - Actions', () => {
       patronGroup.id = patronGroupResponse;
     });
     cy.createTempUser(
-      [permissions.checkinAll.gui, permissions.checkoutAll.gui, permissions.requestsAll.gui],
+      [permissions.checkinAll.gui, permissions.checkoutAll.gui, permissions.uiRequestsAll.gui],
       patronGroup.name,
     )
       .then((userProperties) => {
@@ -121,7 +121,7 @@ describe('Check In - Actions', () => {
           testData.userServicePoint.id,
         );
 
-        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then(
+        cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then(
           (userProperties) => {
             requestUserData.username = userProperties.username;
             requestUserData.userId = userProperties.userId;

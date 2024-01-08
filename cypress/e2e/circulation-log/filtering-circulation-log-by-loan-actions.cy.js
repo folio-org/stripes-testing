@@ -174,7 +174,7 @@ describe('Circulation log', () => {
         );
       })
       .then(() => {
-        cy.createTempUser([permissions.requestsAll.gui]).then((userProperties) => {
+        cy.createTempUser([permissions.uiRequestsAll.gui]).then((userProperties) => {
           userForRequest = userProperties;
           UserEdit.addServicePointViaApi(
             testData.userServicePoint.id,
