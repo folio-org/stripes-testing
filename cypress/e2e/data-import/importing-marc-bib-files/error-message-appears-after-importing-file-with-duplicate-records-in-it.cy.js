@@ -107,6 +107,7 @@ describe('data-import', () => {
       { tags: ['criticalPath', 'folijet', 'nonParallel'] },
       () => {
         DataImport.uploadFile(firstFilePathForUpload, firstFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(firstFileName);
@@ -155,6 +156,7 @@ describe('data-import', () => {
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
         DataImport.uploadFile(editedMarcFileName, secondFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(secondFileName);

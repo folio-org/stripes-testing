@@ -49,6 +49,7 @@ describe('data-import', () => {
       () => {
         DataImport.verifyUploadState();
         DataImport.uploadFile(testData.filePathForUpload, testData.marcFileName);
+        JobProfiles.waitFileIsUploaded();
         JobProfiles.waitLoadingList();
         JobProfiles.search(testData.jobProfileToRun);
         JobProfiles.runImportFile();

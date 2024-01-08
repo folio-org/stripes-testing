@@ -2017,7 +2017,7 @@ export default {
     cy.expect(
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ value: including(valueToCheck) }))
-        .absent()
+        .absent(),
     );
   },
 
@@ -2025,7 +2025,7 @@ export default {
     cy.expect(
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ value: including(valueToCheck) }))
-        .exists()
+        .exists(),
     );
   },
 
