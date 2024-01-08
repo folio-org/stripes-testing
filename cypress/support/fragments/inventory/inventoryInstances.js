@@ -17,6 +17,8 @@ import {
   PaneContent,
   MultiColumnListHeader,
   MultiColumnListRow,
+  AdvancedSearch,
+  AdvancedSearchRow,
 } from '../../../../interactors';
 import CheckinActions from '../check-in-actions/checkInActions';
 import InventoryHoldings from './holdings/inventoryHoldings';
@@ -26,7 +28,6 @@ import InventoryItems from './item/inventoryItems';
 import Arrays from '../../utils/arrays';
 import { ITEM_STATUS_NAMES, LOCATION_NAMES, REQUEST_METHOD } from '../../constants';
 import getRandomPostfix from '../../utils/stringTools';
-import { AdvancedSearch, AdvancedSearchRow } from '../../../../interactors/advanced-search';
 
 const rootSection = Section({ id: 'pane-results' });
 const resultsPaneHeader = PaneHeader({ id: 'paneHeaderpane-results' });
@@ -712,6 +713,71 @@ export default {
         });
       });
   },
+  createMarcInstancesViaApi({ marcInstances = [], location = {}, sourceId } = {}) {
+    const types = {
+      instanceTypeId: '',
+      holdingTypeId: '',
+      loanTypeId: '',
+      materialTypeId: '',
+    };
+
+    return cy
+      .then(() => {
+        this.getInstanceTypes().then((instanceTypes) => {
+          types.instanceTypeId = instanceTypes[0].id;
+        });
+        this.getHoldingTypes().then((holdingTypes) => {
+          types.holdingTypeId = holdingTypes[0].id;
+        });
+        this.getLoanTypes().then((loanTypes) => {
+          types.loanTypeId = loanTypes[0].id;
+        });
+        this.getMaterialTypes().then((materialTypes) => {
+          types.materialTypeId = materialTypes[0].id;
+        });
+      })
+      .then(() => {
+        const instances = marcInstances.map((marcInstance) => {
+          return {
+            instance: {
+              instanceTypeId: types.instanceTypeId,
+              title: marcInstance.instanceTitle,
+              id: marcInstance.instanceId,
+            },
+            holdings: marcInstance.holdings.map((holding) => ({
+              ...holding,
+              holdingsTypeId: types.holdingTypeId,
+              permanentLocationId: holding.permanentLocationId || location.id,
+              sourceId,
+            })),
+            items: marcInstance.items.map((item) => ({
+              ...item,
+              permanentLoanType: {
+                id: item.permanentLoanType?.id || types.loanTypeId,
+              },
+              materialType: {
+                id: item.materialType?.id || types.materialTypeId,
+              },
+            })),
+          };
+        });
+
+        instances.forEach((instance, index) => {
+          this.createMarcInstanceViaApi(instance).then(
+            ({ instanceId, holdingIds, holdings, items }) => {
+              marcInstances[index].instanceId = instanceId;
+              marcInstances[index].holdings = holdings;
+              marcInstances[index].items = items;
+
+              // should not be used, left for support of old tests
+              marcInstances[index].holdingId = holdingIds[0].id;
+              marcInstances[index].itemIds = holdingIds[0].itemIds;
+              marcInstances[index].barcodes = items.map(({ barcode }) => barcode);
+            },
+          );
+        });
+      });
+  },
   createFolioInstanceViaApi({ instance, holdings = [], items = [] }) {
     InventoryHoldings.getHoldingsFolioSource().then((folioSource) => {
       const instanceWithSpecifiedNewId = {
@@ -747,6 +813,62 @@ export default {
                     ...item,
                     id: item.id || uuid(),
                     holdingsRecordId: item.holdingsRecordId || holdingWithIds.id,
+                  };
+                  itemIds.push(itemWithIds.id);
+                  InventoryItems.createItemViaApi(itemWithIds).then(() => {
+                    instanceData.items.push(itemWithIds);
+                  });
+                }),
+              ).then(() => {
+                instanceData.holdingIds.push({ id: holdingWithIds.id, itemIds });
+                instanceData.holdings.push(holdingWithIds);
+              });
+            });
+          }),
+        ).then(() => {
+          cy.wrap(instanceData).as('instanceData');
+        });
+      });
+    });
+    return cy.get('@instanceData');
+  },
+  createMarcInstanceViaApi({ instance, holdings = [], items = [] }) {
+    InventoryHoldings.getHoldingsMarcSource().then((marcSource) => {
+      const instanceWithSpecifiedNewId = {
+        ...instance,
+        id: instance.id || uuid(),
+        title: instance.title || `autotest_instance_${getRandomPostfix()}`,
+        source: marcSource.name,
+      };
+      const instanceData = {
+        instanceId: instanceWithSpecifiedNewId.id,
+        holdingIds: [],
+        holdings: [],
+        items: [],
+      };
+      createInstanceViaAPI(instanceWithSpecifiedNewId).then(() => {
+        cy.wrap(
+          holdings.forEach((holding) => {
+            const holdingWithIds = {
+              ...holding,
+              id: holding.id || uuid(),
+              instanceId: instanceWithSpecifiedNewId.id,
+              sourceId: marcSource.id,
+            };
+            InventoryHoldings.createHoldingRecordViaApi(holdingWithIds).then(() => {
+              const itemIds = [];
+              const holdingItems = items.filter((holdingItem) => {
+                return holdingItem.holdingsRecordId
+                  ? holdingItem.holdingsRecordId === holdingWithIds.id
+                  : true;
+              });
+
+              cy.wrap(
+                holdingItems.forEach((holdingItem) => {
+                  const itemWithIds = {
+                    ...holdingItem,
+                    id: holdingItem.id || uuid(),
+                    holdingsRecordId: holdingItem.holdingsRecordId || holdingWithIds.id,
                   };
                   itemIds.push(itemWithIds.id);
                   InventoryItems.createItemViaApi(itemWithIds).then(() => {

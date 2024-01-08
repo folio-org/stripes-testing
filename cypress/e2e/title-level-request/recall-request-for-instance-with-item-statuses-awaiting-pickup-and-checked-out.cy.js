@@ -145,7 +145,7 @@ describe('Title level Request', () => {
       .then(() => {
         cy.createTempUser(
           [
-            permissions.requestsAll.gui,
+            permissions.uiRequestsAll.gui,
             permissions.checkinAll.gui,
             permissions.checkoutAll.gui,
             permissions.inventoryAll.gui,

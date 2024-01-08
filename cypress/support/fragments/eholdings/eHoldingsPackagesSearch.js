@@ -6,12 +6,14 @@ import {
   Checkbox,
   MultiSelect,
   MultiSelectOption,
+  including,
 } from '../../../../interactors';
 import eHoldingsPackages from './eHoldingsPackages';
 
 const contentTypeAccordion = Accordion({ id: 'filter-packages-type' });
 const selectionStatusAccordion = Accordion({ id: 'filter-packages-selected' });
 const tagsAccordion = Accordion({ id: 'accordionTagFilter' });
+const byTagCheckbox = Checkbox('Search by tags only');
 
 export default {
   byContentType: (type) => {
@@ -31,10 +33,19 @@ export default {
   },
   byTag: (specialTag) => {
     cy.do(tagsAccordion.clickHeader());
-    cy.do(tagsAccordion.find(Checkbox('Search by tags only')).click());
+    cy.do(tagsAccordion.find(byTagCheckbox).click());
     cy.do(tagsAccordion.find(MultiSelect()).filter(specialTag));
     cy.do(tagsAccordion.find(MultiSelectOption(specialTag)).click());
     eHoldingsPackages.waitLoading();
+  },
+  verifyTagAbsent(specialTag) {
+    cy.do([
+      tagsAccordion.clickHeader(),
+      tagsAccordion.find(byTagCheckbox).click(),
+      tagsAccordion.find(byTagCheckbox).click(),
+      tagsAccordion.find(Button({ ariaLabel: 'open menu' })).click(),
+    ]);
+    cy.expect(tagsAccordion.find(MultiSelectOption(including(specialTag))).absent());
   },
   resetTagFilter: () => {
     cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());

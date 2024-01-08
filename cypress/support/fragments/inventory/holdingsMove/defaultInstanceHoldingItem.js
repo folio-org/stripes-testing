@@ -11,6 +11,13 @@ export default {
       source: 'local',
     },
   },
+  defaultModesOfIssuans: {
+    body: {
+      id: uuid(),
+      name: `autotest_name_${getRandomPostfix()}`,
+      source: 'local',
+    },
+  },
   defaultUiHoldingsSources: {
     body: {
       id: uuid(),

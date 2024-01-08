@@ -174,7 +174,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
           testData.userServicePoint.id,
         );
 
-        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then(
+        cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then(
           (userProperties) => {
             recallUserData.username = userProperties.username;
             recallUserData.userId = userProperties.userId;

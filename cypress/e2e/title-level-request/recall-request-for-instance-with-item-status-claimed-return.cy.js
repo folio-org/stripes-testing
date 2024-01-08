@@ -33,7 +33,7 @@ describe('Title level request for claimed return item', () => {
       });
     });
     cy.createTempUser([
-      Permissions.requestsAll.gui,
+      Permissions.uiRequestsAll.gui,
       Permissions.uiRequestsEdit.gui,
       Permissions.uiRequestsCreate.gui,
       Permissions.inventoryAll.gui,
