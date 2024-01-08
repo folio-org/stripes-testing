@@ -65,7 +65,7 @@ describe('marc', () => {
       // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
       DataImport.verifyUploadState();
       DataImport.uploadFile(testData.fileName, testData.fileNameForCreateHoldings);
-      JobProfiles.waitUploadingFile();
+      JobProfiles.waitLoadingList();
       JobProfiles.search(testData.jobProfileForRun);
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(testData.fileNameForCreateHoldings);

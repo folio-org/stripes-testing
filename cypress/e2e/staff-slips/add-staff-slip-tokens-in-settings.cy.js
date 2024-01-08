@@ -81,7 +81,7 @@ describe('Staff slips', () => {
           patronGroup.id = patronGroupResponse;
         });
         cy.createTempUser(
-          [permissions.uiCirculationCreateEditRemoveStaffSlips.gui, permissions.requestsAll.gui],
+          [permissions.uiCirculationCreateEditRemoveStaffSlips.gui, permissions.uiRequestsAll.gui],
           patronGroup.name,
         ).then((userProperties) => {
           userData = userProperties;

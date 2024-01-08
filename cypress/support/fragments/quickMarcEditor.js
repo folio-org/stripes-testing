@@ -723,9 +723,17 @@ export default {
   },
 
   afterDeleteNotification(tag) {
-    cy.get('[class^=deletedRowPlaceholder-]')
-      .contains('span', `Field ${tag}`)
-      .should('include.text', `Field ${tag} has been deleted from this MARC record.`);
+    if (tag) {
+      cy.expect(
+        rootSection
+          .find(HTML(including(`Field ${tag} has been deleted from this MARC record.`)))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        rootSection.find(HTML(including('Field has been deleted from this MARC record.'))).exists(),
+      );
+    }
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo');
   },
 
@@ -1999,6 +2007,22 @@ export default {
 
   checkTagAbsent(tag) {
     cy.expect(getRowInteractorByTagName(tag).absent());
+  },
+
+  checkValueAbsent(rowIndex, valueToCheck) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ value: including(valueToCheck) }))
+        .absent()
+    );
+  },
+
+  checkValueExist(rowIndex, valueToCheck) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ value: including(valueToCheck) }))
+        .exists()
+    );
   },
 
   checkLinkingAuthorityByTag: (tag) => {

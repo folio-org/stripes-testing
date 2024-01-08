@@ -49,7 +49,7 @@ describe('ui-inventory: Create page type request', () => {
             permissions.uiUsersEdituserservicepoints.gui,
             permissions.uiUserAccounts.gui,
             permissions.usersViewRequests.gui,
-            permissions.requestsAll.gui,
+            permissions.uiRequestsAll.gui,
           ],
           patronGroup.name,
         );

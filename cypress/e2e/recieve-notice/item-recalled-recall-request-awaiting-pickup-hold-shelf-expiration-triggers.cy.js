@@ -233,7 +233,7 @@ describe('Request notice triggers', () => {
         });
       cy.createTempUser(
         [
-          permissions.requestsAll.gui,
+          permissions.uiRequestsAll.gui,
           permissions.circulationLogAll.gui,
           permissions.uiCirculationSettingsNoticeTemplates.gui,
           permissions.uiCirculationSettingsNoticePolicies.gui,
