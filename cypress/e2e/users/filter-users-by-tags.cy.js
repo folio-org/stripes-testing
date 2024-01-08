@@ -13,6 +13,11 @@ describe('Users', () => {
 
   before('Create a user', () => {
     cy.getAdminToken();
+    cy.createTempUser().then((userProperties) => {
+      existingUser.username = userProperties.username;
+      existingUser.password = userProperties.password;
+      existingUser.userId = userProperties.userId;
+    });
     cy.createTempUser([
       Permissions.uiTagsPermissionAll.gui,
       Permissions.uiUsersView.gui,
@@ -21,11 +26,10 @@ describe('Users', () => {
       userData.username = userProperties.username;
       userData.password = userProperties.password;
       userData.userId = userProperties.userId;
-    });
-    cy.createTempUser().then((userProperties) => {
-      existingUser.username = userProperties.username;
-      existingUser.password = userProperties.password;
-      existingUser.userId = userProperties.userId;
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.usersPath,
+        waiter: UsersSearchPane.waitLoading,
+      });
     });
   });
 
@@ -36,9 +40,6 @@ describe('Users', () => {
   });
 
   it('C343214 Filter users by tags (volaris) (TaaS)', { tags: ['criticalPath', 'volaris'] }, () => {
-    cy.login(userData.username, userData.password);
-    cy.visit(TopMenu.usersPath);
-    UsersSearchPane.waitLoading();
     UsersSearchPane.searchByKeywords(existingUser.userId);
     UsersCard.waitLoading();
     UsersCard.verifyTagsNumber('0');
