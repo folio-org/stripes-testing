@@ -55,69 +55,73 @@ describe('Title Level Request', () => {
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });
-      cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-        testData.userForTLR = userProperties;
-        UserEdit.addServicePointViaApi(
-          testData.servicePoint.id,
-          testData.userForTLR.userId,
-          testData.servicePoint.id,
-        );
-      });
-      cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-        testData.user = userProperties;
-        UserEdit.addServicePointViaApi(
-          testData.servicePoint.id,
-          testData.user.userId,
-          testData.servicePoint.id,
-        );
-        instanceData = testData.folioInstances[0];
-        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-        Requests.createNewRequestViaApi({
-          fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-          holdingsRecordId: testData.holdingTypeId,
-          instanceId: instanceData.instanceId,
-          item: { barcode: instanceData.barcodes[0] },
-          itemId: instanceData.itemIds[0],
-          pickupServicePointId: testData.servicePoint.id,
-          requestDate: new Date(),
-          requestLevel: REQUEST_LEVELS.ITEM,
-          requestType: REQUEST_TYPES.PAGE,
-          requesterId: testData.user.userId,
-        }).then((request) => {
-          requestIds.push(request.body.id);
-        });
-        Requests.createNewRequestViaApi({
-          fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-          instanceId: instanceData.instanceId,
-          item: { barcode: instanceData.barcodes[1] },
-          pickupServicePointId: testData.servicePoint.id,
-          requestDate: new Date(),
-          requestLevel: REQUEST_LEVELS.TITLE,
-          requestType: REQUEST_TYPES.PAGE,
-          requesterId: testData.userForTLR.userId,
-        }).then((request) => {
-          requestIds.push(request.body.id);
-        });
-        // Check in items 1 and 2 at the service point that matches the patron's pickup service point
-        instanceData.barcodes.forEach((barcode) => CheckInActions.checkinItemViaApi({
-          itemBarcode: barcode,
-          servicePointId: testData.servicePoint.id,
-          checkInDate: new Date().toISOString(),
-        }));
-        // Check out item 2 to patron B
-        Checkout.checkoutItemViaApi({
-          itemBarcode: instanceData.barcodes[1],
-          userBarcode: testData.userForTLR.barcode,
-          servicePointId: testData.servicePoint.id,
-        });
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.requestsPath,
-          waiter: Requests.waitLoading,
-        });
-        Requests.findCreatedRequest(testData.user.barcode);
-        Requests.selectFirstRequest(instanceData.instanceTitle);
-        RequestDetail.waitLoading();
-      });
+      cy.createTempUser([Permissions.uiRequestsAll.gui], patronGroup.name).then(
+        (userProperties) => {
+          testData.userForTLR = userProperties;
+          UserEdit.addServicePointViaApi(
+            testData.servicePoint.id,
+            testData.userForTLR.userId,
+            testData.servicePoint.id,
+          );
+        },
+      );
+      cy.createTempUser([Permissions.uiRequestsAll.gui], patronGroup.name).then(
+        (userProperties) => {
+          testData.user = userProperties;
+          UserEdit.addServicePointViaApi(
+            testData.servicePoint.id,
+            testData.user.userId,
+            testData.servicePoint.id,
+          );
+          instanceData = testData.folioInstances[0];
+          TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+          Requests.createNewRequestViaApi({
+            fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+            holdingsRecordId: testData.holdingTypeId,
+            instanceId: instanceData.instanceId,
+            item: { barcode: instanceData.barcodes[0] },
+            itemId: instanceData.itemIds[0],
+            pickupServicePointId: testData.servicePoint.id,
+            requestDate: new Date(),
+            requestLevel: REQUEST_LEVELS.ITEM,
+            requestType: REQUEST_TYPES.PAGE,
+            requesterId: testData.user.userId,
+          }).then((request) => {
+            requestIds.push(request.body.id);
+          });
+          Requests.createNewRequestViaApi({
+            fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+            instanceId: instanceData.instanceId,
+            item: { barcode: instanceData.barcodes[1] },
+            pickupServicePointId: testData.servicePoint.id,
+            requestDate: new Date(),
+            requestLevel: REQUEST_LEVELS.TITLE,
+            requestType: REQUEST_TYPES.PAGE,
+            requesterId: testData.userForTLR.userId,
+          }).then((request) => {
+            requestIds.push(request.body.id);
+          });
+          // Check in items 1 and 2 at the service point that matches the patron's pickup service point
+          instanceData.barcodes.forEach((barcode) => CheckInActions.checkinItemViaApi({
+            itemBarcode: barcode,
+            servicePointId: testData.servicePoint.id,
+            checkInDate: new Date().toISOString(),
+          }));
+          // Check out item 2 to patron B
+          Checkout.checkoutItemViaApi({
+            itemBarcode: instanceData.barcodes[1],
+            userBarcode: testData.userForTLR.barcode,
+            servicePointId: testData.servicePoint.id,
+          });
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.requestsPath,
+            waiter: Requests.waitLoading,
+          });
+          Requests.findCreatedRequest(testData.user.barcode);
+          Requests.selectFirstRequest(instanceData.instanceTitle);
+          RequestDetail.waitLoading();
+        },
+      );
     });
 
     after('Delete test data', () => {

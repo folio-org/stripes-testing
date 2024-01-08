@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   ConfirmationModal,
   Decorator,
   DecoratorWrapper,
@@ -61,6 +62,7 @@ const orderDetails = {
 const orderLineDetails = {
   poLineDetails: orderDetails.orderLineInformation.find(Section({ id: 'po-line-details' })),
   costDetails: orderDetails.orderLineInformation.find(Section({ id: 'cost-details' })),
+  locationDetails: orderDetails.orderLineInformation.find(Section({ id: 'location' })),
   physicalResourceDetails: orderDetails.orderLineInformation.find(
     Section({ id: 'physical-resource-details' }),
   ),
@@ -104,6 +106,9 @@ const orderLineInformationFields = {
     .find(DecoratorWrapper({ label: including('Receiving workflow') }))
     .find(TextField()),
   physicalUnitPrice: orderLineDetails.costDetails.find(TextField('Physical unit price')),
+  quantityPhysical: orderLineDetails.costDetails.find(TextField('Quantity physical')),
+  electronicUnitPrice: orderLineDetails.costDetails.find(TextField('Electronic unit price')),
+  quantityElectronic: orderLineDetails.costDetails.find(TextField('Quantity electronic')),
   currency: orderLineDetails.costDetails
     .find(DecoratorWrapper({ label: including('Currency') }))
     .find(TextField()),
@@ -119,13 +124,6 @@ const orderLineInformationFields = {
   createInventory: orderLineDetails.physicalResourceDetails
     .find(DecoratorWrapper({ label: including('Create inventory') }))
     .find(TextField()),
-  accessProvider: orderLineDetails.eResourceDetails.find(
-    TextField({ label: including('Access provider') }),
-  ),
-  accessProviderLookUp: orderLineDetails.eResourceDetails.find(Button('Organization look-up')),
-  eMaterialType: orderLineDetails.eResourceDetails.find(
-    TextField({ label: including('Material type') }),
-  ),
 };
 
 const electronicAccessFields = {
@@ -134,6 +132,32 @@ const electronicAccessFields = {
     .find(Select('Select action')),
 };
 
+const locationFields = {
+  quantityElectronic: orderLineDetails.locationDetails.find(TextField('Quantity electronic')),
+};
+
+const eResourceFields = {
+  accessProvider: orderLineDetails.eResourceDetails.find(
+    TextField({ label: including('Access provider') }),
+  ),
+  accessProviderLookUp: orderLineDetails.eResourceDetails.find(Button('Organization look-up')),
+  activationStatus: orderLineDetails.eResourceDetails.find(Checkbox('Activation status')),
+  activationDue: orderLineDetails.eResourceDetails
+    .find(DecoratorWrapper({ label: including('Activation due') }))
+    .find(TextField()),
+  createInventory: orderLineDetails.eResourceDetails
+    .find(DecoratorWrapper({ label: including('Create inventory') }))
+    .find(TextField()),
+  materialType: orderLineDetails.eResourceDetails.find(
+    TextField({ label: including('Material type') }),
+  ),
+  trial: orderLineDetails.eResourceDetails.find(Checkbox('Trial')),
+  expectedActivation: orderLineDetails.eResourceDetails
+    .find(DecoratorWrapper({ label: including('Expected activation') }))
+    .find(TextField()),
+  userLimit: orderLineDetails.eResourceDetails.find(TextField({ label: including('User limit') })),
+  url: orderLineDetails.eResourceDetails.find(TextField({ label: including('URL') })),
+};
 const incomingRecordTypes = {
   'MARC Bibliographic': 'MARC_BIBLIOGRAPHIC',
   'MARC Holdings': 'MARC_HOLDINGS',
@@ -179,7 +203,19 @@ const formButtons = {
 
 const formFields = {
   'Physical resource details -> Material type': orderLineInformationFields.pMaterialType,
-  'E-resources details -> Material type': orderLineInformationFields.eMaterialType,
+  'Cost details -> Electronic unit price': orderLineInformationFields.electronicUnitPrice,
+  'Cost details -> Quantity electronic': orderLineInformationFields.quantityElectronic,
+  'Location -> Quantity electronic': locationFields.quantityElectronic,
+  'E-resources details -> Access provider': eResourceFields.accessProvider,
+  'E-resources details -> Organization look-up': eResourceFields.accessProviderLookUp,
+  'E-resources details -> Activation status': eResourceFields.activationStatus,
+  'E-resources details -> Activation due': eResourceFields.activationDue,
+  'E-resources details -> Create inventory': eResourceFields.createInventory,
+  'E-resources details -> Material type': eResourceFields.materialType,
+  'E-resources details -> Trial': eResourceFields.trial,
+  'E-resources details -> Expected activation': eResourceFields.expectedActivation,
+  'E-resources details -> User limit': eResourceFields.userLimit,
+  'E-resources details -> URL': eResourceFields.url,
 };
 
 export default {
@@ -457,60 +493,42 @@ export default {
       this.fillElectronicResourceDetailsPfofileFields(eResourceDetails);
     }
   },
-  fillPoLineDetailsProfileFields({ acquisitionMethod, orderFormat, receivingWorkflow }) {
-    if (acquisitionMethod) {
-      cy.do([
-        orderLineInformationFields.acquisitionMethod.focus(),
-        orderLineInformationFields.acquisitionMethod.fillIn(`"${acquisitionMethod}"`),
-      ]);
-      cy.expect(
-        orderLineInformationFields.acquisitionMethod.has({ value: `"${acquisitionMethod}"` }),
-      );
-    }
-
-    if (orderFormat) {
-      cy.do([
-        orderLineInformationFields.orderFormat.focus(),
-        orderLineInformationFields.orderFormat.fillIn(`"${orderFormat}"`),
-      ]);
-      cy.expect(orderLineInformationFields.orderFormat.has({ value: `"${orderFormat}"` }));
-    }
-
-    if (receivingWorkflow) {
-      cy.do([
-        orderLineInformationFields.receivingWorkflow.focus(),
-        orderLineInformationFields.receivingWorkflow.fillIn(`"${receivingWorkflow}"`),
-      ]);
-      cy.expect(
-        orderLineInformationFields.receivingWorkflow.has({ value: `"${receivingWorkflow}"` }),
-      );
-    }
+  fillPoLineDetailsProfileFields({
+    acquisitionMethod,
+    orderFormat,
+    receivingWorkflow,
+    clearField = false,
+  }) {
+    [
+      { textField: orderLineInformationFields.acquisitionMethod, fieldValue: acquisitionMethod },
+      { textField: orderLineInformationFields.orderFormat, fieldValue: orderFormat },
+      { textField: orderLineInformationFields.receivingWorkflow, fieldValue: receivingWorkflow },
+    ].forEach(({ textField, fieldValue }) => {
+      InteractorsTools.setTextFieldValue({
+        textField,
+        clearField,
+        fieldValue: fieldValue && `"${fieldValue}"`,
+      });
+    });
   },
   fillCostDetailsProfileFields({ physicalUnitPrice, currency }) {
-    if (physicalUnitPrice) {
-      cy.do([
-        orderLineInformationFields.physicalUnitPrice.focus(),
-        orderLineInformationFields.physicalUnitPrice.fillIn(`"${physicalUnitPrice}"`),
-      ]);
-      cy.expect(
-        orderLineInformationFields.physicalUnitPrice.has({ value: `"${physicalUnitPrice}"` }),
-      );
-    }
-
-    if (currency) {
-      cy.do([
-        orderLineInformationFields.currency.focus(),
-        orderLineInformationFields.currency.fillIn(`"${currency}"`),
-      ]);
-      cy.expect(orderLineInformationFields.currency.has({ value: `"${currency}"` }));
-    }
+    [
+      { textField: orderLineInformationFields.physicalUnitPrice, fieldValue: physicalUnitPrice },
+      { textField: orderLineInformationFields.currency, fieldValue: currency },
+    ].forEach(({ textField, fieldValue }) => {
+      InteractorsTools.setTextFieldValue({
+        textField,
+        fieldValue: fieldValue === undefined ? undefined : `"${fieldValue}"`,
+      });
+    });
   },
   fillLocationsDetailsProfileFields(locations = []) {
     locations.forEach((location, index) => {
+      this.clickAddLocationButton();
+
       const nameField = `profile.mappingDetails.mappingFields[57].subfields.${index}.fields.0.value`;
       const quantityPhysicalField = `profile.mappingDetails.mappingFields[57].subfields.${index}.fields.1.value`;
       const quantityElectronicField = `profile.mappingDetails.mappingFields[57].subfields.${index}.fields.2.value`;
-      cy.do(formButtons['Add location'].click());
 
       if (location.name) {
         cy.do(
@@ -558,23 +576,16 @@ export default {
     organizationLookUp,
     createInventory,
   }) {
-    if (materialSupplier) {
-      cy.do([
-        orderLineInformationFields.materialSupplier.focus(),
-        orderLineInformationFields.materialSupplier.fillIn(`"${materialSupplier}"`),
-      ]);
-      cy.expect(
-        orderLineInformationFields.materialSupplier.has({ value: `"${materialSupplier}"` }),
-      );
-    }
-
-    if (materialType) {
-      cy.do([
-        orderLineInformationFields.pMaterialType.focus(),
-        orderLineInformationFields.pMaterialType.fillIn(`"${materialType}"`),
-      ]);
-      cy.expect(orderLineInformationFields.pMaterialType.has({ value: `"${materialType}"` }));
-    }
+    [
+      { textField: orderLineInformationFields.materialSupplier, fieldValue: materialSupplier },
+      { textField: orderLineInformationFields.pMaterialType, fieldValue: materialType },
+      { textField: orderLineInformationFields.createInventory, fieldValue: createInventory },
+    ].forEach(({ textField, fieldValue }) => {
+      InteractorsTools.setTextFieldValue({
+        textField,
+        fieldValue: fieldValue && `"${fieldValue}"`,
+      });
+    });
 
     if (organizationLookUp) {
       cy.do([
@@ -586,41 +597,22 @@ export default {
         orderLineInformationFields.materialSupplier.has({ value: `"${organizationLookUp}"` }),
       );
     }
-
-    if (createInventory) {
-      cy.do([
-        orderLineInformationFields.createInventory.focus(),
-        orderLineInformationFields.createInventory.fillIn(`"${createInventory}"`),
-      ]);
-      cy.expect(orderLineInformationFields.createInventory.has({ value: `"${createInventory}"` }));
-    }
   },
   fillElectronicResourceDetailsPfofileFields({ accessProvider, organizationLookUp, materialType }) {
-    if (accessProvider) {
-      cy.do([
-        orderLineInformationFields.accessProvider.focus(),
-        orderLineInformationFields.accessProvider.fillIn(`"${accessProvider}"`),
-      ]);
-      cy.expect(orderLineInformationFields.accessProvider.has({ value: `"${accessProvider}"` }));
-    }
+    [
+      { textField: eResourceFields.accessProvider, fieldValue: accessProvider },
+      { textField: eResourceFields.materialType, fieldValue: materialType },
+    ].forEach(({ textField, fieldValue }) => {
+      InteractorsTools.setTextFieldValue({
+        textField,
+        fieldValue: fieldValue && `"${fieldValue}"`,
+      });
+    });
 
     if (organizationLookUp) {
-      cy.do([
-        orderLineInformationFields.accessProvider.focus(),
-        orderLineInformationFields.accessProviderLookUp.click(),
-      ]);
+      cy.do([eResourceFields.accessProvider.focus(), eResourceFields.accessProviderLookUp.click()]);
       FinanceHelper.selectFromLookUpView({ itemName: organizationLookUp });
-      cy.expect(
-        orderLineInformationFields.accessProvider.has({ value: `"${organizationLookUp}"` }),
-      );
-    }
-
-    if (materialType) {
-      cy.do([
-        orderLineInformationFields.eMaterialType.focus(),
-        orderLineInformationFields.eMaterialType.fillIn(`"${materialType}"`),
-      ]);
-      cy.expect(orderLineInformationFields.eMaterialType.has({ value: `"${materialType}"` }));
+      cy.expect(eResourceFields.accessProvider.has({ value: `"${organizationLookUp}"` }));
     }
   },
   fillElectronicAccessProfileFields({ value }) {
@@ -628,6 +620,9 @@ export default {
       cy.do([electronicAccessFields.select.focus(), electronicAccessFields.select.choose(value)]);
       cy.expect(electronicAccessFields.select.has({ value: electronicAccessOptions[value] }));
     }
+  },
+  clickAddLocationButton() {
+    cy.do(formButtons['Add location'].click());
   },
   clickCloseButton({ closeWoSaving = true } = {}) {
     cy.expect(closeButton.has({ disabled: false }));
