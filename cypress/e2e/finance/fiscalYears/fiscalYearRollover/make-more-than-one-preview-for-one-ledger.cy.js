@@ -129,18 +129,17 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       );
       Ledgers.rolloverLogs();
       Ledgers.exportRollover(todayDate);
-      cy.pause();
       Ledgers.checkDownloadedFile(
         `${fileNameDate}-result.csv`,
         defaultFund,
         secondFiscalYear,
+        '100',
+        '100',
         '1000',
         '1000',
-        '160',
-        '160',
-        '160',
-        '160',
-        '160',
+        '1000',
+        '1000',
+        '990',
       );
       Ledgers.deleteDownloadedFile(`${fileNameDate}-result.csv`);
       Ledgers.closeOpenedPage();
@@ -154,8 +153,15 @@ describe('ui-finance: Fiscal Year Rollover', () => {
       Ledgers.closeRolloverInfo();
       Ledgers.selectFundInLedger(defaultFund.name);
       Funds.selectPlannedBudgetDetails();
-      Funds.checkFundingInformation('$160.00', '$0.00', '$0.00', '$160.00', '$0.00', '$160.00');
-      Funds.checkFinancialActivityAndOverages('$0.00', '$0.00', '$0.00', '$0.00');
+      Funds.checkFundingInformation(
+        '$1,000.00',
+        '$0.00',
+        '$0.00',
+        '$1,000.00',
+        '$0.00',
+        '$1,000.00',
+      );
+      Funds.checkFinancialActivityAndOverages('$10.00', '$0.00', '$0.00', '$10.00');
     },
   );
 });
