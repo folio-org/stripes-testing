@@ -1,6 +1,5 @@
 import { Button, Link, Modal, MultiColumnListCell, Pane } from '../../../../interactors';
 
-
 export const openCalendarSettings = (isLoggedIn = true) => {
   if (!isLoggedIn) {
     cy.loginAsAdmin();
@@ -10,19 +9,15 @@ export const openCalendarSettings = (isLoggedIn = true) => {
 
 export const deleteCalendarUI = (calendarName) => {
   openCalendarSettings();
-  cy.do(
-    Pane('Calendar').find(Link('All calendars')).click()
-  );
+  cy.do(Pane('Calendar').find(Link('All calendars')).click());
 
-  cy.do(
-    Pane('All calendars').find(MultiColumnListCell(calendarName)).exists()
-  );
+  cy.do(Pane('All calendars').find(MultiColumnListCell(calendarName)).exists());
 
   cy.do([
     Pane('All calendars').find(MultiColumnListCell(calendarName)).click(),
     Pane(calendarName).clickAction('Delete'),
     Modal('Confirm deletion').find(Button('Delete')).click(),
-    Pane('All calendars').find(MultiColumnListCell(calendarName)).absent()
+    Pane('All calendars').find(MultiColumnListCell(calendarName)).absent(),
   ]);
 };
 
@@ -34,9 +29,9 @@ export const createCalendar = (testCalendarRequestBody, callback = null) => {
       body: testCalendarRequestBody,
       headers: {
         'x-okapi-tenant': Cypress.env('okapi_tenant'),
-        'x-okapi-token': Cypress.env('token')
+        'x-okapi-token': Cypress.env('token'),
       },
-      failOnStatusCode: false
+      failOnStatusCode: false,
     }).then((response) => {
       if (response.status === 409) {
         deleteCalendarUI(testCalendarRequestBody.name);
@@ -49,7 +44,6 @@ export const createCalendar = (testCalendarRequestBody, callback = null) => {
       }
     });
   }
-
 
   if (!Cypress.env('token')) {
     cy.getAdminToken().then(() => {
@@ -66,11 +60,11 @@ export const deleteCalendar = (calendarID, callback = null) => {
     path: 'calendar/calendars/' + calendarID,
   }).then((response) => {
     expect(response.status).equals(204);
-    if (callback) { callback(response); }
+    if (callback) {
+      callback(response);
+    }
   });
 };
-
-
 
 export const createServicePoint = (testServicePointRequestBody, callback) => {
   cy.okapiRequest({
@@ -79,11 +73,17 @@ export const createServicePoint = (testServicePointRequestBody, callback) => {
     body: testServicePointRequestBody,
   }).then((response) => {
     expect(response.status).equals(201);
-    if (callback) { callback(response); }
+    if (callback) {
+      callback(response);
+    }
   });
 };
 
-export const deleteServicePoint = async (servicePointID, checkStatusCode = true, callback = null) => {
+export const deleteServicePoint = async (
+  servicePointID,
+  checkStatusCode = true,
+  callback = null,
+) => {
   function makeRequest() {
     cy.request({
       url: Cypress.env('OKAPI_HOST') + '/service-points/' + servicePointID,
@@ -99,7 +99,9 @@ export const deleteServicePoint = async (servicePointID, checkStatusCode = true,
       } else {
         expect(response.status).oneOf([204, 404]);
       }
-      if (callback) { callback(response); }
+      if (callback) {
+        callback(response);
+      }
     });
   }
 
@@ -111,4 +113,3 @@ export const deleteServicePoint = async (servicePointID, checkStatusCode = true,
     makeRequest();
   }
 };
-
