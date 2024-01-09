@@ -20,8 +20,8 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import ConfirmDeleteItemModal from '../../../support/fragments/inventory/modals/confirmDeleteItemModal';
 
 const testData = {
-  inventoryTitle: 'C360405',
-  inventorySubject: 'C375163 SuperCorp',
+  inventoryTitle: 'C380405',
+  inventorySubject: 'C380405 SuperCorp',
   user: {},
   instanceId: '',
   instanceIDs: [],
