@@ -10,7 +10,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
 
-describe('Data Import', () => {
+describe('data-import', () => {
   describe('Settings', () => {
     const fieldMappingProfile = `autotest_mapping_profile_name_${getRandomPostfix()}`;
 
@@ -91,8 +91,8 @@ describe('Data Import', () => {
 
         // Delete value from the "Purchase order status" field
         FieldMappingProfileEditForm.fillOrderInformationProfileFields({
-          status: '',
-          useQuates: false,
+          status: null,
+          clearField: true,
         });
 
         // Click "Save as profile & Close" button

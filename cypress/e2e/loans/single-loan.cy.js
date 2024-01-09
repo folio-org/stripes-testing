@@ -20,7 +20,7 @@ import Users from '../../support/fragments/users/users';
 import Loans from '../../support/fragments/users/userDefaultObjects/loans';
 
 describe('Loans', () => {
-  describe('Loans:  Change due date', () => {
+  describe('Loans: Change due date', () => {
     const testData = {
       folioInstances: InventoryInstances.generateFolioInstances(),
       servicePoint: ServicePoints.getDefaultServicePoint(),

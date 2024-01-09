@@ -212,7 +212,9 @@ describe('data-import', () => {
         SettingsMatchProfiles.deleteMatchProfileByNameViaApi(matchProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
-          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(profile.mappingProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
         testData.createdRecordIDs.forEach((id) => {
           InventoryInstance.deleteInstanceViaApi(id);

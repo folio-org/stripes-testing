@@ -452,6 +452,7 @@ export default {
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
+    basedOn,
   ) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
@@ -463,13 +464,12 @@ export default {
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose(basedOn),
     ]);
     cy.get('button:contains("Test rollover")').eq(0).should('be.visible').trigger('click');
     cy.wait(2000);
     this.continueRollover();
     cy.do([Button({ id: 'clickable-test-rollover-confirmation-confirm' }).click()]);
-    cy.wait(4000);
   },
 
   fillInRolloverInfoForOngoingOrdersWithoutAllocations(
@@ -498,6 +498,7 @@ export default {
     fiscalYear,
     rolloverBudgetValue,
     rolloverValueAs,
+    basedOn,
   ) {
     cy.do(fiscalYearSelect.click());
     // Need to wait,while date of fiscal year will be loaded
@@ -509,13 +510,12 @@ export default {
       rolloverBudgetVelueSelect.choose(rolloverBudgetValue),
       addAvailableToSelect.choose(rolloverValueAs),
       Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
-      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Initial encumbrance'),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose(basedOn),
     ]);
     cy.get('button:contains("Rollover")').eq(2).should('be.visible').trigger('click');
     cy.wait(4000);
     this.continueRollover();
     cy.do(rolloverConfirmButton.click());
-    cy.wait(4000);
   },
 
   checkZeroSearchResultsHeader: () => {

@@ -89,7 +89,9 @@ describe('data-import', () => {
         SettingsJobProfiles.deleteJobProfileByNameViaApi(jobProfile.profileName);
         collectionOfMappingAndActionProfiles.forEach((profile) => {
           SettingsActionProfiles.deleteActionProfileByNameViaApi(profile.actionProfile.name);
-          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(profile.mappingProfile.name);
+          SettingsFieldMappingProfiles.deleteMappingProfileByNameViaApi(
+            profile.mappingProfile.name,
+          );
         });
         cy.getInstance({
           limit: 1,

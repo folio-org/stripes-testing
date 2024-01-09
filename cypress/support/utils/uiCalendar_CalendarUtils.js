@@ -3,27 +3,30 @@
  */
 
 import DateTools from './dateTools';
-import { WEEKDAYS, WEEKDAY_INDEX, getRelativeWeekdayStatus, weekdayIsBetween } from './uiCalendar_WeekdayUtils';
+import {
+  WEEKDAYS,
+  WEEKDAY_INDEX,
+  getRelativeWeekdayStatus,
+  weekdayIsBetween,
+} from './uiCalendar_WeekdayUtils';
 
 const {
   dateFromHHMM,
   dateFromYYYYMMDD,
   dateFromYYYYMMDDAndHHMM,
   dateToTimeOnly,
-  getLocalizedDate, getLocalizedTime,
+  getLocalizedDate,
+  getLocalizedTime,
   getRelativeDateProximity,
-  dateFromDateAndHHMM
+  dateFromDateAndHHMM,
 } = DateTools.uiCalendar;
 
 /** Get all openings and exceptions which apply to this date */
-export function getDateMatches(
-  testDate,
-  calendar
-) {
+export function getDateMatches(testDate, calendar) {
   const testDateDayStart = new Date(
     testDate.getFullYear(),
     testDate.getMonth(),
-    testDate.getDate()
+    testDate.getDate(),
   );
   return {
     openings: calendar.normalHours.filter((opening) => {
@@ -34,7 +37,7 @@ export function getDateMatches(
         dateFromYYYYMMDD(exception.startDate) <= testDateDayStart &&
         testDateDayStart <= dateFromYYYYMMDD(exception.endDate)
       );
-    })
+    }),
   };
 }
 
@@ -43,58 +46,34 @@ export function isInSingleDayNormalOpening(
   testWeekday,
   testDateTime,
   startTimeRel,
-  endTimeRel
+  endTimeRel,
 ) {
   const testTime = dateToTimeOnly(testDateTime);
 
   // really only spans one day
   if (startTimeRel <= endTimeRel) {
-    return (
-      testWeekday === weekday &&
-      testTime >= startTimeRel &&
-      testTime <= endTimeRel
-    );
+    return testWeekday === weekday && testTime >= startTimeRel && testTime <= endTimeRel;
   }
   // wraps around the week
-  return (
-    weekday !== testWeekday ||
-    testTime <= endTimeRel ||
-    testTime >= startTimeRel
-  );
+  return weekday !== testWeekday || testTime <= endTimeRel || testTime >= startTimeRel;
 }
 
-export function isMiddleDayInRange(
-  startWeekday,
-  endWeekday,
-  testWeekday
-) {
-  const endWeekdayAdjusted =
-    startWeekday > endWeekday ? endWeekday + 7 : endWeekday;
-  const currentWeekdayAdjusted =
-    startWeekday > testWeekday ? testWeekday + 7 : testWeekday;
+export function isMiddleDayInRange(startWeekday, endWeekday, testWeekday) {
+  const endWeekdayAdjusted = startWeekday > endWeekday ? endWeekday + 7 : endWeekday;
+  const currentWeekdayAdjusted = startWeekday > testWeekday ? testWeekday + 7 : testWeekday;
 
   // between both ends
-  return (
-    startWeekday < currentWeekdayAdjusted &&
-    currentWeekdayAdjusted < endWeekdayAdjusted
-  );
+  return startWeekday < currentWeekdayAdjusted && currentWeekdayAdjusted < endWeekdayAdjusted;
 }
 
-
 /** Get the next exceptional opening on the same date, if any */
-export function getNextExceptionalOpening(
-  testDateTime,
-  exception
-) {
+export function getNextExceptionalOpening(testDateTime, exception) {
   let min = null;
   let minDate = null;
   for (const opening of exception.openings) {
     if (
-      testDateTime <=
-      dateFromYYYYMMDDAndHHMM(opening.startDate, opening.startTime) &&
-      (minDate === null ||
-        minDate >=
-        dateFromYYYYMMDDAndHHMM(opening.startDate, opening.startTime))
+      testDateTime <= dateFromYYYYMMDDAndHHMM(opening.startDate, opening.startTime) &&
+      (minDate === null || minDate >= dateFromYYYYMMDDAndHHMM(opening.startDate, opening.startTime))
     ) {
       min = opening;
       minDate = dateFromYYYYMMDDAndHHMM(opening.startDate, opening.startTime);
@@ -103,16 +82,11 @@ export function getNextExceptionalOpening(
   return min;
 }
 
-
 /** Get the current exceptional opening, if any */
-function getCurrentExceptionalOpening(
-  testDateTime,
-  exception
-) {
+function getCurrentExceptionalOpening(testDateTime, exception) {
   for (const opening of exception.openings) {
     if (
-      dateFromYYYYMMDDAndHHMM(opening.startDate, opening.startTime) <=
-      testDateTime &&
+      dateFromYYYYMMDDAndHHMM(opening.startDate, opening.startTime) <= testDateTime &&
       testDateTime <= dateFromYYYYMMDDAndHHMM(opening.endDate, opening.endTime)
     ) {
       return opening;
@@ -121,16 +95,13 @@ function getCurrentExceptionalOpening(
   return null;
 }
 
-export function getExceptionalStatus(
-  testDateTime,
-  exception
-) {
+export function getExceptionalStatus(testDateTime, exception) {
   // fully closed exception
   if (exception.openings.length === 0) {
     return {
       open: false,
       exceptional: true,
-      exceptionName: exception.name
+      exceptionName: exception.name,
     };
   }
 
@@ -143,7 +114,7 @@ export function getExceptionalStatus(
       return {
         open: false,
         exceptional: true,
-        exceptionName: exception.name
+        exceptionName: exception.name,
       };
     } else {
       // future opening found
@@ -154,18 +125,15 @@ export function getExceptionalStatus(
         nextEvent: {
           proximity: getRelativeDateProximity(
             dateFromYYYYMMDD(nextOpening.startDate),
-            testDateTime
+            testDateTime,
           ),
           date: getLocalizedDate(nextOpening.startDate),
           time: getLocalizedTime(nextOpening.startTime),
           weekday:
             WEEKDAY_INDEX[
-              dateFromYYYYMMDDAndHHMM(
-                nextOpening.startDate,
-                nextOpening.startTime
-              ).getDay()
-            ]
-        }
+              dateFromYYYYMMDDAndHHMM(nextOpening.startDate, nextOpening.startTime).getDay()
+            ],
+        },
       };
     }
   } else {
@@ -175,25 +143,17 @@ export function getExceptionalStatus(
       exceptional: true,
       exceptionName: exception.name,
       nextEvent: {
-        proximity: getRelativeDateProximity(
-          dateFromYYYYMMDD(currentOpening.endDate),
-          testDateTime
-        ),
+        proximity: getRelativeDateProximity(dateFromYYYYMMDD(currentOpening.endDate), testDateTime),
         date: getLocalizedDate(currentOpening.endDate),
         time: getLocalizedTime(currentOpening.endTime),
-        weekday:
-          WEEKDAY_INDEX[dateFromYYYYMMDD(currentOpening.endDate).getDay()]
-      }
+        weekday: WEEKDAY_INDEX[dateFromYYYYMMDD(currentOpening.endDate).getDay()],
+      },
     };
   }
 }
 
-
 /** Get the current normal opening, if any */
-export function getCurrentNormalOpening(
-  testDateTime,
-  openings
-) {
+export function getCurrentNormalOpening(testDateTime, openings) {
   const currentWeekday = testDateTime.getDay();
   const testTime = dateToTimeOnly(testDateTime);
 
@@ -207,13 +167,7 @@ export function getCurrentNormalOpening(
     // single-day interval
     if (
       startWeekday === endWeekday &&
-      isInSingleDayNormalOpening(
-        startWeekday,
-        currentWeekday,
-        testTime,
-        startTimeRel,
-        endTimeRel
-      )
+      isInSingleDayNormalOpening(startWeekday, currentWeekday, testTime, startTimeRel, endTimeRel)
     ) {
       return opening;
     }
@@ -244,12 +198,8 @@ export function getCurrentNormalOpening(
   return null;
 }
 
-
 /** Get the next normal opening within the same day */
-export function getNextNormalOpening(
-  testDateTime,
-  openings
-) {
+export function getNextNormalOpening(testDateTime, openings) {
   let min = null;
   let minDate = null;
 
@@ -300,17 +250,12 @@ export function isOpen247(openings) {
   );
 }
 
-
-
-export function getNormalOpeningStatus(
-  testDateTime,
-  openings
-) {
+export function getNormalOpeningStatus(testDateTime, openings) {
   // no openings on that day
   if (openings.length === 0) {
     return {
       open: false,
-      exceptional: false
+      exceptional: false,
     };
   }
 
@@ -322,7 +267,7 @@ export function getNormalOpeningStatus(
     if (nextOpening === null) {
       return {
         open: false,
-        exceptional: false
+        exceptional: false,
       };
     } else {
       // future opening found
@@ -332,8 +277,8 @@ export function getNormalOpeningStatus(
         nextEvent: getRelativeWeekdayStatus(
           nextOpening.startDay,
           nextOpening.startTime,
-          testDateTime
-        )
+          testDateTime,
+        ),
       };
     }
   } else {
@@ -344,17 +289,14 @@ export function getNormalOpeningStatus(
       nextEvent: getRelativeWeekdayStatus(
         currentOpening.endDay,
         currentOpening.endTime,
-        testDateTime
-      )
+        testDateTime,
+      ),
     };
   }
 }
 
 // this function will not consider things more than one day away, unless currently in an opening
-function getCurrentStatusNonFormatted(
-  testDateTime,
-  calendar
-) {
+function getCurrentStatusNonFormatted(testDateTime, calendar) {
   const { openings, exceptions } = getDateMatches(testDateTime, calendar);
 
   if (exceptions.length !== 0) {
@@ -436,46 +378,43 @@ function formatMessage(translationKey, options) {
  * - nextTime (any of the last option)
  */
 // this function will not consider things more than one day away, unless currently in an opening
-export default function getCurrentStatus(
-  testDateTime,
-  calendar
-) {
+export default function getCurrentStatus(testDateTime, calendar) {
   const localeWeekdays = [
     {
       weekday: 'SUNDAY',
       short: 'Sun',
-      long: 'Sunday'
+      long: 'Sunday',
     },
     {
       weekday: 'MONDAY',
       short: 'Mon',
-      long: 'Monday'
+      long: 'Monday',
     },
     {
       weekday: 'TUESDAY',
       short: 'Tue',
-      long: 'Tuesday'
+      long: 'Tuesday',
     },
     {
       weekday: 'WEDNESDAY',
       short: 'Wed',
-      long: 'Wednesday'
+      long: 'Wednesday',
     },
     {
       weekday: 'THURSDAY',
       short: 'Thu',
-      long: 'Thursday'
+      long: 'Thursday',
     },
     {
       weekday: 'FRIDAY',
       short: 'Fri',
-      long: 'Friday'
+      long: 'Friday',
     },
     {
       weekday: 'SATURDAY',
       short: 'Sat',
-      long: 'Saturday'
-    }
+      long: 'Saturday',
+    },
   ];
   const status = getCurrentStatusNonFormatted(testDateTime, calendar);
 
@@ -511,10 +450,6 @@ export default function getCurrentStatus(
     exceptionName: status.exceptionName,
     nextWeekday: nextWeekdayString,
     nextDate: status.nextEvent?.date,
-    nextTime: status.nextEvent?.time
+    nextTime: status.nextEvent?.time,
   });
 }
-
-
-
-
