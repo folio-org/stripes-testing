@@ -136,7 +136,7 @@ describe('eHoldings', () => {
         const FilterTitlesModal = EHoldingsPackageView.openFilterTitlesModal();
 
         // Decrease the number of "Titles" found by using filter.
-        FilterTitlesModal.typeSearchQuery('Australia');
+        FilterTitlesModal.typeSearchQuery('Asian');
         FilterTitlesModal.clickSearchButton();
 
         EHoldingsPackageView.getFilteredTitlesCount().then((titlesCount) => {
