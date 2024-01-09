@@ -2,13 +2,9 @@
  * utility functions for ui-calendar automated UI testing
  */
 
-
 import DateTools from './dateTools';
 
-const {
-  dateFromYYYYMMDD,
-  toStartOfDay,
-} = DateTools.uiCalendar;
+const { dateFromYYYYMMDD, toStartOfDay } = DateTools.uiCalendar;
 
 function getCalendarAssignmentsString(calendar) {
   let result = '';
@@ -19,14 +15,13 @@ function getCalendarAssignmentsString(calendar) {
     } else if (numAssignments === 2) {
       result = calendar.assignments[0] + ' and ' + calendar.assignments[1];
     } else {
-      const lastAssignment = numAssignments > 1 ? ', and ' + calendar.assignments[numAssignments - 1] : '';
+      const lastAssignment =
+        numAssignments > 1 ? ', and ' + calendar.assignments[numAssignments - 1] : '';
       result = calendar.assignments.slice(0, -1).join(', ') + lastAssignment;
     }
   }
   return result;
 }
-
-
 
 export default {
   // functions related to SortableMultiColumnList component in ui-calendar
@@ -34,7 +29,9 @@ export default {
     // add a 'sort' to the sortsArray specified
     addSort(sortsArray, sortProperty) {
       let result = [];
-      sortsArray.forEach(sort => { result.push({ ...sort }); });
+      sortsArray.forEach((sort) => {
+        result.push({ ...sort });
+      });
       if (result.length >= 1 && result[0].sortProperty === sortProperty) {
         // toggling the primary sort
         result[0].inAscendingOrder = !result[0].inAscendingOrder;
@@ -49,7 +46,7 @@ export default {
       }
 
       return result;
-    }
+    },
   },
   sortAllCalendars: {
     // given a calendar object with a list of assignments,
@@ -59,10 +56,9 @@ export default {
     // returns the resulting of sorting 'rows' using the sorts specified in the 'sorts' array
     sortCalendars(rows, sorts) {
       const rowsCopy = [];
-      rows.forEach(row => {
+      rows.forEach((row) => {
         rowsCopy.push({ ...row });
       });
-
 
       for (let i = sorts.length - 1; i >= 0; --i) {
         const sort = sorts[i];
@@ -76,12 +72,22 @@ export default {
             break;
           case 'startDate':
             rowsCopy.sort((firstRow, secondRow) => {
-              return multiplier * Math.sign(new Date(firstRow.startDate).getTime() - new Date(secondRow.startDate).getTime());
+              return (
+                multiplier *
+                Math.sign(
+                  new Date(firstRow.startDate).getTime() - new Date(secondRow.startDate).getTime(),
+                )
+              );
             });
             break;
           case 'endDate':
             rowsCopy.sort((firstRow, secondRow) => {
-              return multiplier * Math.sign(new Date(firstRow.endDate).getTime() - new Date(secondRow.endDate).getTime());
+              return (
+                multiplier *
+                Math.sign(
+                  new Date(firstRow.endDate).getTime() - new Date(secondRow.endDate).getTime(),
+                )
+              );
             });
             break;
           case 'assignments':
@@ -96,8 +102,9 @@ export default {
               const firstRowAssignmentsString = getCalendarAssignmentsString(firstRow);
               const secondRowAssignmentsString = getCalendarAssignmentsString(secondRow);
 
-
-              return multiplier * firstRowAssignmentsString.localeCompare(secondRowAssignmentsString);
+              return (
+                multiplier * firstRowAssignmentsString.localeCompare(secondRowAssignmentsString)
+              );
             });
             break;
           default:
@@ -105,14 +112,13 @@ export default {
         }
       }
 
-
       return rowsCopy;
     },
   },
   sortCurrentCalendarAssignments: {
     sortRows(rows, sorts) {
       const rowsCopy = [];
-      rows.forEach(row => {
+      rows.forEach((row) => {
         rowsCopy.push({ ...row });
       });
 
@@ -135,7 +141,13 @@ export default {
               } else if (secondRow.calendar === null) {
                 return multiplier * 1;
               } else {
-                return multiplier * Math.sign(new Date(firstRow.startDateObj).getTime() - new Date(secondRow.startDateObj).getTime());
+                return (
+                  multiplier *
+                  Math.sign(
+                    new Date(firstRow.startDateObj).getTime() -
+                      new Date(secondRow.startDateObj).getTime(),
+                  )
+                );
               }
             });
             break;
@@ -148,7 +160,13 @@ export default {
               } else if (secondRow.calendar === null) {
                 return multiplier * 1;
               } else {
-                return multiplier * Math.sign(new Date(firstRow.endDateObj).getTime() - new Date(secondRow.endDateObj).getTime());
+                return (
+                  multiplier *
+                  Math.sign(
+                    new Date(firstRow.endDateObj).getTime() -
+                      new Date(secondRow.endDateObj).getTime(),
+                  )
+                );
               }
             });
             break;
@@ -175,7 +193,7 @@ export default {
         }
       }
       return rowsCopy;
-    }
+    },
   },
   date: {
     isBetweenDatesByDay(test, left, right) {
@@ -187,5 +205,5 @@ export default {
     },
 
     dateFromYYYYMMDD,
-  }
+  },
 };

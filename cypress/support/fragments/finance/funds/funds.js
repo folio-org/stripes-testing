@@ -968,6 +968,8 @@ export default {
     cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
     cy.wait(4000);
     FundDetails.waitLoading();
+
+    return FundDetails;
   },
 
   closeMenu: () => {
