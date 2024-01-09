@@ -51,6 +51,7 @@ describe('Inventory', () => {
                 cy.updateInstance(requestBody);
               });
 
+              // adding Holdings in College for shared Instance
               cy.setTenant(Affiliations.College);
               const collegeLocationData = Locations.getDefaultLocation({
                 servicePointId: ServicePoints.getDefaultServicePoint().id,
@@ -75,6 +76,7 @@ describe('Inventory', () => {
                   cy.updateInstance(requestBodyLocal);
                 });
 
+                // adding Holdings in College for local Instance
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: testData.localInstance.id,
                   permanentLocationId: testData.collegeLocation.id,
@@ -83,6 +85,7 @@ describe('Inventory', () => {
                 });
               });
 
+              // adding Holdings in University for shared Instance
               cy.setTenant(Affiliations.University);
               const universityLocationData = Locations.getDefaultLocation({
                 servicePointId: ServicePoints.getDefaultServicePoint().id,
