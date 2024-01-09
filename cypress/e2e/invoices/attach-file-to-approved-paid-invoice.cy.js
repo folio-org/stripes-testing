@@ -18,6 +18,17 @@ describe('Invoices', () => {
     user: {},
   };
 
+  const updateInvoiceStatusAndLogin = (status) => {
+    cy.getAdminToken().then(() => {
+      Invoices.changeInvoiceStatusViaApi({ invoice: testData.invoice, status });
+    });
+
+    cy.login(testData.user.username, testData.user.password, {
+      path: TopMenu.invoicesPath,
+      waiter: Invoices.waitLoading,
+    });
+  };
+
   before('Create test data', () => {
     cy.getAdminToken().then(() => {
       const { fiscalYear, fund } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
@@ -39,7 +50,10 @@ describe('Invoices', () => {
 
   beforeEach('Create test invoice', () => {
     testData.fileName = `autotes_file_name_${getRandomPostfix()}`;
-    FileManager.createFile(`cypress/fixtures/${testData.fileName}`, '[C360544] Data for test');
+    FileManager.createFile(
+      `cypress/fixtures/${testData.fileName}`,
+      '[C360544/C360546] Data for test',
+    );
 
     testData.order = NewOrder.getDefaultOrder({ vendorId: testData.organization.id });
     testData.orderLine = BasicOrderLine.getDefaultOrderLine({
@@ -66,11 +80,6 @@ describe('Invoices', () => {
         },
       );
     });
-
-    cy.login(testData.user.username, testData.user.password, {
-      path: TopMenu.invoicesPath,
-      waiter: Invoices.waitLoading,
-    });
   });
 
   afterEach('Delete test file', () => {
@@ -88,10 +97,7 @@ describe('Invoices', () => {
     'C360544 Attaching file to approved invoice (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Invoices.changeInvoiceStatusViaApi({
-        invoice: testData.invoice,
-        status: INVOICE_STATUSES.APPROVED,
-      });
+      updateInvoiceStatusAndLogin(INVOICE_STATUSES.APPROVED);
 
       // Open invoice from precondition
       Invoices.selectInvoiceByNumber(testData.invoice.vendorInvoiceNo);
@@ -117,10 +123,7 @@ describe('Invoices', () => {
     'C360546 Attaching files to paid invoice (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Invoices.changeInvoiceStatusViaApi({
-        invoice: testData.invoice,
-        status: INVOICE_STATUSES.PAID,
-      });
+      updateInvoiceStatusAndLogin(INVOICE_STATUSES.PAID);
 
       // Open invoice from precondition
       Invoices.selectInvoiceByNumber(testData.invoice.vendorInvoiceNo);
