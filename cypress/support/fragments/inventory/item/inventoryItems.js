@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import { Accordion, Button, Modal, Section } from '../../../../../interactors';
+import { Button, Modal } from '../../../../../interactors';
 import { ITEM_STATUS_NAMES } from '../../../constants';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -103,21 +103,6 @@ export default {
       Button('Unknown').click(),
       Modal('Confirm item status: Unknown').find(Button('Confirm')).click(),
     ]);
-  },
-
-  deleteItemBarCode() {
-    openActions();
-    cy.do(Button('Delete').click());
-    cy.wait(1000);
-    cy.do(Button('Delete').click());
-  },
-
-  verifyThereAreNoItemInHoldings: () => {
-    cy.expect(
-      Accordion('Holdings: Online > prefix call number suffix copy number')
-        .find(Section({ class: 'mclContainer---U3Hmc' }))
-        .absent(),
-    );
   },
 
   closeItem() {
