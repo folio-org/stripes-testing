@@ -819,11 +819,15 @@ export default {
     );
   },
 
-  verifyEditableFieldIcons(rowNumber) {
+  verifyEditableFieldIcons(rowNumber, isDeleteFieldButtonShown = true) {
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).exists());
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).exists());
-    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).exists());
+    if (isDeleteFieldButtonShown) {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).exists());
+    } else {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).absent());
+    }
   },
 
   moveFieldUp(rowNumber) {
@@ -2013,7 +2017,7 @@ export default {
     cy.expect(
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ value: including(valueToCheck) }))
-        .absent()
+        .absent(),
     );
   },
 
@@ -2021,7 +2025,7 @@ export default {
     cy.expect(
       QuickMarcEditorRow({ index: rowIndex })
         .find(TextArea({ value: including(valueToCheck) }))
-        .exists()
+        .exists(),
     );
   },
 

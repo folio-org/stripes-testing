@@ -73,7 +73,7 @@ const testData = {
   ],
 };
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.getAdminToken();

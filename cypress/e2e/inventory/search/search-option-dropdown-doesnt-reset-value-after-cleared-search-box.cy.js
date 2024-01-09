@@ -26,7 +26,7 @@ const testData = {
   },
 };
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((userProperties) => {

@@ -13,151 +13,155 @@ import Users from '../../support/fragments/users/users';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
-describe('Inventory. Fast Add', () => {
-  const timeStamp = {
-    start: null,
-    end: null,
-  };
-  const instanceStatusCodeValue = INSTANCE_STATUS_TERM_NAMES.UNCATALOGED;
-  let userId;
+describe('inventory', () => {
+  describe('Fast Add', () => {
+    const timeStamp = {
+      start: null,
+      end: null,
+    };
+    const instanceStatusCodeValue = INSTANCE_STATUS_TERM_NAMES.UNCATALOGED;
+    let userId;
 
-  beforeEach(() => {
-    cy.createTempUser([
-      Permissions.inventoryAll.gui,
-      Permissions.uiInventorySettingsFastAdd.gui,
-    ]).then((userProperties) => {
-      userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
+    beforeEach(() => {
+      cy.createTempUser([
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventorySettingsFastAdd.gui,
+      ]).then((userProperties) => {
+        userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password);
 
-      cy.intercept('POST', '/inventory/instances').as('createInstance');
-      cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
-      cy.intercept('POST', '/inventory/items').as('createItem');
+        cy.intercept('POST', '/inventory/instances').as('createInstance');
+        cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
+        cy.intercept('POST', '/inventory/items').as('createItem');
 
-      cy.visit(TopMenu.inventorySettingsFastAddPath);
-      FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
+        cy.visit(TopMenu.inventorySettingsFastAddPath);
+        FastAdd.changeDefaultInstanceStatus(instanceStatusCodeValue);
+      });
     });
-  });
 
-  afterEach('reset "Fast add" setting', () => {
-    cy.getAdminToken().then(() => {
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
-        FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
-      );
-      cy.visit(TopMenu.inventorySettingsFastAddPath);
-      FastAdd.changeDefaultInstanceStatus('Select instance status');
-      Users.deleteViaApi(userId);
-    });
-  });
-
-  it(
-    'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
-    { tags: ['smoke', 'folijet'] },
-    () => {
-      cy.visit(TopMenu.inventoryPath);
-      InventoryActions.openNewFastAddRecordForm();
-      FastAddNewRecord.waitLoading();
-      FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
-
-      // set starting timestamp right before saving
-      timeStamp.start = new Date();
-      FastAddNewRecord.saveAndClose();
-
-      cy.wait(['@createInstance', '@createHolding', '@createItem'], getLongDelay()).then(() => {
-        // set ending timestamp after saving
-        timeStamp.end = new Date();
-
-        InteractorsTools.checkCalloutMessage(
-          FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
-        );
-        InventorySearchAndFilter.searchInstanceByTitle(
-          FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
-        );
-        FastAddNewRecord.openRecordDetails();
-
-        // verify instance details
-        FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-        InstanceRecordView.verifyResourceTitle(
-          FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
-        );
-        InstanceRecordView.verifyInstanceStatusCode(
-          FastAddNewRecord.fastAddNewRecordFormDetails.instanceStatusCodeValue,
-        );
-        InstanceRecordView.verifyResourceType(
-          FastAddNewRecord.fastAddNewRecordFormDetails.resourceType,
-        );
-
-        // verify holdings details
-        FastAddNewRecord.viewHoldings();
-        FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-        FastAddNewRecord.verifyPermanentLocation(
-          FastAddNewRecord.fastAddNewRecordFormDetails.permanentLocationValue,
-        );
-        FastAddNewRecord.closeHoldingsRecordView();
-
-        // verify item details
-        InventoryInstance.openHoldings([
-          FastAddNewRecord.fastAddNewRecordFormDetails.permanentLocationValue,
-        ]);
-        InventoryInstance.openItemByBarcode(
+    afterEach('reset "Fast add" setting', () => {
+      cy.getAdminToken().then(() => {
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(
           FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
         );
-        FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-        ItemRecordView.verifyPermanentLoanType(
-          FastAddNewRecord.fastAddNewRecordFormDetails.permanentLoanType,
-        );
-        ItemRecordView.verifyItemBarcode(FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
-        ItemRecordView.verifyNote(FastAddNewRecord.fastAddNewRecordFormDetails.note);
+        cy.visit(TopMenu.inventorySettingsFastAddPath);
+        FastAdd.changeDefaultInstanceStatus('Select instance status');
+        Users.deleteViaApi(userId);
       });
-    },
-  );
+    });
 
-  it(
-    'C16972 Create a fast add record from Inventory. Journal issue. (folijet) (TaaS)',
-    { tags: ['extendedPath', 'folijet'] },
-    () => {
-      const fastAddRecord = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
-      fastAddRecord.resourceTitle = 'Journal issue';
-      fastAddRecord.note = 'Note For Journal Issue';
+    it(
+      'C15850 Create a fast add record from Inventory. Monograph. (folijet)',
+      { tags: ['smoke', 'folijet'] },
+      () => {
+        cy.visit(TopMenu.inventoryPath);
+        InventoryActions.openNewFastAddRecordForm();
+        FastAddNewRecord.waitLoading();
+        FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
 
-      cy.visit(TopMenu.inventoryPath);
-      InventoryActions.openNewFastAddRecordForm();
-      FastAddNewRecord.waitLoading();
-      FastAddNewRecord.fillFastAddNewRecordForm(fastAddRecord);
+        // set starting timestamp right before saving
+        timeStamp.start = new Date();
+        FastAddNewRecord.saveAndClose();
 
-      // set starting timestamp right before saving
-      timeStamp.start = new Date();
-      FastAddNewRecord.saveAndClose();
+        cy.wait(['@createInstance', '@createHolding', '@createItem'], getLongDelay()).then(() => {
+          // set ending timestamp after saving
+          timeStamp.end = new Date();
 
-      cy.wait(['@createInstance', '@createHolding', '@createItem'], getLongDelay()).then(() => {
-        // set ending timestamp after saving
-        timeStamp.end = new Date();
+          InteractorsTools.checkCalloutMessage(
+            FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
+          );
+          InventorySearchAndFilter.searchInstanceByTitle(
+            FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
+          );
+          FastAddNewRecord.openRecordDetails();
 
-        InteractorsTools.checkCalloutMessage(
-          FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
-        );
-        InventorySearchAndFilter.searchInstanceByTitle(fastAddRecord.resourceTitle);
-        FastAddNewRecord.openRecordDetails();
+          // verify instance details
+          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
+          InstanceRecordView.verifyResourceTitle(
+            FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle,
+          );
+          InstanceRecordView.verifyInstanceStatusCode(
+            FastAddNewRecord.fastAddNewRecordFormDetails.instanceStatusCodeValue,
+          );
+          InstanceRecordView.verifyResourceType(
+            FastAddNewRecord.fastAddNewRecordFormDetails.resourceType,
+          );
 
-        // verify instance details
-        FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-        InstanceRecordView.verifyResourceTitle(fastAddRecord.resourceTitle);
-        InstanceRecordView.verifyInstanceStatusCode(fastAddRecord.instanceStatusCodeValue);
-        InstanceRecordView.verifyResourceType(fastAddRecord.resourceType);
+          // verify holdings details
+          FastAddNewRecord.viewHoldings();
+          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
+          FastAddNewRecord.verifyPermanentLocation(
+            FastAddNewRecord.fastAddNewRecordFormDetails.permanentLocationValue,
+          );
+          FastAddNewRecord.closeHoldingsRecordView();
 
-        // verify holdings details
-        FastAddNewRecord.viewHoldings();
-        FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-        FastAddNewRecord.verifyPermanentLocation(fastAddRecord.permanentLocationValue);
-        FastAddNewRecord.closeHoldingsRecordView();
+          // verify item details
+          InventoryInstance.openHoldings([
+            FastAddNewRecord.fastAddNewRecordFormDetails.permanentLocationValue,
+          ]);
+          InventoryInstance.openItemByBarcode(
+            FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
+          );
+          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
+          ItemRecordView.verifyPermanentLoanType(
+            FastAddNewRecord.fastAddNewRecordFormDetails.permanentLoanType,
+          );
+          ItemRecordView.verifyItemBarcode(
+            FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode,
+          );
+          ItemRecordView.verifyNote(FastAddNewRecord.fastAddNewRecordFormDetails.note);
+        });
+      },
+    );
 
-        // verify item details
-        InventoryInstance.openHoldings([fastAddRecord.permanentLocationValue]);
-        InventoryInstance.openItemByBarcode(fastAddRecord.itemBarcode);
-        FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
-        ItemRecordView.verifyPermanentLoanType(fastAddRecord.permanentLoanType);
-        ItemRecordView.verifyItemBarcode(fastAddRecord.itemBarcode);
-        ItemRecordView.verifyNote(fastAddRecord.note);
-      });
-    },
-  );
+    it(
+      'C16972 Create a fast add record from Inventory. Journal issue. (folijet) (TaaS)',
+      { tags: ['extendedPath', 'folijet'] },
+      () => {
+        const fastAddRecord = { ...FastAddNewRecord.fastAddNewRecordFormDetails };
+        fastAddRecord.resourceTitle = 'Journal issue';
+        fastAddRecord.note = 'Note For Journal Issue';
+
+        cy.visit(TopMenu.inventoryPath);
+        InventoryActions.openNewFastAddRecordForm();
+        FastAddNewRecord.waitLoading();
+        FastAddNewRecord.fillFastAddNewRecordForm(fastAddRecord);
+
+        // set starting timestamp right before saving
+        timeStamp.start = new Date();
+        FastAddNewRecord.saveAndClose();
+
+        cy.wait(['@createInstance', '@createHolding', '@createItem'], getLongDelay()).then(() => {
+          // set ending timestamp after saving
+          timeStamp.end = new Date();
+
+          InteractorsTools.checkCalloutMessage(
+            FastAdd.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS,
+          );
+          InventorySearchAndFilter.searchInstanceByTitle(fastAddRecord.resourceTitle);
+          FastAddNewRecord.openRecordDetails();
+
+          // verify instance details
+          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
+          InstanceRecordView.verifyResourceTitle(fastAddRecord.resourceTitle);
+          InstanceRecordView.verifyInstanceStatusCode(fastAddRecord.instanceStatusCodeValue);
+          InstanceRecordView.verifyResourceType(fastAddRecord.resourceType);
+
+          // verify holdings details
+          FastAddNewRecord.viewHoldings();
+          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
+          FastAddNewRecord.verifyPermanentLocation(fastAddRecord.permanentLocationValue);
+          FastAddNewRecord.closeHoldingsRecordView();
+
+          // verify item details
+          InventoryInstance.openHoldings([fastAddRecord.permanentLocationValue]);
+          InventoryInstance.openItemByBarcode(fastAddRecord.itemBarcode);
+          FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
+          ItemRecordView.verifyPermanentLoanType(fastAddRecord.permanentLoanType);
+          ItemRecordView.verifyItemBarcode(fastAddRecord.itemBarcode);
+          ItemRecordView.verifyNote(fastAddRecord.note);
+        });
+      },
+    );
+  });
 });

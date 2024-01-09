@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import getRandomPostfix, { randomFourDigitNumber } from '../../../support/utils/stringTools';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       searchQuery: `C422218_autotest_instance_${getRandomPostfix()}`,
