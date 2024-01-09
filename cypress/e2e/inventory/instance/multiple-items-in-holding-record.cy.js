@@ -4,7 +4,7 @@ import { Locations, ServicePoints } from '../../../support/fragments/settings/te
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Instance', () => {
     const holdingsCount = 2;
     const itemsCount = 2;

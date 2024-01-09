@@ -6,7 +6,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   let user;
   const defaultSearchOption = 'Keyword (title, contributor, identifier, HRID, UUID)';
 
