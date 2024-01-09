@@ -18,12 +18,12 @@ describe('Finance › Settings (Finance)', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   let user;
+
   before(() => {
     cy.getAdminToken();
     FiscalYears.createViaApi(defaultFiscalYear).then((response) => {
       defaultFiscalYear.id = response.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
-
       Ledgers.createViaApi(defaultLedger).then((ledgerResponse) => {
         defaultLedger.id = ledgerResponse.id;
         defaultfund.ledgerId = defaultLedger.id;
