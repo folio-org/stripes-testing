@@ -10,8 +10,8 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ConfirmDeleteItemModal from '../../../support/fragments/inventory/modals/confirmDeleteItemModal';
 
-describe('Inventory', () => {
-  describe('Item', () => {
+describe('inventory', () => {
+  describe('item', () => {
     const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation();
     const itemData = {
       barcode: generateItemBarcode(),
