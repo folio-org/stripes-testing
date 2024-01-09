@@ -17,6 +17,13 @@ describe('Data Import -> Log details', () => {
     });
   });
 
+  beforeEach('Login with User', () => {
+    cy.login(testData.userProperties.username, testData.userProperties.password, {
+      path: TopMenu.dataImportPath,
+      waiter: DataImport.waitLoading,
+    });
+  });
+
   after('Delete test data', () => {
     cy.getAdminToken();
     Users.deleteViaApi(testData.userProperties.userId);
@@ -26,18 +33,13 @@ describe('Data Import -> Log details', () => {
     'C375149 Verify that .mrc files with "No file name" name are present on data import landing page (folijet) (TaaS)',
     { tags: ['extendedPath', 'folijet'] },
     () => {
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.dataImportPath,
-        waiter: DataImport.waitLoading,
-      }).then(() => {
-        DataImport.verifyUploadState();
-        DataImport.uploadFileAndRetry(testData.marcFileName, testData.marcFileName);
-        JobProfiles.waitLoadingList();
-        JobProfiles.search(testData.jobProfileToRun);
-        JobProfiles.runImportFile();
-        Logs.verifyFirstFileNameInLogList(testData.marcFileName);
-        Logs.checkStatusOfJobProfile();
-      });
+      DataImport.verifyUploadState();
+      DataImport.uploadFileAndRetry(testData.marcFileName, testData.marcFileName);
+      JobProfiles.waitLoadingList();
+      JobProfiles.search(testData.jobProfileToRun);
+      JobProfiles.runImportFile();
+      Logs.verifyFirstFileNameInLogList(testData.marcFileName);
+      Logs.checkStatusOfJobProfile();
     },
   );
 });
