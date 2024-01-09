@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   RepeatableFieldItem,
   Section,
   Select,
@@ -44,6 +45,8 @@ const orderLineFields = {
   orderFormat: orderLineDetailsSection.find(Select({ name: 'orderFormat' })),
   receiptStatus: orderLineDetailsSection.find(Select({ name: 'receiptStatus' })),
   paymentStatus: orderLineDetailsSection.find(Select({ name: 'paymentStatus' })),
+  claimingActive: orderLineDetailsSection.find(Checkbox({ name: 'claimingActive' })),
+  claimingInterval: orderLineDetailsSection.find(TextField({ name: 'claimingInterval' })),
 };
 
 const vendorDetailsFields = {
@@ -87,6 +90,9 @@ export default {
   },
   checkItemDetailsSection(fields = []) {
     this.checkFieldsConditions({ fields, section: itemDetailsFields });
+  },
+  checkOrderLineDetailsSection(fields = []) {
+    this.checkFieldsConditions({ fields, section: orderLineFields });
   },
   checkOngoingOrderInformationSection(fields = []) {
     this.checkFieldsConditions({ fields, section: ongoingInformationFields });
@@ -160,6 +166,13 @@ export default {
     }
     if (poLineDetails.orderFormat) {
       cy.do(orderLineFields.orderFormat.choose(poLineDetails.orderFormat));
+    }
+    if (poLineDetails.claimingActive) {
+      cy.do(orderLineFields.claimingActive.click());
+    }
+    if (poLineDetails.claimingInterval) {
+      cy.do(orderLineFields.claimingInterval.fillIn(poLineDetails.claimingInterval));
+      cy.do(orderLineFields.claimingInterval.has({ value: poLineDetails.claimingInterval }));
     }
   },
   fillOngoingOrderInformation({ renewalNote }) {

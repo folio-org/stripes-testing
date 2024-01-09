@@ -56,9 +56,12 @@ describe('eHoldings', () => {
         EHoldingsPackages.verifyOnlySelectedPackagesInResults();
 
         EHoldingsPackages.sortPackagesByTitlesCount().then((packages) => {
-          testData.package.id = packages[0].id;
-          testData.package.name = packages[0].name;
-          testData.package.titles = packages[0].count;
+          const packagesSelectedEqualTotalTitles = packages.filter(
+            (pack) => pack.countSelected === pack.countTotalTitles,
+          );
+          testData.package.id = packagesSelectedEqualTotalTitles[0].id;
+          testData.package.name = packagesSelectedEqualTotalTitles[0].name;
+          testData.package.titles = packagesSelectedEqualTotalTitles[0].countTotalTitles;
 
           testData.packageData = `package_data_${testData.package.id}.csv`;
           testData.titleData = `title_data_${testData.package.id}.csv`;
