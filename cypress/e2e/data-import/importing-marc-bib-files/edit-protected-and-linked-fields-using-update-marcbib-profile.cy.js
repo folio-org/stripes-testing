@@ -3,7 +3,6 @@ import {
   EXISTING_RECORDS_NAMES,
   FOLIO_RECORD_TYPE,
   LOCATION_NAMES,
-  RECORD_STATUSES,
 } from '../../../support/constants';
 import { Permissions } from '../../../support/dictionary';
 import {
@@ -45,18 +44,18 @@ describe('data-import', () => {
     const nameForExportedMarcFile = `C380511autotestFile${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C380511autotestFile${getRandomPostfix()}.csv`;
     const mappingProfile = {
-      name: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      name: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       update: true,
       permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      name: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      name: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const matchProfile = {
-      profileName: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      profileName: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -74,7 +73,7 @@ describe('data-import', () => {
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      profileName: `C380511 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const protectedFields = {
@@ -307,7 +306,9 @@ describe('data-import', () => {
         JobProfiles.waitFileIsImported(nameForUpdatedMarcFile);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(nameForUpdatedMarcFile);
-        Logs.clickOnHotLink(0, 3, RECORD_STATUSES.UPDATED);
+
+        cy.visit(TopMenu.inventoryPath);
+        InventoryInstances.searchByTitle(createdAuthorityIDs[0]);
         InventoryInstance.editMarcBibliographicRecord();
         QuickMarcEditor.verifyTagFieldAfterLinking(
           17,

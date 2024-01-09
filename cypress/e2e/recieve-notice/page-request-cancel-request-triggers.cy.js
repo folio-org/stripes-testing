@@ -132,7 +132,7 @@ describe('Request notice triggers', () => {
           permissions.circulationLogAll.gui,
           permissions.uiCirculationSettingsNoticeTemplates.gui,
           permissions.uiCirculationSettingsNoticePolicies.gui,
-          permissions.requestsAll.gui,
+          permissions.uiRequestsAll.gui,
         ],
         patronGroup.name,
       )

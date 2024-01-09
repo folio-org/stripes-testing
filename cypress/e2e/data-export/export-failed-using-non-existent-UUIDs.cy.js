@@ -19,6 +19,8 @@ describe('data-export: failed using non-existent UUIDs', () => {
     marc: 'Genre_1_record_C353209.mrc',
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
   };
+  const searchHeading = 'Peplum films';
+
   before(() => {
     cy.createTempUser([
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
@@ -55,10 +57,12 @@ describe('data-export: failed using non-existent UUIDs', () => {
     'C353209 Export failed when using ".csv" file with non-existent UUIDs (Spitfire) (TaaS)',
     { tags: ['extendedPath', 'spitfire'] },
     () => {
-      MarcAuthorities.searchBy('Keyword', 'Peplum films');
+      MarcAuthorities.searchBy('Keyword', searchHeading);
       MarcAuthorities.downloadSelectedRecordWithRowIdx();
+      MarcAuthorities.selectRecordByIndex(0);
       MarcAuthoritiesDelete.clickDeleteButton();
       MarcAuthoritiesDelete.confirmDelete();
+      MarcAuthoritiesDelete.checkDelete(searchHeading);
       cy.visit(TopMenu.dataExportPath);
       ExportFileHelper.uploadRecentlyDownloadedFile(downloadedFile);
       ExportFileHelper.exportWithDefaultJobProfile(downloadedFile, 'authority', 'Authorities');

@@ -28,6 +28,7 @@ describe('data-import', () => {
       });
       DataImport.verifyUploadState();
       DataImport.uploadFile(filesNames, fileNameForUpload);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();

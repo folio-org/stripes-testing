@@ -43,13 +43,9 @@ export default {
       tagsAccordion.clickHeader(),
       tagsAccordion.find(byTagCheckbox).click(),
       tagsAccordion.find(byTagCheckbox).click(),
-      tagsAccordion.find(Button({ ariaLabel: 'open menu' })).click()
+      tagsAccordion.find(Button({ ariaLabel: 'open menu' })).click(),
     ]);
-    cy.expect(
-      tagsAccordion
-        .find(MultiSelectOption(including(specialTag)))
-        .absent()
-    );
+    cy.expect(tagsAccordion.find(MultiSelectOption(including(specialTag))).absent());
   },
   resetTagFilter: () => {
     cy.do(tagsAccordion.find(Button({ icon: 'times-circle-solid' })).click());

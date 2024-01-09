@@ -94,4 +94,20 @@ export default {
       HTML(including('No items have been entered yet')),
     ]);
   },
+
+  checkInHouseUseIcon(exists = true, rowNumber = 0) {
+    if (exists) {
+      cy.expect(
+        MultiColumnListCell({ row: rowNumber, column: 'In-house use' })
+          .find(HTML({ className: including('icon-') }))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        MultiColumnListCell({ row: rowNumber, column: 'In-house use' })
+          .find(HTML({ className: including('icon-') }))
+          .absent(),
+      );
+    }
+  },
 };
