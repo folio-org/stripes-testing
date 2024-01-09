@@ -21,6 +21,7 @@ export const SelectionList = HTML.extend('selection list')
     id: (el) => el.id,
     optionCount: (el) => [...el.querySelectorAll('li')].length,
     optionList: (el) => [...el.querySelectorAll('li')].map(({ textContent }) => textContent),
+    placeholder: (el) => el.querySelector('input').placeholder,
   })
   .actions({
     filter: ({ find }, value) => find(TextField()).perform((el) => {

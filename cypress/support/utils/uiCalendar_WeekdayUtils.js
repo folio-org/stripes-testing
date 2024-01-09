@@ -13,7 +13,7 @@ export const WEEKDAYS = {
   WEDNESDAY: 3,
   THURSDAY: 4,
   FRIDAY: 5,
-  SATURDAY: 6
+  SATURDAY: 6,
 };
 
 export const WEEKDAY_INDEX = [
@@ -23,15 +23,11 @@ export const WEEKDAY_INDEX = [
   'WEDNESDAY',
   'THURSDAY',
   'FRIDAY',
-  'SATURDAY'
+  'SATURDAY',
 ];
 
 /** Determine if a day is between two weekdays, inclusive */
-export function weekdayIsBetween(
-  testWeekday,
-  start,
-  end
-) {
+export function weekdayIsBetween(testWeekday, start, end) {
   let startIndex = WEEKDAYS[start];
   let endIndex = WEEKDAYS[end];
 
@@ -49,23 +45,18 @@ export function weekdayIsBetween(
   return startIndex <= testWeekday.getDay() && testWeekday.getDay() <= endIndex;
 }
 
-
 /**
  * Determine how close a weekday is relative to a given reference date.
  * For weekdays more than a day away, the weekday will be returned in the payload
  * for additional formatting.  It is not included for sameDay/nextDay
  */
-export function getRelativeWeekdayStatus(
-  weekday,
-  time,
-  referenceDate
-) {
+export function getRelativeWeekdayStatus(weekday, time, referenceDate) {
   if (referenceDate.getDay() === WEEKDAYS[weekday]) {
     return {
       proximity: 'sameDay',
       weekday: undefined,
       date: undefined,
-      time: getLocalizedTime(time)
+      time: getLocalizedTime(time),
     };
   }
   if ((referenceDate.getDay() + 1) % 7 === WEEKDAYS[weekday]) {
@@ -73,14 +64,13 @@ export function getRelativeWeekdayStatus(
       proximity: 'nextDay',
       weekday: undefined,
       date: undefined,
-      time: getLocalizedTime(time)
+      time: getLocalizedTime(time),
     };
   }
   return {
     proximity: 'otherWeekday',
     weekday,
     date: undefined,
-    time: getLocalizedTime(time)
+    time: getLocalizedTime(time),
   };
 }
-

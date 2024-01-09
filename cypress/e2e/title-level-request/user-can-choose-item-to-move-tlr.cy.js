@@ -101,7 +101,7 @@ describe('Title Level Request', () => {
       patronGroup.id = patronGroupResponse;
     });
 
-    cy.createTempUser([permissions.requestsAll.gui], patronGroup.name)
+    cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name)
       .then((userProperties) => {
         userData = userProperties;
         UserEdit.addServicePointViaApi(

@@ -71,6 +71,7 @@ const publisherList = descriptiveDataAccordion.find(MultiColumnList({ id: 'list-
 const titleDataAccordion = Accordion('Title data');
 const contributorAccordion = Accordion('Contributor');
 const acquisitionAccordion = Accordion('Acquisition');
+const subjectAccordion = Accordion('Subject');
 const listInstanceAcquisitions = acquisitionAccordion.find(
   MultiColumnList({ id: 'list-instance-acquisitions' }),
 );
@@ -276,7 +277,7 @@ const verifySeriesStatement = (indexRow, value) => {
 
 const verifySubjectHeading = (value) => {
   cy.expect(
-    Accordion('Subject')
+    subjectAccordion
       .find(MultiColumnList({ id: 'list-subject' }))
       .find(MultiColumnListCell({ content: value }))
       .exists(),
@@ -305,7 +306,7 @@ const verifyContributorWithMarcAppLink = (indexRow, indexColumn, value) => {
 
 const verifyInstanceSubject = (indexRow, indexColumn, value) => {
   cy.expect(
-    Accordion('Subject')
+    subjectAccordion
       .find(MultiColumnList({ id: 'list-subject' }))
       .find(MultiColumnListRow({ index: indexRow }))
       .find(MultiColumnListCell({ columnIndex: indexColumn }))
@@ -358,8 +359,7 @@ export default {
     cy.expect(instanceDetailsSection.exists());
   },
 
-  openSubjectAccordion: () => cy.do(Accordion('Subject').click()),
-
+  openSubjectAccordion: () => cy.do(subjectAccordion.clickHeader()),
   checkAuthorityAppIconInSection: (sectionId, value, isPresent) => {
     if (isPresent) {
       cy.expect(
@@ -790,7 +790,13 @@ export default {
     InventoryNewHoldings.saveAndClose();
     waitLoading();
   },
-
+  createHoldingsRecordForTemporaryLocation: (permanentLocation, temporaryLocation) => {
+    pressAddHoldingsButton();
+    InventoryNewHoldings.fillRequiredFields(permanentLocation);
+    InventoryNewHoldings.fillRequiredFieldsForTemporaryLocation(temporaryLocation);
+    InventoryNewHoldings.saveAndClose();
+    waitLoading();
+  },
   checkHoldingsTable: (
     locationName,
     rowNumber,

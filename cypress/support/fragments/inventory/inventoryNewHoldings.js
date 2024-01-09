@@ -9,6 +9,9 @@ export default {
   fillRequiredFields: (permanentLocation = 'Annex (KU/CC/DI/A) Remote') => {
     cy.do(Selection('Permanent*').choose(permanentLocation));
   },
+  fillRequiredFieldsForTemporaryLocation: (temporaryLocation = 'Annex (KU/CC/DI/A) Remote') => {
+    cy.do(Selection('Temporary').choose(temporaryLocation));
+  },
   saveAndClose: () => {
     cy.do(rootForm.find(Button('Save & close')).click());
     cy.expect(rootForm.absent());

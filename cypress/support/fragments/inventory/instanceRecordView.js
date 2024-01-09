@@ -490,6 +490,14 @@ export default {
     );
   },
 
+  verifyInstanceAdministrativeNote: (note) => {
+    cy.expect(
+      MultiColumnList({ id: 'administrative-note-list' })
+        .find(HTML(including(note)))
+        .exists(),
+    );
+  },
+
   scroll: () => {
     cy.get('[id^="list-items-"] div.mclScrollable---JvHuN').scrollTo('right');
   },

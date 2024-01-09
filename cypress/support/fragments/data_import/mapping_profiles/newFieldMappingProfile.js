@@ -86,6 +86,7 @@ const mappingProfilesForm = Form({ id: 'mapping-profiles-form' });
 const recordTypeselect = Select({ name: 'profile.existingRecordType' });
 const closeButton = Button('Close');
 const closeWithoutSavingButton = Button('Close without saving');
+const linkProfileButton = Button('Link Profile');
 
 const requiredFields = {
   'Purchase order status': purchaseOrderStatus,
@@ -1414,5 +1415,9 @@ export default {
         .find(Button(`${type}`))
         .click(),
     );
+  },
+
+  clickLinkProfileButton() {
+    cy.do(linkProfileButton.click());
   },
 };

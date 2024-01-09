@@ -11,6 +11,9 @@ import {
 const selectProfileModal = Modal({ header: matching(/Select (?:Action|Field Mapping) Profiles/) });
 
 export default {
+  waitLoading() {
+    cy.expect(selectProfileModal.exists());
+  },
   searchProfile(profileName) {
     cy.do([
       selectProfileModal.find(TextField({ name: 'query' })).fillIn(profileName),

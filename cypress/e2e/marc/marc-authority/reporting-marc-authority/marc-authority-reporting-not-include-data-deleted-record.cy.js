@@ -76,148 +76,152 @@ const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 const todayWithoutPaddingZero = DateTools.clearPaddingZero(today);
 const tomorrow = DateTools.getTomorrowDayDateForFiscalYear();
 
-describe('MARC -> MARC Authority -> Reporting MARC authority', () => {
-  before('Creating user and uploading files', () => {
-    cy.createTempUser([
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-      Permissions.inventoryAll.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-      Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
-      Permissions.exportManagerAll.gui,
-    ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
+describe('marc', () => {
+  describe('MARC Authority', () => {
+    describe('Reporting MARC authority', () => {
+      before('Creating user and uploading files', () => {
+        cy.createTempUser([
+          Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+          Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+          Permissions.inventoryAll.gui,
+          Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui,
+          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
+          Permissions.exportManagerAll.gui,
+        ]).then((createdUserProperties) => {
+          testData.userProperties = createdUserProperties;
 
-      marcFiles.forEach((marcFile) => {
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
-          () => {
-            DataImport.verifyUploadState();
-            DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
-            JobProfiles.waitLoadingList();
-            JobProfiles.search(marcFile.jobProfileToRun);
-            JobProfiles.runImportFile();
-            JobProfiles.waitFileIsImported(marcFile.fileName);
-            Logs.checkStatusOfJobProfile('Completed');
-            Logs.openFileDetails(marcFile.fileName);
-            Logs.getCreatedItemsID().then((link) => {
-              createdAuthorityID.push(link.split('/')[5]);
+          marcFiles.forEach((marcFile) => {
+            cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+              () => {
+                DataImport.verifyUploadState();
+                DataImport.uploadFileAndRetry(marcFile.marc, marcFile.fileName);
+                JobProfiles.waitLoadingList();
+                JobProfiles.search(marcFile.jobProfileToRun);
+                JobProfiles.runImportFile();
+                JobProfiles.waitFileIsImported(marcFile.fileName);
+                Logs.checkStatusOfJobProfile('Completed');
+                Logs.openFileDetails(marcFile.fileName);
+                Logs.getCreatedItemsID().then((link) => {
+                  createdAuthorityID.push(link.split('/')[5]);
+                });
+              },
+            );
+          });
+
+          cy.visit(TopMenu.inventoryPath).then(() => {
+            InventoryInstances.searchByTitle(createdAuthorityID[0]);
+            InventoryInstances.selectInstance();
+            InventoryInstance.editMarcBibliographicRecord();
+            dataForC375230.forEach((field) => {
+              QuickMarcEditor.clickLinkIconInTagField(field.index);
+              MarcAuthorities.switchToSearch();
+              InventoryInstance.verifySelectMarcAuthorityModal();
+              InventoryInstance.searchResults(field.marcValue);
+              MarcAuthoritiesSearch.selectAuthorityByIndex(0);
+              InventoryInstance.clickLinkButton();
             });
-          },
-        );
-      });
+            QuickMarcEditor.pressSaveAndClose();
+            QuickMarcEditor.checkAfterSaveAndClose();
+            InventoryInstance.waitLoading();
+          });
 
-      cy.visit(TopMenu.inventoryPath).then(() => {
-        InventoryInstances.searchByTitle(createdAuthorityID[0]);
-        InventoryInstances.selectInstance();
-        InventoryInstance.editMarcBibliographicRecord();
-        dataForC375230.forEach((field) => {
-          QuickMarcEditor.clickLinkIconInTagField(field.index);
-          MarcAuthorities.switchToSearch();
-          InventoryInstance.verifySelectMarcAuthorityModal();
-          InventoryInstance.searchResults(field.marcValue);
-          MarcAuthoritiesSearch.selectAuthorityByIndex(0);
-          InventoryInstance.clickLinkButton();
+          cy.login(testData.userProperties.username, testData.userProperties.password, {
+            path: TopMenu.marcAuthorities,
+            waiter: MarcAuthorities.waitLoading,
+          });
         });
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.checkAfterSaveAndClose();
-        InventoryInstance.waitLoading();
       });
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.marcAuthorities,
-        waiter: MarcAuthorities.waitLoading,
+      after('Deleting user and data', () => {
+        cy.getAdminToken();
+        InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
+        MarcAuthority.deleteViaAPI(createdAuthorityID[1]);
+        Users.deleteViaApi(testData.userProperties.userId);
       });
+
+      it(
+        'C375230 "MARC authority headings updates (CSV)" report does NOT include data on deleted "MARC authority" record (spitfire) (TaaS)',
+        { tags: ['criticalPath', 'spitfire'] },
+        () => {
+          MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading1);
+          MarcAuthoritiesSearch.selectAuthorityByIndex(0);
+          MarcAuthority.edit();
+          QuickMarcEditor.waitLoading();
+
+          cy.wait(2000);
+          QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
+          QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
+          QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
+
+          MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading2);
+          MarcAuthoritiesSearch.selectAuthorityByIndex(0);
+          MarcAuthority.edit();
+          QuickMarcEditor.waitLoading();
+
+          cy.wait(2000);
+          QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
+          QuickMarcEditor.pressSaveAndClose();
+          MarcAuthority.delete();
+          QuickMarcEditor.confirmDeletingRecord();
+
+          MarcAuthorities.clickActionsAndReportsButtons();
+          MarcAuthorities.fillReportModal(today, tomorrow);
+          MarcAuthorities.clickExportButton();
+
+          cy.intercept('POST', '/data-export-spring/jobs').as('getId');
+          cy.wait('@getId', { timeout: 10000 }).then((item) => {
+            const jobID = item.response.body.name;
+            const expectedJobData = [
+              jobID,
+              expectedJobValues.status,
+              expectedJobValues.jobType,
+              expectedJobValues.description,
+              testData.userProperties.username,
+              todayWithoutPaddingZero,
+            ];
+            const expectedJobDetails = {
+              jobID,
+              status: expectedJobValues.status,
+              jobType: expectedJobValues.jobType,
+              outputType: expectedJobValues.outputType,
+              description: expectedJobValues.description,
+              source: testData.userProperties.username,
+              startDate: todayWithoutPaddingZero,
+              endDate: todayWithoutPaddingZero,
+            };
+            MarcAuthorities.checkCalloutAfterExport(jobID);
+            cy.visit(TopMenu.exportManagerPath);
+            ExportManagerSearchPane.waitLoading();
+            ExportManagerSearchPane.searchByAuthorityControl();
+            ExportManagerSearchPane.verifyJobDataInResults(expectedJobData);
+            ExportManagerSearchPane.verifyResultAndClick(jobID);
+            ExportManagerSearchPane.verifyJobDataInDetailView(expectedJobDetails);
+            ExportManagerSearchPane.downloadLastCreatedJob(item.response.body.name);
+          });
+
+          const downloadedReportDate = DateTools.getFormattedDate({ date: new Date() });
+          const fileNameMask = `${downloadedReportDate}*`;
+          FileManager.verifyFile(
+            MarcAuthorities.verifyMARCAuthorityFileName,
+            fileNameMask,
+            MarcAuthorities.verifyContentOfExportFile,
+            [
+              'Last updated',
+              `${downloadedReportDate}`,
+              'Original heading',
+              testData.authorityHeading1,
+              'New heading',
+              testData.authorityHeading1,
+              'Identifier',
+              testData.authority001FieldValue,
+            ],
+          );
+          FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+        },
+      );
     });
   });
-
-  after('Deleting user and data', () => {
-    cy.getAdminToken();
-    InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
-    MarcAuthority.deleteViaAPI(createdAuthorityID[1]);
-    Users.deleteViaApi(testData.userProperties.userId);
-  });
-
-  it(
-    'C375230 "MARC authority headings updates (CSV)" report does NOT include data on deleted "MARC authority" record (spitfire) (TaaS)',
-    { tags: ['criticalPath', 'spitfire'] },
-    () => {
-      MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading1);
-      MarcAuthoritiesSearch.selectAuthorityByIndex(0);
-      MarcAuthority.edit();
-      QuickMarcEditor.waitLoading();
-
-      cy.wait(2000);
-      QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value1);
-      QuickMarcEditor.saveAndCloseUpdatedLinkedBibField();
-      QuickMarcEditor.confirmUpdateLinkedBibsKeepEditing(1);
-
-      MarcAuthorities.searchBy(testData.searchOption, testData.authorityHeading2);
-      MarcAuthoritiesSearch.selectAuthorityByIndex(0);
-      MarcAuthority.edit();
-      QuickMarcEditor.waitLoading();
-
-      cy.wait(2000);
-      QuickMarcEditor.updateExistingField(testData.tag100, testData.updatedTag100Value2);
-      QuickMarcEditor.pressSaveAndClose();
-      MarcAuthority.delete();
-      QuickMarcEditor.confirmDeletingRecord();
-
-      MarcAuthorities.clickActionsAndReportsButtons();
-      MarcAuthorities.fillReportModal(today, tomorrow);
-      MarcAuthorities.clickExportButton();
-
-      cy.intercept('POST', '/data-export-spring/jobs').as('getId');
-      cy.wait('@getId', { timeout: 10000 }).then((item) => {
-        const jobID = item.response.body.name;
-        const expectedJobData = [
-          jobID,
-          expectedJobValues.status,
-          expectedJobValues.jobType,
-          expectedJobValues.description,
-          testData.userProperties.username,
-          todayWithoutPaddingZero,
-        ];
-        const expectedJobDetails = {
-          jobID,
-          status: expectedJobValues.status,
-          jobType: expectedJobValues.jobType,
-          outputType: expectedJobValues.outputType,
-          description: expectedJobValues.description,
-          source: testData.userProperties.username,
-          startDate: todayWithoutPaddingZero,
-          endDate: todayWithoutPaddingZero,
-        };
-        MarcAuthorities.checkCalloutAfterExport(jobID);
-        cy.visit(TopMenu.exportManagerPath);
-        ExportManagerSearchPane.waitLoading();
-        ExportManagerSearchPane.searchByAuthorityControl();
-        ExportManagerSearchPane.verifyJobDataInResults(expectedJobData);
-        ExportManagerSearchPane.verifyResultAndClick(jobID);
-        ExportManagerSearchPane.verifyJobDataInDetailView(expectedJobDetails);
-        ExportManagerSearchPane.downloadLastCreatedJob(item.response.body.name);
-      });
-
-      const downloadedReportDate = DateTools.getFormattedDate({ date: new Date() });
-      const fileNameMask = `${downloadedReportDate}*`;
-      FileManager.verifyFile(
-        MarcAuthorities.verifyMARCAuthorityFileName,
-        fileNameMask,
-        MarcAuthorities.verifyContentOfExportFile,
-        [
-          'Last updated',
-          `${downloadedReportDate}`,
-          'Original heading',
-          testData.authorityHeading1,
-          'New heading',
-          testData.authorityHeading1,
-          'Identifier',
-          testData.authority001FieldValue,
-        ],
-      );
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    },
-  );
 });
