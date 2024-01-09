@@ -4,7 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 
-describe('Create a new list', () => {
+describe('Create private list', () => {
   const firstUser = {};
   const secondUser = {};
   const listData = {
@@ -40,8 +40,8 @@ describe('Create a new list', () => {
   });
 
   it(
-    'C411704 Create new lists: Private list (corsair)',
-    { tags: ['criticalPath', 'corsair'] },
+    "C411710 Verify that private list isn't visible for the other users",
+    { tags: ['smoke', 'corsair'] },
     () => {
       cy.login(firstUser.username, firstUser.password);
       cy.visit(TopMenu.listsPath);
@@ -53,21 +53,11 @@ describe('Create a new list', () => {
       Lists.selectVisibility(listData.visibility);
       Lists.saveList();
       cy.contains(`List ${listData.name} saved.`);
-
       Lists.closeListDetailsPane();
-      cy.contains(
-        `List ${listData.name} was created. Reload to see changes. Note: the list may not appear based on filters.`,
-      );
-      cy.reload();
-      Lists.findResultRowIndexByContent(listData.name).then((rowIndex) => {
-        Lists.checkResultSearch(listData, rowIndex);
-      });
-
       cy.wait(3000);
       cy.login(secondUser.username, secondUser.password);
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
-
       Lists.verifyListIsNotPresent(listData.name);
     },
   );

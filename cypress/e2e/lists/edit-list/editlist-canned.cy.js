@@ -3,7 +3,7 @@ import Lists from '../../../support/fragments/lists/lists';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('Refresh predefined lists', () => {
+describe('"Edit list" functionality for canned lists', () => {
   const userData = {};
 
   before('Create a user', () => {
@@ -20,27 +20,17 @@ describe('Refresh predefined lists', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C411820 Refresh list: Canned lists (corsair)', { tags: ['smoke', 'corsair'] }, () => {
+  it('C411731 Edit list: Canned reports (corsair)', { tags: ['smoke', 'corsair'] }, () => {
     cy.login(userData.username, userData.password);
     cy.visit(TopMenu.listsPath);
     Lists.waitLoading();
     Lists.expiredPatronLoan();
     Lists.actionButton();
-    Lists.getViaApi().then((response) => {
-      const filteredItem = response.body.content.find(
-        (item) => item.name === 'Inactive patrons with open loans',
-      );
-      cy.intercept('GET', `lists/${filteredItem.id}`).as('getRecords');
-    });
-    Lists.refreshList();
-    cy.wait(7000);
-    cy.wait('@getRecords').then((interception) => {
-      const totalRecords = interception.response.body.successRefresh.recordsCount;
-      cy.contains(`Refresh complete with ${totalRecords} records: View updated list`).should(
-        'be.visible',
-      );
-      cy.contains('View updated list').click();
-      cy.contains(`${totalRecords} records found`).should('be.visible');
-    });
+    cy.contains('Edit list').should('be.disabled');
+    Lists.closeListDetailsPane();
+    Lists.waitLoading();
+    Lists.missingItems();
+    Lists.actionButton();
+    cy.contains('Edit list').should('be.disabled');
   });
 });

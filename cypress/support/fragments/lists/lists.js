@@ -16,6 +16,7 @@ import {
 const closeModal = Modal();
 const saveButton = Button('Save');
 const cancelButton = Button('Cancel');
+const DeleteButton = Button('Delete');
 const cancelRefresh = Button('Cancel refresh');
 const buildQueryButton = Button('Build query');
 const closeWithoutSavingButton = Button('Close without saving');
@@ -24,19 +25,37 @@ const keepEditingButton = closeModal.find(Button('Keep editing'));
 const actions = Button('Actions');
 const refreshList = Button('Refresh list');
 const editList = Button('Edit list');
-const exportList = Button('Export list');
+const exportList = Button('Export list (CSV)');
+const testQuery = Button('Test query');
+const runQuery = Button('Run query & save');
 
 export default {
   waitLoading: () => {
     cy.expect(HTML(including('Lists')).exists());
   },
 
+  queryBuilderActions() {
+    cy.get('#field-option-0').click();
+    cy.contains('User active').click();
+    cy.get('[data-testid="operator-option-0"]').select('==');
+    cy.get('[data-testid="data-input-select-boolType"]').select('True');
+    cy.do(testQuery.click());
+    cy.wait(3000);
+    cy.do(runQuery.click());
+    cy.wait(1000);
+  },
+
   actionButton() {
     cy.do(actions.click());
-    cy.wait(3000);
+    cy.wait(1000);
   },
   refreshList() {
     cy.do(refreshList.click());
+    cy.wait(5000);
+  },
+
+  DeleteListModal() {
+    cy.do(DeleteButton.click());
     cy.wait(5000);
   },
 
@@ -62,7 +81,6 @@ export default {
 
   exportList() {
     cy.do(exportList.click());
-    cy.wait(5000);
   },
 
   cancelList() {
@@ -85,6 +103,10 @@ export default {
 
   expiredPatronLoan() {
     cy.do(Link('Inactive patrons with open loans').click());
+  },
+
+  missingItems() {
+    cy.do(Link('Missing items').click());
   },
 
   setName(value) {
