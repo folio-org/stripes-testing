@@ -1314,10 +1314,6 @@ export default {
     );
   },
 
-  clickItemBarcodeLink(barcode) {
-    cy.do(Button(barcode).click());
-  },
-
   verifyOrdersCount(ordersCount) {
     if (ordersCount === 0) {
       cy.expect(listInstanceAcquisitions.absent());
