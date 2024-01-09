@@ -1304,10 +1304,6 @@ export default {
     cy.expect(MultiColumnListCell({ content: itemStatus }).exists());
   },
 
-  clickHoldingAccordion: () => {
-    cy.do(Accordion('Holdings: Online > prefix call number suffix copy number').clickHeader());
-  },
-
   verifyContributorAbsent: (text) => {
     cy.expect(instanceDetailsSection.find(Button(including('Contributor'))).exists());
     cy.expect(
@@ -1316,10 +1312,6 @@ export default {
         .find(MultiColumnListCell(including(text)))
         .absent(),
     );
-  },
-
-  clickItemBarcodeLink(barcode) {
-    cy.do(Button(barcode).click());
   },
 
   verifyOrdersCount(ordersCount) {
