@@ -1,4 +1,6 @@
 import { Permissions } from '../../../support/dictionary';
+import AgreementLines from '../../../support/fragments/agreements/agreementLines';
+import Agreements from '../../../support/fragments/agreements/agreements';
 import { EHoldingsTitles, EHoldingsTitlesSearch } from '../../../support/fragments/eholdings';
 import TopMenu from '../../../support/fragments/topMenu';
 import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
@@ -7,7 +9,6 @@ import Users from '../../../support/fragments/users/users';
 describe('eHoldings', () => {
   describe('Title+Package', () => {
     const testData = {
-      agreement: 'Default Agreement',
       title: 'Fish Biology',
       titleId: '',
       titleName: '',
@@ -16,6 +17,11 @@ describe('eHoldings', () => {
     };
 
     before('Create test data', () => {
+      cy.getAdminToken();
+      Agreements.createViaApi().then((agreement) => {
+        testData.agreementId = agreement.id;
+        testData.agreementName = agreement.name;
+      });
       cy.createTempUser([
         Permissions.uiAgreementsAgreementsEdit.gui,
         Permissions.uiAgreementsSearchAndView.gui,
@@ -50,6 +56,10 @@ describe('eHoldings', () => {
     after('Delete test data', () => {
       cy.getAdminToken().then(() => {
         Users.deleteViaApi(testData.user.userId);
+        AgreementLines.getIdViaApi({ match: 'title', term: 'Biology of Fishes' }).then((id) => {
+          AgreementLines.deleteViaApi({ agreementId: testData.agreementId, agreementLineId: id });
+        });
+        Agreements.deleteViaApi(testData.agreementId);
       });
     });
 
@@ -87,7 +97,7 @@ describe('eHoldings', () => {
         const SelectAgreementModal = EHoldingsResourceView.openSelectAgreementModal();
 
         // Select any "Agreement" record in the appeared modal.
-        SelectAgreementModal.searchByName(testData.agreement);
+        SelectAgreementModal.searchByName(testData.agreementName);
         SelectAgreementModal.selectAgreement({ name: testData.agreement });
         EHoldingsResourceView.checkAgreementsTableContent({
           records: [{ status: 'Active', name: testData.agreement }],

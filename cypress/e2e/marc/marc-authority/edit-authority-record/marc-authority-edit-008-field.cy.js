@@ -53,6 +53,7 @@ describe('MARC -> MARC Authority -> Edit Authority record', () => {
     }).then(() => {
       DataImport.verifyUploadState();
       DataImport.uploadFile(marcFiles[0].marc, marcFiles[0].fileName);
+      JobProfiles.waitFileIsUploaded();
       JobProfiles.waitLoadingList();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();

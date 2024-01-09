@@ -52,7 +52,8 @@ const testData = {
     },
   ],
 };
-describe('MARC', () => {
+
+describe('marc', () => {
   describe('MARC Authority', () => {
     before('Create test data', () => {
       cy.createTempUser([Permissions.uiMarcAuthoritiesAuthorityRecordView.gui]).then(

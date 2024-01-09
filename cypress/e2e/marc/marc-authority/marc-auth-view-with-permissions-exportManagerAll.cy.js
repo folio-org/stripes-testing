@@ -3,38 +3,40 @@ import MarcAuthorities from '../../../support/fragments/marcAuthority/marcAuthor
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('MARC -> MARC Authority', () => {
-  const testData = {};
+describe('marc', () => {
+  describe('MARC Authority', () => {
+    const testData = {};
 
-  before('Creating user', () => {
-    cy.createTempUser([
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-      Permissions.inventoryAll.gui,
-      Permissions.uiInventoryViewInstances.gui,
-      Permissions.uiInventoryViewCreateEditInstances.gui,
-      Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      Permissions.exportManagerAll.gui,
-    ]).then((createdUserProperties) => {
-      testData.userProperties = createdUserProperties;
+    before('Creating user', () => {
+      cy.createTempUser([
+        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+        Permissions.inventoryAll.gui,
+        Permissions.uiInventoryViewInstances.gui,
+        Permissions.uiInventoryViewCreateEditInstances.gui,
+        Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+        Permissions.exportManagerAll.gui,
+      ]).then((createdUserProperties) => {
+        testData.userProperties = createdUserProperties;
 
-      cy.login(testData.userProperties.username, testData.userProperties.password, {
-        path: TopMenu.marcAuthorities,
-        waiter: MarcAuthorities.waitLoading,
+        cy.login(testData.userProperties.username, testData.userProperties.password, {
+          path: TopMenu.marcAuthorities,
+          waiter: MarcAuthorities.waitLoading,
+        });
       });
     });
-  });
 
-  after('Deleting user', () => {
-    cy.getAdminToken();
-    Users.deleteViaApi(testData.userProperties.userId);
-  });
+    after('Deleting user', () => {
+      cy.getAdminToken();
+      Users.deleteViaApi(testData.userProperties.userId);
+    });
 
-  it(
-    'C375134 User with "Export manager: All" permission can view report options for "MARC authority" records (spitfire)',
-    { tags: ['criticalPath', 'spitfire'] },
-    () => {
-      MarcAuthorities.clickActionsAndReportsButtons();
-    },
-  );
+    it(
+      'C375134 User with "Export manager: All" permission can view report options for "MARC authority" records (spitfire)',
+      { tags: ['criticalPath', 'spitfire'] },
+      () => {
+        MarcAuthorities.clickActionsAndReportsButtons();
+      },
+    );
+  });
 });

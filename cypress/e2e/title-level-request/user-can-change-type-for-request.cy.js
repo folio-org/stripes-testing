@@ -116,7 +116,7 @@ describe('Title Level Request. Request Detail', () => {
         permissions.uiRequestsCreate.gui,
         permissions.uiRequestsView.gui,
         permissions.uiRequestsEdit.gui,
-        permissions.requestsAll.gui,
+        permissions.uiRequestsAll.gui,
         permissions.uiNotesItemView.gui,
       ],
       patronGroup.name,

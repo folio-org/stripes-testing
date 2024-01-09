@@ -100,7 +100,7 @@ describe('Create Item or Title level request', () => {
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
-    cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
+    cy.createTempUser([permissions.uiRequestsAll.gui], patronGroup.name).then((userProperties) => {
       userForHold = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
@@ -113,7 +113,7 @@ describe('Create Item or Title level request', () => {
       [
         permissions.uiUsersfeefinesCRUD.gui,
         permissions.uiUsersfeefinesView.gui,
-        permissions.requestsAll.gui,
+        permissions.uiRequestsAll.gui,
       ],
       patronGroup.name,
     ).then((userProperties) => {
