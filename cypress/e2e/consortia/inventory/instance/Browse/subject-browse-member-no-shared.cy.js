@@ -1,20 +1,11 @@
-import uuid from 'uuid';
 import Permissions from '../../../../../support/dictionary/permissions';
 import Affiliations, { tenantNames } from '../../../../../support/dictionary/affiliations';
 import Users from '../../../../../support/fragments/users/users';
 import TopMenu from '../../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../../support/fragments/inventory/inventoryInstances';
-import TestTypes from '../../../../../support/dictionary/testTypes';
-import DevTeams from '../../../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../../../support/fragments/inventory/inventoryInstance';
-import InventoryViewSource from '../../../../../support/fragments/inventory/inventoryViewSource';
-import QuickMarcEditor from '../../../../../support/fragments/quickMarcEditor';
 import ConsortiumManager from '../../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import DataImport from '../../../../../support/fragments/data_import/dataImport';
-import { JOB_STATUS_NAMES } from '../../../../../support/constants';
-import JobProfiles from '../../../../../support/fragments/data_import/job_profiles/jobProfiles';
-import Logs from '../../../../../support/fragments/data_import/logs/logs';
-import getRandomPostfix, { randomFourDigitNumber } from '../../../../../support/utils/stringTools';
+import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InventoryHoldings from '../../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
@@ -25,35 +16,27 @@ describe('Inventory', () => {
       const randomPostfix = getRandomPostfix();
       const testData = {
         collegeHoldings: [],
+        universityHoldings: [],
         sharedInstance: {
           title: `C422238 Instance ${randomPostfix} Shared`,
           subjects: [{ value: `C422238 Subject ${randomPostfix} Shared` }],
-          barcode: uuid(),
         },
         localInstance: {
           title: `C422238 Instance ${randomPostfix} Local`,
           subjects: [{ value: `C422238 Subject ${randomPostfix} Local` }],
-          barcode: uuid(),
         },
       };
 
-      const users = {};
-
       before('Create user, data', () => {
         cy.getAdminToken();
-        cy.createTempUser([
-          Permissions.uiInventoryViewInstances.gui,
-          Permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-          Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        ])
+        cy.createTempUser([Permissions.uiInventoryViewInstances.gui])
           .then((userProperties) => {
-            users.userProperties = userProperties;
+            testData.userProperties = userProperties;
 
-            cy.assignAffiliationToUser(Affiliations.College, users.userProperties.userId);
-            cy.setTenant(Affiliations.College);
-            cy.assignPermissionsToExistingUser(users.userProperties.userId, [
+            cy.assignAffiliationToUser(Affiliations.University, testData.userProperties.userId);
+            cy.setTenant(Affiliations.University);
+            cy.assignPermissionsToExistingUser(testData.userProperties.userId, [
               Permissions.uiInventoryViewInstances.gui,
-              Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
             ]);
           })
           .then(() => {
@@ -61,8 +44,6 @@ describe('Inventory', () => {
             InventoryInstance.createInstanceViaApi({
               instanceTitle: testData.sharedInstance.title,
             }).then((instanceData) => {
-              cy.log(JSON.stringify(instanceData));
-
               testData.sharedInstance.id = instanceData.instanceData.instanceId;
               cy.getInstanceById(testData.sharedInstance.id).then((body) => {
                 const requestBody = body;
@@ -71,22 +52,53 @@ describe('Inventory', () => {
               });
 
               cy.setTenant(Affiliations.College);
-              const props = Locations.getDefaultLocation({
-                servicePointId: ServicePoints.getDefaultServicePoint(),
+              const collegeLocationData = Locations.getDefaultLocation({
+                servicePointId: ServicePoints.getDefaultServicePoint().id,
               }).location;
-              // location NOT created - need to fix
-              Locations.createViaApi(props).then((location) => {
+              Locations.createViaApi(collegeLocationData).then((location) => {
                 testData.collegeLocation = location;
                 InventoryHoldings.createHoldingRecordViaApi({
                   instanceId: testData.sharedInstance.id,
-                  permanentLocationId: location.id,
+                  permanentLocationId: testData.collegeLocation.id,
                 }).then((holding) => {
                   testData.collegeHoldings.push(holding);
                 });
               });
+
+              InventoryInstance.createInstanceViaApi({
+                instanceTitle: testData.localInstance.title,
+              }).then((instanceDataLocal) => {
+                testData.localInstance.id = instanceDataLocal.instanceData.instanceId;
+                cy.getInstanceById(testData.localInstance.id).then((body) => {
+                  const requestBodyLocal = body;
+                  requestBodyLocal.subjects = testData.localInstance.subjects;
+                  cy.updateInstance(requestBodyLocal);
+                });
+
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: testData.localInstance.id,
+                  permanentLocationId: testData.collegeLocation.id,
+                }).then((holding) => {
+                  testData.collegeHoldings.push(holding);
+                });
+              });
+
+              cy.setTenant(Affiliations.University);
+              const universityLocationData = Locations.getDefaultLocation({
+                servicePointId: ServicePoints.getDefaultServicePoint().id,
+              }).location;
+              Locations.createViaApi(universityLocationData).then((location) => {
+                testData.universityLocation = location;
+                InventoryHoldings.createHoldingRecordViaApi({
+                  instanceId: testData.sharedInstance.id,
+                  permanentLocationId: location.id,
+                }).then((holding) => {
+                  testData.universityHoldings.push(holding);
+                });
+              });
             });
 
-            cy.login(users.userProperties.username, users.userProperties.password, {
+            cy.login(testData.userProperties.username, testData.userProperties.password, {
               path: TopMenu.inventoryPath,
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
@@ -98,22 +110,31 @@ describe('Inventory', () => {
       after('Delete user, data', () => {
         cy.resetTenant();
         cy.getAdminToken();
-        Users.deleteViaApi(users.userProperties.userId);
-        // cy.setTenant(Affiliations.College);
-        // testData.collegeHoldings.forEach((holding) => {
-        //   InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
-        // });
-        // Locations.deleteViaApi(testData.collegeLocation));
-
-        // cy.resetTenant();
-        // InventoryInstance.deleteInstanceViaApi(testData.sharedInstance.id);
+        Users.deleteViaApi(testData.userProperties.userId);
+        cy.setTenant(Affiliations.College);
+        testData.collegeHoldings.forEach((holding) => {
+          InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
+        });
+        Locations.deleteViaApi(testData.collegeLocation);
+        cy.setTenant(Affiliations.University);
+        testData.universityHoldings.forEach((holding) => {
+          InventoryHoldings.deleteHoldingRecordViaApi(holding.id);
+        });
+        Locations.deleteViaApi(testData.universityLocation);
+        cy.setTenant(Affiliations.College);
+        InventoryInstance.deleteInstanceViaApi(testData.localInstance.id);
+        cy.resetTenant();
+        InventoryInstance.deleteInstanceViaApi(testData.sharedInstance.id);
       });
 
       it(
         'C422238 Verify that subject from Shared Instance is not displayed in browse result list when "No" is selected in "Shared" facet (current tenant doesn\'t have this local subject, but another tenant has) (consortia) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          // cy.visit(`${TopMenu.inventoryPath}/view/${createdInstanceIDs[0]}`);
+          cy.visit(`${TopMenu.inventoryPath}/view/${testData.sharedInstance.id}`);
+          cy.log(
+            `------------\nSHARED INSTANCE ID: ${testData.sharedInstance.id}\nLOCAL INSTANCE ID: ${testData.localInstance.id}\n------------`,
+          );
           // InventoryInstance.waitLoading();
           // InventoryInstance.checkPresentedText(testData.instanceTitle);
           // InventoryInstance.deriveNewMarcBib();
