@@ -79,6 +79,10 @@ export default {
     );
   },
 
+  verifyPurchaseOrderLinesLimitValue: (value) => {
+    cy.expect(TextField('Set purchase order lines limit').has({ value }));
+  },
+
   fillRequiredFields: (info) => {
     cy.wait(6000);
     cy.do([

@@ -6,6 +6,7 @@ const getDefaultOrganization = ({
   isDonor = false,
   isVendor = true,
   accounts = 0,
+  claimingInterval,
 } = {}) => {
   const defaultUiOrganizations = {
     id,
@@ -15,6 +16,7 @@ const getDefaultOrganization = ({
     erpCode: getRandomPostfix(),
     isDonor,
     isVendor,
+    claimingInterval,
     accounts: [...Array(accounts).keys()].map((index) => ({
       accountNo: getRandomPostfix(),
       accountStatus: 'Active',

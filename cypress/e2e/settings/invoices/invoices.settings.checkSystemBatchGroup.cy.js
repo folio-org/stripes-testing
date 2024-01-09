@@ -16,7 +16,7 @@ describe('ui-invoices-settings: System Batch Group deletion', () => {
         });
       })
       .then(() => {
-        cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+        cy.loginAsAdmin();
         cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
       });
   });

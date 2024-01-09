@@ -33,7 +33,7 @@ describe('Title level request for declared lost item', () => {
       });
     });
     cy.createTempUser([
-      Permissions.requestsAll.gui,
+      Permissions.uiRequestsAll.gui,
       Permissions.uiRequestsEdit.gui,
       Permissions.uiRequestsCreate.gui,
       Permissions.inventoryAll.gui,
@@ -79,7 +79,7 @@ describe('Title level request for declared lost item', () => {
       InventorySearchAndFilter.searchInstanceByTitle(testData.folioInstances[0].instanceTitle);
       // Open new request dialog
       InventoryInstance.checkNewRequestAtNewPane();
-      NewRequest.verifyTitleLevelRequestsCheckbox('checked');
+      NewRequest.verifyTitleLevelRequestsCheckbox(true);
       // Enter requester barcode
       NewRequest.enterRequesterBarcode(userData.barcode);
       // Error message should be displayed

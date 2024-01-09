@@ -24,6 +24,8 @@ import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from './inventory/inventoryInstance';
 import Institutions from './settings/tenant/location-setup/institutions';
 
+const holdingsRecordViewSection = Section({ id: 'ui-inventory.holdingsRecordView' });
+const actionsButton = Button('Actions');
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
 const cancelButton = Button('Cancel');
@@ -721,9 +723,17 @@ export default {
   },
 
   afterDeleteNotification(tag) {
-    cy.get('[class^=deletedRowPlaceholder-]')
-      .contains('span', `Field ${tag}`)
-      .should('include.text', `Field ${tag} has been deleted from this MARC record.`);
+    if (tag) {
+      cy.expect(
+        rootSection
+          .find(HTML(including(`Field ${tag} has been deleted from this MARC record.`)))
+          .exists(),
+      );
+    } else {
+      cy.expect(
+        rootSection.find(HTML(including('Field has been deleted from this MARC record.'))).exists(),
+      );
+    }
     cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo');
   },
 
@@ -754,7 +764,11 @@ export default {
   checkAfterSaveAndClose() {
     cy.expect([calloutAfterSaveAndClose.exists(), instanceDetailsPane.exists()]);
   },
-
+  checkAfterSaveAndCloseAndReturnHoldingsDetailsPage() {
+    cy.expect(calloutAfterSaveAndClose.exists());
+    Button({ icon: 'times' }).click();
+    cy.expect([holdingsRecordViewSection.exists(), actionsButton.exists()]);
+  },
   verifyAfterDerivedMarcBibSave() {
     cy.expect([
       calloutOnDeriveFirst.exists(),
@@ -805,11 +819,15 @@ export default {
     );
   },
 
-  verifyEditableFieldIcons(rowNumber) {
+  verifyEditableFieldIcons(rowNumber, isDeleteFieldButtonShown = true) {
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowUpButton).exists());
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(arrowDownButton).exists());
     cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(addFieldButton).exists());
-    cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).exists());
+    if (isDeleteFieldButtonShown) {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).exists());
+    } else {
+      cy.expect(QuickMarcEditorRow({ index: rowNumber }).find(deleteFieldButton).absent());
+    }
   },
 
   moveFieldUp(rowNumber) {
@@ -1993,6 +2011,22 @@ export default {
 
   checkTagAbsent(tag) {
     cy.expect(getRowInteractorByTagName(tag).absent());
+  },
+
+  checkValueAbsent(rowIndex, valueToCheck) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ value: including(valueToCheck) }))
+        .absent(),
+    );
+  },
+
+  checkValueExist(rowIndex, valueToCheck) {
+    cy.expect(
+      QuickMarcEditorRow({ index: rowIndex })
+        .find(TextArea({ value: including(valueToCheck) }))
+        .exists(),
+    );
   },
 
   checkLinkingAuthorityByTag: (tag) => {

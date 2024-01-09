@@ -55,51 +55,55 @@ describe('Title Level Request', () => {
       PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
         patronGroup.id = patronGroupResponse;
       });
-      cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-        testData.userForTLR = userProperties;
-        UserEdit.addServicePointViaApi(
-          testData.servicePoint.id,
-          testData.userForTLR.userId,
-          testData.servicePoint.id,
-        );
-      });
+      cy.createTempUser([Permissions.uiRequestsAll.gui], patronGroup.name).then(
+        (userProperties) => {
+          testData.userForTLR = userProperties;
+          UserEdit.addServicePointViaApi(
+            testData.servicePoint.id,
+            testData.userForTLR.userId,
+            testData.servicePoint.id,
+          );
+        },
+      );
 
-      cy.createTempUser([Permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
-        testData.user = userProperties;
-        UserEdit.addServicePointViaApi(
-          testData.servicePoint.id,
-          testData.user.userId,
-          testData.servicePoint.id,
-        );
-        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-        Requests.createNewRequestViaApi({
-          fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-          holdingsRecordId: testData.holdingTypeId,
-          instanceId: instanceData.instanceId,
-          item: { barcode: instanceData.barcodes[0] },
-          itemId: instanceData.itemIds[0],
-          pickupServicePointId: testData.servicePoint.id,
-          requestDate: new Date(),
-          requestLevel: REQUEST_LEVELS.ITEM,
-          requestType: REQUEST_TYPES.PAGE,
-          requesterId: testData.user.userId,
-        }).then((request) => {
-          requestIds.push(request.body.id);
-        });
-        Requests.createNewRequestViaApi({
-          fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
-          instanceId: instanceData.instanceId,
-          item: { barcode: instanceData.barcodes[1] },
-          pickupServicePointId: testData.servicePoint.id,
-          requestDate: new Date(),
-          requestLevel: REQUEST_LEVELS.TITLE,
-          requestType: REQUEST_TYPES.PAGE,
-          requesterId: testData.userForTLR.userId,
-        }).then((request) => {
-          requestIds.push(request.body.id);
-        });
-        cy.login(testData.user.username, testData.user.password);
-      });
+      cy.createTempUser([Permissions.uiRequestsAll.gui], patronGroup.name).then(
+        (userProperties) => {
+          testData.user = userProperties;
+          UserEdit.addServicePointViaApi(
+            testData.servicePoint.id,
+            testData.user.userId,
+            testData.servicePoint.id,
+          );
+          TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+          Requests.createNewRequestViaApi({
+            fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+            holdingsRecordId: testData.holdingTypeId,
+            instanceId: instanceData.instanceId,
+            item: { barcode: instanceData.barcodes[0] },
+            itemId: instanceData.itemIds[0],
+            pickupServicePointId: testData.servicePoint.id,
+            requestDate: new Date(),
+            requestLevel: REQUEST_LEVELS.ITEM,
+            requestType: REQUEST_TYPES.PAGE,
+            requesterId: testData.user.userId,
+          }).then((request) => {
+            requestIds.push(request.body.id);
+          });
+          Requests.createNewRequestViaApi({
+            fulfillmentPreference: FULFILMENT_PREFERENCES.HOLD_SHELF,
+            instanceId: instanceData.instanceId,
+            item: { barcode: instanceData.barcodes[1] },
+            pickupServicePointId: testData.servicePoint.id,
+            requestDate: new Date(),
+            requestLevel: REQUEST_LEVELS.TITLE,
+            requestType: REQUEST_TYPES.PAGE,
+            requesterId: testData.userForTLR.userId,
+          }).then((request) => {
+            requestIds.push(request.body.id);
+          });
+          cy.login(testData.user.username, testData.user.password);
+        },
+      );
     });
 
     beforeEach('Open Request detail page', () => {

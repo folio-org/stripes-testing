@@ -10,8 +10,8 @@ export const CalendarCell = HTML.extend('Calendar component cell')
       apply: (el) => {
         return !el.getAttribute('class').match(/(^adjacentMonth-)|( adjacentMonth-)/);
       },
-    }
+    },
   });
 export default HTML.extend('Calendar component')
   .selector('[class^="calendar-"]')
-  .locator(el => el.querySelector('[class^="headerRow-"] > [class^="headline-"]').textContent);
+  .locator((el) => el.querySelector('[class^="headerRow-"] > [class^="headline-"]').textContent);

@@ -26,6 +26,12 @@ describe('Cancel item level request', () => {
     instanceTitle: `Instance ${getRandomPostfix()}`,
   };
   const patronComments = 'test comment';
+  const cancellationReason = {
+    id: uuid(),
+    name: uuid(),
+    description: 'description',
+    publicDescription: 'publicDescription',
+  };
   let defaultLocation;
 
   const requestData = {
@@ -39,6 +45,8 @@ describe('Cancel item level request', () => {
   before('Prepare test data', () => {
     cy.getAdminToken()
       .then(() => {
+        cy.addCancellationReasonApi(cancellationReason);
+
         ServicePoints.createViaApi(servicePoint);
         defaultLocation = Location.getDefaultLocation(servicePoint.id);
         Location.createViaApi(defaultLocation);
@@ -107,14 +115,19 @@ describe('Cancel item level request', () => {
               });
 
             UserEdit.addServicePointsViaApi([servicePoint.id], userData.userId, servicePoint.id);
-
-            cy.login(userData.username, userData.password);
           });
       });
   });
 
+  beforeEach('Login', () => {
+    cy.login(userData.username, userData.password);
+    cy.visit(TopMenu.requestsPath);
+  });
+
   after('Delete test data', () => {
     cy.getAdminToken();
+    cy.deleteCancellationReasonApi(cancellationReason.id);
+
     Requests.deleteRequestViaApi(requestData.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
@@ -129,10 +142,22 @@ describe('Cancel item level request', () => {
   });
 
   it(
+    'C358999 Check user is able to see all "Cancellation reasons" in dropdown (vega)',
+    { tags: ['extendedPath', 'vega'] },
+    () => {
+      Requests.findCreatedRequest(itemData.barcode);
+      Requests.selectTheFirstRequest();
+
+      RequestDetail.openCancelRequestForm();
+      RequestDetail.selectCancellationReason(cancellationReason.name);
+      RequestDetail.clickOnBackButton();
+    },
+  );
+
+  it(
     'C350562 Check that the user can Cancel request (Item level request) (vega)',
     { tags: ['extendedPath', 'vega'] },
     () => {
-      cy.visit(TopMenu.requestsPath);
       Requests.findCreatedRequest(itemData.barcode);
       Requests.selectTheFirstRequest();
 

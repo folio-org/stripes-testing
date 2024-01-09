@@ -19,7 +19,7 @@ import NewJobProfile from '../../../support/fragments/data_import/job_profiles/n
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import MatchProfiles from '../../../support/fragments/settings/dataImport/matchProfiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -40,18 +40,18 @@ describe('data-import', () => {
     const nameForExportedMarcFile = `C385665autotestFile${getRandomPostfix()}.mrc`;
     const nameForCSVFile = `C385665autotestFile${getRandomPostfix()}.csv`;
     const mappingProfile = {
-      name: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      name: `C385665 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
       update: true,
       permanentLocation: `"${LOCATION_NAMES.ANNEX}"`,
     };
     const actionProfile = {
       typeValue: FOLIO_RECORD_TYPE.MARCBIBLIOGRAPHIC,
-      name: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      name: `C385665 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
     };
     const matchProfile = {
-      profileName: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      profileName: `C385665 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       incomingRecordFields: {
         field: '999',
         in1: 'f',
@@ -69,7 +69,7 @@ describe('data-import', () => {
     };
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: 'Update MARC Bib records by matching 999 ff $s subfield value',
+      profileName: `C385665 Update MARC Bib records by matching 999 ff $s subfield value${getRandomPostfix()}`,
       acceptedType: ACCEPTED_DATA_TYPE_NAMES.MARC,
     };
     const marcFiles = [
