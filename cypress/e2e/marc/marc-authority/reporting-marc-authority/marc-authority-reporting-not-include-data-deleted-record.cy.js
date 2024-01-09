@@ -16,6 +16,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import MarcAuthoritiesSearch from '../../../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 
 const testData = {
+  createdAuthorityID: [],
   marcValue: 'C375230 Beethoven, Ludwig van,',
   tag100: '100',
   tag240: '240',
@@ -36,16 +37,19 @@ const marcFiles = [
     marc: 'marcBibFileForC375230.mrc',
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create instance and SRS MARC Bib',
+    numOfRecords: 1,
   },
   {
     marc: 'marcAuthFileForC375230_1.mrc',
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create SRS MARC Authority',
+    numOfRecords: 1,
   },
   {
     marc: 'marcAuthFileForC375230_2.mrc',
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
     jobProfileToRun: 'Default - Create SRS MARC Authority',
+    numOfRecords: 1,
   },
 ];
 
@@ -55,18 +59,14 @@ const expectedJobValues = {
   description: 'List of updated MARC authority (1XX) headings',
   outputType: 'MARC authority headings updates (CSV)',
 };
-const createdAuthorityID = [];
 
 const dataForC375230 = [
   {
-    recordTitle: createdAuthorityID[0],
     index: 18,
     tagValue: '240',
-    marcValue:
-      'C375230 Beethoven, Ludwig van, 1770-1827. Variations, piano, violin, cello, op. 44, E♭ major',
+    marcValue: 'C375230 Beethoven, Ludwig van',
   },
   {
-    recordTitle: createdAuthorityID[1],
     tagValue: '100',
     index: 17,
     marcValue: 'C375230 Kerouac, Jack',
@@ -80,6 +80,16 @@ describe('marc', () => {
   describe('MARC Authority', () => {
     describe('Reporting MARC authority', () => {
       before('Creating user and uploading files', () => {
+        cy.getAdminToken();
+        MarcAuthorities.getMarcAuthoritiesViaApi({ limit: 100, query: 'keyword="C380532"' }).then(
+          (records) => {
+            records.forEach((record) => {
+              if (record.authRefType === 'Authorized') {
+                MarcAuthority.deleteViaAPI(record.id);
+              }
+            });
+          },
+        );
         cy.createTempUser([
           Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
           Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -104,15 +114,17 @@ describe('marc', () => {
                 JobProfiles.waitFileIsImported(marcFile.fileName);
                 Logs.checkStatusOfJobProfile('Completed');
                 Logs.openFileDetails(marcFile.fileName);
-                Logs.getCreatedItemsID().then((link) => {
-                  createdAuthorityID.push(link.split('/')[5]);
-                });
+                for (let i = 0; i < marcFile.numOfRecords; i++) {
+                  Logs.getCreatedItemsID(i).then((link) => {
+                    testData.createdAuthorityID.push(link.split('/')[5]);
+                  });
+                }
               },
             );
           });
 
           cy.visit(TopMenu.inventoryPath).then(() => {
-            InventoryInstances.searchByTitle(createdAuthorityID[0]);
+            InventoryInstances.searchByTitle(testData.createdAuthorityID[0]);
             InventoryInstances.selectInstance();
             InventoryInstance.editMarcBibliographicRecord();
             dataForC375230.forEach((field) => {
@@ -122,10 +134,10 @@ describe('marc', () => {
               InventoryInstance.searchResults(field.marcValue);
               MarcAuthoritiesSearch.selectAuthorityByIndex(0);
               InventoryInstance.clickLinkButton();
+              QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });
             QuickMarcEditor.pressSaveAndClose();
             QuickMarcEditor.checkAfterSaveAndClose();
-            InventoryInstance.waitLoading();
           });
 
           cy.login(testData.userProperties.username, testData.userProperties.password, {
@@ -137,8 +149,8 @@ describe('marc', () => {
 
       after('Deleting user and data', () => {
         cy.getAdminToken();
-        InventoryInstance.deleteInstanceViaApi(createdAuthorityID[0]);
-        MarcAuthority.deleteViaAPI(createdAuthorityID[1]);
+        InventoryInstance.deleteInstanceViaApi(testData.createdAuthorityID[0]);
+        MarcAuthority.deleteViaAPI(testData.createdAuthorityID[1]);
         Users.deleteViaApi(testData.userProperties.userId);
       });
 
