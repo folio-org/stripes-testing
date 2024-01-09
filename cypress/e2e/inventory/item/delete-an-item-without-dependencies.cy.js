@@ -77,6 +77,13 @@ describe('Inventory', () => {
         InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
           itemData.testInstanceIds.instanceId,
         );
+        Location.deleteViaApiIncludingInstitutionCampusLibrary(
+          defaultLocation.institutionId,
+          defaultLocation.campusId,
+          defaultLocation.libraryId,
+          defaultLocation.id,
+        );
+        ServicePoints.deleteViaApi(servicePoint.id);
       });
     });
 
