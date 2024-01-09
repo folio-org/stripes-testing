@@ -72,10 +72,11 @@ describe('Find requester via user barcode', () => {
   });
 
   after('Delete test data', () => {
-    cy.getAdminToken();
-    InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
-      itemData.testInstanceIds.instanceId,
-    );
+    cy.getAdminToken().then(() => {
+      InventoryInstances.deleteInstanceAndItsHoldingsAndItemsViaApi(
+        itemData.testInstanceIds.instanceId,
+      );
+    });
   });
 
   it(
