@@ -95,7 +95,7 @@ describe('Invoices', () => {
           FiscalYears.updateFiscalYearViaApi({
             ...fiscalYears.next,
             _version: 1,
-            periodStart: new Date(date.getFullYear(), date.getMonth(), date.getDay() - 1),
+            periodStart: new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1),
             periodEnd: new Date(date.getFullYear() + 1, 11, 31),
           });
 
