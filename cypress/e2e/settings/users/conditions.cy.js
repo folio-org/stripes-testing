@@ -16,7 +16,7 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
 
   it(
     'C11078 Verify that you can select/edit/remove patron block conditions (vega)',
-    { tags: ['smoke', 'vega'] },
+    { tags: ['smoke', 'vega', 'system'] },
     () => {
       Object.values(Condition.blockCheckboxes).forEach((specialCheckBox) => {
         const conditionType = Conditions.conditionTypes[5];
