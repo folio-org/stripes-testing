@@ -105,7 +105,7 @@ describe('Orders', () => {
 
     it(
       'C350546 Verify if "Purchase order" and "PO Line Details" DO NOT display export details accordion for NOT exported order lines (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
       () => {
         // Search for exported order and click on it
         const OrderDetails = Orders.selectOrderByPONumber(testData.order.poNumber);
