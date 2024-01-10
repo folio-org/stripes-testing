@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import { Permissions } from '../../../support/dictionary';
 import AgreementLines from '../../../support/fragments/agreements/agreementLines';
 import Agreements from '../../../support/fragments/agreements/agreements';
@@ -7,6 +9,7 @@ import TopMenuNavigation from '../../../support/fragments/topMenuNavigation';
 import Users from '../../../support/fragments/users/users';
 
 describe('eHoldings', () => {
+  const today = moment().utc().format('M/D/YYYY');
   describe('Title+Package', () => {
     const testData = {
       title: 'Fish Biology',
@@ -100,7 +103,7 @@ describe('eHoldings', () => {
         SelectAgreementModal.searchByName(testData.agreementName);
         SelectAgreementModal.selectAgreement({ name: testData.agreement });
         EHoldingsResourceView.checkAgreementsTableContent({
-          records: [{ status: 'Active', name: testData.agreement }],
+          records: [{ date: today, name: testData.agreement }],
         });
 
         // Go to the "Settings >> eHoldings" by using the navigation bar.
