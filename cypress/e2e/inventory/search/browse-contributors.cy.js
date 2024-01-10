@@ -47,7 +47,10 @@ describe('inventory', () => {
     });
 
     beforeEach(() => {
-      InventoryInstances.createInstanceViaApi(testData.item.instanceName, testData.item.itemBarcode);
+      InventoryInstances.createInstanceViaApi(
+        testData.item.instanceName,
+        testData.item.itemBarcode,
+      );
       cy.login(testData.userProperties.username, testData.userProperties.password, {
         path: TopMenu.inventoryPath,
         waiter: InventorySearchAndFilter.waitLoading,

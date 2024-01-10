@@ -22,8 +22,8 @@ describe('marc', () => {
         numberOfRecords: 2,
       },
       positiveSearchQueries: [
-      // Search doesn't work with values with slash at the end
-      // https://issues.folio.org/browse/UISAUTCOMP-103
+        // Search doesn't work with values with slash at the end
+        // https://issues.folio.org/browse/UISAUTCOMP-103
         'bslw85033655\\',
         'nb2006354903\\',
         'bslw85033881',

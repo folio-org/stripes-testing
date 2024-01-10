@@ -98,7 +98,7 @@ describe('lists', () => {
     });
 
     beforeEach('Reset all filters', () => {
-    // #1 Click on "Lists" in app navigation bar
+      // #1 Click on "Lists" in app navigation bar
       cy.visit(TopMenu.listsPath);
       Lists.waitLoading();
       Lists.resetAll();
@@ -120,7 +120,7 @@ describe('lists', () => {
       'C411804 Filter section: Statuses (corsair) (TaaS)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-      // #2 Click on "Status" accordion on the "Filter" pane
+        // #2 Click on "Status" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(statusFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(statusFilters.accordionName);
         // #3 Click on "Statuses" accordion again
@@ -142,7 +142,7 @@ describe('lists', () => {
       'C411805 Filter section: Visibility (corsair) (TaaS)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-      // #2 Click on "Visibility" accordion on the "Filter" pane
+        // #2 Click on "Visibility" accordion on the "Filter" pane
         Lists.clickOnAccordionInFilter(visibilityFilter.accordionName);
         Lists.verifyAccordionCollapsedInFilter(visibilityFilter.accordionName);
         // #3 Click on "Visibility" accordion again
@@ -181,7 +181,7 @@ describe('lists', () => {
       'C411806 Filter section: Record types (corsair) (TaaS)',
       { tags: ['criticalPath', 'corsair'] },
       () => {
-      // #2 Click on "Record types" accordion on the 'Filter' pane
+        // #2 Click on "Record types" accordion on the 'Filter' pane
         Lists.clickOnAccordionInFilter(recordTypesFilters.accordionName);
         Lists.verifyAccordionCollapsedInFilter(recordTypesFilters.accordionName);
         // #3 Click on "Record types" accordion again

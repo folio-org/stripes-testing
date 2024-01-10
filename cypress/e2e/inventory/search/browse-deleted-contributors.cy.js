@@ -16,7 +16,7 @@ describe('inventory', () => {
     const testData = {
       contributorName: 'Snow, Jon',
       instanceTitle:
-      'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
+        'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)',
     };
 
     const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
@@ -32,19 +32,21 @@ describe('inventory', () => {
       ]).then((createdUserProperties) => {
         testData.userProperties = createdUserProperties;
 
-        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-          DataImport.uploadFile('oneMarcBib.mrc', fileName);
-          JobProfiles.waitFileIsUploaded();
-          JobProfiles.waitLoadingList();
-          JobProfiles.search(jobProfileToRun);
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(fileName);
-          Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(fileName);
-          Logs.getCreatedItemsID(0).then((link) => {
-            importedInstanceID.push(link.split('/')[5]);
-          });
-        });
+        cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(
+          () => {
+            DataImport.uploadFile('oneMarcBib.mrc', fileName);
+            JobProfiles.waitFileIsUploaded();
+            JobProfiles.waitLoadingList();
+            JobProfiles.search(jobProfileToRun);
+            JobProfiles.runImportFile();
+            JobProfiles.waitFileIsImported(fileName);
+            Logs.checkStatusOfJobProfile('Completed');
+            Logs.openFileDetails(fileName);
+            Logs.getCreatedItemsID(0).then((link) => {
+              importedInstanceID.push(link.split('/')[5]);
+            });
+          },
+        );
       });
     });
 

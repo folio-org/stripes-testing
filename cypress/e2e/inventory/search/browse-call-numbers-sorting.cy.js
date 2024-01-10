@@ -67,7 +67,7 @@ describe('inventory', () => {
         // * "B JORDAN"
         // * "SC BRU"
         holdingsCallNumbers.forEach((callNumber) => {
-        // #3 Click "Add holdings" button
+          // #3 Click "Add holdings" button
           InventoryInstance.pressAddHoldingsButton();
           // #4 In "Location" accordion:
           // * Select any value in "Permanent" dropdown in "Location" accordion
@@ -106,7 +106,7 @@ describe('inventory', () => {
         // * "B OBAMA"
         // * "SC DAH"
         itemsCallNumbers.forEach((callNumber, index) => {
-        // #13 Click "Add item" button next to added holding line in detail view
+          // #13 Click "Add item" button next to added holding line in detail view
           InventoryInstance.clickAddItemByHoldingName({
             holdingName: LOCATION_NAMES.MAIN_LIBRARY_UI,
           });
@@ -181,7 +181,7 @@ describe('inventory', () => {
         // * "331.016"
         // * "331.1"
         holdingsCallNumbers.forEach((callNumber) => {
-        // #3 Click "Add holdings" button
+          // #3 Click "Add holdings" button
           InventoryInstance.pressAddHoldingsButton();
           // #4 In "Location" accordion:
           // * Select any value in "Permanent" dropdown in "Location" accordion
@@ -220,7 +220,7 @@ describe('inventory', () => {
         // * "331.0413"
         // * "331.02"
         itemsCallNumbers.forEach((callNumber, index) => {
-        // #13 Click "Add item" button next to added holding line in detail view
+          // #13 Click "Add item" button next to added holding line in detail view
           InventoryInstance.clickAddItemByHoldingName({
             holdingName: LOCATION_NAMES.MAIN_LIBRARY_UI,
           });

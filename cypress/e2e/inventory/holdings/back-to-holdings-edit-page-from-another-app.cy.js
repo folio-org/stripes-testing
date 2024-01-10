@@ -47,15 +47,16 @@ describe('inventory', () => {
           });
         });
 
-      cy.createTempUser([permissions.inventoryAll.gui, permissions.moduleDataImportEnabled.gui]).then(
-        (userProperties) => {
-          user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.inventoryPath,
-            waiter: InventorySearchAndFilter.waitLoading,
-          });
-        },
-      );
+      cy.createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.moduleDataImportEnabled.gui,
+      ]).then((userProperties) => {
+        user = userProperties;
+        cy.login(user.username, user.password, {
+          path: TopMenu.inventoryPath,
+          waiter: InventorySearchAndFilter.waitLoading,
+        });
+      });
     });
 
     afterEach(() => {

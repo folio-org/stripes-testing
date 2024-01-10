@@ -18,44 +18,46 @@ const testData = {
 describe('inventory', () => {
   describe('Holdings', () => {
     before('Create test data', () => {
-      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then((createdUserProperties) => {
-        testData.user = createdUserProperties;
-        cy.getHoldingTypes({ limit: 1 }).then((res) => {
-          testData.holdingTypeId = res[0].id;
-        });
-        cy.getLocations({ limit: 1 })
-          .then((res) => {
-            testData.locationId = res.id;
-          })
-          .then(() => {
-            testData.item.instanceId = InventoryInstances.createInstanceViaApi(
-              testData.item.instanceName,
-              testData.item.itemBarcode,
-              undefined,
-              undefined,
-              undefined,
-              undefined,
-              [
-                {
-                  holdingsTypeId: testData.holdingTypeId,
-                  permanentLocationId: testData.locationId,
-                },
-              ],
-            );
-          })
-          .then(() => {
-            cy.getHoldings({
-              limit: 1,
-              query: `"instanceId"="${testData.item.instanceId}"`,
-            }).then((holdings) => {
-              testData.item.holdingHRID = holdings[0].hrid;
-            });
+      cy.createTempUser([Permissions.uiInventoryViewInstances.gui]).then(
+        (createdUserProperties) => {
+          testData.user = createdUserProperties;
+          cy.getHoldingTypes({ limit: 1 }).then((res) => {
+            testData.holdingTypeId = res[0].id;
           });
-        cy.login(testData.user.username, testData.user.password, {
-          path: TopMenu.inventoryPath,
-          waiter: InventoryInstances.waitContentLoading,
-        });
-      });
+          cy.getLocations({ limit: 1 })
+            .then((res) => {
+              testData.locationId = res.id;
+            })
+            .then(() => {
+              testData.item.instanceId = InventoryInstances.createInstanceViaApi(
+                testData.item.instanceName,
+                testData.item.itemBarcode,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                [
+                  {
+                    holdingsTypeId: testData.holdingTypeId,
+                    permanentLocationId: testData.locationId,
+                  },
+                ],
+              );
+            })
+            .then(() => {
+              cy.getHoldings({
+                limit: 1,
+                query: `"instanceId"="${testData.item.instanceId}"`,
+              }).then((holdings) => {
+                testData.item.holdingHRID = holdings[0].hrid;
+              });
+            });
+          cy.login(testData.user.username, testData.user.password, {
+            path: TopMenu.inventoryPath,
+            waiter: InventoryInstances.waitContentLoading,
+          });
+        },
+      );
     });
 
     after('Delete test data', () => {
