@@ -163,7 +163,7 @@ export default {
       (columnIndex) => {
         cy.expect(
           LoanActionsList.find(
-            MultiColumnListCell(DateTools.getFormattedDateWithTime(actionDate), {
+            MultiColumnListCell(including(DateTools.getFormattedDateWithTime(actionDate)), {
               row,
               columnIndex,
             }),
