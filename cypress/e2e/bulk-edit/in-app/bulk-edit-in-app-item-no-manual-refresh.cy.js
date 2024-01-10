@@ -11,9 +11,11 @@ import ItemRecordView from '../../../support/fragments/inventory/item/itemRecord
 
 let user;
 const holdingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
+const itemBarcode = getRandomPostfix();
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: getRandomPostfix(),
+  itemBarcode,
+  secondItemBarcode: `secondBarcode_${itemBarcode}`
 };
 
 describe('bulk-edit', () => {
@@ -36,6 +38,15 @@ describe('bulk-edit', () => {
         }).then((holdings) => {
           item.holdingsUUID = holdings[0].id;
           FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, holdings[0].id);
+        });
+        [item.itemBarcode, item.secondItemBarcode].forEach((barcode) => {
+          cy.getItems({ limit: 1, expandAll: true, query: `"barcode"=="${barcode}"` }).then(
+            (res) => {
+              // Selected loan type
+              res.permanentLoanType = { id: 'a1dc1ce3-d56f-4d8a-b498-d5d674ccc845' };
+              cy.updateItemViaApi(res);
+            },
+          );
         });
         cy.login(user.username, user.password, {
           path: TopMenu.bulkEditPath,

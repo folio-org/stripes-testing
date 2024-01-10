@@ -98,17 +98,17 @@ describe('bulk-edit', () => {
 
         BulkEditActions.openActions();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
-          'Binding',
+          'Binding note',
           'Note',
           'Copy note',
-          'Electronic bookplate',
-          'Provenance',
+          'Electronic bookplate note',
+          'Provenance note',
         );
-        BulkEditSearchPane.verifyResultsUnderColumns('Binding', `${notes.bindingNote}(staff only)`);
-        BulkEditSearchPane.verifyResultsUnderColumns('Note', `${notes.noteNote}(staff only)`);
+        BulkEditSearchPane.verifyResultsUnderColumns('Binding note', `${notes.bindingNote} (staff only)`);
+        BulkEditSearchPane.verifyResultsUnderColumns('Note', `${notes.noteNote} (staff only)`);
         BulkEditSearchPane.verifyResultsUnderColumns('Copy note', notes.copyNote);
         BulkEditSearchPane.verifyResultsUnderColumns(
-          'Electronic bookplate',
+          'Electronic bookplate note',
           notes.electronicBookplateNote,
         );
         BulkEditActions.openInAppStartBulkEditFrom();
@@ -127,23 +127,23 @@ describe('bulk-edit', () => {
         );
 
         BulkEditActions.confirmChanges();
-        BulkEditSearchPane.verifyChangesUnderColumns('Binding', notes.bindingNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Binding note', notes.bindingNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', '');
-        BulkEditSearchPane.verifyChangesUnderColumns('Provenance', `${notes.noteNote}(staff only)`);
-        BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote}(staff only)`);
+        BulkEditSearchPane.verifyChangesUnderColumns('Provenance note', `${notes.noteNote} (staff only)`);
+        BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote} (staff only)`);
         BulkEditSearchPane.verifyChangesUnderColumns(
-          'Electronic bookplate',
+          'Electronic bookplate note',
           notes.newElectronicBookplateNote,
         );
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditSearchPane.verifyChangesUnderColumns('Binding', notes.bindingNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Binding note', notes.bindingNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', '');
-        BulkEditSearchPane.verifyChangesUnderColumns('Provenance', `${notes.noteNote}(staff only)`);
-        BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote}(staff only)`);
+        BulkEditSearchPane.verifyChangesUnderColumns('Provenance note', `${notes.noteNote} (staff only)`);
+        BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote} (staff only)`);
         BulkEditSearchPane.verifyChangesUnderColumns(
-          'Electronic bookplate',
+          'Electronic bookplate note',
           notes.newElectronicBookplateNote,
         );
         BulkEditActions.downloadChangedCSV();

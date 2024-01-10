@@ -55,8 +55,8 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
         BulkEditSearchPane.uploadFile(userBarcodesFileName);
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Expiration date');
         BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Expiration date');
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.fillExpirationDate(futureDate);
         BulkEditActions.confirmChanges();

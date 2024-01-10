@@ -14,7 +14,7 @@ const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
 const editedFileName = `edited-records-${getRandomPostfix()}.csv`;
 
-describe('export-manager', () => {
+describe('Export Manager', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditCsvView.gui,

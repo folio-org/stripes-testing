@@ -81,10 +81,10 @@ describe('bulk-edit', () => {
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox(
-          'Administrative notes',
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Administrative note',
           'Note',
-          'Circulation Notes',
+          'Check in notes',
         );
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
@@ -93,8 +93,8 @@ describe('bulk-edit', () => {
           thirdNote,
         ]);
 
-        BulkEditSearchPane.verifyChangesUnderColumns('Administrative notes', firstNote.bulkEdit);
-        BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', secondNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Administrative note', firstNote.bulkEdit);
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', secondNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', thirdNote);
 
         TopMenuNavigation.navigateToApp('Inventory');

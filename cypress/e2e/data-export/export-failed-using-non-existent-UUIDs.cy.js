@@ -11,7 +11,7 @@ import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('data-export: failed using non-existent UUIDs', () => {
+describe('data-export', () => {
   const user = {};
   const downloadedFile = 'C_353209.csv';
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
