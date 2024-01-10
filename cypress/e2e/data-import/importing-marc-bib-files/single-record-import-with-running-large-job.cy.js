@@ -77,7 +77,7 @@ describe('data-import', { retries: 3 }, () => {
         DataImport.checkIsLandingPageOpened();
         // TODO delete function after fix https://issues.folio.org/browse/MODDATAIMP-691
         DataImport.verifyUploadState();
-        DataImport.uploadFile('oneThousandMarcBib.mrc', fileName);
+        DataImport.uploadFile('marcBibFileForC356824.mrc', fileName);
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();

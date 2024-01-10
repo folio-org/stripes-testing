@@ -8,7 +8,7 @@ import InventoryItems from '../../../support/fragments/inventory/item/inventoryI
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('Inventory', () => {
+describe('inventory', () => {
   describe('Search in Inventory', () => {
     const testData = {
       marcInstances: InventoryInstances.generateFolioInstances(),

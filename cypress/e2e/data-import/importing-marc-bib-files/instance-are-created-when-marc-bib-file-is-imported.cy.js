@@ -29,7 +29,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(jobProfileToRun);
+      Logs.waitFileIsImported(fileName);
     });
 
     after('delete test data', () => {
