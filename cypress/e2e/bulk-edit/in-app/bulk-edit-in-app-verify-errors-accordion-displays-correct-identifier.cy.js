@@ -28,7 +28,10 @@ describe('bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
 
-        item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        item.instanceId = InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+        );
         cy.getHoldings({
           limit: 1,
           query: `"instanceId"="${item.instanceId}"`,

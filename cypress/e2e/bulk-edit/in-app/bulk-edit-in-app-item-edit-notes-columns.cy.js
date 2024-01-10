@@ -104,7 +104,10 @@ describe('bulk-edit', () => {
           'Electronic bookplate note',
           'Provenance note',
         );
-        BulkEditSearchPane.verifyResultsUnderColumns('Binding note', `${notes.bindingNote} (staff only)`);
+        BulkEditSearchPane.verifyResultsUnderColumns(
+          'Binding note',
+          `${notes.bindingNote} (staff only)`,
+        );
         BulkEditSearchPane.verifyResultsUnderColumns('Note', `${notes.noteNote} (staff only)`);
         BulkEditSearchPane.verifyResultsUnderColumns('Copy note', notes.copyNote);
         BulkEditSearchPane.verifyResultsUnderColumns(
@@ -129,7 +132,10 @@ describe('bulk-edit', () => {
         BulkEditActions.confirmChanges();
         BulkEditSearchPane.verifyChangesUnderColumns('Binding note', notes.bindingNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', '');
-        BulkEditSearchPane.verifyChangesUnderColumns('Provenance note', `${notes.noteNote} (staff only)`);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Provenance note',
+          `${notes.noteNote} (staff only)`,
+        );
         BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote} (staff only)`);
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Electronic bookplate note',
@@ -140,7 +146,10 @@ describe('bulk-edit', () => {
         BulkEditActions.openActions();
         BulkEditSearchPane.verifyChangesUnderColumns('Binding note', notes.bindingNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Note', '');
-        BulkEditSearchPane.verifyChangesUnderColumns('Provenance note', `${notes.noteNote} (staff only)`);
+        BulkEditSearchPane.verifyChangesUnderColumns(
+          'Provenance note',
+          `${notes.noteNote} (staff only)`,
+        );
         BulkEditSearchPane.verifyChangesUnderColumns('Copy note', `${notes.copyNote} (staff only)`);
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Electronic bookplate note',

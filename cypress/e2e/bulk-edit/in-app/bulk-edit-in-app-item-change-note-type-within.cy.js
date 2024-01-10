@@ -105,10 +105,9 @@ describe('bulk-edit', () => {
         BulkEditActions.verifyChangesInAreYouSureForm('Provenance note', [
           `${notes.actionOne} (staff only) | ${notes.actionTwo}`,
         ]);
-        BulkEditActions.verifyChangesInAreYouSureForm(
-          'Check out notes',
-          [`${notes.checkInOne} (staff only) | ${notes.checkInTwo}`]
-        );
+        BulkEditActions.verifyChangesInAreYouSureForm('Check out notes', [
+          `${notes.checkInOne} (staff only) | ${notes.checkInTwo}`,
+        ]);
         BulkEditActions.verifyChangesInAreYouSureForm('Check in notes', ['']);
         BulkEditActions.commitChanges();
         BulkEditSearchPane.waitFileUploading();
@@ -118,14 +117,14 @@ describe('bulk-edit', () => {
         );
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Check out notes',
-          `${notes.checkInOne} (staff only) | ${notes.checkInTwo}`
+          `${notes.checkInOne} (staff only) | ${notes.checkInTwo}`,
         );
         BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', '');
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           `Provenance;${notes.actionOne};true|Provenance;${notes.actionTwo};false`,
-          `${notes.checkInOne} (staff only) | ${notes.checkInTwo}`
+          `${notes.checkInOne} (staff only) | ${notes.checkInTwo}`,
         ]);
 
         TopMenuNavigation.navigateToApp('Inventory');

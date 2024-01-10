@@ -98,7 +98,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyChangedResults(item.barcode);
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note', 'Check out notes', 'Check in notes');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Action note',
+          'Check out notes',
+          'Check in notes',
+        );
         BulkEditActions.downloadChangedCSV();
         ExportFile.verifyFileIncludes(changedRecordsFileName, [
           actionNote,

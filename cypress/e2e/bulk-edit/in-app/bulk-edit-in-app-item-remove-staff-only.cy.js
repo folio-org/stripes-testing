@@ -79,7 +79,11 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note', 'Check out notes', 'Check in notes');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Action note',
+          'Check out notes',
+          'Check in notes',
+        );
         BulkEditActions.openInAppStartBulkEditFrom();
 
         BulkEditActions.verifyItemOptions();

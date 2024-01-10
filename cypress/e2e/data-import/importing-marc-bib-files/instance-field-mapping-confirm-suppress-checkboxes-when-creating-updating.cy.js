@@ -111,7 +111,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileName);
+        Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.verifyLogDetailsPageIsOpened();
@@ -180,7 +180,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFileName);
+        Logs.waitFileIsImported(marcFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(marcFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
@@ -234,7 +234,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileUpdate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileNameForUpdate);
+        Logs.waitFileIsImported(fileNameForUpdate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(fileNameForUpdate);
         FileDetails.openJsonScreen(instanceTitle);

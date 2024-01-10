@@ -7,7 +7,7 @@ import NewFieldMappingProfile from '../../../support/fragments/data_import/mappi
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { FOLIO_RECORD_TYPE } from '../../../support/constants';
 
-describe('Data Import', () => {
+describe('data-import', () => {
   describe('Settings', () => {
     let user;
     const mappingProfile = {

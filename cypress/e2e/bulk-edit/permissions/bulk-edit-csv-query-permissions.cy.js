@@ -57,11 +57,9 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
         BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Logs');
         BulkEditSearchPane.isUsersRadioChecked(false);
-        [
-          'Inventory - holdings',
-          'Inventory - instances',
-          'Inventory - items'
-        ].forEach((identifier) => BulkEditSearchPane.verifyRadioHidden(identifier));
+        ['Inventory - holdings', 'Inventory - instances', 'Inventory - items'].forEach(
+          (identifier) => BulkEditSearchPane.verifyRadioHidden(identifier),
+        );
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
       },
     );

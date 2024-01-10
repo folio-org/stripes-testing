@@ -93,7 +93,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Copy note', 'Electronic bookplate note');
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
+          'Copy note',
+          'Electronic bookplate note',
+        );
         BulkEditSearchPane.verifyResultsUnderColumns(
           'Copy note',
           `${notes.copyNote} | ${notes.copyNoteStaffOnly} (staff only)`,

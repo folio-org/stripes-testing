@@ -15,7 +15,7 @@ const itemBarcode = getRandomPostfix();
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode,
-  secondItemBarcode: `secondBarcode_${itemBarcode}`
+  secondItemBarcode: `secondBarcode_${itemBarcode}`,
 };
 
 describe('bulk-edit', () => {

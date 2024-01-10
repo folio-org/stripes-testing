@@ -166,7 +166,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(specialJobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(fileName);
+        Logs.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile();
         Logs.checkImportFile(specialJobProfile.profileName);
         Logs.openFileDetails(fileName);
