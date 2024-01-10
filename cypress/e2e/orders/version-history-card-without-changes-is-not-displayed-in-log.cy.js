@@ -79,8 +79,8 @@ describe('Orders', () => {
     });
 
     it(
-      'C375995 - Version history card without changes is not displayed in "Version history" log (thunderjet) (TaaS)',
-      { tags: ['extendedPath', 'thunderjet'] },
+      'C375995 Version history card without changes is not displayed in "Version history" log (thunderjet) (TaaS)',
+      { tags: ['extendedPath', 'thunderjet', 'nonParallel'] },
       () => {
         const poNumber = testData.order.poNumber;
 
