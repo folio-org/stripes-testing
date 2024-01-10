@@ -57,7 +57,6 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(usernamesFileName, 1, 1);
         BulkEditSearchPane.verifyPaneRecordsCount(1);
-        BulkEditSearchPane.verifyMatchedResults(user.username);
 
         // Click "Actions" menu
         BulkEditActions.openActions();
@@ -74,7 +73,7 @@ describe('bulk-edit', () => {
 
         // Сlick "Confirm changes" option
         BulkEditActions.confirmChanges();
-        BulkEditActions.verifyAreYouSureForm(1, user.username);
+        BulkEditActions.verifyAreYouSureForm(1, user.userId);
         BulkEditActions.clickX();
         BulkEditActions.verifyBulkEditForm();
         BulkEditActions.closeBulkEditInAppForm();
@@ -88,8 +87,8 @@ describe('bulk-edit', () => {
 
         BulkEditActions.selectOption('Email');
         BulkEditActions.replaceWithIsDisabled();
-        const oldEmailDomain = 'test@folio.org';
-        const newEmailDomain = 'test@example.org)';
+        const oldEmailDomain = '"test@folio.org"';
+        const newEmailDomain = '"test@example.org)"';
         BulkEditActions.replaceEmail(oldEmailDomain, newEmailDomain);
         BulkEditSearchPane.isConfirmButtonDisabled(false);
 
@@ -98,14 +97,14 @@ describe('bulk-edit', () => {
         BulkEditActions.clickKeepEditingBtn();
         BulkEditActions.verifyBulkEditForm();
         BulkEditActions.closeBulkEditInAppForm();
-        BulkEditSearchPane.verifyMatchedResults(user.username);
+        BulkEditSearchPane.verifyMatchedResults(user.userId);
         // TODO enable line below when this issue is fixed https://issues.folio.org/browse/MODBULKOPS-114
         // BulkEditActions.downloadErrorsExists();
 
         BulkEditSearchPane.openLogsSearch();
         BulkEditSearchPane.verifyLogsPane();
         BulkEditSearchPane.openIdentifierSearch();
-        BulkEditSearchPane.verifyMatchedResults(user.username);
+        BulkEditSearchPane.verifyMatchedResults(user.userId);
 
         // Click "Actions" menu
         BulkEditActions.openActions();

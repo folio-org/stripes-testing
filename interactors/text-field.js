@@ -41,6 +41,7 @@ export default HTML.extend('text field')
       'border-color',
     ) === 'rgb(153, 0, 0)',
     errorIcon: (el) => !!el.querySelector('[class*="errorIcon-"]'),
+    dataTestId: (el) => el.querySelector('input').getAttribute('data-testid'),
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),

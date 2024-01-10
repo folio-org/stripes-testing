@@ -229,9 +229,17 @@ export default {
       RepeatableFieldItem({ index: rowIndex }).find(bulkPageSelections.valueType).choose('Email'),
     );
     BulkEditSearchPane.isConfirmButtonDisabled(true);
-    getEmailField().first().type(oldEmailDomain);
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextField({ dataTestId: 'input-email-0' }))
+        .fillIn(oldEmailDomain),
+    ]);
     BulkEditSearchPane.isConfirmButtonDisabled(true);
-    getEmailField().eq(2).type(newEmailDomain);
+    cy.do([
+      RepeatableFieldItem({ index: rowIndex })
+        .find(TextField({ dataTestId: 'input-email-1' }))
+        .fillIn(newEmailDomain),
+    ]);
   },
 
   enterOldEmail(oldEmailDomain) {
