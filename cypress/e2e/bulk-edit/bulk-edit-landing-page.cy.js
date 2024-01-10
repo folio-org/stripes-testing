@@ -40,11 +40,11 @@ describe('bulk-edit', () => {
     'C350929 Verify Bulk Edit app - landing page (firebird)',
     { tags: ['smoke', 'firebird'] },
     () => {
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs');
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs', 'Query');
       BulkEditSearchPane.verifySpecificTabHighlighted('Identifier');
-      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query');
 
       // verify panes
+      BulkEditSearchPane.verifyRecordTypesSortedAlphabetically(false);
       BulkEditSearchPane.verifyPanesBeforeImport();
       BulkEditSearchPane.verifyBulkEditPaneItems();
       BulkEditSearchPane.verifySetCriteriaPaneItems();
@@ -67,6 +67,14 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyDragNDropItemFormerIdentifierArea();
       BulkEditSearchPane.verifyDragNDropItemAccessionNumberArea();
       BulkEditSearchPane.verifyDragNDropItemHoldingsUUIDsArea();
+      
+      BulkEditSearchPane.verifyInstanceIdentifiers();
+      [
+        'Instance UUIDs',
+        'Instance HRIDs',
+        'ISBN',
+        'ISSN'
+      ].forEach((identifier) => BulkEditSearchPane.verifyDragNDropInstanceIdentifierArea(identifier));
 
       BulkEditSearchPane.verifyHoldingIdentifiers();
       BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
@@ -76,7 +84,10 @@ describe('bulk-edit', () => {
 
       // verify logs items
       BulkEditSearchPane.openLogsSearch();
+      BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Logs', 'Query');
+      BulkEditSearchPane.verifySpecificTabHighlighted('Logs');
       BulkEditSearchPane.verifyLogsPane();
+      BulkEditSearchPane.verifyRecordTypesSortedAlphabetically();
     },
   );
 });

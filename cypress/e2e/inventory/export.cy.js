@@ -23,8 +23,7 @@ describe('ui-inventory: exports', () => {
 
     cy.createTempUser([
       permissions.inventoryAll.gui,
-      permissions.dataExportAll.gui,
-      permissions.dataExportEnableModule.gui,
+      permissions.dataExportEnableApp.gui,
     ]).then((userProperties) => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
