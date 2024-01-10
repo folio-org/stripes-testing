@@ -22,53 +22,51 @@ describe('data-export', () => {
     before('navigates to Inventory', () => {
       let source;
 
-      cy.createTempUser([
-        permissions.inventoryAll.gui,
-        permissions.dataExportAll.gui,
-        permissions.dataExportEnableModule.gui,
-      ]).then((userProperties) => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-        cy.getAdminToken()
-          .then(() => {
-            cy.getLoanTypes({ limit: 1 });
-            cy.getMaterialTypes({ limit: 1 });
-            cy.getInstanceTypes({ limit: 1 });
-            cy.getLocations({ limit: 1 });
-            cy.getHoldingTypes({ limit: 1 });
-            source = InventoryHoldings.getHoldingSources({ limit: 1 });
-          })
-          .then(() => {
-            locationName = Cypress.env('locations')[0].name;
-            locationId = Cypress.env('locations')[0].id;
-            cy.createInstance({
-              instance: {
-                instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: instanceTitle,
-                languages: ['eng'],
-              },
-              holdings: [
-                {
-                  holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                  permanentLocationId: Cypress.env('locations')[0].id,
-                  sourceId: source.id,
+      cy.createTempUser([permissions.inventoryAll.gui, permissions.dataExportEnableApp.gui]).then(
+        (userProperties) => {
+          userId = userProperties.userId;
+          cy.login(userProperties.username, userProperties.password);
+          cy.getAdminToken()
+            .then(() => {
+              cy.getLoanTypes({ limit: 1 });
+              cy.getMaterialTypes({ limit: 1 });
+              cy.getInstanceTypes({ limit: 1 });
+              cy.getLocations({ limit: 1 });
+              cy.getHoldingTypes({ limit: 1 });
+              source = InventoryHoldings.getHoldingSources({ limit: 1 });
+            })
+            .then(() => {
+              locationName = Cypress.env('locations')[0].name;
+              locationId = Cypress.env('locations')[0].id;
+              cy.createInstance({
+                instance: {
+                  instanceTypeId: Cypress.env('instanceTypes')[0].id,
+                  title: instanceTitle,
+                  languages: ['eng'],
                 },
-              ],
-              items: [
-                [
+                holdings: [
                   {
-                    barcode: `testItem_${getRandomPostfix()}`,
-                    missingPieces: '3',
-                    numberOfMissingPieces: '3',
-                    status: { name: ITEM_STATUS_NAMES.AVAILABLE },
-                    permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                    materialType: { id: Cypress.env('materialTypes')[0].id },
+                    holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+                    permanentLocationId: Cypress.env('locations')[0].id,
+                    sourceId: source.id,
                   },
                 ],
-              ],
+                items: [
+                  [
+                    {
+                      barcode: `testItem_${getRandomPostfix()}`,
+                      missingPieces: '3',
+                      numberOfMissingPieces: '3',
+                      status: { name: ITEM_STATUS_NAMES.AVAILABLE },
+                      permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                      materialType: { id: Cypress.env('materialTypes')[0].id },
+                    },
+                  ],
+                ],
+              });
             });
-          });
-      });
+        },
+      );
     });
 
     beforeEach('navigate to inventory', () => {

@@ -96,7 +96,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Action note', noteType);
         BulkEditSearchPane.verifyChangesUnderColumns(
           'Action note',
-          `${actionNote}|${newActionNote}`,
+          `${actionNote} | ${newActionNote}`,
         );
         BulkEditSearchPane.verifyChangesUnderColumns(noteType, noteTypeText);
         BulkEditActions.downloadChangedCSV();

@@ -16,7 +16,7 @@ const usernamesFileName = `'valid_and_invalid_users_uuids-${getRandomPostfix()}.
 const nextThreeMonthsDate = DateTools.getAfterThreeMonthsDateObj();
 
 describe('bulk-edit', () => {
-  describe('in app approach', () => {
+  describe('in-app approach', () => {
     before('Create test data', () => {
       cy.createTempUser(
         [

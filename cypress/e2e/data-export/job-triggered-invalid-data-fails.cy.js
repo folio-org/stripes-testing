@@ -14,6 +14,7 @@ const emptyFile = `emptyFile${getRandomPostfix()}.csv`;
 const uuidsInInvalidFormat = `invalid-uuids${getRandomPostfix()}.csv`;
 const notFoundUUIDsInValidFormat = `not-found-uuids${getRandomPostfix()}.csv`;
 const validUserUUID = uuid();
+
 describe('data-export', () => {
   before('create test data', () => {
     cy.createTempUser([permissions.dataExportAll.gui, permissions.dataExportEnableModule.gui]).then(

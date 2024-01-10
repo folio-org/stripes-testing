@@ -33,7 +33,7 @@ const item = {
   barcode: getRandomPostfix(),
 };
 
-describe('circulation-log', () => {
+describe('Circulation log', () => {
   before('create test data', () => {
     cy.getAdminToken();
     ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => {

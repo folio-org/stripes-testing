@@ -72,7 +72,7 @@ export default {
   },
   checkLostDate(date) {
     this.checkDateValid(date);
-    this.checkKeyValue('Lost', DateTools.getFormattedDateWithTime(date));
+    this.checkKeyValue('Lost', DateTools.getFormattedEndDateWithTimUTC(date));
   },
   checkRenewalCount() {
     cy.wait(1000);
@@ -163,7 +163,7 @@ export default {
       (columnIndex) => {
         cy.expect(
           LoanActionsList.find(
-            MultiColumnListCell(DateTools.getFormattedDateWithTime(actionDate), {
+            MultiColumnListCell(DateTools.getFormattedEndDateWithTimUTC(actionDate), {
               row,
               columnIndex,
             }),
@@ -178,7 +178,7 @@ export default {
   checkDueDate(row, dueDate) {
     this.checkDateValid(dueDate);
 
-    const expectedDueDate = DateTools.getFormattedDateWithTime(dueDate);
+    const expectedDueDate = DateTools.getFormattedEndDateWithTimUTC(dueDate);
 
     cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
       (columnIndex) => {
@@ -198,7 +198,7 @@ export default {
   checkLoansActionsHaveSameDueDate(firstRow, secondRow, dueDate) {
     this.checkDateValid(dueDate);
 
-    const expectedDueDate = DateTools.getFormattedDateWithTime(dueDate);
+    const expectedDueDate = DateTools.getFormattedEndDateWithTimUTC(dueDate);
 
     cy.then(() => MultiColumnListHeader({ id: 'list-column-duedate' }).index()).then(
       (columnIndex) => {

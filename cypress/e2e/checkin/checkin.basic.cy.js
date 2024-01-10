@@ -117,7 +117,7 @@ describe('Check In - Actions ', () => {
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
-  it('C347631 Check in: Basic check in (vega)', { tags: ['smoke', 'vega'] }, () => {
+  it('C347631 Check in: Basic check in (vega)', { tags: ['smoke', 'vega', 'system'] }, () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(10000);
     cy.visit(TopMenu.checkInPath);

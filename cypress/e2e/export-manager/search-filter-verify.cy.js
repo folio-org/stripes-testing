@@ -34,7 +34,7 @@ const exportRequestedCalloutMessage =
   'Your Circulation log export has been requested. Please wait while the file is downloaded.';
 const jobCompletedCalloutMessage = 'Export job has been completed.';
 
-describe('export manager', () => {
+describe('Export Manager', () => {
   before('create instance, user and two jobs', () => {
     cy.getAdminToken()
       .then(() => {
