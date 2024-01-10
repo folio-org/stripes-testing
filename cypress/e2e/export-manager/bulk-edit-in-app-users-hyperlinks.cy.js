@@ -13,7 +13,7 @@ let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${userBarcodesFileName}`;
 
-describe('export-manager', () => {
+describe('Export Manager', () => {
   before('create test data', () => {
     cy.createTempUser(
       [

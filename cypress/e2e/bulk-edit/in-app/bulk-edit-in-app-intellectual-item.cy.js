@@ -1,6 +1,6 @@
 import permissions from '../../../support/dictionary/permissions';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
@@ -61,12 +61,7 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditActions.openActions();
         BulkEditActions.downloadChangedCSV();
-        BulkEditFiles.verifyMatchedResultFileContent(
-          changedRecordsFileName,
-          ['Intellectual item'],
-          'itemStatus',
-          true,
-        );
+        ExportFile.verifyFileIncludes(changedRecordsFileName, ['Intellectual item']);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();

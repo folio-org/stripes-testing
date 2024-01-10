@@ -32,6 +32,11 @@ describe('bulk-edit', () => {
           query: `"instanceId"="${item.instanceId}"`,
         }).then((holdings) => {
           item.holdingUUID = holdings[0].id;
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            // Online
+            permanentLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+          });
           FileManager.createFile(`cypress/fixtures/${holdingUUIDsFileName}`, item.holdingUUID);
         });
 

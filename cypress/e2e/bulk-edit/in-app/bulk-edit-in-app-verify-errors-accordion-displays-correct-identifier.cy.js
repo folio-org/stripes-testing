@@ -28,7 +28,17 @@ describe('bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
 
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        item.instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        cy.getHoldings({
+          limit: 1,
+          query: `"instanceId"="${item.instanceId}"`,
+        }).then((holdings) => {
+          cy.updateHoldingRecord(holdings[0].id, {
+            ...holdings[0],
+            // Online
+            permanentLocationId: '184aae84-a5bf-4c6a-85ba-4a7c73026cd5',
+          });
+        });
         FileManager.createFile(`cypress/fixtures/${itemBarcodesFileName}`, item.itemBarcode);
       });
     });
