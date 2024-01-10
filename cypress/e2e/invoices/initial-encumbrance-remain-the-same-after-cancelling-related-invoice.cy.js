@@ -15,6 +15,15 @@ describe('Invoices', { retries: 3 }, () => {
     user: {},
   };
 
+  const updateInvoiceStatusAndLogin = ({ invoice, status }) => {
+    Invoices.changeInvoiceStatusViaApi({ invoice, status });
+
+    cy.login(testData.user.username, testData.user.password, {
+      path: TopMenu.invoicesPath,
+      waiter: Invoices.waitLoading,
+    });
+  };
+
   beforeEach('Create test data', () => {
     cy.getAdminToken().then(() => {
       const { fiscalYear, fund, budget } = Budgets.createBudgetWithFundLedgerAndFYViaApi({
@@ -68,8 +77,6 @@ describe('Invoices', { retries: 3 }, () => {
                 subTotal: 30,
               }).then((invoice) => {
                 testData.invoices.push(invoice);
-
-                Invoices.changeInvoiceStatusViaApi({ invoice, status: INVOICE_STATUSES.APPROVED });
               });
             },
           );
@@ -83,11 +90,6 @@ describe('Invoices', { retries: 3 }, () => {
       Permissions.uiFinanceViewFundAndBudget.gui,
     ]).then((userProperties) => {
       testData.user = userProperties;
-
-      cy.login(testData.user.username, testData.user.password, {
-        path: TopMenu.invoicesPath,
-        waiter: Invoices.waitLoading,
-      });
     });
   });
 
@@ -102,10 +104,7 @@ describe('Invoices', { retries: 3 }, () => {
     'C400612 Initial encumbrance amount remains the same as it was before payment after cancelling one of related paid invoice (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Invoices.changeInvoiceStatusViaApi({
-        invoice: testData.invoices[1],
-        status: INVOICE_STATUSES.PAID,
-      });
+      updateInvoiceStatusAndLogin({ invoice: testData.invoices[1], status: INVOICE_STATUSES.PAID });
 
       // Search invoice in the table
       Invoices.searchByNumber(testData.invoices[0].vendorInvoiceNo);
@@ -148,6 +147,11 @@ describe('Invoices', { retries: 3 }, () => {
     'C400614 Initial encumbrance amount remains the same as it was before payment after cancelling related paid invoice (another related approved invoice exists) (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
+      updateInvoiceStatusAndLogin({
+        invoice: testData.invoices[1],
+        status: INVOICE_STATUSES.APPROVED,
+      });
+
       // Search invoice in the table
       Invoices.searchByNumber(testData.invoices[0].vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoices[0].vendorInvoiceNo);
@@ -189,6 +193,11 @@ describe('Invoices', { retries: 3 }, () => {
     'C400615 Initial encumbrance amount remains the same as it was before payment after cancelling related approved invoice (another related paid invoice exists) (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
+      updateInvoiceStatusAndLogin({
+        invoice: testData.invoices[1],
+        status: INVOICE_STATUSES.APPROVED,
+      });
+
       // Search invoice in the table
       Invoices.searchByNumber(testData.invoices[1].vendorInvoiceNo);
       Invoices.selectInvoice(testData.invoices[1].vendorInvoiceNo);
@@ -230,10 +239,7 @@ describe('Invoices', { retries: 3 }, () => {
     'C400618 Initial encumbrance amount remains the same as it was before payment after cancelling related paid credit invoice (another related paid invoice exists) (thunderjet) (TaaS)',
     { tags: ['extendedPath', 'thunderjet'] },
     () => {
-      Invoices.changeInvoiceStatusViaApi({
-        invoice: testData.invoices[1],
-        status: INVOICE_STATUSES.PAID,
-      });
+      updateInvoiceStatusAndLogin({ invoice: testData.invoices[1], status: INVOICE_STATUSES.PAID });
 
       // Search invoice in the table
       Invoices.searchByNumber(testData.invoices[1].vendorInvoiceNo);
