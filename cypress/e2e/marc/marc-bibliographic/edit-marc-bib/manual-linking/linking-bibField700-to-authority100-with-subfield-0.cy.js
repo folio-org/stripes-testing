@@ -49,7 +49,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       '700',
       '1',
       '\\',
-      '$d 1922-2018 $a C380742 Lee, Stan,',
+      '$a C380742 Lee, Stan, $d 1922-2018',
       '$e creator.',
       '$0 id.loc.gov/authorities/names/n83169267',
       '',
@@ -59,7 +59,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       '700',
       '1',
       '\\',
-      '$d 1922-2018 $a C380742 Lee, Stan, $e creator. $0 id.loc.gov/authorities/names/n83169267',
+      '$a C380742 Lee, Stan, $d 1922-2018 $e creator. $0 id.loc.gov/authorities/names/n83169267',
     ],
   };
 
@@ -181,7 +181,7 @@ describe('MARC -> MARC Bibliographic -> Edit MARC bib -> Manual linking', () => 
       InventoryInstance.verifyContributorWithMarcAppLink(
         5,
         1,
-        `${testData.marcAuthIcon}1922-2018 C380742 Lee, Stan`,
+        `${testData.marcAuthIcon}C380742 Lee, Stan, 1922-2018`,
       );
       InventoryInstance.checkExistanceOfAuthorityIconInInstanceDetailPane(testData.accordion);
       InventoryInstance.clickViewAuthorityIconDisplayedInInstanceDetailsPane(testData.accordion);

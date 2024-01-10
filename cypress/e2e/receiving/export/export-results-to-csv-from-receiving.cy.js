@@ -83,6 +83,9 @@ describe('Receiving', () => {
       'Supplement',
       'Display on holding',
       'Item HRID',
+      'Receiving status',
+      'Internal note',
+      'External note',
     ];
 
     before('Create test order', () => {

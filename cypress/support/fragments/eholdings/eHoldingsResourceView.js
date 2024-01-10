@@ -126,6 +126,13 @@ export default {
   },
   checkAgreementsTableContent({ records = [] }) {
     records.forEach((record, index) => {
+      if (record.date) {
+        cy.expect(
+          agreementsSection
+            .find(MultiColumnListCell({ row: index, column: 'Start Date' }))
+            .has({ content: including(record.date) }),
+        );
+      }
       if (record.status) {
         cy.expect(
           agreementsSection
