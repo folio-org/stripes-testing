@@ -1,12 +1,12 @@
-import Permissions from '../../support/dictionary/permissions';
-import Affiliations, { tenantNames } from '../../support/dictionary/affiliations';
-import Users from '../../support/fragments/users/users';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import ConsortiumManager from '../../support/fragments/settings/consortium-manager/consortium-manager';
-import { BROWSE_CALL_NUMBER_OPTIONS } from '../../support/constants';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import BrowseContributors from '../../support/fragments/inventory/search/browseContributors';
+import Permissions from '../../../../support/dictionary/permissions';
+import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
+import Users from '../../../../support/fragments/users/users';
+import TopMenu from '../../../../support/fragments/topMenu';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import { BROWSE_CALL_NUMBER_OPTIONS } from '../../../../support/constants';
+import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
+import BrowseContributors from '../../../../support/fragments/inventory/search/browseContributors';
 
 describe('Inventory -> Call Number Browse -> Consortia', () => {
   const testData = {
