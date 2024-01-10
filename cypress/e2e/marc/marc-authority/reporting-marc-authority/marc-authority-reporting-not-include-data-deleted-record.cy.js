@@ -132,7 +132,6 @@ describe('marc', () => {
               MarcAuthorities.switchToSearch();
               InventoryInstance.verifySelectMarcAuthorityModal();
               InventoryInstance.searchResults(field.marcValue);
-              MarcAuthoritiesSearch.selectAuthorityByIndex(0);
               InventoryInstance.clickLinkButton();
               QuickMarcEditor.verifyAfterLinkingUsingRowIndex(field.tagValue, field.index);
             });
@@ -226,7 +225,7 @@ describe('marc', () => {
               'Original heading',
               testData.authorityHeading1,
               'New heading',
-              testData.authorityHeading1,
+              testData.updatedTag100Value1,
               'Identifier',
               testData.authority001FieldValue,
             ],
