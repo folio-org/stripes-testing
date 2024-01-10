@@ -9,22 +9,28 @@ import getRandomPostfix from '../../../../../support/utils/stringTools';
 import InventoryHoldings from '../../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Locations from '../../../../../support/fragments/settings/tenant/location-setup/locations';
+import InventorySearchAndFilter from '../../../../../support/fragments/inventory/inventorySearchAndFilter';
+import BrowseSubjects from '../../../../../support/fragments/inventory/search/browseSubjects';
 
 describe('Inventory', () => {
   describe('Subject Browse', () => {
     describe('Consortia', () => {
       const randomPostfix = getRandomPostfix();
+      const instancePrefix = `C422238 Instance ${randomPostfix}`;
+      const subjectPrefix = `C422238 Subject ${randomPostfix}`;
       const testData = {
         collegeHoldings: [],
         universityHoldings: [],
         sharedInstance: {
-          title: `C422238 Instance ${randomPostfix} Shared`,
-          subjects: [{ value: `C422238 Subject ${randomPostfix} Shared` }],
+          title: `${instancePrefix} Shared`,
+          subjects: [{ value: `${subjectPrefix} 1` }, { value: `${subjectPrefix} 2` }],
         },
         localInstance: {
-          title: `C422238 Instance ${randomPostfix} Local`,
-          subjects: [{ value: `C422238 Subject ${randomPostfix} Local` }],
+          title: `${instancePrefix} Local`,
+          subjects: [{ value: `${subjectPrefix} 1` }, { value: `${subjectPrefix} 2` }],
         },
+        sharedAccordionName: 'Shared',
+        subjectBrowseoption: 'Subjects',
       };
 
       before('Create user, data', () => {
@@ -106,6 +112,9 @@ describe('Inventory', () => {
               waiter: InventoryInstances.waitContentLoading,
             }).then(() => {
               ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.central);
+              ConsortiumManager.switchActiveAffiliation(tenantNames.university);
+              InventoryInstances.waitContentLoading();
+              ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.university);
             });
           });
       });
@@ -134,61 +143,88 @@ describe('Inventory', () => {
         'C422238 Verify that subject from Shared Instance is not displayed in browse result list when "No" is selected in "Shared" facet (current tenant doesn\'t have this local subject, but another tenant has) (consortia) (spitfire)',
         { tags: ['criticalPath', 'spitfire'] },
         () => {
-          cy.visit(`${TopMenu.inventoryPath}/view/${testData.sharedInstance.id}`);
-          cy.log(
-            `------------\nSHARED INSTANCE ID: ${testData.sharedInstance.id}\nLOCAL INSTANCE ID: ${testData.localInstance.id}\n------------`,
+          InventorySearchAndFilter.switchToBrowseTab();
+          InventorySearchAndFilter.selectBrowseOption(testData.subjectBrowseoption);
+          InventorySearchAndFilter.clickAccordionByName(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            false,
           );
-          // InventoryInstance.waitLoading();
-          // InventoryInstance.checkPresentedText(testData.instanceTitle);
-          // InventoryInstance.deriveNewMarcBib();
-          // QuickMarcEditor.checkPaneheaderContains(testData.deriveSharedPaneheaderText);
-          // QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245DerivedContent);
-          // QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
-          // QuickMarcEditor.pressSaveAndClose();
-          // QuickMarcEditor.checkAfterSaveAndCloseDerive();
-          // InventoryInstance.checkSharedTextInDetailView();
-          // InventoryInstance.checkExpectedMARCSource();
-          // InventoryInstance.checkPresentedText(testData.instanceDerivedTitle);
-          // InventoryInstance.verifyLastUpdatedSource(
-          //   users.userProperties.firstName,
-          //   users.userProperties.lastName,
-          // );
-          // InventoryInstance.verifyLastUpdatedDate();
-          // InventoryInstance.verifyRecordCreatedSource(
-          //   users.userProperties.firstName,
-          //   users.userProperties.lastName,
-          // );
-          // InventoryInstance.getId().then((id) => {
-          //   createdInstanceIDs.push(id);
-          //   InventoryInstance.editMarcBibliographicRecord();
-          //   QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245DerivedContent);
-          //   QuickMarcEditor.updateExistingField(testData.tag245, testData.tag245EditedContent);
-          //   QuickMarcEditor.checkContentByTag(testData.tag245, testData.tag245EditedContent);
-          //   QuickMarcEditor.pressSaveAndClose();
-          //   QuickMarcEditor.checkAfterSaveAndClose();
-          //   InventoryInstance.checkSharedTextInDetailView();
-          //   InventoryInstance.checkExpectedMARCSource();
-          //   InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
-          //   ConsortiumManager.switchActiveAffiliation(tenantNames.college);
-          //   InventoryInstances.waitContentLoading();
-          //   ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
-          //   InventoryInstance.searchByTitle(createdInstanceIDs[1]);
-          //   InventoryInstances.selectInstance();
-          //   InventoryInstance.checkPresentedText(testData.instanceEditedTitle);
-          //   InventoryInstance.checkExpectedMARCSource();
-          //   InventoryInstance.verifyLastUpdatedSource(
-          //     users.userProperties.firstName,
-          //     users.userProperties.lastName,
-          //   );
-          //   InventoryInstance.verifyLastUpdatedDate();
-          //   InventoryInstance.verifyRecordCreatedSource(
-          //     users.userProperties.firstName,
-          //     users.userProperties.lastName,
-          //   );
-          //   InventoryInstance.viewSource();
-          //   InventoryViewSource.contains(testData.tag245EditedContent);
-          //   InventoryViewSource.contains(testData.sourceViewSharedText);
-          // });
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            false,
+          );
+
+          BrowseSubjects.browse(testData.sharedInstance.subjects[0].value);
+          BrowseSubjects.checkValueIsBold(testData.sharedInstance.subjects[0].value);
+          BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(
+            testData.sharedInstance.subjects[0].value,
+            1,
+          );
+          BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(
+            testData.sharedInstance.subjects[1].value,
+            1,
+          );
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            false,
+          );
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            false,
+          );
+
+          InventorySearchAndFilter.selectOptionInExpandedFilter(testData.sharedAccordionName, 'No');
+          BrowseSubjects.verifyNonExistentSearchResult(testData.sharedInstance.subjects[0].value);
+          BrowseSubjects.checkResultIsAbsent(testData.sharedInstance.subjects[1].value);
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            false,
+          );
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            true,
+          );
+
+          BrowseSubjects.verifyClickTakesNowhere(testData.sharedInstance.subjects[0].value);
+
+          InventorySearchAndFilter.selectOptionInExpandedFilter(
+            testData.sharedAccordionName,
+            'No',
+            false,
+          );
+          BrowseSubjects.checkValueIsBold(testData.sharedInstance.subjects[0].value);
+          BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(
+            testData.sharedInstance.subjects[0].value,
+            1,
+          );
+          BrowseSubjects.verifyNumberOfTitlesForRowWithValueAndNoAuthorityIcon(
+            testData.sharedInstance.subjects[1].value,
+            1,
+          );
+          InventorySearchAndFilter.verifyAccordionByNameExpanded(testData.sharedAccordionName);
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'Yes',
+            false,
+          );
+          InventorySearchAndFilter.verifyCheckboxInAccordion(
+            testData.sharedAccordionName,
+            'No',
+            false,
+          );
+
+          BrowseSubjects.verifyClickTakesToInventory(testData.sharedInstance.subjects[1].value);
+          InventoryInstance.checkSharedTextInDetailView();
         },
       );
     });
