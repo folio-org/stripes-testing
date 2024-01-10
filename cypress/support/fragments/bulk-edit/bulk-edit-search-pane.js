@@ -875,13 +875,13 @@ export default {
   // In Identifier pane - radio, in Logs pane - checkbox
   verifyRecordTypesSortedAlphabetically(checkbox = true) {
     let locator;
-    if (checkbox) locator = '#entityType [class*="labelText"]'
-    else locator = '[class*="labelText"]'
-      cy.get(locator).then((checkboxes) => {
-        const textArray = checkboxes.get().map((el) => el.innerText);
-        const sortedArray = [...textArray].sort((a, b) => a - b);
-        expect(sortedArray).to.eql(textArray);
-      });
+    if (checkbox) locator = '#entityType [class*="labelText"]';
+    else locator = '[class*="labelText"]';
+    cy.get(locator).then((checkboxes) => {
+      const textArray = checkboxes.get().map((el) => el.innerText);
+      const sortedArray = [...textArray].sort((a, b) => a - b);
+      expect(sortedArray).to.eql(textArray);
+    });
   },
 
   verifyCellsValues(column, status) {

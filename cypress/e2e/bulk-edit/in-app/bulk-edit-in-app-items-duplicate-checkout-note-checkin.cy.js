@@ -91,7 +91,7 @@ describe('bulk-edit', () => {
         const checkOut = [
           `${notes.checkOutNote} (staff only)`,
           notes.checkOutNote,
-        ]
+        ];
         BulkEditActions.verifyChangesInAreYouSureForm('Check out notes', checkOut);
         BulkEditActions.verifyChangesInAreYouSureForm('Check in notes', checkIn);
         BulkEditActions.commitChanges();

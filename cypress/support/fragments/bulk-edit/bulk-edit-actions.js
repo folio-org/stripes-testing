@@ -226,7 +226,7 @@ export default {
   },
 
   enterNewEmail(newEmailDomain) {
-    cy.do([newEmail.clear(), newEmail.fillIn(oldEmailDomain)]);
+    cy.do([newEmail.clear(), newEmail.fillIn(newEmailDomain)]);
   },
 
   replaceEmail(oldEmailDomain, newEmailDomain, rowIndex = 0) {

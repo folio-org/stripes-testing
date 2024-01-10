@@ -67,7 +67,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyDragNDropItemFormerIdentifierArea();
       BulkEditSearchPane.verifyDragNDropItemAccessionNumberArea();
       BulkEditSearchPane.verifyDragNDropItemHoldingsUUIDsArea();
-      
+
       BulkEditSearchPane.verifyInstanceIdentifiers();
       [
         'Instance UUIDs',
