@@ -72,7 +72,7 @@ describe('Orders', () => {
       OrderLineEditForm.searchLocationByName({ name: '(' });
 
       // In "Filter options list" field type one parentheses character ")"
-      OrderLineEditForm.searchLocationByName({ name: ')' });
+      OrderLineEditForm.searchLocationByName({ name: ')', open: false });
     },
   );
 });
