@@ -35,7 +35,7 @@ describe('Loans', () => {
       cy.createTempUser([
         Permissions.loansAll.gui,
         Permissions.checkoutAll.gui,
-        Permissions.requestsAll.gui,
+        Permissions.uiRequestsAll.gui,
       ]).then((userProperties) => {
         checkOutUser = userProperties;
         cy.getAdminToken()
@@ -48,11 +48,11 @@ describe('Loans', () => {
             });
             cy.getUsers({
               limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`,
+              query: `"personal.lastName"="${checkOutUser.username}" and "active"="true"`,
             });
           })
           .then(() => {
-            UserEdit.addServicePointViaApi(servicePointId, userProperties.userId);
+            UserEdit.addServicePointViaApi(servicePointId, checkOutUser.userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             InventoryInstances.createFolioInstancesViaApi({
               folioInstances,
@@ -61,7 +61,7 @@ describe('Loans', () => {
             });
           })
           .then(() => {
-            cy.login(userProperties.username, userProperties.password);
+            cy.login(checkOutUser.username, checkOutUser.password);
             cy.visit(TopMenu.checkOutPath);
             CheckOutActions.checkOutItemUser(
               Cypress.env('users')[0].barcode,
