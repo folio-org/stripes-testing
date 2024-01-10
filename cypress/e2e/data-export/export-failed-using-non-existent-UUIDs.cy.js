@@ -59,6 +59,7 @@ describe('data-export', () => {
     () => {
       MarcAuthorities.searchBy('Keyword', searchHeading);
       MarcAuthorities.downloadSelectedRecordWithRowIdx();
+      ExportFileHelper.downloadExportedMarcFile(downloadedFile);
       MarcAuthorities.selectRecordByIndex(0);
       MarcAuthoritiesDelete.clickDeleteButton();
       MarcAuthoritiesDelete.confirmDelete();

@@ -96,7 +96,6 @@ describe('Circulation log', () => {
       // Go to the "Inventory" => Search for that Item by pasting the copied Items barcode to the input filled => Click "Search"
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.resetAll();
       InventorySearchAndFilter.searchByStatus('In transit');
       InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
       ItemRecordView.waitLoading();
