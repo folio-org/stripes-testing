@@ -51,7 +51,6 @@ describe('MARC -> MARC Bibliographic -> Create new MARC bib', () => {
       QuickMarcEditor.checkSubfieldsPresenceInTag008();
       QuickMarcEditor.addNewField(testData.newField.tag, `$a ${testData.newField.content}`, 4);
       QuickMarcEditor.pressSaveAndClose();
-      InventoryInstance.waitLoading();
       QuickMarcEditor.checkAfterSaveAndClose();
       InventoryInstance.getId().then((id) => {
         createdInstanceIDs.push(id);
