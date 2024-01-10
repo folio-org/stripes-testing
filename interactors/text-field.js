@@ -19,6 +19,7 @@ export default HTML.extend('text field')
     label,
     type: (el) => el.querySelector('input').type,
     value: (el) => el.querySelector('input').value,
+    testid: (el) => el.querySelector('input').getAttribute('data-testid'),
     focused: (el) => el.querySelector('input').contains(el.ownerDocument.activeElement),
     readOnly: (el) => el.querySelector('input').hasAttribute('readOnly'),
     disabled: (el) => el.querySelector('input').hasAttribute('disabled'),

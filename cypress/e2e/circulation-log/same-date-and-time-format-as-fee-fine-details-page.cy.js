@@ -14,7 +14,7 @@ import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import UserEdit from '../../support/fragments/users/userEdit';
 import Users from '../../support/fragments/users/users';
 
-describe('circulation-log', () => {
+describe('Circulation log', () => {
   const userData = {};
   const ownerData = {};
   const feeFineType = {};

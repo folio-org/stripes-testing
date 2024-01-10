@@ -97,10 +97,10 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyMatchedResults(item.barcode);
         BulkEditActions.openActions();
-        BulkEditSearchPane.changeShowColumnCheckbox(
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Action note',
-          'Circulation Notes',
-          'Administrative notes',
+          'Check in notes',
+          'Administrative note',
         );
         BulkEditActions.openInAppStartBulkEditFrom();
 
@@ -129,10 +129,10 @@ describe('bulk-edit', () => {
           newNotes.checkInNote,
         ]);
 
-        BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', notes.checkInOne);
-        BulkEditSearchPane.verifyChangesUnderColumns('Circulation Notes', newNotes.checkInNote);
-        BulkEditSearchPane.verifyChangesUnderColumns('Administrative notes', notes.adminOne);
-        BulkEditSearchPane.verifyChangesUnderColumns('Administrative notes', newNotes.adminNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', notes.checkInOne);
+        BulkEditSearchPane.verifyChangesUnderColumns('Check in notes', newNotes.checkInNote);
+        BulkEditSearchPane.verifyChangesUnderColumns('Administrative note', notes.adminOne);
+        BulkEditSearchPane.verifyChangesUnderColumns('Administrative note', newNotes.adminNote);
         BulkEditSearchPane.verifyChangesUnderColumns('Action note', notes.actionTwo);
         BulkEditSearchPane.verifyChangesUnderColumns('Action note', newNotes.actionNote);
 

@@ -21,7 +21,7 @@ const itemUUIDsFileName = `itemUUIDs_${getRandomPostfix()}.csv`;
 const matchedRecordsFileName = `*Matched-Records-${itemUUIDsFileName}`;
 
 describe('bulk-edit', () => {
-  describe('in app approach', () => {
+  describe('in-app approach', () => {
     before('Create test data', () => {
       cy.createTempUser([
         Permissions.bulkEditLogsView.gui,
@@ -71,14 +71,15 @@ describe('bulk-edit', () => {
         BulkEditSearchPane.waitFileUploading();
         BulkEditSearchPane.verifyErrorLabel(itemUUIDsFileName, 1, 1);
         BulkEditSearchPane.verifyPaneRecordsCount(1);
-        BulkEditSearchPane.verifyMatchedResults(item.itemId);
 
         BulkEditActions.downloadMatchedResults();
         BulkEditSearchPane.changeShowColumnCheckboxIfNotYet(
           'Permanent loan type',
           'Item permanent location',
           'Item temporary location',
+          'Item ID'
         );
+        BulkEditSearchPane.verifyMatchedResults(item.itemId);
         BulkEditActions.downloadMatchedRecordsExists();
         BulkEditActions.downloadErrorsExists();
         ExportFile.verifyFileIncludes(matchedRecordsFileName, [item.itemId]);

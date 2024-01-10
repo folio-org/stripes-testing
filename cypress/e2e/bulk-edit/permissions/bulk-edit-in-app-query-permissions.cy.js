@@ -39,8 +39,7 @@ describe('bulk-edit', () => {
       'C366073 Verify Bulk edit elements in the left pane --In app (firebird)',
       { tags: ['criticalPath', 'firebird'] },
       () => {
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
         BulkEditSearchPane.verifyRecordTypesEmpty();
         BulkEditSearchPane.verifyRecordIdentifierEmpty();
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
@@ -53,11 +52,13 @@ describe('bulk-edit', () => {
           waiter: BulkEditSearchPane.waitLoading,
         });
 
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier');
-        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabsHidden('Query');
+        BulkEditSearchPane.verifySetCriteriaPaneSpecificTabs('Identifier', 'Query');
         BulkEditSearchPane.itemsRadioIsDisabled(false);
         BulkEditSearchPane.isItemsRadioChecked(false);
         BulkEditSearchPane.holdingsRadioIsDisabled(false);
+        BulkEditSearchPane.isHoldingsRadioChecked(false);
+        BulkEditSearchPane.instancesRadioIsDisabled(false);
+        BulkEditSearchPane.isInstancesRadioChecked(false);
         BulkEditSearchPane.isDragAndDropAreaDisabled(true);
       },
     );
