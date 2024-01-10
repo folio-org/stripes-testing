@@ -201,7 +201,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(createInstanceAndEHoldingsJobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameForCreateMarcFile);
+        Logs.waitFileIsImported(nameForCreateMarcFile);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameForCreateMarcFile);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
@@ -218,7 +218,7 @@ describe('data-import', () => {
           JobProfiles.waitFileIsUploaded();
           JobProfiles.search(updateEHoldingsJobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(nameForUpdateCreateMarcFile);
+          Logs.waitFileIsImported(nameForUpdateCreateMarcFile);
           Logs.checkStatusOfJobProfile();
 
           cy.visit(TopMenu.inventoryPath);

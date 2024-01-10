@@ -34,15 +34,21 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       cancellationReasonId: cancellationReason,
       cancelledDate: new Date().toISOString(),
     });
+    Requests.deleteRequestViaApi(requestData.id);
     Users.deleteViaApi(userId);
   });
 
   it(
     'C556 Request: Edit requests. Make sure that edits are being saved. (vega)',
-    { tags: ['smoke', 'vega', 'nonParallel'] },
+    { tags: ['smoke', 'vega', 'system', 'nonParallel'] },
     () => {
       cy.visit(TopMenu.requestsPath);
-      Object.values(EditRequest.requestStatuses).forEach((status) => {
+      [
+        EditRequest.requestStatuses.AWAITING_DELIVERY,
+        EditRequest.requestStatuses.AWAITING_PICKUP,
+        EditRequest.requestStatuses.IN_TRANSIT,
+        EditRequest.requestStatuses.NOT_YET_FILLED,
+      ].forEach((status) => {
         EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);
         EditRequest.resetFiltersAndReloadPage();
       });

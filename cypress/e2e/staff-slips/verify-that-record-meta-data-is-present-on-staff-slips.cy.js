@@ -48,7 +48,7 @@ describe('adding new tokens', () => {
       cy.visit(SettingsMenu.circulationStaffSlipsPath);
       EditStaffClips.editHold();
       EditStaffClips.checkLastUpdateInfo();
-      EditStaffClips.editDescripton(getTestEntityValue('NewDescription'));
+      EditStaffClips.editDescription(getTestEntityValue('NewDescription'));
       EditStaffClips.collapseAll();
       EditStaffClips.expandAll();
       EditStaffClips.editTemplateContent(getTestEntityValue('NewTemplateContent'));

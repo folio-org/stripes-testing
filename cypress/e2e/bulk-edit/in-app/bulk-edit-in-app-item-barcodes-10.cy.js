@@ -84,8 +84,8 @@ describe('bulk-edit', () => {
           expect(res.response.body.rows).to.have.length(10);
         });
         BulkEditSearchPane.waitFileUploading();
-        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item temporary location');
         BulkEditActions.openActions();
+        BulkEditSearchPane.changeShowColumnCheckboxIfNotYet('Item temporary location');
         const location = 'Annex';
         BulkEditActions.openInAppStartBulkEditFrom();
         BulkEditActions.replaceTemporaryLocation(location);

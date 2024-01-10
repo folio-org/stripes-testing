@@ -307,6 +307,10 @@ export default {
     return momentObj.format('M/D/YYYY, h:mm A');
   },
 
+  getFormattedEndDateWithTimUTC(date) {
+    return moment.utc(date).format('M/D/YYYY, h:mm A');
+  },
+
   getFormattedDateWithTime(date, spelling = { withoutComma: false, withSpace: false }) {
     if (spelling.withoutComma) return moment.utc(date).format('M/D/YYYYh');
     if (spelling.withSpace) return moment.utc(date).format('M/D/YYYY h');

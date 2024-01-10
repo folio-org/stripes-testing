@@ -199,8 +199,8 @@ export default {
       });
     });
   },
-  searchLocationByName({ name, checkOptions = true }) {
-    this.filterDropDownValue('Name (code)', name);
+  searchLocationByName({ name, open = true, checkOptions = true }) {
+    this.filterDropDownValue({ label: 'Name (code)', option: name, open });
 
     if (checkOptions) {
       cy.then(() => SelectionList().optionList()).then((options) => {
@@ -232,13 +232,16 @@ export default {
     );
     cy.wait(2000);
   },
-  filterDropDownValue(label, option, index = 0) {
-    cy.do([
-      RepeatableFieldItem({ index })
-        .find(Selection(including(label)))
-        .open(),
-      SelectionList().filter(option),
-    ]);
+  filterDropDownValue({ label, option, open = true, index = 0 } = {}) {
+    if (open) {
+      cy.do(
+        RepeatableFieldItem({ index })
+          .find(Selection(including(label)))
+          .open(),
+      );
+    }
+
+    cy.do(SelectionList().filter(option));
   },
   selectDropDownValue(label, option, index = 0) {
     cy.do([

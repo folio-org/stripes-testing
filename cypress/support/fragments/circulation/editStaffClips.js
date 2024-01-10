@@ -1,26 +1,24 @@
 import { including } from 'bigtest';
 import {
   Button,
-  TextArea,
-  NavListItem,
   Checkbox,
-  Modal,
-  RichEditor,
-  Pane,
-  matching,
-  PaneContent,
   MetaSection,
+  Modal,
+  NavListItem,
+  Pane,
+  PaneContent,
   PaneSet,
+  TextArea,
+  matching,
 } from '../../../../interactors';
-import InteractorsTools from '../../utils/interactorsTools';
 import richTextEditor from '../../../../interactors/rich-text-editor';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const staffSlipPaneContent = PaneContent({ id: 'staff-slip-pane-content' });
 const editButton = Button({ id: 'clickable-edit-item' });
-const staffClipsDescripton = TextArea({ id: 'input-staff-slip-description' });
+const staffClipsDescription = TextArea({ id: 'input-staff-slip-description' });
 const textCheck = 'The Wines of Italyc.2';
 const saveButton = Button('Save & close');
-const staffClipsEditor = RichEditor();
 
 export default {
   defaultUiEditStaffClips: {
@@ -83,7 +81,7 @@ export default {
   },
   fillStaffClips: (editStaffClipsHold) => {
     cy.do([
-      staffClipsDescripton.fillIn(editStaffClipsHold.description),
+      staffClipsDescription.fillIn(editStaffClipsHold.description),
       Button({ className: 'ql-token' }).click(),
       Checkbox('item.title').click(),
       Checkbox('item.copy').click(),
@@ -91,9 +89,9 @@ export default {
       saveButton.click(),
     ]);
   },
-  editDescripton(description) {
-    cy.do(staffClipsDescripton.fillIn(description));
-    cy.expect(staffClipsDescripton.has({ textContent: including(description) }));
+  editDescription(description) {
+    cy.do(staffClipsDescription.fillIn(description));
+    cy.expect(staffClipsDescription.has({ textContent: including(description) }));
   },
   editTemplateContent(content) {
     cy.do(richTextEditor().fillIn(content));
@@ -116,8 +114,8 @@ export default {
     this.previewStaffClips();
   },
   clearStaffClips: () => {
-    cy.do(staffClipsEditor.fillIn('{selectAll}{backspace}'));
-    cy.do(staffClipsDescripton.fillIn('{selectAll}{backspace}'));
+    cy.get('.ql-container > .ql-editor').type('{selectAll}{backspace}');
+    cy.do(staffClipsDescription.fillIn('{selectAll}{backspace}'));
     cy.do(saveButton.click());
   },
   saveAndClose: () => {
