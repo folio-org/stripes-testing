@@ -151,7 +151,7 @@ export default {
     ]);
     if (query) cy.expect(setCriteriaPane.find(queryToggle).exists());
   },
-  
+
   verifySetCriteriaPaneElements() {
     cy.expect([
       setCriteriaPane.find(identifierToggle).exists(),
