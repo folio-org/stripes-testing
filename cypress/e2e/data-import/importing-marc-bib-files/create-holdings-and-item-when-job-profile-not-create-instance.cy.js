@@ -214,7 +214,7 @@ describe('data-import', () => {
           DataImport.uploadExportedFile(exportedFileName);
           JobProfiles.search(jobProfile.profileName);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(exportedFileName);
+          Logs.waitFileIsImported(exportedFileName);
           Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
           Logs.openFileDetails(exportedFileName);
           [

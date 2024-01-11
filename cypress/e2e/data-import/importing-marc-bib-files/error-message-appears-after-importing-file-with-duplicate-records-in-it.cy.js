@@ -110,7 +110,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(firstFileName);
+        Logs.waitFileIsImported(firstFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(firstFileName);
         FileDetails.openInstanceInInventory(RECORD_STATUSES.CREATED);
@@ -159,7 +159,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfile.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(secondFileName);
+        Logs.waitFileIsImported(secondFileName);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(secondFileName);
         FileDetails.openInstanceInInventoryByStatus(RECORD_STATUSES.UPDATED);

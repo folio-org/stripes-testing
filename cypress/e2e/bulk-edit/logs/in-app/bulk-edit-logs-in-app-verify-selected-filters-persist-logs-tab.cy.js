@@ -63,7 +63,7 @@ describe('Bulk Edit - Logs', () => {
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(user.userId);
+      BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
       BulkEditActions.openActions();
       BulkEditActions.openInAppStartBulkEditFrom();

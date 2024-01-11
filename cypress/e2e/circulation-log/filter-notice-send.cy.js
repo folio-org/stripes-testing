@@ -50,7 +50,7 @@ const testData = {
   ),
 };
 
-describe('circulation-log', () => {
+describe('Circulation log', () => {
   before('create test data', () => {
     cy.createTempUser([permissions.checkoutAll.gui])
       .then((userProperties) => {

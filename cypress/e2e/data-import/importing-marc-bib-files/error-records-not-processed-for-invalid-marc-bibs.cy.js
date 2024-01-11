@@ -46,7 +46,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
+        Logs.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED_WITH_ERRORS);
         Logs.openFileDetails(nameMarcFileForImportCreate);
         FileDetails.verifyTitle('No content', FileDetails.columnNameInResultList.title);
