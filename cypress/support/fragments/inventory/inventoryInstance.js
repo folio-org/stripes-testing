@@ -427,7 +427,6 @@ export default {
   },
 
   searchByTitle(title, result = true) {
-    cy.log('1');
     cy.do([filterPane.find(inputSearchField).fillIn(title), filterPane.find(searchButton).click()]);
     if (result) {
       cy.expect(MultiColumnListRow({ index: 0 }).exists());
@@ -729,10 +728,7 @@ export default {
   },
 
   expandMemberHoldings(memberName) {
-    const memberNameFirstCharToUpperCase = memberName.charAt(0).toUpperCase() + memberName.slice(1);
-    cy.do(
-      Button({ id: `accordion-toggle-button-${memberNameFirstCharToUpperCase}-holdings` }).click(),
-    );
+    cy.do(Button({ id: `accordion-toggle-button-${memberName}-holdings` }).click());
   },
 
   createHoldingsRecord: (permanentLocation) => {

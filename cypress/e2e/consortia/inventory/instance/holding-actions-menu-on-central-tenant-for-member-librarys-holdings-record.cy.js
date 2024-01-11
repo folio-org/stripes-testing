@@ -1,18 +1,15 @@
-import Permissions from '../../../../support/dictionary/permissions';
-import getRandomPostfix from '../../../../support/utils/stringTools';
-import Users from '../../../../support/fragments/users/users';
-import TopMenu from '../../../../support/fragments/topMenu';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../../support/fragments/inventory/inventorySearchAndFilter';
-import InstanceRecordView from '../../../../support/fragments/inventory/instanceRecordView';
-import InstanceRecordEdit from '../../../../support/fragments/inventory/instanceRecordEdit';
-import InteractorsTools from '../../../../support/utils/interactorsTools';
 import Affiliations, { tenantNames } from '../../../../support/dictionary/affiliations';
-import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import Permissions from '../../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import HoldingsRecordView from '../../../../support/fragments/inventory/holdingsRecordView';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
+import ConsortiumManager from '../../../../support/fragments/settings/consortium-manager/consortium-manager';
+import Locations from '../../../../support/fragments/settings/tenant/location-setup/locations';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import TopMenu from '../../../../support/fragments/topMenu';
+import Users from '../../../../support/fragments/users/users';
+import getRandomPostfix from '../../../../support/utils/stringTools';
 
 describe('Inventory -> Instance -> Consortia', () => {
   let user;
@@ -58,7 +55,6 @@ describe('Inventory -> Instance -> Consortia', () => {
           path: TopMenu.inventoryPath,
           waiter: InventoryInstances.waitContentLoading,
         });
-        // ConsortiumManager.switchActiveAffiliation(tenantNames.college);
       });
     });
   });
@@ -74,29 +70,16 @@ describe('Inventory -> Instance -> Consortia', () => {
   });
 
   it(
-    'C407751 (CONSORTIA) Verify the permission for editing shared instance on Member tenant (folijet)',
-    { tags: ['smoke', 'folijet'] },
+    'C411384 (CONSORTIA) Check Holdings "Actions" menu on Central tenant for a member librarys holdings record',
+    { tags: ['criticalPath', 'folijet'] },
     () => {
-      cy.log('0');
-      cy.log(testData.instance.title);
       InventoryInstance.searchByTitle(testData.instance.instanceTitle);
       InventoryInstances.selectInstance();
       InventoryInstance.expandConsortiaHoldings();
-      InventoryInstance.expandMemberHoldings('College');
+      InventoryInstance.expandMemberHoldings(tenantNames.college);
       InventoryInstance.openHoldingView();
-      /*
-      InventorySearchAndFilter.searchInstanceByTitle(testData.instance.instanceTitle);
-      InstanceRecordView.verifyInstanceRecordViewOpened();
-      InstanceRecordView.edit();
-      InstanceRecordEdit.waitLoading();
-      InstanceRecordEdit.fillResourceTitle(testData.newInstanceTitle);
-      InstanceRecordEdit.saveAndClose();
-      InteractorsTools.checkCalloutMessage(
-        'This shared instance has been saved centrally, and updates to associated member library records are in process. Changes in this copy of the instance may not appear immediately.',
-      );
-      InstanceRecordView.verifyInstanceRecordViewOpened();
-      InstanceRecordView.verifyResourceTitle(testData.newInstanceTitle);
-      */
+      ConsortiumManager.checkCurrentTenantInTopMenu(tenantNames.college);
+      HoldingsRecordView.checkActionsMenuOptions();
     },
   );
 });
