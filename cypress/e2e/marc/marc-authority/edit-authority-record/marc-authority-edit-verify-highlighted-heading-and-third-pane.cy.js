@@ -82,7 +82,7 @@ describe('Edit Authority record', () => {
         JobProfiles.waitLoadingList();
         JobProfiles.search(jobProfileToRun);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.waitFileIsImported(marcFile.fileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(marcFile.fileName);
         for (let i = 0; i < marcFile.numOfRecords; i++) {

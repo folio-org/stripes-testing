@@ -56,7 +56,7 @@ describe('marc', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(marcFile.jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(marcFile.fileName);
+      Logs.waitFileIsImported(marcFile.fileName);
       Logs.openFileDetails(marcFile.fileName);
       Logs.getCreatedItemsID(0).then((link) => {
         testData.instanceID = link.split('/')[5];
