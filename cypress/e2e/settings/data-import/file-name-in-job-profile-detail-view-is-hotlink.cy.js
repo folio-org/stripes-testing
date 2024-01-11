@@ -7,6 +7,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 
 describe('data-import', () => {
   describe('Settings', () => {
@@ -28,7 +29,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileNameToUpload);
+      Logs.waitFileIsImported(fileNameToUpload);
       cy.logout();
 
       cy.createTempUser([

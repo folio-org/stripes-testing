@@ -31,6 +31,7 @@ describe('inventory', () => {
             instanceId = specialInstanceId;
           });
         });
+      cy.wait(10000);
       cy.loginAsAdmin();
     });
 

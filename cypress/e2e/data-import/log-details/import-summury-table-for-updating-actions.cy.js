@@ -436,7 +436,7 @@ describe('data-import', () => {
         JobProfiles.waitFileIsUploaded();
         JobProfiles.search(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
+        Logs.waitFileIsImported(nameMarcFileForImportCreate);
         Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
         Logs.openFileDetails(nameMarcFileForImportCreate);
 
@@ -585,7 +585,7 @@ describe('data-import', () => {
         DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
         JobProfiles.search(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
-        JobProfiles.waitFileIsImported(nameMarcFileForImportUpdate);
+        Logs.waitFileIsImported(nameMarcFileForImportUpdate);
         Logs.openFileDetails(nameMarcFileForImportUpdate);
 
         [

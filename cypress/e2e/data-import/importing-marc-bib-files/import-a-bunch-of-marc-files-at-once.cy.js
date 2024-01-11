@@ -40,7 +40,7 @@ describe('data-import', () => {
           DataImport.waitFileIsUploaded();
           JobProfiles.search(jobProfileToRun);
           JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(upload.fileName);
+          Logs.waitFileIsImported(upload.fileName);
 
           Logs.openViewAllLogs();
           LogsViewAll.viewAllIsOpened();

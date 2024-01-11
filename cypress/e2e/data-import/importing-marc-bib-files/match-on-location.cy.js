@@ -271,7 +271,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(testData.jobProfileForCreate.profile.name);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(marcFileForCreate);
+      Logs.waitFileIsImported(marcFileForCreate);
       Logs.openFileDetails(marcFileForCreate);
       rowNumbers.forEach((rowNumber) => {
         FileDetails.checkStatusInColumn(
@@ -420,7 +420,7 @@ describe('data-import', () => {
       JobProfiles.waitFileIsUploaded();
       JobProfiles.search(jobProfileForUpdate.profileName);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileNameAfterUpdate);
+      Logs.waitFileIsImported(fileNameAfterUpdate);
       Logs.checkStatusOfJobProfile(JOB_STATUS_NAMES.COMPLETED);
       Logs.openFileDetails(fileNameAfterUpdate);
       rowNumbers.forEach((rowNumber) => {
