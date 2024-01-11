@@ -117,9 +117,6 @@ export default {
     cy.expect([plusBtn.exists(), Button({ icon: 'trash', disabled: isDisabled }).exists()]);
     BulkEditSearchPane.isConfirmButtonDisabled(true);
   },
-  afterAllSelectedActions() {
-    cy.expect([plusBtn.absent(), Button({ icon: 'trash', disabled: false }).exists()]);
-  },
   deleteRow(rowIndex = 0) {
     cy.do(RepeatableFieldItem({ index: rowIndex }).find(deleteBtn).click());
   },
